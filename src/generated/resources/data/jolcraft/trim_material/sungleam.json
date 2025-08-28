@@ -1,8 +1,0 @@
-{
-  "asset_name": "sungleam",
-  "description": {
-    "color": "#EFD03C",
-    "translate": "trim_material.jolcraft.sungleam"
-  },
-  "ingredient": "jolcraft:sungleam_cut"
-}

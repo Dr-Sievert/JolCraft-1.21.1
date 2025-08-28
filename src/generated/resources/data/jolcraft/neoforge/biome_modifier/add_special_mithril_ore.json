@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": "#jolcraft:mountains_and_hills",
-  "features": "jolcraft:special_mithril_ore_placed",
-  "step": "underground_ores"
-}

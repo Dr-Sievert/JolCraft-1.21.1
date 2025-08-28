@@ -1,8 +1,0 @@
-{
-  "asset_name": "verdanite",
-  "description": {
-    "color": "#6DE775",
-    "translate": "trim_material.jolcraft.verdanite"
-  },
-  "ingredient": "jolcraft:verdanite_cut"
-}

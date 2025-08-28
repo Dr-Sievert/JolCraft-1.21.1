@@ -1,8 +1,0 @@
-{
-  "asset_name": "skyburrow",
-  "description": {
-    "color": "#5BC9DC",
-    "translate": "trim_material.jolcraft.skyburrow"
-  },
-  "ingredient": "jolcraft:skyburrow_cut"
-}

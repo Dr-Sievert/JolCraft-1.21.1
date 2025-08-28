@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "jolcraft:item/deepslate_artisan_hammer"
-  }
-}

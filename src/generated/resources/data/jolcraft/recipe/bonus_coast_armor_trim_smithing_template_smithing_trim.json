@@ -1,6 +1,0 @@
-{
-  "type": "jolcraft:jolcraft_smithing_trim",
-  "addition": "#jolcraft:bonus_trim_materials",
-  "base": "#minecraft:trimmable_armor",
-  "template": "minecraft:coast_armor_trim_smithing_template"
-}

@@ -1,9 +1,0 @@
-{
-  "parent": "minecraft:block/orientable_with_bottom",
-  "textures": {
-    "bottom": "jolcraft:block/hearth_top",
-    "front": "jolcraft:block/hearth_front",
-    "side": "jolcraft:block/hearth_side",
-    "top": "jolcraft:block/hearth_top"
-  }
-}

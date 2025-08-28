@@ -1,8 +1,0 @@
-{
-  "asset_name": "rustagate",
-  "description": {
-    "color": "#C95D38",
-    "translate": "trim_material.jolcraft.rustagate"
-  },
-  "ingredient": "jolcraft:rustagate_cut"
-}

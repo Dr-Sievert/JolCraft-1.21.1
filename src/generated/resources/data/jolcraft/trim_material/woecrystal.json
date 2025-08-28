@@ -1,8 +1,0 @@
-{
-  "asset_name": "woecrystal",
-  "description": {
-    "color": "#737296",
-    "translate": "trim_material.jolcraft.woecrystal"
-  },
-  "ingredient": "jolcraft:woecrystal_cut"
-}

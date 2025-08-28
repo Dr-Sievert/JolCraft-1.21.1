@@ -1,8 +1,0 @@
-{
-  "asset_name": "emberglass",
-  "description": {
-    "color": "#9C584B",
-    "translate": "trim_material.jolcraft.emberglass"
-  },
-  "ingredient": "jolcraft:emberglass_cut"
-}

@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column_horizontal",
-  "textures": {
-    "end": "jolcraft:block/deepslate_mithril_ore_top",
-    "side": "jolcraft:block/deepslate_mithril_ore_side"
-  }
-}

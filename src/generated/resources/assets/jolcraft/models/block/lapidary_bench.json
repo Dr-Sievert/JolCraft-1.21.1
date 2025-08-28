@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "bottom": "jolcraft:block/lapidary_bench_bottom",
-    "side": "jolcraft:block/lapidary_bench_side",
-    "top": "jolcraft:block/lapidary_bench_top"
-  }
-}

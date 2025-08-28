@@ -1,8 +1,0 @@
-{
-  "asset_name": "moonshard",
-  "description": {
-    "color": "#A5A6FF",
-    "translate": "trim_material.jolcraft.moonshard"
-  },
-  "ingredient": "jolcraft:moonshard_cut"
-}
