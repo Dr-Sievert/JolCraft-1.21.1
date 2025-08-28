@@ -30,7 +30,7 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            boolean knowsLang = DwarvenLanguageHelper.knowsDwarvishServer(serverPlayer);
+            boolean knowsLang = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
             boolean hasEffect = AncientEffectHelper.hasAncientMemoryServer(serverPlayer);
             boolean alreadyKnows = AncientDwarvenLanguageHelper.knowsAncientDwarvishServerBypassCreative(serverPlayer);
 

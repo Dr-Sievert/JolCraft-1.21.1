@@ -31,13 +31,13 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
 
     @Override
     protected boolean canIdentify(ServerPlayer player) {
-        return DwarvenLanguageHelper.knowsDwarvishServer(player)
+        return hasRequiredLanguage(player)
                 && AncientEffectHelper.hasAncientMemoryServer(player);
     }
 
     @Override
     protected boolean hasRequiredLanguage(ServerPlayer player) {
-        return DwarvenLanguageHelper.knowsDwarvishServer(player);
+        return DwarvenLanguageHelper.knowsDwarvish(player);
     }
 
     @Override

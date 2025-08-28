@@ -35,7 +35,7 @@ public class ReputationTabletItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            if (!DwarvenLanguageHelper.knowsDwarvishServer(serverPlayer)) {
+            if (!DwarvenLanguageHelper.knowsDwarvish(serverPlayer)) {
                 serverPlayer.displayClientMessage(
                         Component.translatable("tooltip.jolcraft.tablet.locked").withStyle(ChatFormatting.GRAY),
                         true

@@ -2,47 +2,58 @@ package net.sievert.jolcraft.util.attachment;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.custom.attachment.lang.DwarvenLanguage;
-import net.sievert.jolcraft.network.client.data.ClientLanguageData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+/**
+ * Helper for Dwarven Language capability, using the JolCraftProxy system for server/client safety.
+ */
 public class DwarvenLanguageHelper {
 
     /**
-     * SERVER-SIDE: Checks if the player knows Dwarvish or is in creative mode.
+     * Checks if a player knows Dwarvish, or is creative (bypasses language checks).
+     * Always uses the JolCraftProxy for correct context.
      */
-
-    public static boolean knowsDwarvishServer(Player player) {
-        return player != null && (player.isCreative() || DwarvenLanguage.get(player).knowsLanguage());
-    }
-
-    public static boolean knowsDwarvishServerBypassCreative(Player player) {
-        return player != null &&  DwarvenLanguage.get(player).knowsLanguage();
+    public static boolean knowsDwarvish(Player player) {
+        if (player == null) return false;
+        if (player.isCreative()) return true;
+        DwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
+        return lang != null && lang.knowsLanguage();
     }
 
     /**
-     * SERVER-SIDE: Set language.
+     * Checks if a player knows Dwarvish, WITHOUT creative-mode bypass.
+     * Uses the JolCraftProxy for context safety.
      */
-    public static void setKnowsDwarvishServer(Player player, boolean value) {
+    public static boolean knowsDwarvishBypassCreative(Player player) {
+        if (player == null) return false;
+        DwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
+        return lang != null && lang.knowsLanguage();
+    }
+
+    /**
+     * Sets the "knows Dwarvish" flag for a player.
+     * Always goes through JolCraftProxy.
+     */
+    public static void setKnowsDwarvish(Player player, boolean value) {
         if (player == null) return;
-        var lang = DwarvenLanguage.get(player); // Uses static helper
-        lang.setKnowsLanguage(value);
+        DwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
+        if (lang != null) {
+            lang.setKnowsLanguage(value);
+        }
     }
 
     /**
-     * CLIENT-SIDE: Checks if the local player knows Dwarvish or is in creative mode.
-     * Safe for tooltips, renders, and GUIs.
+     * CLIENT-ONLY: Checks if the local player knows Dwarvish, or is creative.
+     * Always routed through JolCraftProxy for correct side handling.
+     * Use in tooltips, GUIs, and client-only renders.
      */
     @OnlyIn(Dist.CLIENT)
     public static boolean knowsDwarvishClient() {
         Player player = Minecraft.getInstance().player;
-        return player != null && (player.isCreative() || ClientLanguageData.knowsLanguage());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean knowsDwarvishClientBypassCreative() {
-        Player player = Minecraft.getInstance().player;
-        return player != null && ClientLanguageData.knowsLanguage();
+        return knowsDwarvish(player);
     }
 }

@@ -351,9 +351,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     public InteractionResult languageCheck(Player player) {
         boolean client = this.level().isClientSide;
-        boolean knowsLanguage = client
-                ? DwarvenLanguageHelper.knowsDwarvishClient()
-                : DwarvenLanguageHelper.knowsDwarvishServer(player);
+        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
 
         if (!knowsLanguage) {
             JolCraftSoundHelper.playDwarfNo(this);
@@ -364,10 +362,8 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                 );
                 return InteractionResult.CONSUME;
             }
-
             return InteractionResult.FAIL;
         }
-
         return InteractionResult.SUCCESS;
     }
 

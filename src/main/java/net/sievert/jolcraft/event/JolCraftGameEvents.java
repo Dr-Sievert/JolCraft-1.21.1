@@ -115,7 +115,7 @@ public class JolCraftGameEvents {
         if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
 
         // Sync normal Dwarvish language
-        boolean knowsLang = DwarvenLanguageHelper.knowsDwarvishServerBypassCreative(serverPlayer);
+        boolean knowsLang = DwarvenLanguageHelper.knowsDwarvishBypassCreative(serverPlayer);
         JolCraftNetworking.sendToClient(serverPlayer, new ClientboundLanguagePacket(knowsLang));
 
         // Sync Ancient Dwarvish language

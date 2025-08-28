@@ -34,7 +34,6 @@ import net.sievert.jolcraft.item.custom.tablet.ReputationTabletItem;
 import net.sievert.jolcraft.item.custom.tooltip.LegendaryItem;
 import net.sievert.jolcraft.item.custom.tooltip.SimpleTooltipBlockItem;
 import net.sievert.jolcraft.item.custom.tooltip.SimpleTooltipItem;
-import net.sievert.jolcraft.item.custom.tooltip.SimpleTooltipLegendaryItem;
 import net.sievert.jolcraft.item.tool.JolCraftToolMaterials;
 import net.sievert.jolcraft.item.food.JolCraftFoodProperties;
 
@@ -407,63 +406,63 @@ public class JolCraftItems {
     );
 
     public static final DeferredItem<Item> AEGISCORE = ITEMS.registerItem(
-            "aegiscore", props -> new UncutGemItem(props)
+            "aegiscore", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> ASHFANG = ITEMS.registerItem(
-            "ashfang", props -> new UncutGemItem(props)
+            "ashfang", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> DEEPMARROW = ITEMS.registerItem(
-            "deepmarrow", props -> new UncutGemItem(props)
+            "deepmarrow", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> EARTHBLOOD = ITEMS.registerItem(
-            "earthblood", props -> new UncutGemItem(props)
+            "earthblood", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> EMBERGLASS = ITEMS.registerItem(
-            "emberglass", props -> new UncutGemItem(props)
+            "emberglass", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> FROSTVEIN = ITEMS.registerItem(
-            "frostvein", props -> new UncutGemItem(props)
+            "frostvein", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> GRIMSTONE = ITEMS.registerItem(
-            "grimstone", props -> new UncutGemItem(props)
+            "grimstone", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> IRONHEART = ITEMS.registerItem(
-            "ironheart", props -> new UncutGemItem(props)
+            "ironheart", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> LUMIERE = ITEMS.registerItem(
-            "lumiere", props -> new UncutGemItem(props)
+            "lumiere", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> MOONSHARD = ITEMS.registerItem(
-            "moonshard", props -> new UncutGemItem(props)
+            "moonshard", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> RUSTAGATE = ITEMS.registerItem(
-            "rustagate", props -> new UncutGemItem(props)
+            "rustagate", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> SKYBURROW = ITEMS.registerItem(
-            "skyburrow", props -> new UncutGemItem(props)
+            "skyburrow", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> SUNGLEAM = ITEMS.registerItem(
-            "sungleam", props -> new UncutGemItem(props)
+            "sungleam", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> VERDANITE = ITEMS.registerItem(
-            "verdanite", props -> new UncutGemItem(props)
+            "verdanite", UncutGemItem::new
     );
 
     public static final DeferredItem<Item> WOECRYSTAL = ITEMS.registerItem(
-            "woecrystal", props -> new UncutGemItem(props)
+            "woecrystal", UncutGemItem::new
     );
 
 
@@ -614,7 +613,7 @@ public class JolCraftItems {
 
     public static final DeferredItem<Item> LEGENDARY_PAGE = ITEMS.registerItem(
             "legendary_page",
-            props -> new LegendaryItem(props)
+            LegendaryItem::new
     );
 
     public static final DeferredItem<Item> LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME =

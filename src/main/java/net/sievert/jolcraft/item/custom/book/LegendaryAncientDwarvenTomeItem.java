@@ -36,7 +36,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             // === GATE: Language + Ancient Memory ===
-            boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishServer(serverPlayer);
+            boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
             boolean hasAncientMemory = AncientEffectHelper.hasAncientMemoryServer(serverPlayer);
 
             if (!(knowsLanguage && hasAncientMemory)) {

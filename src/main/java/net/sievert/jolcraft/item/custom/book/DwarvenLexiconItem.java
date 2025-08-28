@@ -33,8 +33,8 @@ public class DwarvenLexiconItem extends Item {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             // Strict: do NOT grant for creative, only for real unlock
-            if (!DwarvenLanguageHelper.knowsDwarvishServerBypassCreative(serverPlayer)) {
-                DwarvenLanguageHelper.setKnowsDwarvishServer(serverPlayer, true);
+            if (!DwarvenLanguageHelper.knowsDwarvishBypassCreative(serverPlayer)) {
+                DwarvenLanguageHelper.setKnowsDwarvish(serverPlayer, true);
 
                 // ✅ SEND PACKET TO CLIENT
                 JolCraftNetworking.sendToClient(serverPlayer, new ClientboundLanguagePacket(true));

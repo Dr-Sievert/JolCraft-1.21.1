@@ -12,12 +12,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
 
 public class DwarfEntity extends AbstractDwarfEntity {

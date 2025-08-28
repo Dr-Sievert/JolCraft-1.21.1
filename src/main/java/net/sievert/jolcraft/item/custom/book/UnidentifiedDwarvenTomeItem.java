@@ -30,7 +30,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
 
     @Override
     protected boolean canIdentify(ServerPlayer player) {
-        return DwarvenLanguageHelper.knowsDwarvishServer(player);
+        return DwarvenLanguageHelper.knowsDwarvish(player);
     }
 
     @Override

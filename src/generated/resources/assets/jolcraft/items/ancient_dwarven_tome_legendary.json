@@ -5,16 +5,16 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "jolcraft:item/ancient_dwarven_tome_legendary_coin_press_manual"
+          "model": "jolcraft:item/ancient_dwarven_tome_legendary_forgotten_brew_formulas"
         },
-        "when": "coin_press_manual"
+        "when": "forgotten_brew_formulas"
       },
       {
         "model": {
           "type": "minecraft:model",
-          "model": "jolcraft:item/ancient_dwarven_tome_legendary_forgotten_brew_formulas"
+          "model": "jolcraft:item/ancient_dwarven_tome_legendary_coin_press_manual"
         },
-        "when": "forgotten_brew_formulas"
+        "when": "coin_press_manual"
       },
       {
         "model": {
