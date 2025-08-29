@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -28,10 +29,13 @@ import net.sievert.jolcraft.datagen.recipe.builder.JolSmithingTrimRecipeBuilder;
 import net.sievert.jolcraft.item.JolCraftItems;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class JolCraftRecipeProvider extends RecipeProvider {
     public JolCraftRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
         super(provider, recipeOutput);

@@ -14,7 +14,7 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.entity.JolCraftEntities;
-import net.sievert.jolcraft.entity.attribute.JolCraftAttributes;
+import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.item.JolCraftCreativeModeTabs;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
@@ -25,7 +25,7 @@ import net.sievert.jolcraft.network.proxy.JolCraftClientProxy;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.network.proxy.JolCraftServerProxy;
 import net.sievert.jolcraft.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.screen.JolCraftMenuTypes;
+import net.sievert.jolcraft.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.server.ServerTickHandler;
 import net.sievert.jolcraft.worldgen.JolCraftBlockPredicateTypes;
@@ -40,7 +40,10 @@ public class JolCraft {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     // The unified server/client proxy for all context-branching logic
-    public static JolCraftProxy PROXY;
+    public static final JolCraftProxy PROXY =
+            FMLEnvironment.dist.isClient()
+                    ? new JolCraftClientProxy()
+                    : new JolCraftServerProxy();
 
     public JolCraft(IEventBus modEventBus, ModContainer modContainer) {
 
@@ -72,13 +75,6 @@ public class JolCraft {
 
         // --- Server-only tick handler ---
         ServerTickHandler.register();
-
-        // --- Proxy setup (dist-aware, for context filtering everywhere) ---
-        if (FMLEnvironment.dist.isClient()) {
-            PROXY = new JolCraftClientProxy();
-        } else {
-            PROXY = new JolCraftServerProxy();
-        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

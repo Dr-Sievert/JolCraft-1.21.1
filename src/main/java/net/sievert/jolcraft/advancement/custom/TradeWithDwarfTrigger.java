@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class TradeWithDwarfTrigger extends SimpleCriterionTrigger<TradeWithDwarf
             CriteriaTriggers.register("trade_with_dwarf", new TradeWithDwarfTrigger());
 
     @Override
-    public Codec<TriggerInstance> codec() {
+    public @NotNull Codec<TriggerInstance> codec() {
         return TriggerInstance.CODEC;
     }
 

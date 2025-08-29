@@ -3,6 +3,7 @@ package net.sievert.jolcraft.entity.custom.dwarf;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -40,8 +41,11 @@ import net.sievert.jolcraft.util.dwarf.bounty.BountyGenerator;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarfMerchantEntity extends AbstractDwarfEntity {
 
     public DwarfMerchantEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
@@ -545,7 +549,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
                 if (!hasGem) {
                     var shuffled = new ArrayList<>(List.of(gemTrades));
                     Collections.shuffle(shuffled, new Random(this.random.nextLong()));
-                    var offer = shuffled.get(0).getOffer(this, this.random);
+                    var offer = shuffled.getFirst().getOffer(this, this.random);
                     if (offer != null) this.getOffers().add(offer);
                 }
             }
@@ -618,13 +622,13 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             if (gemTrades != null && gemTrades.length > 0) {
                 var shuffled = new ArrayList<>(List.of(gemTrades));
                 Collections.shuffle(shuffled, new Random(this.random.nextLong()));
-                var offer = shuffled.get(0).getOffer(this, this.random);
+                var offer = shuffled.getFirst().getOffer(this, this.random);
                 if (offer != null) this.getOffers().add(offer);
             }
         }
 
         this.lastRestockGameTime = this.level().getGameTime();
-        this.level().playSound(null, this.blockPosition(), getRestockSound(), SoundSource.NEUTRAL, 1.0F, 1.05F);
+        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRestockSound()), SoundSource.NEUTRAL, 1.0F, 1.05F);
     }
 
     public void restockBountiesOnly() {

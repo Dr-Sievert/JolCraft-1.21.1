@@ -2,6 +2,7 @@ package net.sievert.jolcraft.entity.custom.dwarf;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -17,6 +18,10 @@ import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarfEntity extends AbstractDwarfEntity {
 
     public DwarfEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {

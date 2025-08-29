@@ -38,33 +38,30 @@ public class JolCraftAnvilHelper {
             @Nullable String rename,
             Player player
     ) {
-        ItemStack itemstack = left;
         int repairItemCountCost = 0;
         int cost = 1;
         int i = 0;
         long j = 0L;
         int k = 0;
 
-        if (!itemstack.isEmpty() && EnchantmentHelper.canStoreEnchantments(itemstack)) {
-            ItemStack itemstack1 = itemstack.copy();
-            ItemStack itemstack2 = right;
+        if (!left.isEmpty() && EnchantmentHelper.canStoreEnchantments(left)) {
+            ItemStack itemstack1 = left.copy();
             ItemEnchantments.Mutable itemenchantments$mutable = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(itemstack1));
-            j += (long)itemstack.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue()
-                    + (long)itemstack2.getOrDefault(DataComponents.REPAIR_COST, Integer.valueOf(0)).intValue();
-            repairItemCountCost = 0;
+            j += (long) left.getOrDefault(DataComponents.REPAIR_COST, 0)
+                    + (long) right.getOrDefault(DataComponents.REPAIR_COST, 0);
             boolean flag = false;
             // Skipping hooks here; call your hooks outside the helper if needed
 
-            if (!itemstack2.isEmpty()) {
-                flag = itemstack2.has(DataComponents.STORED_ENCHANTMENTS);
-                if (itemstack1.isDamageableItem() && itemstack.isValidRepairItem(itemstack2)) {
+            if (!right.isEmpty()) {
+                flag = right.has(DataComponents.STORED_ENCHANTMENTS);
+                if (itemstack1.isDamageableItem() && left.isValidRepairItem(right)) {
                     int l2 = Math.min(itemstack1.getDamageValue(), itemstack1.getMaxDamage() / 4);
                     if (l2 <= 0) {
                         return new AnvilResult(ItemStack.EMPTY, 0, 0);
                     }
 
                     int j3;
-                    for (j3 = 0; l2 > 0 && j3 < itemstack2.getCount(); j3++) {
+                    for (j3 = 0; l2 > 0 && j3 < right.getCount(); j3++) {
                         int k3 = itemstack1.getDamageValue() - l2;
                         itemstack1.setDamageValue(k3);
                         i++;
@@ -73,13 +70,13 @@ public class JolCraftAnvilHelper {
 
                     repairItemCountCost = j3;
                 } else {
-                    if (!flag && (!itemstack1.is(itemstack2.getItem()) || !itemstack1.isDamageableItem())) {
+                    if (!flag && (!itemstack1.is(right.getItem()) || !itemstack1.isDamageableItem())) {
                         return new AnvilResult(ItemStack.EMPTY, 0, 0);
                     }
 
                     if (itemstack1.isDamageableItem() && !flag) {
-                        int l = itemstack.getMaxDamage() - itemstack.getDamageValue();
-                        int i1 = itemstack2.getMaxDamage() - itemstack2.getDamageValue();
+                        int l = left.getMaxDamage() - left.getDamageValue();
+                        int i1 = right.getMaxDamage() - right.getDamageValue();
                         int j1 = i1 + itemstack1.getMaxDamage() * 12 / 100;
                         int k1 = l + j1;
                         int l1 = itemstack1.getMaxDamage() - k1;
@@ -93,7 +90,7 @@ public class JolCraftAnvilHelper {
                         }
                     }
 
-                    ItemEnchantments itemenchantments = EnchantmentHelper.getEnchantmentsForCrafting(itemstack2);
+                    ItemEnchantments itemenchantments = EnchantmentHelper.getEnchantmentsForCrafting(right);
                     boolean flag2 = false;
                     boolean flag3 = false;
 
@@ -103,7 +100,7 @@ public class JolCraftAnvilHelper {
                         int j2 = entry.getIntValue();
                         j2 = i2 == j2 ? j2 + 1 : Math.max(j2, i2);
                         Enchantment enchantment = holder.value();
-                        boolean flag1 = itemstack.supportsEnchantment(holder);
+                        boolean flag1 = left.supportsEnchantment(holder);
                         if (player.getAbilities().instabuild) {
                             flag1 = true;
                         }
@@ -130,7 +127,7 @@ public class JolCraftAnvilHelper {
                             }
 
                             i += l3 * j2;
-                            if (itemstack.getCount() > 1) {
+                            if (left.getCount() > 1) {
                                 i = 40;
                             }
                         }
@@ -145,21 +142,20 @@ public class JolCraftAnvilHelper {
             // Rename logic
             String filtered = (rename != null) ? StringUtil.filterText(rename) : "";
             if (!filtered.isBlank()) {
-                if (!filtered.equals(itemstack.getHoverName().getString())) {
+                if (!filtered.equals(left.getHoverName().getString())) {
                     k = 1;
                     i += k;
                     // Vanilla: CUSTOM_NAME, *not* ITEM_NAME
                     itemstack1.set(DataComponents.CUSTOM_NAME, Component.literal(filtered));
                 }
-            } else if (itemstack.has(DataComponents.CUSTOM_NAME)) {
+            } else if (left.has(DataComponents.CUSTOM_NAME)) {
                 k = 1;
                 i += k;
                 itemstack1.remove(DataComponents.CUSTOM_NAME);
             }
-            if (flag && !itemstack1.isBookEnchantable(itemstack2)) itemstack1 = ItemStack.EMPTY;
+            if (flag && !itemstack1.isBookEnchantable(right)) itemstack1 = ItemStack.EMPTY;
 
-            int k2 = i <= 0 ? 0 : (int) Mth.clamp(j + (long) i, 0L, 2147483647L);
-            cost = k2;
+            cost = i <= 0 ? 0 : (int) Mth.clamp(j + (long) i, 0L, 2147483647L);
             if (i <= 0) {
                 itemstack1 = ItemStack.EMPTY;
             }
@@ -177,8 +173,8 @@ public class JolCraftAnvilHelper {
 
             if (!itemstack1.isEmpty()) {
                 int i3 = itemstack1.getOrDefault(DataComponents.REPAIR_COST, 0);
-                if (i3 < itemstack2.getOrDefault(DataComponents.REPAIR_COST, 0)) {
-                    i3 = itemstack2.getOrDefault(DataComponents.REPAIR_COST, 0);
+                if (i3 < right.getOrDefault(DataComponents.REPAIR_COST, 0)) {
+                    i3 = right.getOrDefault(DataComponents.REPAIR_COST, 0);
                 }
 
                 if (k != i || k == 0) {

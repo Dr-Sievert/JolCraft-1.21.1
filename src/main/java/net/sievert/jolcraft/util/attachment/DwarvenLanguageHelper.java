@@ -1,12 +1,15 @@
 package net.sievert.jolcraft.util.attachment;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.custom.attachment.lang.DwarvenLanguage;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.network.JolCraftNetworking;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundLanguagePacket;
 
 /**
  * Helper for Dwarven Language capability, using the JolCraftProxy system for server/client safety.
@@ -36,13 +39,15 @@ public class DwarvenLanguageHelper {
 
     /**
      * Sets the "knows Dwarvish" flag for a player.
-     * Always goes through JolCraftProxy.
+     * Only ever use this on the SERVER. Also syncs the client view.
      */
     public static void setKnowsDwarvish(Player player, boolean value) {
         if (player == null) return;
-        DwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
-        if (lang != null) {
-            lang.setKnowsLanguage(value);
+        DwarvenLanguage lang = player.getData(JolCraftAttachments.DWARVEN_LANGUAGE.get());
+        lang.setKnowsLanguage(value);
+        if (player instanceof ServerPlayer serverPlayer) {
+            JolCraftNetworking.sendToClient(serverPlayer,
+                    new ClientboundLanguagePacket(value));
         }
     }
 

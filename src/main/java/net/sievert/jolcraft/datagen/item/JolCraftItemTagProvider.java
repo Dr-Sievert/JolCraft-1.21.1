@@ -11,6 +11,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.item.JolCraftItems;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -20,8 +21,9 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
         super(output, lookupProvider, blockTags, JolCraft.MOD_ID);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    protected void addTags(HolderLookup.@NotNull Provider provider) {
 
         //Vanilla
 

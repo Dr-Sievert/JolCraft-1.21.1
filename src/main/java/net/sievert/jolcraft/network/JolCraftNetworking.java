@@ -15,8 +15,9 @@ import net.sievert.jolcraft.network.client.data.ClientAncientLanguageData;
 import net.sievert.jolcraft.network.client.data.ClientDeliriumData;
 import net.sievert.jolcraft.network.client.data.ClientLanguageData;
 import net.sievert.jolcraft.network.client.data.ClientReputationData;
-import net.sievert.jolcraft.network.packet.*;
-import net.sievert.jolcraft.screen.custom.dwarf.DwarfMerchantMenu;
+import net.sievert.jolcraft.network.packet.C2S.ServerboundDwarfSelectTradePacket;
+import net.sievert.jolcraft.network.packet.S2C.*;
+import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
 
 import java.util.Set;
 
@@ -107,7 +108,6 @@ public class JolCraftNetworking {
         context.enqueueWork(() -> {
             // Get the player sending the packet
             var player = context.player();
-            if (player == null) return; // Defensive: should always exist
 
             // Get the menu (your custom merchant menu)
             if (player.containerMenu instanceof DwarfMerchantMenu menu) {
@@ -122,6 +122,7 @@ public class JolCraftNetworking {
     public static void handleDwarfMerchantOffers(ClientboundDwarfMerchantOffersPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
+            assert mc.player != null;
             AbstractContainerMenu abstractContainerMenu = mc.player.containerMenu;
             if (packet.containerId() == abstractContainerMenu.containerId && abstractContainerMenu instanceof DwarfMerchantMenu dwarfMenu) {
                 dwarfMenu.setOffers(packet.offers());

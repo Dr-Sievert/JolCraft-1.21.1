@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -36,13 +37,13 @@ public final class LoreLineIdProperty implements SelectItemModelProperty<String>
 
     @Nullable
     @Override
-    public String get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, ItemDisplayContext context) {
+    public String get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, @NotNull ItemDisplayContext context) {
         // Pull the lore line id directly from your data component
         return stack.get(JolCraftDataComponents.LORE_LINE_ID.get());
     }
 
     @Override
-    public Type<? extends SelectItemModelProperty<String>, String> type() {
+    public @NotNull Type<? extends SelectItemModelProperty<String>, String> type() {
         return TYPE;
     }
 }

@@ -7,8 +7,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class DeepslateCompassDialItem extends Item {
     public DeepslateCompassDialItem(Properties properties) {
         super(properties);

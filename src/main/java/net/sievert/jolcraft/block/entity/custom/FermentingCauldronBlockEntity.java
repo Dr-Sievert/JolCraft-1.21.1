@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.block.entity.custom;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,9 +17,12 @@ import net.sievert.jolcraft.block.custom.crop.HopsType;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.Set;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class FermentingCauldronBlockEntity extends BlockEntity {
 
     private int fermentationProgress = 0;
@@ -35,7 +39,7 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     }
 
     // Store added hops as a Set to prevent duplicates
-    private Set<HopsType> addedHops = new HashSet<>();
+    private final Set<HopsType> addedHops = new HashSet<>();
 
     public String getHopsString() {
         return addedHops.stream()
@@ -88,7 +92,7 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this, (blockEntity, registryAccess) -> blockEntity.getUpdateTag(registryAccess));
+        return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
     }
 
     @Override

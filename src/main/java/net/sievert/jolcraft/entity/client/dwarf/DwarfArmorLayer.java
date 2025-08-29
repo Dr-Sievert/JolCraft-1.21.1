@@ -16,6 +16,7 @@ import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.Equippable;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
+import org.jetbrains.annotations.NotNull;
 
 public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
@@ -24,7 +25,7 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
+    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight,
                        DwarfRenderState state, float yRot, float xRot) {
         if (state.dwarf == null) return;
 

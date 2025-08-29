@@ -29,7 +29,7 @@ public class DwarfTradeWithPlayerGoal extends Goal {
             if (player == null) {
                 return false;
             } else {
-                return this.mob.distanceToSqr(player) > 16.0 ? false : player.containerMenu != null;
+                return !(this.mob.distanceToSqr(player) > 16.0);
             }
         }
     }

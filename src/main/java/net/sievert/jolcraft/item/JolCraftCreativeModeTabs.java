@@ -5,20 +5,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.client.compass.DialItemColor;
-import net.sievert.jolcraft.client.compass.StructureGroupColorHelper;
+import net.sievert.jolcraft.client.item.compass.DialItemColor;
+import net.sievert.jolcraft.client.item.compass.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.item.potion.JolCraftPotions;
+import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
 
 import java.util.function.Supplier;
 
@@ -208,6 +202,14 @@ public class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME);
                         pOutput.accept(JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME);
                         pOutput.accept(JolCraftItems.LEGENDARY_PAGE);
+
+                        ItemStack gemTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
+                        gemTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.CUTTING_GEMS);
+                        pOutput.accept(gemTome);
+
+                        ItemStack brewTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
+                        brewTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.BREW_MULTIPLE_HOPS);
+                        pOutput.accept(brewTome);
 
                         pOutput.accept(JolCraftItems.COPPER_SPANNER);
                         pOutput.accept(JolCraftItems.IRON_SPANNER);

@@ -2,6 +2,7 @@ package net.sievert.jolcraft.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,7 +47,10 @@ import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import org.jetbrains.annotations.Nullable;
 import net.sievert.jolcraft.block.entity.custom.HearthBlockEntity;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class HearthBlock extends BaseEntityBlock {
 
     public static final MapCodec<HearthBlock> CODEC = simpleCodec(HearthBlock::new);
@@ -101,7 +105,6 @@ public class HearthBlock extends BaseEntityBlock {
         return null;
     }
 
-
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
@@ -110,7 +113,7 @@ public class HearthBlock extends BaseEntityBlock {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide && (player.isCreative() || !player.hasCorrectToolForDrops(state, level, pos))) {
-            this.preventDropFromBottomPart(level, pos, state, player);
+            preventDropFromBottomPart(level, pos, state, player);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }

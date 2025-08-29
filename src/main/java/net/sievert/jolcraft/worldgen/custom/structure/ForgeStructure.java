@@ -3,6 +3,7 @@ package net.sievert.jolcraft.worldgen.custom.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -21,8 +22,11 @@ import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.sievert.jolcraft.worldgen.JolCraftStructures;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ForgeStructure extends Structure {
     public static final MapCodec<ForgeStructure> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(ForgeStructure.settingsCodec(instance),

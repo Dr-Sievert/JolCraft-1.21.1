@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.entity.custom.object;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -17,8 +18,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class RadiantEntity extends Entity implements TraceableEntity {
 
     @Nullable
@@ -164,9 +168,6 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         return false; // Invulnerable
     }
 
-    @Override public boolean canBeCollidedWith() { return false; }
-    @Override public boolean isPickable() { return false; }
-    @Override public boolean isPushable() { return false; }
     @Override public boolean isNoGravity() { return true; }
     @Override public void move(MoverType type, Vec3 vec) { /* Immobile */ }
 

@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -13,8 +14,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.sievert.jolcraft.screen.custom.lapidary_bench.LapidaryBenchMenu;
+import net.sievert.jolcraft.gui.custom.lapidary_bench.LapidaryBenchMenu;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class LapidaryBenchBlock extends Block {
 
     private static final Component CONTAINER_TITLE = Component.translatable("container.jolcraft.lapidary_bench");

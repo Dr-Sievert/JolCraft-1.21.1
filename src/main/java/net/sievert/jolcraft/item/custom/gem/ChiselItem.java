@@ -10,8 +10,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.sievert.jolcraft.item.custom.tooltip.ToolItem;
 import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ChiselItem extends ToolItem {
 
     public ChiselItem(ToolMaterial material, float attackDamage, float attackSpeed, Item.Properties properties) {

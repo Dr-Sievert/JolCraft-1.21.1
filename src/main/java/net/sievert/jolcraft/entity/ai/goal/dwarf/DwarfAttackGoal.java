@@ -11,6 +11,7 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
+import org.jetbrains.annotations.NotNull;
 
 public class DwarfAttackGoal extends MeleeAttackGoal {
     protected final AbstractDwarfEntity mob;
@@ -61,7 +62,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
                     }
                 }
                 this.path = this.mob.getNavigation().createPath(livingentity, 0);
-                return this.path != null ? true : this.mob.isWithinMeleeAttackRange(livingentity);
+                return this.path != null || this.mob.isWithinMeleeAttackRange(livingentity);
             }
         }
     }
@@ -76,9 +77,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
         } else if (!this.followingTargetEvenIfNotSeen) {
             return !this.mob.getNavigation().isDone();
         } else {
-            return !this.mob.isWithinRestriction(livingentity.blockPosition())
-                    ? false
-                    : !(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player)livingentity).isCreative();
+            return this.mob.isWithinRestriction(livingentity.blockPosition()) && (!(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative());
         }
     }
 
@@ -100,11 +99,6 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
         this.mob.setAggressive(false);
         this.mob.setAttacking(false);
         this.mob.getNavigation().stop();
-    }
-
-    @Override
-    public boolean requiresUpdateEveryTick() {
-        return true;
     }
 
     @Override
@@ -161,7 +155,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
         }
     }
 
-    protected void checkAndPerformAttack(LivingEntity target) {
+    protected void checkAndPerformAttack(@NotNull LivingEntity target) {
         if (this.canPerformAttack(target)) {
             this.mob.setAttacking(true);
             this.attackAnimTimer = 8;
@@ -187,16 +181,12 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
         return this.ticksUntilNextAttack <= 0;
     }
 
-    protected boolean canPerformAttack(LivingEntity entity) {
+    protected boolean canPerformAttack(@NotNull LivingEntity entity) {
         return this.isTimeToAttack() && this.mob.isWithinMeleeAttackRange(entity) && this.mob.getSensing().hasLineOfSight(entity);
     }
 
     protected int getTicksUntilNextAttack() {
         return this.ticksUntilNextAttack;
-    }
-
-    protected int getAttackInterval() {
-        return this.adjustedTickDelay(20);
     }
 
 }

@@ -54,11 +54,14 @@ public class DwarfFollowParentGoal extends Goal {
     public boolean canContinueToUse() {
         if (this.dwarf.getAge() >= 0) {
             return false;
-        } else if (!this.parent.isAlive()) {
-            return false;
         } else {
-            double d0 = this.dwarf.distanceToSqr(this.parent);
-            return !(d0 < 9.0) && !(d0 > 256.0);
+            assert this.parent != null;
+            if (!this.parent.isAlive()) {
+                return false;
+            } else {
+                double d0 = this.dwarf.distanceToSqr(this.parent);
+                return !(d0 < 9.0) && !(d0 > 256.0);
+            }
         }
     }
 
@@ -76,6 +79,7 @@ public class DwarfFollowParentGoal extends Goal {
     public void tick() {
         if (--this.timeToRecalcPath <= 0) {
             this.timeToRecalcPath = this.adjustedTickDelay(10);
+            assert this.parent != null;
             this.dwarf.getNavigation().moveTo(this.parent, this.speedModifier);
         }
     }

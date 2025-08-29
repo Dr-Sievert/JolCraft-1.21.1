@@ -1,6 +1,9 @@
 package net.sievert.jolcraft.entity.custom.animal;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -42,6 +45,8 @@ import net.sievert.jolcraft.item.JolCraftItems;
 
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class MuffhornEntity extends Animal implements IShearable {
 
     private long nextMilkTick = 0;

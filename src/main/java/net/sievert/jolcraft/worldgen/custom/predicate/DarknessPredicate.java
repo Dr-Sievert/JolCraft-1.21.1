@@ -7,6 +7,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
 import net.sievert.jolcraft.worldgen.JolCraftBlockPredicateTypes;
+import org.jetbrains.annotations.NotNull;
 
 public class DarknessPredicate implements BlockPredicate {
     public static final MapCodec<DarknessPredicate> CODEC =
@@ -22,7 +23,7 @@ public class DarknessPredicate implements BlockPredicate {
     }
 
     @Override
-    public BlockPredicateType<?> type() {
+    public @NotNull BlockPredicateType<?> type() {
         return JolCraftBlockPredicateTypes.DARKNESS.value();
     }
 }

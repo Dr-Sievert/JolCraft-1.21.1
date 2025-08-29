@@ -2,6 +2,7 @@ package net.sievert.jolcraft.entity.custom.dwarf;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -25,8 +26,11 @@ import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarfScrapperEntity extends AbstractDwarfEntity {
 
     public DwarfScrapperEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
@@ -177,7 +181,7 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         fillRandomSalvageOffers(level);
 
         this.lastRestockGameTime = this.level().getGameTime();
-        this.level().playSound(null, this.blockPosition(), getRestockSound(), SoundSource.NEUTRAL, 1.0F, 0.95F);
+        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRestockSound()), SoundSource.NEUTRAL, 1.0F, 0.95F);
     }
 
 
@@ -202,7 +206,7 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         // Fill salvage trades for current level only
         fillRandomSalvageOffers(currentLevel);
 
-        this.level().playSound(null, this.blockPosition(), getRerollSound(), SoundSource.NEUTRAL, 1.0F, 1.05F);
+        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRerollSound()), SoundSource.NEUTRAL, 1.0F, 1.05F);
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> getAllJeiTrades() {

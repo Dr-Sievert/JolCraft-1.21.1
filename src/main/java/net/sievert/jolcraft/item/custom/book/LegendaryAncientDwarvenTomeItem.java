@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.custom.book;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -19,17 +20,14 @@ import net.sievert.jolcraft.util.attachment.AncientEffectHelper;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
     public LegendaryAncientDwarvenTomeItem(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected boolean hasShift() {
-        return true;
     }
 
     @Override
@@ -37,7 +35,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             // === GATE: Language + Ancient Memory ===
             boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
-            boolean hasAncientMemory = AncientEffectHelper.hasAncientMemoryServer(serverPlayer);
+            boolean hasAncientMemory = AncientEffectHelper.hasAncientMemory(serverPlayer);
 
             if (!(knowsLanguage && hasAncientMemory)) {
                 // Gate failed: Play fail sound and display message, just like AncientUnidentifiedTomeItem
@@ -59,36 +57,32 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
             ItemStack stack = player.getItemInHand(hand);
             String loreLineId = stack.getComponents().getOrDefault(JolCraftDataComponents.LORE_LINE_ID.get(), null);
 
-            if (loreLineId != null) {
-                switch (loreLineId) {
-                    case "forgotten_brew_formulas" -> {
-                        if (TomeUnlockHelper.hasUnlockServerBypassCreative(player, TomeUnlockHelper.BREW_MULTIPLE_HOPS)) {
-                            showEmptyUnlockMessage(player);
-                            playIdentifyFailSound(level, player);
-                        } else {
-                            TomeUnlockHelper.grantUnlock(player, TomeUnlockHelper.BREW_MULTIPLE_HOPS);
-                            player.displayClientMessage(
-                                    Component.translatable("tooltip.jolcraft.tome_unlock.brew").withStyle(ChatFormatting.GREEN), true
-                            );
-                            playUnlockSounds(level, player);
-                        }
+            switch (loreLineId) {
+                case "forgotten_brew_formulas" -> {
+                    if (TomeUnlockHelper.hasUnlockBypassCreative(player, TomeUnlockHelper.BREW_MULTIPLE_HOPS)) {
+                        showEmptyUnlockMessage(player);
+                        playIdentifyFailSound(level, player);
+                    } else {
+                        TomeUnlockHelper.grantUnlock(player, TomeUnlockHelper.BREW_MULTIPLE_HOPS);
+                        player.displayClientMessage(
+                                Component.translatable("tooltip.jolcraft.tome_unlock.brew").withStyle(ChatFormatting.GREEN), true
+                        );
+                        playUnlockSounds(level, player);
                     }
-                    case "ancient_gemcraft" -> {
-                        if (TomeUnlockHelper.hasUnlockServerBypassCreative(player, TomeUnlockHelper.CUTTING_GEMS)) {
-                            showEmptyUnlockMessage(player);
-                            playIdentifyFailSound(level, player);
-                        } else {
-                            TomeUnlockHelper.grantUnlock(player, TomeUnlockHelper.CUTTING_GEMS);
-                            player.displayClientMessage(
-                                    Component.translatable("tooltip.jolcraft.tome_unlock.gems").withStyle(ChatFormatting.GREEN), true
-                            );
-                            playUnlockSounds(level, player);
-                        }
-                    }
-                    default -> showEmptyUnlockMessage(player);
                 }
-            } else {
-                showEmptyUnlockMessage(player);
+                case "ancient_gemcraft" -> {
+                    if (TomeUnlockHelper.hasUnlockBypassCreative(player, TomeUnlockHelper.CUTTING_GEMS)) {
+                        showEmptyUnlockMessage(player);
+                        playIdentifyFailSound(level, player);
+                    } else {
+                        TomeUnlockHelper.grantUnlock(player, TomeUnlockHelper.CUTTING_GEMS);
+                        player.displayClientMessage(
+                                Component.translatable("tooltip.jolcraft.tome_unlock.gems").withStyle(ChatFormatting.GREEN), true
+                        );
+                        playUnlockSounds(level, player);
+                    }
+                }
+                default -> showEmptyUnlockMessage(player);
             }
         }
 
@@ -96,12 +90,10 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
     }
 
     public static void showEmptyUnlockMessage(Player player) {
-        if (player != null) {
-            player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.tome_unlock.empty").withStyle(ChatFormatting.GRAY),
-                    true
-            );
-        }
+        player.displayClientMessage(
+                Component.translatable("tooltip.jolcraft.tome_unlock.empty").withStyle(ChatFormatting.GRAY),
+                true
+        );
     }
 
 
@@ -119,7 +111,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
     public Component getName(ItemStack stack) {
         // If the item has a custom name, use it, but always force gold color
         Component customName = stack.getComponents().getOrDefault(DataComponents.ITEM_NAME, null);
-        if (customName != null && !customName.getString().isEmpty()) {
+        if (!customName.getString().isEmpty()) {
             // .withStyle replaces *only* the color, but preserves other formatting
             return Component.literal(customName.getString()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
         }

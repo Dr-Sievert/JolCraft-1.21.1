@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.block.custom.crop;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
@@ -12,7 +13,10 @@ import net.neoforged.neoforge.common.ItemAbility;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class VerdantSoilBlock extends Block {
     public VerdantSoilBlock(Properties properties) {
         super(properties);
@@ -21,14 +25,12 @@ public class VerdantSoilBlock extends Block {
     @Override
     @Nullable
     public BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility ability, boolean simulate) {
-        // Only respond to hoe tilling action
         if (ability == ItemAbilities.HOE_TILL) {
-            // Optionally, check for air above
             if (context.getLevel().getBlockState(context.getClickedPos().above()).isAir()) {
                 return JolCraftBlocks.VERDANT_FARMLAND.get().defaultBlockState();
             }
         }
-        return null; // No modification for other tools or cases
+        return null;
     }
 
     @Override

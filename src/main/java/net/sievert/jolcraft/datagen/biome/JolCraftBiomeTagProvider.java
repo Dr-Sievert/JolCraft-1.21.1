@@ -6,6 +6,7 @@ import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.tags.BiomeTags;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,14 +17,14 @@ public class JolCraftBiomeTagProvider extends BiomeTagsProvider {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {
+    protected void addTags(HolderLookup.@NotNull Provider provider) {
         tag(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS)
                 .addTag(BiomeTags.IS_MOUNTAIN)
                 .addTag(BiomeTags.IS_HILL);
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "JolCraft Biome Tags";
     }
 }

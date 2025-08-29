@@ -7,23 +7,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.advancement.custom.EndorsementGainTrigger;
+import net.sievert.jolcraft.advancement.custom.*;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.advancement.custom.TradeWithDwarfTrigger;
-import net.sievert.jolcraft.advancement.custom.ReputationTierTrigger;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.minecraft.advancements.AdvancementHolder;
-import net.sievert.jolcraft.advancement.custom.HasDwarvenLanguageTrigger;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.advancements.AdvancementSubProvider;
+import org.jetbrains.annotations.NotNull;
 
 public class JolCraftAdvancementProvider implements AdvancementSubProvider {
     @Override
-    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> consumer) {
+    public void generate(HolderLookup.@NotNull Provider registries, @NotNull Consumer<AdvancementHolder> consumer) {
         // Root advancement (dummy) — sets the tab name
         ResourceLocation rootId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/root");
         AdvancementHolder root = Advancement.Builder.advancement()
@@ -65,7 +63,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         false, false, true
                 )
-                .addCriterion("has_read_lexicon", JolCraftCriteriaTriggers.HAS_ADVANCEMENT.has(readLexiconId))
+                .addCriterion("has_read_lexicon", HasAdvancementTrigger.has(readLexiconId))
                 .save(consumer, tradedummyId);
 
         //Trade with dwarf
@@ -203,7 +201,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         false, false, true
                 )
-                .addCriterion("rep1_dummy", JolCraftCriteriaTriggers.HAS_ADVANCEMENT.has(rep1Id))
+                .addCriterion("rep1_dummy", HasAdvancementTrigger.has(rep1Id))
                 .save(consumer, rep1dummyId);
 
 
@@ -325,7 +323,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         false, false, true
                 )
-                .addCriterion("rep2_dummy", JolCraftCriteriaTriggers.HAS_ADVANCEMENT.has(rep2Id))
+                .addCriterion("rep2_dummy", HasAdvancementTrigger.has(rep2Id))
                 .save(consumer, rep2dummyId);
 
 

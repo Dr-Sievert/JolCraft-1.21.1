@@ -41,7 +41,7 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
     protected List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         // Show SGA version of what would otherwise be visible if unlocked (base class handles SGA-ifying)
         var dataComponentType = JolCraftDataComponents.LORE_LINE_ID.get();
-        String loreKey = dataComponentType != null ? stack.get(dataComponentType) : null;
+        String loreKey = stack.get(dataComponentType);
         var entry = (loreKey != null && !loreKey.isEmpty()) ? DwarvenLoreHelper.get(loreKey, true) : null;
         return List.of(
                 (entry != null)
@@ -53,7 +53,7 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
     @Override
     protected List<Component> getNoShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         var dataComponentType = JolCraftDataComponents.LORE_LINE_ID.get();
-        String loreKey = dataComponentType != null ? stack.get(dataComponentType) : null;
+        String loreKey = stack.get(dataComponentType);
         var entry = (loreKey != null && !loreKey.isEmpty()) ? DwarvenLoreHelper.get(loreKey, true) : null;
         return List.of(
                 (entry != null)

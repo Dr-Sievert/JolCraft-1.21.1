@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.block.entity.custom;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -25,13 +26,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.sievert.jolcraft.block.custom.StrongboxBlock;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.screen.custom.strongbox.LockMenu;
-import net.sievert.jolcraft.screen.custom.strongbox.StrongboxMenu;
+import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
+import net.sievert.jolcraft.gui.custom.strongbox.StrongboxMenu;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
-
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class StrongboxBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity, MenuProvider {
 
     @Nullable
@@ -175,12 +178,14 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     @Override
     public void startOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
+            assert this.getLevel() != null;
             this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
     }
     @Override
     public void stopOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
+            assert this.getLevel() != null;
             this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
     }
@@ -192,6 +197,7 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
     public void recheckOpen() {
         if (!this.remove && this.level != null && !this.level.isClientSide) {
+            assert this.getLevel() != null;
             this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
     }
@@ -264,28 +270,15 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
         // Get the current block state
         BlockState state = this.getBlockState();
 
-        // Return whether the block is locked based on its state property
         return state.getValue(StrongboxBlock.LOCKED);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity strongbox) {
     }
 
-    public Player getCurrentInteractingPlayer() {
-        return currentInteractingPlayer;  // Return the player currently interacting with the strongbox
+    public @Nullable Player getCurrentInteractingPlayer() {
+        return currentInteractingPlayer;
     }
-
-    // Reset the currentInteractingPlayer after unlocking
-    public void resetInteractingPlayer() {
-        currentInteractingPlayer = null;
-    }
-
-
-
-
-
-
-
 
 
 }

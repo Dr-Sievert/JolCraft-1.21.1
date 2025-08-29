@@ -2,7 +2,6 @@ package net.sievert.jolcraft.item.custom;
 
 import com.google.common.collect.Iterables;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -12,8 +11,10 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.Block;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class StrongboxItem extends BlockItem {
 
     public StrongboxItem(Block block, Properties properties) {

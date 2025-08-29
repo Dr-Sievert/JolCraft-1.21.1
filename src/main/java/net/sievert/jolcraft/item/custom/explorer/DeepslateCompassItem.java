@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.custom.explorer;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -20,8 +21,11 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DeepslateCompassItem extends Item {
 
     public DeepslateCompassItem(Properties properties) {
@@ -80,10 +84,6 @@ public class DeepslateCompassItem extends Item {
     @Override
     public boolean isFoil(ItemStack stack) {
         return super.isFoil(stack);
-    }
-
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
     }
 
     @Override

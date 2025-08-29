@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.custom.equipment.armor;
 
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -15,9 +16,11 @@ import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.item.armor.JolCraftArmorMaterials;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Map;
 
+@ParametersAreNonnullByDefault
 public class DeepslateArmorItem extends ArmorItem {
 
     private static final Map<ArmorMaterial, List<MobEffectInstance>> MATERIAL_TO_EFFECT_MAP =

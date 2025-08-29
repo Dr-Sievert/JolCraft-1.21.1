@@ -8,9 +8,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.ItemCost;
-import net.minecraft.world.item.trading.MerchantOffer;
-import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.merchant.CoinPouchItem;
 
 public class DwarfMerchantOffer {
@@ -19,13 +16,13 @@ public class DwarfMerchantOffer {
                             DwarfItemCost.CODEC.fieldOf("buy").forGetter(p_330121_ -> p_330121_.baseCostA),
                             DwarfItemCost.CODEC.lenientOptionalFieldOf("buyB").forGetter(p_330120_ -> p_330120_.costB),
                             ItemStack.CODEC.fieldOf("sell").forGetter(p_324095_ -> p_324095_.result),
-                            Codec.INT.lenientOptionalFieldOf("uses", Integer.valueOf(0)).forGetter(p_324003_ -> p_324003_.uses),
-                            Codec.INT.lenientOptionalFieldOf("maxUses", Integer.valueOf(4)).forGetter(p_323849_ -> p_323849_.maxUses),
-                            Codec.BOOL.lenientOptionalFieldOf("rewardExp", Boolean.valueOf(true)).forGetter(p_323485_ -> p_323485_.rewardExp),
-                            Codec.INT.lenientOptionalFieldOf("specialPrice", Integer.valueOf(0)).forGetter(p_324423_ -> p_324423_.specialPriceDiff),
-                            Codec.INT.lenientOptionalFieldOf("demand", Integer.valueOf(0)).forGetter(p_324040_ -> p_324040_.demand),
-                            Codec.FLOAT.lenientOptionalFieldOf("priceMultiplier", Float.valueOf(0.0F)).forGetter(p_323953_ -> p_323953_.priceMultiplier),
-                            Codec.INT.lenientOptionalFieldOf("xp", Integer.valueOf(1)).forGetter(p_324202_ -> p_324202_.xp)
+                            Codec.INT.lenientOptionalFieldOf("uses", 0).forGetter(p_324003_ -> p_324003_.uses),
+                            Codec.INT.lenientOptionalFieldOf("maxUses", 4).forGetter(p_323849_ -> p_323849_.maxUses),
+                            Codec.BOOL.lenientOptionalFieldOf("rewardExp", Boolean.TRUE).forGetter(p_323485_ -> p_323485_.rewardExp),
+                            Codec.INT.lenientOptionalFieldOf("specialPrice", 0).forGetter(p_324423_ -> p_324423_.specialPriceDiff),
+                            Codec.INT.lenientOptionalFieldOf("demand", 0).forGetter(p_324040_ -> p_324040_.demand),
+                            Codec.FLOAT.lenientOptionalFieldOf("priceMultiplier", 0.0F).forGetter(p_323953_ -> p_323953_.priceMultiplier),
+                            Codec.INT.lenientOptionalFieldOf("xp", 1).forGetter(p_324202_ -> p_324202_.xp)
                     )
                     .apply(p_324269_, DwarfMerchantOffer::new)
     );
@@ -232,11 +229,9 @@ public class DwarfMerchantOffer {
         }
 
         // Handle costB (if any)
-        if (!this.costB.isPresent()) {
-            return playerOfferB.isEmpty(); // No second item required
-        } else {
-            return this.costB.get().test(playerOfferB) && playerOfferB.getCount() >= this.costB.get().count(); // Check second item
-        }
+        // No second item required
+        // Check second item
+        return this.costB.map(dwarfItemCost -> dwarfItemCost.test(playerOfferB) && playerOfferB.getCount() >= dwarfItemCost.count()).orElseGet(playerOfferB::isEmpty);
     }
 
 

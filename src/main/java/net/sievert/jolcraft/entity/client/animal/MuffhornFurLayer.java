@@ -13,6 +13,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.animal.MuffhornModel;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class MuffhornFurLayer extends RenderLayer<MuffhornRenderState, MuffhornModel> {
@@ -28,7 +29,7 @@ public class MuffhornFurLayer extends RenderLayer<MuffhornRenderState, MuffhornM
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
+    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight,
                        MuffhornRenderState state, float yRot, float xRot) {
         if (state.isSheared) return;
 

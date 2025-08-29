@@ -1,17 +1,18 @@
 package net.sievert.jolcraft.block.custom;
 
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 public enum FermentingStage implements StringRepresentable {
     YEAST_FERMENTING,
     YEAST_READY,
     MALTED,
-    HOPS,             // New: Hops are added here
+    HOPS,
     BREW_FERMENTING,
     BREW_READY;
 
     @Override
-    public String getSerializedName() {
+    public @NotNull String getSerializedName() {
         return name().toLowerCase();
     }
 }

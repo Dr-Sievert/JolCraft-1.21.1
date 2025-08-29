@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.sievert.jolcraft.JolCraft;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -27,7 +28,7 @@ public class TomeUnlockImpl implements TomeUnlock {
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
         for (String id : unlocks) {
@@ -38,9 +39,9 @@ public class TomeUnlockImpl implements TomeUnlock {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
         this.unlocks.clear();
-        ListTag list = tag.getList("unlocks", 8); // 8 = String
+        ListTag list = tag.getList("unlocks", 8);
         for (int i = 0; i < list.size(); i++) {
             String id = list.getString(i).trim();
             if (!id.isEmpty()) {

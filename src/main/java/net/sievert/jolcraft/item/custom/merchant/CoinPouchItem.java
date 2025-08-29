@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.item.custom.merchant;
 
-import net.minecraft.network.chat.Component;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -12,18 +12,19 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.custom.item.CoinPouchTooltip;
+import net.sievert.jolcraft.client.item.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 
-import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class CoinPouchItem extends Item {
 
     public static final int MAX_COINS = 999;
@@ -188,9 +189,7 @@ public class CoinPouchItem extends Item {
     // --- UI Helper ---
     private void broadcastChangesOnContainerMenu(Player player) {
         AbstractContainerMenu menu = player.containerMenu;
-        if (menu != null) {
-            menu.slotsChanged(player.getInventory());
-        }
+        menu.slotsChanged(player.getInventory());
     }
 
     // --- Set Data Component ---

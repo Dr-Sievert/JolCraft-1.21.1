@@ -25,14 +25,12 @@ import net.minecraft.world.item.equipment.trim.TrimMaterials;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.block.custom.crop.BarleyCropBlock;
 import net.sievert.jolcraft.block.custom.crop.FesterlingCropBlock;
 import net.sievert.jolcraft.block.custom.crop.HopsCropBottomBlock;
 import net.sievert.jolcraft.block.custom.crop.HopsCropTopBlock;
-import net.sievert.jolcraft.client.compass.DialColor;
 import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
@@ -40,21 +38,20 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.util.component.CoinPouchAmountProperty;
 import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
 import net.sievert.jolcraft.util.component.LoreLineIdProperty;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Stream;
 
 public class JolCraftModelProvider extends ModelProvider {
 
-    private final PackOutput packOutput;
     public JolCraftModelProvider(PackOutput output) {
         super(output, JolCraft.MOD_ID);
-        this.packOutput = output;
 
     }
 
     @Override
-    protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+    protected void registerModels(@NotNull BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
 
         //Core
         itemModels.generateFlatItem(JolCraftItems.DEV_KEY.get(), ModelTemplates.FLAT_ITEM);
@@ -377,14 +374,14 @@ public class JolCraftModelProvider extends ModelProvider {
                 JsonObject root = new JsonObject();
                 JsonObject variants = new JsonObject();
                 for (int age = 0; age <= 9; age++) {
-                    variants.add("age=" + age, modelObj(JolCraft.MOD_ID, "block/deepslate_bulbs_crop_stage" + age));
+                    variants.add("age=" + age, modelObj("block/deepslate_bulbs_crop_stage" + age));
                 }
                 root.add("variants", variants);
                 return root;
             }
 
             @Override
-            public Block getBlock() {
+            public @NotNull Block getBlock() {
                 return JolCraftBlocks.DEEPSLATE_BULBS_CROP.get();
             }
         });
@@ -392,7 +389,7 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.ASGARNIAN_CROP_TOP.get(),
-                HopsCropTopBlock.TOP_AGE, // <-- use your top crop's static property
+                // <-- use your top crop's static property
                 0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
         );
 
@@ -401,7 +398,7 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.DUSKHOLD_CROP_TOP.get(),
-                HopsCropTopBlock.TOP_AGE, // <-- use your top crop's static property
+                // <-- use your top crop's static property
                 0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
         );
 
@@ -410,7 +407,7 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.KRANDONIAN_CROP_TOP.get(),
-                HopsCropTopBlock.TOP_AGE, // <-- use your top crop's static property
+                // <-- use your top crop's static property
                 0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
         );
 
@@ -419,7 +416,7 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.YANILLIAN_CROP_TOP.get(),
-                HopsCropTopBlock.TOP_AGE, // <-- use your top crop's static property
+                // <-- use your top crop's static property
                 0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
         );
 
@@ -433,14 +430,14 @@ public class JolCraftModelProvider extends ModelProvider {
             public JsonObject get() {
                 JsonObject root = new JsonObject();
                 JsonObject variants = new JsonObject();
-                variants.add("level=1", modelObj(JolCraft.MOD_ID, "block/fermenting_cauldron_level1"));
-                variants.add("level=2", modelObj(JolCraft.MOD_ID, "block/fermenting_cauldron_level2"));
-                variants.add("level=3", modelObj(JolCraft.MOD_ID, "block/fermenting_cauldron_full"));
+                variants.add("level=1", modelObj("block/fermenting_cauldron_level1"));
+                variants.add("level=2", modelObj("block/fermenting_cauldron_level2"));
+                variants.add("level=3", modelObj("block/fermenting_cauldron_full"));
                 root.add("variants", variants);
                 return root;
             }
             @Override
-            public Block getBlock() {
+            public @NotNull Block getBlock() {
                 return JolCraftBlocks.FERMENTING_CAULDRON.get();
             }
         });
@@ -770,7 +767,7 @@ public class JolCraftModelProvider extends ModelProvider {
         Optional<Item> itemOptional = BuiltInRegistries.ITEM.getOptional(jolcraftLocation);
 
         // If the item wasn't found in jolcraft, fall back to the minecraft namespace
-        if (!itemOptional.isPresent()) {
+        if (itemOptional.isEmpty()) {
             ResourceLocation minecraftLocation = ResourceLocation.fromNamespaceAndPath("minecraft", itemName);
             itemOptional = BuiltInRegistries.ITEM.getOptional(minecraftLocation);
         }
@@ -780,14 +777,14 @@ public class JolCraftModelProvider extends ModelProvider {
     }
 
     //Hops top helper
-    private void createTopCropBlock(BlockModelGenerators blockModels, Block block, IntegerProperty ageProperty, int... ageToVisualStageMapping) {
-        if (ageProperty.getPossibleValues().size() != ageToVisualStageMapping.length) {
+    private void createTopCropBlock(BlockModelGenerators blockModels, Block block, int... ageToVisualStageMapping) {
+        if (HopsCropTopBlock.TOP_AGE.getPossibleValues().size() != ageToVisualStageMapping.length) {
             throw new IllegalArgumentException("Mismatch between age property values and visual stage mapping!");
         }
 
         Int2ObjectMap<ResourceLocation> visualStageModels = new Int2ObjectOpenHashMap<>();
 
-        PropertyDispatch dispatch = PropertyDispatch.property(ageProperty).generate(ageValue -> {
+        PropertyDispatch dispatch = PropertyDispatch.property(HopsCropTopBlock.TOP_AGE).generate(ageValue -> {
             int visualStage = ageToVisualStageMapping[ageValue];
             ResourceLocation modelId = visualStageModels.computeIfAbsent(
                     visualStage,
@@ -834,13 +831,12 @@ public class JolCraftModelProvider extends ModelProvider {
         // Both "moist" and "dry" models are the same (you only have one hydrated model)
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(JolCraftBlocks.VERDANT_FARMLAND.get())
-                        .with(blockModels.createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, model, model))
+                        .with(BlockModelGenerators.createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, model, model))
         );
     }
 
     private static VariantProperties.Rotation rotFromDegrees(int degrees) {
         return switch (degrees) {
-            case 0 -> VariantProperties.Rotation.R0;
             case 90 -> VariantProperties.Rotation.R90;
             case 180 -> VariantProperties.Rotation.R180;
             case 270 -> VariantProperties.Rotation.R270;
@@ -921,25 +917,30 @@ public class JolCraftModelProvider extends ModelProvider {
         );
     }
 
-    // Helper for the model property
-    private static JsonObject modelObj(String modid, String path) {
+    private static JsonObject modelObj(String path) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("model", modid + ":" + path);
+        obj.addProperty("model", JolCraft.MOD_ID + ":" + path);
         return obj;
     }
 
     @Override
-    protected Stream<? extends Holder<Block>> getKnownBlocks() {
+    protected @NotNull Stream<? extends Holder<Block>> getKnownBlocks() {
         return BuiltInRegistries.BLOCK.listElements()
-                .filter(holder -> holder.getKey().location().getNamespace().equals(modId))
+                .filter(holder -> {
+                    assert holder.getKey() != null;
+                    return holder.getKey().location().getNamespace().equals(modId);
+                })
                 .filter(holder -> !holder.value().equals(JolCraftBlocks.STRONGBOX.get()))
                 .filter(holder -> !holder.value().equals(JolCraftBlocks.STRONGBOX_DUMMY.get()));
     }
 
     @Override
-    protected Stream<? extends Holder<Item>> getKnownItems() {
+    protected @NotNull Stream<? extends Holder<Item>> getKnownItems() {
         return BuiltInRegistries.ITEM.listElements()
-                .filter(holder -> holder.getKey().location().getNamespace().equals(modId))
+                .filter(holder -> {
+                    assert holder.getKey() != null;
+                    return holder.getKey().location().getNamespace().equals(modId);
+                })
                 .filter(holder -> !holder.value().equals(JolCraftItems.STRONGBOX_ITEM.get()))
                 .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS.get()))
                 .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get()));

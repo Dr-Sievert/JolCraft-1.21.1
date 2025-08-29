@@ -49,11 +49,11 @@ public class JolCraftDataGenerator {
                 Collections.emptySet(),
                 List.of(
                         new LootTableProvider.SubProviderEntry(
-                                provider -> new JolCraftBlockLootTableProvider(provider),
+                                JolCraftBlockLootTableProvider::new,
                                 LootContextParamSets.BLOCK
                         ),
                         new LootTableProvider.SubProviderEntry(
-                                provider -> new JolCraftEntityLootTableProvider(provider),
+                                JolCraftEntityLootTableProvider::new,
                                 LootContextParamSets.ENTITY
                         )
                 ),
@@ -97,11 +97,11 @@ public class JolCraftDataGenerator {
                 Collections.emptySet(),
                 List.of(
                         new LootTableProvider.SubProviderEntry(
-                                provider -> new JolCraftBlockLootTableProvider(provider),
+                                JolCraftBlockLootTableProvider::new,
                                 LootContextParamSets.BLOCK
                         ),
                         new LootTableProvider.SubProviderEntry(
-                                provider -> new JolCraftEntityLootTableProvider(provider),
+                                JolCraftEntityLootTableProvider::new,
                                 LootContextParamSets.ENTITY
                         )
                 ),

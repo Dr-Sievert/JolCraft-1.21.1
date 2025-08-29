@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.effect.custom;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
@@ -11,8 +12,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.ClientboundDeliriumPacket;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundDeliriumPacket;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DeliriumCurseEffect extends MobEffect {
     public static final int BLINDNESS_TICKS = 200; // 10 seconds
 

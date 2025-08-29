@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class CutGemItem extends Item {
 
     public static final Map<String, List<Component>> GEM_TOOLTIPS = Map.ofEntries(
@@ -84,6 +87,7 @@ public class CutGemItem extends Item {
                     .withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
         }
 
+        assert context != null;
         super.appendHoverText(stack, context, tooltip, flag);
     }
 

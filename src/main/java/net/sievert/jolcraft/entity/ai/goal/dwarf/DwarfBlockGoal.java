@@ -24,11 +24,7 @@ public class DwarfBlockGoal extends Goal {
             return false;
         }
 
-        if (dwarf.getTarget() != null && dwarf.consumeBlockFlag()) {
-            return true;
-        }
-
-        return false;
+        return dwarf.getTarget() != null && dwarf.consumeBlockFlag();
     }
 
     @Override

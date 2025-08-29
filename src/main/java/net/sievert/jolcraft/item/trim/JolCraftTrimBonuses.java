@@ -12,7 +12,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.sievert.jolcraft.entity.attribute.JolCraftAttributes;
+import net.sievert.jolcraft.data.JolCraftAttributes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -149,7 +149,7 @@ public class JolCraftTrimBonuses {
         for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
             ResourceLocation id = entry.modifier().id();
             // Remove only JolCraft trim-related ones (prefix, or more robust, check contains 'jolcraft')
-            if (id == null || !id.getNamespace().equals("jolcraft")) {
+            if (!id.getNamespace().equals("jolcraft")) {
                 builder.add(entry.attribute(), entry.modifier(), entry.slot());
             }
         }

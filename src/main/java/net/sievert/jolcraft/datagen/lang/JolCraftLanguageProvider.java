@@ -13,7 +13,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.effect.JolCraftEffects;
-import net.sievert.jolcraft.entity.attribute.JolCraftAttributes;
+import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.potion.JolCraftPotions;
 
@@ -481,8 +481,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         // Fallback for vanilla items
         if (thing instanceof Item item) {
             ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
-            if (id != null)
-                return "item." + id.getNamespace() + "." + id.getPath();
+            return "item." + id.getNamespace() + "." + id.getPath();
         }
 
         throw new IllegalArgumentException("Unsupported or unregistered object: " + thing + " (class: " + thing.getClass() + ")");
@@ -555,7 +554,6 @@ public class JolCraftLanguageProvider extends LanguageProvider {
     // In your LanguageProvider subclass (JolCraftLanguageProvider):
 
     private void addPotion(Object potionHolder, String displayName, boolean hasLong, boolean hasStrong) {
-        // Find potion base name (e.g. "lockpicking" from DeferredHolder or similar)
         String baseName = resolvePotionName(potionHolder);
 
         // Standard potions

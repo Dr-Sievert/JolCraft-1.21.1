@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.block.custom.crop;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +21,10 @@ import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.data.JolCraftTags;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DeepslateBulbsCropBlock extends CropBlock {
     public static final int MAX_AGE = 9;
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, MAX_AGE);

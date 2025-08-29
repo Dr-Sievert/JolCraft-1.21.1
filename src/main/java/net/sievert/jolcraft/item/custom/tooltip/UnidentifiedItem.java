@@ -1,8 +1,7 @@
 package net.sievert.jolcraft.item.custom.tooltip;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -15,8 +14,12 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public abstract class UnidentifiedItem extends Item {
     public UnidentifiedItem(Properties properties) {
         super(properties);
@@ -98,7 +101,7 @@ public abstract class UnidentifiedItem extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (context.level() != null && context.level().isClientSide()) {
+        if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
             Player player = net.minecraft.client.Minecraft.getInstance().player;
             if (player != null) {
                 if (net.minecraft.client.gui.screens.Screen.hasShiftDown() && hasShift()) {

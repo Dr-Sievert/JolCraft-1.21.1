@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public class HasAdvancementTrigger extends SimpleCriterionTrigger<HasAdvancement
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "has_advancement");
 
     @Override
-    public Codec<TriggerInstance> codec() {
+    public @NotNull Codec<TriggerInstance> codec() {
         return TriggerInstance.CODEC;
     }
     public void trigger(ServerPlayer player, ResourceLocation advancementId) {

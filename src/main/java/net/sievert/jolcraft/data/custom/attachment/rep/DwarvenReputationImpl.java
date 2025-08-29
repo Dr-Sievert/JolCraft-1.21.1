@@ -8,6 +8,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -65,7 +66,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     // --- Serialization ---
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("tier", tier);
 
@@ -79,7 +80,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
         this.tier = tag.getInt("tier");
         this.endorsements.clear();
 

@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTomeItem{
     public LegendaryAncientUnidentifiedTomeItem(Properties properties) {
@@ -27,10 +28,10 @@ public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTom
     }
 
     @Override
-    public Component getName(ItemStack stack) {
+    public @NotNull Component getName(ItemStack stack) {
         // If the item has a custom name, use it, but always force gold color
         Component customName = stack.getComponents().getOrDefault(DataComponents.ITEM_NAME, null);
-        if (customName != null && !customName.getString().isEmpty()) {
+        if (!customName.getString().isEmpty()) {
             // .withStyle replaces *only* the color, but preserves other formatting
             return Component.literal(customName.getString()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
         }

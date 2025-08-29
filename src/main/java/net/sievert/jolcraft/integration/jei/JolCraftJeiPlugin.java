@@ -39,7 +39,7 @@ public class JolCraftJeiPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+    public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
         for (var prof : DwarfTradeJeiHelper.PROFESSIONS) {
             registration.addCraftingStation(
                     DwarfTradeCategory.RECIPE_TYPE,

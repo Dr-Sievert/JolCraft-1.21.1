@@ -7,11 +7,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class SimpleTooltipItem extends Item {
 
-    protected final String tooltipKey; // e.g., "lockpick"
+    protected final String tooltipKey;
 
     public SimpleTooltipItem(Properties properties, String tooltipKey) {
         super(properties);

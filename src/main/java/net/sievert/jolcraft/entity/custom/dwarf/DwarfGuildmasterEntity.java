@@ -3,6 +3,7 @@ package net.sievert.jolcraft.entity.custom.dwarf;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,19 +18,18 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputation;
 import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
@@ -38,16 +38,16 @@ import net.sievert.jolcraft.sound.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.ClientboundEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.ClientboundReputationPacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.util.attachment.DwarvenReputationHelper;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
 
     public DwarfGuildmasterEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
@@ -149,7 +149,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         }
 
         // Sync Guildmaster level with player tier (for AI or display, use standard rep)
-        int tier = DwarvenReputationHelper.getTierServer(player);
+        int tier = DwarvenReputationHelper.getTier(player);
         int desiredLevel = Math.min(tier + 1, 5);
         int currentLevel = this.getVillagerData().getLevel();
 
@@ -160,32 +160,20 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
             this.updateTrades();
         }
 
-        // Only proceed if holding a reputation tablet
         if (!itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS)) {
             return super.mobInteract(player, hand);
         }
 
-        // --- For display/UI only: current tier & endorsement count (CAN show creative-granted values) ---
-        int currentTier = client
-                ? DwarvenReputationHelper.getClientTier()
-                : DwarvenReputationHelper.getTierServer(player);
-
-        int endorsementCount = client
-                ? DwarvenReputationHelper.getClientEndorsementCount()
-                : DwarvenReputationHelper.getEndorsementCountServer(player);
-
         int maxTier = DwarvenReputationImpl.getThresholdCount();
 
-        // --- For actual logic: STRICT checks (bypass creative) ---
         int strictTier = client
                 ? DwarvenReputationHelper.getClientTier()
-                : DwarvenReputationHelper.getTierServerBypassCreative(player);
+                : DwarvenReputationHelper.getTierBypassCreative(player);
 
         int strictEndorsementCount = client
                 ? DwarvenReputationHelper.getClientEndorsementCount()
-                : DwarvenReputationHelper.getEndorsementCountServerBypassCreative(player);
+                : DwarvenReputationHelper.getEndorsementCountBypassCreative(player);
 
-        // Check if max tier already reached (using strict check)
         if (strictTier >= maxTier) {
             if (client) {
                 player.displayClientMessage(Component.translatable("tooltip.jolcraft.reputation.max_tier")
@@ -195,7 +183,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
             return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
 
-        // Check if the player can advance to the next tier (using strict check)
         if (!DwarvenReputationImpl.canAdvance(strictTier, strictEndorsementCount)) {
             if (!client) {
                 int needed = DwarvenReputationImpl.getThresholdForTier(strictTier);
@@ -216,7 +203,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
             return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
 
-        if (!this.isPaid()) {
+        if (this.needsPay()) {
             if (!client) {
                 player.displayClientMessage(Component.translatable("tooltip.jolcraft.dwarf.not_paid")
                         .withStyle(ChatFormatting.GRAY), true);
@@ -255,9 +242,9 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
             if (!this.level().isClientSide && this.currentActionPlayer instanceof ServerPlayer serverPlayer) {
-                DwarvenReputationImpl repFinal = serverPlayer.getData(JolCraftAttachments.DWARVEN_REP.get());
-                if (repFinal != null && repFinal.getTier() == strictTier) {
-                    repFinal.setTier(strictTier + 1);
+                DwarvenReputation repFinal = serverPlayer.getData(JolCraftAttachments.DWARVEN_REP.get());
+                if (repFinal.getTier() == strictTier) {
+                    DwarvenReputationHelper.setReputationTier(serverPlayer, strictTier + 1);
                     JolCraftCriteriaTriggers.REPUTATION_TIER.trigger(serverPlayer);
 
                     int newTier = repFinal.getTier();
@@ -265,10 +252,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
                         this.increaseMerchantCareer();
                     }
 
-                    JolCraftNetworking.sendToClient(serverPlayer,
-                            new ClientboundReputationPacket(newTier));
-                    JolCraftNetworking.sendToClient(serverPlayer,
-                            new ClientboundEndorsementsPacket(repFinal.getEndorsements()));
                     serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.reputation.level_up")
                             .withStyle(ChatFormatting.GOLD), true);
 
@@ -302,7 +285,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
 
         return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
-
 
     @Override
     public void tick() {

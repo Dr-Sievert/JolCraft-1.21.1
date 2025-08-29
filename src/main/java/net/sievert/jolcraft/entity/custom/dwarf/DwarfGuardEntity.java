@@ -3,6 +3,7 @@ package net.sievert.jolcraft.entity.custom.dwarf;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -42,7 +43,10 @@ import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarfGuardEntity extends AbstractDwarfEntity {
 
     public DwarfGuardEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
@@ -180,7 +184,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         }
 
         // 3. Guard-specific trade logic (if needed) — otherwise delete this section
-        if (canTrade() && stack.isEmpty() && !this.isBaby() && (player.getAbilities() == null || !player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty())) {
+        if (canTrade() && stack.isEmpty() && !this.isBaby() && (!player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty())) {
             if (hand == InteractionHand.MAIN_HAND) {
                 player.awardStat(Stats.TALKED_TO_VILLAGER);
             }

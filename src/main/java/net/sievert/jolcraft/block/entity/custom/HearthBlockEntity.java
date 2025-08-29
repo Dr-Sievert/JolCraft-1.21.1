@@ -16,8 +16,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.sievert.jolcraft.block.custom.HearthBlock;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.effect.JolCraftEffects;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,7 +34,7 @@ public class HearthBlockEntity extends BlockEntity {
 
     // --- Save/load NBT ---
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         super.saveAdditional(tag, provider);
         // Save UUIDs as string list
         ListTag uuidList = new ListTag();
@@ -43,7 +45,7 @@ public class HearthBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         super.loadAdditional(tag, provider);
         activePlayers.clear();
         ListTag uuidList = tag.getList("ActivePlayers", 8); // 8 = String
@@ -84,7 +86,7 @@ public class HearthBlockEntity extends BlockEntity {
         // Only give regeneration if the hearth is lit
         if (this.getBlockState().getValue(HearthBlock.LIT)) {
             for (UUID uuid : activePlayers) {
-                ServerPlayer player = this.level.getServer().getPlayerList().getPlayer(uuid);
+                ServerPlayer player = Objects.requireNonNull(this.level.getServer()).getPlayerList().getPlayer(uuid);
                 if (player == null) continue;
                 if (!player.level().dimension().equals(this.level.dimension())) continue; // Same dimension only
 

@@ -32,7 +32,7 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
     @Override
     protected boolean canIdentify(ServerPlayer player) {
         return hasRequiredLanguage(player)
-                && AncientEffectHelper.hasAncientMemoryServer(player);
+                && AncientEffectHelper.hasAncientMemory(player);
     }
 
     @Override

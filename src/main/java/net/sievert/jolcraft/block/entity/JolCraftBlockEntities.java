@@ -53,7 +53,7 @@ public class JolCraftBlockEntities {
                         if (blockEntity instanceof StrongboxBlockEntity strongbox) {
                             if (level instanceof Level) {
                                 // Call the serverTick method with correct arguments
-                                strongbox.tick(level, pos, state, strongbox);
+                                StrongboxBlockEntity.tick(level, pos, state, strongbox);
                             }
                         }
                     })

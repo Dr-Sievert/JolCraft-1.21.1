@@ -8,7 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.JolCraftAttachments;
+import net.sievert.jolcraft.data.custom.attachment.lang.DwarvenLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -23,7 +24,8 @@ public class HasDwarvenLanguageTrigger extends SimpleCriterionTrigger<HasDwarven
     }
 
     public void trigger(ServerPlayer player) {
-        if (DwarvenLanguageHelper.knowsDwarvish(player)) {
+        DwarvenLanguage lang = player.getData(JolCraftAttachments.DWARVEN_LANGUAGE.get());
+        if (lang.knowsLanguage()) {
             this.trigger(player, instance -> true);
         }
     }

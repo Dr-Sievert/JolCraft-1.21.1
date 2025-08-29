@@ -9,8 +9,10 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.sievert.jolcraft.item.custom.tooltip.ToolItem;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ArtisanHammerItem extends ToolItem {
 
     public ArtisanHammerItem(ToolMaterial material, float attackDamage, float attackSpeed, Item.Properties properties) {

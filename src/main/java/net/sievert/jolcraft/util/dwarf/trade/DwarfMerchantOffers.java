@@ -37,8 +37,7 @@ public class DwarfMerchantOffers extends ArrayList<DwarfMerchantOffer> {
             DwarfMerchantOffer merchantoffer1 = this.get(index);
             return merchantoffer1.satisfiedBy(stackA, stackB) ? merchantoffer1 : null;
         } else {
-            for (int i = 0; i < this.size(); i++) {
-                DwarfMerchantOffer merchantoffer = this.get(i);
+            for (DwarfMerchantOffer merchantoffer : this) {
                 if (merchantoffer.satisfiedBy(stackA, stackB)) {
                     return merchantoffer;
                 }

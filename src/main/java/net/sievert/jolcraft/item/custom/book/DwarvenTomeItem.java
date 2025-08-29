@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.item.custom.book;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -11,8 +11,12 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarvenTomeItem extends Item {
     public DwarvenTomeItem(Properties properties) {
         super(properties);
@@ -20,11 +24,11 @@ public class DwarvenTomeItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (context.level() != null && context.level().isClientSide()) {
+        if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
             boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
 
             var dataComponentType = JolCraftDataComponents.LORE_LINE_ID.get();
-            String loreKey = dataComponentType != null ? stack.get(dataComponentType) : null;
+            String loreKey = stack.get(dataComponentType);
 
             if (Screen.hasShiftDown()) {
                 if (knowsLanguage) {

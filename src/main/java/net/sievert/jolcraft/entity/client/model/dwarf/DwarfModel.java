@@ -14,6 +14,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.dwarf.DwarfAnimationType;
 import net.sievert.jolcraft.entity.client.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.dwarf.DwarfAnimations;
+import org.jetbrains.annotations.NotNull;
 
 public class DwarfModel extends HumanoidModel<DwarfRenderState>{
 
@@ -148,7 +149,7 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
 
 
     @Override
-    public void translateToHand(HumanoidArm side, PoseStack poseStack) {
+    public void translateToHand(@NotNull HumanoidArm side, @NotNull PoseStack poseStack) {
         this.root.translateAndRotate(poseStack);
         this.getArm(side).translateAndRotate(poseStack);
         poseStack.translate(-0.05F, -0.15F, 0.05F);
@@ -161,7 +162,7 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
         this.head.xRot = headPitch *  ((float)Math.PI / 180f);
     }
 
-    protected ModelPart getArm(HumanoidArm side) {
+    protected @NotNull ModelPart getArm(@NotNull HumanoidArm side) {
         return side == HumanoidArm.RIGHT ? this.rightArm : this.leftArm;
     }
 

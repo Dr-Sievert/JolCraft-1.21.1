@@ -13,6 +13,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -22,8 +23,11 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.item.JolCraftItems;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
     public static final IRecipeType<InfoPageRecipe> RECIPE_TYPE =
             IRecipeType.create(JolCraft.MOD_ID, "info_page", InfoPageRecipe.class);
@@ -147,9 +151,8 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
                     int maxLines = Math.max(1, textHeight / lineHeight);
                     int totalLines = Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16).size();
                     int maxScroll = Math.max(0, totalLines - maxLines);
-                    int barHeight = textHeight;
-                    int thumbHeight = Math.max(12, Math.round(barHeight * (maxLines / (float) totalLines)));
-                    int maxThumbMove = barHeight - thumbHeight;
+                    int thumbHeight = Math.max(12, Math.round(textHeight * (maxLines / (float) totalLines)));
+                    int maxThumbMove = textHeight - thumbHeight;
                     int thumbY = (maxScroll == 0 ? 0 : Math.round(maxThumbMove * (scrollOffset / (float) maxScroll)));
 
                     // mouseY is *relative* to the scrollbar area! (not global)
@@ -181,9 +184,8 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
                     int maxScroll = Math.max(0, totalLines - maxLines);
 
                     // Travelable space for thumb
-                    int barHeight = textHeight;
-                    int thumbHeight = Math.max(12, Math.round(barHeight * (maxLines / (float) totalLines)));
-                    int thumbTravel = barHeight - thumbHeight;
+                    int thumbHeight = Math.max(12, Math.round(textHeight * (maxLines / (float) totalLines)));
+                    int thumbTravel = textHeight - thumbHeight;
 
                     // Calculate drag as a ratio of bar travel
                     int deltaY = (int) mouseY - dragStartMouseY;

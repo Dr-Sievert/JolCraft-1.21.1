@@ -2,6 +2,7 @@ package net.sievert.jolcraft.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -54,8 +55,12 @@ import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final VoxelShape STRONGBOX_SHAPE = Block.box(1, 0, 3, 15, 10, 13); // [minX, minY, minZ, maxX, maxY, maxZ]
@@ -69,37 +74,28 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
         this.registerDefaultState(
                 this.stateDefinition.any()
                         .setValue(FACING, Direction.NORTH)
-                        .setValue(WATERLOGGED, Boolean.valueOf(false))
-                        .setValue(LOCKED, Boolean.valueOf(false))
+                        .setValue(WATERLOGGED, Boolean.FALSE)
+                        .setValue(LOCKED, Boolean.FALSE)
         );
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction facing = state.getValue(FACING);
-        return rotateShape(STRONGBOX_SHAPE, facing);
+        return rotateShape(facing);
     }
 
     // Utility to rotate VoxelShape (XZ axes only)
-    private static VoxelShape rotateShape(VoxelShape shape, Direction facing) {
-        switch (facing) {
-            case SOUTH:
-                return shape; // Default
-            case WEST:
-                return Block.box(
-                        3, 0, 1, 13, 10, 15
-                ); // Rotate manually or use a library to rotate shape
-            case NORTH:
-                return Block.box(
-                        1, 0, 3, 15, 10, 13
-                );
-            case EAST:
-                return Block.box(
-                        3, 0, 1, 13, 10, 15
-                );
-            default:
-                return shape;
-        }
+    private static VoxelShape rotateShape(Direction facing) {
+        return switch (facing) {
+            case WEST, EAST -> Block.box(
+                    3, 0, 1, 13, 10, 15
+            );
+            case NORTH -> Block.box(
+                    1, 0, 3, 15, 10, 13
+            );
+            default -> StrongboxBlock.STRONGBOX_SHAPE;
+        };
     }
 
 
@@ -167,7 +163,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 serverLevel.registryAccess().lookup(Registries.ENCHANTMENT).ifPresent(lookup -> {
                     var silkTouchHolder = lookup.get(Enchantments.SILK_TOUCH);
                     boolean hasSilkTouch = silkTouchHolder
-                            .map(enchantment -> EnchantmentHelper.getItemEnchantmentLevel(enchantment, tool) > 0)
+                            .map(enchantment -> EnchantmentHelper.getTagEnchantmentLevel(enchantment, tool) > 0)
                             .orElse(false);
 
                     if (hasSilkTouch) {
@@ -201,6 +197,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                         }
 
                         // Drop the Strongbox item with loot table information attached
+                        assert breakingPlayer != null;
                         if(!breakingPlayer.isCreative()){
                             Block.popResource(level, pos, drop);
                         }
@@ -209,10 +206,12 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                          else {
                         // Default behavior when Silk Touch is not used
                         if (strongbox.getLootTable() != null && state.getValue(LOCKED)){
+                            assert breakingPlayer != null;
                             if(!breakingPlayer.isCreative()){
                                 Block.popResource(level, pos, new ItemStack(JolCraftItems.STRONGBOX_ITEM.get())); // Drop the Strongbox item (no loot)
                             }
                         } else {
+                            assert breakingPlayer != null;
                             if(!breakingPlayer.isCreative()){
                                 // If no loot table, drop the Strongbox item and contents
                                 Containers.dropContents(level, pos, strongbox);  // Drop the contents of the Strongbox
@@ -239,13 +238,14 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             if (stack.has(DataComponents.CONTAINER)) {
                 ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
                 NonNullList<ItemStack> items = NonNullList.withSize(be.getContainerSize(), ItemStack.EMPTY);
+                assert contents != null;
                 contents.copyInto(items);
                 be.setItems(items);
             }
 
             // Handle LOCKED state separately
             if (stack.has(JolCraftDataComponents.LOCKED)) {
-                boolean isLocked = stack.get(JolCraftDataComponents.LOCKED);
+                boolean isLocked = Boolean.TRUE.equals(stack.get(JolCraftDataComponents.LOCKED));
                 level.setBlock(pos, state.setValue(StrongboxBlock.LOCKED, isLocked), 3);  // Set the LOCKED state of the block
             }
 
@@ -254,7 +254,8 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 String lootTableString = stack.get(JolCraftDataComponents.LOOT_TABLE);
 
                 // Create the ResourceKey<LootTable> from the lootTableString
-                ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.tryParse(lootTableString));
+                assert lootTableString != null;
+                ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, Objects.requireNonNull(ResourceLocation.tryParse(lootTableString)));
 
                 // Set the loot table in the block entity
                 be.setLootTable(lootTableKey, be.getLootTableSeed());  // Use the current lootTableSeed
@@ -266,6 +267,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 String lootTableSeedString = stack.get(JolCraftDataComponents.LOOT_SEED);
 
                 // Convert the loot table seed string into a long
+                assert lootTableSeedString != null;
                 long lootTableSeed = Long.parseLong(lootTableSeedString);
 
                 // Set the loot table seed in the block entity
@@ -339,17 +341,17 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide) {
             // Keep the lid animation logic for the client side
-            return createTickerHelper(type, JolCraftBlockEntities.STRONGBOX.get(), StrongboxBlockEntity::lidAnimateTick);
+            return Objects.requireNonNull(createTickerHelper(type, JolCraftBlockEntities.STRONGBOX.get(), StrongboxBlockEntity::lidAnimateTick));
         } else {
             // Keep the recheckOpen logic for the server side, and also call the tick method to update progress
-            return createTickerHelper(type, JolCraftBlockEntities.STRONGBOX.get(), (tickLevel, pos, blockState, be) -> {
+            return Objects.requireNonNull(createTickerHelper(type, JolCraftBlockEntities.STRONGBOX.get(), (tickLevel, pos, blockState, be) -> {
                 if (be instanceof StrongboxBlockEntity strongbox) {
                     if (!tickLevel.isClientSide) {
                         strongbox.recheckOpen();
-                        strongbox.tick(tickLevel, pos, blockState, strongbox);
+                        StrongboxBlockEntity.tick(tickLevel, pos, blockState, strongbox);
                     }
                 }
-            });
+            }));
         }
     }
 

@@ -15,9 +15,11 @@ import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.item.armor.JolCraftArmorMaterials;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Map;
 
+@ParametersAreNonnullByDefault
 public class MithrilArmorItem extends ArmorItem {
 
     public MithrilArmorItem(ArmorMaterial material, ArmorType armorType, Properties properties) {

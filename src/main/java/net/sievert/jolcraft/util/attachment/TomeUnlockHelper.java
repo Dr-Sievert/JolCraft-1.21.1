@@ -1,11 +1,15 @@
 package net.sievert.jolcraft.util.attachment;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.JolCraftAttachments;
+import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlock;
-import net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData;
+import net.sievert.jolcraft.network.JolCraftNetworking;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundTomeUnlocksPacket;
 
 import java.util.Set;
 
@@ -15,44 +19,65 @@ public class TomeUnlockHelper {
     public static final String BREW_MULTIPLE_HOPS = "forgotten_brew_formulas";
     public static final String CUTTING_GEMS = "ancient_gemcraft";
 
-    // --- SERVER SIDE ---
-
-    // Creative OR unlock
-    public static boolean hasUnlockServer(Player player, String unlockId) {
-        return player != null && (player.isCreative() || TomeUnlock.get(player).hasUnlock(unlockId));
+    /**
+     * Checks if player is creative OR has the unlock (side-safe).
+     */
+    public static boolean hasUnlock(Player player, String unlockId) {
+        if (player == null) return false;
+        if (player.isCreative()) return true;
+        TomeUnlock unlock = JolCraft.PROXY.getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
+        return unlock != null && unlock.hasUnlock(unlockId);
     }
 
-    // Only unlock (NOT creative)
-    public static boolean hasUnlockServerBypassCreative(Player player, String unlockId) {
-        return player != null && TomeUnlock.get(player).hasUnlock(unlockId);
+    /**
+     * Checks if player has the unlock (bypasses creative, side-safe).
+     */
+    public static boolean hasUnlockBypassCreative(Player player, String unlockId) {
+        if (player == null) return false;
+        TomeUnlock unlock = JolCraft.PROXY.getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
+        return unlock != null && unlock.hasUnlock(unlockId);
     }
 
+    /**
+     * Grants an unlock to a player.
+     * Only call this on the server. Also syncs the client view.
+     */
     public static void grantUnlock(Player player, String unlockId) {
-        if (player != null) {
-            TomeUnlock.get(player).addUnlock(unlockId);
+        if (player == null) return;
+        TomeUnlock unlock = player.getData(JolCraftAttachments.TOME_UNLOCK.get());
+        unlock.addUnlock(unlockId);
+        if (player instanceof ServerPlayer serverPlayer) {
+            JolCraftNetworking.sendToClient(serverPlayer,
+                    new ClientboundTomeUnlocksPacket(unlock.getUnlocks()));
         }
     }
 
-    public static Set<String> getAllUnlocksServer(Player player) {
-        return player != null ? TomeUnlock.get(player).getUnlocks() : Set.of();
+    /**
+     * Gets all unlocks for a player (side-safe).
+     */
+    public static Set<String> getAllUnlocks(Player player) {
+        if (player == null) return Set.of();
+        TomeUnlock unlock = JolCraft.PROXY.getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
+        return unlock != null ? unlock.getUnlocks() : Set.of();
     }
 
-    // --- CLIENT SIDE ---
+    // --- CLIENT ONLY: For local player convenience ---
 
     @OnlyIn(Dist.CLIENT)
     public static boolean hasUnlockClient(String unlockId) {
         Player player = Minecraft.getInstance().player;
-        return player != null && (player.isCreative() || ClientTomeUnlocksData.hasUnlock(unlockId));
+        return hasUnlock(player, unlockId);
     }
 
     @OnlyIn(Dist.CLIENT)
     public static boolean hasUnlockClientBypassCreative(String unlockId) {
         Player player = Minecraft.getInstance().player;
-        return player != null && ClientTomeUnlocksData.hasUnlock(unlockId);
+        return hasUnlockBypassCreative(player, unlockId);
     }
 
     @OnlyIn(Dist.CLIENT)
     public static Set<String> getAllUnlocksClient() {
-        return ClientTomeUnlocksData.getAllUnlocks();
+        Player player = Minecraft.getInstance().player;
+        return getAllUnlocks(player);
     }
 }

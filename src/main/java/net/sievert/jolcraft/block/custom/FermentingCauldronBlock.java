@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.block.custom;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,6 +35,10 @@ import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class FermentingCauldronBlock extends LayeredCauldronBlock implements EntityBlock {
 
     // Unique properties for Fermenting Cauldron
@@ -134,6 +139,7 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
 
                 if (hopToAdd != null) {
                     // 1. Dupe check always first: dupe always trumps unlock
+                    assert blockEntity != null;
                     if (blockEntity.getAddedHops().contains(hopToAdd)) {
                         player.displayClientMessage(
                                 Component.translatable("tooltip.jolcraft.brewing.hops").withStyle(ChatFormatting.GRAY),
@@ -143,8 +149,8 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
                     }
 
                     // 2. Check unlock for adding multiple different hops
-                    if (blockEntity.getAddedHops().size() >= 1 &&
-                            !TomeUnlockHelper.hasUnlockServer(player, TomeUnlockHelper.BREW_MULTIPLE_HOPS)) {
+                    if (!blockEntity.getAddedHops().isEmpty() &&
+                            !TomeUnlockHelper.hasUnlock(player, TomeUnlockHelper.BREW_MULTIPLE_HOPS)) {
                         player.displayClientMessage(
                                 Component.translatable("tooltip.jolcraft.brewing.locked_hops").withStyle(ChatFormatting.RED),
                                 true

@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.block.custom.crop;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -16,6 +17,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.item.JolCraftItems;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class BarleyCropBlock extends CropBlock {
     public static final int MAX_AGE = 7;
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 7);

@@ -264,7 +264,7 @@ public class JolCraftBlocks {
                             .randomTicks()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.ASGARNIAN_SEEDS.get()  // <<-- This makes block pick give seeds!
+                    JolCraftItems.ASGARNIAN_SEEDS
             )
     );
 
@@ -278,8 +278,8 @@ public class JolCraftBlocks {
                             .instabreak()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.ASGARNIAN_SEEDS.get(),         // Supplier for seeds
-                    () -> JolCraftBlocks.ASGARNIAN_CROP_TOP.get()      // Supplier for top block
+                    JolCraftItems.ASGARNIAN_SEEDS,
+                    JolCraftBlocks.ASGARNIAN_CROP_TOP
             )
     );
 
@@ -292,7 +292,7 @@ public class JolCraftBlocks {
                             .randomTicks()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.DUSKHOLD_SEEDS.get()
+                    JolCraftItems.DUSKHOLD_SEEDS
             )
     );
 
@@ -305,8 +305,8 @@ public class JolCraftBlocks {
                             .instabreak()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.DUSKHOLD_SEEDS.get(),
-                    () -> JolCraftBlocks.DUSKHOLD_CROP_TOP.get()
+                    JolCraftItems.DUSKHOLD_SEEDS,
+                    JolCraftBlocks.DUSKHOLD_CROP_TOP
             )
     );
 
@@ -319,7 +319,7 @@ public class JolCraftBlocks {
                             .randomTicks()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.KRANDONIAN_SEEDS.get()
+                    JolCraftItems.KRANDONIAN_SEEDS
             )
     );
 
@@ -332,8 +332,8 @@ public class JolCraftBlocks {
                             .instabreak()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.KRANDONIAN_SEEDS.get(),
-                    () -> JolCraftBlocks.KRANDONIAN_CROP_TOP.get()
+                    JolCraftItems.KRANDONIAN_SEEDS,
+                    JolCraftBlocks.KRANDONIAN_CROP_TOP
             )
     );
 
@@ -347,7 +347,7 @@ public class JolCraftBlocks {
                             .randomTicks()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.YANILLIAN_SEEDS.get()
+                    JolCraftItems.YANILLIAN_SEEDS
             )
     );
 
@@ -360,8 +360,8 @@ public class JolCraftBlocks {
                             .instabreak()
                             .sound(SoundType.CROP)
                             .pushReaction(PushReaction.DESTROY),
-                    () -> JolCraftItems.YANILLIAN_SEEDS.get(),
-                    () -> JolCraftBlocks.YANILLIAN_CROP_TOP.get()
+                    JolCraftItems.YANILLIAN_SEEDS,
+                    JolCraftBlocks.YANILLIAN_CROP_TOP
             )
     );
 

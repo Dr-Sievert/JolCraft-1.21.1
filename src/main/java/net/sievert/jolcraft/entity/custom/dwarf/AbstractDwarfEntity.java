@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -47,11 +48,11 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputationImpl;
+import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputation;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.network.packet.ClientboundDwarfMerchantOffersPacket;
-import net.sievert.jolcraft.screen.custom.dwarf.DwarfMerchantMenu;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfMerchantOffersPacket;
+import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchant;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffers;
@@ -65,9 +66,8 @@ import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.network.packet.ClientboundDwarfEndorseAnimationPacket;
-import net.sievert.jolcraft.network.packet.ClientboundEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.ClientboundReputationPacket;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfEndorseAnimationPacket;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.util.attachment.DwarvenReputationHelper;
@@ -76,8 +76,11 @@ import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchant {
 
     @Nullable
@@ -201,7 +204,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                     blockParticleTicks = 10; // spawn for 10 ticks
                 }
 
-                if (blockParticleTicks-- > 0 && blockParticlePos != null) {
+                if (blockParticleTicks-- > 0) {
                     for (int i = 0; i < 5; i++) { // spawn multiple per tick for visual density
                         double scatterRange = 0.15D; // how far they can spread from center
 
@@ -373,9 +376,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     public InteractionResult reputationCheck(Player player, int requiredTier) {
         boolean client = this.level().isClientSide;
-        boolean hasTier = client
-                ? DwarvenReputationHelper.hasClientTier(requiredTier)
-                : DwarvenReputationHelper.hasTierServer(player, requiredTier);
+        boolean hasTier = DwarvenReputationHelper.hasTier(player, requiredTier);
 
         if (!hasTier) {
             JolCraftSoundHelper.playDwarfNo(this);
@@ -497,7 +498,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             }
 
             // 2️⃣ Not paid yet
-            if (!this.isPaid()) {
+            if (this.needsPay()) {
                 if (!client) {
                     player.displayClientMessage(
                             Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true
@@ -554,7 +555,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             }
 
             // 2 Not paid yet
-            if (!this.isPaid()) {
+            if (this.needsPay()) {
                 if (!client) {
                     player.displayClientMessage(
                             Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true
@@ -588,9 +589,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         if (itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS) && !this.isBaby()) {
             ResourceLocation profId = this.getProfessionId();
             boolean client = this.level().isClientSide;
-            boolean hasEndorsement = client
-                    ? DwarvenReputationHelper.hasClientEndorsementBypassCreative(profId)
-                    : DwarvenReputationHelper.hasEndorsementServerBypassCreative(player, profId);
+            boolean hasEndorsement = DwarvenReputationHelper.hasEndorsementBypassCreative(player, profId);
 
             // Send to subclass if special case
             if (this instanceof DwarfGuildmasterEntity) {
@@ -628,7 +627,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             }
 
             // 3️⃣ Paid check
-            if (!this.isPaid()) {
+            if (this.needsPay()) {
                 if (!client) {
                     player.displayClientMessage(
                             Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true);
@@ -650,11 +649,12 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
                 if (!this.level().isClientSide && this.currentActionPlayer != null) {
                     ResourceLocation profIdFinish = this.getProfessionId();
-                    DwarvenReputationImpl repFinish = this.currentActionPlayer.getData(JolCraftAttachments.DWARVEN_REP.get());
+                    DwarvenReputation repFinish = this.currentActionPlayer.getData(JolCraftAttachments.DWARVEN_REP.get());
 
                     boolean added = false;
-                    if (repFinish != null && !repFinish.hasEndorsement(profIdFinish)) {
-                        repFinish.addEndorsement(profIdFinish);
+                    if (!repFinish.hasEndorsement(profIdFinish)) {
+                        // Helper adds endorsement and syncs client
+                        DwarvenReputationHelper.addEndorsement(this.currentActionPlayer, profIdFinish);
                         added = true;
 
                         if (this.currentActionPlayer instanceof ServerPlayer serverPlayer) {
@@ -662,11 +662,10 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                         }
                     }
 
+                    // Always sync tier after potential change (in case endorsement bumps it)
                     if (this.currentActionPlayer instanceof ServerPlayer serverPlayer) {
                         JolCraftNetworking.sendToClient(serverPlayer,
                                 new ClientboundReputationPacket(repFinish.getTier()));
-                        JolCraftNetworking.sendToClient(serverPlayer,
-                                new ClientboundEndorsementsPacket(repFinish.getEndorsements()));
                     }
 
                     if (added) {
@@ -692,6 +691,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                 }
             });
 
+
             if (!client) {
                 JolCraftNetworking.sendToNearbyClients(
                         this.level(), this.blockPosition(), 32,
@@ -704,10 +704,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
 
         // 💼 Trade (only if hand empty and a baby)
-        if (canTrade()
-                && itemstack.isEmpty()
-                && !this.isBaby()
-                && (player.getAbilities() == null || !player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty()))
+        if (canTrade() && itemstack.isEmpty() && !this.isBaby() && (!player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty()))
         {
             if (hand == InteractionHand.MAIN_HAND) {
                 player.awardStat(Stats.TALKED_TO_VILLAGER);
@@ -869,7 +866,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     @Nullable
     public EntityType<? extends AbstractDwarfEntity> resolveProfessionType(ItemStack contractStack) {
-        if (contractStack == null || contractStack.isEmpty()) return null;
+        if (contractStack.isEmpty()) return null;
         return CONTRACT_TO_PROFESSION.get(contractStack.getItem());
     }
 
@@ -1213,8 +1210,8 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     protected UUID paidCause;
     public static final int MAX_PAID_TICKS = 20 * 60; // 1 min
 
-    public boolean isPaid() {
-        return this.paidTicks > 0;
+    public boolean needsPay() {
+        return this.paidTicks <= 0;
     }
 
     public void setPaid(@Nullable Player player) {
@@ -1395,7 +1392,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         }
         if (needsRestock) {
             this.lastRestockGameTime = this.level().getGameTime();
-            this.level().playSound(null, this.blockPosition(), getRestockSound(), SoundSource.NEUTRAL, 1.2F, 1.0F);
+            this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRestockSound()), SoundSource.NEUTRAL, 1.2F, 1.0F);
         }
     }
 
@@ -1411,7 +1408,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             this.updateTrades();
         }
         this.setVillagerData(this.getVillagerData().setLevel(originalLevel));
-        this.level().playSound(null, this.blockPosition(), getRerollSound(), SoundSource.NEUTRAL, 1.2F, 1.0F);
+        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRerollSound()), SoundSource.NEUTRAL, 1.2F, 1.0F);
     }
 
     protected void rewardTradeXp(DwarfMerchantOffer offer) {
@@ -1616,6 +1613,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         DwarfVariant variant = Util.getRandom(DwarfVariant.values(), this.random);
         DwarfBeardColor beard = Util.getRandom(DwarfBeardColor.values(), this.random);
         DwarfEyeColor eye = Util.getRandom(DwarfEyeColor.values(), this.random);
+        assert baby != null;
         baby.setVariant(variant);
         baby.setBeard(beard);
         baby.setEye(eye);
@@ -1672,7 +1670,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     public void setCustomAttackDamage(double amount) {
         if (this.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
-            this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(amount);
+            Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(amount);
         }
     }
 
@@ -1696,9 +1694,9 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     @Nullable
     @Override
-    public Entity teleport(TeleportTransition p_379715_) {
+    public Entity teleport(TeleportTransition teleportTransition) {
         this.stopTrading();
-        return super.teleport(p_379715_);
+        return super.teleport(teleportTransition);
     }
 
     @Override

@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -26,9 +27,8 @@ public final class CoinPouchAmountProperty implements SelectItemModelProperty<In
 
     private CoinPouchAmountProperty() {}
 
-    @Nullable
     @Override
-    public Integer get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, ItemDisplayContext context) {
+    public @NotNull Integer get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, @NotNull ItemDisplayContext context) {
         int coins = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
 
         if (coins == 0) {
@@ -43,7 +43,7 @@ public final class CoinPouchAmountProperty implements SelectItemModelProperty<In
     }
 
     @Override
-    public Type<? extends SelectItemModelProperty<Integer>, Integer> type() {
+    public @NotNull Type<? extends SelectItemModelProperty<Integer>, Integer> type() {
         return TYPE;
     }
 }

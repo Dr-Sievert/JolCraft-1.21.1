@@ -40,6 +40,7 @@ public class DwarfBreedGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
+        assert this.partner != null;
         return this.partner.isAlive() && this.partner.isInLove() && this.loveTime < 60 && !this.partner.isPanicking();
     }
 
@@ -49,6 +50,7 @@ public class DwarfBreedGoal extends Goal {
     }
 
     public void tick() {
+        assert this.partner != null;
         this.dwarf.getLookControl().setLookAt(this.partner, 10.0F, (float)this.dwarf.getMaxHeadXRot());
         this.dwarf.getNavigation().moveTo(this.partner, this.speedModifier);
         ++this.loveTime;

@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.custom.book;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -16,8 +17,11 @@ import net.sievert.jolcraft.item.custom.tooltip.UnidentifiedItem;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     public UnidentifiedDwarvenTomeItem(Properties properties) {
         super(properties);

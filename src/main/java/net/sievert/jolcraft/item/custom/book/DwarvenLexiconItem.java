@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.item.custom.book;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -16,13 +16,14 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.ClientboundLanguagePacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarvenLexiconItem extends Item {
 
     public DwarvenLexiconItem(Properties properties) {
@@ -32,13 +33,8 @@ public class DwarvenLexiconItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            // Strict: do NOT grant for creative, only for real unlock
             if (!DwarvenLanguageHelper.knowsDwarvishBypassCreative(serverPlayer)) {
                 DwarvenLanguageHelper.setKnowsDwarvish(serverPlayer, true);
-
-                // ✅ SEND PACKET TO CLIENT
-                JolCraftNetworking.sendToClient(serverPlayer, new ClientboundLanguagePacket(true));
-
                 JolCraftCriteriaTriggers.HAS_DWARVEN_LANGUAGE.trigger(serverPlayer);
                 level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 2.0f, 0.7f);
                 level.playSound(null, player.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);

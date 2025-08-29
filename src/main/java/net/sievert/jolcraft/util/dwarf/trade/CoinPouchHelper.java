@@ -11,8 +11,7 @@ public class CoinPouchHelper {
         }
 
         Integer value = stack.get(JolCraftDataComponents.COIN_POUCH_AMOUNT);
-        int coins = value != null ? value : 0;
-        return coins;
+        return value != null ? value : 0;
     }
 
     // Set coin count

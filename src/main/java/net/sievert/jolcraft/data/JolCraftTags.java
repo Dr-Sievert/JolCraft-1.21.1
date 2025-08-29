@@ -14,7 +14,7 @@ import static net.sievert.jolcraft.JolCraft.locate;
 
 public class JolCraftTags {
 
-    public final class Items {
+    public static final class Items {
 
         //Core
 
@@ -73,7 +73,7 @@ public class JolCraftTags {
         }
     }
 
-    public final class Blocks {
+    public static final class Blocks {
 
         public static final TagKey<Block> DEEPSLATE_BULBS_PLANTABLE = createTag("deepslate_bulbs_plantable");
 
@@ -101,7 +101,7 @@ public class JolCraftTags {
         }
     }
 
-    public final class Biomes {
+    public static final class Biomes {
         public static final TagKey<net.minecraft.world.level.biome.Biome> MOUNTAINS_AND_HILLS = create("mountains_and_hills");
 
         private static TagKey<net.minecraft.world.level.biome.Biome> create(String name) {

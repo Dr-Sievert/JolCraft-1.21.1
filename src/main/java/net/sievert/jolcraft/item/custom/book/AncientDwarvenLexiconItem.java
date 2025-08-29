@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.custom.book;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -12,15 +13,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.item.custom.tooltip.AncientItemBase;
-import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.ClientboundAncientLanguagePacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.util.attachment.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.attachment.AncientEffectHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class AncientDwarvenLexiconItem extends AncientItemBase {
 
     public AncientDwarvenLexiconItem(Properties properties) {
@@ -31,12 +33,11 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             boolean knowsLang = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
-            boolean hasEffect = AncientEffectHelper.hasAncientMemoryServer(serverPlayer);
-            boolean alreadyKnows = AncientDwarvenLanguageHelper.knowsAncientDwarvishServerBypassCreative(serverPlayer);
+            boolean hasEffect = AncientEffectHelper.hasAncientMemory(serverPlayer);
+            boolean alreadyKnows = AncientDwarvenLanguageHelper.knowsAncientDwarvishBypassCreative(serverPlayer);
 
             if (!alreadyKnows && knowsLang && hasEffect) {
-                AncientDwarvenLanguageHelper.setKnowsAncientDwarvishServer(serverPlayer, true);
-                JolCraftNetworking.sendToClient(serverPlayer, new ClientboundAncientLanguagePacket(true));
+                AncientDwarvenLanguageHelper.setKnowsAncientDwarvish(serverPlayer, true);
                 level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 2.0f, 0.7f);
                 level.playSound(null, player.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
                 serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.use")

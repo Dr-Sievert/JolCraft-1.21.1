@@ -11,8 +11,11 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.attachment.AncientEffectHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 
+@ParametersAreNonnullByDefault
 public abstract class AncientItemBase extends Item {
     public AncientItemBase(Properties properties) {
         super(properties);
@@ -25,7 +28,7 @@ public abstract class AncientItemBase extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public final void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (context.level() != null && context.level().isClientSide()) {
+        if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
             Player player = net.minecraft.client.Minecraft.getInstance().player;
             if (player != null) {
                 if (net.minecraft.client.gui.screens.Screen.hasShiftDown() && hasShift()) {
@@ -80,7 +83,6 @@ public abstract class AncientItemBase extends Item {
     /**
      * Subclass provides the fully readable tooltip for this item.
      */
-
     protected List<Component> getFullyReadableTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         return null;
     }

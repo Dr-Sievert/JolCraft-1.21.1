@@ -9,6 +9,7 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -22,6 +23,10 @@ import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.custom.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
     public static final IRecipeType<DwarfTradeRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, "dwarf_trades", DwarfTradeRecipe.class);
     private static final java.util.Map<String, LivingEntity> DWARF_RENDER_CACHE = new java.util.HashMap<>();
@@ -110,7 +115,7 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
         );
 
         LivingEntity dwarf = getOrCreateDwarf(recipe);
-        if (dwarf != null) {
+        {
             int offsetY = -16;
             int minX = 100, minY = 10 + offsetY, maxX = 160, maxY = 90 + offsetY;
             int scale = 32;
@@ -174,8 +179,7 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
                     ? String.valueOf(recipe.getOutputMin())
                     : (recipe.getOutputMin() + "-" + recipe.getOutputMax());
             int strW = Minecraft.getInstance().font.width(oText);
-            float outSlotX = outputX;
-            float centerX = outSlotX + (slotWidth / 2f) - (strW * scale / 2f);
+            float centerX = (float) outputX + (slotWidth / 2f) - (strW * scale / 2f);
 
             graphics.pose().pushPose();
             graphics.pose().translate(centerX, overlayY, 0);
@@ -244,9 +248,7 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             default -> entity = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level); // fallback
         }
 
-        if (entity != null) {
-            DWARF_RENDER_CACHE.put(key, entity);
-        }
+        DWARF_RENDER_CACHE.put(key, entity);
         return entity;
     }
 

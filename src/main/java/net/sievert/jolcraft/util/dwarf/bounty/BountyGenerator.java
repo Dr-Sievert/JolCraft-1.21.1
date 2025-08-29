@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.util.dwarf.bounty;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -176,6 +175,7 @@ public class BountyGenerator {
 
         BountyType type;
         try {
+            assert typeStr != null;
             type = BountyType.valueOf(typeStr.toUpperCase());
         } catch (Exception e) {
             type = BountyType.MERCHANT;
@@ -195,8 +195,6 @@ public class BountyGenerator {
                 type.name().toLowerCase()
         );
     }
-
-
 
     /** Helper for static lambdas */
     private static int randomInt(int bound) {

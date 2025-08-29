@@ -3,15 +3,12 @@ package net.sievert.jolcraft.datagen.block;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -26,16 +23,14 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.block.custom.*;
 import net.sievert.jolcraft.block.custom.crop.*;
 import net.sievert.jolcraft.item.JolCraftItems;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
@@ -118,9 +113,7 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
         add(JolCraftBlocks.DEEPSLATE_BULBS_CROP.get(),
                 createSelfDropStoneCropDrops(
                         JolCraftBlocks.DEEPSLATE_BULBS_CROP.get(),
-                        JolCraftItems.DEEPSLATE_BULBS.get(),
-                        DeepslateBulbsCropBlock.AGE,
-                        9
+                        JolCraftItems.DEEPSLATE_BULBS.get()
                 )
         );
 
@@ -140,44 +133,28 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                 JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(),
                 JolCraftBlocks.ASGARNIAN_CROP_TOP.get(),
                 JolCraftItems.ASGARNIAN_SEEDS.get(),
-                JolCraftItems.ASGARNIAN_HOPS.get(),
-                HopsCropBottomBlock.AGE,
-                HopsCropBottomBlock.MAX_AGE,
-                HopsCropTopBlock.TOP_AGE,
-                4
+                JolCraftItems.ASGARNIAN_HOPS.get()
         );
 
         addHopsCropDrops(
                 JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(),
                 JolCraftBlocks.DUSKHOLD_CROP_TOP.get(),
                 JolCraftItems.DUSKHOLD_SEEDS.get(),
-                JolCraftItems.DUSKHOLD_HOPS.get(),
-                HopsCropBottomBlock.AGE,
-                HopsCropBottomBlock.MAX_AGE,
-                HopsCropTopBlock.TOP_AGE,
-                4
+                JolCraftItems.DUSKHOLD_HOPS.get()
         );
 
         addHopsCropDrops(
                 JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(),
                 JolCraftBlocks.KRANDONIAN_CROP_TOP.get(),
                 JolCraftItems.KRANDONIAN_SEEDS.get(),
-                JolCraftItems.KRANDONIAN_HOPS.get(),
-                HopsCropBottomBlock.AGE,
-                HopsCropBottomBlock.MAX_AGE,
-                HopsCropTopBlock.TOP_AGE,
-                4
+                JolCraftItems.KRANDONIAN_HOPS.get()
         );
 
         addHopsCropDrops(
                 JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(),
                 JolCraftBlocks.YANILLIAN_CROP_TOP.get(),
                 JolCraftItems.YANILLIAN_SEEDS.get(),
-                JolCraftItems.YANILLIAN_HOPS.get(),
-                HopsCropBottomBlock.AGE,
-                HopsCropBottomBlock.MAX_AGE,
-                HopsCropTopBlock.TOP_AGE,
-                4
+                JolCraftItems.YANILLIAN_HOPS.get()
         );
 
     }
@@ -194,16 +171,12 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
             Block bottom,
             Block top,
             Item seed,
-            Item hops,
-            IntegerProperty bottomAge,
-            int bottomMaxAge,
-            IntegerProperty topAge,
-            int topMaxAge
+            Item hops
     ) {
         // Bottom loot table: use bottom age
         LootItemCondition.Builder isMatureBottom = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(bottom)
-                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(bottomAge, bottomMaxAge));
+                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HopsCropBottomBlock.AGE, HopsCropBottomBlock.MAX_AGE));
 
         LootTable.Builder bottomLoot = LootTable.lootTable()
                 .withPool(LootPool.lootPool()
@@ -227,7 +200,7 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
         // Top loot table: use top age
         LootItemCondition.Builder isMatureTop = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(top)
-                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(topAge, topMaxAge));
+                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HopsCropTopBlock.TOP_AGE, 4));
 
         LootTable.Builder topLoot = LootTable.lootTable()
                 .withPool(LootPool.lootPool()
@@ -254,12 +227,12 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
 
 
 
-    protected LootTable.Builder createSelfDropStoneCropDrops(Block cropBlock, Item item, IntegerProperty ageProperty, int maxAge) {
+    protected LootTable.Builder createSelfDropStoneCropDrops(Block cropBlock, Item item) {
         HolderLookup.RegistryLookup<Enchantment> registrylookup = registries.lookupOrThrow(Registries.ENCHANTMENT);
 
         LootItemCondition.Builder mature = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(cropBlock)
-                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(ageProperty, maxAge));
+                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DeepslateBulbsCropBlock.AGE, 9));
 
         return LootTable.lootTable()
                 // 1. Always drop 1 (unconditional, for any age)
@@ -340,7 +313,7 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
 
 
     @Override
-    protected Iterable<Block> getKnownBlocks() {
+    protected @NotNull Iterable<Block> getKnownBlocks() {
         return JolCraftBlocks.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
     }
 }

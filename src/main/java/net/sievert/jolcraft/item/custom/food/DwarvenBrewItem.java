@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.custom.food;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,10 +17,13 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.block.custom.crop.HopsType;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DwarvenBrewItem extends Item {
 
     public DwarvenBrewItem(Properties properties) {

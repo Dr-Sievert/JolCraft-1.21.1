@@ -9,8 +9,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public abstract class AncientUnidentifiedItem extends AncientItemBase {
     public AncientUnidentifiedItem(Properties properties) {
         super(properties);

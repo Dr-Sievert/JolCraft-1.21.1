@@ -31,7 +31,7 @@ public class DiscoveredStructuresHelper {
     public static List<GlobalPos> getDiscoveredStructures(Player player) {
         if (player == null) return List.of();
         DiscoveredStructures ds = DiscoveredStructures.get(player);
-        return ds != null ? ds.getDiscovered() : List.of();
+        return ds.getDiscovered();
     }
 
     /**

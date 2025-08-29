@@ -2,6 +2,7 @@ package net.sievert.jolcraft.recipe.custom;
 
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,8 +13,11 @@ import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.sievert.jolcraft.item.trim.JolCraftTrimBonuses;
 import net.sievert.jolcraft.recipe.JolCraftRecipes;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class JolSmithingTrimRecipe extends SmithingTrimRecipe {
 
     public JolSmithingTrimRecipe(Optional<Ingredient> template, Optional<Ingredient> base, Optional<Ingredient> addition) {

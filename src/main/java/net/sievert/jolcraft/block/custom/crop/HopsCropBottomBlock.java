@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.block.custom.crop;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,10 +23,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.TriState;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class HopsCropBottomBlock extends CropBlock {
     public static final int MAX_AGE = 9;
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 9);
@@ -43,8 +48,7 @@ public class HopsCropBottomBlock extends CropBlock {
     };
 
     private final Supplier<? extends ItemLike> seedItem;
-    @Nullable
-    private final Supplier<? extends Block> topBlock;
+    private final @NotNull Supplier<? extends Block> topBlock;
 
     public HopsCropBottomBlock(Properties props, Supplier<? extends ItemLike> seedItem, Supplier<? extends Block> topBlock) {
         super(props);
@@ -175,11 +179,6 @@ public class HopsCropBottomBlock extends CropBlock {
         return soilOk && darkOk;
     }
 
-
-    @Override
-    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getBlock() instanceof net.minecraft.world.level.block.FarmBlock;
-    }
 
     public static boolean hasSufficientDarkness(LevelReader level, BlockPos pos) {
         return level.getRawBrightness(pos, 0) <= 8;

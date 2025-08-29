@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.client.compass.DialItemColor;
+import net.sievert.jolcraft.client.item.compass.DialItemColor;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.item.JolCraftItems;

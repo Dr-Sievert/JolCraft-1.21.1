@@ -10,6 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public class DiscoveredStructuresImpl implements DiscoveredStructures {
 
     // --- Serialization ---
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
         for (GlobalPos pos : discovered) {
@@ -61,7 +62,7 @@ public class DiscoveredStructuresImpl implements DiscoveredStructures {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
         discovered.clear();
         ListTag list = tag.getList("discovered", Tag.TAG_COMPOUND);
         for (Tag base : list) {

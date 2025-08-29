@@ -2,6 +2,7 @@ package net.sievert.jolcraft.data.custom.attachment.block;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 public class HearthImpl implements Hearth {
     private boolean litThisDay = false;
@@ -17,14 +18,14 @@ public class HearthImpl implements Hearth {
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("LitThisDay", litThisDay);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
         this.litThisDay = tag.getBoolean("LitThisDay");
     }
 }

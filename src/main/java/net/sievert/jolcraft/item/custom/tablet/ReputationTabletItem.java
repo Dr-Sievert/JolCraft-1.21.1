@@ -1,9 +1,8 @@
 package net.sievert.jolcraft.item.custom.tablet;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -18,13 +17,16 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.ClientboundEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.ClientboundReputationPacket;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
+import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.attachment.DwarvenReputationHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ReputationTabletItem extends Item {
     public ReputationTabletItem(Properties properties) {
         super(properties);
@@ -43,8 +45,8 @@ public class ReputationTabletItem extends Item {
                 return InteractionResult.SUCCESS;
             }
 
-            int currentTier = DwarvenReputationHelper.getTierServer(serverPlayer);
-            int endorsements = DwarvenReputationHelper.getEndorsementCountServer(serverPlayer);
+            int currentTier = DwarvenReputationHelper.getTier(serverPlayer);
+            int endorsements = DwarvenReputationHelper.getEndorsementCount(serverPlayer);
 
             if (currentTier >= ENDORSEMENT_THRESHOLDS.length) {
                 serverPlayer.displayClientMessage(
@@ -70,15 +72,15 @@ public class ReputationTabletItem extends Item {
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            int tier = DwarvenReputationHelper.getTierServer(serverPlayer);
-            int endorsements = DwarvenReputationHelper.getEndorsementCountServer(serverPlayer);
+            int tier = DwarvenReputationHelper.getTier(serverPlayer);
+            int endorsements = DwarvenReputationHelper.getEndorsementCount(serverPlayer);
 
             stack.set(JolCraftDataComponents.REP_OWNER.get(), serverPlayer.getName().getString());
             stack.set(JolCraftDataComponents.REP_TIER.get(), tier);
             stack.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), endorsements);
 
             JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundEndorsementsPacket(DwarvenReputationHelper.getAllEndorsementsServer(serverPlayer))
+                    new ClientboundEndorsementsPacket(DwarvenReputationHelper.getAllEndorsements(serverPlayer))
             );
             JolCraftNetworking.sendToClient(serverPlayer,
                     new ClientboundReputationPacket(tier)

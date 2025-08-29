@@ -14,6 +14,7 @@ import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class MuffhornModel extends QuadrupedModel<LivingEntityRenderState> {
@@ -136,7 +137,7 @@ public class MuffhornModel extends QuadrupedModel<LivingEntityRenderState> {
     }
 
     @Override
-    public void setupAnim(LivingEntityRenderState state) {
+    public void setupAnim(@NotNull LivingEntityRenderState state) {
         super.setupAnim(state);
 
         float clampedX = Mth.clamp(state.xRot, -20.0F, 15.0F);

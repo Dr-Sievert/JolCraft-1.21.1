@@ -1,9 +1,10 @@
 package net.sievert.jolcraft.block.custom.crop;
 
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 public enum HopsType implements StringRepresentable {
-    NONE("none"),  // Represents no hop type selected
+    NONE("none"),
     ASGARNIAN("asgarnian_hop"),
     YANILLIAN("yanillian_hop"),
     DUSKHOLD("duskhold_hop"),
@@ -16,7 +17,7 @@ public enum HopsType implements StringRepresentable {
     }
 
     @Override
-    public String getSerializedName() {
-        return name; // The name of the hop type as a string
+    public @NotNull String getSerializedName() {
+        return name;
     }
 }

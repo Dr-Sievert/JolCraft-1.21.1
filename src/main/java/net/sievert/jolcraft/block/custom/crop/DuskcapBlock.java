@@ -2,6 +2,7 @@ package net.sievert.jolcraft.block.custom.crop;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.BlockGetter;
@@ -13,6 +14,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class DuskcapBlock extends JolCraftMushroomBlock{
 
     public DuskcapBlock(Properties properties) {
@@ -43,9 +48,7 @@ public class DuskcapBlock extends JolCraftMushroomBlock{
         BlockPos blockpos = pos.below();
         BlockState blockstate = level.getBlockState(blockpos);
         net.neoforged.neoforge.common.util.TriState soilDecision = blockstate.canSustainPlant(level, blockpos, net.minecraft.core.Direction.UP, state);
-        return blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK)
-                ? true
-                : soilDecision.isDefault() ? (level.getRawBrightness(pos, 0) < 8 && this.mayPlaceOn(blockstate, level, blockpos)) : soilDecision.isTrue();
+        return blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK) || (soilDecision.isDefault() ? (level.getRawBrightness(pos, 0) < 8 && this.mayPlaceOn(blockstate, level, blockpos)) : soilDecision.isTrue());
     }
 
 }

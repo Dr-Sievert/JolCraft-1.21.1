@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 
 import java.util.EnumSet;
+import java.util.Objects;
 
 
 public class DwarfRevengeGoal extends Goal
@@ -35,7 +36,7 @@ public class DwarfRevengeGoal extends Goal
             } else {
                 // Make sure the attack damage attribute is correct right before the attack:
                 this.entity.setCustomAttackDamage(this.entity.getAttackDamage());
-                revengeTarget.hurt(this.entity.damageSources().mobAttack(this.entity), (float) this.entity.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
+                revengeTarget.hurt(this.entity.damageSources().mobAttack(this.entity), (float) Objects.requireNonNull(this.entity.getAttribute(Attributes.ATTACK_DAMAGE)).getValue());
                 this.entity.setAttacking(true);
                 this.entity.setLastHurtByMob(null);
             }

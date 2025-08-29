@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -11,7 +12,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class JolCraftRecipeBuilder implements RecipeBuilder {
     private final RecipeBuilder inner;
     private final String modId;

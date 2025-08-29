@@ -8,6 +8,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.object.RadiantRenderState;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Model for RadiantEntity – single "body" cube, fully animation-driven.
@@ -44,7 +45,7 @@ public class RadiantModel extends EntityModel<RadiantRenderState>  {
     }
 
     @Override
-    public void setupAnim(RadiantRenderState state) {
+    public void setupAnim(@NotNull RadiantRenderState state) {
         super.setupAnim(state);
         this.root().getAllParts().forEach(ModelPart::resetPose);
 

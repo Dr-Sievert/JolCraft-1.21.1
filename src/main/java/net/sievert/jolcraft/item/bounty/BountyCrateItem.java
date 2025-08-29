@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.bounty;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,9 +28,13 @@ import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.dwarf.bounty.BountyData;
 import net.sievert.jolcraft.util.dwarf.bounty.BountyHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class BountyCrateItem extends Item implements IItemExtension {
     public BountyCrateItem(Properties properties) {
         super(properties);
@@ -204,7 +209,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 ? stack.get(JolCraftDataComponents.BOUNTY_FILL.get())
                 : 0;
         // If the crate is completely filled, set the bar color to green, else use red
-        return currentFilled == stack.get(JolCraftDataComponents.BOUNTY_DATA.get()).requiredCount()
+        return currentFilled == Objects.requireNonNull(stack.get(JolCraftDataComponents.BOUNTY_DATA.get())).requiredCount()
                 ? FULL_BAR_COLOR : BAR_COLOR;
     }
 
@@ -258,7 +263,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                             .withStyle(ChatFormatting.GRAY));
 
                     if (stack.has(JolCraftDataComponents.BOUNTY_COMPLETE.get()) &&
-                            stack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get())) {
+                            Boolean.TRUE.equals(stack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get()))) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.complete")
                                 .withStyle(ChatFormatting.GREEN));
                     }

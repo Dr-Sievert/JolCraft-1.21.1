@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -11,6 +12,10 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.tooltip.SimpleTooltipItem;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class QuillItem extends SimpleTooltipItem {
 
     public QuillItem(Properties properties, String tooltipKey) {
