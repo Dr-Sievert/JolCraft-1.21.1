@@ -10,6 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundAncientLanguagePacket;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 /**
  * Helper for Ancient Dwarven Language attachment, using the JolCraftProxy system for server/client safety.
@@ -23,7 +24,7 @@ public class AncientDwarvenLanguageHelper {
     public static boolean knowsAncientDwarvish(Player player) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        AncientDwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get(), player);
+        AncientDwarvenLanguage lang = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get(), player);
         return lang != null && lang.knowsLanguage();
     }
 
@@ -33,7 +34,7 @@ public class AncientDwarvenLanguageHelper {
      */
     public static boolean knowsAncientDwarvishBypassCreative(Player player) {
         if (player == null) return false;
-        AncientDwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get(), player);
+        AncientDwarvenLanguage lang = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get(), player);
         return lang != null && lang.knowsLanguage();
     }
 

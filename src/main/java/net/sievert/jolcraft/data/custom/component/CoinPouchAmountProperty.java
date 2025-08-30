@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.util.component;
+package net.sievert.jolcraft.data.custom.component;
 
 
 import com.mojang.serialization.Codec;

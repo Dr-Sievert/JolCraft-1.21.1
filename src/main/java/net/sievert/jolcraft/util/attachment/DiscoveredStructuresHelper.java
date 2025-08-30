@@ -56,7 +56,6 @@ public class DiscoveredStructuresHelper {
         if (player == null || pos == null || structureId == null) return;
 
         DiscoveredStructures ds = DiscoveredStructures.get(player);
-        if (ds == null) return;
 
         // Only act if this is a new discovery
         if (ds.addDiscovered(pos)) {
@@ -156,7 +155,7 @@ public class DiscoveredStructuresHelper {
         BlockPos patchedPos = pos;
         if (matchedStructure != null) {
             StructureStart start = structureManager.getStructureAt(pos, matchedStructure);
-            if (start != null && start.isValid()) {
+            if (start.isValid()) {
                 var box = start.getBoundingBox();
                 int centerY = box.getCenter().getY();
                 if (box.isInside(pos)) {

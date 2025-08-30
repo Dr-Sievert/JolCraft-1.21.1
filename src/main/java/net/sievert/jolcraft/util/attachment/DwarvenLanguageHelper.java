@@ -10,6 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundLanguagePacket;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 /**
  * Helper for Dwarven Language capability, using the JolCraftProxy system for server/client safety.
@@ -23,7 +24,7 @@ public class DwarvenLanguageHelper {
     public static boolean knowsDwarvish(Player player) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        DwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
+        DwarvenLanguage lang = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
         return lang != null && lang.knowsLanguage();
     }
 
@@ -33,7 +34,7 @@ public class DwarvenLanguageHelper {
      */
     public static boolean knowsDwarvishBypassCreative(Player player) {
         if (player == null) return false;
-        DwarvenLanguage lang = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
+        DwarvenLanguage lang = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
         return lang != null && lang.knowsLanguage();
     }
 

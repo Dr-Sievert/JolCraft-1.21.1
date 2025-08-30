@@ -12,6 +12,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class DwarvenReputationHelper {
     public static boolean hasTier(Player player, int minTier) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null && rep.getTier() >= minTier;
     }
 
@@ -37,7 +38,7 @@ public class DwarvenReputationHelper {
      */
     public static boolean hasTierBypassCreative(Player player, int minTier) {
         if (player == null) return false;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null && rep.getTier() >= minTier;
     }
 
@@ -47,7 +48,7 @@ public class DwarvenReputationHelper {
     public static boolean hasEndorsement(Player player, ResourceLocation professionId) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null && rep.hasEndorsement(professionId);
     }
 
@@ -56,7 +57,7 @@ public class DwarvenReputationHelper {
      */
     public static boolean hasEndorsementBypassCreative(Player player, ResourceLocation professionId) {
         if (player == null) return false;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null && rep.hasEndorsement(professionId);
     }
 
@@ -65,7 +66,7 @@ public class DwarvenReputationHelper {
      */
     public static int getEndorsementCount(Player player) {
         if (player == null) return 0;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getEndorsementCount() : 0;
     }
 
@@ -74,7 +75,7 @@ public class DwarvenReputationHelper {
      */
     public static int getEndorsementCountBypassCreative(Player player) {
         if (player == null) return 0;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getEndorsementCount() : 0;
     }
 
@@ -83,7 +84,7 @@ public class DwarvenReputationHelper {
      */
     public static Set<ResourceLocation> getAllEndorsements(Player player) {
         if (player == null) return Set.of();
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getEndorsements() : Set.of();
     }
 
@@ -92,7 +93,7 @@ public class DwarvenReputationHelper {
      */
     public static Set<ResourceLocation> getAllEndorsementsBypassCreative(Player player) {
         if (player == null) return Set.of();
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getEndorsements() : Set.of();
     }
 
@@ -115,7 +116,7 @@ public class DwarvenReputationHelper {
      */
     public static int getTier(Player player) {
         if (player == null) return 0;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getTier() : 0;
     }
 
@@ -124,7 +125,7 @@ public class DwarvenReputationHelper {
      */
     public static int getTierBypassCreative(Player player) {
         if (player == null) return 0;
-        DwarvenReputation rep = JolCraft.PROXY.getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getTier() : 0;
     }
 

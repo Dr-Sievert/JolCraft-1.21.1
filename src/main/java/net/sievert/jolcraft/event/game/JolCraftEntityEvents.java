@@ -11,6 +11,8 @@ import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +29,10 @@ import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuardEntity;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSoundHelper;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftEntityEvents {
@@ -281,6 +287,117 @@ public class JolCraftEntityEvents {
                 event.setCanceled(true);
             }
 
+        }
+
+        // Wandering Trader logic
+        if (target instanceof WanderingTrader trader) {
+
+
+            // Restock Crate
+            if (stack.is(JolCraftItems.RESTOCK_CRATE.get())) {
+
+                //Prevent clientside crash
+                if (player.level().isClientSide) {
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    event.setCanceled(true);
+                    return;
+                }
+
+                //Needs to actually have offers
+                if (trader.getOffers().isEmpty()) {
+                    player.displayClientMessage(
+                            Component.translatable("tooltip.jolcraft.crate.no_offers_villager").withStyle(ChatFormatting.RED),
+                            true
+                    );
+                    JolCraftSoundHelper.playVillagerNo(trader);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    event.setCanceled(true);
+                    return;
+                }
+
+                boolean needsRestock = trader.getOffers().stream().anyMatch(MerchantOffer::isOutOfStock);
+
+                if (!needsRestock) {
+                    player.displayClientMessage(
+                            Component.translatable("tooltip.jolcraft.restock_crate.no_need").withStyle(ChatFormatting.GRAY),
+                            true
+                    );
+                    JolCraftSoundHelper.playVillagerNo(trader);
+                } else {
+                    player.displayClientMessage(
+                            Component.translatable("tooltip.jolcraft.restock_crate.success").withStyle(ChatFormatting.GREEN),
+                            true
+                    );
+                    JolCraftSoundHelper.playVillagerFisherman(trader);
+                    JolCraftSoundHelper.playVillagerYes(trader);
+                    for (MerchantOffer merchantoffer : trader.getOffers()) {
+                        merchantoffer.resetUses();
+                    }
+                    if (!player.isCreative()) stack.shrink(1);
+                    player.getCooldowns().addCooldown(stack, 60);
+                }
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+                return;
+            }
+
+            // Reroll Crate
+            if (stack.is(JolCraftItems.REROLL_CRATE.get())) {
+
+                //Prevent clientside crash
+                if (player.level().isClientSide) {
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    event.setCanceled(true);
+                    return;
+                }
+
+                //Needs to actually have offers
+                if (trader.getOffers().isEmpty()) {
+                    player.displayClientMessage(
+                            Component.translatable("tooltip.jolcraft.crate.no_offers_villager").withStyle(ChatFormatting.RED),
+                            true
+                    );
+                    JolCraftSoundHelper.playVillagerNo(trader);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    event.setCanceled(true);
+                    return;
+                }
+                trader.getOffers().clear();
+
+                VillagerTrades.ItemListing[] pool1 = VillagerTrades.WANDERING_TRADER_TRADES.get(1);
+                if (pool1 != null) {
+                    List<VillagerTrades.ItemListing> genericTrades = new ArrayList<>(Arrays.asList(pool1));
+                    int toAdd = Math.min(5, genericTrades.size());
+                    for (int i = 0; i < toAdd && !genericTrades.isEmpty(); i++) {
+                        VillagerTrades.ItemListing picked = genericTrades.remove(trader.getRandom().nextInt(genericTrades.size()));
+                        MerchantOffer offer = picked.getOffer(trader, trader.getRandom());
+                        if (offer != null) {
+                            trader.getOffers().add(offer);
+                        }
+                    }
+                }
+
+                VillagerTrades.ItemListing[] pool2 = VillagerTrades.WANDERING_TRADER_TRADES.get(2);
+                if (pool2 != null && pool2.length > 0) {
+                    int rareIndex = trader.getRandom().nextInt(pool2.length);
+                    VillagerTrades.ItemListing rareListing = pool2[rareIndex];
+                    MerchantOffer rareOffer = rareListing.getOffer(trader, trader.getRandom());
+                    if (rareOffer != null) {
+                        trader.getOffers().add(rareOffer);
+                    }
+                }
+
+                JolCraftSoundHelper.playVillagerFisherman(trader);
+                JolCraftSoundHelper.playVillagerYes(trader);
+                player.displayClientMessage(
+                        Component.translatable("tooltip.jolcraft.reroll_crate.success").withStyle(ChatFormatting.GREEN),
+                        true
+                );
+                if (!player.isCreative()) stack.shrink(1);
+                player.getCooldowns().addCooldown(stack, 60);
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+            }
         }
 
     }

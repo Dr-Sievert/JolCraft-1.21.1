@@ -35,9 +35,9 @@ import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.sievert.jolcraft.util.component.CoinPouchAmountProperty;
+import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
 import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
-import net.sievert.jolcraft.util.component.LoreLineIdProperty;
+import net.sievert.jolcraft.data.custom.component.LoreLineIdProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

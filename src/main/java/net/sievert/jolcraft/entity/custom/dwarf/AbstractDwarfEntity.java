@@ -1518,7 +1518,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                 this.offers = new DwarfMerchantOffers();
                 this.updateTrades();
             }
-
             return this.offers;
         }
     }

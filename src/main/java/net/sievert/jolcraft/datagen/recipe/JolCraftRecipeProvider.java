@@ -561,7 +561,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
 
         modShaped(RecipeCategory.MISC, JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
                 .pattern(" B ")
-                .pattern("BBB")
+                .pattern("B B")
                 .pattern(" B ")
                 .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
                 .unlockedBy("has_deepslate_plate", has(JolCraftItems.DEEPSLATE_PLATE.get())).save(output);

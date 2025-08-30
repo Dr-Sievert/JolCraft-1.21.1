@@ -45,7 +45,7 @@ public class JolCraftGameEvents {
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
             trades.get(5).add((pTrader, pRandom) -> {
-                int baseCost = 32 + pRandom.nextInt(33); // Random between 32 and 64
+                int baseCost = 32 + pRandom.nextInt(33);
                 return new MerchantOffer(
                         new ItemCost(Items.EMERALD, baseCost),
                         new ItemStack(JolCraftItems.DWARVEN_LEXICON.get(), 1),

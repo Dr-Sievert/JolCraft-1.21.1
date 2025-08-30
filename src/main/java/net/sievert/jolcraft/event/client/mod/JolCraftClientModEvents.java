@@ -33,8 +33,8 @@ import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantScreen;
 import net.sievert.jolcraft.gui.custom.lapidary_bench.LapidaryBenchScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.LockScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.StrongboxScreen;
-import net.sievert.jolcraft.util.component.CoinPouchAmountProperty;
-import net.sievert.jolcraft.util.component.LoreLineIdProperty;
+import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
+import net.sievert.jolcraft.data.custom.component.LoreLineIdProperty;
 import net.sievert.jolcraft.client.item.compass.DeepslateCompassAngle;
 
 

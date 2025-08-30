@@ -10,6 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundTomeUnlocksPacket;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class TomeUnlockHelper {
     public static boolean hasUnlock(Player player, String unlockId) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        TomeUnlock unlock = JolCraft.PROXY.getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
+        TomeUnlock unlock = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
         return unlock != null && unlock.hasUnlock(unlockId);
     }
 
@@ -34,7 +35,7 @@ public class TomeUnlockHelper {
      */
     public static boolean hasUnlockBypassCreative(Player player, String unlockId) {
         if (player == null) return false;
-        TomeUnlock unlock = JolCraft.PROXY.getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
+        TomeUnlock unlock = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
         return unlock != null && unlock.hasUnlock(unlockId);
     }
 
@@ -57,7 +58,7 @@ public class TomeUnlockHelper {
      */
     public static Set<String> getAllUnlocks(Player player) {
         if (player == null) return Set.of();
-        TomeUnlock unlock = JolCraft.PROXY.getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
+        TomeUnlock unlock = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.TOME_UNLOCK.get(), player);
         return unlock != null ? unlock.getUnlocks() : Set.of();
     }
 

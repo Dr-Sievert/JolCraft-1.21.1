@@ -36,14 +36,10 @@ import com.mojang.logging.LogUtils;
 
 @Mod(JolCraft.MOD_ID)
 public class JolCraft {
-    public static final String MOD_ID = "jolcraft";
-    public static final Logger LOGGER = LogUtils.getLogger();
 
-    // The unified server/client proxy for all context-branching logic
-    public static final JolCraftProxy PROXY =
-            FMLEnvironment.dist.isClient()
-                    ? new JolCraftClientProxy()
-                    : new JolCraftServerProxy();
+    public static final String MOD_ID = "jolcraft";
+
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public JolCraft(IEventBus modEventBus, ModContainer modContainer) {
 

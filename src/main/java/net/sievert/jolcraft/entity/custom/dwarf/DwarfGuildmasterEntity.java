@@ -41,6 +41,7 @@ import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.util.attachment.DwarvenReputationHelper;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
@@ -153,11 +154,13 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         int desiredLevel = Math.min(tier + 1, 5);
         int currentLevel = this.getVillagerData().getLevel();
 
-        if (currentLevel < desiredLevel) {
-            this.setVillagerData(this.getVillagerData().setLevel(desiredLevel));
-            this.getOffers().clear();
-            this.lastUnlockedLevel = 0;
-            this.updateTrades();
+        if (currentLevel < desiredLevel && !client) {
+            if (this.getOffers().isEmpty()) {
+                this.updateTrades();
+            }
+            for (int i = currentLevel; i < desiredLevel; i++) {
+                this.increaseMerchantCareer();
+            }
         }
 
         if (!itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS)) {
@@ -322,7 +325,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
                         //Journeyman
                         3,
                         new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ALCHEMIST.get(), 1, 1, 0, 0.05F),
+                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ARTISAN.get(), 1, 1, 0, 0.05F),
                                 new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_EXPLORER.get(), 1, 1, 0, 0.05F),
                                 new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_MINER.get(), 1, 1, 0, 0.05F)
                         },
@@ -331,7 +334,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
                         4,
                         new DwarfTrades.ItemListing[]{
                                 new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ARCANIST.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ARTISAN.get(), 1, 1, 0, 0.05F),
+                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ALCHEMIST.get(), 1, 1, 0, 0.05F),
                                 new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_PRIEST.get(), 1, 1, 0, 0.05F)
                         },
 
@@ -353,11 +356,11 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         if (instanceTrades != null) {
             DwarfTrades.ItemListing[] listings = instanceTrades.get(level);
             if (listings != null) {
-                // Ensure exact order: add them in the original array order
-                for (DwarfTrades.ItemListing trade : listings) {
-                    DwarfMerchantOffer offer = trade.getOffer(this, this.random);
+                DwarfMerchantOffers offers = this.getOffers();
+                for (DwarfTrades.ItemListing listing : listings) {
+                    DwarfMerchantOffer offer = listing.getOffer(this, this.random);
                     if (offer != null) {
-                        this.getOffers().add(offer);
+                        offers.add(offer);
                     }
                 }
             }
