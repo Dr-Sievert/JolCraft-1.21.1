@@ -96,7 +96,6 @@ public class ReputationTabletItem extends Item {
             String ownerName = stack.getOrDefault(JolCraftDataComponents.REP_OWNER.get(), "Unknown");
             int statictier = stack.getOrDefault(JolCraftDataComponents.REP_TIER.get(), 0);
             int staticendorsements = stack.getOrDefault(JolCraftDataComponents.REP_ENDORSEMENTS.get(), 0);
-            int staticneeded = statictier < ENDORSEMENT_THRESHOLDS.length ? ENDORSEMENT_THRESHOLDS[statictier] : -1;
                 tooltip.add(Component.translatable("tooltip.jolcraft.rep_owner", ownerName)
                         .withStyle(ChatFormatting.GRAY));
                 tooltip.add(Component.translatable("tooltip.jolcraft.reputation_tier")

@@ -65,7 +65,7 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
     // ===== Tooltip Providers =====
 
     @Override
-    protected List<Component> getNoShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
+    protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.unlocked").withStyle(ChatFormatting.GRAY));
     }
 

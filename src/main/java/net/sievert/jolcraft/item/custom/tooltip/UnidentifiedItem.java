@@ -13,6 +13,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.util.item.tooltip.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -25,7 +26,7 @@ public abstract class UnidentifiedItem extends Item {
         super(properties);
     }
 
-    protected boolean hasShift() {
+    protected boolean hasAlt() {
         return false;
     }
 
@@ -77,14 +78,14 @@ public abstract class UnidentifiedItem extends Item {
     protected abstract ItemStack getRandomIdentifiedItem(ServerPlayer player, ItemStack original);
 
     /**
-     * Subclass provides all lines shown when holding Shift.
+     * Subclass provides all lines shown when holding Alt.
      */
-    protected List<Component> getShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
+    protected List<Component> getAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         return null;
     }
 
-    /** Subclass provides lines shown when NOT holding Shift (before the "Hold Shift" line). */
-    protected abstract List<Component> getNoShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
+    /** Subclass provides lines shown when NOT holding Alt (before the "Hold Alt" line). */
+    protected abstract List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
 
     /** Must define in subclasses: message on successful identification. */
     protected abstract Component getIdentifySuccessMessage(ServerPlayer player, ItemStack identified);
@@ -104,13 +105,13 @@ public abstract class UnidentifiedItem extends Item {
         if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
             Player player = net.minecraft.client.Minecraft.getInstance().player;
             if (player != null) {
-                if (net.minecraft.client.gui.screens.Screen.hasShiftDown() && hasShift()) {
-                    tooltip.addAll(getShiftTooltip(stack, player, tooltip, flag));
+                if (net.minecraft.client.gui.screens.Screen.hasAltDown() && hasAlt()) {
+                    tooltip.addAll(getAltTooltip(stack, player, tooltip, flag));
                 } else {
-                    tooltip.addAll(getNoShiftTooltip(stack, player, tooltip, flag));
-                    if(hasShift()){
-                        Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-                        tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+                    tooltip.addAll(getNoAltTooltip(stack, player, tooltip, flag));
+                    if(hasAlt()){
+                        Component altKey = TooltipHelper.ALT_KEY;
+                        tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                                 .withStyle(ChatFormatting.DARK_GRAY));
                     }
 

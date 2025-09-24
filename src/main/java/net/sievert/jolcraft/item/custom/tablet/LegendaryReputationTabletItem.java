@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom.tablet;
 
+import com.mojang.math.MethodsReturnNonnullByDefault;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -7,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class LegendaryReputationTabletItem extends ReputationTabletItem {
     public LegendaryReputationTabletItem(Properties properties) {

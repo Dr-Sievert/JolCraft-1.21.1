@@ -10,6 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.util.attachment.AncientEffectHelper;
+import net.sievert.jolcraft.util.item.tooltip.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -21,7 +22,7 @@ public abstract class AncientItemBase extends Item {
         super(properties);
     }
 
-    protected boolean hasShift() {
+    protected boolean hasAlt() {
         return false;
     }
 
@@ -31,7 +32,7 @@ public abstract class AncientItemBase extends Item {
         if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
             Player player = net.minecraft.client.Minecraft.getInstance().player;
             if (player != null) {
-                if (net.minecraft.client.gui.screens.Screen.hasShiftDown() && hasShift()) {
+                if (net.minecraft.client.gui.screens.Screen.hasAltDown() && hasAlt()) {
                     if (AncientEffectHelper.hasAncientMemoryClient()) {
                         if (DwarvenLanguageHelper.knowsDwarvishClient()) {
                             tooltip.addAll(getFullyReadableTooltip(stack, player, tooltip, flag));
@@ -45,7 +46,7 @@ public abstract class AncientItemBase extends Item {
                                 getUnreadableTooltipSGA(stack, player, tooltip, flag)));
                     }
 
-                    // Always add "ancient shift help" at the end of Shift-hover
+                    // Always add "ancient alt help" at the end of Alt-hover
                     if (!AncientEffectHelper.hasAncientMemoryClient()) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.need_ancient")
                                 .withStyle(ChatFormatting.RED));
@@ -59,7 +60,7 @@ public abstract class AncientItemBase extends Item {
                 } else {
                     if (AncientEffectHelper.hasAncientMemoryClient()) {
                         if (DwarvenLanguageHelper.knowsDwarvishClient()) {
-                            tooltip.addAll(getNoShiftTooltip(stack, player, tooltip, flag));
+                            tooltip.addAll(getNoAltTooltip(stack, player, tooltip, flag));
                         } else {
                             tooltip.addAll(getLockedTooltip(stack, player, tooltip, flag));
                         }
@@ -69,9 +70,9 @@ public abstract class AncientItemBase extends Item {
                         tooltip.addAll(AncientEffectHelper.getAncientText(player,
                                 getUnreadableTooltipSGA(stack, player, tooltip, flag)));
                     }
-                    if(hasShift()){
-                        Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-                        tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+                    if(hasAlt()){
+                        Component altKey = TooltipHelper.ALT_KEY;
+                        tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                                 .withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
@@ -87,8 +88,8 @@ public abstract class AncientItemBase extends Item {
         return null;
     }
 
-    /** Subclass provides lines shown when NOT holding Shift (before the "Hold Shift" line). */
-    protected abstract List<Component> getNoShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
+    /** Subclass provides lines shown when NOT holding Alt (before the "Hold Alt" line). */
+    protected abstract List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
 
     /** Subclass provides the "locked" tooltip for this item (has memory, but not language). */
     protected abstract List<Component> getLockedTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);

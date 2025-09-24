@@ -25,7 +25,7 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
     }
 
     @Override
-    protected boolean hasShift() {
+    protected boolean hasAlt() {
         return true;
     }
 
@@ -81,7 +81,7 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
     }
 
     @Override
-    protected List<Component> getNoShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
+    protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unidentified").withStyle(ChatFormatting.GRAY));
     }
 

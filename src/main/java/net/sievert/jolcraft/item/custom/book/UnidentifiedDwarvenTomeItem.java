@@ -28,7 +28,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     }
 
     @Override
-    protected boolean hasShift() {
+    protected boolean hasAlt() {
         return true;
     }
 
@@ -57,7 +57,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     }
 
     @Override
-    protected List<Component> getShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
+    protected List<Component> getAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
         return List.of(
                 knowsLanguage
@@ -67,7 +67,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     }
 
     @Override
-    protected List<Component> getNoShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
+    protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
         return List.of(
                 knowsLanguage

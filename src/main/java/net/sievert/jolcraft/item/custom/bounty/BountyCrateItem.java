@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.bounty;
+package net.sievert.jolcraft.item.custom.bounty;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item;
+package net.sievert.jolcraft.item.creative;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -12,6 +12,7 @@ import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.client.item.compass.DialItemColor;
 import net.sievert.jolcraft.client.item.compass.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
 
 import java.util.function.Supplier;

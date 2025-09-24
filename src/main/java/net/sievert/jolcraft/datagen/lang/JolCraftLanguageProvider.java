@@ -223,7 +223,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
 
         //Tooltips
 
-        add("tooltip.jolcraft.shift", "Hold %s for more info");
+        add("tooltip.jolcraft.hold_key", "Hold %s for more info");
         add("tooltip.jolcraft.dev_key", "Used for testing/creative mode.");
         add("tooltip.jolcraft.quill_empty", "Can be filled with ink sacs or by right-clicking a squid.");
         add("tooltip.jolcraft.quill", "Used for writing on paper. Can be filled by right-clicking a squid.");

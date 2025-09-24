@@ -14,7 +14,7 @@ public class ServerTickHandler {
     private static void onServerTick(ServerTickEvent.Post event) {
         for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
             if (player.containerMenu instanceof LockMenu lockMenu) {
-                lockMenu.tick(); // Server-side tick!
+                lockMenu.tick();
             }
         }
     }

@@ -17,7 +17,7 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
     }
 
     @Override
-    protected boolean hasShift() {
+    protected boolean hasAlt() {
         return true;
     }
 
@@ -51,7 +51,7 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
     }
 
     @Override
-    protected List<Component> getNoShiftTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
+    protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         var dataComponentType = JolCraftDataComponents.LORE_LINE_ID.get();
         String loreKey = stack.get(dataComponentType);
         var entry = (loreKey != null && !loreKey.isEmpty()) ? DwarvenLoreHelper.get(loreKey, true) : null;

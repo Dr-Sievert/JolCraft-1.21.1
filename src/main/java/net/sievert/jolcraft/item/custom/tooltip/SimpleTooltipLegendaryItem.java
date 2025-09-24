@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.sievert.jolcraft.util.item.tooltip.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -20,14 +21,11 @@ public class SimpleTooltipLegendaryItem extends LegendaryItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Screen.hasShiftDown()) {
-            tooltip.add(Component.translatable("tooltip.jolcraft." + tooltipKey)
-                    .withStyle(ChatFormatting.GRAY));
-        } else {
-            Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-            tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
-                    .withStyle(ChatFormatting.DARK_GRAY));
-        }
+        TooltipHelper.addAltTooltip(
+                tooltip,
+                Component.translatable("tooltip.jolcraft." + tooltipKey).withStyle(ChatFormatting.GRAY),
+                List.of()
+        );
         super.appendHoverText(stack, context, tooltip, flag);
     }
 }
