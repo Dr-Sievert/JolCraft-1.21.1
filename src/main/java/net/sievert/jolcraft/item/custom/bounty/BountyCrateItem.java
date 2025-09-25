@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom.bounty;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
@@ -218,7 +219,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
 
-        if (Screen.hasShiftDown()) {
+        if (Screen.hasAltDown()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate")
                     .withStyle(ChatFormatting.GRAY));
 
@@ -276,8 +277,9 @@ public class BountyCrateItem extends Item implements IItemExtension {
                         .withStyle(ChatFormatting.GRAY));
             }
 
-            Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-            tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+            Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
+                    .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
+            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 

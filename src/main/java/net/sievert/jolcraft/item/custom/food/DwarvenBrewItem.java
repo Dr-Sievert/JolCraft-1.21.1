@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom.food;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
@@ -52,7 +53,7 @@ public class DwarvenBrewItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
 
-        if (Screen.hasShiftDown()) {
+        if (Screen.hasAltDown()) {
             List<HopsType> hops = getHopsFromItem(stack);
             if (!hops.isEmpty()) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.brew.hops_added").withStyle(ChatFormatting.GRAY));
@@ -63,8 +64,9 @@ public class DwarvenBrewItem extends Item {
                 tooltip.add(Component.translatable("tooltip.jolcraft.brew.no_hops_added").withStyle(ChatFormatting.GRAY));
             }
         } else {
-            Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-            tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+            Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
+                    .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
+            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
     }

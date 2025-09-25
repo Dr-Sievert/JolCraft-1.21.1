@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom.contract;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,12 +26,13 @@ public class SignedContractItem extends Item {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (DwarvenLanguageHelper.knowsDwarvishClient()) {
-            if (Screen.hasShiftDown()) {
+            if (Screen.hasAltDown()) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.signed_contract")
                         .withStyle(ChatFormatting.GRAY));
             }else{
-                Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-                tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+                Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
+                        .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
+                tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                         .withStyle(ChatFormatting.DARK_GRAY));
             }
         } else {

@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom.gem;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -26,7 +27,7 @@ public class ChiselItem extends ToolItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Screen.hasShiftDown()) {
+        if (Screen.hasAltDown()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.chisel")
                     .withStyle(ChatFormatting.GRAY));
 
@@ -36,8 +37,9 @@ public class ChiselItem extends ToolItem {
             }
 
         } else {
-            Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-            tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+            Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
+                    .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
+            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 

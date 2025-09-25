@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom.gem;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -72,7 +73,7 @@ public class CutGemItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Screen.hasShiftDown()) {
+        if (Screen.hasAltDown()) {
             // Show only one, simple, shift-aware detailed line
             tooltip.add(Component.translatable("tooltip.jolcraft.cut_gem")
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
@@ -82,8 +83,9 @@ public class CutGemItem extends Item {
             List<Component> lines = GEM_TOOLTIPS.get(gemKey);
             if (lines != null) tooltip.addAll(lines);
             // Show shift info prompt under the short tooltip
-            Component shiftKey = Component.literal("Shift").withStyle(net.minecraft.ChatFormatting.BLUE);
-            tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+            Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
+                    .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
+            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                     .withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
         }
 
