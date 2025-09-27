@@ -236,7 +236,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.trim_material", "Can be used to trim armor.");
         add("tooltip.jolcraft.vanilla_crop", "Grows like vanilla crops.");
         add("tooltip.jolcraft.hops_seed", "Needs two blocks height and a light level of 8 or less to grow.");
-        add("tooltip.jolcraft.deepslate_bulbs", "Needs a light level of 8 or less to grow. Can only be planted on Deepslate, Tuff or Verdant Soil.");
+        add("tooltip.jolcraft.deepslate_bulbs", "Needs a light level of 8 or less and a y-level of 0 or less to grow. Can only be planted on Deepslate, Tuff or Verdant Soil.");
         add("tooltip.jolcraft.malt", "Can be used on a water cauldron as a first step in brewing.");
         add("tooltip.jolcraft.hops", "Can be used on a cauldron with malt to add effects to a brew.");
         add("tooltip.jolcraft.yeast", "Can be used on a fermenting cauldron with malt/hops to start the brewing process. Created by using sugar on a water cauldron and extracted using glass bottles.");
@@ -547,16 +547,19 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("item.minecraft.potion.effect." + baseName, displayName + " Potion");
         add("item.minecraft.splash_potion.effect." + baseName, displayName + " Splash Potion");
         add("item.minecraft.lingering_potion.effect." + baseName, displayName + " Lingering Potion");
+        add("item.minecraft.tipped_arrow.effect." + baseName, "Arrow of " + displayName);
 
         if (hasLong) {
             add("item.minecraft.potion.effect.long_" + baseName, displayName + " Potion");
             add("item.minecraft.splash_potion.effect.long_" + baseName, displayName + " Splash Potion");
             add("item.minecraft.lingering_potion.effect.long_" + baseName, displayName + " Lingering Potion");
+            add("item.minecraft.tipped_arrow.effect.long_" + baseName, "Arrow of " + displayName);
         }
         if (hasStrong) {
             add("item.minecraft.potion.effect.strong_" + baseName, displayName + " Potion");
             add("item.minecraft.splash_potion.effect.strong_" + baseName, displayName + " Splash Potion");
             add("item.minecraft.lingering_potion.effect.strong_" + baseName, displayName + " Lingering Potion");
+            add("item.minecraft.tipped_arrow.effect.strong_" + baseName, "Arrow of " + displayName);
         }
     }
 

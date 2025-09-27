@@ -318,8 +318,6 @@ public class JolCraftItems {
             ProfessionContractItem::new, new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
-
-
     public static final DeferredItem<Item> QUILL_EMPTY =
             ITEMS.registerItem("quill_empty",
                     props -> new QuillItem(props.stacksTo(16), "quill_empty"));
