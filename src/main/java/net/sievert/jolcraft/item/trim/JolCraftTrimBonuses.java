@@ -24,9 +24,6 @@ public class JolCraftTrimBonuses {
 
     static {
 
-        //Possible operations are ADD_VALUE (simple add +1) , ADD_MULTIPLIED_BASE (add multiplied with base for example 0.1 of base hp 20 is +2),
-        // ADD_MULTIPLIED_TOTAL same as previous but it multiplies not with base but with current total (Multiplicatively)
-
         TRIM_BONUSES.put("aegiscore", List.of(
                 bonus(Attributes.ARMOR_TOUGHNESS, 0.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlot.HEAD),
                 bonus(Attributes.ARMOR_TOUGHNESS, 0.5, AttributeModifier.Operation.ADD_VALUE, EquipmentSlot.CHEST),
@@ -133,7 +130,6 @@ public class JolCraftTrimBonuses {
         ));
     }
 
-
     public static void applyBonus(ItemStack stack, ArmorTrim trim) {
         String material = trim.material().unwrapKey().map(k -> k.location().getPath()).orElse("");
         List<TrimAttributeBonus> bonuses = TRIM_BONUSES.get(material);
@@ -145,16 +141,13 @@ public class JolCraftTrimBonuses {
         ItemAttributeModifiers oldModifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
 
-        // Copy all existing modifiers EXCEPT any with a jolcraft prefix (old trim bonuses)
         for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
             ResourceLocation id = entry.modifier().id();
-            // Remove only JolCraft trim-related ones (prefix, or more robust, check contains 'jolcraft')
             if (!id.getNamespace().equals("jolcraft")) {
                 builder.add(entry.attribute(), entry.modifier(), entry.slot());
             }
         }
 
-        // Only apply bonuses matching this armor's slot
         for (TrimAttributeBonus bonus : bonuses) {
             if (bonus.slot == thisSlot) {
                 builder.add(
@@ -172,8 +165,6 @@ public class JolCraftTrimBonuses {
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, builder.build());
     }
 
-
-
     public static EquipmentSlot getSlotForArmor(ItemStack stack) {
         Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
         if (equippable != null) {
@@ -181,9 +172,6 @@ public class JolCraftTrimBonuses {
         }
         return null;
     }
-
-
-
 
     private static TrimAttributeBonus bonus(Holder<Attribute> attr, double amount, AttributeModifier.Operation op, EquipmentSlot slot) {
         return new TrimAttributeBonus(attr, amount, op, slot);

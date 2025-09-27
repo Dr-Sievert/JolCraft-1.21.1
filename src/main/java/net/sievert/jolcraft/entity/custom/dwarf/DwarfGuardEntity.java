@@ -38,9 +38,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.sound.JolCraftSoundHelper;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -208,7 +208,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         if (this.updateMerchantTimer > 0) {
             --this.updateMerchantTimer;
             if (this.updateMerchantTimer == 0) {
-                // Level-up finished: play effects (optional)
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 0));
                 JolCraftSoundHelper.playDwarfYes(this);
             }
@@ -258,7 +257,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        // Suppress if blocking
         if (this.isBlocking()) {
             return null;
         }

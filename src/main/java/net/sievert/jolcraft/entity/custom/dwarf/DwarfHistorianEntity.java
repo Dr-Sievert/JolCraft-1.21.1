@@ -23,9 +23,9 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -48,7 +48,6 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
                 .add(Attributes.FOLLOW_RANGE, 24D)
                 .add(Attributes.TEMPT_RANGE, 16D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0D);
-
     }
 
     //Behavior

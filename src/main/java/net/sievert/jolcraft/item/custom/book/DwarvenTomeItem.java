@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.item.custom.book;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
@@ -7,9 +8,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -22,6 +25,7 @@ public class DwarvenTomeItem extends Item {
         super(properties);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
@@ -30,14 +34,13 @@ public class DwarvenTomeItem extends Item {
             var dataComponentType = JolCraftDataComponents.LORE_LINE_ID.get();
             String loreKey = stack.get(dataComponentType);
 
-            if (Screen.hasShiftDown()) {
+            if (Screen.hasAltDown()) {
                 if (knowsLanguage) {
                     tooltip.add(Component.translatable("tooltip.jolcraft.dwarven_tome.shift").withStyle(ChatFormatting.GRAY));
                 } else {
                     tooltip.add(Component.translatable("tooltip.jolcraft.dwarven_tome.locked").withStyle(ChatFormatting.GRAY));
                 }
             } else {
-                // Basic summary only
                 if (knowsLanguage) {
                     var entry = (loreKey != null && !loreKey.isEmpty()) ? DwarvenLoreHelper.get(loreKey, false) : null;
                     if (entry != null) {
@@ -48,9 +51,9 @@ public class DwarvenTomeItem extends Item {
                 } else {
                     tooltip.add(Component.translatable("tooltip.jolcraft.dwarven_tome.locked").withStyle(ChatFormatting.GRAY));
                 }
-                // Add the shift help at the end
-                Component shiftKey = Component.literal("Shift").withStyle(ChatFormatting.BLUE);
-                tooltip.add(Component.translatable("tooltip.jolcraft.shift", shiftKey)
+                Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
+                        .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
+                tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                         .withStyle(ChatFormatting.DARK_GRAY));
             }
         }

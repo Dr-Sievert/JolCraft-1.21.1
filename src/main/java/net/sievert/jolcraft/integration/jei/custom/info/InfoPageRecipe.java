@@ -17,9 +17,8 @@ public class InfoPageRecipe {
     private final List<ItemStack> groupStacks;
     private final Component content;
     private final Consumer<ItemStack> stackCustomizer;
-    private final String type; // e.g., "compass" for compass group, null or "" for normal
+    private final String type;
 
-    // Single item entry (no group)
     public InfoPageRecipe(ItemStack focusStack, Component content) {
         this(focusStack, content, null, null, null, null);
     }
@@ -28,17 +27,14 @@ public class InfoPageRecipe {
         this(focusStack, content, stackCustomizer, null, null, null);
     }
 
-    // Group entry (for compass, etc.)
     public InfoPageRecipe(List<ItemStack> groupStacks, Component content, String type) {
         this(null, content, null, groupStacks, type, null);
     }
 
-    // Tag entry
     public InfoPageRecipe(TagKey<Item> focusTag, Component content) {
         this(null, content, null, null, null, focusTag);
     }
 
-    // Core all-args constructor (used internally)
     private InfoPageRecipe(ItemStack focusStack, Component content, Consumer<ItemStack> stackCustomizer,
                            List<ItemStack> groupStacks, String type, TagKey<Item> focusTag) {
         this.focusStack = focusStack;

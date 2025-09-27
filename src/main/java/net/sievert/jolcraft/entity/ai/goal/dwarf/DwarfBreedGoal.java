@@ -9,7 +9,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 
 public class DwarfBreedGoal extends Goal {
-    private static final TargetingConditions PARTNER_TARGETING = TargetingConditions.forNonCombat().range((double)8.0F).ignoreLineOfSight();
+    private static final TargetingConditions PARTNER_TARGETING = TargetingConditions.forNonCombat().range(8.0F).ignoreLineOfSight();
     protected final AbstractDwarfEntity dwarf;
     private final Class<? extends AbstractDwarfEntity> partnerClass;
     protected final ServerLevel level;

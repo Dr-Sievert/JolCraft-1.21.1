@@ -53,11 +53,11 @@ import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfMerchantOffersPacket;
 import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchant;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
-import net.sievert.jolcraft.sound.JolCraftSoundHelper;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.DwarfBlockGoal;
@@ -70,8 +70,8 @@ import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfEndorseAnimationP
 import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.util.attachment.DwarvenReputationHelper;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
 
 import org.slf4j.Logger;
 
@@ -148,7 +148,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     private boolean isAnimationActive(DwarfAnimationType type) {
         return switch (type) {
-            case ATTACK, ATTACK_AXE -> this.isAttacking(); // Both attack types share the same flag for now
+            case ATTACK, ATTACK_AXE -> this.isAttacking();
             case BLOCK -> this.isBlocking();
             case DRINK -> this.isDrinking();
             case INSPECT -> this.isInspecting();
@@ -156,7 +156,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     protected void setupAnimationStates() {
-        // Handle idle as before (the only "ticking" animation)
         if (this.idleAnimationTimeout <= 0) {
             this.idleAnimationTimeout = 90;
             this.idleAnimationState.start(this.tickCount);
@@ -164,7 +163,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             --this.idleAnimationTimeout;
         }
 
-        // Handle all one-shot animations in one loop
         for (DwarfAnimationType type : DwarfAnimationType.values()) {
             boolean active = isAnimationActive(type);
             AnimationState state = animationStates.get(type);
@@ -187,10 +185,8 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         if(this.level().isClientSide()) {
             this.setupAnimationStates();
 
-            //Blocking particles
             if (hasStartedFlags.get(DwarfAnimationType.BLOCK)) {
                 if (blockParticlePos == null) {
-                    // Capture particle spawn location at start
                     Vec3 look = this.getLookAngle().normalize();
                     double forwardOffset = 1.0D;
                     double leftOffset = -0.4D;
@@ -201,19 +197,19 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                     double pz = this.getZ() + look.z * forwardOffset + left.z * leftOffset;
 
                     blockParticlePos = new Vec3(px, py, pz);
-                    blockParticleTicks = 10; // spawn for 10 ticks
+                    blockParticleTicks = 10;
                 }
 
                 if (blockParticleTicks-- > 0) {
-                    for (int i = 0; i < 5; i++) { // spawn multiple per tick for visual density
-                        double scatterRange = 0.15D; // how far they can spread from center
+                    for (int i = 0; i < 5; i++) {
+                        double scatterRange = 0.15D;
 
                         double offsetX = blockParticlePos.x + (this.random.nextDouble() - 0.5) * 2.0 * scatterRange;
                         double offsetY = blockParticlePos.y + (this.random.nextDouble() - 0.5) * 2.0 * scatterRange;
                         double offsetZ = blockParticlePos.z + (this.random.nextDouble() - 0.5) * 2.0 * scatterRange;
 
                         double velocityX = (this.random.nextDouble() - 0.5) * 0.1;
-                        double velocityY = (this.random.nextDouble()) * 0.1; // small upward boost
+                        double velocityY = (this.random.nextDouble()) * 0.1;
                         double velocityZ = (this.random.nextDouble() - 0.5) * 0.1;
 
                         DustParticleOptions dust = new DustParticleOptions(-2233622, 0.5F);
@@ -221,7 +217,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                     }
                 }
             } else {
-                // Reset when animation ends
                 blockParticlePos = null;
                 blockParticleTicks = 0;
             }
@@ -236,7 +231,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     public boolean canEndorse(Player player) {
-        // Default: only allow if profession level is 5 (master)
         return this.getVillagerData().getLevel() >= 1;
     }
 
@@ -261,7 +255,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         this.currentActionPlayer = player;
         this.currentActionTicks = ticks;
         this.currentActionId = actionId;
-        this.usedItem = usedItem.copy(); // always defensive copy!
+        this.usedItem = usedItem.copy();
         this.previousMainHandItem = previousMainHandItem.copy();
         this.finishActionCallback = onFinish;
         this.performingAction = true;
@@ -371,7 +365,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     protected int getRequiredTier() {
-        return 0; // Default to tier 0, override in subclasses
+        return 0;
     }
 
     public InteractionResult reputationCheck(Player player, int requiredTier) {
@@ -748,7 +742,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         }
         if (this.shouldRestock()) {
             this.restock();
-            lastRestockGameTime = this.level().getGameTime(); // Reset timer
+            lastRestockGameTime = this.level().getGameTime();
         }
         super.customServerAiStep(p_376777_);
     }
@@ -787,10 +781,8 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             }
         }
 
-        // Paid mode ticking
         if (this.paidTicks > 0) {
             this.paidTicks--;
-            // Every 30 ticks, spawn a little gold sparkle/coin effect
             if (this.paidTicks % 30 == 0) {
                 this.spawnColoredParticles(1.0F, 0.84F, 0.0F, 1.0F, 3, 0.4D);
             }
@@ -852,7 +844,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         // Universal animation reset: runs if NO action is running
         if (currentActionId == null) {
             this.setInspecting(false);
-            // Add other animation flags to reset here as you add more actions!
         }
 
     }
@@ -887,6 +878,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             Map.entry(JolCraftItems.CONTRACT_MINER.get(), JolCraftEntities.DWARF_MINER.get())
 
             /*
+
             // Tier 4
             Map.entry(JolCraftItems.CONTRACT_ARCANIST.get(), JolCraftEntities.DWARF_ARCANIST.get()),
             Map.entry(JolCraftItems.CONTRACT_PRIEST.get(), JolCraftEntities.DWARF_PRIEST.get()),
@@ -897,7 +889,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             Map.entry(JolCraftItems.CONTRACT_SMELTER.get(), JolCraftEntities.DWARF_SMELTER.get())
 
             */
-
     );
 
     public void transformToProfession() {
@@ -908,23 +899,19 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
 
             if (professionType != null) {
-                // This is the best usage for NeoForge 1.21.x
                 Entity entity = professionType.create(
                         serverLevel,
-                        null, // Consumer<T>
+                        null,
                         this.blockPosition(),
                         EntitySpawnReason.CONVERSION,
-                        false, // shouldOffsetY
-                        false  // shouldOffsetYMore
+                        false,
+                        false
                 );
 
                 if (entity instanceof AbstractDwarfEntity newDwarf) {
                     newDwarf.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-
-                    //Preserve data
                     newDwarf.setBeard(this.getBeard());
                     newDwarf.setEye(this.getEye());
-
                     serverLevel.addFreshEntity(newDwarf);
                     this.discard();
                 }
@@ -1044,7 +1031,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             }
         }
         if (id == 19) {
-            // Gold coins or sparkle (paid)
             this.spawnColoredParticles(1.0F, 0.84F, 0.0F, 1.0F, 7, 0.5D);
         }
         else {
@@ -1146,7 +1132,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         if (this.loveCause != null) {
             compound.putUUID("LoveCause", this.loveCause);
         }
-        // 🪙 Paid status
         compound.putInt("PaidTicks", this.paidTicks);
         if (this.paidCause != null) {
             compound.putUUID("PaidCause", this.paidCause);
@@ -1176,7 +1161,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         super.readAdditionalSaveData(compound);
         this.inLove = compound.getInt("InLove");
         this.loveCause = compound.hasUUID("LoveCause") ? compound.getUUID("LoveCause") : null;
-        // 🪙 Paid status
         this.paidTicks = compound.getInt("PaidTicks");
         this.paidCause = compound.hasUUID("PaidCause") ? compound.getUUID("PaidCause") : null;
         this.entityData.set(VARIANT, compound.getInt("Variant"));
@@ -1208,7 +1192,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     protected int paidTicks;
     @Nullable
     protected UUID paidCause;
-    public static final int MAX_PAID_TICKS = 20 * 60; // 1 min
+    public static final int MAX_PAID_TICKS = 20 * 60;
 
     public boolean needsPay() {
         return this.paidTicks <= 0;
@@ -1219,7 +1203,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         if (player != null) {
             this.paidCause = player.getUUID();
         }
-        this.level().broadcastEntityEvent(this, (byte)19); // 19 = custom code for "paid"
+        this.level().broadcastEntityEvent(this, (byte)19);
     }
 
     public void resetPaid() {
@@ -1249,61 +1233,46 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         int rgb = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255);
         DustParticleOptions dust = new DustParticleOptions(rgb, scale);
 
-        Vec3 forward = this.getLookAngle().normalize(); // Get the direction the dwarf is facing
-        // Position particles above the dwarf's head and slightly back in their looking direction
-        double baseX = this.getX() + forward.x * 0.6;  // Move back by half a block (smaller scale)
-        double baseY = this.getY() + 1.8D; // Raised height (above the dwarf's head)
-        double baseZ = this.getZ() + forward.z * 0.5;  // Move back by half a block (smaller scale)
+        Vec3 forward = this.getLookAngle().normalize();
+        double baseX = this.getX() + forward.x * 0.6;
+        double baseY = this.getY() + 1.8D;
+        double baseZ = this.getZ() + forward.z * 0.5;
 
-        // Spawn particles in a scattered cloud
         for (int i = 0; i < count; i++) {
-            // Apply randomness to x, y, z positions to scatter particles in a cloud
-            double offsetX = baseX + (this.random.nextDouble() - 0.5D) * scatter; // Spread in X direction
-            double offsetY = baseY + (this.random.nextDouble() - 0.5D) * scatter; // Spread in Y direction (vertical)
-            double offsetZ = baseZ + (this.random.nextDouble() - 0.5D) * scatter; // Spread in Z direction
+            double offsetX = baseX + (this.random.nextDouble() - 0.5D) * scatter;
+            double offsetY = baseY + (this.random.nextDouble() - 0.5D) * scatter;
+            double offsetZ = baseZ + (this.random.nextDouble() - 0.5D) * scatter;
 
-            // Random velocity for particles
             double velocityX = (this.random.nextDouble() - 0.5D) * 0.1D;
             double velocityY = this.random.nextDouble() * 0.1D;
             double velocityZ = (this.random.nextDouble() - 0.5D) * 0.1D;
 
-            // Add the particle to the world
             this.level().addParticle(dust, offsetX, offsetY, offsetZ, velocityX, velocityY, velocityZ);
         }
     }
 
     //Loot
 
-    // Helper: check for quest/contract items
     private boolean isSpecialDropItem(ItemStack stack) {
         return stack.is(JolCraftItems.CONTRACT_WRITTEN.get()) || stack.is(JolCraftItems.CONTRACT_SIGNED.get()) || stack.is(JolCraftItems.BOUNTY.get()) || stack.is(JolCraftItems.BOUNTY_CRATE.get());
     }
 
-    // Helper: allow only certain gear to drop
     private boolean shouldDropEquipment(ItemStack stack) {
-        // Only drop specific
         return stack.is(Items.DIAMOND);
     }
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        // Handle MAINHAND item
         ItemStack mainHand = this.getMainHandItem();
 
         if (!mainHand.isEmpty()) {
             if (isSpecialDropItem(mainHand)) {
-                // Always drop special quest items (contract, bounty crate, etc)
                 this.spawnAtLocation(level, mainHand);
             } else if (shouldDropEquipment(mainHand)) {
-                // Drop only certain equipment (iron axe, etc)
                 this.spawnAtLocation(level, mainHand);
             }
-            // Otherwise: do not drop (e.g., remove from world)
-            // Clear mainhand slot to avoid duplicate drops
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
-
-        // Optionally: call super to handle other drops (armor, offhand, etc) as usual
         super.dropCustomDeathLoot(level, source, recentlyHit);
     }
 
@@ -1471,7 +1440,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                         new ClientboundDwarfMerchantOffersPacket(
                                 menuId.getAsInt(),
                                 offers,
-                                level,                   // Pass level argument as dwarfLevel
+                                level,
                                 this.getVillagerXp(),
                                 this.showProgressBar(),
                                 this.showLevel(),
@@ -1674,19 +1643,17 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     public double getAttackDamage() {
-        // Return different values based on held item
         if (this.getMainHandItem().is(JolCraftItems.DEEPSLATE_WARHAMMER.get())) return 16.5D;
         if (this.getMainHandItem().is(JolCraftItems.DEEPSLATE_AXE.get())) return 9.5D;
         if (this.getMainHandItem().is(JolCraftItems.DEEPSLATE_PICKAXE.get())) return 4.5D;
-        return  3.0D; // default (unarmed, or whatever else)
+        return  3.0D;
     }
 
     @Override
     public void setItemSlot(EquipmentSlot slot, ItemStack stack) {
         ItemStack oldStack = this.getItemBySlot(slot);
-        super.setItemSlot(slot, stack); // <-- set the item first!
+        super.setItemSlot(slot, stack);
         if (slot == EquipmentSlot.MAINHAND && !ItemStack.matches(oldStack, stack)) {
-            // Now update damage using the correct new item
             this.setCustomAttackDamage(this.getAttackDamage());
         }
     }
@@ -1732,9 +1699,8 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     @Override
-    public boolean stillValid(Player p_383034_) {
-        return this.getTradingPlayer() == p_383034_ && this.isAlive() && p_383034_.canInteractWithEntity(this, 4.0);
+    public boolean stillValid(Player player) {
+        return this.getTradingPlayer() == player && this.isAlive() && player.canInteractWithEntity(this, 4.0);
     }
-
 
 }

@@ -33,10 +33,7 @@ public class JolCraftCurseEvents {
         }
     }
 
-
-    // ThreadLocal flag for tracking milk bucket effect clearing
     private static final ThreadLocal<Boolean> isMilkRemoval = ThreadLocal.withInitial(() -> false);
-
 
     @SubscribeEvent
     public static void onMilkStart(LivingEntityUseItemEvent.Start event) {

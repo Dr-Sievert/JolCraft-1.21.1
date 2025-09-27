@@ -20,7 +20,6 @@ public class JolCraftRecipeBuilder implements RecipeBuilder {
     private final RecipeBuilder inner;
     private final String modId;
 
-    // Constructors for both shaped and shapeless
     public JolCraftRecipeBuilder(ShapedRecipeBuilder shaped, String modId) {
         this.inner = shaped;
         this.modId = modId;
@@ -30,8 +29,6 @@ public class JolCraftRecipeBuilder implements RecipeBuilder {
         this.inner = shapeless;
         this.modId = modId;
     }
-
-    // === DSL METHODS (only common ones) ===
 
     public JolCraftRecipeBuilder unlockedBy(String name, Criterion<?> criterion) {
         if (inner instanceof ShapedRecipeBuilder s) s.unlockedBy(name, criterion);
@@ -75,9 +72,6 @@ public class JolCraftRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-
-    // === Base interface ===
-
     @Override
     public Item getResult() {
         return inner.getResult();
@@ -98,4 +92,5 @@ public class JolCraftRecipeBuilder implements RecipeBuilder {
         ResourceKey<Recipe<?>> fixedKey = ResourceKey.create(Registries.RECIPE, fixedLoc);
         inner.save(output, fixedKey);
     }
+
 }

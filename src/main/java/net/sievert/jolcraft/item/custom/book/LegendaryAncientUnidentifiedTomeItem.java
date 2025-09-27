@@ -8,7 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTomeItem{
@@ -17,9 +17,9 @@ public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTom
     }
 
     @Override
-    protected ItemStack getRandomIdentifiedItem(ServerPlayer player, ItemStack original) {
+    protected ItemStack getRandomIdentifiedItem(@NotNull ServerPlayer player, ItemStack original) {
         RandomSource rng = player.getRandom();
-        String loreKey = DwarvenLoreHelper.getRandomLegendaryKey(rng); // Only legendary!
+        String loreKey = DwarvenLoreHelper.getRandomLegendaryKey(rng);
         if (loreKey.isEmpty()) return ItemStack.EMPTY;
 
         ItemStack tome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
@@ -29,17 +29,11 @@ public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTom
 
     @Override
     public @NotNull Component getName(ItemStack stack) {
-        // If the item has a custom name, use it, but always force gold color
         Component customName = stack.getComponents().getOrDefault(DataComponents.ITEM_NAME, null);
         if (!customName.getString().isEmpty()) {
-            // .withStyle replaces *only* the color, but preserves other formatting
             return Component.literal(customName.getString()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
         }
-        // Otherwise, use the default name, also gold
         return Component.translatable(this.getDescriptionId()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
     }
-
-
-
 
 }

@@ -47,7 +47,6 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     public void tick() {
         super.tick();
 
-        // Handle idle animation client-side
         if (level().isClientSide()) {
             if (idleAnimationTimeout <= 0) {
                 idleAnimationTimeout = 120;
@@ -60,15 +59,12 @@ public class RadiantEntity extends Entity implements TraceableEntity {
 
         BlockPos newPos = this.blockPosition();
 
-        // If the block position has changed
         if (currentLightPos == null || !currentLightPos.equals(newPos)) {
-            // Revert previous light block to its original state
             if (currentLightPos != null && lastReplacedBlockState != null &&
                     level().getBlockState(currentLightPos).is(Blocks.LIGHT)) {
                 level().setBlock(currentLightPos, lastReplacedBlockState, 3);
             }
 
-            // Save the block we're about to replace
             BlockState stateAtNew = level().getBlockState(newPos);
             if ((stateAtNew.isAir() || stateAtNew.is(Blocks.WATER) || stateAtNew.is(Blocks.LIGHT)) && getRadiantLightLevel() > 0) {
                 lastReplacedBlockState = stateAtNew.is(Blocks.LIGHT) ? Blocks.AIR.defaultBlockState() : stateAtNew;
@@ -82,7 +78,6 @@ public class RadiantEntity extends Entity implements TraceableEntity {
                 currentLightPos = newPos.immutable();
             }
         } else {
-            // Update light level if changed
             BlockState state = level().getBlockState(newPos);
             if (state.is(Blocks.LIGHT) && state.getValue(LightBlock.LEVEL) != getRadiantLightLevel()) {
                 boolean waterlogged = state.getValue(LightBlock.WATERLOGGED);
@@ -93,7 +88,6 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         }
     }
 
-
     @Override
     public void remove(RemovalReason reason) {
         if (currentLightPos != null && lastReplacedBlockState != null &&
@@ -103,10 +97,8 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         super.remove(reason);
     }
 
-
-
     // --- Light Level ---
-    private int radiantLightLevel = 15; // Default: max light
+    private int radiantLightLevel = 15;
 
     /** Returns the current light level emitted (0-15). */
     public int getRadiantLightLevel() {
@@ -159,16 +151,17 @@ public class RadiantEntity extends Entity implements TraceableEntity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
-        // TODO: Serialize ownerUUID if you want to persist ownership
     }
 
     // === INVULNERABILITY/PHYSICS ===
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        return false; // Invulnerable
+        return false;
     }
 
     @Override public boolean isNoGravity() { return true; }
-    @Override public void move(MoverType type, Vec3 vec) { /* Immobile */ }
+    @Override public void move(MoverType type, Vec3 vec) {
+
+    }
 
 }

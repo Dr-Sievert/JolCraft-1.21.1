@@ -12,14 +12,12 @@ public class ClientDeliriumData {
         return muffleTicks;
     }
 
-    // This helper updates prevMuffleTicks and returns the previous value
     public static int getAndStorePreviousTicks() {
         int prev = prevMuffleTicks;
         prevMuffleTicks = muffleTicks;
         return prev;
     }
 
-    // Tick down
     public static void tick() {
         if (muffleTicks > 0) muffleTicks--;
     }

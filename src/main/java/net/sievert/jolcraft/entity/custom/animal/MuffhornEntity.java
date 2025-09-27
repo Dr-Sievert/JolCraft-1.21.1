@@ -117,7 +117,6 @@ public class MuffhornEntity extends Animal implements IShearable {
     public void aiStep() {
         super.aiStep();
 
-        // Ensure this logic only runs on the server to prevent visual desync
         if (!this.level().isClientSide) {
             if (this.isSheared() && !this.isBaby() && --regrowTicks <= 0) {
                 this.setSheared(false);
@@ -182,8 +181,8 @@ public class MuffhornEntity extends Animal implements IShearable {
     @Override
     public float getVoicePitch() {
         return this.isBaby()
-                ? 1.2F + this.random.nextFloat() * 0.2F  // Babies: ~1.2–1.4 (lighter)
-                : 0.5F + this.random.nextFloat() * 0.15F; // Adults: ~0.5–0.65 (deep)
+                ? 1.2F + this.random.nextFloat() * 0.2F
+                : 0.5F + this.random.nextFloat() * 0.15F;
     }
 
     @Override
@@ -205,7 +204,6 @@ public class MuffhornEntity extends Animal implements IShearable {
                     player.setItemInHand(hand, result);
                     return InteractionResult.SUCCESS;
                 } else {
-                    // Optional: Feedback (see below)
                     return InteractionResult.FAIL;
                 }
             }
@@ -215,11 +213,8 @@ public class MuffhornEntity extends Animal implements IShearable {
             if (!this.level().isClientSide) {
                 this.usePlayerItem(player, hand, itemstack);
                 this.playEatingSound();
-                // Reduce regrow time (vanilla baby food logic reduces by 10% of remaining age)
                 int reduction = (int) (this.regrowTicks * 0.2F);
                 this.setRegrowTicks(this.regrowTicks - reduction);
-
-
             }
             return InteractionResult.SUCCESS;
         }
@@ -229,15 +224,14 @@ public class MuffhornEntity extends Animal implements IShearable {
     }
 
     @Nullable
-    public MuffhornEntity getBreedOffspring(ServerLevel p_148890_, AgeableMob p_148891_) {
-        return JolCraftEntities.MUFFHORN.get().create(p_148890_, EntitySpawnReason.BREEDING);
+    public MuffhornEntity getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
+        return JolCraftEntities.MUFFHORN.get().create(serverLevel, EntitySpawnReason.BREEDING);
     }
 
     @Override
-    public EntityDimensions getDefaultDimensions(Pose p_316185_) {
-        return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(p_316185_);
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        return this.isBaby() ? BABY_DIMENSIONS : super.getDefaultDimensions(pose);
     }
-
 
 }
 

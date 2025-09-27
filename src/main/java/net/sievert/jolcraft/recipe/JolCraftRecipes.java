@@ -17,10 +17,8 @@ public class JolCraftRecipes {
     public static final DeferredRegister<RecipeType<?>> TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, JolCraft.MOD_ID);
 
-    // Register your custom serializer
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> SMITHING_TRIM_SERIALIZER =
             SERIALIZERS.register("jolcraft_smithing_trim", JolSmithingTrimRecipe.Serializer::new);
-
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);

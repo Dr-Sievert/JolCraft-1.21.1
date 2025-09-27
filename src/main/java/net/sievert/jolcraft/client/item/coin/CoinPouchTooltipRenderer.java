@@ -21,17 +21,13 @@ public class CoinPouchTooltipRenderer implements ClientTooltipComponent {
 
     @Override
     public int getWidth(Font font) {
-        // 16 for the icon + 2 for spacing + width of the count text (right side)
         return 16 + 2 + font.width(String.valueOf(coinCount));
     }
 
     @Override
     public void renderImage(@NotNull Font font, int x, int y, int width, int height, GuiGraphics guiGraphics) {
-        // Draw the coin at the given position
         ItemStack stack = new ItemStack(JolCraftItems.GOLD_COIN.get());
-        guiGraphics.renderItem(stack, x, y, 0); // 0 = seed for consistent render
-
-        // Draw the count as a vanilla-style stack count (bottom right corner of the coin)
+        guiGraphics.renderItem(stack, x, y, 0);
         guiGraphics.renderItemDecorations(font, stack, x, y, String.valueOf(coinCount));
     }
 }

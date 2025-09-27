@@ -37,7 +37,6 @@ public class LapidaryBenchBlock extends Block {
 
     @Override
     protected MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
-        // Replace YourCustomMenu with your menu class!
         return new SimpleMenuProvider(
                 (windowId, playerInv, player) ->
                         new LapidaryBenchMenu(windowId, playerInv, ContainerLevelAccess.create(level, pos)),
@@ -52,7 +51,5 @@ public class LapidaryBenchBlock extends Block {
         }
         return InteractionResult.SUCCESS;
     }
-
-
 
 }

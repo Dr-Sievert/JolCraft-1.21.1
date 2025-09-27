@@ -6,6 +6,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.sievert.jolcraft.network.client.data.ClientDeliriumData;
 import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
 import net.sievert.jolcraft.gui.custom.strongbox.LockScreen;
@@ -33,6 +34,26 @@ public class JolCraftClientGameEvents {
             }
         }
         ClientDeliriumData.tick();
+    }
+
+    @SubscribeEvent
+    public static void onPlaySound(PlayLevelSoundEvent event) {
+        if (ClientDeliriumData.getMuffleTicks() > 0) {
+            var soundHolder = event.getSound();
+            if (soundHolder == null) return;
+
+            var soundKeyOpt = soundHolder.unwrapKey();
+            if (soundKeyOpt.isEmpty()) return;
+            var soundLocation = soundKeyOpt.get().location();
+
+            var caveKeyOpt = SoundEvents.AMBIENT_CAVE.unwrapKey();
+            if (caveKeyOpt.isEmpty()) return;
+            var caveLocation = caveKeyOpt.get().location();
+
+            if (soundLocation.equals(caveLocation)) return;
+
+            event.setNewVolume(event.getOriginalVolume() * 0.3F);
+        }
     }
 
 }

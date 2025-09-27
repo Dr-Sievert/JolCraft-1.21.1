@@ -78,7 +78,6 @@ public class DwarfMerchantModel extends DwarfModel{
     public void setupAnim(DwarfRenderState state) {
         super.setupAnim(state);
 
-        // Force display of wear/armor-slot parts
         this.head.getChild("hat").visible = true;
         this.body.getChild("bodywear").visible = true;
         this.body.getChild("legwear").visible = true;
@@ -93,9 +92,9 @@ public class DwarfMerchantModel extends DwarfModel{
         if (side == HumanoidArm.LEFT) {
             this.root.translateAndRotate(poseStack);
             this.getArm(side).translateAndRotate(poseStack);
-            poseStack.translate(0.05F, -0.15F, 0.05F); // your custom left-hand offset
+            poseStack.translate(0.05F, -0.15F, 0.05F);
         } else {
-            super.translateToHand(side, poseStack); // use default right-hand behavior
+            super.translateToHand(side, poseStack);
         }
     }
 

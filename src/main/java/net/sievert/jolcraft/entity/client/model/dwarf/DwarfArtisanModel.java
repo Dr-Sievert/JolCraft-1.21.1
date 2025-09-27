@@ -74,7 +74,6 @@ public class DwarfArtisanModel extends DwarfModel{
     public void setupAnim(DwarfRenderState state) {
         super.setupAnim(state);
 
-        // Always show equipment overlay parts (if not handled in the model constructor)
         this.head.getChild("hat").visible = true;
         this.body.getChild("bodywear").visible = true;
         this.body.getChild("legwear").visible = true;
@@ -89,9 +88,9 @@ public class DwarfArtisanModel extends DwarfModel{
         if (side == HumanoidArm.LEFT) {
             this.root.translateAndRotate(poseStack);
             this.getArm(side).translateAndRotate(poseStack);
-            poseStack.translate(0.05F, -0.03F, 0.0F); // your custom left-hand offset
+            poseStack.translate(0.05F, -0.03F, 0.0F);
         } else {
-            super.translateToHand(side, poseStack); // use default right-hand behavior
+            super.translateToHand(side, poseStack);
         }
     }
 

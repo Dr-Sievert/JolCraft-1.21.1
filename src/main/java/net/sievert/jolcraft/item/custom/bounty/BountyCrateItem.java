@@ -25,9 +25,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.util.dwarf.bounty.BountyData;
-import net.sievert.jolcraft.util.dwarf.bounty.BountyHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -47,7 +47,6 @@ public class BountyCrateItem extends Item implements IItemExtension {
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access) {
 
-        // Extract whatever has been filled (even partially) if right-click and cursor is empty
         if (action == ClickAction.SECONDARY && other.isEmpty()) {
             BountyData data = stack.get(JolCraftDataComponents.BOUNTY_DATA.get());
             int currentFilled = stack.getOrDefault(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
@@ -58,7 +57,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                         .orElse(null);
 
                 if (targetItem != null) {
-                    int toExtract = Math.min(64, currentFilled); // up to a full stack max
+                    int toExtract = Math.min(64, currentFilled);
                     ItemStack out = new ItemStack(targetItem, toExtract);
                     access.set(out);
 
@@ -177,17 +176,14 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        // Retrieve the current amount filled in the crate
         int currentFilled = stack.has(JolCraftDataComponents.BOUNTY_FILL.get())
                 ? stack.get(JolCraftDataComponents.BOUNTY_FILL.get())
                 : 0;
-        // If the crate has any items filled, show the progress bar
         return currentFilled > 0;
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        // Retrieve the total required count to fill the crate
         BountyData data = stack.get(JolCraftDataComponents.BOUNTY_DATA.get());
         if (data == null) return 0;
 
@@ -196,26 +192,22 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 ? stack.get(JolCraftDataComponents.BOUNTY_FILL.get())
                 : 0;
 
-        // Calculate the progress as a fraction (current filled / required count)
         double progress = (double) currentFilled / requiredCount;
 
-        // Calculate the width of the progress bar (scale it to fit within 0 to 13)
-        return Math.min(13, (int) (progress * 13));  // 13 is the max bar width
+        return Math.min(13, (int) (progress * 13));
     }
 
     @Override
     public int getBarColor(ItemStack stack) {
-        // Retrieve the current amount filled in the crate
         int currentFilled = stack.has(JolCraftDataComponents.BOUNTY_FILL.get())
                 ? stack.get(JolCraftDataComponents.BOUNTY_FILL.get())
                 : 0;
-        // If the crate is completely filled, set the bar color to green, else use red
         return currentFilled == Objects.requireNonNull(stack.get(JolCraftDataComponents.BOUNTY_DATA.get())).requiredCount()
                 ? FULL_BAR_COLOR : BAR_COLOR;
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
 

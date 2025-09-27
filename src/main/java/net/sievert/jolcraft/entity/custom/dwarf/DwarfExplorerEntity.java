@@ -28,10 +28,10 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.sound.JolCraftSoundHelper;
-import net.sievert.jolcraft.util.attachment.DiscoveredStructuresHelper;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.data.util.attachment.DiscoveredStructuresHelper;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -236,11 +236,8 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
 
         if (instanceTrades == null) return;
 
-        // If this is the very first time (lastUnlockedLevel == 0, i.e. fresh dwarf)
-        // or if you ever want to forcibly re-initialize (e.g. world load)
         if (lastUnlockedLevel == 0 || this.getOffers().isEmpty()) {
-            this.getOffers().clear(); // Wipe just in case
-            // Full sweep: add ALL trades up to current level
+            this.getOffers().clear();
             for (int i = 1; i <= level; i++) {
                 DwarfTrades.ItemListing[] listings = instanceTrades.get(i);
                 if (listings != null) {
@@ -253,7 +250,6 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
                 }
             }
         } else {
-            // Otherwise, only add new level's trades
             for (int i = lastUnlockedLevel + 1; i <= level; i++) {
                 DwarfTrades.ItemListing[] listings = instanceTrades.get(i);
                 if (listings != null) {

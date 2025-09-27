@@ -8,6 +8,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.item.custom.tooltip.ToolItem;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,10 +22,7 @@ public class ArtisanHammerItem extends ToolItem {
         super(material.applySwordProperties(properties, attackDamage, attackSpeed));
     }
 
-    public ArtisanHammerItem(Properties properties) {
-        super(properties);
-    }
-
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Screen.hasAltDown()) {

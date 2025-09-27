@@ -5,7 +5,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.entity.custom.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,6 @@ public class DwarfTradeJeiHelper {
                     var inputB = DwarfTrades.getExampleInputB(listing);
                     var output = DwarfTrades.getExampleOutput(listing);
 
-                    // --- NEW: get min/max for each input/output
                     int[] a = getInputAMinMax(listing);
                     int[] b = getInputBMinMax(listing);
                     int[] o = getOutputMinMax(listing);
@@ -41,8 +40,6 @@ public class DwarfTradeJeiHelper {
         }
         return recipes;
     }
-
-
 
     public record DwarfProfession(
             String id,
@@ -73,13 +70,13 @@ public class DwarfTradeJeiHelper {
             new DwarfProfession(
                     "merchant",
                     "Merchant",
-                    DwarfMerchantEntity.getAllJeiTrades(), // pooled trade list
+                    DwarfMerchantEntity.getAllJeiTrades(),
                     JolCraftItems.DWARF_MERCHANT_SPAWN_EGG
             ),
             new DwarfProfession(
                     "scrapper",
                     "Scrapper",
-                    DwarfScrapperEntity.getAllJeiTrades(), // pooled trade list
+                    DwarfScrapperEntity.getAllJeiTrades(),
                     JolCraftItems.DWARF_SCRAPPER_SPAWN_EGG
             ),
             new DwarfProfession(
@@ -121,7 +118,6 @@ public class DwarfTradeJeiHelper {
     );
 
     private static int[] getInputAMinMax(DwarfTrades.ItemListing listing) {
-        // [min, max] for inputA
         if (listing instanceof DwarfTrades.ItemsForGold t) {
             return new int[]{t.minGoldCost, t.maxGoldCost};
         } else if (listing instanceof DwarfTrades.GoldForItems t) {
@@ -141,7 +137,6 @@ public class DwarfTradeJeiHelper {
     }
 
     private static int[] getInputBMinMax(DwarfTrades.ItemListing listing) {
-        // [min, max] for inputB (usually the item part for double-input trades)
         if (listing instanceof DwarfTrades.ItemsAndGoldToItems t) {
             return new int[]{t.minInputCount, t.maxInputCount};
         } else if (listing instanceof DwarfTrades.ItemsAndGoldToItemsWithData t) {
@@ -153,7 +148,6 @@ public class DwarfTradeJeiHelper {
     }
 
     private static int[] getOutputMinMax(DwarfTrades.ItemListing listing) {
-        // [min, max] for output
         if (listing instanceof DwarfTrades.ItemsForGold t) {
             return new int[]{t.minItemCount, t.maxItemCount};
         } else if (listing instanceof DwarfTrades.GoldForItems t) {
@@ -171,6 +165,5 @@ public class DwarfTradeJeiHelper {
         }
         return new int[]{1, 1};
     }
-
 
 }

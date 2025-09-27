@@ -24,7 +24,6 @@ public class JolSmithingTrimRecipe extends SmithingTrimRecipe {
         super(template, base, addition);
     }
 
-
     @Override
     public ItemStack assemble(SmithingRecipeInput input, HolderLookup.Provider registries) {
         ItemStack stack = super.assemble(input, registries);
@@ -39,7 +38,6 @@ public class JolSmithingTrimRecipe extends SmithingTrimRecipe {
     public RecipeSerializer<SmithingTrimRecipe> getSerializer() {
         return JolCraftRecipes.SMITHING_TRIM_SERIALIZER.get();
     }
-
 
     public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {
         @Override
@@ -74,10 +72,5 @@ public class JolSmithingTrimRecipe extends SmithingTrimRecipe {
             );
         }
     }
-
-
-
-
-
 
 }

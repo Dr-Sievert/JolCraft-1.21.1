@@ -15,6 +15,4 @@ public class RadiantRenderState extends LivingEntityRenderState {
 
     /** Idle animation (looped, always ticking if entity is alive). */
     public final AnimationState idleAnimationState = new AnimationState();
-
-    // Add more AnimationState fields here for custom logic if needed in future.
 }

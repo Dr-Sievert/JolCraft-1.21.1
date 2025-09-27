@@ -28,9 +28,4 @@ public record ClientboundAncientLanguagePacket(boolean knowsLanguage) implements
     public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
-
-    // This is your client-side handler
-    public void handle() {
-        ClientAncientLanguageData.setKnows(knowsLanguage);
-    }
 }

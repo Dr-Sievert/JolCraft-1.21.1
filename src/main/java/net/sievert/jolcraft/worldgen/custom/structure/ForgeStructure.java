@@ -97,14 +97,12 @@ public class ForgeStructure extends Structure {
                         .getBaseColumn(surfacePos.getX(), surfacePos.getZ(), context.heightAccessor(), context.randomState())
                         .getBlock(surfaceY - 1);
 
-                // Reject if air or contains any fluid
                 if (surfaceBlock.isAir() || !surfaceBlock.getFluidState().isEmpty()) {
                     return false;
                 }
             }
         }
 
-        // Reject if terrain is too uneven or too high
         return maxY - minY <= 5 && maxY <= 70;
     }
 

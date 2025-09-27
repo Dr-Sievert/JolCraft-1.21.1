@@ -1,13 +1,15 @@
 package net.sievert.jolcraft.event.game;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEnchantItemEvent;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.util.vanilla.JolCraftAnvilHelper;
+import net.sievert.jolcraft.event.util.JolCraftAnvilHelper;
 
 public class JolCraftUtilityEvents {
 
@@ -24,16 +26,16 @@ public class JolCraftUtilityEvents {
             if (!result.isEmpty()) {
                 String baseName;
                 if (rename != null && !rename.isEmpty()) {
-                    baseName = net.minecraft.util.StringUtil.filterText(rename);
+                    baseName = StringUtil.filterText(rename);
                 } else {
                     baseName = left.getHoverName().getString();
                 }
 
-                result.remove(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
-                result.remove(net.minecraft.core.component.DataComponents.ITEM_NAME);
+                result.remove(DataComponents.CUSTOM_NAME);
+                result.remove(DataComponents.ITEM_NAME);
 
-                result.set(net.minecraft.core.component.DataComponents.ITEM_NAME,
-                        net.minecraft.network.chat.Component.literal(baseName).withStyle(net.minecraft.ChatFormatting.GOLD));
+                result.set(DataComponents.ITEM_NAME,
+                        Component.literal(baseName).withStyle(ChatFormatting.GOLD));
             }
 
             event.setOutput(result);
@@ -48,16 +50,16 @@ public class JolCraftUtilityEvents {
             if (!result.isEmpty()) {
                 String baseName;
                 if (rename != null && !rename.isEmpty()) {
-                    baseName = net.minecraft.util.StringUtil.filterText(rename);
+                    baseName = StringUtil.filterText(rename);
                 } else {
                     baseName = left.getHoverName().getString();
                 }
 
-                result.remove(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
-                result.remove(net.minecraft.core.component.DataComponents.ITEM_NAME);
+                result.remove(DataComponents.CUSTOM_NAME);
+                result.remove(DataComponents.ITEM_NAME);
 
-                result.set(net.minecraft.core.component.DataComponents.ITEM_NAME,
-                        net.minecraft.network.chat.Component.literal(baseName).withStyle(ChatFormatting.AQUA));
+                result.set(DataComponents.ITEM_NAME,
+                        Component.literal(baseName).withStyle(ChatFormatting.AQUA));
             }
 
             event.setOutput(result);
@@ -73,17 +75,17 @@ public class JolCraftUtilityEvents {
 
         if (!stack.isEmpty() && stack.is(JolCraftTags.Items.LEGENDARY_ITEMS)) {
             String baseName = stack.getHoverName().getString();
-            stack.remove(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
-            stack.remove(net.minecraft.core.component.DataComponents.ITEM_NAME);
-            stack.set(net.minecraft.core.component.DataComponents.ITEM_NAME,
+            stack.remove(DataComponents.CUSTOM_NAME);
+            stack.remove(DataComponents.ITEM_NAME);
+            stack.set(DataComponents.ITEM_NAME,
                     Component.literal(baseName).withStyle(ChatFormatting.GOLD));
         }
 
         if (!stack.isEmpty() && stack.is(JolCraftTags.Items.MITHRIL_ITEMS)) {
             String baseName = stack.getHoverName().getString();
-            stack.remove(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
-            stack.remove(net.minecraft.core.component.DataComponents.ITEM_NAME);
-            stack.set(net.minecraft.core.component.DataComponents.ITEM_NAME,
+            stack.remove(DataComponents.CUSTOM_NAME);
+            stack.remove(DataComponents.ITEM_NAME);
+            stack.set(DataComponents.ITEM_NAME,
                     Component.literal(baseName).withStyle(ChatFormatting.AQUA));
         }
     }

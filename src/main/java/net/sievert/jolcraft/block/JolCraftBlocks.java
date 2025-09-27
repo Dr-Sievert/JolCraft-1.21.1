@@ -96,7 +96,6 @@ public class JolCraftBlocks {
             BlockBehaviour.Properties.of(), true
     );
 
-    // Only register the block, NOT the item
     public static final DeferredBlock<Block> STRONGBOX = registerBlock(
             "strongbox",
             (properties) -> new StrongboxBlock(properties
@@ -111,7 +110,6 @@ public class JolCraftBlocks {
             BlockBehaviour.Properties.of(), false
     );
 
-    // Register dummy block WITHOUT item
     public static final DeferredBlock<Block> STRONGBOX_DUMMY = BLOCKS.registerBlock("strongbox_dummy",
             (properties) -> new StrongboxBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
@@ -230,8 +228,6 @@ public class JolCraftBlocks {
             BlockBehaviour.Properties.of(), true
     );
 
-
-    // Register barley crop WITHOUT a block item!
     public static final DeferredBlock<Block> BARLEY_CROP = BLOCKS.registerBlock("barley_crop",
             (properties) -> new BarleyCropBlock(properties
                     .mapColor(MapColor.PLANT)
@@ -254,7 +250,6 @@ public class JolCraftBlocks {
             )
     );
 
-    // 🔼 Top (visual only) — no item
     public static final DeferredBlock<Block> ASGARNIAN_CROP_TOP = BLOCKS.registerBlock("asgarnian_crop_top",
             (properties) -> new HopsCropTopBlock(
                     properties
@@ -268,7 +263,6 @@ public class JolCraftBlocks {
             )
     );
 
-    // 🔽 Bottom (logic + growth) — no item
     public static final DeferredBlock<Block> ASGARNIAN_CROP_BOTTOM = BLOCKS.registerBlock("asgarnian_crop_bottom",
             (properties) -> new HopsCropBottomBlock(
                     properties
@@ -379,13 +373,11 @@ public class JolCraftBlocks {
                     .noOcclusion()
     );
 
-
-    // Registers a block and its corresponding item
     private static <B extends Block> DeferredBlock<B> registerBlock(
             String name,
             Function<BlockBehaviour.Properties, ? extends B> builder,
             BlockBehaviour.Properties properties,
-            boolean registerItem // NEW param
+            boolean registerItem
     ) {
         DeferredBlock<B> block = BLOCKS.registerBlock(name, builder);
         if (registerItem) {
@@ -394,7 +386,6 @@ public class JolCraftBlocks {
         return block;
     }
 
-    // Registers a BlockItem for an existing block
     private static <B extends Block> void registerBlockItem(String name, DeferredBlock<B> block) {
         JolCraftItems.ITEMS.registerItem(name, props -> new BlockItem(block.get(), props.useBlockDescriptionPrefix()));
     }
@@ -410,7 +401,6 @@ public class JolCraftBlocks {
                 new SimpleTooltipBlockItem(block.get(), props.useBlockDescriptionPrefix(), tooltipKey));
         return block;
     }
-
 
     private static <B extends Block> DeferredBlock<B> registerMithrilBlock(
             String name,
@@ -443,6 +433,5 @@ public class JolCraftBlocks {
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }
-
 
 }

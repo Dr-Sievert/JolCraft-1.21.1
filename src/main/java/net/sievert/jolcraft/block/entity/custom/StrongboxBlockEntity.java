@@ -38,8 +38,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class StrongboxBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity, MenuProvider {
 
     @Nullable
-    public Player currentInteractingPlayer = null;  // Track the currently interacting player
-    private NonNullList<ItemStack> items = NonNullList.withSize(18, ItemStack.EMPTY); // 2x9
+    public Player currentInteractingPlayer = null;
+    private NonNullList<ItemStack> items = NonNullList.withSize(18, ItemStack.EMPTY);
     private boolean allowLootUnpack = false;
 
 
@@ -48,7 +48,6 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
                 @Override
                 protected void onOpen(Level level, BlockPos pos, BlockState state) {
-                    // Play the sound when the strongbox is opened
                     StrongboxBlockEntity.playSound(level, pos, JolCraftSounds.STRONGBOX_OPEN.get());
 
                 }
@@ -63,34 +62,29 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
                     StrongboxBlockEntity.this.signalOpenCount(level, pos, state, oldCount, newCount);
                 }
 
-                // Override incrementOpeners to track players interacting with the strongbox
                 @Override
                 public void incrementOpeners(Player player, Level level, BlockPos pos, BlockState state) {
                     super.incrementOpeners(player, level, pos, state);
-                    currentInteractingPlayer = player;  // Update the current interacting player
-
+                    currentInteractingPlayer = player;
                 }
 
-                // Override decrementOpeners to remove players from the list
                 @Override
                 public void decrementOpeners(Player player, Level level, BlockPos pos, BlockState state) {
                     super.decrementOpeners(player, level, pos, state);
                     if (currentInteractingPlayer == player) {
-                        currentInteractingPlayer = null;  // Reset if the player who opened it is the one closing it
+                        currentInteractingPlayer = null;
                     }
                 }
 
                 @Override
                 protected boolean isOwnContainer(Player player) {
 
-                    // Handle StrongboxMenu
                     if (player.containerMenu instanceof StrongboxMenu menu) {
                         return menu.getBlockEntity() == StrongboxBlockEntity.this;
                     }
 
-                    // Handle LockMenu
                     if (player.containerMenu instanceof LockMenu) {
-                        return false;  // Prevent storage action when LockMenu is active
+                        return false;
                     }
 
                     return false;
@@ -106,18 +100,16 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
     @Override
     public void setLootTable(@Nullable ResourceKey<LootTable> lootTable) {
-        // Always set the loot table, regardless of locked state
         this.lootTable = lootTable;
     }
 
     @Override
     public void unpackLootTable(@Nullable Player player) {
-        // Skip unpacking loot table if the strongbox is locked
         if (this.isLocked()) {
-            return;  // Do nothing if locked
+            return;
         }
         if(allowLootUnpack){
-            super.unpackLootTable(player);  // Unpack loot if not locked
+            super.unpackLootTable(player);
         }
     }
 
@@ -128,25 +120,21 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
     @Override
     public void setItems(NonNullList<ItemStack> items) {
-        // If locked, clear the inventory and prevent setting items
         if (this.isLocked()) {
             this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);  // Clear inventory
         } else {
-            this.items = items;  // Set items if unlocked
+            this.items = items;
         }
     }
 
     @Override
     public void clearContent() {
-        // Ensure that only non-lockpick slots are cleared when the block is locked
         if (this.isLocked()) {
-            // Clear only non-lockpick slots
             for (int i = 1; i < this.getContainerSize(); i++) {
-                this.setItem(i, ItemStack.EMPTY);  // Clear non-lockpick slots
+                this.setItem(i, ItemStack.EMPTY);
             }
         } else {
-            // If it's not locked, clear the entire container
-            super.clearContent(); // Use the superclass logic to clear everything if not locked
+            super.clearContent();
         }
     }
 
@@ -163,6 +151,7 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     public float getOpenNess(float partialTicks) {
         return lidController.getOpenness(partialTicks);
     }
+
     public static void lidAnimateTick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity be) {
         be.lidController.tickLid();
     }
@@ -175,6 +164,7 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
         }
         return super.triggerEvent(id, param);
     }
+
     @Override
     public void startOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
@@ -182,6 +172,7 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
             this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
     }
+
     @Override
     public void stopOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
@@ -227,19 +218,15 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     @Override
     protected AbstractContainerMenu createMenu(int id, Inventory inv) {
         if (this.isLocked()) {
-            // Only allow if nobody is using, or this *is* the same player
             if (this.currentInteractingPlayer != null && this.currentInteractingPlayer != inv.player) {
-                // Send message (only for the second player, not the first)
                 inv.player.displayClientMessage(
                         Component.translatable("tooltip.jolcraft.strongbox.busy").withStyle(ChatFormatting.GRAY), true
                 );
                 return null;
             }
-            // Allow access for the first or same player
             currentInteractingPlayer = inv.player;
             return new LockMenu(id, inv, this);
         } else {
-            // For unlocked, you might or might not want this restriction; usually not needed:
             this.allowLootUnpack = true;
             currentInteractingPlayer = inv.player;
             return new StrongboxMenu(id, inv, this);
@@ -248,11 +235,10 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
     @Override
     public Component getDisplayName() {
-        // Use the helper method to check if the Strongbox is locked and return the appropriate display name
         if (this.isLocked()) {
-            return Component.translatable("container.jolcraft.strongbox_locked");  // Display locked name
+            return Component.translatable("container.jolcraft.strongbox_locked");
         } else {
-            return Component.translatable("container.jolcraft.strongbox");  // Display normal name
+            return Component.translatable("container.jolcraft.strongbox");
         }
     }
 
@@ -267,7 +253,6 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     }
 
     public boolean isLocked() {
-        // Get the current block state
         BlockState state = this.getBlockState();
 
         return state.getValue(StrongboxBlock.LOCKED);
@@ -279,6 +264,5 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     public @Nullable Player getCurrentInteractingPlayer() {
         return currentInteractingPlayer;
     }
-
 
 }

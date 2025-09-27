@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.dwarf.DwarfRenderState;
+import org.jetbrains.annotations.NotNull;
 
 public class DwarfGuildmasterModel extends DwarfModel{
 
@@ -73,7 +74,6 @@ public class DwarfGuildmasterModel extends DwarfModel{
     public void setupAnim(DwarfRenderState state) {
         super.setupAnim(state);
 
-        // Always show equipment overlay parts (if not handled in the model constructor)
         this.head.getChild("hat").visible = true;
         this.body.getChild("bodywear").visible = true;
         this.body.getChild("legwear").visible = true;
@@ -84,13 +84,13 @@ public class DwarfGuildmasterModel extends DwarfModel{
     }
 
     @Override
-    public void translateToHand(HumanoidArm side, PoseStack poseStack) {
+    public void translateToHand(@NotNull HumanoidArm side, @NotNull PoseStack poseStack) {
         if (side == HumanoidArm.LEFT) {
             this.root.translateAndRotate(poseStack);
             this.getArm(side).translateAndRotate(poseStack);
-            poseStack.translate(0.05F, -0.15F, 0.05F); // your custom left-hand offset
+            poseStack.translate(0.05F, -0.15F, 0.05F);
         } else {
-            super.translateToHand(side, poseStack); // use default right-hand behavior
+            super.translateToHand(side, poseStack);
         }
     }
 

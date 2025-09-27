@@ -36,13 +36,13 @@ public class DwarfBlockGoal extends Goal {
     public void start() {
         dwarf.setBlocking(true);
         dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.HOSTILE, 1.0F, 1.0F);
-        blockTicks = 15; // block for 15 ticks
+        blockTicks = 15;
     }
 
     @Override
     public void stop() {
         dwarf.setBlocking(false);
-        dwarf.setBlockCooldown(60); // Cooldown now tracked in entity
+        dwarf.setBlockCooldown(60);
     }
 
     @Override

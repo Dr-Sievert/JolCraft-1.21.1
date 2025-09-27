@@ -127,16 +127,16 @@ public class JolCraftRecipeProvider extends RecipeProvider {
 
         nineBlockStorageRecipes(
                 RecipeCategory.MISC,
-                JolCraftItems.SCRAP.get(), //Ingredient
+                JolCraftItems.SCRAP.get(),
                 RecipeCategory.MISC,
-                JolCraftItems.SCRAP_HEAP.get() //Block
+                JolCraftItems.SCRAP_HEAP.get()
         );
 
         nineBlockStorageRecipes(
                 RecipeCategory.MISC,
-                JolCraftItems.BARLEY.get(), //Ingredient
+                JolCraftItems.BARLEY.get(),
                 RecipeCategory.MISC,
-                JolCraftBlocks.BARLEY_BLOCK.get() //Block
+                JolCraftBlocks.BARLEY_BLOCK.get()
         );
 
         modShapeless(RecipeCategory.MISC, JolCraftBlocks.VERDANT_SOIL.get())
@@ -144,23 +144,21 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .requires(JolCraftItems.VERDANITE_DUST.get())
                 .unlockedBy("has_verdanite_dust", has(JolCraftItems.VERDANITE_DUST.get())).save(output, "verdant_soil");
 
-        // Barley -> Barley Malt (Smelting)
         SimpleCookingRecipeBuilder.smelting(
                         Ingredient.of(JolCraftItems.BARLEY.get()),
                         RecipeCategory.FOOD,
                         JolCraftItems.BARLEY_MALT.get(),
-                        0.35f, // XP
-                        200    // Cooking time (in ticks, vanilla is 200 = 10s)
+                        0.35f,
+                        200
                 ).unlockedBy("has_barley", has(JolCraftItems.BARLEY.get()))
                 .save(output, ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "barley_malt_from_smelting")));
 
-        // Barley -> Barley Malt (Smoking)
         SimpleCookingRecipeBuilder.smoking(
                         Ingredient.of(JolCraftItems.BARLEY.get()),
                         RecipeCategory.FOOD,
                         JolCraftItems.BARLEY_MALT.get(),
-                        0.35f, // XP
-                        100    // Cooking time (smoking is usually faster, vanilla is 100 = 5s)
+                        0.35f,
+                        100
                 ).unlockedBy("has_barley", has(JolCraftItems.BARLEY.get()))
                 .save(output, ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "barley_malt_from_smoking")));
 
@@ -171,7 +169,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .define('B', JolCraftItems.IMPURE_MITHRIL.get())
                 .unlockedBy("has_impure_mithril", has(JolCraftItems.IMPURE_MITHRIL.get())).save(output, "deepslate_mithril_ore");
 
-        // Storage recipes (these are usually safe)
         nineBlockStorageRecipes(
                 RecipeCategory.MISC,
                 JolCraftItems.PURE_MITHRIL.get(),
@@ -199,7 +196,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 JolCraftBlocks.MITHRIL_BLOCK.get()
         );
 
-        // Smelting & Blasting recipes with UNIQUE save keys
         oreBlasting(
                 List.of(JolCraftItems.IMPURE_MITHRIL.get()),
                 RecipeCategory.MISC,
@@ -348,8 +344,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .pattern("B B")
                 .define('B', JolCraftItems.MITHRIL_INGOT.get())
                 .unlockedBy("has_mithril_ingot", has(JolCraftItems.MITHRIL_INGOT.get())).save(output, "mithril_boots");
-
-
 
         modShaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PLATE.get())
                 .pattern("BXB")
@@ -616,12 +610,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
 
 
 
-
-
-
-
-
-
     }
 
     protected void bonusTrimSmithing(Item templateItem, ResourceKey<Recipe<?>> key) {
@@ -635,10 +623,8 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .save(output, key);
     }
 
-    // Your own TrimTemplate record if needed (or reuse vanilla one)
     public record TrimTemplate(Item template, ResourceKey<Recipe<?>> id) { }
 
-    // Define your custom list somewhere accessible
     public static List<TrimTemplate> customTrimTemplates() {
         return List.of(
                 new TrimTemplate(
@@ -661,7 +647,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 })
                 .toList();
 
-        // Your custom templates with proper keys
         List<TrimTemplate> customTemplates = List.of(
                 new TrimTemplate(
                         JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(),
@@ -669,7 +654,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 )
         );
 
-        // Combine both lists
         List<TrimTemplate> combined = new ArrayList<>(vanillaTemplates);
         combined.addAll(customTemplates);
 
@@ -773,10 +757,5 @@ public class JolCraftRecipeProvider extends RecipeProvider {
             Items.YELLOW_DYE,
             Items.WHITE_DYE
     );
-
-
-
-
-
 
 }

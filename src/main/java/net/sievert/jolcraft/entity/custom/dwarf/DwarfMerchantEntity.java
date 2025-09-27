@@ -2,6 +2,7 @@ package net.sievert.jolcraft.entity.custom.dwarf;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -33,13 +34,13 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.sound.JolCraftSoundHelper;
-import net.sievert.jolcraft.util.dwarf.bounty.BountyData;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.util.dwarf.bounty.BountyGenerator;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyGenerator;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
@@ -260,23 +261,17 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
     public void aiStep() {
         super.aiStep();
 
-        // Check if the Merchant can level up and if the timer is expired
         if (this.shouldIncreaseLevel() && this.updateMerchantTimer <= 0) {
-            // Check if the Merchant has enough XP to level up
             if (this.shouldIncreaseLevel()) {
-                // Increase the Merchant's level if XP is enough
                 this.increaseMerchantCareer();
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
                 JolCraftSoundHelper.playDwarfYes(this);
-                // Set the delay to 40 ticks (similar to vanilla)
-                this.updateMerchantTimer = 40; // Reset the timer after leveling up
+                this.updateMerchantTimer = 40;
             }
         } else if (this.updateMerchantTimer > 0) {
-            // Countdown the timer only if the Merchant is not performing an action or trading
             --this.updateMerchantTimer;
         }
 
-        // Per-tick bounty action logic
         if (ACTION_BOUNTY_CRATE_TURNIN.equals(currentActionId)) {
             this.setInspecting(true);
             if (currentActionTicks == 25) {
@@ -485,11 +480,9 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
     protected void updateTrades() {
         int level = this.getVillagerData().getLevel();
 
-        // 1. Add bounty trade for this level if not already present
         for (int lvl = 1; lvl <= level; lvl++) {
             var bountyListings = BOUNTY_TRADES.get(lvl);
             if (bountyListings != null && bountyListings.length > 0) {
-                // Only add this bounty if not present yet (matches result item and price)
                 boolean hasThisBounty = this.getOffers().stream().anyMatch(offer -> {
                     DwarfMerchantOffer test = bountyListings[0].getOffer(this, this.random);
                     return test != null &&
@@ -502,10 +495,8 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             }
         }
 
-        // 2. Add up to 2 general trades for this level, but only if missing
         var generalPool = GENERAL_TRADES.get(level);
         if (generalPool != null && generalPool.length > 0) {
-            // Count how many general trades from this pool are present
             Set<Item> currentGeneral = new HashSet<>();
             for (DwarfMerchantOffer offer : this.getOffers()) {
                 for (DwarfTrades.ItemListing listing : generalPool) {
@@ -532,11 +523,9 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             }
         }
 
-        // 3. At master, add 1 gem trade if not already present
         if (level == 5) {
             var gemTrades = GEM_TRADES.get(5);
             if (gemTrades != null && gemTrades.length > 0) {
-                // Check if a gem trade already exists
                 boolean hasGem = this.getOffers().stream().anyMatch(offer -> {
                     for (DwarfTrades.ItemListing listing : gemTrades) {
                         DwarfMerchantOffer test = listing.getOffer(this, this.random);
@@ -566,22 +555,14 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
     public void crateRestock() {
         if (this.level().isClientSide) return;
 
-        // 1. Save all current crate trades
         List<DwarfMerchantOffer> crateTrades = this.getOffers().stream()
                 .filter(this::isCrateTrade)
-                .map(DwarfMerchantOffer::copy) // Defensive copy (optional, for safety)
+                .map(DwarfMerchantOffer::copy)
                 .toList();
 
-        // 2. Perform a normal restock (which will clear everything and re-add new trades)
         this.restock();
-
-        // 3. Remove any crate trades that got rebuilt (if any)
         this.getOffers().removeIf(this::isCrateTrade);
-
-        // 4. Re-add the original crate trades (preserving uses/availability)
         this.getOffers().addAll(crateTrades);
-
-        // (Optional: update restock time & sound, or just let restock() handle it)
     }
 
     @Override
@@ -592,16 +573,13 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
 
         int level = this.getVillagerData().getLevel();
 
-        // --- 🟨 Add 1 Bounty trade per level ---
         for (int i = 1; i <= level; i++) {
             var bountyListings = BOUNTY_TRADES.get(i);
             if (bountyListings != null && bountyListings.length > 0) {
-                // Only add the first bounty per level (usually only one anyway)
                 this.addOffersFromItemListings(this.getOffers(), bountyListings, 1);
             }
         }
 
-        // --- 🟩 Add 2 random General trades per level ---
         var freshGeneralTrades = createGeneralTrades(this.random);
         for (int i = 1; i <= level; i++) {
             var generalPool = freshGeneralTrades.get(i);
@@ -616,7 +594,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             }
         }
 
-        // --- 💎 Add 1 Gem trade at Master only ---
         if (level == 5) {
             var gemTrades = GEM_TRADES.get(5);
             if (gemTrades != null && gemTrades.length > 0) {
@@ -650,18 +627,16 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
 
     @Override
     public void notifyTrade(DwarfMerchantOffer offer) {
-        super.notifyTrade(offer); // handles XP, sound, stats, and default advancement
+        super.notifyTrade(offer);
 
         if (this.getTradingPlayer() instanceof ServerPlayer serverPlayer) {
-            // Fire specific advancement for Merchant
-            serverPlayer.awardStat(Stats.TRADED_WITH_VILLAGER); // optional if not already done in super
+            serverPlayer.awardStat(Stats.TRADED_WITH_VILLAGER);
             JolCraftCriteriaTriggers.TRADE_WITH_DWARF.trigger(serverPlayer, this);
         }
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> getAllJeiTrades() {
-        // Merge all trade sources relevant for display
-        Int2ObjectMap<DwarfTrades.ItemListing[]> out = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
+        Int2ObjectMap<DwarfTrades.ItemListing[]> out = new Int2ObjectOpenHashMap<>();
         for (int lvl = 1; lvl <= 5; lvl++) {
             List<DwarfTrades.ItemListing> all = new ArrayList<>();
             if (BOUNTY_TRADES.get(lvl) != null) all.addAll(List.of(BOUNTY_TRADES.get(lvl)));

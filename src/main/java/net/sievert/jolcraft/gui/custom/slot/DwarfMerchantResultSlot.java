@@ -6,8 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantContainer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchant;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -83,8 +83,6 @@ public class DwarfMerchantResultSlot extends Slot {
             this.merchant.overrideXp(this.merchant.getVillagerXp() + merchantoffer.getXp());
         }
     }
-
-
 
 
 }

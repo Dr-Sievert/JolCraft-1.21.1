@@ -69,7 +69,6 @@ public class BarleyCropBlock extends CropBlock {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState below = level.getBlockState(pos.below());
 
-        // If on Verdant Farmland, always survive (ignore Y and light)
         if (below.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
             return true;
         }
@@ -79,11 +78,10 @@ public class BarleyCropBlock extends CropBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!level.isAreaLoaded(pos, 1)) return; // Don't load chunks
+        if (!level.isAreaLoaded(pos, 1)) return;
 
         BlockState below = level.getBlockState(pos.below());
 
-        // PATCH: If on Verdant Farmland, skip the light check
         if (below.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
             int age = this.getAge(state);
             if (age < this.getMaxAge()) {
@@ -96,7 +94,6 @@ public class BarleyCropBlock extends CropBlock {
             return;
         }
 
-        // VANILLA: Require light level for normal farmland
         if (level.getRawBrightness(pos, 0) >= 9) {
             int age = this.getAge(state);
             if (age < this.getMaxAge()) {
@@ -113,7 +110,7 @@ public class BarleyCropBlock extends CropBlock {
         float base = CropBlock.getGrowthSpeed(blockState, level, pos);
         BlockState soil = level.getBlockState(pos.below());
         if (soil.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
-            return base * 1.5F; // 20% faster
+            return base * 1.5F;
         }
         return base;
     }

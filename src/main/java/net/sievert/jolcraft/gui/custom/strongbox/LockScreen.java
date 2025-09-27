@@ -61,21 +61,20 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
             PROGRESS_TEXTURE13
     };
 
-    // List of broken textures
     private static final List<ResourceLocation> BROKEN_BUTTON_TEXTURES = List.of(
             BROKEN_LOCKPICK_TEXTURE1, BROKEN_LOCKPICK_TEXTURE2, BROKEN_LOCKPICK_TEXTURE3, BROKEN_LOCKPICK_TEXTURE4
     );
 
-    private ResourceLocation lockpick_broken1 = BROKEN_LOCKPICK_TEXTURE1;  // Initial texture
-    private ResourceLocation lockpick_broken2 = BROKEN_LOCKPICK_TEXTURE1;  // Initial texture
+    private ResourceLocation lockpick_broken1 = BROKEN_LOCKPICK_TEXTURE1;
+    private ResourceLocation lockpick_broken2 = BROKEN_LOCKPICK_TEXTURE1;
 
 
     public LockScreen(LockMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 176;  // Set the width of the background image
-        this.imageHeight = 150; // Set the height of the background image
-        this.titleLabelY = 6;   // Position of the title
-        this.inventoryLabelY = 56; // Position of the inventory label
+        this.imageWidth = 176;
+        this.imageHeight = 150;
+        this.titleLabelY = 6;
+        this.inventoryLabelY = 56;
     }
 
     @Override
@@ -86,21 +85,18 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        // Set up the background texture
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
         int pulse = this.menu.getButtonLayerUpdatePulse();
 
         guiGraphics.blit(RenderType.GUI_TEXTURED, TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, 176, 150);
 
-        // Only update broken lockpick sprite if a new cycle has started
         if (pulse != lastSeenPulse) {
             lastSeenPulse = pulse;
             guiGraphics.blit(RenderType.GUI_TEXTURED, TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, 176, 150);
             updateBrokenLockpickTextures();
             renderLockpickProgress(guiGraphics, x, y);
         }
-
 
         if (this.menu.isActive()) {
             renderLockpickProgress(guiGraphics, x, y);
@@ -110,16 +106,15 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Render the screen title and player inventory title
         guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xDDDDDD, false);
         guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xDDDDDD, false);
     }
 
     private void renderLockpickProgress(GuiGraphics guiGraphics, int x, int y) {
-        float progress = this.menu.getLockpickProgress(); // 0–130
-        if (progress <= 0f) return;  // Do not render if empty
+        float progress = this.menu.getLockpickProgress();
+        if (progress <= 0f) return;
 
-        int step = Math.max(1, Math.min(13, (int)Math.ceil(progress / 10f))); // 1–13
+        int step = Math.max(1, Math.min(13, (int)Math.ceil(progress / 10f)));
         ResourceLocation texture = PROGRESS_TEXTURES[step - 1];
 
         int progressWidth = 108;
@@ -130,9 +125,6 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
         guiGraphics.blit(RenderType.GUI_TEXTURED, texture, progressX, progressY, 0, 0, progressWidth, progressHeight, progressWidth, progressHeight);
     }
 
-
-
-    // Only update texture once per cycle
     private void updateBrokenLockpickTextures() {
         int id1 = guiRandom.nextInt(BROKEN_BUTTON_TEXTURES.size());
         int id2 = guiRandom.nextInt(BROKEN_BUTTON_TEXTURES.size());
@@ -140,10 +132,9 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
         this.lockpick_broken2 = BROKEN_BUTTON_TEXTURES.get(id2);
     }
 
-
     private void renderButtonTextures(GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY) {
-        int correctButtonId = this.menu.getCorrectButtonId(); // 0–3
-        int unlockSlot = this.menu.getUnlockSlotId();         // -1 if not active, else 0–2
+        int correctButtonId = this.menu.getCorrectButtonId();
+        int unlockSlot = this.menu.getUnlockSlotId();
         int[] buttonXs = { x + 48, x + 80, x + 112 };
         int buttonY = y + 31;
 
@@ -151,7 +142,6 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
         int wrongIdx = 0;
 
         if (correctButtonId == 3 && unlockSlot >= 0 && unlockSlot < 3) {
-            // Special unlock icon mode: show unlock icon at the right slot
             for (int idx = 0; idx < 3; idx++) {
                 int bx = buttonXs[idx], bw = 16, bh = 16, hw = 17, hh = 17;
                 boolean hovered = mouseX >= bx && mouseY >= buttonY && mouseX < bx + bw && mouseY < buttonY + bh;
@@ -164,7 +154,6 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
                 guiGraphics.blit(RenderType.GUI_TEXTURED, texture, bx, buttonY, 0, 0, bw, bh, bw, bh);
             }
         } else {
-            // Normal lockpick logic
             for (int idx = 0; idx < 3; idx++) {
                 int bx = buttonXs[idx], bw = 16, bh = 16, hw = 17, hh = 17;
                 boolean hovered = mouseX >= bx && mouseY >= buttonY && mouseX < bx + bw && mouseY < buttonY + bh;
@@ -179,9 +168,6 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
         }
     }
 
-
-
-
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int x = (this.width - this.imageWidth) / 2;
@@ -194,7 +180,6 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
                 int btnW = 16, btnH = 16;
 
                 if (mouseX >= btnX && mouseY >= btnY && mouseX < btnX + btnW && mouseY < btnY + btnH && this.menu.isActive()) {
-                    // Notify the server (let server do real action/check)
                     assert Objects.requireNonNull(this.minecraft).gameMode != null;
                     this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, idx);
                     return true;
@@ -203,9 +188,5 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
-
-
-
-
 
 }

@@ -38,15 +38,10 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
             Block.box(0, 0, 0, 16, 14, 16)
     };
 
-    // Dummy suppliers, never called, but required for constructor
-
     public HopsCropTopBlock(Properties properties, Supplier<? extends ItemLike> seedItem) {
         super(properties, seedItem, () -> null); // top block doesn't grow further
         this.registerDefaultState(this.stateDefinition.any().setValue(TOP_AGE, 0));
     }
-
-
-    // --- Shape and state handling ---
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -58,11 +53,8 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
         return SHAPE_BY_AGE[state.getValue(TOP_AGE)];
     }
 
-    // --- Crop logic overrides: these blocks do not grow, bonemeal, drop, or act as crops ---
-
     @Override
     public IntegerProperty getAgeProperty() {
-        // Return TOP_AGE for this block
         return TOP_AGE;
     }
 
@@ -73,16 +65,13 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
 
     @Override
     protected boolean isRandomlyTicking(BlockState state) {
-        // Only tick to check for survival, not for growth
         return true;
     }
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         BlockState below = level.getBlockState(pos.below());
-        // Must be hops bottom block AND bottom block must be mature enough (age ≥ 5)
         if (!below.is(JolCraftTags.Blocks.HOPS_BOTTOM) || below.getValue(HopsCropBottomBlock.AGE) < 5) {
-            // The bottom is missing or not mature; destroy self
             level.destroyBlock(pos, true);
         }
     }
@@ -106,7 +95,6 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
     ) {
         if (direction == Direction.DOWN &&
                 (!neighborState.is(JolCraftTags.Blocks.HOPS_BOTTOM) || neighborState.getValue(HopsCropBottomBlock.AGE) < 5)) {
-            // Schedule a tick so randomTick can destroy the block properly (drops, sounds, etc.)
             ticker.scheduleTick(pos, this, 1);
         }
         return super.updateShape(state, level, ticker, pos, direction, neighborPos, neighborState, random);
@@ -140,7 +128,6 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         super.onRemove(state, level, pos, newState, isMoving);
         if (newState.getBlock() != this) {
-            // Remove the bottom half (never drops)
             BlockPos below = pos.below();
             BlockState belowState = level.getBlockState(below);
             if (belowState.is(JolCraftTags.Blocks.HOPS_BOTTOM)) {
@@ -152,29 +139,16 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
     @Override
     public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
         if (!player.isCreative()) {
-            // Drop this block's loot (works if loot table is assigned to top)
             super.playerDestroy(level, player, pos, state, blockEntity, tool);
         } else {
-            // In creative, just remove block with no drops
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 35);
         }
-        // Remove the other half (never drops)
         BlockPos otherHalf = pos.below();
         BlockState otherState = level.getBlockState(otherHalf);
         if (otherState.is(JolCraftTags.Blocks.HOPS_BOTTOM)) {
             level.setBlock(otherHalf, Blocks.AIR.defaultBlockState(), 35);
         }
     }
-
-
-
-
-
-
-
-
-
-
 
 
 }

@@ -2,6 +2,7 @@ package net.sievert.jolcraft.network;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -86,8 +87,7 @@ public class JolCraftNetworking {
             var player = mc.player;
             if (player == null) return;
 
-            // 1.21+ registry access
-            var optHolder = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(packet.soundId());
+            var optHolder = BuiltInRegistries.SOUND_EVENT.get(packet.soundId());
             if (optHolder.isEmpty()) return;
             var sound = optHolder.get().value();
 
@@ -104,20 +104,15 @@ public class JolCraftNetworking {
 
 
     public static void handleServerboundDwarfSelectTrade(ServerboundDwarfSelectTradePacket packet, net.neoforged.neoforge.network.handling.IPayloadContext context) {
-        // Ensure on server thread
         context.enqueueWork(() -> {
-            // Get the player sending the packet
             var player = context.player();
 
-            // Get the menu (your custom merchant menu)
             if (player.containerMenu instanceof DwarfMerchantMenu menu) {
-                // Optionally, check menu containerId matches (packet can carry it if you want extra safety)
                 menu.setSelectionHint(packet.getItem());
                 menu.tryMoveItems(packet.getItem());
             }
         });
     }
-
 
     public static void handleDwarfMerchantOffers(ClientboundDwarfMerchantOffersPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
@@ -142,34 +137,23 @@ public class JolCraftNetworking {
     }
 
     public static void handleDelirium(ClientboundDeliriumPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ClientDeliriumData.setMuffleTicks(packet.durationTicks());
-        });
+        context.enqueueWork(() -> ClientDeliriumData.setMuffleTicks(packet.durationTicks()));
     }
 
-
     public static void handleSyncLanguage(ClientboundLanguagePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ClientLanguageData.setKnows(packet.knowsLanguage());
-        });
+        context.enqueueWork(() -> ClientLanguageData.setKnows(packet.knowsLanguage()));
     }
 
     public static void handleSyncAncientLanguage(ClientboundAncientLanguagePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ClientAncientLanguageData.setKnows(packet.knowsLanguage());
-        });
+        context.enqueueWork(() -> ClientAncientLanguageData.setKnows(packet.knowsLanguage()));
     }
 
     public static void handleSyncReputation(ClientboundReputationPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ClientReputationData.setTier(packet.tier());
-        });
+        context.enqueueWork(() -> ClientReputationData.setTier(packet.tier()));
     }
 
     public static void handleDwarfEndorseAnimation(ClientboundDwarfEndorseAnimationPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ClientReputationData.setEndorsementAnimation(packet.entityId(), true);
-        });
+        context.enqueueWork(() -> ClientReputationData.setEndorsementAnimation(packet.entityId(), true));
     }
 
     public static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
@@ -192,4 +176,5 @@ public class JolCraftNetworking {
             }
         }
     }
+
 }

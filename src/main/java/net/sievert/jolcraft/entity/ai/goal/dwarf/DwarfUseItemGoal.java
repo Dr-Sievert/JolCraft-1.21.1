@@ -32,7 +32,7 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
     @Override
     public boolean canUse() {
         if (cooldownTimer > 0) {
-            cooldownTimer--; // decrement cooldown while idle
+            cooldownTimer--;
             return false;
         }
         return this.canUseSelector.test(this.mob);
@@ -48,7 +48,7 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
         if (this.mob instanceof AbstractDwarfEntity dwarf) {
             dwarf.setDrinking(true);
         }
-        this.previousMainHandItem = this.mob.getItemBySlot(EquipmentSlot.MAINHAND).copy(); // Save previous item
+        this.previousMainHandItem = this.mob.getItemBySlot(EquipmentSlot.MAINHAND).copy();
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.item.copy());
         this.mob.startUsingItem(InteractionHand.MAIN_HAND);
     }
@@ -58,12 +58,12 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
         if (this.mob instanceof AbstractDwarfEntity dwarf) {
             dwarf.setDrinking(false);
         }
-        this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem); // Restore old item
+        this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
         if (this.finishUsingSound != null) {
             this.mob.playSound(this.finishUsingSound, 1.0F, this.mob.getRandom().nextFloat() * 0.2F + 0.9F);
         }
-        this.cooldownTimer = cooldownTicks; // start cooldown after use
-        this.previousMainHandItem = ItemStack.EMPTY; // Clear to avoid keeping stale reference
+        this.cooldownTimer = cooldownTicks;
+        this.previousMainHandItem = ItemStack.EMPTY;
 
     }
 

@@ -5,6 +5,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 
 
 public class LockpickingEffect extends MobEffect {
+
     public LockpickingEffect(MobEffectCategory category, int color) {
         super(category, color);
     }

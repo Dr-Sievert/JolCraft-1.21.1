@@ -27,8 +27,8 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuardEntity;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.sound.JolCraftSoundHelper;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,7 +76,6 @@ public class JolCraftEntityEvents {
         Entity target = event.getTarget();
         ItemStack stack = event.getItemStack();
 
-        //Cooldown gate
         if (player.getCooldowns().isOnCooldown(stack)) {
             player.displayClientMessage(
                     Component.translatable("tooltip.jolcraft.crate.cooldown").withStyle(ChatFormatting.GRAY),
@@ -401,5 +400,6 @@ public class JolCraftEntityEvents {
         }
 
     }
+
 
 }

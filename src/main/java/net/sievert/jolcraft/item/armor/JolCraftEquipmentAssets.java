@@ -32,4 +32,5 @@ public class JolCraftEquipmentAssets {
     public static void register(IEventBus eventBus) {
         EQUIPMENT_ASSETS.register(eventBus);
     }
+
 }

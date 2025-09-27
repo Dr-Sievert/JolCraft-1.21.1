@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.datamaps.builtin.Compostable;
 import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.item.JolCraftItems;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,7 +17,7 @@ public class JolCraftDataMapProvider extends DataMapProvider {
     }
 
     @Override
-    protected void gather(HolderLookup.Provider provider) {
+    protected void gather(HolderLookup.@NotNull Provider provider) {
         this.builder(NeoForgeDataMaps.COMPOSTABLES)
                 .add(JolCraftItems.BARLEY_SEEDS.getId(), new Compostable(0.25f), false)
                 .add(JolCraftItems.BARLEY.getId(), new Compostable(0.45f), false)

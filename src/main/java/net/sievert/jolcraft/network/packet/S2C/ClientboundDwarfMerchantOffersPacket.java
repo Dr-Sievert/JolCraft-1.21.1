@@ -5,7 +5,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientboundDwarfMerchantOffersPacket(

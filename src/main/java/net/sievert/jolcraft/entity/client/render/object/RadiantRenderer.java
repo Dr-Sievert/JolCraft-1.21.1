@@ -9,11 +9,15 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.object.RadiantModel;
 import net.sievert.jolcraft.entity.client.object.RadiantRenderState;
 import net.sievert.jolcraft.entity.custom.object.RadiantEntity;
+import org.jetbrains.annotations.NotNull;
 
+@OnlyIn(Dist.CLIENT)
 public class RadiantRenderer extends EntityRenderer<RadiantEntity, RadiantRenderState> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             JolCraft.MOD_ID, "textures/entity/radiant/radiant.png"
@@ -36,20 +40,17 @@ public class RadiantRenderer extends EntityRenderer<RadiantEntity, RadiantRender
 
     @Override
     public void extractRenderState(RadiantEntity entity, RadiantRenderState state, float partialTick) {
-        // Copy the entity's animation state to the render state for model use
         state.idleAnimationState.copyFrom(entity.idleAnimationState);
         state.ageInTicks = entity.tickCount + partialTick;
     }
 
     @Override
-    public void render(RadiantRenderState state, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(@NotNull RadiantRenderState state, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         poseStack.pushPose();
 
-        // Vanilla mob: scale -1 on X and Y to flip upright
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(-0.01F, -1.501F, 0.0F);
 
-        // ⬇️ Call setupAnim *here* before rendering the model!
         model.setupAnim(state);
 
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
@@ -59,7 +60,7 @@ public class RadiantRenderer extends EntityRenderer<RadiantEntity, RadiantRender
     }
 
     @Override
-    protected int getBlockLightLevel(RadiantEntity entity, BlockPos pos) {
+    protected int getBlockLightLevel(@NotNull RadiantEntity entity, @NotNull BlockPos pos) {
         return 15;
     }
 

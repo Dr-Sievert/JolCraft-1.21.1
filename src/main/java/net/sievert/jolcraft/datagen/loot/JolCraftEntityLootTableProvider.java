@@ -40,14 +40,12 @@ public class JolCraftEntityLootTableProvider implements LootTableSubProvider {
         output.accept(
                 lootTableKey,
                 LootTable.lootTable()
-                        // MUFFHORN_FUR pool
                         .withPool(LootPool.lootPool()
                                 .setRolls(UniformGenerator.between(0, 1))
                                 .add(LootItem.lootTableItem(JolCraftItems.MUFFHORN_FUR.get())
                                         .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
                                 )
                         )
-                        // LEATHER pool
                         .withPool(LootPool.lootPool()
                                 .setRolls(UniformGenerator.between(1, 1))
                                 .add(LootItem.lootTableItem(Items.LEATHER)
@@ -55,7 +53,6 @@ public class JolCraftEntityLootTableProvider implements LootTableSubProvider {
                                         .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
                                 )
                         )
-                        // BEEF pool (conditionally cooked like cow)
                         .withPool(LootPool.lootPool()
                                 .setRolls(UniformGenerator.between(1, 1))
                                 .add(
@@ -80,12 +77,7 @@ public class JolCraftEntityLootTableProvider implements LootTableSubProvider {
         );
 
 
-
-
-
     }
-
-
 
 
 

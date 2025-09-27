@@ -6,7 +6,6 @@ import java.util.*;
 
 public class ClientReputationData {
 
-    // Track endorsement/animation state per entity (by their UUID or entityId)
     private static final Map<Integer, Boolean> endorsementAnimationStates = new HashMap<>();
     private static int tier = 0;
     private static Set<ResourceLocation> CLIENT_ENDORSEMENTS = Collections.emptySet();

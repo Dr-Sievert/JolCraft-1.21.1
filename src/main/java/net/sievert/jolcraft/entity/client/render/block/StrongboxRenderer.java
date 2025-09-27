@@ -13,10 +13,13 @@ import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.custom.StrongboxBlock;
 import net.sievert.jolcraft.entity.client.model.blockentity.StrongboxModel;
 
+@OnlyIn(Dist.CLIENT)
 public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implements BlockEntityRenderer<T> {
     private final BlockEntityRendererProvider.Context context;
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/block/strongbox.png");
@@ -32,21 +35,16 @@ public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implement
     public void render(T tileEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
 
-        // 1. Move to block center (so Y = 0.75 is the middle of a 16px tall block model, adjust if your model is taller/shorter)
         poseStack.translate(0.5F, 0.75F, 0.5F);
 
-        // 2. Rotate around block center by facing
         BlockState state = tileEntity.getBlockState();
         Direction facing = state.getValue(StrongboxBlock.FACING);
         poseStack.mulPose(Axis.YP.rotationDegrees(-facing.toYRot()));
 
-        // 3. Flip upright for Blockbench
         poseStack.mulPose(Axis.XP.rotationDegrees(180));
 
-        // 4. Move *down* by 8 pixels (0.5), and *back* by 8px on Z and *right* by 8px on X
         poseStack.translate(0F, -0.75F, 0F);
 
-        // --- Animate and render model ---
         float openness = tileEntity.getOpenNess(partialTicks);
         openness = 1.0F - openness;
         openness = 1.0F - openness * openness * openness;
@@ -62,7 +60,6 @@ public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implement
 
     @Override
     public AABB getRenderBoundingBox(T blockEntity) {
-        // Use vanilla-like bounding box to prevent culling lid animation
         return AABB.encapsulatingFullBlocks(blockEntity.getBlockPos().offset(-1, 0, -1), blockEntity.getBlockPos().offset(1, 1, 1));
     }
 }

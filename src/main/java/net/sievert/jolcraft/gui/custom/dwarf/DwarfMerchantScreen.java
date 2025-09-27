@@ -16,8 +16,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.network.packet.C2S.ServerboundDwarfSelectTradePacket;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -104,23 +104,18 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
         int level = this.menu.getTraderLevel();
         boolean showLvl = this.menu.showLevel();
 
-        // Always show mob's title/name, possibly with rank
         Component displayTitle;
         if (showLvl && level > 0 && level <= 5) {
-            // Show "Dwarf - Master", etc
             Component rank = Component.translatable("merchant.level." + level);
             displayTitle = Component.translatable("merchant.title", this.title, rank);
         } else {
-            // Only show "Dwarf"
             displayTitle = this.title;
         }
         int titleX = 49 + this.imageWidth / 2 - this.font.width(displayTitle) / 2;
         graphics.drawString(this.font, displayTitle, titleX, 6, 0xDDDDDD, false);
 
-        // Player inventory
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xDDDDDD, false);
 
-        // Trades label
         int tradesLabelWidth = this.font.width(TRADES_LABEL);
         graphics.drawString(this.font, TRADES_LABEL, 5 - tradesLabelWidth / 2 + 48, 6, 0xDDDDDD, false);
 
@@ -257,7 +252,6 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
             guiGraphics.renderItemDecorations(this.font, realCost, x, y);
         } else {
             guiGraphics.renderItemDecorations(this.font, baseCost, x, y, baseCost.getCount() == 1 ? "1" : null);
-            // Forge: fixes Forge-8806, code for count rendering taken from GuiGraphics#renderGuiItemDecorations
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
             String count = realCost.getCount() == 1 ? "1" : String.valueOf(realCost.getCount());

@@ -28,6 +28,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
+
     public static final IRecipeType<DwarfTradeRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, "dwarf_trades", DwarfTradeRecipe.class);
     private static final java.util.Map<String, LivingEntity> DWARF_RENDER_CACHE = new java.util.HashMap<>();
     private final IDrawable background;
@@ -67,32 +68,25 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
     public void draw(DwarfTradeRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         background.draw(graphics, 0, 0);
 
-        // === Profession and level merged, e.g. "Master Dwarf" ===
-        int textY = 12;        // vertical position (tweak here)
-        int offsetX = -19;       // horizontal offset (tweak here)
+        int textY = 12;
+        int offsetX = -19;
+        int level = recipe.level();
 
-        // Get level string (e.g., "Master")
-        int level = recipe.getLevel();
         String levelKey = "merchant.level." + level;
         String levelStr = Component.translatable(levelKey).getString();
 
-        // Merge with profession, e.g. "Master Dwarf"
-        String profText = recipe.getProfession();
+        String profText = recipe.profession();
         String displayStr = levelStr + " " + profText;
 
-        // Center the full string
         int x = ((getWidth() - Minecraft.getInstance().font.width(displayStr)) / 2) + offsetX;
 
-        // Draw merged string
         graphics.drawString(Minecraft.getInstance().font, displayStr, x+3, textY, 0x888888, false);
 
-        // Input slots: always A, maybe B
-        boolean hasB = recipe.getInputB() != null && !recipe.getInputB().isEmpty();
+        boolean hasB = recipe.inputB() != null && !recipe.inputB().isEmpty();
         int plusX = 16, plusY = 27;
         int arrowX = hasB ? 45 : 21;
         int arrowY = 24;
 
-        // Draw plus if two inputs
         if (hasB) {
             graphics.blit(
                     RenderType.GUI_TEXTURED,
@@ -104,7 +98,6 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             );
         }
 
-        // Draw arrow
         graphics.blit(
                 RenderType.GUI_TEXTURED,
                 ARROW_TEXTURE,
@@ -131,23 +124,19 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             );
         }
 
-        // --- DRAW THE COUNT/RANGE OVERLAYS ---
         float scale = 0.75f;
-        int overlayY = 43; // y under item slot, tweak as needed
+        int overlayY = 43;
 
-// Slot X and width definitions (slot width is always 18 for JEI slots)
         final int slotWidth = 18;
         final int slotAX = 2;
         final int slotBX = 28;
-        final int outputX = (recipe.getInputB() != null && !recipe.getInputB().isEmpty()) ? 68 : 45;
+        final int outputX = (recipe.inputB() != null && !recipe.inputB().isEmpty()) ? 68 : 45;
 
-// --- Input A ---
-        if (recipe.getInputAMin() != 1 || recipe.getInputAMax() != 1) {
-            String aText = (recipe.getInputAMin() == recipe.getInputAMax())
-                    ? String.valueOf(recipe.getInputAMin())
-                    : (recipe.getInputAMin() + "-" + recipe.getInputAMax());
+        if (recipe.inputAMin() != 1 || recipe.inputAMax() != 1) {
+            String aText = (recipe.inputAMin() == recipe.inputAMax())
+                    ? String.valueOf(recipe.inputAMin())
+                    : (recipe.inputAMin() + "-" + recipe.inputAMax());
             int strW = Minecraft.getInstance().font.width(aText);
-            // Center under slot: (slot center) - (half string width at scale)
             float centerX = slotAX + (slotWidth / 2f) - (strW * scale / 2f);
 
             graphics.pose().pushPose();
@@ -157,12 +146,11 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             graphics.pose().popPose();
         }
 
-// --- Input B ---
-        if (recipe.getInputB() != null && !recipe.getInputB().isEmpty()
-                && (recipe.getInputBMin() != 1 || recipe.getInputBMax() != 1)) {
-            String bText = (recipe.getInputBMin() == recipe.getInputBMax())
-                    ? String.valueOf(recipe.getInputBMin())
-                    : (recipe.getInputBMin() + "-" + recipe.getInputBMax());
+        if (recipe.inputB() != null && !recipe.inputB().isEmpty()
+                && (recipe.inputBMin() != 1 || recipe.inputBMax() != 1)) {
+            String bText = (recipe.inputBMin() == recipe.inputBMax())
+                    ? String.valueOf(recipe.inputBMin())
+                    : (recipe.inputBMin() + "-" + recipe.inputBMax());
             int strW = Minecraft.getInstance().font.width(bText);
             float centerX = slotBX + (slotWidth / 2f) - (strW * scale / 2f);
 
@@ -173,11 +161,10 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             graphics.pose().popPose();
         }
 
-// --- Output ---
-        if (recipe.getOutputMin() != 1 || recipe.getOutputMax() != 1) {
-            String oText = (recipe.getOutputMin() == recipe.getOutputMax())
-                    ? String.valueOf(recipe.getOutputMin())
-                    : (recipe.getOutputMin() + "-" + recipe.getOutputMax());
+        if (recipe.outputMin() != 1 || recipe.outputMax() != 1) {
+            String oText = (recipe.outputMin() == recipe.outputMax())
+                    ? String.valueOf(recipe.outputMin())
+                    : (recipe.outputMin() + "-" + recipe.outputMax());
             int strW = Minecraft.getInstance().font.width(oText);
             float centerX = (float) outputX + (slotWidth / 2f) - (strW * scale / 2f);
 
@@ -188,43 +175,34 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             graphics.pose().popPose();
         }
 
-
-
-
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DwarfTradeRecipe recipe, IFocusGroup focuses) {
         int sloty = 25;
-        // Profession egg slot (always first)
         builder.addSlot(RecipeIngredientRole.INPUT, 95, 42)
-                .add(recipe.getSpawnEgg());
-        if(recipe.getInputA().is(JolCraftItems.GOLD_COIN.get())){
-            // Input A (coin pouch or gold coin)
+                .add(recipe.spawnEgg());
+        if(recipe.inputA().is(JolCraftItems.GOLD_COIN.get())){
             builder.addSlot(RecipeIngredientRole.INPUT, 2, sloty).add(new ItemStack(JolCraftItems.GOLD_COIN.get())).add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
-        }else{
-            builder.addSlot(RecipeIngredientRole.INPUT, 2, sloty).add(recipe.getInputA());
+        }
+        else{
+            builder.addSlot(RecipeIngredientRole.INPUT, 2, sloty).add(recipe.inputA());
         }
 
-        // Input B if present (for recipes requiring two inputs)
-        if (recipe.getInputB() != null && !recipe.getInputB().isEmpty()) {
-            if(recipe.getInputB().is(JolCraftItems.GOLD_COIN.get())){
-                // Input B (coin pouch or gold coin)
+        if (recipe.inputB() != null && !recipe.inputB().isEmpty()) {
+            if(recipe.inputB().is(JolCraftItems.GOLD_COIN.get())){
                 builder.addSlot(RecipeIngredientRole.INPUT, 28, sloty).add(new ItemStack(JolCraftItems.GOLD_COIN.get())).add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
             }else{
-                builder.addSlot(RecipeIngredientRole.INPUT, 28, sloty).add(recipe.getInputB());
+                builder.addSlot(RecipeIngredientRole.INPUT, 28, sloty).add(recipe.inputB());
             }
-            // Output farther right for double input
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 68, sloty).add(recipe.getOutput());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 68, sloty).add(recipe.output());
         } else {
-            // Output closer for single input
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 45, sloty).add(recipe.getOutput());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 45, sloty).add(recipe.output());
         }
     }
 
-
     public static LivingEntity getOrCreateDwarf(DwarfTradeRecipe recipe) {
-        String profession = recipe.getProfession();
+        String profession = recipe.profession();
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || profession == null) return null;
 
@@ -232,9 +210,8 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
         LivingEntity cached = DWARF_RENDER_CACHE.get(key);
         if (cached != null) return cached;
 
-        LivingEntity entity = null;
+        LivingEntity entity;
         switch (key) {
-            case "dwarf" -> entity = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
             case "guildmaster" -> entity = new DwarfGuildmasterEntity(JolCraftEntities.DWARF_GUILDMASTER.get(), mc.level);
             case "historian" -> entity = new DwarfHistorianEntity(JolCraftEntities.DWARF_HISTORIAN.get(), mc.level);
             case "merchant" -> entity = new DwarfMerchantEntity(JolCraftEntities.DWARF_MERCHANT.get(), mc.level);
@@ -245,7 +222,7 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             case "artisan" -> entity = new DwarfArtisanEntity(JolCraftEntities.DWARF_ARTISAN.get(), mc.level);
             case "explorer" -> entity = new DwarfExplorerEntity(JolCraftEntities.DWARF_EXPLORER.get(), mc.level);
             case "miner" -> entity = new DwarfMinerEntity(JolCraftEntities.DWARF_MINER.get(), mc.level);
-            default -> entity = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level); // fallback
+            default -> entity = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
         }
 
         DWARF_RENDER_CACHE.put(key, entity);

@@ -84,12 +84,10 @@ public class DeepslateBulbsCropBlock extends CropBlock {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState below = level.getBlockState(pos.below());
 
-        // If on Verdant Farmland, always survive (ignore Y and light)
         if (below.is(JolCraftBlocks.VERDANT_SOIL.get())) {
             return true;
         }
 
-        // Hard Y-level gate: must be below surface
         if (pos.getY() > 0) return false;
 
         TriState soilDecision = below.canSustainPlant(level, pos.below(), Direction.UP, state);
@@ -99,7 +97,6 @@ public class DeepslateBulbsCropBlock extends CropBlock {
 
         boolean darkOk = hasSufficientDarkness(level, pos);
 
-        // Restrict to tagged deepslate surfaces
         return below.is(JolCraftTags.Blocks.DEEPSLATE_BULBS_PLANTABLE) && darkOk;
     }
 
@@ -117,7 +114,6 @@ public class DeepslateBulbsCropBlock extends CropBlock {
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!level.isAreaLoaded(pos, 1)) return;
 
-        // Check if the block is still valid and allowed to grow
         if (!this.canSurvive(state, level, pos)) {
             level.destroyBlock(pos, true);
             return;
@@ -126,13 +122,11 @@ public class DeepslateBulbsCropBlock extends CropBlock {
         BlockState below = level.getBlockState(pos.below());
         boolean onVerdant = below.is(JolCraftBlocks.VERDANT_SOIL.get());
 
-        // PATCH: Only require darkness if NOT on Verdant Farmland
         if (!onVerdant && !hasSufficientDarkness(level, pos)) return;
 
         int age = this.getAge(state);
         if (age >= this.getMaxAge()) return;
 
-        // Growth chance logic (vanilla-based)
         float growthSpeed = getGrowthSpeed(state, level, pos);
         if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt((int)(25.0F / growthSpeed) + 1) == 0)) {
             level.setBlock(pos, this.getStateForAge(age + 1), 2);
@@ -144,12 +138,11 @@ public class DeepslateBulbsCropBlock extends CropBlock {
         float base = CropBlock.getGrowthSpeed(blockState, level, pos);
         BlockState soil = level.getBlockState(pos.below());
         if (soil.is(JolCraftBlocks.VERDANT_SOIL.get())) {
-            return base * 1.5F; // 20% faster
+            return base * 1.5F;
         }
         return base;
     }
 
-    // ---- Bonemeal Support ----
     @Override
     public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
         return false;

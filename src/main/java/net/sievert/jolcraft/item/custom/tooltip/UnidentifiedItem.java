@@ -13,7 +13,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.util.item.tooltip.TooltipHelper;
+import net.sievert.jolcraft.item.util.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -120,4 +120,5 @@ public abstract class UnidentifiedItem extends Item {
         }
         super.appendHoverText(stack, context, tooltip, flag);
     }
+
 }

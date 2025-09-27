@@ -54,8 +54,6 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         return CODEC;
     }
 
-    // ---- Placement and Survival ----
-
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return isUprightLog(state);
@@ -64,7 +62,6 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState below = level.getBlockState(pos.below());
-        // If on Verdant Farmland, always survive (ignore Y and light)
         if (below.is(JolCraftBlocks.VERDANT_SOIL.get())) {
             return true;
         }
@@ -78,8 +75,6 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
                 && state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y;
     }
 
-    // ---- Growth ----
-
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (!level.isAreaLoaded(pos, 1)) return;
@@ -89,12 +84,11 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         }
         int age = state.getValue(AGE);
 
-        // PATCH: Only allow growth on upright log or Verdant Farmland
         BlockState below = level.getBlockState(pos.below());
         boolean isOnLog = isUprightLog(below);
         boolean isOnVerdant = below.is(JolCraftBlocks.VERDANT_SOIL.get());
 
-        if (!(isOnLog || isOnVerdant)) return; // Don't grow if on invalid substrate
+        if (!(isOnLog || isOnVerdant)) return;
 
         if (age < MAX_AGE) {
             float growthChance = getGrowthSpeed(state, level, pos);
@@ -103,9 +97,7 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
             }
         }
         else if (age == MAX_AGE) {
-            // Transform into a Festerling block!
             level.setBlock(pos, JolCraftBlocks.FESTERLING.get().defaultBlockState(), 2);
-            // Spawn happy villager particles
             for (int i = 0; i < 5; ++i) {
                 double dx = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.7;
                 double dy = pos.getY() + 0.7 + (random.nextDouble() * 0.3);
@@ -124,24 +116,21 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         float speed = 1.0F;
         BlockPos below = pos.below();
 
-        // If planted ON Verdant Soil/Farmland, multiply base speed
         BlockState soil = level.getBlockState(below);
         if (soil.is(JolCraftBlocks.VERDANT_SOIL.get()) || soil.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
             speed *= 1.5F;
         }
 
-        // For each adjacent block in 3x3 below, add +2 if Verdant Soil/Farmland
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 if (dx == 0 && dz == 0) continue;
                 BlockState neighborSoil = level.getBlockState(below.offset(dx, 0, dz));
                 if (neighborSoil.is(JolCraftBlocks.VERDANT_SOIL.get()) || neighborSoil.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
-                    speed += 2.0F; // Strong bonus per verdant block
+                    speed += 2.0F;
                 }
             }
         }
 
-        // Upright log support, as before
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockState neighbor = level.getBlockState(pos.relative(dir));
             if (neighbor.is(BlockTags.LOGS)
@@ -154,15 +143,12 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         return speed;
     }
 
-
-    // ---- Bonemeal Support ----
-
     public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
         return state.getValue(AGE) < MAX_AGE;
     }
 
     public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
-        return random.nextFloat() < 0.4F; // 40% chance to bonemeal
+        return random.nextFloat() < 0.4F;
     }
 
     public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
@@ -171,8 +157,6 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         int newAge = Math.min(age + growBy, MAX_AGE);
         level.setBlock(pos, state.setValue(AGE, newAge), 2);
     }
-
-    // ---- Misc ----
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

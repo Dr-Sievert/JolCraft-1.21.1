@@ -40,6 +40,6 @@ public class MuffhornFurLayer extends RenderLayer<MuffhornRenderState, MuffhornM
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(FUR_TEXTURE));
         model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
 
-        model.setFurVisible(false); // Reset so other renders (e.g. shadow) don't accidentally keep fur on
+        model.setFurVisible(false);
     }
 }

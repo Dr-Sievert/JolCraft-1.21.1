@@ -17,7 +17,6 @@ public class StrongboxMenu extends AbstractContainerMenu {
     public final StrongboxBlockEntity blockEntity;
     private final Level level;
 
-    // Used by NeoForge's auto-gui opening
     public StrongboxMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
     }
@@ -26,27 +25,23 @@ public class StrongboxMenu extends AbstractContainerMenu {
         return blockEntity;
     }
 
-    // Main constructor
     public StrongboxMenu(int id, Inventory inv, BlockEntity blockEntity) {
         super(JolCraftMenuTypes.STRONGBOX_MENU.get(), id);
         this.blockEntity = (StrongboxBlockEntity) blockEntity;
         this.level = inv.player.level();
 
-        // Strongbox slots
         for (int row = 0; row < 2; ++row) {
             for (int col = 0; col < 9; ++col) {
                 this.addSlot(new Slot(this.blockEntity, col + row * 9, 8 + col * 18, 18 + row * 18));
             }
         }
 
-        // Player inventory
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 9; ++col) {
                 this.addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 68 + row * 18));
             }
         }
 
-        // Hotbar
         for (int col = 0; col < 9; ++col) {
             this.addSlot(new Slot(inv, col, 8 + col * 18, 126));
         }
@@ -64,11 +59,9 @@ public class StrongboxMenu extends AbstractContainerMenu {
         int hotbarStart = strongboxSize + 27;
         int hotbarEnd = hotbarStart + 9;
 
-        // Shift-click from Strongbox to Player
         if (index < strongboxSize) {
             if (!moveItemStackTo(stack, strongboxSize, hotbarEnd, true)) return ItemStack.EMPTY;
         } else {
-            // Shift-click from Player to Strongbox
             if (!moveItemStackTo(stack, 0, strongboxSize, false)) return ItemStack.EMPTY;
         }
 
@@ -82,8 +75,6 @@ public class StrongboxMenu extends AbstractContainerMenu {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
                 player, blockEntity.getBlockState().getBlock());
     }
-
-
 
 
 }

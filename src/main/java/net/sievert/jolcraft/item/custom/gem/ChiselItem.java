@@ -8,8 +8,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.item.custom.tooltip.ToolItem;
-import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
+import net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -21,10 +23,7 @@ public class ChiselItem extends ToolItem {
         super(material.applySwordProperties(properties, attackDamage, attackSpeed));
     }
 
-    public ChiselItem(Properties properties) {
-        super(properties);
-    }
-
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Screen.hasAltDown()) {

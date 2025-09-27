@@ -60,7 +60,6 @@ public class FesterlingBlock extends JolCraftMushroomBlock{
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        // This logic is based on the JolCraftMushroomBlock, but adds log support
         if (random.nextInt(25) == 0) {
             int i = 5;
             for (BlockPos checkPos : BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4))) {
@@ -83,7 +82,6 @@ public class FesterlingBlock extends JolCraftMushroomBlock{
     private boolean isValidFesterlingSubstrate(BlockState state) {
         if (state.is(BlockTags.MUSHROOM_GROW_BLOCK)) return true;
         if (state.is(BlockTags.LOGS)) {
-            // Accept if AXIS is Y, or if it doesn't have AXIS (defensive for modded logs)
             return !state.hasProperty(BlockStateProperties.AXIS)
                     || state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y;
         }

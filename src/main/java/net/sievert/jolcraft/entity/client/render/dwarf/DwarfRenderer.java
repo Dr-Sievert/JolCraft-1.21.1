@@ -8,14 +8,18 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.dwarf.*;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@OnlyIn(Dist.CLIENT)
 public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRenderer<T, DwarfRenderState, DwarfModel> {
 
     public DwarfRenderer(EntityRendererProvider.Context context) {
@@ -48,14 +52,12 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
             });
 
     @Override
-    public ResourceLocation getTextureLocation(DwarfRenderState entity) {
+    public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
         return LOCATION_BY_VARIANT.get(entity.variant);
     }
 
-
-
     @Override
-    public void render(DwarfRenderState renderState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(DwarfRenderState renderState, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         if (renderState.isBaby) {
             poseStack.scale(0.45f, 0.45f, 0.45f);
         } else {
@@ -65,12 +67,12 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
     }
 
     @Override
-    public DwarfRenderState createRenderState() {
+    public @NotNull DwarfRenderState createRenderState() {
         return new DwarfRenderState();
     }
 
     @Override
-    public void extractRenderState(T entity, DwarfRenderState reusedState, float partialTick) {
+    public void extractRenderState(@NotNull T entity, @NotNull DwarfRenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
         reusedState.idleAnimationState.copyFrom(entity.idleAnimationState);
         for (DwarfAnimationType type : DwarfAnimationType.values()) {
@@ -88,8 +90,5 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         reusedState.legsEquipment = entity.getItemBySlot(EquipmentSlot.LEGS);
         reusedState.feetEquipment = entity.getItemBySlot(EquipmentSlot.FEET);
     }
-
-
-
 
 }

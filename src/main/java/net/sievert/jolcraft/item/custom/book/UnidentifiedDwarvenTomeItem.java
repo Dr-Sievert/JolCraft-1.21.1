@@ -14,8 +14,8 @@ import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.tooltip.UnidentifiedItem;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -40,7 +40,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     @Override
     protected ItemStack getRandomIdentifiedItem(ServerPlayer player, ItemStack original) {
         RandomSource rng = player.getRandom();
-        String loreKey = DwarvenLoreHelper.getRandomKeyWeighted(rng, false); // modern pool
+        String loreKey = DwarvenLoreHelper.getRandomKeyWeighted(rng, false);
         if (loreKey.isEmpty()) return ItemStack.EMPTY;
 
         DwarvenLoreHelper.LoreRarity rarity = DwarvenLoreHelper.getRarity(loreKey, false);
@@ -49,7 +49,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
             case UNCOMMON -> new ItemStack(JolCraftItems.DWARVEN_TOME_UNCOMMON.get());
             case RARE -> new ItemStack(JolCraftItems.DWARVEN_TOME_RARE.get());
             case EPIC -> new ItemStack(JolCraftItems.DWARVEN_TOME_EPIC.get());
-            case LEGENDARY -> ItemStack.EMPTY; // Safe fallback
+            case LEGENDARY -> ItemStack.EMPTY;
         };
 
         tome.set(JolCraftDataComponents.LORE_LINE_ID.get(), loreKey);

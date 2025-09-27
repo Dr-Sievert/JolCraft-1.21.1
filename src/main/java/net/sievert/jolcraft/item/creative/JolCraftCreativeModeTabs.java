@@ -13,7 +13,7 @@ import net.sievert.jolcraft.client.item.compass.DialItemColor;
 import net.sievert.jolcraft.client.item.compass.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
+import net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper;
 
 import java.util.function.Supplier;
 
@@ -26,6 +26,7 @@ public class JolCraftCreativeModeTabs {
                     .title(Component.translatable("itemGroup.jolcraft.jolcraft_items_tab"))
                     .icon(() -> new ItemStack(JolCraftItems.GOLD_COIN.get()))
                     .displayItems((pParameters, pOutput) -> {
+
                         //Testing
                         pOutput.accept(JolCraftItems.DEV_KEY);
 
@@ -241,6 +242,7 @@ public class JolCraftCreativeModeTabs {
                     .icon(() -> new ItemStack(JolCraftItems.DWARF_SPAWN_EGG.get()))
                     .withTabsBefore(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "jolcraft_items_tab"))
                     .displayItems((pParameters, pOutput) -> {
+
                         pOutput.accept(JolCraftItems.DWARF_SPAWN_EGG);
                         pOutput.accept(JolCraftItems.DWARF_GUILDMASTER_SPAWN_EGG);
                         pOutput.accept(JolCraftItems.DWARF_HISTORIAN_SPAWN_EGG);
@@ -253,6 +255,7 @@ public class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.DWARF_EXPLORER_SPAWN_EGG);
                         pOutput.accept(JolCraftItems.DWARF_MINER_SPAWN_EGG);
                         pOutput.accept(JolCraftItems.MUFFHORN_SPAWN_EGG);
+
                     }).build());
 
     private static void addCompassDialVariant(CreativeModeTab.Output output, String group) {

@@ -33,7 +33,6 @@ public class RadiantModel extends EntityModel<RadiantRenderState>  {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        // Blockbench export: centered at (0,20,-6), 2x2x2 cube.
         root.addOrReplaceChild(
                 "body",
                 CubeListBuilder.create()
@@ -49,24 +48,18 @@ public class RadiantModel extends EntityModel<RadiantRenderState>  {
         super.setupAnim(state);
         this.root().getAllParts().forEach(ModelPart::resetPose);
 
-        // Manual example: spin & bob (replace with your logic/math)
-        float tick = state.ageInTicks; // smooth
-        float cycle = tick % 60f;      // 60 ticks loop
-        float spin = (float) (Math.toRadians((cycle / 60f) * 360f)); // 0 to 2PI
+        float tick = state.ageInTicks;
+        float cycle = tick % 60f;
+        float spin = (float) (Math.toRadians((cycle / 60f) * 360f));
         float bob = (float) Math.sin(tick * 0.12f) * 2f;
 
-        // Rotate
         this.body.xRot = spin;
         this.body.yRot = spin;
         this.body.zRot = 0f;
 
-        // Position: base + bobbing
-        this.body.x = 0f;            // default x
-        this.body.y = 20.0f + bob;   // base y + bob
-        this.body.z = -6.0f;         // default z
-
-        // If you want to follow your original keyframes, do the math for each one,
-        // or use a big switch/case, or interpolate by hand.
+        this.body.x = 0f;
+        this.body.y = 20.0f + bob;
+        this.body.z = -6.0f;
     }
 
 }

@@ -35,10 +35,9 @@ public class CoinPouchItem extends Item {
         super(properties.stacksTo(1));
     }
 
-    // --- Extract coins by right-clicking pouch in inventory (to slot or cursor) ---
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack pouch, ItemStack cursor, Slot slot, ClickAction action, Player player, SlotAccess access) {
-        // Right click, cursor empty: Extract up to 64 coins to the slot
+
         if (action == ClickAction.SECONDARY && cursor.isEmpty()) {
             int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
             if (current > 0) {
@@ -47,7 +46,6 @@ public class CoinPouchItem extends Item {
                 pouch.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), current - toGive);
                 access.set(out);
 
-                // Play appropriate sound based on how many were extracted
                 if (toGive == 1) playSingleSound(player);
                 else playStackSound(player);
 
@@ -56,8 +54,9 @@ public class CoinPouchItem extends Item {
                 return true;
             }
         }
-        // Left or right click: Insert coins from slot into pouch
+
         ItemStack slotStack = access.get();
+
         if (isGoldCoin(slotStack)) {
             int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
             int addable = 0;
@@ -66,16 +65,13 @@ public class CoinPouchItem extends Item {
             } else if (action == ClickAction.SECONDARY) {
                 addable = Math.min(MAX_COINS - current, 1);
             }
-            // For insert (clicking coins into pouch)
             if (addable > 0) {
                 boolean wasEmpty = (current == 0);
                 pouch.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), current + addable);
                 slotStack.shrink(addable);
                 access.set(slotStack.isEmpty() ? ItemStack.EMPTY : slotStack);
 
-                // Sound logic
                 if (addable == 1 && wasEmpty) {
-                    // 1 coin, pouch was empty
                     playPouchInsertSound(player);
                 } else if (addable == 1) {
                     playSingleSound(player);
@@ -92,7 +88,6 @@ public class CoinPouchItem extends Item {
         return false;
     }
 
-    // --- Fill pouch from player inventory on right-click in hand ---
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack pouch = player.getItemInHand(hand);
@@ -121,13 +116,10 @@ public class CoinPouchItem extends Item {
         return InteractionResult.PASS;
     }
 
-
-    // --- Utility: Is this a gold coin? ---
     private boolean isGoldCoin(ItemStack stack) {
         return !stack.isEmpty() && stack.getItem() == JolCraftItems.GOLD_COIN.get();
     }
 
-    // --- Utility: Remove up to max coins from inventory ---
     private int tryConsumeGoldCoinsFromInventory(Player player, int max) {
         int removed = 0;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
@@ -142,7 +134,6 @@ public class CoinPouchItem extends Item {
         return removed;
     }
 
-    // --- Bar ---
     @Override
     public boolean isBarVisible(ItemStack stack) {
         int amount = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
@@ -160,8 +151,6 @@ public class CoinPouchItem extends Item {
         return BAR_COLOR;
     }
 
-
-    // --- Hover render ---
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         int amount = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
@@ -170,34 +159,30 @@ public class CoinPouchItem extends Item {
                 : Optional.empty();
     }
 
-
-    // --- Sounds (copying BundleItem) ---
     private void playStackSound(Player player) {
         player.playSound(JolCraftSounds.COIN_STACK.get(), 0.8F + player.level().random.nextFloat() * 0.2F, 1.0F + player.level().random.nextFloat() * 0.2F);
     }
+
     private void playSingleSound(Player player) {
         player.playSound(JolCraftSounds.COIN_SINGLE.get(), 0.8F + player.level().random.nextFloat() * 0.2F, 1.0F + player.level().random.nextFloat() * 0.2F);
     }
+
     private void playPouchInsertSound(Player player) {
         player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 1.3F);
     }
+
     private void playInsertFailSound(Player player) {
         player.playSound(SoundEvents.BUNDLE_INSERT_FAIL, 0.6F, 1.3F);
     }
 
-
-    // --- UI Helper ---
     private void broadcastChangesOnContainerMenu(Player player) {
         AbstractContainerMenu menu = player.containerMenu;
         menu.slotsChanged(player.getInventory());
     }
 
-    // --- Set Data Component ---
     @Override
     public void onCraftedBy(ItemStack stack, Level world, Player player) {
         stack.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
     }
-
-
 
 }

@@ -32,7 +32,7 @@ import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
+import net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -41,7 +41,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class FermentingCauldronBlock extends LayeredCauldronBlock implements EntityBlock {
 
-    // Unique properties for Fermenting Cauldron
     public static final EnumProperty<FermentingStage> STAGE = EnumProperty.create("stage", FermentingStage.class);
     public static final EnumProperty<HopsType> HOPS_TYPE = EnumProperty.create("hops_type", HopsType.class);
     public static final IntegerProperty FERMENTATION_PROGRESS = IntegerProperty.create("fermentation_progress", 0, 9);
@@ -60,11 +59,9 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        // Add the unique properties of Fermenting Cauldron
         builder.add(STAGE, FERMENTATION_PROGRESS, HOPS_TYPE);
     }
 
-    // --- Interaction Logic ---
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
@@ -175,8 +172,6 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
             }
         }
 
-
-
         // Add yeast to start fermentation
         if (stack.is(JolCraftItems.YEAST.get()) && (state.getValue(STAGE) == FermentingStage.HOPS)) {
             BlockState newState = state.setValue(STAGE, FermentingStage.BREW_FERMENTING);
@@ -195,8 +190,6 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
         return InteractionResult.PASS;
     }
 
-
-    // --- BLOCK ENTITY SUPPORT ---
     @Nullable
     @Override
     public FermentingCauldronBlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -208,7 +201,7 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (type == JolCraftBlockEntities.FERMENTING_CAULDRON.get()) {
             return (lvl, pos, st, blockEntity) -> {
-                if (lvl instanceof ServerLevel serverLevel) {
+                if (lvl instanceof ServerLevel) {
                     if (blockEntity instanceof FermentingCauldronBlockEntity fermenting) {
                         fermenting.tick();
                     }
@@ -227,10 +220,9 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
         }
     }
 
-    // --- MISC OVERRIDES ---
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        return new ItemStack(Items.CAULDRON); // Prevents pick block from giving custom cauldron with NBT
+        return new ItemStack(Items.CAULDRON);
     }
 
     @Override

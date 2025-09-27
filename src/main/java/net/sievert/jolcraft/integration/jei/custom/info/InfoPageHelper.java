@@ -20,7 +20,6 @@ public class InfoPageHelper {
     public static List<InfoPageRecipe> getAllInfoPages() {
 
         //Compass group
-
         ItemStack compassEmpty = JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get().getDefaultInstance();
 
         ItemStack compassDial = JolCraftItems.DEEPSLATE_COMPASS_DIAL.get().getDefaultInstance();
@@ -74,7 +73,6 @@ public class InfoPageHelper {
         );
     }
 
-
     public static List<ItemStack> getAllStacksForTag(TagKey<Item> tag) {
         List<ItemStack> stacks = new ArrayList<>();
         for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(tag)) {
@@ -82,4 +80,5 @@ public class InfoPageHelper {
         }
         return stacks;
     }
+
 }

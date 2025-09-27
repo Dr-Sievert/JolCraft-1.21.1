@@ -25,18 +25,15 @@ import java.util.UUID;
 
 public class HearthBlockEntity extends BlockEntity {
 
-    // Set of UUIDs for players who have activated this hearth
     private final Set<UUID> activePlayers = new HashSet<>();
 
     public HearthBlockEntity(BlockPos pos, BlockState state) {
         super(JolCraftBlockEntities.HEARTH.get(), pos, state);
     }
 
-    // --- Save/load NBT ---
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         super.saveAdditional(tag, provider);
-        // Save UUIDs as string list
         ListTag uuidList = new ListTag();
         for (UUID uuid : activePlayers) {
             uuidList.add(StringTag.valueOf(uuid.toString()));
@@ -56,34 +53,16 @@ public class HearthBlockEntity extends BlockEntity {
         }
     }
 
-    // Add a player to the hearth, returns true if new, false if already present
     public boolean activateFor(UUID playerId) {
         boolean wasAdded = activePlayers.add(playerId);
         setChanged();
         return wasAdded;
     }
 
-    // Remove a player from the hearth (if needed, e.g., on logout)
-    public boolean deactivateFor(UUID playerId) {
-        boolean wasRemoved = activePlayers.remove(playerId);
-        setChanged();
-        return wasRemoved;
-    }
-
-    // Is the hearth currently lit (at least one active player)?
-    public boolean isLit() {
-        return !activePlayers.isEmpty();
-    }
-
-    // Utility: Get the current set (copy for safety)
-    public Set<UUID> getActivePlayers() {
-        return Set.copyOf(activePlayers);
-    }
     public void tick() {
         if (this.level == null || this.level.isClientSide) return;
         if (this.level.getGameTime() % 200 != 0) return;
 
-        // Only give regeneration if the hearth is lit
         if (this.getBlockState().getValue(HearthBlock.LIT)) {
             for (UUID uuid : activePlayers) {
                 ServerPlayer player = Objects.requireNonNull(this.level.getServer()).getPlayerList().getPlayer(uuid);
@@ -91,7 +70,7 @@ public class HearthBlockEntity extends BlockEntity {
                 if (!player.level().dimension().equals(this.level.dimension())) continue; // Same dimension only
 
                 double distSq = player.blockPosition().distSqr(this.getBlockPos());
-                if (distSq <= 100) { // 10 block radius (10*10)
+                if (distSq <= 100) {
                     player.addEffect(new MobEffectInstance(JolCraftEffects.HOMESTEAD, 300, 0, true, true));
                 }
             }
@@ -110,7 +89,7 @@ public class HearthBlockEntity extends BlockEntity {
                     double distSq = bedPos.distSqr(this.getBlockPos());
                     if (distSq <= 100) {
                         anyValidBed = true;
-                        break; // At least one valid bed is enough
+                        break;
                     }
                 }
             }

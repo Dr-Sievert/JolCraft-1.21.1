@@ -16,7 +16,6 @@ import net.sievert.jolcraft.entity.client.dwarf.DwarfAnimations;
 
 public class DwarfGuardModel extends DwarfModel{
 
-    //MUST BE UNIQUE OR IT OVERWRITES AND MESSES UP TEXTURES
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_guard"), "main");
 
     private final ModelPart right_arm;
@@ -91,10 +90,8 @@ public class DwarfGuardModel extends DwarfModel{
         this.applyHeadRotation(state.yRot, state.xRot);
         this.animateWalk(DwarfAnimations.DWARF_WALK, state.walkAnimationPos, state.walkAnimationSpeed, 2f, 2.5f);
 
-        // Idle
         this.animate(state.idleAnimationState, DwarfAnimations.DWARF_IDLE, state.ageInTicks, 1f);
 
-        // Custom: replace the ATTACK animation with DWARF_ATTACK_AXE
         for (DwarfAnimationType type : DwarfAnimationType.values()) {
             if (type == DwarfAnimationType.ATTACK) {
                 this.animate(
@@ -113,7 +110,6 @@ public class DwarfGuardModel extends DwarfModel{
             }
         }
 
-        // Equipment overlays (copy from base)
         this.hat.visible = !state.headEquipment.isEmpty();
         boolean hasChest = !state.chestEquipment.isEmpty();
         this.bodywear.visible = hasChest;
@@ -127,9 +123,8 @@ public class DwarfGuardModel extends DwarfModel{
 
     @Override
     protected AnimationDefinition getAttackAnimationFor(DwarfRenderState state, DwarfAnimationType type) {
-        // For ATTACK, always use axe swing
-        if (type == DwarfAnimationType.ATTACK)
-            return DwarfAnimations.DWARF_ATTACK_AXE;
+        if (type == DwarfAnimationType.ATTACK) return DwarfAnimations.DWARF_ATTACK_AXE;
+
         return super.getAttackAnimationFor(state, type);
     }
 

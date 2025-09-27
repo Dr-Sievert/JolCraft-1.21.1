@@ -22,7 +22,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class RotatedPillarExperienceBlock extends DropExperienceBlock {
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.AXIS;
 
-    // Store XP range in our own field for codec access
     private final IntProvider myXpRange;
 
     public static final MapCodec<RotatedPillarExperienceBlock> CODEC = RecordCodecBuilder.mapCodec(
@@ -39,7 +38,7 @@ public class RotatedPillarExperienceBlock extends DropExperienceBlock {
 
     public RotatedPillarExperienceBlock(IntProvider xpRange, BlockBehaviour.Properties properties) {
         super(xpRange, properties);
-        this.myXpRange = xpRange; // Save for codec
+        this.myXpRange = xpRange;
         this.registerDefaultState(this.defaultBlockState().setValue(AXIS, Direction.Axis.Y));
     }
 

@@ -6,6 +6,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
@@ -60,12 +61,19 @@ public class JolCraftTags {
 
         //Scrap
         public static final TagKey<Item> GLOBAL_SALVAGE = createTag("global_salvage");
+
         public static final TagKey<Item> GENERAL_SALVAGE = createTag("general_salvage");
+
         public static final TagKey<Item> DEEPSLATE_SALVAGE = createTag("general_salvage");
+
         public static final TagKey<Item> TEXTILE_SALVAGE = createTag("textile_salvage");
+
         public static final TagKey<Item> REDSTONE_SALVAGE = createTag("redstone_salvage");
+
         public static final TagKey<Item> IRON_SALVAGE = createTag("iron_salvage");
+
         public static final TagKey<Item> GOLD_SALVAGE = createTag("gold_salvage");
+
         public static final TagKey<Item> MITHRIL_SALVAGE = createTag("mithril_salvage");
 
         private static TagKey<Item> createTag(String name) {
@@ -90,6 +98,7 @@ public class JolCraftTags {
     }
 
     public interface Structures {
+
         public static final TagKey<Structure> ON_FORGE_EXPLORER_MAPS = create("on_forge_explorer_maps");
 
         public static final TagKey<Structure> DWARVEN_STRUCTURES = create("dwarven_structures");
@@ -102,9 +111,9 @@ public class JolCraftTags {
     }
 
     public static final class Biomes {
-        public static final TagKey<net.minecraft.world.level.biome.Biome> MOUNTAINS_AND_HILLS = create("mountains_and_hills");
+        public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create("mountains_and_hills");
 
-        private static TagKey<net.minecraft.world.level.biome.Biome> create(String name) {
+        private static TagKey<Biome> create(String name) {
             return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, name));
         }
     }

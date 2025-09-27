@@ -55,7 +55,6 @@ public class DwarfBeardLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
         model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
 
-        // Prevents it from bleeding into other layers
         beard.visible = false;
         right_eyebrow.visible = false;
         left_eyebrow.visible = false;

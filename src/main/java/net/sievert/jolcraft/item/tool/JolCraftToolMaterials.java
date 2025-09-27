@@ -13,6 +13,4 @@ public class JolCraftToolMaterials {
     public static final ToolMaterial MITHRIL = new ToolMaterial(BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
             5000, 10f, 5f, 20, JolCraftTags.Items.REPAIRS_MITHRIL);
 
-
-
 }

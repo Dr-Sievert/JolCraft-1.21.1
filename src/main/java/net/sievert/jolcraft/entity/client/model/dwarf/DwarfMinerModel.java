@@ -78,7 +78,6 @@ public class DwarfMinerModel extends DwarfModel{
     public void setupAnim(DwarfRenderState state) {
         super.setupAnim(state);
 
-        // Force display of wear/armor-slot parts
         this.head.getChild("hat").visible = true;
         this.body.getChild("bodywear").visible = true;
         this.body.getChild("legwear").visible = true;

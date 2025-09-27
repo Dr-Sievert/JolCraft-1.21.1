@@ -44,8 +44,6 @@ public class DiscoveredStructuresImpl implements DiscoveredStructures {
         this.discoveryScore += amount;
     }
 
-
-    // --- Serialization ---
     @Override
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();

@@ -42,14 +42,14 @@ public class DwarvenBrewItem extends Item {
             try {
                 hops.add(HopsType.valueOf(s.trim().toUpperCase()));
             } catch (IllegalArgumentException ignored) {
-                // Unknown hop name, skip
+                // Unknown hop name
             }
         }
         return hops;
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
 
@@ -70,7 +70,6 @@ public class DwarvenBrewItem extends Item {
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
     }
-
 
     /** Applies effects from each hop type when consumed */
     private void applyHopEffects(ItemStack stack, Player player) {

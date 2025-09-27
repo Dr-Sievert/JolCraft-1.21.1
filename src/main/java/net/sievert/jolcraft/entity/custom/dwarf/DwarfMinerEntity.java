@@ -32,11 +32,11 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.sound.JolCraftSoundHelper;
-import net.sievert.jolcraft.util.dwarf.bounty.BountyData;
-import net.sievert.jolcraft.util.dwarf.bounty.BountyGenerator;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyGenerator;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -278,19 +278,14 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
     public void aiStep() {
         super.aiStep();
 
-        // Check if the Miner can level up and if the timer is expired
         if (this.shouldIncreaseLevel() && this.updateMerchantTimer <= 0) {
-            // Check if the Miner has enough XP to level up
             if (this.shouldIncreaseLevel()) {
-                // Increase the Miner's level if XP is enough
                 this.increaseMerchantCareer();
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
                 JolCraftSoundHelper.playDwarfYes(this);
-                // Set the delay to 40 ticks (similar to vanilla)
-                this.updateMerchantTimer = 40; // Reset the timer after leveling up
+                this.updateMerchantTimer = 40;
             }
         } else if (this.updateMerchantTimer > 0) {
-            // Countdown the timer only if the Miner is not performing an action or trading
             --this.updateMerchantTimer;
         }
 

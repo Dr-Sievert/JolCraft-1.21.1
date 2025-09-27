@@ -49,5 +49,4 @@ public class VerdantSoilBlock extends Block {
         }
     }
 
-
 }

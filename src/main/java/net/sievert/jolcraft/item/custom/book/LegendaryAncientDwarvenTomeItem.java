@@ -16,9 +16,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.util.attachment.AncientEffectHelper;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
+import net.sievert.jolcraft.data.util.attachment.AncientEffectHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -33,12 +33,10 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            // === GATE: Language + Ancient Memory ===
             boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
             boolean hasAncientMemory = AncientEffectHelper.hasAncientMemory(serverPlayer);
 
             if (!(knowsLanguage && hasAncientMemory)) {
-                // Gate failed: Play fail sound and display message, just like AncientUnidentifiedTomeItem
                 playIdentifyFailSound(level, player);
                 if (!knowsLanguage) {
                     player.displayClientMessage(
@@ -53,7 +51,6 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                 return InteractionResult.SUCCESS;
             }
 
-            // === PASSED: Now run Legendary unlock logic ===
             ItemStack stack = player.getItemInHand(hand);
             String loreLineId = stack.getComponents().getOrDefault(JolCraftDataComponents.LORE_LINE_ID.get(), null);
 
@@ -96,7 +93,6 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         );
     }
 
-
     public static void playUnlockSounds(Level level, Player player) {
         BlockPos pos = player.blockPosition();
         level.playSound(null, pos, SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -109,13 +105,10 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        // If the item has a custom name, use it, but always force gold color
         Component customName = stack.getComponents().getOrDefault(DataComponents.ITEM_NAME, null);
         if (!customName.getString().isEmpty()) {
-            // .withStyle replaces *only* the color, but preserves other formatting
             return Component.literal(customName.getString()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
         }
-        // Otherwise, use the default name, also gold
         return Component.translatable(this.getDescriptionId()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
     }
 

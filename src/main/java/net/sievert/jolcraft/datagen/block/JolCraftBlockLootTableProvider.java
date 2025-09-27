@@ -78,7 +78,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
 
         add(JolCraftBlocks.FESTERLING_CROP.get(),
                 LootTable.lootTable()
-                        // Drop at age 0: Rotten Flesh
                         .withPool(LootPool.lootPool()
                                 .when(LootItemBlockStatePropertyCondition
                                         .hasBlockStateProperties(JolCraftBlocks.FESTERLING_CROP.get())
@@ -86,7 +85,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                                 .setRolls(ConstantValue.exactly(1))
                                 .add(LootItem.lootTableItem(Items.ROTTEN_FLESH))
                         )
-                        // Drop at age 3: Festerling
                         .withPool(LootPool.lootPool()
                                 .when(LootItemBlockStatePropertyCondition
                                         .hasBlockStateProperties(JolCraftBlocks.FESTERLING_CROP.get())
@@ -159,7 +157,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
 
     }
 
-
     protected LootTable.Builder createCropDrops(Block cropBlock, Item cropItem, Item seedItem, IntegerProperty ageProperty, int maxAge) {
         LootItemCondition.Builder mature = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(cropBlock)
@@ -173,7 +170,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
             Item seed,
             Item hops
     ) {
-        // Bottom loot table: use bottom age
         LootItemCondition.Builder isMatureBottom = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(bottom)
                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HopsCropBottomBlock.AGE, HopsCropBottomBlock.MAX_AGE));
@@ -197,7 +193,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                         )
                 );
 
-        // Top loot table: use top age
         LootItemCondition.Builder isMatureTop = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(top)
                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HopsCropTopBlock.TOP_AGE, 4));
@@ -235,12 +230,10 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DeepslateBulbsCropBlock.AGE, 9));
 
         return LootTable.lootTable()
-                // 1. Always drop 1 (unconditional, for any age)
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(item))
                 )
-                // 2. If mature, fortune applies to the always-drop
                 .withPool(LootPool.lootPool()
                         .when(mature)
                         .setRolls(ConstantValue.exactly(1))
@@ -248,7 +241,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                                 .apply(ApplyBonusCount.addOreBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE)))
                         )
                 )
-                // 3. If mature, 20% chance for 1 extra (fortune does not apply here)
                 .withPool(LootPool.lootPool()
                         .when(mature)
                         .setRolls(ConstantValue.exactly(1))
@@ -262,13 +254,11 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
     protected LootTable.Builder createGeodeOreDrop(Block block, Item small, Item medium, Item large) {
         HolderLookup.RegistryLookup<Enchantment> enchantments = registries.lookupOrThrow(Registries.ENCHANTMENT);
 
-        // Silk Touch: drop the block itself
         LootPool.Builder silkTouchPool = LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1))
                 .when(hasSilkTouch())
                 .add(LootItem.lootTableItem(block));
 
-        // Not Silk Touch: 1-3 weighted geodes with fortune and explosion decay
         LootPool.Builder geodePool = LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1))
                 .when(hasSilkTouch().invert())
@@ -288,7 +278,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
     protected LootTable.Builder createMultipleOreDrops(Block block, Item item, float minDrops, float maxDrops) {
         HolderLookup.RegistryLookup<Enchantment> enchantments = registries.lookupOrThrow(Registries.ENCHANTMENT);
 
-        // NOT Silk Touch: drop item with count and fortune/explosion decay
         LootPool.Builder defaultPool = LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1))
                 .when(hasSilkTouch().invert())
@@ -300,7 +289,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
         );
         defaultPool.apply(ApplyExplosionDecay.explosionDecay());
 
-        // Silk Touch: drop the block itself
         LootPool.Builder silkTouchPool = LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1))
                 .when(hasSilkTouch())
@@ -310,7 +298,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                 .withPool(silkTouchPool)
                 .withPool(defaultPool);
     }
-
 
     @Override
     protected @NotNull Iterable<Block> getKnownBlocks() {

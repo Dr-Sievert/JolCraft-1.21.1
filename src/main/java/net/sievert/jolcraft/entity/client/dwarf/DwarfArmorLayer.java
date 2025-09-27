@@ -53,7 +53,6 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
                     "textures/entity/dwarf/armor/dwarf_" + material + "_armor.png"
             );
 
-            // Hide all armor-wear parts only
             model.getHead().getChild("hat").visible = slot == EquipmentSlot.HEAD;
             model.body.getChild("bodywear").visible = slot == EquipmentSlot.CHEST;
             model.right_arm.getChild("right_armwear").visible = slot == EquipmentSlot.CHEST;
@@ -66,7 +65,6 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
             model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
         }
 
-        // Re-enable everything after all slots rendered
         model.setAllVisible(true);
     }
 

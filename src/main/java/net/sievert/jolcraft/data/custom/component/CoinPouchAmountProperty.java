@@ -32,13 +32,13 @@ public final class CoinPouchAmountProperty implements SelectItemModelProperty<In
         int coins = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
 
         if (coins == 0) {
-            return 0; // "empty" or small
+            return 0;
         } else if (coins < 333) {
-            return 0; // still "small"
+            return 0;
         } else if (coins < 666) {
-            return 1; // "large"
+            return 1;
         } else {
-            return 2; // "full"
+            return 2;
         }
     }
 

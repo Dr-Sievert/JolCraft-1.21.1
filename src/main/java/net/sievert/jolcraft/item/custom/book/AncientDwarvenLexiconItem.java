@@ -14,9 +14,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.item.custom.tooltip.AncientItemBase;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.util.attachment.AncientDwarvenLanguageHelper;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.util.attachment.AncientEffectHelper;
+import net.sievert.jolcraft.data.util.attachment.AncientDwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.AncientEffectHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -43,7 +43,6 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
                 serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.use")
                         .withStyle(ChatFormatting.GREEN), true);
             } else {
-                // ---- Precedence: language before effect ----
                 if (!knowsLang) {
                     serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.cant_read")
                             .withStyle(ChatFormatting.RED), true);
@@ -61,8 +60,6 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
         }
         return InteractionResult.SUCCESS;
     }
-
-    // ===== Tooltip Providers =====
 
     @Override
     protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
@@ -82,7 +79,6 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
 
     @Override
     protected List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        // This just returns the same as fully readable, the base will SGA-ify it if needed.
         return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.unlocked").withStyle(ChatFormatting.GRAY));
     }
 }

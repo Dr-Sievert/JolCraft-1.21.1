@@ -34,15 +34,15 @@ import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.sound.JolCraftSoundHelper;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.util.attachment.DwarvenReputationHelper;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -59,7 +59,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
     }
 
     //Data
-
     private int lastUnlockedLevel = 0;
 
     @Override
@@ -110,7 +109,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
 
     @Override
     public float getVoicePitch() {
-        return 0.8F; // deeper voice for guildmaster
+        return 0.8F;
     }
 
     @Override
@@ -378,8 +377,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
     protected SoundEvent getRerollSound() {
         return SoundEvents.VILLAGER_WORK_CARTOGRAPHER;
     }
-
-
 
 }
 

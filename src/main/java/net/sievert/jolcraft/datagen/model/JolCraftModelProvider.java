@@ -36,7 +36,7 @@ import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
-import net.sievert.jolcraft.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
 import net.sievert.jolcraft.data.custom.component.LoreLineIdProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -389,8 +389,7 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.ASGARNIAN_CROP_TOP.get(),
-                // <-- use your top crop's static property
-                0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
+                0, 1, 2, 3, 4
         );
 
         blockModels.createCropBlock(JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -398,8 +397,7 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.DUSKHOLD_CROP_TOP.get(),
-                // <-- use your top crop's static property
-                0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
+                0, 1, 2, 3, 4
         );
 
         blockModels.createCropBlock(JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -407,8 +405,7 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.KRANDONIAN_CROP_TOP.get(),
-                // <-- use your top crop's static property
-                0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
+                0, 1, 2, 3, 4
         );
 
         blockModels.createCropBlock(JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -416,13 +413,10 @@ public class JolCraftModelProvider extends ModelProvider {
         createTopCropBlock(
                 blockModels,
                 JolCraftBlocks.YANILLIAN_CROP_TOP.get(),
-                // <-- use your top crop's static property
-                0, 1, 2, 3, 4 // <-- as many stages as you defined models/textures for
+                0, 1, 2, 3, 4
         );
 
         blockModels.createCropBlock(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-
-
 
         // For Fermenting Cauldron: custom blockstate with level property
         blockModels.blockStateOutput.accept(new BlockStateGenerator() {
@@ -473,15 +467,11 @@ public class JolCraftModelProvider extends ModelProvider {
             new ItemModelGenerators.TrimMaterialData("sungleam", JolCraftTrimMaterials.SUNGLEAM, Map.of()),
             new ItemModelGenerators.TrimMaterialData("verdanite", JolCraftTrimMaterials.VERDANITE, Map.of()),
             new ItemModelGenerators.TrimMaterialData("woecrystal", JolCraftTrimMaterials.WOECRYSTAL, Map.of())
-
-            // Add more trims as you implement them!
     );
 
     private void generateCoinPouchModel(ItemModelGenerators itemModels) {
         Item pouch = JolCraftItems.COIN_POUCH.get();
-        ResourceLocation baseModelLoc = ModelLocationUtils.getModelLocation(pouch);
 
-        // Register base models for each stage
         ResourceLocation small = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/coin_pouch_small");
         ResourceLocation large = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/coin_pouch_large");
         ResourceLocation full  = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/coin_pouch_full");
@@ -490,14 +480,12 @@ public class JolCraftModelProvider extends ModelProvider {
         ModelTemplates.FLAT_ITEM.create(large,  TextureMapping.layer0(large),  itemModels.modelOutput);
         ModelTemplates.FLAT_ITEM.create(full,  TextureMapping.layer0(full),  itemModels.modelOutput);
 
-        // Set up model switch cases
         List<SelectItemModel.SwitchCase<Integer>> cases = List.of(
                 ItemModelUtils.when(0,   ItemModelUtils.plainModel(small)),
                 ItemModelUtils.when(1,   ItemModelUtils.plainModel(large)),
                 ItemModelUtils.when(2,   ItemModelUtils.plainModel(full))
         );
 
-        // Fallback is empty
         itemModels.itemModelOutput.accept(
                 pouch,
                 new SelectItemModel.Unbaked(
@@ -507,8 +495,6 @@ public class JolCraftModelProvider extends ModelProvider {
         );
     }
 
-
-    //Custom Helpers!!
     public void generateLegendaryTomeModels(ItemModelGenerators itemModels) {
         Item tomeItem = JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get();
         ResourceLocation baseModelLoc = ModelLocationUtils.getModelLocation(tomeItem);
@@ -561,10 +547,8 @@ public class JolCraftModelProvider extends ModelProvider {
             List<SelectItemModel.SwitchCase<ResourceKey<TrimMaterial>>> list = new ArrayList<>(trimMaterialList.size());
 
             for (ItemModelGenerators.TrimMaterialData data : trimMaterialList) {
-                boolean isCustom = data.materialKey().location().getNamespace().equals("jolcraft");
                 ResourceLocation trimModelLoc = baseModelLocation.withSuffix("_" + data.name() + "_trim");
 
-                // Only change this line:
                 String trimTextureName = data.name();
                 if (baseName.equals(data.name())) {
                     trimTextureName += "_darker";
@@ -577,26 +561,25 @@ public class JolCraftModelProvider extends ModelProvider {
                             trimModelLoc,
                             textureLocation,
                             overlayTexture,
-                            trimTextureLocation  // layer1 = correct namespace!
+                            trimTextureLocation
                     );
                     bakedModel = ItemModelUtils.tintedModel(trimModelLoc, new Dye(-6265536));
                 } else {
                     itemModels.generateLayeredItem(
                             trimModelLoc,
                             textureLocation,
-                            trimTextureLocation  // layer1 = correct namespace!
+                            trimTextureLocation
                     );
                     bakedModel = ItemModelUtils.plainModel(trimModelLoc);
                 }
                 list.add(ItemModelUtils.when(data.materialKey(), bakedModel));
             }
 
-
             // Default (fallback) model
             ItemModel.Unbaked defaultModel;
             if (dyeable) {
                 ModelTemplates.TWO_LAYERED_ITEM.create(baseModelLocation, TextureMapping.layered(textureLocation, overlayTexture), itemModels.modelOutput);
-                defaultModel = ItemModelUtils.tintedModel(baseModelLocation, new Dye(-6265536)); // Example color
+                defaultModel = ItemModelUtils.tintedModel(baseModelLocation, new Dye(-6265536));
             } else {
                 ModelTemplates.FLAT_ITEM.create(baseModelLocation, TextureMapping.layer0(textureLocation), itemModels.modelOutput);
                 defaultModel = ItemModelUtils.plainModel(baseModelLocation);
@@ -621,7 +604,6 @@ public class JolCraftModelProvider extends ModelProvider {
         allTrims.addAll(JOLCRAFT_TRIMS);
         generateTrimmableItemWithCustomList(itemModels, baseName, key, dyeable, allTrims);
     }
-
 
     private void generateArmorWithTrim(
             ItemModelGenerators itemModels,
@@ -715,7 +697,6 @@ public class JolCraftModelProvider extends ModelProvider {
         }
     }
 
-
     // Helper method to add the trim model to the list (common for custom trims only)
     private void addTrimModelToList(
             ItemModelGenerators itemModels,
@@ -741,10 +722,8 @@ public class JolCraftModelProvider extends ModelProvider {
         list.add(ItemModelUtils.when(trim.materialKey(), bakedModel));
     }
 
-    // Helper method with custom trim list
     private static final String[] ARMOR_TYPES = {"helmet", "chestplate", "leggings", "boots"};
 
-    // At class level, or as a static final, define:
     private static final Map<String, ResourceKey<TrimMaterial>> VANILLA_TRIMS = Map.of(
             "quartz",   TrimMaterials.QUARTZ,
             "iron",     TrimMaterials.IRON,
@@ -828,7 +807,6 @@ public class JolCraftModelProvider extends ModelProvider {
                 blockModels.modelOutput
         );
 
-        // Both "moist" and "dry" models are the same (you only have one hydrated model)
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(JolCraftBlocks.VERDANT_FARMLAND.get())
                         .with(BlockModelGenerators.createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, model, model))
@@ -845,8 +823,6 @@ public class JolCraftModelProvider extends ModelProvider {
     }
 
     private static int vanillaFacingY(Direction facing) {
-        // Map direction to correct vanilla blockstate y-rotation
-        // (so north = 0, east = 90, south = 180, west = 270)
         return switch (facing) {
             case NORTH -> 0;
             case EAST  -> 90;
@@ -875,8 +851,8 @@ public class JolCraftModelProvider extends ModelProvider {
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(hearthBlock, "_side"))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(hearthBlock, "_top"))
                 .put(TextureSlot.FRONT, TextureMapping.getBlockTexture(hearthBlock, "_front_on"))
-                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(hearthBlock, "_top")) // <-- matches vanilla furnace
-                .put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(hearthBlock, "_front_on")); // or "_side"
+                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(hearthBlock, "_top"))
+                .put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(hearthBlock, "_front_on"));
 
         ResourceLocation hearthOnModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.createWithSuffix(
                 hearthBlock,
@@ -885,7 +861,6 @@ public class JolCraftModelProvider extends ModelProvider {
                 blockModels.modelOutput
         );
 
-        // Chimney model is assumed to be hand-written
         ResourceLocation chimney = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "block/hearth_chimney");
 
         blockModels.blockStateOutput.accept(

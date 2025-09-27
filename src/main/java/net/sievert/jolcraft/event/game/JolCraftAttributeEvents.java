@@ -134,7 +134,6 @@ public class JolCraftAttributeEvents {
     public static void onPlayerArmorTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         if (player.level().isClientSide()) return;
-        // Check if actual value matches expected, skip if equal
         if (!needsIronheartUpdate(player)) return;
         recalcIronheartBonus(player);
     }
@@ -154,7 +153,6 @@ public class JolCraftAttributeEvents {
         }
         double expectedBonus = baseArmor * percent;
 
-        // Find if our modifier exists, and its amount matches
         var existing = attr.getModifier(IRONHEART_ID);
         if (existing == null && expectedBonus == 0) return false;
         return existing == null || !(Math.abs(existing.amount() - expectedBonus) < 0.01);
@@ -258,7 +256,7 @@ public class JolCraftAttributeEvents {
             if (ticks >= 20 && player.onGround()) {
                 int percent = (int) (radiant * 100);
                 int nearest25 = (percent / 25) * 25;
-                int radius = 1 + (nearest25 / 25); // 2–5
+                int radius = 1 + (nearest25 / 25);
 
                 double dx = existing.getX() - player.getX();
                 double dz = existing.getZ() - player.getZ();
@@ -366,22 +364,17 @@ public class JolCraftAttributeEvents {
         var movementAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
         if (movementAttr == null) return;
 
-        // Prepare ResourceLocations for unique modifiers
         ResourceLocation SKYBURROW_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "skyburrow_day_speed");
         ResourceLocation MOONSHARD_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "moonshard_night_speed");
 
-        // Remove old modifiers every tick for consistency
         movementAttr.removeModifier(SKYBURROW_ID);
         movementAttr.removeModifier(MOONSHARD_ID);
 
-        // Get boosts from your custom attributes
         double dayBoost = player.getAttributeValue(JolCraftAttributes.MOVEMENT_SPEED_BOOST_DAY);
         double nightBoost = player.getAttributeValue(JolCraftAttributes.MOVEMENT_SPEED_BOOST_NIGHT);
 
-        // Time check (is it day or night?)
         boolean isDay = player.level().isDay();
 
-        // Apply the correct boost as ADD_MULTIPLIED_BASE
         if (isDay && dayBoost > 0) {
             AttributeModifier mod = new AttributeModifier(
                     SKYBURROW_ID,

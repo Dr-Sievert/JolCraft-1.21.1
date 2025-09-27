@@ -92,7 +92,6 @@ public class HopsCropBottomBlock extends CropBlock {
         BlockPos above = pos.above();
         BlockState aboveState = level.getBlockState(above);
 
-        // Survival check
         if (!this.canSurvive(state, level, pos)) {
             level.destroyBlock(pos, true);
             return;
@@ -100,10 +99,8 @@ public class HopsCropBottomBlock extends CropBlock {
 
         BlockState soil = level.getBlockState(pos.below());
 
-        // Growth logic (only if not max age and not blocked above)
         if (age < MAX_AGE) {
             if (aboveState.isAir() || aboveState.is(JolCraftTags.Blocks.HOPS_TOP)) {
-                // If on Verdant Farmland: ignore darkness check, always allow growth
                 boolean canGrow = soil.is(JolCraftBlocks.VERDANT_FARMLAND.get()) || hasSufficientDarkness(level, pos);
                 if (canGrow) {
                     float growthSpeed = getGrowthSpeed(state, level, pos);
@@ -111,7 +108,7 @@ public class HopsCropBottomBlock extends CropBlock {
                         int newAge = age + 1;
                         BlockState newState = this.getStateForAge(newAge);
                         level.setBlock(pos, newState, 2);
-                        age = newAge; // update age so sync is correct
+                        age = newAge;
                     }
                 }
             }
@@ -123,7 +120,7 @@ public class HopsCropBottomBlock extends CropBlock {
         float base = CropBlock.getGrowthSpeed(blockState, level, pos);
         BlockState soil = level.getBlockState(pos.below());
         if (soil.is(JolCraftBlocks.VERDANT_SOIL.get())) {
-            return base * 1.5F; // 20% faster
+            return base * 1.5F;
         }
         return base;
     }
@@ -158,12 +155,10 @@ public class HopsCropBottomBlock extends CropBlock {
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockState soil = level.getBlockState(pos.below());
 
-        // If on Verdant Farmland, always survive (ignore light and darkness)
         if (soil.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
             return true;
         }
 
-        // NeoForge/vanilla's TriState for plant support
         TriState soilDecision = soil.canSustainPlant(level, pos.below(), Direction.UP, state);
         boolean soilOk;
         if (!soilDecision.isDefault()) {
@@ -174,8 +169,6 @@ public class HopsCropBottomBlock extends CropBlock {
 
         boolean darkOk = hasSufficientDarkness(level, pos);
 
-
-        // Must have both good soil and darkness if not on Verdant Farmland
         return soilOk && darkOk;
     }
 
@@ -195,7 +188,6 @@ public class HopsCropBottomBlock extends CropBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (newState.getBlock() != this) {
-            // Remove the top half if it exists (never drops)
             BlockPos abovePos = pos.above();
             BlockState aboveState = level.getBlockState(abovePos);
             if (aboveState.is(JolCraftTags.Blocks.HOPS_TOP)) {
@@ -208,25 +200,15 @@ public class HopsCropBottomBlock extends CropBlock {
     @Override
     public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
         if (!player.isCreative()) {
-            // Drop loot as normal (vanilla does this)
             super.playerDestroy(level, player, pos, state, blockEntity, tool);
         } else {
-            // In creative, just remove block with no drops
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 35);
         }
-        // Remove the other half (never drops)
         BlockPos otherHalf = pos.above();
         BlockState otherState = level.getBlockState(otherHalf);
         if (otherState.is(JolCraftTags.Blocks.HOPS_TOP)) {
             level.setBlock(otherHalf, Blocks.AIR.defaultBlockState(), 35);
         }
     }
-
-
-
-
-
-
-
 
 }

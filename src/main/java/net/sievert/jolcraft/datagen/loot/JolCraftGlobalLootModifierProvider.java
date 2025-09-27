@@ -20,7 +20,6 @@ public class JolCraftGlobalLootModifierProvider extends GlobalLootModifierProvid
 
     @Override
     protected void start() {
-        // Stronghold Library
         this.add("dwarven_lexicon_from_stronghold_library",
                 new AddItemModifier(
                         new LootItemCondition[] {
@@ -30,7 +29,6 @@ public class JolCraftGlobalLootModifierProvider extends GlobalLootModifierProvid
                         JolCraftItems.DWARVEN_LEXICON.get()
                 ));
 
-        // Mineshaft
         this.add("dwarven_lexicon_from_mineshaft",
                 new AddItemModifier(
                         new LootItemCondition[] {
@@ -40,11 +38,11 @@ public class JolCraftGlobalLootModifierProvider extends GlobalLootModifierProvid
                         JolCraftItems.DWARVEN_LEXICON.get()
                 ));
 
-        //Trail ruins
         this.add("dwarven_lexicon_from_trail_ruins",
                 new AddItemModifier(new LootItemCondition[]{
                         new LootTableIdCondition.Builder(ResourceLocation.withDefaultNamespace("archaeology/trail_ruins_rare")).build(),
                         LootItemRandomChanceCondition.randomChance(0.50f).build()
                 }, JolCraftItems.DWARVEN_LEXICON.get()));
     }
+
 }

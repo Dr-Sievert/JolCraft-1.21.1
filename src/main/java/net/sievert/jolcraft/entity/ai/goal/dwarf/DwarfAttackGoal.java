@@ -149,7 +149,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
             if (attackAnimTimer > 0) {
                 attackAnimTimer--;
                 if (attackAnimTimer == 0) {
-                    mob.setAttacking(false); // Stop animation
+                    mob.setAttacking(false);
                 }
             }
         }

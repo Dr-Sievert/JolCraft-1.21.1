@@ -55,7 +55,6 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
         model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
 
-        // Prevents it from bleeding into other layers
         right_eye.visible = false;
         left_eye.visible = false;
     }

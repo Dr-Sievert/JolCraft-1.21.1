@@ -56,12 +56,11 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
 
         guiGraphics.blit(RenderType.GUI_TEXTURED, TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, 176, 150);
 
-        // Always render hammer if gem/geode in slot
         if (menu.hasGem() || menu.hasGeode()) {
             boolean hammerActive = menu.hasHammer();
             renderToolButton(guiGraphics, x, y, mouseX, mouseY, HAMMER_X, HAMMER, 0, hammerActive);
         }
-        // Always render chisel if gem in slot
+
         if (menu.hasGem()) {
             boolean chiselActive = menu.hasChisel();
             renderToolButton(guiGraphics, x, y, mouseX, mouseY, CHISEL_X, CHISEL, 1, chiselActive);
@@ -72,7 +71,6 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
     /**
      * Renders one tool button (hammer or chisel) with highlight on hover.
      */
-
     private void renderToolButton(
             GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY,
             int btnRelX, ResourceLocation icon, int btnIndex, boolean active
@@ -83,29 +81,21 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
 
         float alpha = active ? 1.0f : 0.4f;
 
-        // 1. Flush any batched draws so far before changing alpha
         guiGraphics.flush();
 
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha);
 
-        // Highlight (only for active+hover)
         if (hovered) {
             guiGraphics.blit(RenderType.GUI_TEXTURED, HIGHLIGHT, bx, by, 0, 0, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE);
         }
-        // Button icon
-        guiGraphics.blit(RenderType.GUI_TEXTURED, icon, bx, by, 0, 0, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
 
-        // 2. Flush *again* to finish the alpha-drawn batch
+        guiGraphics.blit(RenderType.GUI_TEXTURED, icon, bx, by, 0, 0, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
         guiGraphics.flush();
 
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f); // reset alpha for later draws
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
     }
-
-
-
-
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -119,30 +109,24 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
         int y = (this.height - this.imageHeight) / 2;
 
         if (button == 0) {
-            // Hammer logic
+
             if ((menu.hasGem() || menu.hasGeode()) && menu.hasHammer() && isOverButton(mouseX, mouseY, x + HAMMER_X, y + BUTTON_Y)) {
                 assert Objects.requireNonNull(this.minecraft).gameMode != null;
-                this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 0); // Hammer
+                this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 0);
                 return true;
             }
-            // Chisel logic
+
             if (menu.hasGem() && menu.hasChisel() && isOverButton(mouseX, mouseY, x + CHISEL_X, y + BUTTON_Y)) {
                 assert Objects.requireNonNull(this.minecraft).gameMode != null;
-                this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 1); // Chisel
+                this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 1);
                 return true;
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-
     private boolean isOverButton(double mouseX, double mouseY, int bx, int by) {
         return mouseX >= bx && mouseY >= by && mouseX < bx + BUTTON_SIZE && mouseY < by + BUTTON_SIZE;
     }
 
-    private void playClickSound() {
-        if (minecraft != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-        }
-    }
 }

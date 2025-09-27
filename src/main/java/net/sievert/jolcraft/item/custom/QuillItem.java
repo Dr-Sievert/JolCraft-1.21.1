@@ -29,10 +29,8 @@ public class QuillItem extends SimpleTooltipItem {
                 ItemStack fullQuill = new ItemStack(JolCraftItems.QUILL_FULL.get());
 
                 if (stack.getCount() == 1) {
-                    // Replace directly in hand if it's the last empty quill
                     player.setItemInHand(hand, fullQuill);
                 } else {
-                    // Normal case: shrink and add
                     stack.shrink(1);
                     boolean added = player.addItem(fullQuill);
                     if (!added) {
@@ -45,4 +43,5 @@ public class QuillItem extends SimpleTooltipItem {
         }
         return super.interactLivingEntity(stack, player, target, hand);
     }
+
 }

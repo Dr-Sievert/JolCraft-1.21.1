@@ -22,8 +22,8 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -214,7 +214,7 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         for (int lvl = 1; lvl <= 5; lvl++) {
             List<DwarfTrades.ItemListing> all = new ArrayList<>();
             if (MAIN_TRADES.get(lvl) != null) all.addAll(List.of(MAIN_TRADES.get(lvl)));
-            if (lvl == 1) all.addAll(List.of(SALVAGE_POOL)); // Only include salvage pool at Novice
+            if (lvl == 1) all.addAll(List.of(SALVAGE_POOL));
             out.put(lvl, all.toArray(DwarfTrades.ItemListing[]::new));
         }
         return out;
@@ -223,7 +223,7 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
     // Sound
     @Override
     public float getVoicePitch() {
-        return 1.4F; // lower pitch for scrapper
+        return 1.4F;
     }
 
     @Nullable

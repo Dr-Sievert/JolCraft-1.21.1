@@ -28,7 +28,7 @@ import net.minecraft.core.particles.ParticleTypes;
 
 import net.minecraft.world.SimpleContainer;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.util.attachment.TomeUnlockHelper;
+import net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -42,18 +42,15 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
     private final Level level;
     private final Player player;
 
-    // Use your mod's registered MenuType here!
     public LapidaryBenchMenu(int windowId, Inventory playerInventory, ContainerLevelAccess access) {
-        super(JolCraftMenuTypes.LAPIDARY_BENCH_MENU.get(), windowId); // Replace with your MenuType registry
+        super(JolCraftMenuTypes.LAPIDARY_BENCH_MENU.get(), windowId);
         this.level = playerInventory.player.level();
         this.player = playerInventory.player;
         this.access = access;
         this.container = new SimpleContainer(1);
 
-        // Add the single lapidary slot at (32, 16)
         this.addSlot(new LapidarySlot(container, 0, 32, 32));
 
-        //Add player inventory + hotbar
         this.addStandardInventorySlots(playerInventory, 8, 68);
     }
 
@@ -178,7 +175,6 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
 
         // Chisel button: 1 (only for gems)
         if (buttonId == 1 && hasGem() && hasChisel()) {
-            // First, check if the player has the "Cutting Gems" unlock
             if (!TomeUnlockHelper.hasUnlock(player, TomeUnlockHelper.CUTTING_GEMS)) {
                 player.displayClientMessage(
                         Component.translatable("tooltip.jolcraft.lapidary_bench.locked_cut_gems").withStyle(ChatFormatting.RED),
@@ -233,8 +229,6 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
         return false;
     }
 
-
-    // Used by NeoForge's auto-GUI opening
     public LapidaryBenchMenu(int windowId, Inventory playerInventory, FriendlyByteBuf extraData) {
         this(windowId, playerInventory, ContainerLevelAccess.NULL);
     }
@@ -244,7 +238,6 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
         return stillValid(this.access, player, JolCraftBlocks.LAPIDARY_BENCH.get());
     }
 
-    // Shift-click (quick move) handling
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
@@ -254,11 +247,9 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
             itemstack = stackInSlot.copy();
 
             if (index == 0) {
-                // Moving from lapidary slot to player inventory
                 if (!this.moveItemStackTo(stackInSlot, 1, 37, true))
                     return ItemStack.EMPTY;
             } else {
-                // Moving from player inventory to lapidary slot
                 if (!this.slots.getFirst().mayPlace(stackInSlot) || !this.moveItemStackTo(stackInSlot, 0, 1, false))
                     return ItemStack.EMPTY;
             }
@@ -377,11 +368,5 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
             );
         }
     }
-
-
-
-
-
-
 
 }

@@ -77,27 +77,25 @@ public class HearthBlock extends BaseEntityBlock {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, HALF, LIT);
     }
+
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         DoubleBlockHalf half = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
         if (half == DoubleBlockHalf.LOWER) {
-            // Hearth base: full block (or whatever shape you want)
             return Block.box(0, 0, 0, 16, 16, 16);
         } else {
-            // Chimney: 8x8 column
             return Block.box(4, 0, 4, 12, 16, 12);
         }
     }
+
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
         int maxBuildY = level.dimensionType().logicalHeight();
-        // Ensure there is space for the upper half
         if (pos.getY() < maxBuildY - 1 && level.getBlockState(pos.above()).canBeReplaced(context)) {
             return this.defaultBlockState()
-                    // FACING should be opposite of player look direction, so the front faces the player (like furnace)
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
                     .setValue(HALF, DoubleBlockHalf.LOWER)
                     .setValue(LIT, false);
@@ -160,7 +158,6 @@ public class HearthBlock extends BaseEntityBlock {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide()) return InteractionResult.PASS;
 
-        // Only the lower half is interactable
         if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
             pos = pos.below();
             state = level.getBlockState(pos);
@@ -173,7 +170,6 @@ public class HearthBlock extends BaseEntityBlock {
             return InteractionResult.CONSUME;
         }
 
-        //Creative player can always light it
         if (player.isCreative() && !state.getValue(LIT)) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof HearthBlockEntity hearth) {
@@ -186,7 +182,6 @@ public class HearthBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        // --- Daily use check ---
         if (!player.isCreative()) {
             Hearth hearthAttachment = Hearth.get(player);
             if (hearthAttachment.hasLitThisDay()) {
@@ -199,7 +194,6 @@ public class HearthBlock extends BaseEntityBlock {
 
         boolean isCoal = stack.is(Items.COAL) || stack.is(Items.CHARCOAL);
 
-        // Only show message if not holding coal/charcoal and the hearth is not lit
         if (!isCoal && !state.getValue(LIT)) {
             player.displayClientMessage(
                     Component.translatable("tooltip.jolcraft.hearth.need_coal").withStyle(ChatFormatting.GRAY), true
@@ -208,7 +202,6 @@ public class HearthBlock extends BaseEntityBlock {
         }
 
         if (isCoal && !state.getValue(LIT)) {
-            // Monster and bed checks (can extract to method if you want)
             boolean monstersNearby = !level.getEntitiesOfClass(
                     Monster.class,
                     new AABB(
@@ -269,7 +262,6 @@ public class HearthBlock extends BaseEntityBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (state.getValue(LIT)) {
-            // ---- FRONT flame/smoke (like furnace) ----
             double d0 = pos.getX() + 0.5;
             double d1 = pos.getY();
             double d2 = pos.getZ() + 0.5;
@@ -283,20 +275,15 @@ public class HearthBlock extends BaseEntityBlock {
             double d5 = axis == Direction.Axis.X ? direction.getStepX() * 0.52 : d4;
             double d6 = random.nextDouble() * 6.0 / 16.0;
             double d7 = axis == Direction.Axis.Z ? direction.getStepZ() * 0.52 : d4;
-            // This is at the "front"
             level.addParticle(ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
             level.addParticle(ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
 
-            // ---- CHIMNEY smoke (if chimney exists above) ----
             BlockState above = level.getBlockState(pos.above());
-            // If the above block is the chimney (upper half)
             if (above.getBlock() == state.getBlock() && above.getValue(HALF) == DoubleBlockHalf.UPPER) {
-                // Centered on chimney top
                 double cx = pos.getX() + 0.5;
-                double cy = pos.getY() + 1.85; // Slightly above chimney
+                double cy = pos.getY() + 1.85;
                 double cz = pos.getZ() + 0.5;
 
-                // Random horizontal offset for natural look
                 for (int i = 0; i < 2 + random.nextInt(2); i++) {
                     double ox = random.nextGaussian() * 0.06;
                     double oz = random.nextGaussian() * 0.06;
@@ -305,7 +292,6 @@ public class HearthBlock extends BaseEntityBlock {
             }
         }
     }
-
 
     @Nullable
     @Override
@@ -327,8 +313,5 @@ public class HearthBlock extends BaseEntityBlock {
         }
         return null;
     }
-
-
-
 
 }

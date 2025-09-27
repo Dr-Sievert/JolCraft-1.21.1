@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -19,7 +20,7 @@ public abstract class AncientUnidentifiedItem extends AncientItemBase {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             if (canIdentify(serverPlayer)) {
                 ItemStack stack = player.getItemInHand(hand);
@@ -53,7 +54,6 @@ public abstract class AncientUnidentifiedItem extends AncientItemBase {
                 }
             } else {
                 playIdentifyFailSound(level, player);
-                // Language takes precedence
                 if (!hasRequiredLanguage(serverPlayer)) {
                     serverPlayer.displayClientMessage(getFailMessageMissingLanguage(serverPlayer), true);
                 } else {
@@ -75,16 +75,16 @@ public abstract class AncientUnidentifiedItem extends AncientItemBase {
 
     /** Tooltip (content only, not gating/knowledge logic). */
     @Override
-    protected abstract List<Component> getFullyReadableTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
+    protected abstract @NotNull List<Component> getFullyReadableTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
 
     @Override
-    protected abstract List<Component> getLockedTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
+    protected abstract @NotNull List<Component> getLockedTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
 
     @Override
-    protected abstract List<Component> getPartialUnderstandingTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
+    protected abstract @NotNull List<Component> getPartialUnderstandingTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
 
     @Override
-    protected abstract List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
+    protected abstract @NotNull List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag);
 
     /** Message when identification succeeds. */
     protected abstract Component getIdentifySuccessMessage(ServerPlayer player, ItemStack identified);

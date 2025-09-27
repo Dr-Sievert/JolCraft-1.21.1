@@ -68,7 +68,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty LOCKED = BooleanProperty.create("locked");
 
-    // --- Constructor ---
     public StrongboxBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(
@@ -85,7 +84,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
         return rotateShape(facing);
     }
 
-    // Utility to rotate VoxelShape (XZ axes only)
     private static VoxelShape rotateShape(Direction facing) {
         return switch (facing) {
             case WEST, EAST -> Block.box(
@@ -326,7 +324,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        // Return an empty list if the drops are already being handled by `onRemove`
         return List.of();  // Prevent default drops if handled in onRemove
     }
 
@@ -397,6 +394,5 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
 
         return stack;
     }
-
 
 }

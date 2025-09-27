@@ -56,8 +56,4 @@ public class JolCraftArmorMaterials {
             MITHRIL_KEY
     );
 
-
-
-
-
 }

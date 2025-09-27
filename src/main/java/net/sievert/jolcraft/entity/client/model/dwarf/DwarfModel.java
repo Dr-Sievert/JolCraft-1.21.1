@@ -117,10 +117,8 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
         this.applyHeadRotation(state.yRot, state.xRot);
         this.animateWalk(DwarfAnimations.DWARF_WALK, state.walkAnimationPos, state.walkAnimationSpeed, 2f, 2.5f);
 
-        // Idle remains as before
         this.animate(state.idleAnimationState, DwarfAnimations.DWARF_IDLE, state.ageInTicks, 1f);
 
-        // Loop through all one-shot animations
         for (DwarfAnimationType type : DwarfAnimationType.values()) {
             this.animate(
                     state.animationStates.get(type),
@@ -130,7 +128,6 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
             );
         }
 
-        // Equipment logic as before
         this.hat.visible = !state.headEquipment.isEmpty();
         boolean hasChest = !state.chestEquipment.isEmpty();
         this.bodywear.visible = hasChest;
@@ -143,7 +140,6 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
     }
 
     protected AnimationDefinition getAttackAnimationFor(DwarfRenderState state, DwarfAnimationType type) {
-        // Default: use standard mapping
         return DwarfAnimations.getByType(type);
     }
 

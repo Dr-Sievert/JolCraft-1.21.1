@@ -19,8 +19,8 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.util.attachment.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -89,8 +89,8 @@ public class ReputationTabletItem extends Item {
         super.onCraftedBy(stack, level, player);
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (DwarvenLanguageHelper.knowsDwarvishClient()) {
             String ownerName = stack.getOrDefault(JolCraftDataComponents.REP_OWNER.get(), "Unknown");
@@ -109,7 +109,5 @@ public class ReputationTabletItem extends Item {
         }
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
-
 
 }

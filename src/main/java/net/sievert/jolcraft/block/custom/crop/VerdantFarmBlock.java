@@ -43,7 +43,6 @@ public class VerdantFarmBlock extends FarmBlock {
         return SHAPE;
     }
 
-    // Always stay at max moisture
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (state.getValue(MOISTURE) != MAX_MOISTURE) {
@@ -58,7 +57,6 @@ public class VerdantFarmBlock extends FarmBlock {
         }
     }
 
-    //Just vanilla, no trample
     @Override
     public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
         entity.causeFallDamage(fallDistance, 1.0F, entity.damageSources().fall());

@@ -460,10 +460,8 @@ public class JolCraftLanguageProvider extends LanguageProvider {
     }
 
     private String resolveKey(Object thing) {
-        // Use string directly
         if (thing instanceof String str) return str;
 
-        // DeferredHolder (NeoForge-style registry object)
         if (thing instanceof DeferredHolder<?, ?> deferred) {
             var resourceKey = deferred.getKey();
             return resourceKey.registry().getPath() + "." +
@@ -471,14 +469,12 @@ public class JolCraftLanguageProvider extends LanguageProvider {
                     resourceKey.location().getPath();
         }
 
-        // Fallback for objects with a get() method
         try {
             var getMethod = thing.getClass().getMethod("get");
             Object actual = getMethod.invoke(thing);
             if (actual != null && actual != thing) return resolveKey(actual);
         } catch (Exception ignored) {}
 
-        // Fallback for vanilla items
         if (thing instanceof Item item) {
             ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
             return "item." + id.getNamespace() + "." + id.getPath();
@@ -486,8 +482,6 @@ public class JolCraftLanguageProvider extends LanguageProvider {
 
         throw new IllegalArgumentException("Unsupported or unregistered object: " + thing + " (class: " + thing.getClass() + ")");
     }
-
-    // --- String helpers ---
 
     private static String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
@@ -508,10 +502,9 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         return toTitleCase(path);
     }
 
-
     public <T> void addMissingRegistryTranslations(
             Class<?> registryClass,
-            String type,                        // "item" or "block"
+            String type,
             Set<String> addedKeys,
             Class<T> entryType,
             Function<T, ResourceLocation> idGetter
@@ -519,9 +512,8 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         for (Field field : registryClass.getDeclaredFields()) {
             try {
                 field.setAccessible(true);
-                Object obj = field.get(null); // static field
+                Object obj = field.get(null);
 
-                // Try to unwrap DeferredRegister types
                 if (obj != null && obj.getClass().getSimpleName().startsWith("Deferred")) {
                     try {
                         obj = obj.getClass().getMethod("get").invoke(obj);
@@ -549,14 +541,9 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         }
     }
 
-    //Special
-
-    // In your LanguageProvider subclass (JolCraftLanguageProvider):
-
     private void addPotion(Object potionHolder, String displayName, boolean hasLong, boolean hasStrong) {
         String baseName = resolvePotionName(potionHolder);
 
-        // Standard potions
         add("item.minecraft.potion.effect." + baseName, displayName + " Potion");
         add("item.minecraft.splash_potion.effect." + baseName, displayName + " Splash Potion");
         add("item.minecraft.lingering_potion.effect." + baseName, displayName + " Lingering Potion");
@@ -574,39 +561,24 @@ public class JolCraftLanguageProvider extends LanguageProvider {
     }
 
     private String resolvePotionName(Object potionHolder) {
-        // If it's a Holder.Reference, unwrap the ResourceKey
         if (potionHolder instanceof Holder.Reference<?> ref) {
-            // ResourceKey<Minecraft:ancient_memory>
             ResourceKey<?> key = ref.unwrapKey().orElse(null);
             if (key != null)
                 return key.location().getPath();
         }
-        // Support DeferredHolder (JolCraftPotions.* are usually DeferredHolder)
         if (potionHolder instanceof net.neoforged.neoforge.registries.DeferredHolder<?,?> deferred) {
             return deferred.getId().getPath();
         }
-        // Try to unwrap get()
         try {
             var getMethod = potionHolder.getClass().getMethod("get");
             Object actual = getMethod.invoke(potionHolder);
             if (actual != null && actual != potionHolder) {
-                return resolvePotionName(actual); // Recurse
+                return resolvePotionName(actual);
             }
         } catch (Exception ignored) {}
         if (potionHolder instanceof String str) return str;
         throw new IllegalArgumentException("Can't resolve potion name for " + potionHolder);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

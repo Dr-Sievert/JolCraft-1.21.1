@@ -71,7 +71,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
     public void draw(InfoPageRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         background.draw(graphics, 0, 0);
 
-        // Scrollable text area
         int lineHeight = 10;
         int maxLines = Math.max(1, textHeight / lineHeight);
 
@@ -91,7 +90,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
             );
         }
 
-        // Draw scroll bar if needed
         if (totalLines > maxLines) {
             int barX = getWidth() - 8;
             int barY = textStartY;
@@ -112,7 +110,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, InfoPageRecipe recipe, IFocusGroup focuses) {
 
-        // 1. Full-page: allow mouse scroll everywhere.
         builder.addInputHandler(new IJeiInputHandler() {
             @Override
             public ScreenRectangle getArea() {
@@ -129,7 +126,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
             }
         });
 
-        // 2. Scrollbar-only: handle drag/clicks for the scroll thumb.
         builder.addInputHandler(new IJeiInputHandler() {
 
             @Override
@@ -144,7 +140,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
             @Override
             public boolean handleInput(double mouseX, double mouseY, IJeiUserInput input) {
                 if (input.getKey().equals(InputConstants.Type.MOUSE.getOrCreate(0))) {
-                    // Compute thumb bounds for *this* frame
                     int textStartY = 32;
                     int textHeight = getHeight() - textStartY - 8;
                     int lineHeight = 10;
@@ -155,9 +150,7 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
                     int maxThumbMove = textHeight - thumbHeight;
                     int thumbY = (maxScroll == 0 ? 0 : Math.round(maxThumbMove * (scrollOffset / (float) maxScroll)));
 
-                    // mouseY is *relative* to the scrollbar area! (not global)
                     if (input.isSimulate()) {
-                        // Only allow drag if clicking inside the thumb
                         if (mouseY >= thumbY && mouseY < (thumbY + thumbHeight)) {
                             draggingScrollThumb = true;
                             dragStartMouseY = (int) mouseY;
@@ -175,7 +168,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
             @Override
             public boolean handleMouseDragged(double mouseX, double mouseY, InputConstants.Key mouseKey, double dragX, double dragY) {
                 if (draggingScrollThumb) {
-                    // These should match your text/scroll region
                     int textStartY = 32;
                     int textHeight = getHeight() - textStartY - 8;
                     int lineHeight = 10;
@@ -183,11 +175,9 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
                     int totalLines = Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16).size();
                     int maxScroll = Math.max(0, totalLines - maxLines);
 
-                    // Travelable space for thumb
                     int thumbHeight = Math.max(12, Math.round(textHeight * (maxLines / (float) totalLines)));
                     int thumbTravel = textHeight - thumbHeight;
 
-                    // Calculate drag as a ratio of bar travel
                     int deltaY = (int) mouseY - dragStartMouseY;
                     float ratio = thumbTravel == 0 ? 0 : (float) deltaY / thumbTravel;
 
@@ -197,8 +187,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
                 }
                 return false;
             }
-
-
         });
 
     }
@@ -209,7 +197,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
         int slotX = (getWidth() - 18) / 2;
         int slotY = 8;
 
-        // Special layout for groups
         if (recipe.isGroup()) {
             List<ItemStack> group = recipe.getGroupStacks();
             int groupSize = group.size();
@@ -226,7 +213,6 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
             }
             return;
         }
-
 
         //Tags
         if (recipe.isTag()) {

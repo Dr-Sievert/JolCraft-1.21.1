@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class HomesteadEffect extends MobEffect {
+
     public HomesteadEffect(MobEffectCategory category, int color) {
         super(category, color);
     }

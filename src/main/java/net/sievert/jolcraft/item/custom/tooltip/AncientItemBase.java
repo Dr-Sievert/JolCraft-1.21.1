@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.item.custom.tooltip;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -8,15 +9,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.util.attachment.AncientEffectHelper;
-import net.sievert.jolcraft.util.item.tooltip.TooltipHelper;
+import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.AncientEffectHelper;
+import net.sievert.jolcraft.item.util.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 
 @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public abstract class AncientItemBase extends Item {
     public AncientItemBase(Properties properties) {
         super(properties);
@@ -46,7 +48,6 @@ public abstract class AncientItemBase extends Item {
                                 getUnreadableTooltipSGA(stack, player, tooltip, flag)));
                     }
 
-                    // Always add "ancient alt help" at the end of Alt-hover
                     if (!AncientEffectHelper.hasAncientMemoryClient()) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.need_ancient")
                                 .withStyle(ChatFormatting.RED));

@@ -35,7 +35,6 @@ public class JolCraftBlockEvents {
         var state = level.getBlockState(pos);
         var mainHandStack = player.getMainHandItem();
 
-        // Only allow clicking on the top face
         if (mainHandStack.is(Items.ROTTEN_FLESH)) {
             BlockPos above = pos.above();
 
@@ -49,7 +48,6 @@ public class JolCraftBlockEvents {
 
             boolean canPlant = onLog || onSoil;
 
-            // Must be air above
             if (canPlant && level.getBlockState(above).isAir()) {
                 level.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
                 level.playSound(null, above, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -62,7 +60,6 @@ public class JolCraftBlockEvents {
         }
 
         if (!level.isClientSide()) {
-            // Check that block is full water cauldron
             if (state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
 
                 // === SUGAR logic for yeast creation ===
@@ -86,7 +83,6 @@ public class JolCraftBlockEvents {
                     BlockState maltedState = JolCraftBlocks.FERMENTING_CAULDRON.get().defaultBlockState()
                             .setValue(FermentingCauldronBlock.LEVEL, 3)
                             .setValue(FermentingCauldronBlock.STAGE, FermentingStage.MALTED);
-                    // Optionally set a malted boolean property if you want
 
                     level.setBlock(pos, maltedState, 3);
 
@@ -106,13 +102,11 @@ public class JolCraftBlockEvents {
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         Player player = event.getEntity();
 
-        // Check for your custom effect (replace 'DWARVEN_HASTE' with your actual effect)
         if (player.hasEffect(JolCraftEffects.DWARVEN_HASTE)) {
             MobEffectInstance effect = player.getEffect(JolCraftEffects.DWARVEN_HASTE);
             assert effect != null;
             int amplifier = effect.getAmplifier();
 
-            // +20% per level, like vanilla Haste
             float originalSpeed = event.getOriginalSpeed();
             float newSpeed = originalSpeed * (1.0F + 0.2F * (amplifier + 1));
             event.setNewSpeed(newSpeed);

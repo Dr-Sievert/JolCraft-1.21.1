@@ -38,7 +38,6 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         super(JolCraftBlockEntities.FERMENTING_CAULDRON.get(), pos, state);
     }
 
-    // Store added hops as a Set to prevent duplicates
     private final Set<HopsType> addedHops = new HashSet<>();
 
     public String getHopsString() {
@@ -49,14 +48,11 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
                 .orElse("");
     }
 
-    // --- Save/load NBT ---
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("FermentationProgress", fermentationProgress);
         tag.putInt("BubbleCooldown", bubbleCooldown);
-
-        // Save the set of hops that have been added
         tag.putIntArray("AddedHops", addedHops.stream().mapToInt(HopsType::ordinal).toArray());
     }
 
@@ -65,7 +61,6 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         fermentationProgress = tag.getInt("FermentationProgress");
         bubbleCooldown = tag.getInt("BubbleCooldown");
-        // Load the added hops from NBT
         int[] hopsArray = tag.getIntArray("AddedHops");
         addedHops.clear();
         for (int hop : hopsArray) {
@@ -73,22 +68,18 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
-    // --- Methods for managing hops ---
     public boolean addHop(HopsType hop) {
-        // Prevent adding the same hop twice
         if (addedHops.contains(hop)) {
-            return false; // Hop already added
+            return false;
         }
-
-        addedHops.add(hop);  // Add the hop type to the set
-        return true;  // Successfully added the hop
+        addedHops.add(hop);
+        return true;
     }
 
     public Set<HopsType> getAddedHops() {
         return addedHops;
     }
 
-    // --- Client sync ---
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
@@ -106,14 +97,12 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
-    // --- Updated tick method with hops blending ---
     public void tick() {
         if (level == null || level.isClientSide) return;
 
         BlockState state = getBlockState();
         FermentingStage stage = state.getValue(FermentingCauldronBlock.STAGE);
 
-        // Handle fermentation progress if it's in the fermenting stage
         if (isFermentingStage(stage)) {
 
             if (state.getValue(FermentingCauldronBlock.STAGE) == FermentingStage.BREW_FERMENTING) {
@@ -122,20 +111,15 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
                     brewTickCounter = 0;
                 }
 
-                // Trigger fermentation progress and handle color update
                 updateBlockStateProgress();
 
-
-                // Bubbles and sound effects for fermentation progress
                 if (bubbleCooldown <= 0) {
                     if (level instanceof ServerLevel serverLevel) {
                         double x = worldPosition.getX() + 0.5 + (serverLevel.random.nextDouble() - 0.5);
                         double y = worldPosition.getY() + 1.01;
                         double z = worldPosition.getZ() + 0.5 + (serverLevel.random.nextDouble() - 0.5);
 
-                        // Bubble particle effect
                         serverLevel.sendParticles(ParticleTypes.BUBBLE_POP, x, y, z, 1, 0.0, 0.05, 0.0, 0.05);
-                        // Bubble sound effect
                         serverLevel.playSound(null, x, y, z, SoundEvents.BUBBLE_POP, SoundSource.BLOCKS, 0.3f, 1.4f);
 
                         bubbleCooldown = 3 + serverLevel.random.nextInt(60);
@@ -151,20 +135,15 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
                     yeastTickCounter = 0;
                 }
 
-                // Trigger fermentation progress and handle color update
                 updateBlockStateProgress();
 
-
-                // Bubbles and sound effects for fermentation progress
                 if (bubbleCooldown <= 0) {
                     if (level instanceof ServerLevel serverLevel) {
                         double x = worldPosition.getX() + 0.5 + (serverLevel.random.nextDouble() - 0.5);
                         double y = worldPosition.getY() + 1.01;
                         double z = worldPosition.getZ() + 0.5 + (serverLevel.random.nextDouble() - 0.5);
 
-                        // Bubble particle effect
                         serverLevel.sendParticles(ParticleTypes.BUBBLE_POP, x, y, z, 1, 0.0, 0.05, 0.0, 0.05);
-                        // Bubble sound effect
                         serverLevel.playSound(null, x, y, z, SoundEvents.BUBBLE_POP, SoundSource.BLOCKS, 0.3f, 1.4f);
 
                         bubbleCooldown = 3 + serverLevel.random.nextInt(3);
@@ -196,22 +175,15 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         BlockState newState;
 
         switch (currentStage) {
-            case YEAST_FERMENTING -> {
-                // Yeast fermentation done → yeast ready
-                newState = currentState.setValue(FermentingCauldronBlock.STAGE, FermentingStage.YEAST_READY)
-                        .setValue(FermentingCauldronBlock.LEVEL, 3)
-                        .setValue(FermentingCauldronBlock.FERMENTATION_PROGRESS, 0);
-            }
-            case BREW_FERMENTING -> {
-                // Brew fermentation done → brew ready
-                newState = currentState.setValue(FermentingCauldronBlock.STAGE, FermentingStage.BREW_READY)
-                        .setValue(FermentingCauldronBlock.LEVEL, 3)
-                        .setValue(FermentingCauldronBlock.FERMENTATION_PROGRESS, 0);
-            }
-            default -> {
-                // Not a fermenting stage, just reset progress
-                newState = currentState.setValue(FermentingCauldronBlock.FERMENTATION_PROGRESS, 0);
-            }
+            case YEAST_FERMENTING -> newState = currentState.setValue(FermentingCauldronBlock.STAGE, FermentingStage.YEAST_READY)
+                    .setValue(FermentingCauldronBlock.LEVEL, 3)
+                    .setValue(FermentingCauldronBlock.FERMENTATION_PROGRESS, 0);
+
+            case BREW_FERMENTING -> newState = currentState.setValue(FermentingCauldronBlock.STAGE, FermentingStage.BREW_READY)
+                    .setValue(FermentingCauldronBlock.LEVEL, 3)
+                    .setValue(FermentingCauldronBlock.FERMENTATION_PROGRESS, 0);
+
+            default -> newState = currentState.setValue(FermentingCauldronBlock.FERMENTATION_PROGRESS, 0);
         }
 
         serverLevel.setBlock(worldPosition, newState, 3);
@@ -221,7 +193,6 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         if (level == null || level.isClientSide) return;
 
         BlockState currentState = getBlockState();
-        // Map internal 0–100 progress to 0–9 for blockstate
         int blockStateProgress = Math.min(fermentationProgress * 10 / maxFermentationProgress, 9);
         if (currentState.getValue(FermentingCauldronBlock.FERMENTATION_PROGRESS) != blockStateProgress) {
             level.setBlock(worldPosition, currentState.setValue(FermentingCauldronBlock.FERMENTATION_PROGRESS, blockStateProgress), 3);

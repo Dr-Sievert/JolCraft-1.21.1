@@ -9,6 +9,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import java.util.List;
 import java.util.Map;
+
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -71,18 +74,16 @@ public class CutGemItem extends Item {
         this.gemKey = gemKey;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Screen.hasAltDown()) {
-            // Show only one, simple, shift-aware detailed line
             tooltip.add(Component.translatable("tooltip.jolcraft.cut_gem")
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
         }
         else{
-            // Always show the main short gem tooltip first
             List<Component> lines = GEM_TOOLTIPS.get(gemKey);
             if (lines != null) tooltip.addAll(lines);
-            // Show shift info prompt under the short tooltip
             Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
                     .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
             tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)

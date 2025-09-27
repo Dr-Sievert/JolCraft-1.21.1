@@ -14,7 +14,7 @@ public class JolCraftFoodProperties {
 
     //Effects
     public static final Consumable DWARVEN_BREW_EFFECT = Consumables.defaultDrink()
-            .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0), 1.0f)) // Always apply confusion
+            .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0), 1.0f))
             .build();
 
     public static final Consumable DEEPSLATE_BULBS_EFFECT = Consumables.defaultFood()

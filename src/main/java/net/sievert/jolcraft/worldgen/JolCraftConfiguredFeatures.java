@@ -61,7 +61,6 @@ public class JolCraftConfiguredFeatures {
                 )
         );
 
-        // Build the WeightedStateProvider with all ages, using a loop
         SimpleWeightedRandomList.Builder<BlockState> builder = SimpleWeightedRandomList.builder();
         for (int i = 0; i <= 9; i++) {
             builder.add(
@@ -141,8 +140,6 @@ public class JolCraftConfiguredFeatures {
         );
 
         register(context, BASALT_GEODE_KEY, Feature.GEODE, basaltGeodeConfig);
-
-
     }
 
     public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {

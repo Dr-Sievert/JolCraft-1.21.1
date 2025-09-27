@@ -19,8 +19,6 @@ public class DwarvenReputationImpl implements DwarvenReputation {
 
     private static final int[] ENDORSEMENT_THRESHOLDS = {2, 5, 9, 14};
 
-    // --- Accessors ---
-
     @Override
     public int getTier() {
         return tier;
@@ -50,8 +48,6 @@ public class DwarvenReputationImpl implements DwarvenReputation {
         return ENDORSEMENT_THRESHOLDS.length;
     }
 
-    // --- Tier Logic ---
-
     public static int getThresholdForTier(int tier) {
         return (tier >= 0 && tier < ENDORSEMENT_THRESHOLDS.length)
                 ? ENDORSEMENT_THRESHOLDS[tier]
@@ -62,8 +58,6 @@ public class DwarvenReputationImpl implements DwarvenReputation {
         return currentTier < ENDORSEMENT_THRESHOLDS.length
                 && endorsements >= getThresholdForTier(currentTier);
     }
-
-    // --- Serialization ---
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {

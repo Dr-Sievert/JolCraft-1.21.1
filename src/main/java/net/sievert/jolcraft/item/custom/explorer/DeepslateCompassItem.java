@@ -19,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -96,6 +98,7 @@ public class DeepslateCompassItem extends Item {
         return super.getName(stack);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.jolcraft.deepslate_compass").withStyle(ChatFormatting.GRAY));
@@ -104,7 +107,6 @@ public class DeepslateCompassItem extends Item {
         if (structureId != null && !structureId.isEmpty()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.structure." + structureId).withStyle(ChatFormatting.BLUE));
 
-            // Show target coords for creative players
             if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
                 var pos = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
                 if (pos != null) {
@@ -118,7 +120,5 @@ public class DeepslateCompassItem extends Item {
             tooltip.add(Component.translatable("tooltip.jolcraft.structure.unknown").withStyle(ChatFormatting.DARK_GRAY));
         }
     }
-
-
 
 }
