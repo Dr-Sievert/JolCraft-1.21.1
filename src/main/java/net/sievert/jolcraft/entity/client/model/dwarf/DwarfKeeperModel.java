@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.dwarf.DwarfRenderState;
+import org.jetbrains.annotations.NotNull;
 
 public class DwarfKeeperModel extends DwarfModel{
 
@@ -89,7 +90,7 @@ public class DwarfKeeperModel extends DwarfModel{
     }
 
     @Override
-    public void translateToHand(HumanoidArm side, PoseStack poseStack) {
+    public void translateToHand(@NotNull HumanoidArm side, @NotNull PoseStack poseStack) {
         if (side == HumanoidArm.LEFT) {
             this.root.translateAndRotate(poseStack);
             this.getArm(side).translateAndRotate(poseStack);

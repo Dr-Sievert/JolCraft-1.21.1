@@ -139,11 +139,6 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
         this.left_footwear.visible = hasBoots;
     }
 
-    protected AnimationDefinition getAttackAnimationFor(DwarfRenderState state, DwarfAnimationType type) {
-        return DwarfAnimations.getByType(type);
-    }
-
-
     @Override
     public void translateToHand(@NotNull HumanoidArm side, @NotNull PoseStack poseStack) {
         this.root.translateAndRotate(poseStack);
@@ -151,15 +146,19 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
         poseStack.translate(-0.05F, -0.15F, 0.05F);
     }
 
+    protected AnimationDefinition getAttackAnimationFor(DwarfRenderState state, DwarfAnimationType type) {
+        return DwarfAnimations.getByType(type);
+    }
+
+    protected @NotNull ModelPart getArm(@NotNull HumanoidArm side) {
+        return side == HumanoidArm.RIGHT ? this.rightArm : this.leftArm;
+    }
+
     protected void applyHeadRotation(float headYaw, float headPitch) {
         headYaw = Mth.clamp(headYaw, -30f, 30f);
         headPitch = Mth.clamp(headPitch, -25f, 45);
         this.head.yRot = headYaw * ((float)Math.PI / 180f);
         this.head.xRot = headPitch *  ((float)Math.PI / 180f);
-    }
-
-    protected @NotNull ModelPart getArm(@NotNull HumanoidArm side) {
-        return side == HumanoidArm.RIGHT ? this.rightArm : this.leftArm;
     }
 
 }

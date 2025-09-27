@@ -83,7 +83,6 @@ public class JolCraftBiomeModifiers {
                 )
         );
 
-
     }
 
     private static ResourceKey<BiomeModifier> registerKey(String name) {

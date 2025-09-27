@@ -29,16 +29,6 @@ public class DwarfMerchantRenderer extends DwarfRenderer<DwarfMerchantEntity> {
     }
 
     @Override
-    public void render(DwarfRenderState renderState, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        super.render(renderState, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    public @NotNull DwarfRenderState createRenderState() {
-        return new DwarfRenderState();
-    }
-
-    @Override
     public void extractRenderState(@NotNull DwarfMerchantEntity entity, @NotNull DwarfRenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
     }

@@ -29,12 +29,6 @@ public class DwarfScrapperRenderer extends DwarfRenderer<DwarfScrapperEntity> {
     }
 
     @Override
-    public void render(DwarfRenderState renderState, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        super.render(renderState, poseStack, bufferSource, packedLight);
-
-    }
-
-    @Override
     public void extractRenderState(@NotNull DwarfScrapperEntity entity, @NotNull DwarfRenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
     }

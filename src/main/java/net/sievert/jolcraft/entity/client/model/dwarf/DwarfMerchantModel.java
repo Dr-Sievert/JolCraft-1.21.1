@@ -9,6 +9,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.dwarf.DwarfRenderState;
+import org.jetbrains.annotations.NotNull;
 
 public class DwarfMerchantModel extends DwarfModel{
 
@@ -88,7 +89,7 @@ public class DwarfMerchantModel extends DwarfModel{
     }
 
     @Override
-    public void translateToHand(HumanoidArm side, PoseStack poseStack) {
+    public void translateToHand(@NotNull HumanoidArm side, @NotNull PoseStack poseStack) {
         if (side == HumanoidArm.LEFT) {
             this.root.translateAndRotate(poseStack);
             this.getArm(side).translateAndRotate(poseStack);

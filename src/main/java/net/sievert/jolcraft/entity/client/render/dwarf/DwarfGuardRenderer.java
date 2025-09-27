@@ -37,11 +37,6 @@ public class DwarfGuardRenderer extends DwarfRenderer<DwarfGuardEntity> {
     }
 
     @Override
-    public @NotNull DwarfRenderState createRenderState() {
-        return new DwarfRenderState();
-    }
-
-    @Override
     public void extractRenderState(@NotNull DwarfGuardEntity entity, @NotNull DwarfRenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
     }

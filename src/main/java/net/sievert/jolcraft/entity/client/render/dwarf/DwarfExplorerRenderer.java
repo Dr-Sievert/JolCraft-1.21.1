@@ -31,16 +31,6 @@ public class DwarfExplorerRenderer extends DwarfRenderer<DwarfExplorerEntity> {
     }
 
     @Override
-    public void render(DwarfRenderState renderState, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        super.render(renderState, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    public @NotNull DwarfRenderState createRenderState() {
-        return new DwarfRenderState();
-    }
-
-    @Override
     public void extractRenderState(@NotNull DwarfExplorerEntity entity, @NotNull DwarfRenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
     }
