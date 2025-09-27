@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.client.item.coin;
+package net.sievert.jolcraft.item.util;
 
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 

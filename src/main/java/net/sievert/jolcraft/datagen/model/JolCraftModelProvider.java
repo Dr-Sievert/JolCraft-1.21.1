@@ -418,7 +418,6 @@ public class JolCraftModelProvider extends ModelProvider {
 
         blockModels.createCropBlock(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
-        // For Fermenting Cauldron: custom blockstate with level property
         blockModels.blockStateOutput.accept(new BlockStateGenerator() {
             @Override
             public JsonObject get() {
@@ -500,27 +499,22 @@ public class JolCraftModelProvider extends ModelProvider {
         ResourceLocation baseModelLoc = ModelLocationUtils.getModelLocation(tomeItem);
         ResourceLocation fallbackTexture = TextureMapping.getItemTexture(tomeItem);
 
-        // Fallback model (default texture)
         ModelTemplates.FLAT_ITEM.create(baseModelLoc, TextureMapping.layer0(fallbackTexture), itemModels.modelOutput);
         ItemModel.Unbaked fallbackModel = ItemModelUtils.plainModel(baseModelLoc);
 
-        // Build override cases
         Set<String> legendaryLoreKeys = DwarvenLoreHelper.getLegendaryKeys();
         List<SelectItemModel.SwitchCase<String>> switchCases = new ArrayList<>();
 
         for (String loreKey : legendaryLoreKeys) {
-            // Use the improved, unambiguous naming
             String modelName = "item/ancient_dwarven_tome_legendary_" + loreKey;
             ResourceLocation modelLoc = ResourceLocation.fromNamespaceAndPath("jolcraft", modelName);
 
-            // Variant model uses layer0 = itself
             ModelTemplates.FLAT_ITEM.create(modelLoc, TextureMapping.layer0(modelLoc), itemModels.modelOutput);
             ItemModel.Unbaked model = ItemModelUtils.plainModel(modelLoc);
 
             switchCases.add(ItemModelUtils.when(loreKey, model));
         }
 
-        // Register the select item model
         itemModels.itemModelOutput.accept(
                 tomeItem,
                 new SelectItemModel.Unbaked(
@@ -575,7 +569,6 @@ public class JolCraftModelProvider extends ModelProvider {
                 list.add(ItemModelUtils.when(data.materialKey(), bakedModel));
             }
 
-            // Default (fallback) model
             ItemModel.Unbaked defaultModel;
             if (dyeable) {
                 ModelTemplates.TWO_LAYERED_ITEM.create(baseModelLocation, TextureMapping.layered(textureLocation, overlayTexture), itemModels.modelOutput);
@@ -585,7 +578,6 @@ public class JolCraftModelProvider extends ModelProvider {
                 defaultModel = ItemModelUtils.plainModel(baseModelLocation);
             }
 
-            // Register select model for this armor piece
             Item armorItem = getItemFromBaseName(baseName, type);
             itemModels.itemModelOutput.accept(
                     armorItem,
@@ -611,14 +603,12 @@ public class JolCraftModelProvider extends ModelProvider {
             ResourceKey<EquipmentAsset> key,
             boolean dyeable) {
 
-        // Gather all possible trims (vanilla + all custom)
         List<ItemModelGenerators.TrimMaterialData> allTrimMaterials = new ArrayList<>();
 
-        // Add all vanilla trims
         for (Map.Entry<String, ResourceKey<TrimMaterial>> entry : VANILLA_TRIMS.entrySet()) {
             allTrimMaterials.add(new ItemModelGenerators.TrimMaterialData(entry.getKey(), entry.getValue(), Map.of()));
         }
-        // Add ALL custom trims from static list
+
         allTrimMaterials.addAll(JOLCRAFT_TRIMS);
 
         for (String type : ARMOR_TYPES) {
@@ -634,9 +624,7 @@ public class JolCraftModelProvider extends ModelProvider {
 
                 ResourceLocation caseModelLoc;
 
-                // Handle non-vanilla armor separately to avoid double suffixing
                 if (!isVanillaArmor && isCustom) {
-                    // Only add one _trim suffix for custom, non-vanilla armor
                     caseModelLoc = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName + "_" + trimName + "_trim");
 
                     ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName);
@@ -654,7 +642,6 @@ public class JolCraftModelProvider extends ModelProvider {
                             dyeable
                     );
                 } else if (isCustom) {
-                    // Vanilla armor: Jolcraft custom trims still get one _trim
                     caseModelLoc = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName);
 
                     ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("minecraft", "item/" + fileName);
@@ -672,14 +659,12 @@ public class JolCraftModelProvider extends ModelProvider {
                             dyeable
                     );
                 } else {
-                    // Vanilla trims (any armor): always reference vanilla
                     caseModelLoc = ResourceLocation.fromNamespaceAndPath("minecraft", "item/" + fileName + "_" + trimName + "_trim");
                     ItemModel.Unbaked dummyModel = ItemModelUtils.plainModel(caseModelLoc);
                     selectCases.add(ItemModelUtils.when(trim.materialKey(), dummyModel));
                 }
             }
 
-            // Fallback logic
             ResourceLocation fallbackModelLoc = (baseName.equals("diamond") || baseName.equals("netherite") || baseName.equals("leather")
                     || baseName.equals("iron") || baseName.equals("golden") || baseName.equals("chainmail"))
                     ? ResourceLocation.fromNamespaceAndPath("minecraft", "item/" + fileName)
@@ -697,7 +682,6 @@ public class JolCraftModelProvider extends ModelProvider {
         }
     }
 
-    // Helper method to add the trim model to the list (common for custom trims only)
     private void addTrimModelToList(
             ItemModelGenerators itemModels,
             ResourceLocation baseModelLocation,
@@ -710,11 +694,9 @@ public class JolCraftModelProvider extends ModelProvider {
 
         ItemModel.Unbaked bakedModel;
         if (dyeable) {
-            // Generate the item model with overlay and trim texture for dyeable items
             itemModels.generateLayeredItem(baseModelLocation.withSuffix("_" + trim.name() + "_trim"), textureLocation, overlayTexture, trimTextureLocation);
             bakedModel = ItemModelUtils.tintedModel(baseModelLocation.withSuffix("_" + trim.name() + "_trim"), new Dye(-6265536)); // Example color
         } else {
-            // Generate the model with the trim texture for non-dyeable items
             itemModels.generateLayeredItem(baseModelLocation.withSuffix("_" + trim.name() + "_trim"), textureLocation, trimTextureLocation);
             bakedModel = ItemModelUtils.plainModel(baseModelLocation.withSuffix("_" + trim.name() + "_trim"));
         }
@@ -738,24 +720,19 @@ public class JolCraftModelProvider extends ModelProvider {
     );
 
     private Item getItemFromBaseName(String baseName, String type) {
-        // Dynamically construct the correct item name based on baseName and type
         String itemName = baseName + "_" + type;
 
-        // Try to fetch from jolcraft first
         ResourceLocation jolcraftLocation = ResourceLocation.fromNamespaceAndPath("jolcraft", itemName);
         Optional<Item> itemOptional = BuiltInRegistries.ITEM.getOptional(jolcraftLocation);
 
-        // If the item wasn't found in jolcraft, fall back to the minecraft namespace
         if (itemOptional.isEmpty()) {
             ResourceLocation minecraftLocation = ResourceLocation.fromNamespaceAndPath("minecraft", itemName);
             itemOptional = BuiltInRegistries.ITEM.getOptional(minecraftLocation);
         }
 
-        // If the item was not found in either namespace, throw an exception
         return itemOptional.orElseThrow(() -> new IllegalStateException("Item not found: " + itemName));
     }
 
-    //Hops top helper
     private void createTopCropBlock(BlockModelGenerators blockModels, Block block, int... ageToVisualStageMapping) {
         if (HopsCropTopBlock.TOP_AGE.getPossibleValues().size() != ageToVisualStageMapping.length) {
             throw new IllegalArgumentException("Mismatch between age property values and visual stage mapping!");
@@ -776,7 +753,6 @@ public class JolCraftModelProvider extends ModelProvider {
     }
 
     public void createFesterlingCrop(BlockModelGenerators blockModels) {
-        // Only handle blockstate with AGE-based variant for the crop
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(JolCraftBlocks.FESTERLING_CROP.get())
                         .with(

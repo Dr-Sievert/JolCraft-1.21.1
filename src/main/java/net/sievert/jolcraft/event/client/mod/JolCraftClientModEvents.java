@@ -18,7 +18,7 @@ import net.sievert.jolcraft.block.custom.crop.HopsType;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.client.item.coin.CoinPouchTooltipRenderer;
 import net.sievert.jolcraft.client.item.compass.DialColor;
-import net.sievert.jolcraft.client.item.coin.CoinPouchTooltip;
+import net.sievert.jolcraft.item.util.CoinPouchTooltip;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.client.model.animal.MuffhornModel;
 import net.sievert.jolcraft.entity.client.model.blockentity.StrongboxModel;

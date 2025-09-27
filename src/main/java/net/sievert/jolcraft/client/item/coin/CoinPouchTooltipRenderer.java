@@ -3,11 +3,16 @@ package net.sievert.jolcraft.client.item.coin;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.sievert.jolcraft.item.util.CoinPouchTooltip;
 import org.jetbrains.annotations.NotNull;
 
+@OnlyIn(Dist.CLIENT)
 public class CoinPouchTooltipRenderer implements ClientTooltipComponent {
+
     private final int coinCount;
 
     public CoinPouchTooltipRenderer(CoinPouchTooltip tooltip) {

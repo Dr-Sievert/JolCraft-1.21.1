@@ -862,11 +862,14 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     public static final Map<Item, EntityType<? extends AbstractDwarfEntity>> CONTRACT_TO_PROFESSION = Map.ofEntries(
+
             Map.entry(JolCraftItems.CONTRACT_GUILDMASTER.get(), JolCraftEntities.DWARF_GUILDMASTER.get()),
+
             // Tier 1
             Map.entry(JolCraftItems.CONTRACT_MERCHANT.get(), JolCraftEntities.DWARF_MERCHANT.get()),
             Map.entry(JolCraftItems.CONTRACT_HISTORIAN.get(), JolCraftEntities.DWARF_HISTORIAN.get()),
             Map.entry(JolCraftItems.CONTRACT_SCRAPPER.get(), JolCraftEntities.DWARF_SCRAPPER.get()),
+
             // Tier 2
             Map.entry(JolCraftItems.CONTRACT_GUARD.get(), JolCraftEntities.DWARF_GUARD.get()),
             Map.entry(JolCraftItems.CONTRACT_BREWMASTER.get(), JolCraftEntities.DWARF_BREWMASTER.get()),
@@ -880,12 +883,13 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             /*
 
             // Tier 4
+            Map.entry(JolCraftItems.CONTRACT_ALCHEMIST.get(), JolCraftEntities.DWARF_ALCHEMIST.get()),
             Map.entry(JolCraftItems.CONTRACT_ARCANIST.get(), JolCraftEntities.DWARF_ARCANIST.get()),
             Map.entry(JolCraftItems.CONTRACT_PRIEST.get(), JolCraftEntities.DWARF_PRIEST.get()),
-            Map.entry(JolCraftItems.CONTRACT_ALCHEMIST.get(), JolCraftEntities.DWARF_ALCHEMIST.get()),
+
             // Tier 5
-            Map.entry(JolCraftItems.CONTRACT_CHAMPION.get(), JolCraftEntities.DWARF_CHAMPION.get()),
             Map.entry(JolCraftItems.CONTRACT_BLACKSMITH.get(), JolCraftEntities.DWARF_BLACKSMITH.get()),
+            Map.entry(JolCraftItems.CONTRACT_CHAMPION.get(), JolCraftEntities.DWARF_CHAMPION.get()),
             Map.entry(JolCraftItems.CONTRACT_SMELTER.get(), JolCraftEntities.DWARF_SMELTER.get())
 
             */
