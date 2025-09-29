@@ -7,9 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfArmorLayer;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfBeardLayer;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfEyeLayer;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfArmorLayer;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfGuardModel;
 import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuardEntity;
@@ -34,11 +34,6 @@ public class DwarfGuardRenderer extends DwarfRenderer<DwarfGuardEntity> {
     public void render(DwarfRenderState renderState, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         poseStack.scale(1.1f, 1.1f, 1.1f);
         super.render(renderState, poseStack, bufferSource, packedLight);
-    }
-
-    @Override
-    public void extractRenderState(@NotNull DwarfGuardEntity entity, @NotNull DwarfRenderState reusedState, float partialTick) {
-        super.extractRenderState(entity, reusedState, partialTick);
     }
 
 }

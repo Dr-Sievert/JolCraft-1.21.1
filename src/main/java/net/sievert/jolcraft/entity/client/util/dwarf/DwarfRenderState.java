@@ -6,23 +6,64 @@ import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
 import java.util.EnumMap;
 
+/**
+ * Holds per-frame state for rendering a dwarf entity.
+ * This includes animation states, visual appearance, and current action information.
+ */
 public class DwarfRenderState extends HumanoidRenderState {
-    public final AnimationState idleAnimationState = new AnimationState();
 
-    public final EnumMap<DwarfAnimationType, AnimationState> animationStates = new EnumMap<>(DwarfAnimationType.class);
+    /**
+     * Per-action animation states used to track and drive custom dwarf animations.
+     */
+    public final EnumMap<DwarfActionType, AnimationState> animationStates = new EnumMap<>(DwarfActionType.class);
 
+    /**
+     * The currently active top-level action type (e.g., ATTACK, BLOCK, DRINK).
+     */
+    public DwarfActionType currentActionType = DwarfActionType.IDLE;
+
+    /**
+     * The current action subtype, if one is active (e.g., ATTACK_AXE, BLOCK_SHIELD).
+     */
+    public DwarfActionType.Subtype currentActionSubtype = null;
+
+    /** The dwarf entity being rendered (optional, rarely needed). */
     public AbstractDwarfEntity dwarf;
+
+    /**
+     * The visual variant of this dwarf (e.g., skin tone or body type).
+     */
     public DwarfVariant variant;
+
+    /**
+     * The beard color of the dwarf, used in rendering facial layers.
+     */
     public DwarfBeardColor beard;
+
+    /**
+     * The eye color of the dwarf, used in rendering overlays or glow effects.
+     */
     public DwarfEyeColor eye;
 
+    /**
+     * Creates and initializes all action-specific animation states.
+     * Called once per dwarf instance.
+     */
     public DwarfRenderState() {
-        for (DwarfAnimationType type : DwarfAnimationType.values()) {
+        for (DwarfActionType type : DwarfActionType.values()) {
             animationStates.put(type, new AnimationState());
         }
     }
 
+    /**
+     * Interface for dwarf entities that provide a render state.
+     * Used by models to retrieve animation data safely.
+     */
+    public interface Provider {
+        DwarfRenderState getDwarfRenderState();
+    }
 }

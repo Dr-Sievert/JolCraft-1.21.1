@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
 public class DwarfUseItemGoal<T extends Mob> extends Goal {
     private final T mob;
@@ -46,7 +47,7 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
     @Override
     public void start() {
         if (this.mob instanceof AbstractDwarfEntity dwarf) {
-            dwarf.setDrinking(true);
+            dwarf.getActionHandler().setAction(DwarfActionType.DRINK, dwarf);
         }
         this.previousMainHandItem = this.mob.getItemBySlot(EquipmentSlot.MAINHAND).copy();
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.item.copy());
@@ -56,7 +57,7 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
     @Override
     public void stop() {
         if (this.mob instanceof AbstractDwarfEntity dwarf) {
-            dwarf.setDrinking(false);
+            dwarf.getActionHandler().stopAction(dwarf);
         }
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
         if (this.finishUsingSound != null) {

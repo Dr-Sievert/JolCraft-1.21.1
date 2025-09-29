@@ -10,10 +10,9 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfAnimationType;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfAnimations;
+import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimations;
 import org.jetbrains.annotations.NotNull;
 
 public class DwarfGuardModel extends DwarfModel{
@@ -45,30 +44,7 @@ public class DwarfGuardModel extends DwarfModel{
 
     @Override
     public void setupAnim(DwarfRenderState state) {
-        this.root().getAllParts().forEach(ModelPart::resetPose);
-        this.applyHeadRotation(state.yRot, state.xRot);
-        this.animateWalk(DwarfAnimations.DWARF_WALK, state.walkAnimationPos, state.walkAnimationSpeed, 2f, 2.5f);
-
-        this.animate(state.idleAnimationState, DwarfAnimations.DWARF_IDLE, state.ageInTicks, 1f);
-
-        for (DwarfAnimationType type : DwarfAnimationType.values()) {
-            if (type == DwarfAnimationType.ATTACK) {
-                this.animate(
-                        state.animationStates.get(type),
-                        DwarfAnimations.DWARF_ATTACK_AXE,
-                        state.ageInTicks,
-                        1f
-                );
-            } else {
-                this.animate(
-                        state.animationStates.get(type),
-                        DwarfAnimations.getByType(type),
-                        state.ageInTicks,
-                        1f
-                );
-            }
-        }
-
+        super.setupAnim(state);
         this.hat.visible = !state.headEquipment.isEmpty();
         boolean hasChest = !state.chestEquipment.isEmpty();
         this.bodywear.visible = hasChest;
@@ -78,13 +54,6 @@ public class DwarfGuardModel extends DwarfModel{
         boolean hasBoots = !state.feetEquipment.isEmpty();
         this.right_footwear.visible = hasBoots;
         this.left_footwear.visible = hasBoots;
-    }
-
-    @Override
-    protected AnimationDefinition getAttackAnimationFor(DwarfRenderState state, DwarfAnimationType type) {
-        if (type == DwarfAnimationType.ATTACK) return DwarfAnimations.DWARF_ATTACK_AXE;
-
-        return super.getAttackAnimationFor(state, type);
     }
 
     @Override

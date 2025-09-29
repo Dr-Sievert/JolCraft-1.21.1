@@ -5,6 +5,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
 import java.util.EnumSet;
 import java.util.Objects;
@@ -12,33 +13,33 @@ import java.util.Objects;
 
 public class DwarfRevengeGoal extends Goal
 {
-    private final AbstractDwarfEntity entity;
+    private final AbstractDwarfEntity dwarf;
 
     public DwarfRevengeGoal(AbstractDwarfEntity entity)
     {
-        this.entity = entity;
+        this.dwarf = entity;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
     public boolean canUse()
     {
-        return this.entity.getLastHurtByMob() != null && this.entity.getLastHurtByMob().isAlive() && this.entity.distanceTo(this.entity.getLastHurtByMob()) <= 10.0F && (!(this.entity.getLastHurtByMob() instanceof Player) || !((Player)this.entity.getLastHurtByMob()).isCreative());
+        return this.dwarf.getLastHurtByMob() != null && this.dwarf.getLastHurtByMob().isAlive() && this.dwarf.distanceTo(this.dwarf.getLastHurtByMob()) <= 10.0F && (!(this.dwarf.getLastHurtByMob() instanceof Player) || !((Player)this.dwarf.getLastHurtByMob()).isCreative());
     }
 
     @Override
     public void tick() {
-        LivingEntity revengeTarget = this.entity.getLastHurtByMob();
-        if (revengeTarget != null && this.entity.getTradingPlayer() == null && revengeTarget instanceof Player) {
-            this.entity.getLookControl().setLookAt(revengeTarget, 10.0F, (float) this.entity.getHeadRotSpeed());
-            if (this.entity.distanceTo(revengeTarget) >= 1.5D) {
-                this.entity.getNavigation().moveTo(revengeTarget, 1.3F);
+        LivingEntity revengeTarget = this.dwarf.getLastHurtByMob();
+        if (revengeTarget != null && this.dwarf.getTradingPlayer() == null && revengeTarget instanceof Player) {
+            this.dwarf.getLookControl().setLookAt(revengeTarget, 10.0F, (float) this.dwarf.getHeadRotSpeed());
+            if (this.dwarf.distanceTo(revengeTarget) >= 1.5D) {
+                this.dwarf.getNavigation().moveTo(revengeTarget, 1.3F);
             } else {
                 // Make sure the attack damage attribute is correct right before the attack:
-                this.entity.setCustomAttackDamage(this.entity.getAttackDamage());
-                revengeTarget.hurt(this.entity.damageSources().mobAttack(this.entity), (float) Objects.requireNonNull(this.entity.getAttribute(Attributes.ATTACK_DAMAGE)).getValue());
-                this.entity.setAttacking(true);
-                this.entity.setLastHurtByMob(null);
+                this.dwarf.setCustomAttackDamage(this.dwarf.getAttackDamage());
+                revengeTarget.hurt(this.dwarf.damageSources().mobAttack(this.dwarf), (float) Objects.requireNonNull(this.dwarf.getAttribute(Attributes.ATTACK_DAMAGE)).getValue());
+                this.dwarf.getActionHandler().setAction(DwarfActionType.ATTACK, dwarf);
+                this.dwarf.setLastHurtByMob(null);
             }
         }
     }
@@ -46,13 +47,13 @@ public class DwarfRevengeGoal extends Goal
     @Override
     public boolean canContinueToUse()
     {
-        return this.entity.getLastHurtByMob() != null && this.entity.getLastHurtByMob().isAlive() && this.entity.distanceTo(this.entity.getLastHurtByMob()) <= 10.0F && this.entity.getTradingPlayer() == null;
+        return this.dwarf.getLastHurtByMob() != null && this.dwarf.getLastHurtByMob().isAlive() && this.dwarf.distanceTo(this.dwarf.getLastHurtByMob()) <= 10.0F && this.dwarf.getTradingPlayer() == null;
     }
 
     @Override
     public void stop()
     {
-        this.entity.setAttacking(false);
-        this.entity.setLastHurtByMob(null);
+        this.dwarf.getActionHandler().stopAction(dwarf);
+        this.dwarf.setLastHurtByMob(null);
     }
 }

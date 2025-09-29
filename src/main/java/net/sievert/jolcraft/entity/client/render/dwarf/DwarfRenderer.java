@@ -13,8 +13,14 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.util.dwarf.*;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
+import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHandler;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfArmorLayer;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHandler;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -74,10 +80,15 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
     @Override
     public void extractRenderState(@NotNull T entity, @NotNull DwarfRenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
-        reusedState.idleAnimationState.copyFrom(entity.idleAnimationState);
-        for (DwarfAnimationType type : DwarfAnimationType.values()) {
-            reusedState.animationStates.get(type).copyFrom(entity.getAnimationState(type));
-        }
+
+        reusedState.currentActionType = DwarfActionHandler.getCurrentActionType(entity);
+        DwarfAnimationHandler.updateAnimationStates(
+                reusedState,
+                reusedState.currentActionType,
+                entity.tickCount
+        );
+        reusedState.ageInTicks = entity.tickCount + partialTick;
+
         reusedState.dwarf = entity;
         reusedState.variant = entity.getVariant();
         reusedState.beard = entity.getBeard();

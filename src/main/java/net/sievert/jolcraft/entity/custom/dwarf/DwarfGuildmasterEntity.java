@@ -240,7 +240,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
 
         this.usedItem = tabletUsed;
         beginAction(player, 40, AbstractDwarfEntity.ACTION_REPUTATION_ENDORSEMENT, tabletUsed, previousMainHandItem, () -> {
-            this.setInspecting(false);
+            this.getActionHandler().stopAction(this);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
             if (!this.level().isClientSide && this.currentActionPlayer instanceof ServerPlayer serverPlayer) {

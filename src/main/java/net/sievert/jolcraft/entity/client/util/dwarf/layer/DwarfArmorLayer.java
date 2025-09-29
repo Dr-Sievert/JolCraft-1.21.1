@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.util.dwarf;
+package net.sievert.jolcraft.entity.client.util.dwarf.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,6 +16,7 @@ import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.Equippable;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
+import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import org.jetbrains.annotations.NotNull;
 
 public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {

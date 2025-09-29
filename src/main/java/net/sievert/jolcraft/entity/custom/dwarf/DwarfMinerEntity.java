@@ -31,6 +31,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
@@ -173,7 +174,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
 
             // Begin multi-tick action
             beginAction(player, 40, ACTION_BOUNTY_CRATE_TURNIN, itemstack, prevMainHand, () -> {
-                this.setInspecting(false);
+                this.getActionHandler().stopAction(this);
                 this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
                 if (!this.level().isClientSide && this.currentActionPlayer != null) {
@@ -236,7 +237,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
             JolCraftSoundHelper.playDwarfYes(this);
 
             beginAction(player, 40, ACTION_BOUNTY_NOTE_SUBMIT, itemstack, prevMainHand, () -> {
-                this.setInspecting(false);
+                this.getActionHandler().stopAction(this);
                 this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
                 if (!this.level().isClientSide && this.currentActionPlayer != null) {
@@ -291,7 +292,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
 
         // Per-tick bounty action logic
         if (ACTION_BOUNTY_CRATE_TURNIN.equals(currentActionId)) {
-            this.setInspecting(true);
+            this.getActionHandler().setAction(DwarfActionType.INSPECT, this);
             if (currentActionTicks == 25) {
                 JolCraftSoundHelper.playVillagerFisherman(this);
             }
@@ -300,7 +301,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
             }
         }
         if (ACTION_BOUNTY_NOTE_SUBMIT.equals(currentActionId)) {
-            this.setInspecting(true);
+            this.getActionHandler().setAction(DwarfActionType.INSPECT, this);
             if (currentActionTicks == 25) {
                 this.level().playSound(null, this.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.NEUTRAL, 1.0F, 1.2F);
             }
@@ -311,14 +312,14 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
 
         // Universal animation reset
         if (currentActionId == null) {
-            this.setInspecting(false);
+            this.getActionHandler().stopAction(this);
         }
     }
 
     //Particles
     @Override
-    protected void tickAction() {
-        super.tickAction();
+    public void tick() {
+        super.tick();
 
         if (ACTION_BOUNTY_CRATE_TURNIN.equals(currentActionId) && currentActionTicks <= 10 && currentActionTicks > 0) {
             this.spawnColoredParticles(0.2F, 0.6F, 1.0F, 0.7F, 10, 1.0D);

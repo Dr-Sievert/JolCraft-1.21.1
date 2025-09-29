@@ -5,8 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfBeardLayer;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfEyeLayer;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
+import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfMerchantModel;
 import net.sievert.jolcraft.entity.custom.dwarf.DwarfMerchantEntity;
@@ -24,11 +24,6 @@ public class DwarfMerchantRenderer extends DwarfRenderer<DwarfMerchantEntity> {
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
         return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_merchant.png");
-    }
-
-    @Override
-    public void extractRenderState(@NotNull DwarfMerchantEntity entity, @NotNull DwarfRenderState reusedState, float partialTick) {
-        super.extractRenderState(entity, reusedState, partialTick);
     }
 
 }

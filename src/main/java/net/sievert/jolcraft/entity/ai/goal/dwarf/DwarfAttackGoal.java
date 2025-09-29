@@ -9,12 +9,15 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.entity.util.dwarf.action.type.AttackDwarfAction;
+import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
 
 public class DwarfAttackGoal extends MeleeAttackGoal {
-    protected final AbstractDwarfEntity mob;
+    protected final AbstractDwarfEntity dwarf;
     private final double speedModifier;
     private final boolean followingTargetEvenIfNotSeen;
     private Path path;
@@ -33,7 +36,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
 
     public DwarfAttackGoal(AbstractDwarfEntity mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
-        this.mob = mob;
+        this.dwarf = mob;
         this.speedModifier = speedModifier;
         this.followingTargetEvenIfNotSeen = followingTargetEvenIfNotSeen;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -41,12 +44,12 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
 
     @Override
     public boolean canUse() {
-        long i = this.mob.level().getGameTime();
+        long i = this.dwarf.level().getGameTime();
         if (i - this.lastCanUseCheck < 20L) {
             return false;
         } else {
             this.lastCanUseCheck = i;
-            LivingEntity livingentity = this.mob.getTarget();
+            LivingEntity livingentity = this.dwarf.getTarget();
             if (livingentity == null) {
                 return false;
             } else if (!livingentity.isAlive()) {
@@ -54,75 +57,75 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
             } else {
                 if (canPenalize) {
                     if (--this.ticksUntilNextPathRecalculation <= 0) {
-                        this.path = this.mob.getNavigation().createPath(livingentity, 0);
-                        this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
+                        this.path = this.dwarf.getNavigation().createPath(livingentity, 0);
+                        this.ticksUntilNextPathRecalculation = 4 + this.dwarf.getRandom().nextInt(7);
                         return this.path != null;
                     } else {
                         return true;
                     }
                 }
-                this.path = this.mob.getNavigation().createPath(livingentity, 0);
-                return this.path != null || this.mob.isWithinMeleeAttackRange(livingentity);
+                this.path = this.dwarf.getNavigation().createPath(livingentity, 0);
+                return this.path != null || this.dwarf.isWithinMeleeAttackRange(livingentity);
             }
         }
     }
 
     @Override
     public boolean canContinueToUse() {
-        LivingEntity livingentity = this.mob.getTarget();
+        LivingEntity livingentity = this.dwarf.getTarget();
         if (livingentity == null) {
             return false;
         } else if (!livingentity.isAlive()) {
             return false;
         } else if (!this.followingTargetEvenIfNotSeen) {
-            return !this.mob.getNavigation().isDone();
+            return !this.dwarf.getNavigation().isDone();
         } else {
-            return this.mob.isWithinRestriction(livingentity.blockPosition()) && (!(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative());
+            return this.dwarf.isWithinRestriction(livingentity.blockPosition()) && (!(livingentity instanceof Player) || !livingentity.isSpectator() && !((Player) livingentity).isCreative());
         }
     }
 
     @Override
     public void start() {
-        this.mob.getNavigation().moveTo(this.path, this.speedModifier);
-        this.mob.setAggressive(true);
+        this.dwarf.getNavigation().moveTo(this.path, this.speedModifier);
+        this.dwarf.setAggressive(true);
         this.ticksUntilNextPathRecalculation = 0;
         this.ticksUntilNextAttack = 0;
     }
 
     @Override
     public void stop() {
-        LivingEntity livingentity = this.mob.getTarget();
+        LivingEntity livingentity = this.dwarf.getTarget();
         if (!EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
-            this.mob.setTarget(null);
+            this.dwarf.setTarget(null);
         }
-        mob.level().playSound(null, mob.blockPosition(), JolCraftSounds.DWARF_YES.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
-        this.mob.setAggressive(false);
-        this.mob.setAttacking(false);
-        this.mob.getNavigation().stop();
+        dwarf.level().playSound(null, dwarf.blockPosition(), JolCraftSounds.DWARF_YES.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+        this.dwarf.setAggressive(false);
+        this.dwarf.getActionHandler().stopAction(dwarf);
+        this.dwarf.getNavigation().stop();
     }
 
     @Override
     public void tick() {
-        LivingEntity livingentity = this.mob.getTarget();
+        LivingEntity livingentity = this.dwarf.getTarget();
         if (livingentity != null) {
-            this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+            this.dwarf.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
             this.ticksUntilNextPathRecalculation = Math.max(this.ticksUntilNextPathRecalculation - 1, 0);
-            if ((this.followingTargetEvenIfNotSeen || this.mob.getSensing().hasLineOfSight(livingentity))
+            if ((this.followingTargetEvenIfNotSeen || this.dwarf.getSensing().hasLineOfSight(livingentity))
                     && this.ticksUntilNextPathRecalculation <= 0
                     && (
                     this.pathedTargetX == 0.0 && this.pathedTargetY == 0.0 && this.pathedTargetZ == 0.0
                             || livingentity.distanceToSqr(this.pathedTargetX, this.pathedTargetY, this.pathedTargetZ) >= 1.0
-                            || this.mob.getRandom().nextFloat() < 0.05F
+                            || this.dwarf.getRandom().nextFloat() < 0.05F
             )) {
                 this.pathedTargetX = livingentity.getX();
                 this.pathedTargetY = livingentity.getY();
                 this.pathedTargetZ = livingentity.getZ();
-                this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
-                double d0 = this.mob.distanceToSqr(livingentity);
+                this.ticksUntilNextPathRecalculation = 4 + this.dwarf.getRandom().nextInt(7);
+                double d0 = this.dwarf.distanceToSqr(livingentity);
                 if (this.canPenalize) {
                     this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
-                    if (this.mob.getNavigation().getPath() != null) {
-                        net.minecraft.world.level.pathfinder.Node finalPathPoint = this.mob.getNavigation().getPath().getEndNode();
+                    if (this.dwarf.getNavigation().getPath() != null) {
+                        net.minecraft.world.level.pathfinder.Node finalPathPoint = this.dwarf.getNavigation().getPath().getEndNode();
                         if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
                             failedPathFindingPenalty = 0;
                         else
@@ -137,7 +140,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
                     this.ticksUntilNextPathRecalculation += 5;
                 }
 
-                if (!this.mob.getNavigation().moveTo(livingentity, this.speedModifier)) {
+                if (!this.dwarf.getNavigation().moveTo(livingentity, this.speedModifier)) {
                     this.ticksUntilNextPathRecalculation += 15;
                 }
 
@@ -149,7 +152,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
             if (attackAnimTimer > 0) {
                 attackAnimTimer--;
                 if (attackAnimTimer == 0) {
-                    mob.setAttacking(false);
+                    this.dwarf.getActionHandler().stopAction(dwarf);
                 }
             }
         }
@@ -157,10 +160,10 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
 
     protected void checkAndPerformAttack(@NotNull LivingEntity target) {
         if (this.canPerformAttack(target)) {
-            this.mob.setAttacking(true);
+            this.dwarf.getActionHandler().setAction(DwarfActionType.ATTACK, dwarf);
             this.attackAnimTimer = 8;
             this.resetAttackCooldown();
-            this.mob.doHurtTarget(getServerLevel(this.mob), target);
+            this.dwarf.doHurtTarget(getServerLevel(this.dwarf), target);
         }
     }
 
@@ -168,21 +171,20 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
     @Override
     protected void resetAttackCooldown() {
         int cooldown = 20;
-        if (mob.getMainHandItem().is(JolCraftItems.DEEPSLATE_WARHAMMER.get())) {
+        if (dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_WARHAMMER.get())) {
             cooldown = 40;
-        } else if (mob.getMainHandItem().is(JolCraftItems.DEEPSLATE_AXE.get())) {
+        } else if (dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_AXE.get())) {
             cooldown = 22;
         }
         this.ticksUntilNextAttack = this.adjustedTickDelay(cooldown);
     }
-
 
     protected boolean isTimeToAttack() {
         return this.ticksUntilNextAttack <= 0;
     }
 
     protected boolean canPerformAttack(@NotNull LivingEntity entity) {
-        return this.isTimeToAttack() && this.mob.isWithinMeleeAttackRange(entity) && this.mob.getSensing().hasLineOfSight(entity);
+        return this.isTimeToAttack() && this.dwarf.isWithinMeleeAttackRange(entity) && this.dwarf.getSensing().hasLineOfSight(entity);
     }
 
     protected int getTicksUntilNextAttack() {

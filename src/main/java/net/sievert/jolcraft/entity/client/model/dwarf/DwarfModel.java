@@ -5,16 +5,16 @@ import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfAnimationType;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfAnimations;
+import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHandler;
+import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimations;
 import org.jetbrains.annotations.NotNull;
 
 public class DwarfModel extends HumanoidModel<DwarfRenderState>{
@@ -74,18 +74,9 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
     public void setupAnim(DwarfRenderState state) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
         this.applyHeadRotation(state.yRot, state.xRot);
-        this.animateWalk(DwarfAnimations.DWARF_WALK, state.walkAnimationPos, state.walkAnimationSpeed, 2f, 2.5f);
 
-        this.animate(state.idleAnimationState, DwarfAnimations.DWARF_IDLE, state.ageInTicks, 1f);
-
-        for (DwarfAnimationType type : DwarfAnimationType.values()) {
-            this.animate(
-                    state.animationStates.get(type),
-                    getAttackAnimationFor(state, type),
-                    state.ageInTicks,
-                    1f
-            );
-        }
+        this.animateWalk(DwarfAnimations.WALK, state.walkAnimationPos, state.walkAnimationSpeed, 2f, 2.5f);
+        DwarfAnimationHandler.animate(state, this);
 
         this.hat.visible = !state.headEquipment.isEmpty();
         boolean hasChest = !state.chestEquipment.isEmpty();
@@ -105,10 +96,6 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
         poseStack.translate(-0.05F, -0.15F, 0.05F);
     }
 
-    protected AnimationDefinition getAttackAnimationFor(DwarfRenderState state, DwarfAnimationType type) {
-        return DwarfAnimations.getByType(type);
-    }
-
     protected @NotNull ModelPart getArm(@NotNull HumanoidArm side) {
         return side == HumanoidArm.RIGHT ? this.rightArm : this.leftArm;
     }
@@ -118,6 +105,10 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
         headPitch = Mth.clamp(headPitch, -25f, 45);
         this.head.yRot = headYaw * ((float)Math.PI / 180f);
         this.head.xRot = headPitch *  ((float)Math.PI / 180f);
+    }
+
+    public void forwardAnimation(AnimationState state, AnimationDefinition def, float ageInTicks, float speed) {
+        this.animate(state, def, ageInTicks, speed);
     }
 
 }

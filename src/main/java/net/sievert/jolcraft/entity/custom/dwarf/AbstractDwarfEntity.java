@@ -51,6 +51,9 @@ import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputation;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHandler;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.entity.util.dwarf.data.DwarfData;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfMerchantOffersPacket;
 import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
@@ -61,7 +64,6 @@ import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.DwarfBlockGoal;
-import net.sievert.jolcraft.entity.client.util.dwarf.DwarfAnimationType;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
@@ -81,7 +83,53 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchant {
+public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchant, DwarfData {
+
+    protected final DwarfActionHandler actionHandler = new DwarfActionHandler();
+
+    public DwarfActionHandler getActionHandler() {
+        return this.actionHandler;
+    }
+
+    public static final EntityDataAccessor<Integer> VARIANT =
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
+
+    public static final EntityDataAccessor<Integer> BEARD_COLOR =
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
+
+    public static final EntityDataAccessor<Integer> EYE_COLOR =
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
+
+    public static final EntityDataAccessor<Integer> CURRENT_ACTION =
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
+
+    public static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA =
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.VILLAGER_DATA);
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(VARIANT, 0);
+        builder.define(BEARD_COLOR, 0);
+        builder.define(EYE_COLOR, 0);
+        builder.define(CURRENT_ACTION, DwarfActionType.IDLE.ordinal());
+        builder.define(DATA_VILLAGER_DATA, new VillagerData(
+                VillagerType.PLAINS,
+                VillagerProfession.NONE,
+                1));
+    }
+
+    @Override
+    public <T> void setData(EntityDataAccessor<T> accessor, T value) {
+        this.entityData.set(accessor, value);
+    }
+
+    @Override
+    public <T> T getData(EntityDataAccessor<T> accessor) {
+        return this.entityData.get(accessor);
+    }
+
+    //Old
 
     @Nullable
     private Player tradingPlayer;
@@ -100,129 +148,12 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         this.setDropChance(EquipmentSlot.FEET, 0.0F);
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
         this.setDropChance(EquipmentSlot.OFFHAND, 0.0F);
-
-        for (DwarfAnimationType type : DwarfAnimationType.values()) {
-            animationStates.put(type, new AnimationState());
-            hasStartedFlags.put(type, false);
-        }
-    }
-
-    //Animations
-    public final AnimationState idleAnimationState = new AnimationState();
-    public int idleAnimationTimeout = 0;
-
-    public void setAttacking(boolean attacking) {
-        this.entityData.set(ATTACKING, attacking);
-    }
-    public boolean isAttacking() {
-        return this.entityData.get(ATTACKING);
-    }
-
-    public void setInspecting(boolean inspecting) {
-        this.entityData.set(INSPECTING, inspecting);
-    }
-    public boolean isInspecting() {
-        return this.entityData.get(INSPECTING);
-    }
-
-    public void setBlocking(boolean blocking) {
-        this.entityData.set(BLOCKING, blocking);
-    }
-    public boolean isBlocking() {
-        return this.entityData.get(BLOCKING);
-    }
-
-    public void setDrinking(boolean drinking) {
-        this.entityData.set(DRINKING, drinking);
-    }
-    public boolean isDrinking() {
-        return this.entityData.get(DRINKING);
-    }
-
-    private final EnumMap<DwarfAnimationType, AnimationState> animationStates = new EnumMap<>(DwarfAnimationType.class);
-    private final EnumMap<DwarfAnimationType, Boolean> hasStartedFlags = new EnumMap<>(DwarfAnimationType.class);
-
-    public AnimationState getAnimationState(DwarfAnimationType type) {
-        return animationStates.get(type);
-    }
-
-    private boolean isAnimationActive(DwarfAnimationType type) {
-        return switch (type) {
-            case ATTACK, ATTACK_AXE -> this.isAttacking();
-            case BLOCK -> this.isBlocking();
-            case DRINK -> this.isDrinking();
-            case INSPECT -> this.isInspecting();
-        };
-    }
-
-    protected void setupAnimationStates() {
-        if (this.idleAnimationTimeout <= 0) {
-            this.idleAnimationTimeout = 90;
-            this.idleAnimationState.start(this.tickCount);
-        } else {
-            --this.idleAnimationTimeout;
-        }
-
-        for (DwarfAnimationType type : DwarfAnimationType.values()) {
-            boolean active = isAnimationActive(type);
-            AnimationState state = animationStates.get(type);
-            boolean hasStarted = hasStartedFlags.get(type);
-
-            if (active) {
-                if (!hasStarted) {
-                    state.start(this.tickCount);
-                    hasStartedFlags.put(type, true);
-                }
-            } else {
-                hasStartedFlags.put(type, false);
-            }
-        }
     }
 
     @Override
     public void tick() {
         super.tick();
-        if(this.level().isClientSide()) {
-            this.setupAnimationStates();
-
-            if (hasStartedFlags.get(DwarfAnimationType.BLOCK)) {
-                if (blockParticlePos == null) {
-                    Vec3 look = this.getLookAngle().normalize();
-                    double forwardOffset = 1.0D;
-                    double leftOffset = -0.4D;
-                    Vec3 left = new Vec3(-look.z, 0, look.x).normalize();
-
-                    double px = this.getX() + look.x * forwardOffset + left.x * leftOffset;
-                    double py = this.getY() + 1.2D;
-                    double pz = this.getZ() + look.z * forwardOffset + left.z * leftOffset;
-
-                    blockParticlePos = new Vec3(px, py, pz);
-                    blockParticleTicks = 10;
-                }
-
-                if (blockParticleTicks-- > 0) {
-                    for (int i = 0; i < 5; i++) {
-                        double scatterRange = 0.15D;
-
-                        double offsetX = blockParticlePos.x + (this.random.nextDouble() - 0.5) * 2.0 * scatterRange;
-                        double offsetY = blockParticlePos.y + (this.random.nextDouble() - 0.5) * 2.0 * scatterRange;
-                        double offsetZ = blockParticlePos.z + (this.random.nextDouble() - 0.5) * 2.0 * scatterRange;
-
-                        double velocityX = (this.random.nextDouble() - 0.5) * 0.1;
-                        double velocityY = (this.random.nextDouble()) * 0.1;
-                        double velocityZ = (this.random.nextDouble() - 0.5) * 0.1;
-
-                        DustParticleOptions dust = new DustParticleOptions(-2233622, 0.5F);
-                        this.level().addParticle(dust, offsetX, offsetY, offsetZ, velocityX, velocityY, velocityZ);
-                    }
-                }
-            } else {
-                blockParticlePos = null;
-                blockParticleTicks = 0;
-            }
-
-        }
-
+        actionHandler.tick(this);
     }
 
     //Behavior
@@ -259,30 +190,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         this.previousMainHandItem = previousMainHandItem.copy();
         this.finishActionCallback = onFinish;
         this.performingAction = true;
-    }
-
-    // --- Action ticker ---
-    protected void tickAction() {
-        if (performingAction && currentActionTicks > 0) {
-            currentActionTicks--;
-            if (currentActionTicks == 0) {
-                finishAction();
-            }
-        }
-    }
-
-    // --- Action finisher ---
-    protected void finishAction() {
-        setNoAi(false);
-        this.performingAction = false;
-        if (finishActionCallback != null) {
-            finishActionCallback.run();
-            finishActionCallback = null;
-        }
-        currentActionPlayer = null;
-        usedItem = ItemStack.EMPTY;
-        previousMainHandItem = ItemStack.EMPTY;
-        currentActionId = null;
     }
 
     // --- Getters/setters ---
@@ -509,7 +416,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.CONTRACT_WRITTEN.get()));
 
             beginAction(player, 40, ACTION_CONTRACT_SIGNING, itemstack, prevMainHand, () -> {
-                this.setInspecting(false);
+                actionHandler.setAction(DwarfActionType.INSPECT, this);
                 this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
                 if (!this.level().isClientSide && this.currentActionPlayer != null) {
@@ -567,7 +474,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
             // Start the promotion action
             beginAction(player, 40, ACTION_PROFESSION_PROMOTION, itemstack, previousMainHandItem, () -> {
-                this.setInspecting(false);
+                actionHandler.stopAction(this);
                 this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
                 if (!this.level().isClientSide && this.currentActionPlayer != null) {
@@ -638,7 +545,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             JolCraftSoundHelper.playDwarfYes(this);
 
             beginAction(player, 40, ACTION_REPUTATION_ENDORSEMENT, tabletUsed, prevMainHand, () -> {
-                this.setInspecting(false);
+                actionHandler.stopAction(this);
                 this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
                 if (!this.level().isClientSide && this.currentActionPlayer != null) {
@@ -751,7 +658,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     public void aiStep() {
         super.aiStep();
         tickBlockCooldown();
-        tickAction();
 
         if (this.level().isClientSide) {
             if (this.forcedAgeTimer > 0) {
@@ -791,7 +697,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
         // Contract signing: do per-tick effects if this is the current action
         if (ACTION_CONTRACT_SIGNING.equals(currentActionId)) {
-            this.setInspecting(true); // Show "inspecting" animation state (signing)
+            actionHandler.setAction(DwarfActionType.INSPECT, this); // Show "inspecting" animation state (signing)
 
             // Paid status: always reset at the start of animation
             if (currentActionTicks == 39) {
@@ -807,7 +713,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
         //Profession promotion
         if (ACTION_PROFESSION_PROMOTION.equals(currentActionId)) {
-            this.setInspecting(true); // You could use a different animation flag if you want
+            actionHandler.setAction(DwarfActionType.INSPECT, this); // You could use a different animation flag if you want
 
             if (this.currentActionTicks == 39) {
                 // First subtle gray poof
@@ -827,7 +733,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
         // Tablet endorsement per-tick logic
         if (ACTION_REPUTATION_ENDORSEMENT.equals(currentActionId)) {
-            this.setInspecting(true);
+            actionHandler.setAction(DwarfActionType.INSPECT, this);
             if (currentActionTicks == 39) {
                 this.resetPaid();
             }
@@ -838,12 +744,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
         // Profession interaction (guard, etc)
         if (ACTION_PROFESSION.equals(currentActionId)) {
-            this.setInspecting(true);
-        }
-
-        // Universal animation reset: runs if NO action is running
-        if (currentActionId == null) {
-            this.setInspecting(false);
+            actionHandler.setAction(DwarfActionType.INSPECT, this);
         }
 
     }
@@ -948,7 +849,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     public void markForBlocking() {
-        if(!this.isDrinking()){
+        if(actionHandler.isAction(this, DwarfActionType.DRINK)){
             this.shouldStartBlocking = true;
         }
     }
@@ -1087,45 +988,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         super.actuallyHurt(p_376120_, p_341676_, p_341648_);
     }
 
-    //Entity Data Accessors
-    public static final EntityDataAccessor<Integer> VARIANT =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
-
-    public static final EntityDataAccessor<Integer> BEARD_COLOR =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
-
-    public static final EntityDataAccessor<Integer> EYE_COLOR =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
-
-    public static final EntityDataAccessor<Boolean> ATTACKING =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.BOOLEAN);
-
-    public static final EntityDataAccessor<Boolean> INSPECTING =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.BOOLEAN);
-
-    private static final EntityDataAccessor<Boolean> BLOCKING =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.BOOLEAN);
-
-    public static final EntityDataAccessor<Boolean> DRINKING =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.BOOLEAN);
-
-    public static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.VILLAGER_DATA);
-
-    //Data
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(VARIANT, 0);
-        builder.define(BEARD_COLOR, 0);
-        builder.define(EYE_COLOR, 0);
-        builder.define(ATTACKING, false);
-        builder.define(INSPECTING, false);
-        builder.define(BLOCKING, false);
-        builder.define(DRINKING, false);
-        builder.define(DATA_VILLAGER_DATA, new VillagerData(VillagerType.PLAINS, VillagerProfession.NONE, 1));
-    }
-
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -1167,16 +1029,16 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         this.loveCause = compound.hasUUID("LoveCause") ? compound.getUUID("LoveCause") : null;
         this.paidTicks = compound.getInt("PaidTicks");
         this.paidCause = compound.hasUUID("PaidCause") ? compound.getUUID("PaidCause") : null;
-        this.entityData.set(VARIANT, compound.getInt("Variant"));
-        this.entityData.set(BEARD_COLOR, compound.getInt("Beard"));
-        this.entityData.set(EYE_COLOR, compound.getInt("Eye"));
+        setData(VARIANT, compound.getInt("Variant"));
+        setData(BEARD_COLOR, compound.getInt("Beard"));
+        setData(EYE_COLOR, compound.getInt("Eye"));
         this.setAge(compound.getInt("Age"));
         this.forcedAge = compound.getInt("ForcedAge");
         if (compound.contains("VillagerData", 10)) {
             VillagerData.CODEC
                     .parse(NbtOps.INSTANCE, compound.get("VillagerData"))
                     .resultOrPartial(LOGGER::error)
-                    .ifPresent(p_323354_ -> this.entityData.set(DATA_VILLAGER_DATA, p_323354_));
+                    .ifPresent(data -> setData(DATA_VILLAGER_DATA, data));
         }
         if (compound.contains("Xp", 3)) {
             this.dwarfXp = compound.getInt("Xp");
@@ -1331,7 +1193,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     public VillagerData getVillagerData() {
-        return this.entityData.get(DATA_VILLAGER_DATA);
+        return getData(DATA_VILLAGER_DATA);
     }
 
     public void setVillagerData(VillagerData villagerData) {
@@ -1340,7 +1202,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             this.offers = null;
         }
 
-        this.entityData.set(DATA_VILLAGER_DATA, villagerData);
+        setData(DATA_VILLAGER_DATA, villagerData);
     }
 
     public boolean shouldIncreaseLevel() {
@@ -1594,39 +1456,39 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     //Randomized traits
     public int getTypeVariant() {
-        return this.entityData.get(VARIANT);
+        return getData(VARIANT);
     }
 
     public DwarfVariant getVariant() {
-        return DwarfVariant.byId(this.getTypeVariant() & 255);
+        return DwarfVariant.byId(getTypeVariant() & 255);
     }
 
     public void setVariant(DwarfVariant variant) {
-        this.entityData.set(VARIANT, variant.getId() & 255);
+        setData(VARIANT, variant.getId() & 255);
     }
 
     public int getTypeBeard() {
-        return this.entityData.get(BEARD_COLOR);
+        return getData(BEARD_COLOR);
     }
 
     public DwarfBeardColor getBeard() {
-        return DwarfBeardColor.byId(this.getTypeBeard() & 255);
+        return DwarfBeardColor.byId(getTypeBeard() & 255);
     }
 
     public void setBeard(DwarfBeardColor beard) {
-        this.entityData.set(BEARD_COLOR, beard.getId() & 255);
+        setData(BEARD_COLOR, beard.getId() & 255);
     }
 
     public int getTypeEye() {
-        return this.entityData.get(EYE_COLOR);
+        return getData(EYE_COLOR);
     }
 
     public DwarfEyeColor getEye() {
-        return DwarfEyeColor.byId(this.getTypeEye() & 255);
+        return DwarfEyeColor.byId(getTypeEye() & 255);
     }
 
     public void setEye(DwarfEyeColor eye) {
-        this.entityData.set(EYE_COLOR, eye.getId() & 255);
+        setData(EYE_COLOR, eye.getId() & 255);
     }
 
     //Other

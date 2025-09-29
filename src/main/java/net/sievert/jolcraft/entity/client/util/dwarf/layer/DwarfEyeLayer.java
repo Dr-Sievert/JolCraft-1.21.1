@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.util.dwarf;
+package net.sievert.jolcraft.entity.client.util.dwarf.layer;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
+import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import org.jetbrains.annotations.NotNull;
 
