@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.dwarf;
+package net.sievert.jolcraft.entity.client.util.dwarf;
 
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
@@ -404,9 +404,6 @@ public class DwarfAnimations {
                                     AnimationChannel.Interpolations.LINEAR),
                             new Keyframe(1.95833f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
-
-
-
 
     // Helper mapping enum → AnimationDefinition
     private static final Map<DwarfAnimationType, AnimationDefinition> BY_TYPE = new EnumMap<>(DwarfAnimationType.class);

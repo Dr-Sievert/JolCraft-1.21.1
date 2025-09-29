@@ -7,7 +7,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.client.object.RadiantRenderState;
+import net.sievert.jolcraft.entity.client.util.object.RadiantRenderState;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.animal;
+package net.sievert.jolcraft.entity.client.util.animal;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.sievert.jolcraft.entity.custom.animal.MuffhornEntity;

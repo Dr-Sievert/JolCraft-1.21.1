@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.dwarf;
+package net.sievert.jolcraft.entity.client.util.dwarf;
 
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.AnimationState;

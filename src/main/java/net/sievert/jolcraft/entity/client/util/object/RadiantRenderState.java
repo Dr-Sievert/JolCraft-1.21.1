@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.object;
+package net.sievert.jolcraft.entity.client.util.object;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.AnimationState;

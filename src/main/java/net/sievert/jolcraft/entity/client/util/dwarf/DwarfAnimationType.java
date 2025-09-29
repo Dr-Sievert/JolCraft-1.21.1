@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.dwarf;
+package net.sievert.jolcraft.entity.client.util.dwarf;
 
 public enum DwarfAnimationType {
     ATTACK,

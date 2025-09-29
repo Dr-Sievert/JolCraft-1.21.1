@@ -6,8 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.client.animal.MuffhornFurLayer;
-import net.sievert.jolcraft.entity.client.animal.MuffhornRenderState;
+import net.sievert.jolcraft.entity.client.util.animal.MuffhornFurLayer;
+import net.sievert.jolcraft.entity.client.util.animal.MuffhornRenderState;
 import net.sievert.jolcraft.entity.client.model.animal.MuffhornModel;
 import net.sievert.jolcraft.entity.custom.animal.MuffhornEntity;
 

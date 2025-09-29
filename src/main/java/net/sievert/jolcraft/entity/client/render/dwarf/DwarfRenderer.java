@@ -11,7 +11,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.client.dwarf.*;
+import net.sievert.jolcraft.entity.client.util.dwarf.*;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;

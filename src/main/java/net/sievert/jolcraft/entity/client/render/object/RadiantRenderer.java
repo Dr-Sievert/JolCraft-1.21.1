@@ -13,7 +13,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.object.RadiantModel;
-import net.sievert.jolcraft.entity.client.object.RadiantRenderState;
+import net.sievert.jolcraft.entity.client.util.object.RadiantRenderState;
 import net.sievert.jolcraft.entity.custom.object.RadiantEntity;
 import org.jetbrains.annotations.NotNull;
 

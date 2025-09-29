@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.client.dwarf;
+package net.sievert.jolcraft.entity.client.util.dwarf;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

@@ -61,7 +61,7 @@ import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.DwarfBlockGoal;
-import net.sievert.jolcraft.entity.client.dwarf.DwarfAnimationType;
+import net.sievert.jolcraft.entity.client.util.dwarf.DwarfAnimationType;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
