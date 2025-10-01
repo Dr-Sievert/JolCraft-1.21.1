@@ -39,6 +39,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.sound.JolCraftSounds;
@@ -54,6 +55,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
     public DwarfGuardEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.instanceTrades = createRandomizedGuardTrades();
+        this.setProfession(DwarfProfession.GUARD);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -81,11 +83,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
     @Override
     protected int getRequiredTier() {
         return 1;
-    }
-
-    @Override
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_guard");
     }
 
     @Override

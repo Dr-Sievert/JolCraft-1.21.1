@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.datagen.lang;
+package net.sievert.jolcraft.datagen.language;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

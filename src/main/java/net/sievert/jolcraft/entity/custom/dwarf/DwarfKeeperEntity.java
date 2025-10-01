@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -37,6 +38,7 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.BARLEY.get()));
         this.instanceTrades = createRandomizedKeeperTrades();
+        this.setProfession(DwarfProfession.KEEPER);
     }
 
     @Override
@@ -52,11 +54,6 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
     @Override
     protected int getRequiredTier() {
         return 1;
-    }
-
-    @Override
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_keeper");
     }
 
     @Nullable

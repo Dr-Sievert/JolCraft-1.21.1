@@ -24,6 +24,7 @@ import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -39,6 +40,7 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.GLASS_MUG.get()));
         this.instanceTrades = createRandomizedBrewmasterTrades();
+        this.setProfession(DwarfProfession.BREWMASTER);
     }
 
     @Override
@@ -52,11 +54,6 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
     @Override
     protected int getRequiredTier() {
         return 1;
-    }
-
-    @Override
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_brewmaster");
     }
 
     @Nullable

@@ -34,6 +34,7 @@ import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
@@ -53,6 +54,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_PICKAXE.get()));
         this.instanceTrades = createRandomizedMinerTrades();
+        this.setProfession(DwarfProfession.MINER);
     }
 
     @Override
@@ -71,11 +73,6 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
     @Override
     protected int getRequiredTier() {
         return 2;
-    }
-
-    @Override
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_miner");
     }
 
     @Nullable

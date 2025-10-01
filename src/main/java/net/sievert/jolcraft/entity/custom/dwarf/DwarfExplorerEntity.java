@@ -23,6 +23,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.client.item.compass.DialItemColor;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.util.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.*;
@@ -46,6 +47,7 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
         this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
         this.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.LEATHER_BOOTS));
         this.instanceTrades = createRandomizedExplorerTrades();
+        this.setProfession(DwarfProfession.EXPLORER);
     }
 
     private int lastUnlockedLevel = 0;
@@ -92,11 +94,6 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
     @Override
     protected SoundEvent getRerollSound() {
         return SoundEvents.VILLAGER_WORK_CARTOGRAPHER;
-    }
-
-    @Override
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_explorer");
     }
 
     @Override

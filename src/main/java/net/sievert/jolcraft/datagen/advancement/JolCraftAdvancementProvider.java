@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.custom.*;
-import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.minecraft.advancements.AdvancementHolder;
 
@@ -108,9 +108,8 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.GOAL,
                         true, true, false
                 )
-                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_historian")))
+                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.HISTORIAN))
                 .save(consumer, endorsehistorianId);
-
 
         //Merchant path
         ResourceLocation trademerchantId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_merchant");
@@ -138,7 +137,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.GOAL,
                         true, true, false
                 )
-                .addCriterion("endorse_merchant", EndorsementGainTrigger.endorsedBy(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_merchant")))
+                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.MERCHANT))
                 .save(consumer, endorsemerchantId);
 
 
@@ -168,7 +167,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.GOAL,
                         true, true, false
                 )
-                .addCriterion("endorse_scrapper", EndorsementGainTrigger.endorsedBy(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_scrapper")))
+                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.SCRAPPER))
                 .save(consumer, endorsescrapperId);
 
 
@@ -231,7 +230,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.GOAL,
                         true, true, false
                 )
-                .addCriterion("endorse_brewmaster", EndorsementGainTrigger.endorsedBy(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_brewmaster")))
+                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.BREWMASTER))
                 .save(consumer, endorsebrewmasterId);
 
 
@@ -261,7 +260,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.GOAL,
                         true, true, false
                 )
-                .addCriterion("endorse_guard", EndorsementGainTrigger.endorsedBy(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_guard")))
+                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.GUARD))
                 .save(consumer, endorseguardId);
 
 
@@ -291,7 +290,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.GOAL,
                         true, true, false
                 )
-                .addCriterion("endorse_keeper", EndorsementGainTrigger.endorsedBy(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_keeper")))
+                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.KEEPER))
                 .save(consumer, endorsekeeperId);
 
 

@@ -6,15 +6,17 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
  * Sent from server to client to sync the player's full set of profession endorsements.
+ * Now uses DwarfProfession enum for full type safety.
  */
-public record ClientboundEndorsementsPacket(Set<ResourceLocation> endorsements) implements CustomPacketPayload {
+public record ClientboundEndorsementsPacket(Set<DwarfProfession> endorsements) implements CustomPacketPayload {
 
     public static final Type<ClientboundEndorsementsPacket> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "endorsement_sync"));
@@ -24,17 +26,21 @@ public record ClientboundEndorsementsPacket(Set<ResourceLocation> endorsements) 
 
     public static ClientboundEndorsementsPacket read(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
-        Set<ResourceLocation> endorsements = new HashSet<>();
+        Set<DwarfProfession> endorsements = EnumSet.noneOf(DwarfProfession.class);
         for (int i = 0; i < size; i++) {
-            endorsements.add(buf.readResourceLocation());
+            String id = buf.readUtf();
+            DwarfProfession prof = DwarfProfession.byId(id);
+            if (prof != DwarfProfession.NONE) {
+                endorsements.add(prof);
+            }
         }
         return new ClientboundEndorsementsPacket(endorsements);
     }
 
     public void write(FriendlyByteBuf buf) {
         buf.writeVarInt(endorsements.size());
-        for (ResourceLocation rl : endorsements) {
-            buf.writeResourceLocation(rl);
+        for (DwarfProfession prof : endorsements) {
+            buf.writeUtf(prof.getId());
         }
     }
 

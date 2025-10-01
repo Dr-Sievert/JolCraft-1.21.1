@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.JolCraftAttachments;
-import net.sievert.jolcraft.data.custom.attachment.lang.DwarvenLanguage;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguage;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.network.JolCraftNetworking;

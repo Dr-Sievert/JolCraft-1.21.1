@@ -2,7 +2,6 @@ package net.sievert.jolcraft.entity.util.dwarf.interaction.type.reputation;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +12,7 @@ import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuildmasterEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.InspectInteraction;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 public class EndorseInteraction extends InspectInteraction {
@@ -22,8 +22,8 @@ public class EndorseInteraction extends InspectInteraction {
         boolean client = dwarf.level().isClientSide;
         assert itemstack != null;
         if (itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS)) {
-            ResourceLocation profId = dwarf.getProfessionId();
-            boolean hasEndorsement = DwarvenReputationHelper.hasEndorsementBypassCreative(player, profId);
+            DwarfProfession profession = dwarf.getProfession();
+            boolean hasEndorsement = DwarvenReputationHelper.hasEndorsementBypassCreative(player, profession);
             if (dwarf instanceof DwarfGuildmasterEntity) {
                 return InteractionResult.FAIL;
             }

@@ -1,10 +1,10 @@
-package net.sievert.jolcraft.data.custom.attachment.lang;
+package net.sievert.jolcraft.data.custom.attachment.language;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
-public class DwarvenLanguageImpl implements DwarvenLanguage {
+public class AncientDwarvenLanguageImpl implements AncientDwarvenLanguage {
     private boolean knowsLanguage = false;
 
     @Override
@@ -25,7 +25,8 @@ public class DwarvenLanguageImpl implements DwarvenLanguage {
     }
 
     @Override
-    public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
         this.knowsLanguage = tag.getBoolean("KnowsLanguage");
     }
 }
+

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.custom.attachment.rep;
+package net.sievert.jolcraft.data.custom.attachment.reputation;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -6,16 +6,18 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DwarvenReputationImpl implements DwarvenReputation {
 
     private int tier = 0;
-    private final Set<ResourceLocation> endorsements = new HashSet<>();
+    private final Set<DwarfProfession> endorsements = new HashSet<>();
 
     private static final int[] ENDORSEMENT_THRESHOLDS = {2, 5, 9, 14};
 
@@ -30,18 +32,18 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     }
 
     @Override
-    public Set<ResourceLocation> getEndorsements() {
+    public Set<DwarfProfession> getEndorsements() {
         return endorsements;
     }
 
     @Override
-    public void addEndorsement(ResourceLocation professionId) {
-        endorsements.add(professionId);
+    public void addEndorsement(DwarfProfession profession) {
+        endorsements.add(profession);
     }
 
     @Override
-    public boolean hasEndorsement(ResourceLocation professionId) {
-        return endorsements.contains(professionId);
+    public boolean hasEndorsement(DwarfProfession profession) {
+        return endorsements.contains(profession);
     }
 
     public static int getThresholdCount() {
@@ -65,8 +67,8 @@ public class DwarvenReputationImpl implements DwarvenReputation {
         tag.putInt("tier", tier);
 
         ListTag endorsementList = new ListTag();
-        for (ResourceLocation id : endorsements) {
-            endorsementList.add(StringTag.valueOf(id.toString()));
+        for (DwarfProfession prof : endorsements) {
+            endorsementList.add(StringTag.valueOf(prof.getId()));
         }
         tag.put("endorsements", endorsementList);
 
@@ -81,19 +83,27 @@ public class DwarvenReputationImpl implements DwarvenReputation {
         ListTag endorsementList = tag.getList("endorsements", 8); // 8 = StringTag
         for (int i = 0; i < endorsementList.size(); i++) {
             String idString = endorsementList.getString(i);
-            ResourceLocation id = ResourceLocation.tryParse(idString);
-            if (id != null) {
-                endorsements.add(id);
+            DwarfProfession prof = DwarfProfession.byId(idString);
+            if (prof != DwarfProfession.NONE) {
+                endorsements.add(prof);
             } else {
-                JolCraft.LOGGER.warn("Failed to parse endorsement ID: '{}'", idString);
+                JolCraft.LOGGER.warn("Failed to parse endorsement profession: '{}'", idString);
             }
         }
     }
 
     public static final Codec<DwarvenReputationImpl> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("tier").forGetter(rep -> rep.tier),
-            ResourceLocation.CODEC.listOf()
-                    .xmap(HashSet::new, ArrayList::new)
+            Codec.STRING.listOf()
+                    .xmap(
+                            list -> list.stream()
+                                    .map(DwarfProfession::byId)
+                                    .filter(prof -> prof != DwarfProfession.NONE)
+                                    .collect(Collectors.toSet()),
+                            set -> set.stream()
+                                    .map(DwarfProfession::getId)
+                                    .collect(Collectors.toList())
+                    )
                     .fieldOf("endorsements")
                     .forGetter(rep -> new HashSet<>(rep.endorsements))
     ).apply(instance, (tier, endorsementSet) -> {

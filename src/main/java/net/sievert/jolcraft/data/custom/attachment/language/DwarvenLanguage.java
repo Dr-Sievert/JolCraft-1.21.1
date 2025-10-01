@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.custom.attachment.lang;
+package net.sievert.jolcraft.data.custom.attachment.language;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;

@@ -8,11 +8,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class EndorsementGainTrigger extends SimpleCriterionTrigger<EndorsementGainTrigger.TriggerInstance> {
+
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "endorsement_gain");
 
     @Override
@@ -20,21 +22,29 @@ public class EndorsementGainTrigger extends SimpleCriterionTrigger<EndorsementGa
         return TriggerInstance.CODEC;
     }
 
-    public void trigger(ServerPlayer player, ResourceLocation professionId) {
-        this.trigger(player, instance -> instance.professionId().equals(professionId));
+    /**
+     * Triggers the criterion for a specific player and profession.
+     */
+    public void trigger(ServerPlayer player, DwarfProfession profession) {
+        if (profession == null || profession == DwarfProfession.NONE) return;
+        this.trigger(player, instance -> instance.profession().equals(profession));
     }
 
-    public static Criterion<TriggerInstance> endorsedBy(ResourceLocation professionId) {
+    /**
+     * Creates an advancement criterion for being endorsed by a profession.
+     */
+    public static Criterion<TriggerInstance> endorsedBy(DwarfProfession profession) {
         return JolCraftCriteriaTriggers.ENDORSEMENT_GAIN.createCriterion(
-                new TriggerInstance(Optional.empty(), professionId)
+                new TriggerInstance(Optional.empty(), profession)
         );
     }
 
-    public record TriggerInstance(Optional<ContextAwarePredicate> player, ResourceLocation professionId)
+    public record TriggerInstance(Optional<ContextAwarePredicate> player, DwarfProfession profession)
             implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
-                ResourceLocation.CODEC.fieldOf("profession").forGetter(TriggerInstance::professionId)
+                Codec.STRING.xmap(DwarfProfession::byId, DwarfProfession::getId)
+                        .fieldOf("profession").forGetter(i -> i.profession)
         ).apply(instance, TriggerInstance::new));
     }
 }

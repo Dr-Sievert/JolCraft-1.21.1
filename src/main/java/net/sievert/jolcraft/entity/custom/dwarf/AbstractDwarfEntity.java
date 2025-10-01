@@ -36,6 +36,7 @@ import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.data.DwarfData;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
@@ -88,8 +89,12 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         return new ItemStack(JolCraftItems.CONTRACT_SIGNED.get());
     }
 
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "none");
+    public DwarfProfession getProfession() {
+        return DwarfProfession.byId(this.getData(PROFESSION));
+    }
+
+    public void setProfession(DwarfProfession profession) {
+        this.setData(PROFESSION, profession.getId());
     }
 
     @Override
@@ -109,6 +114,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     //Data
 
+    public static final EntityDataAccessor<String> PROFESSION =
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.STRING);
+
     public static final EntityDataAccessor<Integer> CURRENT_ACTION =
             SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
 
@@ -118,6 +126,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
+        builder.define(PROFESSION, "none");
         builder.define(CURRENT_ACTION, DwarfActionType.IDLE.ordinal());
         builder.define(CURRENT_ACTION_SUBTYPE, -1);
     }
@@ -125,6 +134,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        compound.putString("Profession", this.getData(PROFESSION));
         compound.putInt("CurrentAction", this.getData(CURRENT_ACTION));
         compound.putInt("CurrentActionSubtype", this.getData(CURRENT_ACTION_SUBTYPE));
         compound.putInt("PaidTicks", this.paidTicks);
@@ -136,6 +146,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        if (compound.contains("Profession", 8)) {
+            this.setData(PROFESSION, compound.getString("Profession"));
+        }
         if (compound.contains("CurrentAction", 3)) {
             this.getEntityData().set(CURRENT_ACTION, compound.getInt("CurrentAction"));
         }
@@ -221,11 +234,6 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         super.tick();
         actionHelper.tick(this);
         if (blockCooldownTicks > 0) blockCooldownTicks--;
-        if (!this.level().isClientSide()) {
-            System.out.println("Spawning test heart particle at " + this.blockPosition());
-            this.level().addParticle(net.minecraft.core.particles.ParticleTypes.HEART,
-                    this.getX(), this.getY() + 2, this.getZ(), 0, 0, 0);
-        }
     }
 
     @Override

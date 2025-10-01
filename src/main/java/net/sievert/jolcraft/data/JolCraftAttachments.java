@@ -7,9 +7,9 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.custom.attachment.block.HearthImpl;
 import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructuresImpl;
-import net.sievert.jolcraft.data.custom.attachment.lang.AncientDwarvenLanguageImpl;
-import net.sievert.jolcraft.data.custom.attachment.lang.DwarvenLanguageImpl;
-import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputationImpl;
+import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLanguageImpl;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
+import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlockImpl;
 
 import java.util.function.Supplier;

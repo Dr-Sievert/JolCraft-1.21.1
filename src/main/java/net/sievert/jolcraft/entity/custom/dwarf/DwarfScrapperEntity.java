@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
@@ -40,6 +41,7 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
         this.instanceTrades = MAIN_TRADES;
+        this.setProfession(DwarfProfession.SCRAPPER);
     }
 
     @Override
@@ -54,9 +56,6 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
     public ItemStack getSignedContractItem() {
         return new ItemStack(JolCraftItems.CONTRACT_SCRAPPER.get());
     }
-
-    @Override
-    public ResourceLocation getProfessionId() { return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_scrapper");}
 
     @Override
     public float getVoicePitch() {

@@ -37,6 +37,7 @@ import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
 import net.sievert.jolcraft.entity.ai.goal.*;
@@ -56,6 +57,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COIN_POUCH.get()));
         this.instanceTrades = createRandomizedMerchantTrades();
+        this.setProfession(DwarfProfession.MERCHANT);
     }
 
     @Override
@@ -73,11 +75,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
     @Override
     public ItemStack getSignedContractItem() {
         return new ItemStack(JolCraftItems.CONTRACT_MERCHANT.get());
-    }
-
-    @Override
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_merchant");
     }
 
     @Override

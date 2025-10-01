@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.network.client.data.ClientAncientLanguageData;
 import net.sievert.jolcraft.network.client.data.ClientDeliriumData;
 import net.sievert.jolcraft.network.client.data.ClientLanguageData;
@@ -170,7 +171,7 @@ public class JolCraftNetworking {
 
     public static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
-            Set<ResourceLocation> set = packet.endorsements();
+            Set<DwarfProfession> set = packet.endorsements();
             ClientReputationData.setEndorsements(set);
         });
     }

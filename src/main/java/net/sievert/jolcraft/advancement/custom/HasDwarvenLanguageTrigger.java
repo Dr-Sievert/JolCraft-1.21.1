@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftAttachments;
-import net.sievert.jolcraft.data.custom.attachment.lang.DwarvenLanguage;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

@@ -3,6 +3,7 @@ package net.sievert.jolcraft.data.util.attachment;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.*;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 public class AttachmentSyncHelper {
 
     public static void syncAll(ServerPlayer player) {
+
         // Dwarvish language
         boolean knowsLang = net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper.knowsDwarvishBypassCreative(player);
         JolCraftNetworking.sendToClient(player, new ClientboundLanguagePacket(knowsLang));
@@ -27,7 +29,7 @@ public class AttachmentSyncHelper {
         JolCraftNetworking.sendToClient(player, new ClientboundReputationPacket(tier));
 
         // Endorsements
-        Set<ResourceLocation> endorsements = net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper.getAllEndorsementsBypassCreative(player);
+        Set<DwarfProfession> endorsements = net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper.getAllEndorsementsBypassCreative(player);
         JolCraftNetworking.sendToClient(player, new ClientboundEndorsementsPacket(endorsements));
 
         // Tome Unlocks

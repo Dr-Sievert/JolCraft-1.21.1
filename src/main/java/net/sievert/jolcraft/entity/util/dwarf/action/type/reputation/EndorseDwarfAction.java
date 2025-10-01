@@ -10,11 +10,12 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputation;
+import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputation;
 import net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 
 public class EndorseDwarfAction extends InspectDwarfAction {
 
@@ -51,11 +52,11 @@ public class EndorseDwarfAction extends InspectDwarfAction {
 
     @Override
     public void stop() {
-        ResourceLocation profId = dwarf.getProfessionId();
+        DwarfProfession profession = dwarf.getProfession();
         DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
-        DwarvenReputationHelper.addEndorsement(player, profId);
+        DwarvenReputationHelper.addEndorsement(player, profession);
         if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftCriteriaTriggers.ENDORSEMENT_GAIN.trigger(serverPlayer, profId);
+            JolCraftCriteriaTriggers.ENDORSEMENT_GAIN.trigger(serverPlayer, profession);
         }
         ItemStack updatedTablet = tablet;
         updatedTablet.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), rep.getEndorsementCount());
