@@ -1,6 +1,9 @@
-package net.sievert.jolcraft.entity.util.dwarf.action.type;
+package net.sievert.jolcraft.entity.util.dwarf.action.type.combat;
 
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfAction;
@@ -12,9 +15,14 @@ import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
  */
 public class BlockDwarfAction implements DwarfAction {
 
+    protected AbstractDwarfEntity dwarf;
     private Vec3 blockParticlePos = null;
     private int blockParticleTicks = 0;
     private boolean started = false;
+
+    public BlockDwarfAction (AbstractDwarfEntity dwarf){
+        this.dwarf = dwarf;
+    }
 
     @Override
     public DwarfActionType getType() {
@@ -22,7 +30,7 @@ public class BlockDwarfAction implements DwarfAction {
     }
 
     @Override
-    public void start(AbstractDwarfEntity dwarf) {
+    public void start() {
         started = true;
     }
 
@@ -32,7 +40,7 @@ public class BlockDwarfAction implements DwarfAction {
     }
 
     @Override
-    public void tick(AbstractDwarfEntity dwarf) {
+    public void tick() {
 
         if (blockParticlePos == null) {
             Vec3 look = dwarf.getLookAngle().normalize();
@@ -72,7 +80,7 @@ public class BlockDwarfAction implements DwarfAction {
     }
 
     @Override
-    public void stop(AbstractDwarfEntity dwarf) {
+    public void stop() {
         blockParticlePos = null;
         blockParticleTicks = 0;
         started = false;

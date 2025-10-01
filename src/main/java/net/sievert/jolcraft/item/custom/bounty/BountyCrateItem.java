@@ -28,6 +28,8 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyTier;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -221,7 +223,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 if (data != null) {
                     ResourceLocation targetItem = data.targetItem();
                     int count = data.requiredCount();
-                    int tier = data.tier();
+                    int tierInt = data.tier();
 
                     Component itemName = Component.translatable(targetItem.toLanguageKey("item"));
                     if (itemName.getString().equals(targetItem.toLanguageKey("item"))) {
@@ -231,23 +233,23 @@ public class BountyCrateItem extends Item implements IItemExtension {
                         }
                     }
 
-                    String type = BountyHelper.getBountyType(stack);
-                    if (type.isEmpty()) {
+                    BountyType type = BountyHelper.getBountyType(stack);
+                    if (type == BountyType.UNKNOWN) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.bounty.type.invalid").withStyle(ChatFormatting.RED));
                     } else {
-                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty.type").append(Component.translatable("entity.jolcraft.dwarf_" + type)).withStyle(ChatFormatting.GRAY));
+                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty.type")
+                                .append(Component.translatable("entity.jolcraft.dwarf_" + type.getId()))
+                                .withStyle(ChatFormatting.GRAY));
                     }
 
-                    String tierName = switch (tier) {
-                        case 1 -> "Novice";
-                        case 2 -> "Apprentice";
-                        case 3 -> "Journeyman";
-                        case 4 -> "Expert";
-                        case 5 -> "Master";
-                        default -> "Unknown";
-                    };
-                    tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.tier", tierName)
-                            .withStyle(ChatFormatting.GRAY));
+                    BountyTier tier = BountyTier.fromValue(tierInt);
+                    if (tier == BountyTier.UNKNOWN) {
+                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty.tier.invalid").withStyle(ChatFormatting.RED));
+                    } else {
+                        assert tier != null;
+                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.tier", tier.getDisplayName())
+                                .withStyle(ChatFormatting.GRAY));
+                    }
 
                     tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.target")
                             .append(itemName)
@@ -260,7 +262,8 @@ public class BountyCrateItem extends Item implements IItemExtension {
                         tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.complete")
                                 .withStyle(ChatFormatting.GREEN));
                     }
-                } else {
+                }
+                else {
                     tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.invalid")
                             .withStyle(ChatFormatting.RED));
                 }

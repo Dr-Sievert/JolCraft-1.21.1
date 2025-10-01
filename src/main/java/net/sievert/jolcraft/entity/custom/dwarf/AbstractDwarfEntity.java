@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.ChatFormatting;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -33,10 +31,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.UseRemainder;
@@ -44,14 +40,14 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.custom.attachment.rep.DwarvenReputation;
-import net.sievert.jolcraft.data.JolCraftAttachments;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHandler;
+import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.data.DwarfData;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfMerchantOffersPacket;
@@ -61,34 +57,50 @@ import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.DwarfBlockGoal;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfEndorseAnimationPacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper;
-import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
-
+import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchant, DwarfData {
 
-    protected final DwarfActionHandler actionHandler = new DwarfActionHandler();
+    public AbstractDwarfEntity(EntityType<? extends AgeableMob> entityType, Level level) {
+        super(entityType, level);
+        ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
+        this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
+        this.setLeftHanded(false);
+        this.setDropChance(EquipmentSlot.HEAD, 0.0F);
+        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
+        this.setDropChance(EquipmentSlot.LEGS, 0.0F);
+        this.setDropChance(EquipmentSlot.FEET, 0.0F);
+        this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+        this.setDropChance(EquipmentSlot.OFFHAND, 0.0F);
+    }
 
-    public DwarfActionHandler getActionHandler() {
-        return this.actionHandler;
+    private static final Map<AbstractDwarfEntity, DwarfRenderState> CLIENT_RENDER_STATES = new WeakHashMap<>();
+
+    public static DwarfRenderState getOrCreateClientRenderState(AbstractDwarfEntity entity) {
+        return CLIENT_RENDER_STATES.computeIfAbsent(entity, e -> new DwarfRenderState());
+    }
+
+    protected final DwarfActionHelper actionHelper = new DwarfActionHelper();
+
+    public DwarfActionHelper getActionHelper() {
+        return this.actionHelper;
     }
 
     public static final EntityDataAccessor<Integer> VARIANT =
@@ -103,6 +115,9 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     public static final EntityDataAccessor<Integer> CURRENT_ACTION =
             SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
 
+    public static final EntityDataAccessor<Integer> CURRENT_ACTION_SUBTYPE =
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
+
     public static final EntityDataAccessor<VillagerData> DATA_VILLAGER_DATA =
             SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.VILLAGER_DATA);
 
@@ -113,6 +128,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         builder.define(BEARD_COLOR, 0);
         builder.define(EYE_COLOR, 0);
         builder.define(CURRENT_ACTION, DwarfActionType.IDLE.ordinal());
+        builder.define(CURRENT_ACTION_SUBTYPE, -1);
         builder.define(DATA_VILLAGER_DATA, new VillagerData(
                 VillagerType.PLAINS,
                 VillagerProfession.NONE,
@@ -131,93 +147,32 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     //Old
 
+    @Override
+    public void tick() {
+        super.tick();
+        actionHelper.tick(this);
+    }
+
     @Nullable
     private Player tradingPlayer;
     @Nullable
     protected DwarfMerchantOffers offers;
 
-    public AbstractDwarfEntity(EntityType<? extends AgeableMob> entityType, Level level) {
-        super(entityType, level);
-        ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
-        this.setLeftHanded(false);
-        this.setDropChance(EquipmentSlot.HEAD, 0.0F);
-        this.setDropChance(EquipmentSlot.CHEST, 0.0F);
-        this.setDropChance(EquipmentSlot.LEGS, 0.0F);
-        this.setDropChance(EquipmentSlot.FEET, 0.0F);
-        this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
-        this.setDropChance(EquipmentSlot.OFFHAND, 0.0F);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        actionHandler.tick(this);
-    }
-
     //Behavior
+
     public boolean canSign() {
         return true;
     }
 
-    public boolean canEndorse(Player player) {
+    public boolean canEndorse() {
         return this.getVillagerData().getLevel() >= 1;
     }
 
-    public boolean neverEndorse(Player player) {
-        return false;
+    public boolean neverEndorse() { return false; }
+
+    protected int getRequiredTier() {
+        return 0;
     }
-
-    // --- Action-related state ---
-    protected Player currentActionPlayer;
-    protected int currentActionTicks;
-    protected ResourceLocation currentActionId = null;
-    protected Runnable finishActionCallback;
-    protected boolean performingAction = false;
-
-    // For item snapshotting (what the player handed in, and the dwarf's previous item)
-    protected ItemStack previousMainHandItem = ItemStack.EMPTY;
-    protected ItemStack usedItem = ItemStack.EMPTY;
-
-    // --- Action starter ---
-    protected void beginAction(Player player, int ticks, ResourceLocation actionId, ItemStack usedItem, ItemStack previousMainHandItem, Runnable onFinish) {
-        setNoAi(true);
-        this.currentActionPlayer = player;
-        this.currentActionTicks = ticks;
-        this.currentActionId = actionId;
-        this.usedItem = usedItem.copy();
-        this.previousMainHandItem = previousMainHandItem.copy();
-        this.finishActionCallback = onFinish;
-        this.performingAction = true;
-    }
-
-    // --- Getters/setters ---
-    protected boolean isPerformingAction() { return performingAction; }
-
-    //Actions list
-
-    //Common
-    public static final ResourceLocation ACTION_CONTRACT_SIGNING =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "contract_signing");
-
-    public static final ResourceLocation ACTION_PROFESSION =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "profession");
-
-    public static final ResourceLocation ACTION_PROFESSION_PROMOTION =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "profession_promotion");
-
-    public static final ResourceLocation ACTION_REPUTATION_ENDORSEMENT =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "reputation_endorsement");
-
-    //Guildmaster
-
-    //Merchant
-    public static final ResourceLocation ACTION_BOUNTY_CRATE_TURNIN =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "bounty_crate_turnin");
-
-    public static final ResourceLocation ACTION_BOUNTY_NOTE_SUBMIT =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "bounty_note_submit");
 
     public ItemStack getSignedContractItem() {
         return new ItemStack(JolCraftItems.CONTRACT_SIGNED.get());
@@ -227,410 +182,68 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "none");
     }
 
-    //Blocks dwarf state
-    protected boolean blacklistedProperties() {
-        return !this.isAlive() || this.isTrading();
-    }
-
-    //Blocks all interactions globally (e.g., spawn eggs)
-    protected boolean isGloballyBlacklistedItem(ItemStack stack) {
-        return stack.is(JolCraftTags.Items.DWARF_SPAWN_EGGS);
-    }
-
-    protected boolean isBusyOrBlacklisted(Player player, ItemStack stack) {
-        return blacklistedProperties() || isGloballyBlacklistedItem(stack) || isPerformingAction();
-    }
-
-    // Items handled in the abstract class (e.g., contract, food)
-    protected boolean isCommonHandledItem(ItemStack stack) {
-        return stack.is(JolCraftItems.CONTRACT_WRITTEN.get()) ||
-                this.isFood(stack);
-    }
-
-    // Items *delegated* to subclass (e.g., bounty crate, bounty scroll)
-    protected boolean isSubclassHandledItem(ItemStack stack) {
-        return stack.is(JolCraftItems.BOUNTY.get())
-                || stack.is(JolCraftItems.BOUNTY_CRATE.get());
-    }
-
-    public InteractionResult languageCheck(Player player) {
-        boolean client = this.level().isClientSide;
-        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
-
-        if (!knowsLanguage) {
-            JolCraftSoundHelper.playDwarfNo(this);
-
-            if (client) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.language.locked").withStyle(ChatFormatting.RED), true
-                );
-                return InteractionResult.CONSUME;
-            }
-            return InteractionResult.FAIL;
-        }
-        return InteractionResult.SUCCESS;
-    }
-
-    protected int getRequiredTier() {
-        return 0;
-    }
-
-    public InteractionResult reputationCheck(Player player, int requiredTier) {
-        boolean client = this.level().isClientSide;
-        boolean hasTier = DwarvenReputationHelper.hasTier(player, requiredTier);
-
-        if (!hasTier) {
-            JolCraftSoundHelper.playDwarfNo(this);
-
-            if (client) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reputation.locked", requiredTier)
-                                .withStyle(ChatFormatting.RED),
-                        true
-                );
-                return InteractionResult.CONSUME;
-            }
-            return InteractionResult.FAIL;
-        }
-        return InteractionResult.SUCCESS;
-    }
-
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        boolean client = this.level().isClientSide;
 
-        // 🧠 Language check - ensures only players who know the Dwarvish language can interact
-        InteractionResult langCheck = this.languageCheck(player);
-        if (langCheck != InteractionResult.SUCCESS) {
-            return langCheck;
-        }
+        InteractionResult langFilter = DwarfInteractionHelper.languageCheck(this, player);
+        if (langFilter != InteractionResult.SUCCESS) return langFilter;
 
-        InteractionResult repCheck = this.reputationCheck(player, getRequiredTier());
-        if (repCheck != InteractionResult.SUCCESS) {
-            return repCheck;
-        }
+        InteractionResult repFilter = DwarfInteractionHelper.reputationCheck(this, player, getRequiredTier());
+        if (repFilter != InteractionResult.SUCCESS) return repFilter;
 
+        InteractionResult blacklistFilter = DwarfInteractionHelper.blacklistCheck(this, player, itemstack);
+        if (blacklistFilter != InteractionResult.SUCCESS) return blacklistFilter;
 
-        // 🛑 Block if dwarf is dead, trading, holding a spawn egg, or performing an action
-        if (this.isBusyOrBlacklisted(player, itemstack)) {
-            if (this.isPerformingAction() && this.level().isClientSide) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.dwarf.busy").withStyle(ChatFormatting.GRAY), true
-                );
-            }else{
-                JolCraftSoundHelper.playDwarfNo(this);
-            }
-            return InteractionResult.FAIL; // ❌ Block interaction if any condition is met
-        }
+        InteractionResult actionFilter = DwarfInteractionHelper.actionCheck(this, player);
+        if (actionFilter != InteractionResult.SUCCESS) return actionFilter;
 
-        // 🔄 Delegate to subclass for specific item handling (e.g., bounty crates, etc.)
-        if (isSubclassHandledItem(itemstack)) {
-            return InteractionResult.CONSUME; // ✅ Subclass consumes the interaction, no further action
-        }
+        InteractionResult breed = DwarfInteractionHelper.breed(this, player, hand, itemstack);
+        if (breed != InteractionResult.FAIL) return breed;
 
-        // 🍞 Breeding or feeding dwarf (based on itemstack)
-        if (this.isFood(itemstack)) {
-            int i = this.getAge();
+        if(this.isBaby()) return InteractionResult.FAIL;
 
-            // 🐺 Start love mode if dwarf is an adult and can fall in love
-            if (!client && i == 0 && this.canFallInLove()) {
-                this.usePlayerItem(player, hand, itemstack);
-                this.setInLove(player);
-                this.playEatingSound();
-                return InteractionResult.SUCCESS_SERVER; // ✅ Valid breeding initiated on the server
-            }
-
-            // 👶 If the dwarf is a baby, age it up and trigger eating sound
-            if (this.isBaby()) {
-                this.usePlayerItem(player, hand, itemstack);
-                this.ageUp(getSpeedUpSecondsWhenFeeding(-i), true);
-                this.playEatingSound();
-                return InteractionResult.SUCCESS; // ✅ Client handles particles/sound
-            }
-
-            // ✅ Client side consumes the item and displays the correct animation
-            if (client) {
-                return InteractionResult.CONSUME;
-            }
-
-            // ❌ If the dwarf is neither in love nor a baby, play sound indicating invalid action
-            JolCraftSoundHelper.playDwarfNo(this);
-        }
-
-        // 🔇 Fallback to generic common interaction logic
-        return handleCommonInteractions(player, hand);
-    }
-
-
-    // ✅ Common interactions (if nothing else is handled)
-    public InteractionResult handleCommonInteractions(Player player, InteractionHand hand) {
-        // Check if the dwarf is currently performing an action (like processing a bounty crate)
-        if (this.isPerformingAction()) {
-            return InteractionResult.FAIL; // Block any interactions if an action is in progress
-        }
-
-        ItemStack itemstack = player.getItemInHand(hand);
-
-        // 🛑 Common interactions if none of above interactions were triggered
-
-        //Paid
-        if (itemstack.is(JolCraftItems.GOLD_COIN.get()) && this.canBePaid() && !this.isBaby()) {
+        if (itemstack.is(JolCraftItems.GOLD_COIN.get()) && this.canBePaid()) {
             this.setPaid(player);
             this.level().playSound(null, this.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 1.0F, 1.4F);
             this.usePlayerItem(player, hand, itemstack);
             return InteractionResult.SUCCESS;
         }
 
+        InteractionResult sign = DwarfInteractionHelper.sign(this, player, hand, itemstack);
+        if (sign != InteractionResult.FAIL) return sign;
 
-        // 🖊️ Contract signing action
-        if (itemstack.is(JolCraftItems.CONTRACT_WRITTEN.get()) && !this.isBaby()) {
-            boolean client = this.level().isClientSide;
+        InteractionResult promote = DwarfInteractionHelper.promote(this, player, hand, itemstack);
+        if (promote != InteractionResult.FAIL) return promote;
 
-            // 1️⃣ Cannot sign (wrong dwarf type)
-            if (!canSign()) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.dwarf.cannot_sign").withStyle(ChatFormatting.GRAY), true
-                    );
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
+        InteractionResult endorse = DwarfInteractionHelper.endorse(this, player, hand, itemstack);
+        if (endorse != InteractionResult.FAIL) return endorse;
 
-            // 2️⃣ Not paid yet
-            if (this.needsPay()) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true
-                    );
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-
-            // ✅ All clear: proceed with contract signing
-            this.usePlayerItem(player, hand, itemstack);
-            JolCraftSoundHelper.playDwarfYes(this);
-            ItemStack prevMainHand = this.getMainHandItem().copy();
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.CONTRACT_WRITTEN.get()));
-
-            beginAction(player, 40, ACTION_CONTRACT_SIGNING, itemstack, prevMainHand, () -> {
-                actionHandler.setAction(DwarfActionType.INSPECT, this);
-                this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-
-                if (!this.level().isClientSide && this.currentActionPlayer != null) {
-                    // Throw the signed contract to the player
-                    Vec3 start = this.position().add(0.0, this.getEyeHeight(), 0.0);
-                    Vec3 target = this.currentActionPlayer.position().add(0.0, this.currentActionPlayer.getBbHeight() * 0.5, 0.0);
-                    Vec3 velocity = target.subtract(start).normalize().scale(0.4);
-
-                    ItemEntity thrown = new ItemEntity(this.level(), start.x, start.y, start.z, this.getSignedContractItem());
-                    thrown.setDeltaMovement(velocity);
-                    thrown.setPickUpDelay(10);
-                    this.level().addFreshEntity(thrown);
-
-                    this.level().playSound(null, this.blockPosition(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.5F, 0.8F);
-                    this.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
-                    this.previousMainHandItem = ItemStack.EMPTY;
-                }
-            });
-
-            return InteractionResult.SUCCESS_SERVER;
-        }
-
-
-        // 🪄 Profession Promotion with Signed Contract
-        if (itemstack.is(JolCraftTags.Items.SIGNED_CONTRACTS) && !this.isBaby()) {
-            boolean client = this.level().isClientSide;
-
-            // 1 Not promotable type (wrong dwarf)
-            if (!canPromoteToProfession()) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.dwarf.cannot_promote").withStyle(ChatFormatting.GRAY), true
-                    );
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-
-            // 2 Not paid yet
-            if (this.needsPay()) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true
-                    );
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-
-            // ✅ All clear: proceed with profession promotion
-            this.previousMainHandItem = itemstack.copy(); // Save contract for animation & later use
-            this.usePlayerItem(player, hand, itemstack);  // Remove contract from player
-            this.setItemSlot(EquipmentSlot.MAINHAND, itemstack.copy()); // Show contract in dwarf's hand
-            this.level().playSound(null, this.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 1.0F, 1.5F);
-
-            // Start the promotion action
-            beginAction(player, 40, ACTION_PROFESSION_PROMOTION, itemstack, previousMainHandItem, () -> {
-                actionHandler.stopAction(this);
-                this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-
-                if (!this.level().isClientSide && this.currentActionPlayer != null) {
-                    this.transformToProfession(); // Transform to new profession
-                }
-                this.previousMainHandItem = ItemStack.EMPTY;
-            });
-
-            return InteractionResult.SUCCESS_SERVER;
-        }
-
-        // 🗿 Tablet endorsement (works both sides for animation)
-        if (itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS) && !this.isBaby()) {
-            ResourceLocation profId = this.getProfessionId();
-            boolean client = this.level().isClientSide;
-            boolean hasEndorsement = DwarvenReputationHelper.hasEndorsementBypassCreative(player, profId);
-
-            // Send to subclass if special case
-            if (this instanceof DwarfGuildmasterEntity) {
-                return InteractionResult.CONSUME;
-            }
-
-            // 1️⃣ Already endorsed? Instantly block.
-            if (hasEndorsement) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.reputation.already_endorsed").withStyle(ChatFormatting.GRAY), true);
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-
-            // 2️⃣a. This dwarf can NEVER endorse (Guildmaster, PlainDwarf, etc.)
-            if (this.neverEndorse(player)) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.reputation.never_endorse").withStyle(ChatFormatting.GRAY), true);
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-
-            // 2️⃣b. Can endorse in principle, but player doesn't meet conditions
-            if (!this.canEndorse(player)) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.reputation.cannot_endorse").withStyle(ChatFormatting.GRAY), true);
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-
-            // 3️⃣ Paid check
-            if (this.needsPay()) {
-                if (!client) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true);
-                }
-                JolCraftSoundHelper.playDwarfNo(this);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-
-            // ✅ Proceed with animation and endorsement
-            ItemStack prevMainHand = this.getMainHandItem().copy();
-            ItemStack tabletUsed = itemstack.copy();
-            this.setItemSlot(EquipmentSlot.MAINHAND, tabletUsed.copy());
-            this.usePlayerItem(player, hand, itemstack);
-            JolCraftSoundHelper.playDwarfYes(this);
-
-            beginAction(player, 40, ACTION_REPUTATION_ENDORSEMENT, tabletUsed, prevMainHand, () -> {
-                actionHandler.stopAction(this);
-                this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-
-                if (!this.level().isClientSide && this.currentActionPlayer != null) {
-                    ResourceLocation profIdFinish = this.getProfessionId();
-                    DwarvenReputation repFinish = this.currentActionPlayer.getData(JolCraftAttachments.DWARVEN_REP.get());
-
-                    boolean added = false;
-                    if (!repFinish.hasEndorsement(profIdFinish)) {
-                        // Helper adds endorsement and syncs client
-                        DwarvenReputationHelper.addEndorsement(this.currentActionPlayer, profIdFinish);
-                        added = true;
-
-                        if (this.currentActionPlayer instanceof ServerPlayer serverPlayer) {
-                            JolCraftCriteriaTriggers.ENDORSEMENT_GAIN.trigger(serverPlayer, profIdFinish);
-                        }
-                    }
-
-                    // Always sync tier after potential change (in case endorsement bumps it)
-                    if (this.currentActionPlayer instanceof ServerPlayer serverPlayer) {
-                        JolCraftNetworking.sendToClient(serverPlayer,
-                                new ClientboundReputationPacket(repFinish.getTier()));
-                    }
-
-                    if (added) {
-                        // Throw updated tablet
-                        ItemStack updatedTablet = this.usedItem.copy();
-                        updatedTablet.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), repFinish.getEndorsementCount());
-                        updatedTablet.set(JolCraftDataComponents.REP_TIER.get(), repFinish.getTier());
-                        updatedTablet.set(JolCraftDataComponents.REP_OWNER.get(), this.currentActionPlayer.getName().getString());
-
-                        Vec3 start = this.position().add(0.0, this.getEyeHeight(), 0.0);
-                        Vec3 target = this.currentActionPlayer.position().add(0.0, this.currentActionPlayer.getBbHeight() * 0.5, 0.0);
-                        Vec3 velocity = target.subtract(start).normalize().scale(0.4);
-
-                        ItemEntity thrown = new ItemEntity(this.level(), start.x, start.y, start.z, updatedTablet);
-                        thrown.setDeltaMovement(velocity);
-                        thrown.setPickUpDelay(10);
-                        this.level().addFreshEntity(thrown);
-                        this.level().playSound(null, this.blockPosition(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.5F, 0.8F);
-                    }
-
-                    this.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
-                    this.previousMainHandItem = ItemStack.EMPTY;
-                }
-            });
-
-
-            if (!client) {
-                JolCraftNetworking.sendToNearbyClients(
-                        this.level(), this.blockPosition(), 32,
-                        new ClientboundDwarfEndorseAnimationPacket(this.getId())
-                );
-            }
-
-            return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-        }
-
-
-        // 💼 Trade (only if hand empty and a baby)
-        if (canTrade() && itemstack.isEmpty() && !this.isBaby() && (!player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty()))
+        if (canTrade() && itemstack.isEmpty() && (!player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty()))
         {
             if (hand == InteractionHand.MAIN_HAND) {
                 player.awardStat(Stats.TALKED_TO_VILLAGER);
             }
-
             if (!this.level().isClientSide) {
                 if (this.getOffers().isEmpty()) {
                     return InteractionResult.FAIL;
                 }
-
                 this.setTradingPlayer(player);
                 this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().getLevel());
             }
-
             return InteractionResult.SUCCESS;
         }
-        JolCraftSoundHelper.playDwarfNo(this);
-        return InteractionResult.FAIL; // ❌ Block any fallback actions
+
+        return InteractionResult.FAIL;
     }
 
     @Override
-    protected void customServerAiStep(ServerLevel p_376777_) {
+    protected void customServerAiStep(ServerLevel serverlevel) {
+
         if (this.getAge() != 0) {
             this.inLove = 0;
         }
+
         if (this.assignProfessionWhenSpawned) {
             this.assignProfessionWhenSpawned = false;
         }
@@ -651,7 +264,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
             this.restock();
             lastRestockGameTime = this.level().getGameTime();
         }
-        super.customServerAiStep(p_376777_);
+        super.customServerAiStep(serverlevel);
     }
 
     @Override
@@ -693,141 +306,10 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                 this.spawnColoredParticles(1.0F, 0.84F, 0.0F, 1.0F, 3, 0.4D);
             }
         }
-
-
-        // Contract signing: do per-tick effects if this is the current action
-        if (ACTION_CONTRACT_SIGNING.equals(currentActionId)) {
-            actionHandler.setAction(DwarfActionType.INSPECT, this); // Show "inspecting" animation state (signing)
-
-            // Paid status: always reset at the start of animation
-            if (currentActionTicks == 39) {
-                this.resetPaid();
-            }
-
-            // Sound effects at specific ticks
-            if (currentActionTicks == 25 || currentActionTicks == 15) {
-                this.level().playSound(null, this.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.NEUTRAL, 1.0F, 1.2F);
-            }
-
-        }
-
-        //Profession promotion
-        if (ACTION_PROFESSION_PROMOTION.equals(currentActionId)) {
-            actionHandler.setAction(DwarfActionType.INSPECT, this); // You could use a different animation flag if you want
-
-            if (this.currentActionTicks == 39) {
-                // First subtle gray poof
-                this.spawnColoredParticles(0.35F, 0.35F, 0.35F, 0.7F, 16, 0.5D);
-                this.resetPaid();
-            }
-
-            if (currentActionTicks == 20) {
-                this.level().playSound(null, this.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 1.0F, 1.5F);
-                this.spawnColoredParticles(0.35F, 0.35F, 0.35F, 0.8F, 24, 0.7D);
-            }
-            if (currentActionTicks == 2) {
-                this.level().playSound(null, this.blockPosition(), JolCraftSounds.POOF.get(), SoundSource.NEUTRAL, 1.5F, 1.0F);
-                this.spawnColoredParticles(0.35F, 0.35F, 0.35F, 1.25F, 64, 2.5D);
-            }
-        }
-
-        // Tablet endorsement per-tick logic
-        if (ACTION_REPUTATION_ENDORSEMENT.equals(currentActionId)) {
-            actionHandler.setAction(DwarfActionType.INSPECT, this);
-            if (currentActionTicks == 39) {
-                this.resetPaid();
-            }
-            if (currentActionTicks == 25 || currentActionTicks == 15) {
-                this.level().playSound(null, this.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.NEUTRAL, 1.2F, 0.6F);
-            }
-        }
-
-        // Profession interaction (guard, etc)
-        if (ACTION_PROFESSION.equals(currentActionId)) {
-            actionHandler.setAction(DwarfActionType.INSPECT, this);
-        }
-
     }
 
-    public static final Set<EntityType<?>> PROMOTABLE_DWARF_TYPES = Set.of(JolCraftEntities.DWARF.get());
-
-
-    public boolean canPromoteToProfession() {
-        return PROMOTABLE_DWARF_TYPES.contains(this.getType()) && this.isAlive() && !this.isBaby();
-    }
-
-    @Nullable
-    public EntityType<? extends AbstractDwarfEntity> resolveProfessionType(ItemStack contractStack) {
-        if (contractStack.isEmpty()) return null;
-        return CONTRACT_TO_PROFESSION.get(contractStack.getItem());
-    }
-
-    public static final Map<Item, EntityType<? extends AbstractDwarfEntity>> CONTRACT_TO_PROFESSION = Map.ofEntries(
-
-            Map.entry(JolCraftItems.CONTRACT_GUILDMASTER.get(), JolCraftEntities.DWARF_GUILDMASTER.get()),
-
-            // Tier 1
-            Map.entry(JolCraftItems.CONTRACT_MERCHANT.get(), JolCraftEntities.DWARF_MERCHANT.get()),
-            Map.entry(JolCraftItems.CONTRACT_HISTORIAN.get(), JolCraftEntities.DWARF_HISTORIAN.get()),
-            Map.entry(JolCraftItems.CONTRACT_SCRAPPER.get(), JolCraftEntities.DWARF_SCRAPPER.get()),
-
-            // Tier 2
-            Map.entry(JolCraftItems.CONTRACT_GUARD.get(), JolCraftEntities.DWARF_GUARD.get()),
-            Map.entry(JolCraftItems.CONTRACT_BREWMASTER.get(), JolCraftEntities.DWARF_BREWMASTER.get()),
-            Map.entry(JolCraftItems.CONTRACT_KEEPER.get(), JolCraftEntities.DWARF_KEEPER.get()),
-
-            // Tier 3
-            Map.entry(JolCraftItems.CONTRACT_ARTISAN.get(), JolCraftEntities.DWARF_ARTISAN.get()),
-            Map.entry(JolCraftItems.CONTRACT_EXPLORER.get(), JolCraftEntities.DWARF_EXPLORER.get()),
-            Map.entry(JolCraftItems.CONTRACT_MINER.get(), JolCraftEntities.DWARF_MINER.get())
-
-            /*
-
-            // Tier 4
-            Map.entry(JolCraftItems.CONTRACT_ALCHEMIST.get(), JolCraftEntities.DWARF_ALCHEMIST.get()),
-            Map.entry(JolCraftItems.CONTRACT_ARCANIST.get(), JolCraftEntities.DWARF_ARCANIST.get()),
-            Map.entry(JolCraftItems.CONTRACT_PRIEST.get(), JolCraftEntities.DWARF_PRIEST.get()),
-
-            // Tier 5
-            Map.entry(JolCraftItems.CONTRACT_BLACKSMITH.get(), JolCraftEntities.DWARF_BLACKSMITH.get()),
-            Map.entry(JolCraftItems.CONTRACT_CHAMPION.get(), JolCraftEntities.DWARF_CHAMPION.get()),
-            Map.entry(JolCraftItems.CONTRACT_SMELTER.get(), JolCraftEntities.DWARF_SMELTER.get())
-
-            */
-    );
-
-    public void transformToProfession() {
-        if (!this.level().isClientSide) {
-            ServerLevel serverLevel = (ServerLevel) this.level();
-
-            EntityType<? extends AbstractDwarfEntity> professionType = resolveProfessionType(this.previousMainHandItem);
-
-
-            if (professionType != null) {
-                Entity entity = professionType.create(
-                        serverLevel,
-                        null,
-                        this.blockPosition(),
-                        EntitySpawnReason.CONVERSION,
-                        false,
-                        false
-                );
-
-                if (entity instanceof AbstractDwarfEntity newDwarf) {
-                    newDwarf.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-                    newDwarf.setBeard(this.getBeard());
-                    newDwarf.setEye(this.getEye());
-                    serverLevel.addFreshEntity(newDwarf);
-                    this.discard();
-                }
-            }
-        }
-    }
 
     //Blocking
-    protected Vec3 blockParticlePos = null;
-    protected int blockParticleTicks = 0;
-
     protected boolean shouldStartBlocking = false;
 
     public int blockCooldown = 0;
@@ -849,7 +331,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     public void markForBlocking() {
-        if(actionHandler.isAction(this, DwarfActionType.DRINK)){
+        if(DwarfActionHelper.isActionType(this, DwarfActionType.BLOCK)){
             this.shouldStartBlocking = true;
         }
     }
@@ -871,7 +353,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         return itemStack.is(Items.BREAD);
     }
 
-    protected void playEatingSound() {
+    public void playEatingSound() {
         this.playSound(SoundEvents.PLAYER_BURP, 1.0F, this.getVoicePitch());
     }
 
@@ -895,13 +377,21 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         return this.inLove;
     }
 
-    protected void usePlayerItem(Player player, InteractionHand hand, ItemStack stack) {
-        int i = stack.getCount();
-        UseRemainder useremainder = stack.get(DataComponents.USE_REMAINDER);
+    public void usePlayerItem(Player player, InteractionHand hand, ItemStack stack) {
+        if (player.level().isClientSide) return;
+        if (player.isCreative()) return;
+        if (stack.isEmpty() || stack.getCount() == 0) return;
+        int initialCount = stack.getCount();
+        UseRemainder useRemainder = stack.get(DataComponents.USE_REMAINDER);
         stack.consume(1, player);
-        if (useremainder != null) {
-            ItemStack itemstack = useremainder.convertIntoRemainder(stack, i, player.hasInfiniteMaterials(), player::handleExtraItemsCreatedOnUse);
-            player.setItemInHand(hand, itemstack);
+        if (useRemainder != null) {
+            ItemStack remainderStack = useRemainder.convertIntoRemainder(
+                    stack,
+                    initialCount,
+                    false,
+                    player::handleExtraItemsCreatedOnUse
+            );
+            player.setItemInHand(hand, remainderStack);
         }
     }
 
@@ -991,6 +481,8 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        compound.putInt("CurrentAction", this.getEntityData().get(CURRENT_ACTION));
+        compound.putInt("CurrentActionSubtype", this.getEntityData().get(CURRENT_ACTION_SUBTYPE));
         compound.putInt("InLove", this.inLove);
         compound.putInt("Variant", this.getTypeVariant());
         compound.putInt("Beard", this.getTypeBeard());
@@ -1052,6 +544,12 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                     .resultOrPartial(Util.prefix("Failed to load offers: ", LOGGER::warn))
                     .ifPresent(p_323775_ -> this.offers = p_323775_);
         }
+        if (compound.contains("CurrentAction", 3)) {
+            this.getEntityData().set(CURRENT_ACTION, compound.getInt("CurrentAction"));
+        }
+        if (compound.contains("CurrentActionSubtype", 3)) {
+            this.getEntityData().set(CURRENT_ACTION_SUBTYPE, compound.getInt("CurrentActionSubtype"));
+        }
     }
 
     //Paying
@@ -1093,7 +591,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     // Particles
-    protected void spawnColoredParticles(float r, float g, float b, float scale, int count, double scatter) {
+    public void spawnColoredParticles(float r, float g, float b, float scale, int count, double scatter) {
         if (!this.level().isClientSide()) return;
 
         int rgb = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255);
@@ -1169,6 +667,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     public boolean canReroll(){ return true; }
 
     protected void updateTrades() {
+        if (this.level().isClientSide) return;
         int level = this.getVillagerData().getLevel();
         if (instanceTrades != null) {
             DwarfTrades.ItemListing[] listings = instanceTrades.get(level);
@@ -1281,7 +780,8 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
 
-    protected void increaseMerchantCareer() {
+    public void increaseMerchantCareer() {
+        if (this.level().isClientSide) return;
         int current = this.getVillagerData().getLevel();
         if (VillagerData.canLevelUp(current)) {
             int next = current + 1;
@@ -1319,6 +819,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     @Override
     public void notifyTrade(DwarfMerchantOffer offer) {
+        if (this.level().isClientSide) return;
         Player player = this.getTradingPlayer();
         offer.increaseUses();
         this.ambientSoundTime = -this.getAmbientSoundInterval();
@@ -1408,7 +909,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         return isYesSound ? JolCraftSounds.DWARF_YES.get() : JolCraftSounds.DWARF_NO.get();
     }
 
-    @Nullable
     public void playCelebrateSound() {
         this.makeSound(JolCraftSounds.DWARF_YES.get());
     }
@@ -1429,7 +929,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {return false;}
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @org.jetbrains.annotations.Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
         DwarfVariant variant = Util.getRandom(DwarfVariant.values(), this.random);
         DwarfBeardColor beard = Util.getRandom(DwarfBeardColor.values(), this.random);
         DwarfEyeColor eye = Util.getRandom(DwarfEyeColor.values(), this.random);
@@ -1552,6 +1052,7 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     }
 
     protected void addOffersFromItemListings(DwarfMerchantOffers givenMerchantOffers, DwarfTrades.ItemListing[] newTrades, int maxNumbers) {
+        if (this.level().isClientSide) return;
         ArrayList<DwarfTrades.ItemListing> arraylist = Lists.newArrayList(newTrades);
         int i = 0;
 
@@ -1569,4 +1070,18 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         return this.getTradingPlayer() == player && this.isAlive() && player.canInteractWithEntity(this, 4.0);
     }
 
+    public void restockBountiesOnly() {
+        if (this.level().isClientSide) return;
+        if (this.getOffers().isEmpty()) return;
+        boolean restocked = false;
+        for (DwarfMerchantOffer offer : this.getOffers()) {
+            if (offer.getResult().is(JolCraftItems.BOUNTY.get()) && offer.needsRestock()) {
+                offer.resetUses();
+                restocked = true;
+            }
+        }
+        if (restocked) {
+            this.playSound(SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.0F, 1.0F);
+        }
+    }
 }

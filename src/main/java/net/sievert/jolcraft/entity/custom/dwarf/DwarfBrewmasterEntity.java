@@ -26,6 +26,7 @@ import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -117,21 +118,10 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
-
-        // 🧠 Language check
-        InteractionResult langCheck = this.languageCheck(player);
-        if (langCheck != InteractionResult.SUCCESS) {
-            return langCheck;
-        }
-
-        // Reputation check
-        InteractionResult repCheck = this.reputationCheck(player, getRequiredTier());
-        if (repCheck != InteractionResult.SUCCESS) {
-            return repCheck;
-        }
-
-        // Call parent for all other interactions (contracts, trades, etc)
-        return super.mobInteract(player, hand);
+        InteractionResult result = super.mobInteract(player, hand);
+        if (result != InteractionResult.FAIL) return result;
+        JolCraftSoundHelper.playDwarfNo(this);
+        return InteractionResult.FAIL;
     }
 
     // ----------------------------

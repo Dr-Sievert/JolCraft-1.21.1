@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -17,6 +19,7 @@ import net.sievert.jolcraft.entity.ai.goal.*;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -46,7 +49,7 @@ public class DwarfEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    public boolean neverEndorse(Player player) {
+    public boolean neverEndorse() {
         return true;
     }
 
@@ -73,6 +76,14 @@ public class DwarfEntity extends AbstractDwarfEntity {
                 return level.getBlockState(pos).is(Blocks.COBBLED_DEEPSLATE);
             }
         });
+    }
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        InteractionResult result = super.mobInteract(player, hand);
+        if (result != InteractionResult.FAIL) return result;
+        JolCraftSoundHelper.playDwarfNo(this);
+        return InteractionResult.FAIL;
     }
 
     //Trades

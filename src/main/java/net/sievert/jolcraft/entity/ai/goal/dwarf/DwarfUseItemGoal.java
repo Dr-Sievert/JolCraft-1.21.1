@@ -47,7 +47,7 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
     @Override
     public void start() {
         if (this.mob instanceof AbstractDwarfEntity dwarf) {
-            dwarf.getActionHandler().setAction(DwarfActionType.DRINK, dwarf);
+            dwarf.getActionHelper().setAction(dwarf, DwarfActionType.DRINK);
         }
         this.previousMainHandItem = this.mob.getItemBySlot(EquipmentSlot.MAINHAND).copy();
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.item.copy());
@@ -57,7 +57,7 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
     @Override
     public void stop() {
         if (this.mob instanceof AbstractDwarfEntity dwarf) {
-            dwarf.getActionHandler().stopAction(dwarf);
+            dwarf.getActionHelper().stopAction(dwarf);
         }
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
         if (this.finishUsingSound != null) {

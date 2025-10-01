@@ -13,14 +13,13 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.util.dwarf.*;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
-import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHandler;
+import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfArmorLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
-import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHandler;
-import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -78,28 +77,34 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
     }
 
     @Override
-    public void extractRenderState(@NotNull T entity, @NotNull DwarfRenderState reusedState, float partialTick) {
-        super.extractRenderState(entity, reusedState, partialTick);
+    public void extractRenderState(@NotNull T entity, @NotNull DwarfRenderState reused, float partialTick) {
+        super.extractRenderState(entity, reused, partialTick);
 
-        reusedState.currentActionType = DwarfActionHandler.getCurrentActionType(entity);
-        DwarfAnimationHandler.updateAnimationStates(
-                reusedState,
-                reusedState.currentActionType,
-                entity.tickCount
-        );
-        reusedState.ageInTicks = entity.tickCount + partialTick;
+        DwarfRenderState persistent = AbstractDwarfEntity.getOrCreateClientRenderState(entity);
 
-        reusedState.dwarf = entity;
-        reusedState.variant = entity.getVariant();
-        reusedState.beard = entity.getBeard();
-        reusedState.eye = entity.getEye();
-        reusedState.useItemHand = entity.getUsedItemHand();
-        reusedState.ticksUsingItem = entity.getTicksUsingItem();
-        reusedState.isUsingItem = entity.isUsingItem();
-        reusedState.headEquipment = entity.getItemBySlot(EquipmentSlot.HEAD);
-        reusedState.chestEquipment = entity.getItemBySlot(EquipmentSlot.CHEST);
-        reusedState.legsEquipment = entity.getItemBySlot(EquipmentSlot.LEGS);
-        reusedState.feetEquipment = entity.getItemBySlot(EquipmentSlot.FEET);
+        persistent.currentActionType    = DwarfActionHelper.getCurrentActionType(entity);
+        persistent.currentActionSubtype = DwarfActionHelper.getCurrentActionSubType(entity);
+        DwarfAnimationHelper.updateAnimationStates(persistent, persistent.currentActionType, entity.tickCount);
+        persistent.ageInTicks = entity.tickCount + partialTick;
+
+        reused.currentActionType    = persistent.currentActionType;
+        reused.currentActionSubtype = persistent.currentActionSubtype;
+        reused.ageInTicks           = persistent.ageInTicks;
+
+        reused.dwarf          = entity;
+        reused.variant        = entity.getVariant();
+        reused.beard          = entity.getBeard();
+        reused.eye            = entity.getEye();
+        reused.useItemHand    = entity.getUsedItemHand();
+        reused.ticksUsingItem = entity.getTicksUsingItem();
+        reused.isUsingItem    = entity.isUsingItem();
+        reused.headEquipment  = entity.getItemBySlot(EquipmentSlot.HEAD);
+        reused.chestEquipment = entity.getItemBySlot(EquipmentSlot.CHEST);
+        reused.legsEquipment  = entity.getItemBySlot(EquipmentSlot.LEGS);
+        reused.feetEquipment  = entity.getItemBySlot(EquipmentSlot.FEET);
+
+        reused.animationStates.clear();
+        reused.animationStates.putAll(persistent.animationStates);
     }
 
 }

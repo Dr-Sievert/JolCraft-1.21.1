@@ -1,7 +1,5 @@
 package net.sievert.jolcraft.entity.util.dwarf.action;
 
-import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
-
 /**
  * Represents a server-side action performed by a dwarf, such as contract signing,
  * profession promotion, endorsement, blocking, etc.
@@ -28,13 +26,13 @@ public interface DwarfAction {
      * Called every tick while this action is active.
      * Put all per-tick timers, sounds, particles, or state logic here.
      */
-    default void tick(AbstractDwarfEntity dwarf) {}
+    default void tick() {}
 
     /**
      * Called once when this action becomes active.
      * Use for initialization, resetting timers, or spawning first effects.
      */
-    default void start(AbstractDwarfEntity dwarf) {}
+    default void start() {}
 
     /**
      * Returns true ONLY on the tick this action first starts.
@@ -46,7 +44,7 @@ public interface DwarfAction {
      * Called once when the action ends, after isStopped() returns true.
      * Put all one-time rewards, item handout, animation reset, or cleanup logic here.
      */
-    default void stop(AbstractDwarfEntity dwarf) {}
+    default void stop() {}
 
     /**
      * Should return true when this action is stopped and ready to be cleaned up.

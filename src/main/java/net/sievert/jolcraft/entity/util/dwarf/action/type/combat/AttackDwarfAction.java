@@ -1,6 +1,5 @@
-package net.sievert.jolcraft.entity.util.dwarf.action.type;
+package net.sievert.jolcraft.entity.util.dwarf.action.type.combat;
 
-import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
@@ -11,12 +10,12 @@ public class AttackDwarfAction implements DwarfAction {
     public DwarfActionType getType() { return DwarfActionType.ATTACK; }
 
     @Override
-    public void start(AbstractDwarfEntity dwarf) {
+    public void start() {
         this.ticksRemaining = 10;
     }
 
     @Override
-    public void tick(AbstractDwarfEntity dwarf) {
+    public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
     }
 

@@ -1,0 +1,64 @@
+package net.sievert.jolcraft.entity.util.dwarf.action.type.bounty;
+
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyGenerator;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyTier;
+import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
+import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
+
+public class BountyDwarfAction extends InspectDwarfAction {
+
+    public int ticksRemaining = 0;
+    private final BountyType type = BountyHelper.getBountyType(itemstack);
+
+    public BountyDwarfAction(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+        super(dwarf, player, hand, itemstack);
+    }
+
+    @Override
+    public DwarfActionType.Subtype getSubtype() {return DwarfActionType.Subtype.BOUNTY;}
+
+    @Override
+    public void start() {
+        this.ticksRemaining = 40;
+        startInspect(dwarf, player, hand, itemstack);
+    }
+
+    @Override
+    public void tick() {
+        if (ticksRemaining > 0) ticksRemaining--;
+        if (type == BountyType.MERCHANT || type == BountyType.MINER) {
+            if (ticksRemaining == 25) {
+                dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.NEUTRAL, 1.0F, 1.2F);
+            }
+            if (ticksRemaining == 15) {
+                JolCraftSoundHelper.playVillagerFisherman(dwarf);
+            }
+        }
+    }
+
+    @Override
+    public boolean isStopped() {
+        return ticksRemaining <= 0;
+    }
+
+    @Override
+    public void stop() {
+        ItemStack crate = new ItemStack(JolCraftItems.BOUNTY_CRATE.get());
+        int merchantTier = dwarf.getVillagerData().getLevel();
+        BountyHelper.setBountyType(crate, type);
+        BountyHelper.setBountyTier(crate, BountyTier.fromValue(merchantTier));
+        crate.set(JolCraftDataComponents.BOUNTY_DATA.get(), BountyGenerator.generate(crate, dwarf.getRandom()));
+        throwItem(dwarf, player, crate);
+    }
+}

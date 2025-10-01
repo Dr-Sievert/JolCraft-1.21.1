@@ -26,6 +26,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuardEntity;
+import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
@@ -90,9 +91,9 @@ public class JolCraftEntityEvents {
         if (target instanceof AbstractDwarfEntity dwarf && !dwarf.isBaby() && dwarf.canTrade()) {
 
             // --- Language Check (block event if player can't interact) ---
-            InteractionResult langResult = dwarf.languageCheck(player);
-            if (langResult != InteractionResult.SUCCESS) {
-                event.setCancellationResult(langResult);
+            InteractionResult langFilter = DwarfInteractionHelper.languageCheck(dwarf, player);
+            if (langFilter != InteractionResult.SUCCESS) {
+                event.setCancellationResult(langFilter);
                 event.setCanceled(true);
                 return;
             }

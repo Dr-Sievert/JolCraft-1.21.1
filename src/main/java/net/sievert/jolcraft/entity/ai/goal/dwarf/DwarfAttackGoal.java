@@ -10,8 +10,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
-import net.sievert.jolcraft.entity.util.dwarf.action.type.AttackDwarfAction;
-import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
@@ -100,7 +98,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
         }
         dwarf.level().playSound(null, dwarf.blockPosition(), JolCraftSounds.DWARF_YES.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         this.dwarf.setAggressive(false);
-        this.dwarf.getActionHandler().stopAction(dwarf);
+        this.dwarf.getActionHelper().stopAction(dwarf);
         this.dwarf.getNavigation().stop();
     }
 
@@ -152,7 +150,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
             if (attackAnimTimer > 0) {
                 attackAnimTimer--;
                 if (attackAnimTimer == 0) {
-                    this.dwarf.getActionHandler().stopAction(dwarf);
+                    this.dwarf.getActionHelper().stopAction(dwarf);
                 }
             }
         }
@@ -160,7 +158,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
 
     protected void checkAndPerformAttack(@NotNull LivingEntity target) {
         if (this.canPerformAttack(target)) {
-            this.dwarf.getActionHandler().setAction(DwarfActionType.ATTACK, dwarf);
+            this.dwarf.getActionHelper().setAction(dwarf, DwarfActionType.ATTACK);
             this.attackAnimTimer = 8;
             this.resetAttackCooldown();
             this.dwarf.doHurtTarget(getServerLevel(this.dwarf), target);

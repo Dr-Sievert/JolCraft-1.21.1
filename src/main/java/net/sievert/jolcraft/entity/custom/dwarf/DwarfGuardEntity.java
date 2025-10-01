@@ -37,6 +37,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.sound.JolCraftSounds;
@@ -91,7 +93,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
 
     @Override
     public float getVoicePitch() {
-        return 0.7F; // deeper voice for guards
+        return 0.7F;
     }
 
     @Override
@@ -122,84 +124,13 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        boolean client = this.level().isClientSide;
-
-        // 🧠 Language check
-        InteractionResult langCheck = this.languageCheck(player);
-        if (langCheck != InteractionResult.SUCCESS) {
-            return langCheck;
-        }
-
-        // Reputation check
-        InteractionResult repCheck = this.reputationCheck(player, getRequiredTier());
-        if (repCheck != InteractionResult.SUCCESS) {
-            return repCheck;
-        }
-
-        // 1. Only custom-guard logic: armor hand-in
-        EquipmentSlot slot = getSlotForArmor(stack);
-        if (!isPerformingAction() && slot != null && this.getItemBySlot(slot).isEmpty()) {
-            ItemStack armorCopy = stack.copyWithCount(1);
-            ItemStack prevMain = this.getMainHandItem().copy();
-            if (!client) {
-                this.setItemSlot(EquipmentSlot.MAINHAND, armorCopy);
-                JolCraftSoundHelper.playDwarfYes(this);
-            }
-            // Always call beginAction on BOTH SIDES
-            beginAction(player, 40, ACTION_PROFESSION, armorCopy, prevMain, () -> {
-                this.getActionHandler().stopAction(this);
-                this.setItemSlot(slot, armorCopy);
-                this.level().playSound(null, blockPosition(), JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get(), SoundSource.NEUTRAL, 1.0F, 1.05F);
-                this.setItemSlot(EquipmentSlot.MAINHAND, JolCraftItems.DEEPSLATE_AXE.get().getDefaultInstance());
-                if (!client) {
-                    this.increaseMerchantCareer();
-                    this.updateMerchantTimer = 40; // Block repeated hand-ins
-
-                    if (this.currentActionPlayer != null) {
-                        int newLevel = getVillagerData().getLevel();
-                        Component rank = Component.translatable("merchant.level." + newLevel);
-                        this.currentActionPlayer.displayClientMessage(
-                                Component.translatable("tooltip.jolcraft.guard.promotion", rank)
-                                        .withStyle(ChatFormatting.GRAY),
-                                true
-                        );
-                    }
-                    // Only shrink item on server and after successful promotion
-                    if(!player.isCreative()){
-                        player.getItemInHand(hand).shrink(1);
-                    }
-                }
-            });
-            return InteractionResult.SUCCESS;
-        }
-
-
-
-        // 2. Already has this armor slot? No!
-        if (slot != null && !this.getItemBySlot(slot).isEmpty()) {
-            if (!client)
-                JolCraftSoundHelper.playDwarfNo(this);
-            return InteractionResult.SUCCESS;
-        }
-
-        // 3. Guard-specific trade logic (if needed) — otherwise delete this section
-        if (canTrade() && stack.isEmpty() && !this.isBaby() && (!player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty())) {
-            if (hand == InteractionHand.MAIN_HAND) {
-                player.awardStat(Stats.TALKED_TO_VILLAGER);
-            }
-            if (!this.level().isClientSide) {
-                if (this.getOffers().isEmpty()) {
-                    return InteractionResult.FAIL;
-                }
-                this.setTradingPlayer(player);
-                this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().getLevel());
-            }
-            return InteractionResult.SUCCESS;
-        }
-
-        // 4. All other logic (contracts, tablets, promotions, endorsements, etc) goes to abstract!
-        return super.mobInteract(player, hand);
+        InteractionResult result = super.mobInteract(player, hand);
+        if (result != InteractionResult.FAIL) return result;
+        ItemStack itemstack = player.getItemInHand(hand);
+        InteractionResult guardEquip = DwarfInteractionHelper.guardEquip(this, player, hand, itemstack);
+        if (guardEquip != InteractionResult.FAIL) return guardEquip;
+        JolCraftSoundHelper.playDwarfNo(this);
+        return InteractionResult.FAIL;
     }
 
     @Override
@@ -214,17 +145,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         }
 
         super.aiStep();
-    }
-
-
-    // Helper for armor slot
-    @Nullable
-    private EquipmentSlot getSlotForArmor(ItemStack stack) {
-        if (stack.is(JolCraftItems.DEEPSLATE_HELMET.get())) return EquipmentSlot.HEAD;
-        if (stack.is(JolCraftItems.DEEPSLATE_CHESTPLATE.get())) return EquipmentSlot.CHEST;
-        if (stack.is(JolCraftItems.DEEPSLATE_LEGGINGS.get())) return EquipmentSlot.LEGS;
-        if (stack.is(JolCraftItems.DEEPSLATE_BOOTS.get())) return EquipmentSlot.FEET;
-        return null;
     }
 
     //Trades

@@ -5,7 +5,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuardEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
-import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
 
 
 import java.util.EnumSet;
@@ -36,14 +35,14 @@ public class DwarfBlockGoal extends Goal {
 
     @Override
     public void start() {
-        this.dwarf.getActionHandler().setAction(DwarfActionType.BLOCK, dwarf);
+        this.dwarf.getActionHelper().setAction(dwarf, DwarfActionType.BLOCK);
         dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.HOSTILE, 1.0F, 1.0F);
         blockTicks = 15;
     }
 
     @Override
     public void stop() {
-        this.dwarf.getActionHandler().stopAction(dwarf);
+        this.dwarf.getActionHelper().stopAction(dwarf);
         dwarf.setBlockCooldown(60);
     }
 

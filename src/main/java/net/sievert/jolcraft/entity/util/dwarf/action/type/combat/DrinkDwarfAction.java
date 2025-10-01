@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.util.dwarf.action.type;
+package net.sievert.jolcraft.entity.util.dwarf.action.type.combat;
 
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;

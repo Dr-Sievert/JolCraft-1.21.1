@@ -13,7 +13,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHandler;
+import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimations;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +76,7 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
         this.applyHeadRotation(state.yRot, state.xRot);
 
         this.animateWalk(DwarfAnimations.WALK, state.walkAnimationPos, state.walkAnimationSpeed, 2f, 2.5f);
-        DwarfAnimationHandler.animate(state, this);
+        DwarfAnimationHelper.animate(state, this);
 
         this.hat.visible = !state.headEquipment.isEmpty();
         boolean hasChest = !state.chestEquipment.isEmpty();

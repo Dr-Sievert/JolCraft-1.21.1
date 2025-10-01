@@ -141,36 +141,22 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack itemstack = player.getItemInHand(hand);
-
-        // Language check
-        InteractionResult langCheck = this.languageCheck(player);
-        if (langCheck != InteractionResult.SUCCESS) {
-            return langCheck;
-        }
-
-        // Reputation check
-        InteractionResult repCheck = this.reputationCheck(player, getRequiredTier());
-        if (repCheck != InteractionResult.SUCCESS) {
-            return repCheck;
-        }
-
-        // *** SERVER SIDE ONLY for offers, levels, trades ***
         if (!this.level().isClientSide) {
             int playerScore = DiscoveredStructuresHelper.getDiscoveryScore(player);
             int currentLevel = this.getVillagerData().getLevel();
             int targetLevel = getLevelForScore(playerScore);
-
             if (targetLevel > currentLevel) {
                 this.setVillagerData(this.getVillagerData().setLevel(targetLevel));
                 this.updateTrades();
                 JolCraftSoundHelper.playDwarfYes(this);
             }
-
         }
-
-        return super.mobInteract(player, hand);
+        InteractionResult result = super.mobInteract(player, hand);
+        if (result != InteractionResult.FAIL) return result;
+        JolCraftSoundHelper.playDwarfNo(this);
+        return InteractionResult.FAIL;
     }
+
 
     // Vanilla-like structure discovery thresholds for Explorer Dwarf
     public static final int[] SCORE_THRESHOLDS = { 0, 10, 70, 150, 250 };

@@ -24,9 +24,12 @@ public enum DwarfActionType {
 
         // INSPECT subtypes
         CONTRACT_SIGNING(INSPECT),
-        PROFESSION_PROMOTION(INSPECT),
-        ENDORSEMENT(INSPECT),
-        GENERIC_INSPECTION(INSPECT),
+        PROMOTE(INSPECT),
+        ENDORSE(INSPECT),
+        REPUTATION_GAIN(INSPECT),
+        BOUNTY(INSPECT),
+        BOUNTY_CRATE(INSPECT),
+        GUARD_EQUIP(INSPECT),
 
         // ATTACK subtypes
         ATTACK_AXE(ATTACK);
