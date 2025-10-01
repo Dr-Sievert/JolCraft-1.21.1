@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.entity.JolCraftEntities;
+import net.sievert.jolcraft.entity.custom.dwarf.AbstractBreedingEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
@@ -124,8 +125,8 @@ public class PromoteDwarfAction extends InspectDwarfAction {
 
                 if (entity instanceof AbstractDwarfEntity newDwarf) {
                     newDwarf.moveTo(dwarf.getX(), dwarf.getY(), dwarf.getZ(), dwarf.getYRot(), dwarf.getXRot());
-                    newDwarf.setBeard(dwarf.getBeard());
-                    newDwarf.setEye(dwarf.getEye());
+                    newDwarf.setData(AbstractBreedingEntity.BEARD_COLOR, dwarf.getData(AbstractBreedingEntity.BEARD_COLOR));
+                    newDwarf.setData(AbstractBreedingEntity.EYE_COLOR, dwarf.getData(AbstractBreedingEntity.EYE_COLOR));
                     serverLevel.addFreshEntity(newDwarf);
                     dwarf.discard();
                 }

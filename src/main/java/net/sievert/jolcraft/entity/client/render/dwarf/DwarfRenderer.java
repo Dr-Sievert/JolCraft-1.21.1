@@ -17,7 +17,10 @@ import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHel
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfArmorLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
+import net.sievert.jolcraft.entity.custom.dwarf.AbstractBreedingEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import org.jetbrains.annotations.NotNull;
@@ -92,9 +95,9 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         reused.ageInTicks           = persistent.ageInTicks;
 
         reused.dwarf          = entity;
-        reused.variant        = entity.getVariant();
-        reused.beard          = entity.getBeard();
-        reused.eye            = entity.getEye();
+        reused.variant = DwarfVariant.byId(entity.getData(AbstractBreedingEntity.VARIANT));
+        reused.beard   = DwarfBeardColor.byId(entity.getData(AbstractBreedingEntity.BEARD_COLOR));
+        reused.eye     = DwarfEyeColor.byId(entity.getData(AbstractBreedingEntity.EYE_COLOR));
         reused.useItemHand    = entity.getUsedItemHand();
         reused.ticksUsingItem = entity.getTicksUsingItem();
         reused.isUsingItem    = entity.isUsingItem();

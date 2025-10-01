@@ -39,17 +39,6 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedKeeperTrades();
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30d)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    //Core
     @Override
     public boolean canTrade() {
         return true;
@@ -70,9 +59,16 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
         return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_keeper");
     }
 
+    @Nullable
     @Override
-    public float getVoicePitch() {
-        return 1.0F;
+    protected SoundEvent getRestockSound() {
+        return SoundEvents.VILLAGER_WORK_FARMER;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRerollSound() {
+        return SoundEvents.VILLAGER_WORK_FARMER;
     }
 
     @Override
@@ -107,7 +103,6 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
         return InteractionResult.FAIL;
     }
 
-    //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedKeeperTrades() {
         return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
 
@@ -154,18 +149,5 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
                 )
         );
     }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_FARMER;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_FARMER;
-    }
-
 }
 

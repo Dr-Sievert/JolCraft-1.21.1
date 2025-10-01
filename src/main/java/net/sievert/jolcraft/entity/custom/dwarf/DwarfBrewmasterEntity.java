@@ -35,29 +35,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
 
-
     public DwarfBrewmasterEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.GLASS_MUG.get()));
         this.instanceTrades = createRandomizedBrewmasterTrades();
     }
-
-    // ----------------------------
-    // Attributes
-    // ----------------------------
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30d)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    // ----------------------------
-    // Core
-    // ----------------------------
 
     @Override
     public boolean canTrade() { return true; }
@@ -124,10 +106,6 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
         return InteractionResult.FAIL;
     }
 
-    // ----------------------------
-    // Trade Randomization
-    // ----------------------------
-
     /** Generates a new randomized trade set for this Brewmaster instance.
      * No pre-randomization! All values are min/max, the trade does the rolling. */
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedBrewmasterTrades() {
@@ -170,6 +148,4 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
                 }
         ));
     }
-
-
 }

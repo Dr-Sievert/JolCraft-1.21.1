@@ -48,17 +48,20 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedExplorerTrades();
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfExplorerEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30d)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
+    private int lastUnlockedLevel = 0;
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("LastUnlockedLevel", lastUnlockedLevel);
     }
 
-    //Behavior
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.lastUnlockedLevel = tag.getInt("LastUnlockedLevel");
+    }
+
     @Override
     public boolean canTrade() {
         return true;
@@ -97,9 +100,6 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    public float getVoicePitch() { return 1.0F; }
-
-    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new FirePanicGoal(this, 1.3));
@@ -123,22 +123,6 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
         });
     }
 
-    //Data
-
-    private int lastUnlockedLevel = 0;
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putInt("LastUnlockedLevel", lastUnlockedLevel);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.lastUnlockedLevel = tag.getInt("LastUnlockedLevel");
-    }
-
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!this.level().isClientSide) {
@@ -158,19 +142,17 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
     }
 
 
-    // Vanilla-like structure discovery thresholds for Explorer Dwarf
     public static final int[] SCORE_THRESHOLDS = { 0, 10, 70, 150, 250 };
 
     public static int getLevelForScore(int score) {
         for (int i = SCORE_THRESHOLDS.length - 1; i >= 0; i--) {
             if (score >= SCORE_THRESHOLDS[i]) {
-                return i + 1; // Levels are 1-based
+                return i + 1;
             }
         }
         return 1;
     }
 
-    //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedExplorerTrades() {
         return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
                 // Novice
@@ -251,9 +233,5 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
 
         lastUnlockedLevel = level;
     }
-
-
-
-
 }
 

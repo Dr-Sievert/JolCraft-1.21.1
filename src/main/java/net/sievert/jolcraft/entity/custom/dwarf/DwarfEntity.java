@@ -32,17 +32,6 @@ public class DwarfEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedDwarfTrades();
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30d)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    //Behavior
     @Override
     public boolean canTrade() {
         return true;
@@ -111,7 +100,4 @@ public class DwarfEntity extends AbstractDwarfEntity {
                 }
         ));
     }
-
-
-
 }

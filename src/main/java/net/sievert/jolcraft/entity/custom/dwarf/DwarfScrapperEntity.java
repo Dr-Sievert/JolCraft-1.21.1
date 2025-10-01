@@ -42,16 +42,6 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         this.instanceTrades = MAIN_TRADES;
     }
 
-    // Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfScrapperEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
     @Override
     public boolean canTrade() {
         return true;
@@ -60,15 +50,29 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
     @Override
     public boolean hasRandomTrades(){ return true; }
 
-
     @Override
     public ItemStack getSignedContractItem() {
         return new ItemStack(JolCraftItems.CONTRACT_SCRAPPER.get());
     }
 
     @Override
-    public ResourceLocation getProfessionId() {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_scrapper");
+    public ResourceLocation getProfessionId() { return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_scrapper");}
+
+    @Override
+    public float getVoicePitch() {
+        return 1.4F;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRestockSound() {
+        return SoundEvents.VILLAGER_WORK_TOOLSMITH;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRerollSound() {
+        return SoundEvents.VILLAGER_WORK_TOOLSMITH;
     }
 
     @Override
@@ -103,8 +107,6 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         return InteractionResult.FAIL;
     }
 
-    // --- Trade tables ---
-    // Only static main trades (one per level)
     public static final Int2ObjectMap<DwarfTrades.ItemListing[]> MAIN_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
             1, new DwarfTrades.ItemListing[] { new DwarfTrades.ItemsForGold(JolCraftItems.COPPER_SPANNER.get(), 8, 15, 1, 3, 10) },
             2, new DwarfTrades.ItemListing[] { new DwarfTrades.GoldForItems(JolCraftItems.SCRAP.get(), 1, 256, 5, 1) },
@@ -113,7 +115,6 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
             5, new DwarfTrades.ItemListing[] { new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.SCRAP_HEAP.get(), 1, 15, JolCraftItems.RUSTAGATE.get(), 1, 3, 0, 0.05F) }
     ));
 
-    // Salvage pool (full pool for randomization)
     public static final DwarfTrades.ItemListing[] SALVAGE_POOL = new DwarfTrades.ItemListing[] {
             new DwarfTrades.GoldForItems(JolCraftItems.EXPIRED_POTION.get(), 1, 5, 3, 1, 3),
             new DwarfTrades.GoldForItems(JolCraftItems.OLD_FABRIC.get(), 1, 5, 3, 1, 3),
@@ -141,9 +142,7 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         fillRandomSalvageOffers(getVillagerData().getLevel());
     }
 
-
     private void fillRandomSalvageOffers(int level) {
-        // Remove all previous salvage offers
         this.getOffers().removeIf(this::isSalvageOffer);
 
         int quota = Math.min(level * 2, SALVAGE_POOL.length);
@@ -162,16 +161,12 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         }
     }
 
-
-
-
     private boolean isSalvageOffer(DwarfMerchantOffer offer) {
         for (DwarfTrades.ItemListing salvage : SALVAGE_POOL) {
             DwarfMerchantOffer test = salvage.getOffer(this, this.random);
             if (test != null &&
                     ItemStack.isSameItemSameComponents(offer.getResult(), test.getResult()) &&
                     ItemStack.isSameItemSameComponents(offer.getBaseCostA(), test.getBaseCostA())
-                // Optionally: && offer.getCostB().isEmpty() == test.getCostB().isEmpty()
             ) {
                 return true;
             }
@@ -179,14 +174,11 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         return false;
     }
 
-
-
     @Override
     public void restock() {
         if (this.level().isClientSide) return;
         int level = this.getVillagerData().getLevel();
 
-        // Only remove salvage trades
         this.getOffers().removeIf(this::isSalvageOffer);
 
         fillRandomSalvageOffers(level);
@@ -195,13 +187,11 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRestockSound()), SoundSource.NEUTRAL, 1.0F, 0.95F);
     }
 
-
     @Override
     public void rerollTrades() {
         this.getOffers().clear();
         int currentLevel = this.getVillagerData().getLevel();
 
-        // Add all main trades up to current level
         for (int level = 1; level <= currentLevel; level++) {
             DwarfTrades.ItemListing[] listings = MAIN_TRADES.get(level);
             if (listings != null) {
@@ -214,7 +204,6 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
             }
         }
 
-        // Fill salvage trades for current level only
         fillRandomSalvageOffers(currentLevel);
 
         this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRerollSound()), SoundSource.NEUTRAL, 1.0F, 1.05F);
@@ -230,23 +219,4 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         }
         return out;
     }
-
-    // Sound
-    @Override
-    public float getVoicePitch() {
-        return 1.4F;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_TOOLSMITH;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_TOOLSMITH;
-    }
-
 }

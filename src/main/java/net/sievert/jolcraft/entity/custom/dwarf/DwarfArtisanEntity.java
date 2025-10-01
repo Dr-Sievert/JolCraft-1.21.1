@@ -42,17 +42,6 @@ public class DwarfArtisanEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedArtisanTrades();
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfArtisanEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30d)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    //Behavior
     @Override
     public boolean canTrade() {
         return true;
@@ -76,13 +65,13 @@ public class DwarfArtisanEntity extends AbstractDwarfEntity {
     @Nullable
     @Override
     protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_WEAPONSMITH;
+        return SoundEvents.VILLAGER_WORK_TOOLSMITH;
     }
 
     @Nullable
     @Override
     protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_WEAPONSMITH;
+        return SoundEvents.VILLAGER_WORK_TOOLSMITH;
     }
 
     @Override
@@ -173,7 +162,5 @@ public class DwarfArtisanEntity extends AbstractDwarfEntity {
                 }
         ));
     }
-
-
 }
 

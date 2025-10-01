@@ -55,17 +55,6 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedMinerTrades();
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfMinerEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30d)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    //Behavior
     @Override
     public boolean canTrade() {
         return true;
@@ -157,7 +146,6 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
         }
     }
 
-    //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedMinerTrades() {
         return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
                 1, new DwarfTrades.ItemListing[] {

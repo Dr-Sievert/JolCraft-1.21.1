@@ -58,18 +58,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedMerchantTrades();
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfMerchantEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-
-    }
-
-    //Behavior
     @Override
     public boolean canTrade() {
         return true;
@@ -116,10 +104,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         });
     }
 
-    public ItemStack getBountyCrateItem() {
-        return new ItemStack(JolCraftItems.BOUNTY_CRATE.get());
-    }
-
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         InteractionResult result = super.mobInteract(player, hand);
@@ -149,7 +133,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         }
     }
 
-    // --- Bounty Trades ---
     public static final Int2ObjectMap<DwarfTrades.ItemListing[]> BOUNTY_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
             1, new DwarfTrades.ItemListing[] {
                     new DwarfTrades.ItemForItemWithData(
@@ -214,9 +197,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             }
     ));
 
-
-
-    // --- General Trades ---
     public static final Int2ObjectMap<DwarfTrades.ItemListing[]> GENERAL_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
             1, new DwarfTrades.ItemListing[]{
                     new DwarfTrades.ItemsForGold(Items.TORCH, 1, 2, 12, 3, 1),
@@ -263,7 +243,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             }
     ));
 
-    // --- Gem Trades ---
     public static final Int2ObjectMap<DwarfTrades.ItemListing[]> GEM_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
             5, new DwarfTrades.ItemListing[]{
                     new DwarfTrades.ItemsForGold(JolCraftItems.AEGISCORE.get(), 64, 64, 1, 1, 1),
@@ -374,7 +353,6 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         }
     }
 
-
     private boolean isCrateTrade(DwarfMerchantOffer offer) {
         return offer.getResult().is(JolCraftItems.RESTOCK_CRATE.get()) ||
                 offer.getResult().is(JolCraftItems.REROLL_CRATE.get());
@@ -458,12 +436,4 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         }
         return out;
     }
-
-    //Sound
-    @Override
-    public float getVoicePitch() {
-        return 1.0F;
-    }
-
-
 }

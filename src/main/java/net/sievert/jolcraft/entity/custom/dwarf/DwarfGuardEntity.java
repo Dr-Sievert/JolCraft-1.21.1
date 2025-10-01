@@ -56,7 +56,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedGuardTrades();
     }
 
-    //Attributes
     public static AttributeSupplier.Builder createAttributes() {
         return DwarfGuardEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 30D)
@@ -66,10 +65,8 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
                 .add(Attributes.ATTACK_DAMAGE, 3.0D);
     }
 
-    //Core
     @Override
     public boolean canTrade() {
-        // Only allow trading at master level (level 5)
         return this.getVillagerData().getLevel() == 5;
     }
 
@@ -94,6 +91,28 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
     @Override
     public float getVoicePitch() {
         return 0.7F;
+    }
+
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        if (this.isBlocking()) {
+            return null;
+        }
+        return JolCraftSounds.DWARF_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRestockSound() {
+        return SoundEvents.VILLAGER_WORK_WEAPONSMITH;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRerollSound() {
+        return SoundEvents.VILLAGER_WORK_WEAPONSMITH;
     }
 
     @Override
@@ -135,7 +154,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
 
     @Override
     public void aiStep() {
-        // --- Guard Level-Up Tick Logic ---
         if (this.updateMerchantTimer > 0) {
             --this.updateMerchantTimer;
             if (this.updateMerchantTimer == 0) {
@@ -143,11 +161,9 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
                 JolCraftSoundHelper.playDwarfYes(this);
             }
         }
-
         super.aiStep();
     }
 
-    //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedGuardTrades() {
         return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
                         //Master
@@ -160,40 +176,13 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         );
     }
 
-    //Spawning
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
         if (this.random.nextBoolean()) {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_AXE.get()));
         } else {
             this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_WARHAMMER.get()));
         }
-
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
-
     }
-
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) {
-        if (this.isBlocking()) {
-            return null;
-        }
-        return JolCraftSounds.DWARF_HURT.get();
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_WEAPONSMITH;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_WEAPONSMITH;
-    }
-
-
 }

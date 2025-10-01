@@ -56,10 +56,8 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()));
         this.instanceTrades = createRandomizedGuildmasterTrades();
-
     }
 
-    //Data
     private int lastUnlockedLevel = 0;
 
     @Override
@@ -74,17 +72,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         this.lastUnlockedLevel = tag.getInt("LastUnlockedLevel");
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    //Behavior
     @Override
     public boolean canTrade() {
         return true;
@@ -111,6 +98,18 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
     @Override
     public float getVoicePitch() {
         return 0.8F;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRestockSound() {
+        return SoundEvents.VILLAGER_WORK_CARTOGRAPHER;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRerollSound() {
+        return SoundEvents.VILLAGER_WORK_CARTOGRAPHER;
     }
 
     @Override
@@ -165,7 +164,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         return InteractionResult.FAIL;
     }
 
-    //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedGuildmasterTrades() {
         return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
 
@@ -231,18 +229,5 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
             }
         }
     }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_CARTOGRAPHER;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_CARTOGRAPHER;
-    }
-
 }
 

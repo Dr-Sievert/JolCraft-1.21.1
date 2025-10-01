@@ -43,17 +43,6 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
         this.instanceTrades = createRandomizedHistorianTrades();
     }
 
-    //Attributes
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfHistorianEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
-    }
-
-    //Behavior
     @Override
     public boolean canTrade() {
         return true;
@@ -67,6 +56,23 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
     @Override
     public ResourceLocation getProfessionId() {
         return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_historian");
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return 1.1F;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRestockSound() {
+        return SoundEvents.VILLAGER_WORK_LIBRARIAN;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getRerollSound() {
+        return SoundEvents.VILLAGER_WORK_LIBRARIAN;
     }
 
     @Override
@@ -101,7 +107,6 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
         return InteractionResult.FAIL;
     }
 
-    //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedHistorianTrades() {
         return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
 
@@ -189,24 +194,4 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
             }
         }
     }
-
-    //Sound
-    @Override
-    public float getVoicePitch() {
-        return 1.1F;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_LIBRARIAN;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_LIBRARIAN;
-    }
-
-
 }
