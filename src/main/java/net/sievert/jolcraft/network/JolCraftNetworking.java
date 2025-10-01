@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.network;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -48,11 +49,6 @@ public class JolCraftNetworking {
                         JolCraftNetworking::handleSyncReputation
                 )
                 .playToClient(
-                        ClientboundDwarfEndorseAnimationPacket.TYPE,
-                        ClientboundDwarfEndorseAnimationPacket.CODEC,
-                        JolCraftNetworking::handleDwarfEndorseAnimation
-                )
-                .playToClient(
                         ClientboundEndorsementsPacket.TYPE,
                         ClientboundEndorsementsPacket.CODEC,
                         JolCraftNetworking::handleSyncEndorsements
@@ -76,9 +72,29 @@ public class JolCraftNetworking {
                         ClientboundPlaySoundPacket.TYPE,
                         ClientboundPlaySoundPacket.CODEC,
                         JolCraftNetworking::handlePlaySound
+                )
+                .playToClient(
+                        ClientboundParticlePacket.TYPE,
+                        ClientboundParticlePacket.CODEC,
+                        JolCraftNetworking::handleParticle
                 );
 
 
+    }
+
+    public static void handleParticle(ClientboundParticlePacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            var mc = Minecraft.getInstance();
+            if (mc.level instanceof ClientLevel clientLevel) {
+                clientLevel.addParticle(
+                        packet.particle(),
+                        packet.overrideLimiter(),
+                        packet.alwaysShow(),
+                        packet.x(), packet.y(), packet.z(),
+                        packet.vx(), packet.vy(), packet.vz()
+                );
+            }
+        });
     }
 
     public static void handlePlaySound(ClientboundPlaySoundPacket packet, IPayloadContext context) {
@@ -150,10 +166,6 @@ public class JolCraftNetworking {
 
     public static void handleSyncReputation(ClientboundReputationPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> ClientReputationData.setTier(packet.tier()));
-    }
-
-    public static void handleDwarfEndorseAnimation(ClientboundDwarfEndorseAnimationPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> ClientReputationData.setEndorsementAnimation(packet.entityId(), true));
     }
 
     public static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {

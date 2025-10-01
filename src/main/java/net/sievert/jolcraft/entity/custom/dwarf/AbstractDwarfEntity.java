@@ -142,8 +142,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         return this.entityData.get(accessor);
     }
 
-
-    //Blocking
     public boolean shouldBlock = false;
     public int blockCooldownTicks = 0;
     public boolean canBlock() {
@@ -155,10 +153,14 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         super.tick();
         actionHelper.tick(this);
         if (blockCooldownTicks > 0) blockCooldownTicks--;
+        if (!this.level().isClientSide()) {
+            System.out.println("Spawning test heart particle at " + this.blockPosition());
+            this.level().addParticle(net.minecraft.core.particles.ParticleTypes.HEART,
+                    this.getX(), this.getY() + 2, this.getZ(), 0, 0, 0);
+        }
     }
 
     //Old
-
 
     @Nullable
     private Player tradingPlayer;

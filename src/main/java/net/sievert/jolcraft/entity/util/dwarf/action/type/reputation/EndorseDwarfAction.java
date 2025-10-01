@@ -63,11 +63,5 @@ public class EndorseDwarfAction extends InspectDwarfAction {
         updatedTablet.set(JolCraftDataComponents.REP_OWNER.get(), player.getName().getString());
         throwItem(dwarf, player, updatedTablet);
         tablet = ItemStack.EMPTY;
-//        if(!dwarf.level().isClientSide){
-//            JolCraftNetworking.sendToNearbyClients(
-//                    dwarf.level(), dwarf.blockPosition(), 32,
-//                    new ClientboundDwarfEndorseAnimationPacket(dwarf.getId())
-//            );
-//        }
     }
 }

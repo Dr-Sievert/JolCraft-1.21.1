@@ -3,14 +3,15 @@ package net.sievert.jolcraft.entity.util.dwarf.action.type.combat;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.sievert.jolcraft.client.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
 /**
  * Action for handling dwarf blocking behavior and associated particle effects.
- * Handles its own particle timers and resets when finished.
  */
 public class BlockDwarfAction implements DwarfAction {
 
@@ -44,29 +45,38 @@ public class BlockDwarfAction implements DwarfAction {
     }
 
     private void spawnBlockParticles(AbstractDwarfEntity dwarf) {
-        Vec3 look = dwarf.getLookAngle().normalize();
-        double forwardOffset = 1.0D;
-        double leftOffset = -0.4D;
-        Vec3 left = new Vec3(-look.z, 0, look.x).normalize();
+        float yawDeg = dwarf.yBodyRot;
+        float yawRad = yawDeg * Mth.DEG_TO_RAD;
 
-        double px = dwarf.getX() + look.x * forwardOffset + left.x * leftOffset;
+        Vec3 forward = new Vec3(-Mth.sin(yawRad), 0.0D, Mth.cos(yawRad)).normalize();
+        Vec3 left = new Vec3(-forward.z, 0.0D, forward.x).normalize();
+
+        double px = dwarf.getX() + forward.x + left.x * (-0.4D);
         double py = dwarf.getY() + 1.2D;
-        double pz = dwarf.getZ() + look.z * forwardOffset + left.z * leftOffset;
+        double pz = dwarf.getZ() + forward.z + left.z * (-0.4D);
 
-        Vec3 blockParticlePos = new Vec3(px, py, pz);
+        DustParticleOptions dust = new DustParticleOptions(-2233622, 0.5F);
+
         for (int i = 0; i < 5; i++) {
-            double scatterRange = 0.15D;
+            double scatter = 0.15D;
 
-            double offsetX = blockParticlePos.x + (dwarf.getRandom().nextDouble() - 0.5) * 2.0 * scatterRange;
-            double offsetY = blockParticlePos.y + (dwarf.getRandom().nextDouble() - 0.5) * 2.0 * scatterRange;
-            double offsetZ = blockParticlePos.z + (dwarf.getRandom().nextDouble() - 0.5) * 2.0 * scatterRange;
+            double ox = px + (dwarf.getRandom().nextDouble() - 0.5D) * 2.0D * scatter;
+            double oy = py + (dwarf.getRandom().nextDouble() - 0.5D) * 2.0D * scatter;
+            double oz = pz + (dwarf.getRandom().nextDouble() - 0.5D) * 2.0D * scatter;
 
-            double velocityX = (dwarf.getRandom().nextDouble() - 0.5) * 0.1;
-            double velocityY = (dwarf.getRandom().nextDouble()) * 0.1;
-            double velocityZ = (dwarf.getRandom().nextDouble() - 0.5) * 0.1;
+            double vx = (dwarf.getRandom().nextDouble() - 0.5D) * 0.1D;
+            double vy = dwarf.getRandom().nextDouble() * 0.1D;
+            double vz = (dwarf.getRandom().nextDouble() - 0.5D) * 0.1D;
 
-            DustParticleOptions dust = new DustParticleOptions(-2233622, 0.5F);
-            dwarf.level().addParticle(dust, offsetX, offsetY, offsetZ, velocityX, velocityY, velocityZ);
+            JolCraftParticleHelper.sendParticle(
+                    dwarf.level(),
+                    dwarf.blockPosition(),
+                    dust,
+                    false, false,
+                    ox, oy, oz,
+                    vx, vy, vz,
+                    32.0D
+            );
         }
     }
 }
