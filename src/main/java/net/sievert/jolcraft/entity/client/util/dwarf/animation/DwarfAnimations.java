@@ -179,7 +179,7 @@ public class DwarfAnimations {
                             new Keyframe(0.4167667f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                     AnimationChannel.Interpolations.LINEAR))).build();
 
-    public static final AnimationDefinition ATTACK_AXE = AnimationDefinition.Builder.withLength(0.5f)
+    public static final AnimationDefinition ATTACK_HEAVY = AnimationDefinition.Builder.withLength(0.5f)
             .addAnimation("right_arm",
                     new AnimationChannel(AnimationChannel.Targets.POSITION,
                             new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),

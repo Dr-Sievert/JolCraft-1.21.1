@@ -24,8 +24,10 @@ import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.entity.ai.goal.dwarf.DwarfBlockGoal;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuardEntity;
+import net.sievert.jolcraft.entity.util.dwarf.action.type.combat.BlockDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -38,30 +40,24 @@ import java.util.List;
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftEntityEvents {
 
-    //General
+    //Dwarf
 
     @SubscribeEvent
     public static void onInvulnerabilityCheck(EntityInvulnerabilityCheckEvent event) {
-        if (event.getEntity() instanceof DwarfGuardEntity dwarf &&
-                event.getSource().getEntity() instanceof Monster &&
-                dwarf.isBlockCooldownReady()) {
-
-            if (event.getSource().getEntity() instanceof Monster monster) {
-                if (monster.isWithinMeleeAttackRange((LivingEntity) event.getEntity())) {
-                    dwarf.markForBlocking();
-                    event.setInvulnerable(true);
-                    return;
-                }
-
-                if (event.getSource().getDirectEntity() instanceof Projectile) {
-                    dwarf.markForBlocking();
-                    event.setInvulnerable(true);
-                }
+        if (event.getEntity() instanceof AbstractDwarfEntity dwarf && dwarf.canBlock() && event.getSource().getEntity() instanceof Monster monster) {
+            if (event.getSource().getDirectEntity() instanceof Projectile) {
+                dwarf.shouldBlock = true;
+                dwarf.blockCooldownTicks = 75;
+                event.setInvulnerable(true);
+                return;
+            }
+            if (monster.isWithinMeleeAttackRange(dwarf)) {
+                event.setInvulnerable(true);
+                dwarf.shouldBlock = true;
+                dwarf.blockCooldownTicks = 75;
             }
         }
     }
-
-    //Dwarf
 
     @SubscribeEvent
     public static void onMonsterTarget(FinalizeSpawnEvent event) {

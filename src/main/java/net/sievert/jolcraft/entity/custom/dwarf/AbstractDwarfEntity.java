@@ -40,8 +40,6 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.sievert.jolcraft.JolCraft;
@@ -58,7 +56,6 @@ import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.entity.JolCraftEntities;
-import net.sievert.jolcraft.entity.ai.goal.dwarf.DwarfBlockGoal;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
@@ -145,13 +142,23 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
         return this.entityData.get(accessor);
     }
 
-    //Old
+
+    //Blocking
+    public boolean shouldBlock = false;
+    public int blockCooldownTicks = 0;
+    public boolean canBlock() {
+        return blockCooldownTicks == 0;
+    }
 
     @Override
     public void tick() {
         super.tick();
         actionHelper.tick(this);
+        if (blockCooldownTicks > 0) blockCooldownTicks--;
     }
+
+    //Old
+
 
     @Nullable
     private Player tradingPlayer;
@@ -270,7 +277,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
     @Override
     public void aiStep() {
         super.aiStep();
-        tickBlockCooldown();
 
         if (this.level().isClientSide) {
             if (this.forcedAgeTimer > 0) {
@@ -306,42 +312,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
                 this.spawnColoredParticles(1.0F, 0.84F, 0.0F, 1.0F, 3, 0.4D);
             }
         }
-    }
-
-
-    //Blocking
-    protected boolean shouldStartBlocking = false;
-
-    public int blockCooldown = 0;
-
-    public boolean isBlockCooldownReady() {
-        return blockCooldown <= 0;
-    }
-
-    public void setBlockCooldown(int ticks) {
-        this.blockCooldown = ticks;
-    }
-
-    public void tickBlockCooldown() {
-        if (this.goalSelector.getAvailableGoals().stream().anyMatch(
-                goal -> goal.getGoal() instanceof DwarfBlockGoal
-        )) {
-            if (blockCooldown > 0) blockCooldown--;
-        }
-    }
-
-    public void markForBlocking() {
-        if(DwarfActionHelper.isActionType(this, DwarfActionType.BLOCK)){
-            this.shouldStartBlocking = true;
-        }
-    }
-
-    public boolean consumeBlockFlag() {
-        if (this.shouldStartBlocking) {
-            this.shouldStartBlocking = false;
-            return true;
-        }
-        return false;
     }
 
     //Breeding
@@ -577,10 +547,6 @@ public class AbstractDwarfEntity extends AgeableMob implements Npc, DwarfMerchan
 
     public boolean canBePaid() {
         return this.paidTicks <= 0;
-    }
-
-    public int getPaidTicks() {
-        return this.paidTicks;
     }
 
     @Nullable

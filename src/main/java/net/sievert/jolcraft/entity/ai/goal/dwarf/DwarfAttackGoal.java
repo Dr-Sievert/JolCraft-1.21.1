@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.entity.ai.goal.dwarf;
 
 import java.util.EnumSet;
-
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,12 +8,14 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
 
 public class DwarfAttackGoal extends MeleeAttackGoal {
+
     protected final AbstractDwarfEntity dwarf;
     private final double speedModifier;
     private final boolean followingTargetEvenIfNotSeen;
@@ -24,13 +25,9 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
     private double pathedTargetZ;
     private int ticksUntilNextPathRecalculation;
     private int ticksUntilNextAttack;
-    private final int attackInterval = 20;
     private long lastCanUseCheck;
-    private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
     private int failedPathFindingPenalty = 0;
     private final boolean canPenalize = false;
-    private int attackAnimTimer = 0;
-
 
     public DwarfAttackGoal(AbstractDwarfEntity mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
@@ -98,7 +95,6 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
         }
         dwarf.level().playSound(null, dwarf.blockPosition(), JolCraftSounds.DWARF_YES.get(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         this.dwarf.setAggressive(false);
-        this.dwarf.getActionHelper().stopAction(dwarf);
         this.dwarf.getNavigation().stop();
     }
 
@@ -146,35 +142,31 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
             }
 
             this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
-            this.checkAndPerformAttack(livingentity);
-            if (attackAnimTimer > 0) {
-                attackAnimTimer--;
-                if (attackAnimTimer == 0) {
-                    this.dwarf.getActionHelper().stopAction(dwarf);
-                }
+            if (canPerformAttack(livingentity)) {
+                chooseAndSetAttackAction(dwarf, dwarf.getActionHelper());
+                this.dwarf.doHurtTarget(getServerLevel(this.dwarf), livingentity);
+                this.resetAttackCooldown();
             }
         }
     }
 
-    protected void checkAndPerformAttack(@NotNull LivingEntity target) {
-        if (this.canPerformAttack(target)) {
-            this.dwarf.getActionHelper().setAction(dwarf, DwarfActionType.ATTACK);
-            this.attackAnimTimer = 8;
-            this.resetAttackCooldown();
-            this.dwarf.doHurtTarget(getServerLevel(this.dwarf), target);
+    public static void chooseAndSetAttackAction(AbstractDwarfEntity dwarf, DwarfActionHelper actionHelper) {
+        if (dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_WARHAMMER.get()) || dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_AXE.get())) {
+            actionHelper.setAction(dwarf, DwarfActionType.Subtype.ATTACK_HEAVY);
+        } else {
+            actionHelper.setAction(dwarf, DwarfActionType.ATTACK);
         }
     }
 
-
     @Override
     protected void resetAttackCooldown() {
-        int cooldown = 20;
         if (dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_WARHAMMER.get())) {
-            cooldown = 40;
+            this.ticksUntilNextAttack = this.adjustedTickDelay(40);
         } else if (dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_AXE.get())) {
-            cooldown = 22;
+            this.ticksUntilNextAttack = this.adjustedTickDelay(22);
+        } else {
+            this.ticksUntilNextAttack = this.adjustedTickDelay(10);
         }
-        this.ticksUntilNextAttack = this.adjustedTickDelay(cooldown);
     }
 
     protected boolean isTimeToAttack() {
@@ -188,5 +180,4 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
     protected int getTicksUntilNextAttack() {
         return this.ticksUntilNextAttack;
     }
-
 }

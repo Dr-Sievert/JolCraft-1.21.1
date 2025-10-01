@@ -32,7 +32,7 @@ public enum DwarfActionType {
         GUARD_EQUIP(INSPECT),
 
         // ATTACK subtypes
-        ATTACK_AXE(ATTACK);
+        ATTACK_HEAVY(ATTACK);
 
         /** The parent action group for this subtype. */
         public final DwarfActionType parent;

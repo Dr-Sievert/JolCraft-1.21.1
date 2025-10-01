@@ -1,10 +1,18 @@
 package net.sievert.jolcraft.entity.util.dwarf.action.type.combat;
 
+import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.item.JolCraftItems;
 
 public class AttackDwarfAction implements DwarfAction {
+
+    protected AbstractDwarfEntity dwarf;
     private int ticksRemaining = 0;
+
+    public AttackDwarfAction (AbstractDwarfEntity dwarf){
+        this.dwarf = dwarf;
+    }
 
     @Override
     public DwarfActionType getType() { return DwarfActionType.ATTACK; }

@@ -25,7 +25,7 @@ public class DwarfAnimationHelper {
         BY_TYPE.put(DwarfActionType.DRINK,   DwarfAnimations.DRINK);
         BY_TYPE.put(DwarfActionType.INSPECT, DwarfAnimations.INSPECT);
 
-        BY_SUBTYPE.put(DwarfActionType.Subtype.ATTACK_AXE, DwarfAnimations.ATTACK_AXE);
+        BY_SUBTYPE.put(DwarfActionType.Subtype.ATTACK_HEAVY, DwarfAnimations.ATTACK_HEAVY);
     }
 
     /**

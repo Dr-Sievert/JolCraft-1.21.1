@@ -38,7 +38,7 @@ public class DwarfRevengeGoal extends Goal
                 // Make sure the attack damage attribute is correct right before the attack:
                 this.dwarf.setCustomAttackDamage(this.dwarf.getAttackDamage());
                 revengeTarget.hurt(this.dwarf.damageSources().mobAttack(this.dwarf), (float) Objects.requireNonNull(this.dwarf.getAttribute(Attributes.ATTACK_DAMAGE)).getValue());
-                this.dwarf.getActionHelper().setAction(dwarf, DwarfActionType.ATTACK);
+                DwarfAttackGoal.chooseAndSetAttackAction(dwarf, dwarf.getActionHelper());
                 this.dwarf.setLastHurtByMob(null);
             }
         }

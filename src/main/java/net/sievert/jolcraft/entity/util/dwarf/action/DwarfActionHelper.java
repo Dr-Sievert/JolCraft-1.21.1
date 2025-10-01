@@ -8,6 +8,7 @@ import net.sievert.jolcraft.entity.util.dwarf.action.type.*;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.bounty.BountyCrateDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.bounty.BountyDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.combat.AttackDwarfAction;
+import net.sievert.jolcraft.entity.util.dwarf.action.type.combat.AttackHeavyDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.combat.BlockDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.combat.DrinkDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.profession.GuardEquipDwarfAction;
@@ -38,10 +39,12 @@ public class DwarfActionHelper {
         if (activeAction == null) {
             activeAction = IdleDwarfAction.INSTANCE;
         }
-        activeAction.tick();
-        if (activeAction.isStopped()) {
-            activeAction.stop();
-            stopAction(dwarf);
+        if(activeAction.getType() != DwarfActionType.IDLE){
+            activeAction.tick();
+            if (activeAction.isStopped()) {
+                activeAction.stop();
+                stopAction(dwarf);
+            }
         }
     }
 
@@ -54,9 +57,7 @@ public class DwarfActionHelper {
             @Nullable InteractionHand hand,
             @Nullable ItemStack itemstack
     ) {
-        if (activeAction != null && !activeAction.isStopped() && activeAction.getType() != DwarfActionType.IDLE) {
-            return;
-        }
+        if (activeAction.getType() != DwarfActionType.IDLE) return;
         DwarfAction newAction;
         if (subtype != null) {
             newAction = switch (subtype) {
@@ -67,7 +68,7 @@ public class DwarfActionHelper {
                 case BOUNTY -> new BountyDwarfAction(dwarf, player, hand, itemstack);
                 case BOUNTY_CRATE -> new BountyCrateDwarfAction(dwarf, player, hand, itemstack);
                 case GUARD_EQUIP -> new GuardEquipDwarfAction(dwarf, player, hand, itemstack);
-                case ATTACK_AXE ->  new AttackDwarfAction(); //Needs future fix?
+                case ATTACK_HEAVY ->  new AttackHeavyDwarfAction(dwarf);
             };
         } else {
             assert type != null;
@@ -75,7 +76,7 @@ public class DwarfActionHelper {
                 case INSPECT -> new InspectDwarfAction(dwarf, player, hand, itemstack);
                 case DRINK   -> new DrinkDwarfAction();
                 case BLOCK   -> new BlockDwarfAction(dwarf);
-                case ATTACK  -> new AttackDwarfAction();
+                case ATTACK  -> new AttackDwarfAction(dwarf);
                 case IDLE    -> IdleDwarfAction.INSTANCE;
             };
         }
@@ -108,11 +109,6 @@ public class DwarfActionHelper {
         setAction(dwarf, null, subtype, player, hand, itemstack);
     }
 
-    /** Stops the current action and returns the dwarf to Idle. */
-    public void stopAction(AbstractDwarfEntity dwarf) {
-        setAction(dwarf, DwarfActionType.IDLE);
-    }
-
     /**
      * Sets the current action type value into the entity's data.
      */
@@ -125,6 +121,13 @@ public class DwarfActionHelper {
             entity.getEntityData().set(AbstractDwarfEntity.CURRENT_ACTION_SUBTYPE, -1);
         }
     }
+
+    /** Stops the current action and returns the dwarf to Idle. */
+    public void stopAction(AbstractDwarfEntity dwarf) {
+        setCurrentAction(dwarf, DwarfActionType.IDLE, null);
+        activeAction = IdleDwarfAction.INSTANCE;
+    }
+
 
     /**
      * Gets the current action type from the entity's data.
