@@ -17,11 +17,11 @@ import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHel
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfArmorLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
-import net.sievert.jolcraft.entity.custom.dwarf.AbstractBreedingEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractBreedingEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfVariant;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import org.jetbrains.annotations.NotNull;
 

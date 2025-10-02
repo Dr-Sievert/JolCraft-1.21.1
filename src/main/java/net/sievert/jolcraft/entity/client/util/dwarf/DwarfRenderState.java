@@ -2,10 +2,10 @@ package net.sievert.jolcraft.entity.client.util.dwarf;
 
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.AnimationState;
-import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfVariant;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
 import java.util.EnumMap;

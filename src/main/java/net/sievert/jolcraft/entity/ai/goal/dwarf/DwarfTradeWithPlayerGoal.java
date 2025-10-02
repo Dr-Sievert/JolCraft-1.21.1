@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 
 public class DwarfTradeWithPlayerGoal extends Goal {
     private final AbstractDwarfEntity mob;

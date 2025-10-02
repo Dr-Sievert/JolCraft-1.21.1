@@ -10,7 +10,7 @@ import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfExplorerModel;
-import net.sievert.jolcraft.entity.custom.dwarf.DwarfExplorerEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfExplorerEntity;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)

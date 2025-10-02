@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.custom.dwarf.*;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;

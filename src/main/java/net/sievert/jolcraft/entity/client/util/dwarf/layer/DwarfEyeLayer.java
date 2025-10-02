@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

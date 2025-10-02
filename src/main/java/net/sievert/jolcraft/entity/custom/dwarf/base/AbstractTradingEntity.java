@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.custom.dwarf;
+package net.sievert.jolcraft.entity.custom.dwarf.base;
 
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;

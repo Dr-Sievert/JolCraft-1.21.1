@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.custom.dwarf;
+package net.sievert.jolcraft.entity.custom.dwarf.base;
 
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
@@ -15,7 +15,6 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -25,16 +24,15 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.sievert.jolcraft.entity.JolCraftEntities;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.entity.custom.dwarf.DwarfEntity;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfVariant;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.data.DwarfData;
-import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
 
 import java.util.UUID;
 

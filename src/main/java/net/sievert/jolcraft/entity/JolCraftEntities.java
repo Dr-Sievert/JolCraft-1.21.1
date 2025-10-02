@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.custom.animal.MuffhornEntity;
 import net.sievert.jolcraft.entity.custom.dwarf.*;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.*;
 import net.sievert.jolcraft.entity.custom.object.RadiantEntity;
 
 import java.util.function.Supplier;

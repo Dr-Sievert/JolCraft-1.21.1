@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.custom.dwarf.variation;
+package net.sievert.jolcraft.entity.util.dwarf.variation;
 
 
 import java.util.Arrays;

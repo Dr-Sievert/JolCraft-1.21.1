@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.entity.ai.goal.dwarf;
 
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuardEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfGuardEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
 public class DwarfBlockGoal extends Goal {

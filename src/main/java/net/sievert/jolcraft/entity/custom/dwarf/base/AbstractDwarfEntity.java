@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.custom.dwarf;
+package net.sievert.jolcraft.entity.custom.dwarf.base;
 
 import net.minecraft.Util;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -31,15 +31,16 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.client.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfArtisanEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.data.DwarfData;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.entity.custom.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
+import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfVariant;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;

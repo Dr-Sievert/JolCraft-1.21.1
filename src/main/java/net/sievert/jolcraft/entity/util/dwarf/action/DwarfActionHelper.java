@@ -3,7 +3,7 @@ package net.sievert.jolcraft.entity.util.dwarf.action;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.*;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.bounty.BountyCrateDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.bounty.BountyDwarfAction;
