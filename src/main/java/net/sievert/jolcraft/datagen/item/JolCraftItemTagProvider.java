@@ -249,7 +249,10 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.DWARF_KEEPER_SPAWN_EGG.get())
                 .add(JolCraftItems.DWARF_ARTISAN_SPAWN_EGG.get())
                 .add(JolCraftItems.DWARF_EXPLORER_SPAWN_EGG.get())
-                .add(JolCraftItems.DWARF_MINER_SPAWN_EGG.get());
+                .add(JolCraftItems.DWARF_MINER_SPAWN_EGG.get())
+                .add(JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG.get())
+                .add(JolCraftItems.DWARF_ARCANIST_SPAWN_EGG.get())
+                .add(JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get());
 
         tag(JolCraftTags.Items.CREATURE_SPAWN_EGGS)
                 .add(JolCraftItems.MUFFHORN_SPAWN_EGG.get());
@@ -477,6 +480,4 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.MITHRIL_CHISEL.get());
 
     }
-
-
 }

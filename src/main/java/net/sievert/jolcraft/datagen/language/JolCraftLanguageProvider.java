@@ -175,11 +175,15 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("entity.jolcraft.dwarf_merchant", "Merchant");
         add("entity.jolcraft.dwarf_scrapper", "Scrapper");
         add("entity.jolcraft.dwarf_brewmaster", "Brewmaster");
+        add("entity.jolcraft.dwarf_guard", "Guard");
         add("entity.jolcraft.dwarf_keeper", "Keeper");
         add("entity.jolcraft.dwarf_artisan", "Artisan");
-        add("entity.jolcraft.dwarf_guard", "Guard");
         add("entity.jolcraft.dwarf_explorer", "Explorer");
         add("entity.jolcraft.dwarf_miner", "Miner");
+        add("entity.jolcraft.dwarf_alchemist", "Alchemist");
+        add("entity.jolcraft.dwarf_arcanist", "Arcanist");
+        add("entity.jolcraft.dwarf_priest", "Priest");
+
         add("entity.jolcraft.muffhorn", "Muffhorn");
         add("entity.jolcraft.radiant", "Radiant");
 

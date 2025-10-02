@@ -29,6 +29,9 @@ public class JolCraftModEvents {
         event.put(JolCraftEntities.DWARF_ARTISAN.get(), DwarfArtisanEntity.createAttributes().build());
         event.put(JolCraftEntities.DWARF_EXPLORER.get(), DwarfExplorerEntity.createAttributes().build());
         event.put(JolCraftEntities.DWARF_MINER.get(), DwarfMinerEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_ALCHEMIST.get(), DwarfAlchemistEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_ARCANIST.get(), DwarfArcanistEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_PRIEST.get(), DwarfPriestEntity.createAttributes().build());
 
         event.put(JolCraftEntities.MUFFHORN.get(), MuffhornEntity.createAttributes().build());
     }

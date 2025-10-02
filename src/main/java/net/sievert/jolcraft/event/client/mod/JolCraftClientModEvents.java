@@ -18,6 +18,8 @@ import net.sievert.jolcraft.block.custom.crop.HopsType;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.client.item.coin.CoinPouchTooltipRenderer;
 import net.sievert.jolcraft.client.item.compass.DialColor;
+import net.sievert.jolcraft.entity.client.model.dwarf.profession.*;
+import net.sievert.jolcraft.entity.client.render.dwarf.profession.*;
 import net.sievert.jolcraft.item.util.CoinPouchTooltip;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.client.model.animal.MuffhornModel;
@@ -57,6 +59,9 @@ public class JolCraftClientModEvents {
         EntityRenderers.register(JolCraftEntities.DWARF_ARTISAN.get(), DwarfArtisanRenderer::new);
         EntityRenderers.register(JolCraftEntities.DWARF_EXPLORER.get(), DwarfExplorerRenderer::new);
         EntityRenderers.register(JolCraftEntities.DWARF_MINER.get(), DwarfMinerRenderer::new);
+        EntityRenderers.register(JolCraftEntities.DWARF_ALCHEMIST.get(), DwarfAlchemistRenderer::new);
+        EntityRenderers.register(JolCraftEntities.DWARF_ARCANIST.get(), DwarfArcanistRenderer::new);
+        EntityRenderers.register(JolCraftEntities.DWARF_PRIEST.get(), DwarfPriestRenderer::new);
 
         //Animals
         EntityRenderers.register(JolCraftEntities.MUFFHORN.get(), MuffhornRenderer::new);
@@ -65,7 +70,6 @@ public class JolCraftClientModEvents {
         EntityRenderers.register(JolCraftEntities.RADIANT.get(), RadiantRenderer::new);
 
         //Blocks
-        //ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.STRONGBOX.get(), RenderType.cutout());
 
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.VERDANT_FARMLAND.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.BARLEY_CROP.get(), RenderType.cutout());
@@ -86,7 +90,6 @@ public class JolCraftClientModEvents {
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.FESTERLING_CROP.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.FESTERLING.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.POTTED_FESTERLING.get(), RenderType.cutout());
-
     }
 
     @SubscribeEvent
@@ -104,6 +107,9 @@ public class JolCraftClientModEvents {
         event.registerLayerDefinition(DwarfArtisanModel.LAYER_LOCATION, DwarfArtisanModel::createBodyLayer);
         event.registerLayerDefinition(DwarfExplorerModel.LAYER_LOCATION, DwarfExplorerModel::createBodyLayer);
         event.registerLayerDefinition(DwarfMinerModel.LAYER_LOCATION, DwarfMinerModel::createBodyLayer);
+        event.registerLayerDefinition(DwarfAlchemistModel.LAYER_LOCATION, DwarfAlchemistModel::createBodyLayer);
+        event.registerLayerDefinition(DwarfArcanistModel.LAYER_LOCATION, DwarfArcanistModel::createBodyLayer);
+        event.registerLayerDefinition(DwarfPriestModel.LAYER_LOCATION, DwarfPriestModel::createBodyLayer);
 
         //Animals
         event.registerLayerDefinition(MuffhornModel.LAYER_LOCATION, MuffhornModel::createBodyLayer);

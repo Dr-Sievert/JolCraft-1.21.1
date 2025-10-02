@@ -299,65 +299,87 @@ public class JolCraftModelProvider extends ModelProvider {
         itemModels.generateFlatItem(JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), ModelTemplates.FLAT_ITEM);
+
+        String dwarfEggPrimary = "aa7d66";
+
         //Eggs
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_SPAWN_EGG.get(),
-                -4355214,
-                -11125709
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("4a342c")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_GUILDMASTER_SPAWN_EGG.get(),
-                -4355214,
-                -11788222
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("4f2144")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_HISTORIAN_SPAWN_EGG.get(),
-                -4355214,
-                -12296406
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("49652d")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_MERCHANT_SPAWN_EGG.get(),
-                -4355214,
-                -6803431
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("842610")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_SCRAPPER_SPAWN_EGG.get(),
-                -4355214,
-                -7316689
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("764721")
         );
 
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_BREWMASTER_SPAWN_EGG.get(),
-                -4355214,
-                -7506898
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("806723")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_GUARD_SPAWN_EGG.get(),
-                -4355214,
-                -14606047
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("333232")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_KEEPER_SPAWN_EGG.get(),
-                -4355214,
-                -14514148
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("166b11")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_ARTISAN_SPAWN_EGG.get(),
-                -4355214,
-                -13028996
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("2f286c")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_EXPLORER_SPAWN_EGG.get(),
-                -4355214,
-                -16085340
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("0089a0")
         );
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_MINER_SPAWN_EGG.get(),
-                -4355214,
-                -13351642
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("28351c")
+        );
+        itemModels.generateSpawnEgg(
+                JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG.get(),
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("89435e")
+        );
+        itemModels.generateSpawnEgg(
+                JolCraftItems.DWARF_ARCANIST_SPAWN_EGG.get(),
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("1e6c6a")
+        );
+        itemModels.generateSpawnEgg(
+                JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get(),
+                eggColorPrimary(dwarfEggPrimary),
+                eggColorSecondary("fff05a")
         );
 
-        itemModels.generateFlatItem(JolCraftItems.MUFFHORN_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateSpawnEgg(
+                JolCraftItems.MUFFHORN_SPAWN_EGG.get(),
+                eggColorPrimary("723119"),
+                eggColorSecondary("4b1f12")
+        );
 
         //Crops
 
@@ -809,7 +831,6 @@ public class JolCraftModelProvider extends ModelProvider {
     }
 
     public void createHearth(Block hearthBlock, BlockModelGenerators blockModels) {
-        // Model generation
         TextureMapping baseMapping = new TextureMapping()
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(hearthBlock, "_side"))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(hearthBlock, "_top"))
@@ -866,6 +887,25 @@ public class JolCraftModelProvider extends ModelProvider {
                                         })
                         )
         );
+    }
+
+    static int eggColor(String hex, int mask) {
+        String s = hex.trim();
+        if (s.startsWith("#")) s = s.substring(1);
+        else if (s.startsWith("0x") || s.startsWith("0X")) s = s.substring(2);
+        int rgb = Integer.parseInt(s, 16) & 0xFFFFFF;
+        int r = Math.min(255, (((rgb >> 16) & 0xFF) * 255 + mask) / mask);
+        int g = Math.min(255, (((rgb >> 8)  & 0xFF) * 255 + mask) / mask);
+        int b = Math.min(255, (( rgb        & 0xFF) * 255 + mask) / mask);
+        return (int)(0xFF000000L | (r << 16) | (g << 8) | b);
+    }
+
+    static int eggColorPrimary(String hex) {
+        return eggColor(hex, 232);
+    }
+
+    static int eggColorSecondary(String hex) {
+        return eggColor(hex, 222);
     }
 
     private static JsonObject modelObj(String path) {

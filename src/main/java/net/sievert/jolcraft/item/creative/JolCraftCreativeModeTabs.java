@@ -254,6 +254,9 @@ public class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.DWARF_ARTISAN_SPAWN_EGG);
                         pOutput.accept(JolCraftItems.DWARF_EXPLORER_SPAWN_EGG);
                         pOutput.accept(JolCraftItems.DWARF_MINER_SPAWN_EGG);
+                        pOutput.accept(JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG);
+                        pOutput.accept(JolCraftItems.DWARF_ARCANIST_SPAWN_EGG);
+                        pOutput.accept(JolCraftItems.DWARF_PRIEST_SPAWN_EGG);
                         pOutput.accept(JolCraftItems.MUFFHORN_SPAWN_EGG);
 
                     }).build());

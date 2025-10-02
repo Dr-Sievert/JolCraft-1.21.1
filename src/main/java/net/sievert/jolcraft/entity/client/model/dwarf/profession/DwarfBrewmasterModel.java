@@ -1,23 +1,23 @@
-package net.sievert.jolcraft.entity.client.model.dwarf;
-
+package net.sievert.jolcraft.entity.client.model.dwarf.profession;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import org.jetbrains.annotations.NotNull;
 
-public class DwarfArtisanModel extends DwarfModel{
+public class DwarfBrewmasterModel extends DwarfModel {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_artisan"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_brewmaster"), "main");
 
-    public DwarfArtisanModel(ModelPart root) {super(root);}
+    public DwarfBrewmasterModel(ModelPart root) {
+        super(root);
+    }
 
     @Override
     public void setupAnim(DwarfRenderState state) {
@@ -30,11 +30,10 @@ public class DwarfArtisanModel extends DwarfModel{
         if (side == HumanoidArm.LEFT) {
             this.root.translateAndRotate(poseStack);
             this.getArm(side).translateAndRotate(poseStack);
-            poseStack.translate(0.05F, -0.03F, 0.0F);
+            poseStack.translate(0.1F, -0.15F, 0.0F);
         } else {
             super.translateToHand(side, poseStack);
         }
     }
 
 }
-

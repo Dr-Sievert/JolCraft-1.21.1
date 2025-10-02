@@ -2,6 +2,8 @@ package net.sievert.jolcraft.entity.util.dwarf.profession;
 
 public enum DwarfProfession {
     NONE("none"),
+    ALCHEMIST("alchemist"),
+    ARCANIST("arcanist"),
     ARTISAN("artisan"),
     BREWMASTER("brewmaster"),
     EXPLORER("explorer"),
@@ -10,6 +12,7 @@ public enum DwarfProfession {
     KEEPER("keeper"),
     MERCHANT("merchant"),
     MINER("miner"),
+    PRIEST("priest"),
     SCRAPPER("scrapper");
 
     private final String id;

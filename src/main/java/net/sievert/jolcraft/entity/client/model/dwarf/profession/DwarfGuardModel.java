@@ -1,8 +1,7 @@
-package net.sievert.jolcraft.entity.client.model.dwarf;
+package net.sievert.jolcraft.entity.client.model.dwarf.profession;
 
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,12 +9,12 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimations;
 import org.jetbrains.annotations.NotNull;
 
-public class DwarfGuardModel extends DwarfModel{
+public class DwarfGuardModel extends DwarfModel {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_guard"), "main");
 

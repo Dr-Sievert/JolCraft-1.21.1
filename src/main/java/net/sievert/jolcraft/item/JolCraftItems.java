@@ -369,6 +369,15 @@ public class JolCraftItems {
     public static final DeferredItem<Item> DWARF_MINER_SPAWN_EGG = ITEMS.registerItem("dwarf_miner_spawn_egg",
             (properties) -> new SpawnEggItem(JolCraftEntities.DWARF_MINER.get(), properties));
 
+    public static final DeferredItem<Item> DWARF_ALCHEMIST_SPAWN_EGG = ITEMS.registerItem("dwarf_alchemist_spawn_egg",
+            (properties) -> new SpawnEggItem(JolCraftEntities.DWARF_ALCHEMIST.get(), properties));
+
+    public static final DeferredItem<Item> DWARF_ARCANIST_SPAWN_EGG = ITEMS.registerItem("dwarf_arcanist_spawn_egg",
+            (properties) -> new SpawnEggItem(JolCraftEntities.DWARF_ARCANIST.get(), properties));
+
+    public static final DeferredItem<Item> DWARF_PRIEST_SPAWN_EGG = ITEMS.registerItem("dwarf_priest_spawn_egg",
+            (properties) -> new SpawnEggItem(JolCraftEntities.DWARF_PRIEST.get(), properties));
+
 
     public static final DeferredItem<Item> MUFFHORN_SPAWN_EGG = ITEMS.registerItem("muffhorn_spawn_egg",
             (properties) -> new SpawnEggItem(JolCraftEntities.MUFFHORN.get(), properties));
