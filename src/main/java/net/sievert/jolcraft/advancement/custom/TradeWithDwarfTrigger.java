@@ -9,6 +9,8 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.entity.custom.dwarf.AbstractDwarfEntity;
@@ -16,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+/**
+ * Advancement trigger for trading with a dwarf, optionally filtered by entity type.
+ */
 public class TradeWithDwarfTrigger extends SimpleCriterionTrigger<TradeWithDwarfTrigger.TriggerInstance> {
 
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade_with_dwarf");
@@ -28,36 +33,60 @@ public class TradeWithDwarfTrigger extends SimpleCriterionTrigger<TradeWithDwarf
         return TriggerInstance.CODEC;
     }
 
-    /** Called when the player successfully trades with the dwarf */
+    /**
+     * Call this when a player successfully trades with a dwarf.
+     */
     public void trigger(ServerPlayer player, AbstractDwarfEntity dwarf) {
         this.trigger(player, instance -> instance.matches(dwarf));
     }
 
-    /** Convenient method to create Criterion for advancement JSON */
-    public static Criterion<TriggerInstance> tradedWithSpecificDwarf(String dwarfId) {
+    /**
+     * Creates a criterion for a specific entity type (uses EntityType, stores as ResourceLocation).
+     */
+    public static Criterion<TriggerInstance> tradedWithSpecificDwarf(EntityType<?> entityType) {
+        ResourceLocation id = entityType.builtInRegistryHolder().key().location();
         return JolCraftCriteriaTriggers.TRADE_WITH_DWARF.createCriterion(
-                new TriggerInstance(Optional.empty(), Optional.of(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, dwarfId)))
+                new TriggerInstance(Optional.empty(), Optional.of(id))
         );
     }
 
+    /**
+     * Creates a criterion that matches trading with any dwarf.
+     */
     public static Criterion<TriggerInstance> tradedWithAnyDwarf() {
         return JolCraftCriteriaTriggers.TRADE_WITH_DWARF.createCriterion(
                 new TriggerInstance(Optional.empty(), Optional.empty())
         );
     }
 
-    public record TriggerInstance(Optional<ContextAwarePredicate> player, Optional<ResourceLocation> dwarfType)
+    /**
+     * Instance data for a trade-with-dwarf criterion.
+     * Stores player predicate and optional dwarf entity type as ResourceLocation for codec stability.
+     */
+    public record TriggerInstance(Optional<ContextAwarePredicate> player, Optional<ResourceLocation> dwarfTypeId)
             implements SimpleCriterionTrigger.SimpleInstance {
 
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
                         EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
-                        ResourceLocation.CODEC.optionalFieldOf("dwarf_type").forGetter(TriggerInstance::dwarfType)
+                        ResourceLocation.CODEC.optionalFieldOf("dwarf_type").forGetter(TriggerInstance::dwarfTypeId)
                 ).apply(instance, TriggerInstance::new)
         );
 
+        /**
+         * Checks if the given dwarf matches the trigger's entity type filter.
+         */
         public boolean matches(AbstractDwarfEntity dwarf) {
-            return dwarfType.isEmpty() || dwarf.getType().builtInRegistryHolder().key().location().equals(dwarfType.get());
+            if (dwarfTypeId.isEmpty()) return true;
+            ResourceLocation entityId = dwarf.getType().builtInRegistryHolder().key().location();
+            return entityId.equals(dwarfTypeId.get());
+        }
+
+        /**
+         * Resolves the stored ResourceLocation to an EntityType, if present in the registry.
+         */
+        public Optional<EntityType<?>> resolvedEntityType() {
+            return dwarfTypeId.flatMap(BuiltInRegistries.ENTITY_TYPE::getOptional);
         }
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.custom.*;
+import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.minecraft.advancements.AdvancementHolder;
@@ -94,7 +95,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         true, true, false
                 )
-                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf("dwarf_historian"))
+                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_HISTORIAN.get()))
                 .save(consumer, tradehistorianId);
 
         ResourceLocation endorsehistorianId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_historian");
@@ -123,7 +124,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         true, true, false
                 )
-                .addCriterion("trade_merchant", TradeWithDwarfTrigger.tradedWithSpecificDwarf("dwarf_merchant"))
+                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_MERCHANT.get()))
                 .save(consumer, trademerchantId);
 
         ResourceLocation endorsemerchantId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_merchant");
@@ -153,7 +154,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         true, true, false
                 )
-                .addCriterion("trade_scrapper", TradeWithDwarfTrigger.tradedWithSpecificDwarf("dwarf_scrapper"))
+                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_SCRAPPER.get()))
                 .save(consumer, tradescrapperId);
 
         ResourceLocation endorsescrapperId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_scrapper");
@@ -216,7 +217,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         true, true, false
                 )
-                .addCriterion("trade_brewmaster", TradeWithDwarfTrigger.tradedWithSpecificDwarf("dwarf_brewmaster"))
+                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_BREWMASTER.get()))
                 .save(consumer, tradebrewmasterId);
 
         ResourceLocation endorsebrewmasterId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_brewmaster");
@@ -246,7 +247,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         true, true, false
                 )
-                .addCriterion("trade_guard", TradeWithDwarfTrigger.tradedWithSpecificDwarf("dwarf_guard"))
+                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_GUARD.get()))
                 .save(consumer, tradeguardId);
 
         ResourceLocation endorseguardId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_guard");
@@ -276,7 +277,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                         AdvancementType.TASK,
                         true, true, false
                 )
-                .addCriterion("trade_keeper", TradeWithDwarfTrigger.tradedWithSpecificDwarf("dwarf_keeper"))
+                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_KEEPER.get()))
                 .save(consumer, tradekeeperId);
 
         ResourceLocation endorsekeeperId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_keeper");

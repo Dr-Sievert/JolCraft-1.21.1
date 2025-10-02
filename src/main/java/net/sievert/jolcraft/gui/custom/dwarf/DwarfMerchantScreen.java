@@ -1,13 +1,16 @@
 package net.sievert.jolcraft.gui.custom.dwarf;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.player.Inventory;
@@ -31,10 +34,10 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
     );
     private static final ResourceLocation EXPERIENCE_BAR_CURRENT_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_current");
     private static final ResourceLocation EXPERIENCE_BAR_RESULT_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_result");
-    private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/scroller");
-    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/scroller_disabled");
-    private static final ResourceLocation TRADE_ARROW_OUT_OF_STOCK_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/trade_arrow_out_of_stock");
-    private static final ResourceLocation TRADE_ARROW_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/trade_arrow");
+    private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/scroller");
+    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/scroller_disabled");
+    private static final ResourceLocation TRADE_ARROW_OUT_OF_STOCK_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/trade_arrow_out_of_stock");
+    private static final ResourceLocation TRADE_ARROW_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/trade_arrow");
     private static final ResourceLocation DISCOUNT_STRIKETHRUOGH_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/discount_strikethrough");
     /**
      * The GUI texture for the villager merchant GUI.
@@ -323,6 +326,28 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
             super(x, y, 88, 20, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION);
             this.index = index;
             this.visible = false;
+        }
+
+        protected static final WidgetSprites SPRITES = new WidgetSprites(
+                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "widget/button"),
+                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "widget/button_disabled"),
+                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "widget/button_highlighted")
+        );
+
+        @Override
+        protected void renderWidget(GuiGraphics p_281670_, int p_282682_, int p_281714_, float p_282542_) {
+            Minecraft minecraft = Minecraft.getInstance();
+            p_281670_.blitSprite(
+                    RenderType::guiTextured,
+                    SPRITES.get(this.active, this.isHoveredOrFocused()),
+                    this.getX(),
+                    this.getY(),
+                    this.getWidth(),
+                    this.getHeight(),
+                    ARGB.white(this.alpha)
+            );
+            int i = getFGColor();
+            this.renderString(p_281670_, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
         }
 
         public int getIndex() {
