@@ -9,7 +9,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.client.item.compass.DialItemColor;
+import net.sievert.jolcraft.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.item.util.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;

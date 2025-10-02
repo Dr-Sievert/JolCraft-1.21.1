@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.client.util;
+package net.sievert.jolcraft.network.util;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

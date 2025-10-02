@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.client.item.compass;
+package net.sievert.jolcraft.item.client.compass;
 
 
 import javax.annotation.Nullable;

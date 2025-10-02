@@ -16,8 +16,8 @@ import net.sievert.jolcraft.block.custom.FermentingCauldronBlock;
 import net.sievert.jolcraft.block.custom.FermentingStage;
 import net.sievert.jolcraft.block.custom.crop.HopsType;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.client.item.coin.CoinPouchTooltipRenderer;
-import net.sievert.jolcraft.client.item.compass.DialColor;
+import net.sievert.jolcraft.item.client.coin.CoinPouchTooltipRenderer;
+import net.sievert.jolcraft.item.client.compass.DialColor;
 import net.sievert.jolcraft.entity.client.model.dwarf.profession.*;
 import net.sievert.jolcraft.entity.client.render.dwarf.profession.*;
 import net.sievert.jolcraft.item.util.CoinPouchTooltip;
@@ -37,7 +37,7 @@ import net.sievert.jolcraft.gui.custom.strongbox.LockScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.StrongboxScreen;
 import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
 import net.sievert.jolcraft.data.custom.component.LoreLineIdProperty;
-import net.sievert.jolcraft.client.item.compass.DeepslateCompassAngle;
+import net.sievert.jolcraft.item.client.compass.DeepslateCompassAngle;
 
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

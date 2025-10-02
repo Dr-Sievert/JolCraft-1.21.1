@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.client.item.coin;
+package net.sievert.jolcraft.item.client.coin;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

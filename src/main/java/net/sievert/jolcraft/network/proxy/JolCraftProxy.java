@@ -12,6 +12,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
  * This ensures the correct value is returned for each side (server = real, client = last-synced/cached).
  */
 public interface JolCraftProxy {
+
     JolCraftProxy CLIENT = new JolCraftClientProxy();
     JolCraftProxy SERVER = new JolCraftServerProxy();
 
