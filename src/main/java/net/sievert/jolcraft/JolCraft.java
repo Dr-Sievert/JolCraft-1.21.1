@@ -27,9 +27,9 @@ import net.sievert.jolcraft.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.worldgen.JolCraftBlockPredicateTypes;
-import net.sievert.jolcraft.worldgen.JolCraftProcessors;
-import net.sievert.jolcraft.worldgen.JolCraftStructures;
+import net.sievert.jolcraft.worldgen.feature.JolCraftBlockPredicateTypes;
+import net.sievert.jolcraft.worldgen.processor.JolCraftProcessors;
+import net.sievert.jolcraft.worldgen.structure.JolCraftStructures;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 

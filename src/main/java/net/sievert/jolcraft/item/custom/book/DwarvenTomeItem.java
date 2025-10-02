@@ -11,7 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;

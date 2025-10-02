@@ -12,7 +12,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
-import net.sievert.jolcraft.worldgen.JolCraftProcessors;
+import net.sievert.jolcraft.worldgen.processor.JolCraftProcessors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

@@ -9,7 +9,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.sievert.jolcraft.worldgen.JolCraftProcessors;
+import net.sievert.jolcraft.worldgen.processor.JolCraftProcessors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.tooltip.UnidentifiedItem;
-import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;

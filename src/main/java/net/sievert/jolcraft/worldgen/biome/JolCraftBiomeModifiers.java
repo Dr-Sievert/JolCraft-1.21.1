@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.worldgen;
+package net.sievert.jolcraft.worldgen.biome;
 
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -12,6 +12,7 @@ import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.worldgen.feature.JolCraftPlacedFeatures;
 
 public class JolCraftBiomeModifiers {
 

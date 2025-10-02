@@ -16,8 +16,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.data.util.attachment.AncientEffectHelper;
-import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.language.AncientEffectHelper;
+import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;

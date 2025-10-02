@@ -25,7 +25,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyTier;

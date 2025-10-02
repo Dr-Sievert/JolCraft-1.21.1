@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.worldgen;
+package net.sievert.jolcraft.worldgen.feature;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;

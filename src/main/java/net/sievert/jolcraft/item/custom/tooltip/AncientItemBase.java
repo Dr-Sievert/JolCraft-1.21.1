@@ -9,8 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.util.attachment.AncientEffectHelper;
+import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.language.AncientEffectHelper;
 import net.sievert.jolcraft.item.util.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;

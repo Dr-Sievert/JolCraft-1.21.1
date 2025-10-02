@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.util.attachment;
+package net.sievert.jolcraft.data.util.attachment.reputation;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;

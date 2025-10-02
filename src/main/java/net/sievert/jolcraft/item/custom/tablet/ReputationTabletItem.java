@@ -19,8 +19,8 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
-import net.sievert.jolcraft.data.util.attachment.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

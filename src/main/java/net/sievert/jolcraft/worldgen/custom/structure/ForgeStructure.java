@@ -20,7 +20,7 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.pools.alias.PoolAliasLookup;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
-import net.sievert.jolcraft.worldgen.JolCraftStructures;
+import net.sievert.jolcraft.worldgen.structure.JolCraftStructures;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;

@@ -24,7 +24,7 @@ import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.data.util.attachment.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
