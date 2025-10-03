@@ -1,6 +1,6 @@
-package net.sievert.jolcraft.data.util.lore.dwarf;
+package net.sievert.jolcraft.data.custom.lore.dwarf;
 
-import net.sievert.jolcraft.data.util.lore.*;
+import net.sievert.jolcraft.data.custom.lore.*;
 
 public record DwarfLoreEntry(
         DwarfLoreKey key,

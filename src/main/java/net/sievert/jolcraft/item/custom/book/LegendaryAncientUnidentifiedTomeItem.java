@@ -6,13 +6,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.util.lore.LoreAge;
-import net.sievert.jolcraft.data.util.lore.LoreRarity;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntry;
+import net.sievert.jolcraft.data.custom.lore.LoreAge;
+import net.sievert.jolcraft.data.custom.lore.LoreRarity;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntry;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.data.util.lore.LoreHelper;
+import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTomeItem{

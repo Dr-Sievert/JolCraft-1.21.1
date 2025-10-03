@@ -36,7 +36,7 @@ import net.sievert.jolcraft.gui.custom.lapidary_bench.LapidaryBenchScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.LockScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.StrongboxScreen;
 import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
-import net.sievert.jolcraft.data.custom.component.LoreLineIdProperty;
+import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
 import net.sievert.jolcraft.item.client.compass.DeepslateCompassAngle;
 
 
@@ -151,8 +151,8 @@ public class JolCraftClientModEvents {
     @SubscribeEvent
     public static void onRegisterSelectItemModelProperty(RegisterSelectItemModelPropertyEvent event) {
         event.register(
-                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "lore_line_id"),
-                LoreLineIdProperty.TYPE
+                LoreKeyProperty.KEY,
+                LoreKeyProperty.TYPE
         );
         event.register(
                 CoinPouchAmountProperty.KEY,

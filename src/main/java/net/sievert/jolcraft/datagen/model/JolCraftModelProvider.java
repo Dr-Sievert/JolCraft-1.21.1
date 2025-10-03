@@ -31,16 +31,15 @@ import net.sievert.jolcraft.block.custom.crop.BarleyCropBlock;
 import net.sievert.jolcraft.block.custom.crop.FesterlingCropBlock;
 import net.sievert.jolcraft.block.custom.crop.HopsCropBottomBlock;
 import net.sievert.jolcraft.block.custom.crop.HopsCropTopBlock;
-import net.sievert.jolcraft.data.util.lore.LoreRarity;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.LoreRarity;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
-import net.sievert.jolcraft.data.util.lore.LoreHelper;
-import net.sievert.jolcraft.data.custom.component.LoreLineIdProperty;
+import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -554,7 +553,7 @@ public class JolCraftModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 tomeItem,
                 new SelectItemModel.Unbaked(
-                        new SelectItemModel.UnbakedSwitch<>(LoreLineIdProperty.INSTANCE, switchCases),
+                        new SelectItemModel.UnbakedSwitch<>(LoreKeyProperty.INSTANCE, switchCases),
                         Optional.of(fallbackModel)
                 )
         );

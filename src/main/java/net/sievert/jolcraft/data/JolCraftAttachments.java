@@ -11,7 +11,7 @@ import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLangua
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlockImpl;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 
 import java.util.function.Supplier;
 

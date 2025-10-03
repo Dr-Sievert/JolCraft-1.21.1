@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.util.lore;
+package net.sievert.jolcraft.data.custom.lore;
 
 public enum LoreAge {
     MODERN,

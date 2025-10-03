@@ -4,12 +4,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.util.lore.LoreHelper;
+import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.minecraft.ChatFormatting;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntry;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.item.custom.tooltip.AncientItemBase;
 import org.jetbrains.annotations.NotNull;
 

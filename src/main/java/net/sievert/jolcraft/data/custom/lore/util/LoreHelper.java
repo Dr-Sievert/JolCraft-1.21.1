@@ -1,8 +1,11 @@
-package net.sievert.jolcraft.data.util.lore;
+package net.sievert.jolcraft.data.custom.lore.util;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.custom.lore.LoreAge;
+import net.sievert.jolcraft.data.custom.lore.LoreEntry;
+import net.sievert.jolcraft.data.custom.lore.LoreRarity;
 
 import java.util.*;
 

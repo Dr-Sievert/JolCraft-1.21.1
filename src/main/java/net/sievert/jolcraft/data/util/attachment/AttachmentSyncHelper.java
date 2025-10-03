@@ -6,7 +6,7 @@ import net.sievert.jolcraft.data.util.attachment.language.AncientDwarvenLanguage
 import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.util.attachment.lore.DwarfTomeHelper;
 import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.*;

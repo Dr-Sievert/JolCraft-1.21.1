@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.gui.custom.slot.LapidarySlot;
 import net.sievert.jolcraft.gui.JolCraftMenuTypes;

@@ -11,10 +11,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.util.lore.LoreHelper;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntry;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

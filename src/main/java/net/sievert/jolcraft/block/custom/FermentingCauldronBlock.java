@@ -31,7 +31,7 @@ import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.data.util.attachment.lore.DwarfTomeHelper;
 import org.jetbrains.annotations.Nullable;

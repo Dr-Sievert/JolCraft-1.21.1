@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.custom.component;
+package net.sievert.jolcraft.data.custom.lore.client;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -16,21 +16,20 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 /**
- * Model predicate property for switching legendary tome models by LORE_LINE_ID.
+ * Model predicate property for switching item models models by JolCraftDataComponents.LORE_KEY.
  * This is a stateless, singleton property used only for SelectItemModel.
  */
 @OnlyIn(Dist.CLIENT)
-public final class LoreLineIdProperty implements SelectItemModelProperty<String> {
-    public static final ResourceLocation LORE_LINE_ID_PROPERTY = ResourceLocation.fromNamespaceAndPath("jolcraft", "lore_line_id");
+public final class LoreKeyProperty implements SelectItemModelProperty<String> {
+    public static final ResourceLocation KEY = ResourceLocation.fromNamespaceAndPath("jolcraft", "lore_key");
+    public static final LoreKeyProperty INSTANCE = new LoreKeyProperty();
 
-    public static final LoreLineIdProperty INSTANCE = new LoreLineIdProperty();
+    public static final MapCodec<LoreKeyProperty> MAP_CODEC = MapCodec.unit(INSTANCE);
 
-    public static final MapCodec<LoreLineIdProperty> MAP_CODEC = MapCodec.unit(INSTANCE);
-
-    public static final Type<LoreLineIdProperty, String> TYPE =
+    public static final Type<LoreKeyProperty, String> TYPE =
             SelectItemModelProperty.Type.create(MAP_CODEC, Codec.STRING);
 
-    private LoreLineIdProperty() {}
+    private LoreKeyProperty() {}
 
     @Nullable
     @Override

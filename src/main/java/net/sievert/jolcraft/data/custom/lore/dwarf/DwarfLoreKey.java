@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.util.lore.dwarf;
+package net.sievert.jolcraft.data.custom.lore.dwarf;
 
 public enum DwarfLoreKey {
 

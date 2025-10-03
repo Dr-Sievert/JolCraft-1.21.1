@@ -7,18 +7,15 @@ import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLangua
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlockImpl;
-import net.sievert.jolcraft.data.util.lore.LoreHelper;
-import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.network.client.data.ClientAncientLanguageData;
 import net.sievert.jolcraft.network.client.data.ClientLanguageData;
 import net.sievert.jolcraft.network.client.data.ClientReputationData;
 import net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData;
 
 import java.util.HashSet;
-import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Client proxy that uses local client cache for some attachments.
