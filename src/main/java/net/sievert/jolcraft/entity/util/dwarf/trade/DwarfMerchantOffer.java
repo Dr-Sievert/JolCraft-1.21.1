@@ -9,7 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.item.custom.merchant.CoinPouchItem;
-import net.sievert.jolcraft.item.util.CoinPouchHelper;
+import net.sievert.jolcraft.item.util.coin.CoinPouchHelper;
 
 public class DwarfMerchantOffer {
     public static final Codec<DwarfMerchantOffer> CODEC = RecordCodecBuilder.create(

@@ -14,11 +14,14 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.Equippable;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import org.jetbrains.annotations.NotNull;
 
+@OnlyIn(Dist.CLIENT)
 public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     public DwarfArmorLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {

@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.item.util.CoinPouchTooltip;
+import net.sievert.jolcraft.item.util.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 

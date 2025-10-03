@@ -18,9 +18,9 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.data.util.attachment.language.AncientEffectHelper;
-import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.util.attachment.lore.DwarfTomeHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.AncientEffectHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

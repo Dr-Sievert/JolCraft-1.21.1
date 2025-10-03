@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyTier;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;

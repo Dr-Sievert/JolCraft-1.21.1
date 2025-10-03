@@ -1,11 +1,10 @@
-package net.sievert.jolcraft.data.util.attachment.lore;
+package net.sievert.jolcraft.data.custom.lore.dwarf;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlock;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.network.JolCraftNetworking;

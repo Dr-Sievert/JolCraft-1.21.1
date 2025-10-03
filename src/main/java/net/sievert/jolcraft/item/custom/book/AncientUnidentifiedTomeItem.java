@@ -16,8 +16,8 @@ import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntry;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.tooltip.AncientUnidentifiedItem;
-import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.util.attachment.language.AncientEffectHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.AncientEffectHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import org.jetbrains.annotations.NotNull;
 

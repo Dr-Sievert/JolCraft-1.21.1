@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@OnlyIn(Dist.CLIENT)
 public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     private static final Map<DwarfEyeColor, ResourceLocation> LOCATION_BY_EYE =

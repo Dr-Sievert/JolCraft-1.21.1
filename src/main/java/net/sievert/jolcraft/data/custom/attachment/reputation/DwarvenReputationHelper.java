@@ -1,10 +1,9 @@
-package net.sievert.jolcraft.data.util.attachment.reputation;
+package net.sievert.jolcraft.data.custom.attachment.reputation;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.JolCraftAttachments;
-import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;

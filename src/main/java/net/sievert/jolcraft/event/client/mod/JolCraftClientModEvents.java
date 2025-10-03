@@ -20,7 +20,7 @@ import net.sievert.jolcraft.item.client.coin.CoinPouchTooltipRenderer;
 import net.sievert.jolcraft.item.client.compass.DialColor;
 import net.sievert.jolcraft.entity.client.model.dwarf.profession.*;
 import net.sievert.jolcraft.entity.client.render.dwarf.profession.*;
-import net.sievert.jolcraft.item.util.CoinPouchTooltip;
+import net.sievert.jolcraft.item.util.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.client.model.animal.MuffhornModel;
 import net.sievert.jolcraft.entity.client.model.blockentity.StrongboxModel;
@@ -35,7 +35,7 @@ import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantScreen;
 import net.sievert.jolcraft.gui.custom.lapidary_bench.LapidaryBenchScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.LockScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.StrongboxScreen;
-import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
+import net.sievert.jolcraft.item.util.coin.CoinPouchAmountProperty;
 import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
 import net.sievert.jolcraft.item.client.compass.DeepslateCompassAngle;
 

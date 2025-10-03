@@ -6,13 +6,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.util.object.RadiantRenderState;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Model for RadiantEntity – single "body" cube, fully animation-driven.
- */
+@OnlyIn(Dist.CLIENT)
 public class RadiantModel extends EntityModel<RadiantRenderState>  {
 
     /** Layer location for Radiant model (register in client init). */

@@ -17,7 +17,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

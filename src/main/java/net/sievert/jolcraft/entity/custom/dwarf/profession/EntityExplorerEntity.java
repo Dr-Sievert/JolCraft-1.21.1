@@ -21,12 +21,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.item.util.StructureGroupColorHelper;
+import net.sievert.jolcraft.item.util.compass.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.data.util.attachment.DiscoveredStructuresHelper;
+import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 

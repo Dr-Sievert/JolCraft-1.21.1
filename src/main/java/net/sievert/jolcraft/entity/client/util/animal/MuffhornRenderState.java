@@ -1,8 +1,11 @@
 package net.sievert.jolcraft.entity.client.util.animal;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.entity.custom.animal.MuffhornEntity;
 
+@OnlyIn(Dist.CLIENT)
 public class MuffhornRenderState extends LivingEntityRenderState {
     private MuffhornEntity entity;
     public boolean isSheared;

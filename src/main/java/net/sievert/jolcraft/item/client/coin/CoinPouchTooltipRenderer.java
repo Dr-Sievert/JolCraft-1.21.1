@@ -7,7 +7,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.sievert.jolcraft.item.util.CoinPouchTooltip;
+import net.sievert.jolcraft.item.util.coin.CoinPouchTooltip;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)

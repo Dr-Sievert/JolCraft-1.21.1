@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.util;
+package net.sievert.jolcraft.item.util.compass;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.levelgen.structure.Structure;

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.util.attachment;
+package net.sievert.jolcraft.data.custom.attachment.compass;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -14,8 +14,6 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.sievert.jolcraft.data.JolCraftStats;
-import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructures;
-import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructuresImpl;
 
 import javax.annotation.Nullable;
 import java.util.List;

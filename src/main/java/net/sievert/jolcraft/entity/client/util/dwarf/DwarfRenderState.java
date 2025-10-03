@@ -2,6 +2,8 @@ package net.sievert.jolcraft.entity.client.util.dwarf;
 
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.AnimationState;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
@@ -14,6 +16,7 @@ import java.util.EnumMap;
  * Holds per-frame state for rendering a dwarf entity.
  * This includes animation states, visual appearance, and current action information.
  */
+@OnlyIn(Dist.CLIENT)
 public class DwarfRenderState extends HumanoidRenderState {
 
     /**

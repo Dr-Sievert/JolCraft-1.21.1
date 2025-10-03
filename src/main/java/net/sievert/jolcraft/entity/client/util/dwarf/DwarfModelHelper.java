@@ -4,8 +4,11 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 
+@OnlyIn(Dist.CLIENT)
 public class DwarfModelHelper {
 
     private DwarfModelHelper() {}

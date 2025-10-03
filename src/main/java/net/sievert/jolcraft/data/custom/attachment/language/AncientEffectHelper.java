@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.util.attachment.language;
+package net.sievert.jolcraft.data.custom.attachment.language;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.custom.component;
+package net.sievert.jolcraft.item.util.coin;
 
 
 import com.mojang.serialization.Codec;

@@ -2,6 +2,8 @@ package net.sievert.jolcraft.entity.client.util.dwarf.animation;
 
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.world.entity.AnimationState;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
@@ -13,6 +15,7 @@ import java.util.Map;
  * Central animation lookup. Both DwarfActionType and Subtype
  * can be passed to resolve the final animation.
  */
+@OnlyIn(Dist.CLIENT)
 public class DwarfAnimationHelper {
 
     private static final Map<DwarfActionType, AnimationDefinition> BY_TYPE = new EnumMap<>(DwarfActionType.class);

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.util;
+package net.sievert.jolcraft.item.util.tooltip;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;

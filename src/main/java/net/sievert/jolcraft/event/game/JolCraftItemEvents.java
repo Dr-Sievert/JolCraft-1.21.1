@@ -36,8 +36,8 @@ import net.sievert.jolcraft.item.custom.scrapper.SpannerItem;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundPlaySoundPacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.data.util.attachment.DiscoveredStructuresHelper;
-import net.sievert.jolcraft.item.util.DeepslateCompassHelper;
+import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructuresHelper;
+import net.sievert.jolcraft.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.entity.util.dwarf.SalvageLootHelper;
 
 import java.util.List;

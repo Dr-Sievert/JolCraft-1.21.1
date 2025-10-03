@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;

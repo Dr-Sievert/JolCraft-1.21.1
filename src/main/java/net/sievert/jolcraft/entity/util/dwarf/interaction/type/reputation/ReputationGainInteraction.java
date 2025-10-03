@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
-import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.InspectInteraction;

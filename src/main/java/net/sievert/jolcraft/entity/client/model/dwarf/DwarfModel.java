@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.HumanoidArm;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
@@ -17,6 +19,7 @@ import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimationHel
 import net.sievert.jolcraft.entity.client.util.dwarf.animation.DwarfAnimations;
 import org.jetbrains.annotations.NotNull;
 
+@OnlyIn(Dist.CLIENT)
 public class DwarfModel extends HumanoidModel<DwarfRenderState>{
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf"), "main");

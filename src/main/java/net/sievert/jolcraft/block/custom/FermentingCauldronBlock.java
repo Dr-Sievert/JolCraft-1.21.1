@@ -33,7 +33,7 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.data.util.attachment.lore.DwarfTomeHelper;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;

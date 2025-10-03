@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.util;
+package net.sievert.jolcraft.item.util.compass;
 
 import java.util.Map;
 

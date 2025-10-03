@@ -38,7 +38,7 @@ import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
+import net.sievert.jolcraft.item.util.coin.CoinPouchAmountProperty;
 import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
 import org.jetbrains.annotations.NotNull;
 

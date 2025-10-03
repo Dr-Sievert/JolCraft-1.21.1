@@ -1,11 +1,11 @@
-package net.sievert.jolcraft.data.util.attachment;
+package net.sievert.jolcraft.network.util;
 
 
 import net.minecraft.server.level.ServerPlayer;
-import net.sievert.jolcraft.data.util.attachment.language.AncientDwarvenLanguageHelper;
-import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.util.attachment.lore.DwarfTomeHelper;
-import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLanguageHelper;
+import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
+import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.network.JolCraftNetworking;
