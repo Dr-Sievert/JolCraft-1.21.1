@@ -35,9 +35,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityExplorerEntity extends AbstractEntityEntity {
+public class DwarfExplorerEntity extends AbstractEntityEntity {
 
-    public EntityExplorerEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfExplorerEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()));
         this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));

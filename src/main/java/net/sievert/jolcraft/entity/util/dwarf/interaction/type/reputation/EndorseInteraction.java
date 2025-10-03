@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityGuildmasterEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfGuildmasterEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
@@ -24,7 +24,7 @@ public class EndorseInteraction extends InspectInteraction {
         if (itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS)) {
             DwarfProfession profession = dwarf.getProfession();
             boolean hasEndorsement = DwarvenReputationHelper.hasEndorsementBypassCreative(player, profession);
-            if (dwarf instanceof EntityGuildmasterEntity) {
+            if (dwarf instanceof DwarfGuildmasterEntity) {
                 return InteractionResult.FAIL;
             }
             if (dwarf.neverEndorse()) {

@@ -31,9 +31,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityArtisanEntity extends AbstractEntityEntity {
+public class DwarfArtisanEntity extends AbstractEntityEntity {
 
-    public EntityArtisanEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfArtisanEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DEEPSLATE_CHISEL.get()));
         this.instanceTrades = createRandomizedArtisanTrades();

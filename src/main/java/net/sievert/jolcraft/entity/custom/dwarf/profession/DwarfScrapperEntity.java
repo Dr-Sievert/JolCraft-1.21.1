@@ -31,9 +31,9 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityScrapperEntity extends AbstractEntityEntity {
+public class DwarfScrapperEntity extends AbstractEntityEntity {
 
-    public EntityScrapperEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfScrapperEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
         this.instanceTrades = MAIN_TRADES;

@@ -12,6 +12,9 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.data.custom.lore.LoreEntry;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -19,6 +22,7 @@ import net.sievert.jolcraft.item.potion.JolCraftPotions;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -270,7 +274,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.ancient_dwarven_lexicon.unlocked", "What was once silent may now speak again.");
         add("tooltip.jolcraft.ancient_dwarven_lexicon.use", "You have learned to understand the ancient dwarven language!");
         add("tooltip.jolcraft.ancient_dwarven_lexicon.cant_read", "You have no idea how to decipher this.");
-        add("tooltip.jolcraft.ancient_dwarven_lexicon.cant_use", "The text is clearly dwarvish, but you cannot decipher its secrets.");
+        add("tooltip.jolcraft.ancient_dwarven_lexicon.cant_use", "The textKey is clearly dwarvish, but you cannot decipher its secrets.");
         add("tooltip.jolcraft.ancient_dwarven_lexicon.knows", "You already understand the ancient dwarven language.");
         add("tooltip.jolcraft.unidentified_dwarven_tome", "An unidentified dwarven tome.");
         add("tooltip.jolcraft.dwarven_tome.shift", "Can be sold to Dwarven Historians.");
@@ -365,6 +369,114 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.hearth.need_coal", "You need coal to light this.");
         add("tooltip.jolcraft.hearth.not_safe", "Cannot light with monsters nearby!");
         add("tooltip.jolcraft.hearth.no_bed_nearby", "No claimed bed nearby.");
+
+        //Lore
+
+        // MODERN
+
+        addLoreEntry(DwarfLoreKey.TUNNEL_STABILITY, "A Survey of Tunnel Stability in Soft Granite, Volume II");
+        addLoreEntry(DwarfLoreKey.BARREL_SEALING, "Proper Barrel Sealing Techniques, Volume I");
+        addLoreEntry(DwarfLoreKey.TURNIP_YIELDS, "A Record of Turnip Yields, Year 538");
+        addLoreEntry(DwarfLoreKey.BEARD_GROOMING, "The Art of Beard Grooming: A Beginner's Guide, 4th Edition");
+        addLoreEntry(DwarfLoreKey.MINECART_WHEELS, "Catalog of Minecart Wheel Failures, Volume VII");
+        addLoreEntry(DwarfLoreKey.FURNACE_TEMPERATURES, "Furnace Temperatures and You, Revised 987");
+        addLoreEntry(DwarfLoreKey.PIPEWORKS_KARRAM_DUN, "The Pipeworks of Lower Karram-Dûn, Year 1112");
+        addLoreEntry(DwarfLoreKey.FORGE_ETIQUETTE, "Basic Forge Etiquette for Apprentices, Volume IV");
+        addLoreEntry(DwarfLoreKey.LEDGERS, "Ledgers and Ledgers: On the Keeping of Ledgers, Volume IX");
+        addLoreEntry(DwarfLoreKey.FUNGUS_UPPER_CAVERNS, "Common Fungus of the Upper Caverns, Survey of 1014");
+        addLoreEntry(DwarfLoreKey.ECHO_PATTERNS, "Observations on Echo Patterns in Vaulted Halls, Volume II");
+
+        addLoreEntry(DwarfLoreKey.CHISELED_DEEPSLATE, "Properties of Chiseled Deepslate, Volume VI");
+        addLoreEntry(DwarfLoreKey.FORGE_MARKS, "Ancestral Forge Marks and Their Variants, Volume III");
+        addLoreEntry(DwarfLoreKey.AQUEDUCT_COLLAPSE, "Survey of the Northern Aqueduct Collapse, Year 1198");
+        addLoreEntry(DwarfLoreKey.GEM_VEIN_LUNAR_CYCLE, "Gem Vein Activity by Lunar Cycle, Volume VIII");
+        addLoreEntry(DwarfLoreKey.MOLD_ID_CONTAINMENT, "Subterranean Mold: Identification & Containment, Year 1243");
+        addLoreEntry(DwarfLoreKey.WHISPERS_OLD_PILLARS, "Whispers Among the Old Pillars, Volume V");
+        addLoreEntry(DwarfLoreKey.QUEEN_HRAGA, "A Disputed Account of Forge-Queen Hraga's Reign, Volume I");
+        addLoreEntry(DwarfLoreKey.UNSPOKEN_TUNNELS, "The Unspoken Tunnels: A Guard Captain’s Memoir, Year 982");
+        addLoreEntry(DwarfLoreKey.HALL_LANTERNS, "Inventory of the Hall of Lanterns, Year 1024");
+        addLoreEntry(DwarfLoreKey.RITUAL_BEARD_OIL, "On the Use of Beard Oil in Ritual Contexts, Volume X");
+        addLoreEntry(DwarfLoreKey.ROOF_COLLAPSE_CHRONOLOGY, "Chronology of Roof Collapses in Irondeep Sector, Volume IX");
+
+        addLoreEntry(DwarfLoreKey.ECHO_CARTOGRAPHY, "Echo-Chamber Cartography: The First Attempts, Year 1251");
+        addLoreEntry(DwarfLoreKey.GEMLINES_BEARERS, "The Fifteen Gemlines and Their Bearers, Volume I");
+        addLoreEntry(DwarfLoreKey.STONEGUARD_PROTOCOLS, "Stoneguard Protocols for Deep Siege Defense, Year 1066");
+        addLoreEntry(DwarfLoreKey.ARCANIST_BINDING_RITUALS, "Rituals of Binding: Arcanist Practices, Volume XIII");
+        addLoreEntry(DwarfLoreKey.MITHRIL_FORGING, "On the Forging of Mithril Alloy, Year 987");
+        addLoreEntry(DwarfLoreKey.CONTRACT_SEALS, "Contract Seals and Binding Ink Formulas, Volume XI");
+        addLoreEntry(DwarfLoreKey.EMBERGLASS_FIRES, "Mysteries of the Emberglass Furnace-Fires, Year 1187");
+        addLoreEntry(DwarfLoreKey.DEEPMARROW_SIGILS, "Ancestral Sigils of the Deepmarrow Keepers, Volume XII");
+        addLoreEntry(DwarfLoreKey.CHAOS_DWARVES_WARNING, "Chaos Dwarves: A Warning to the Forgeborn, Year 1293");
+        addLoreEntry(DwarfLoreKey.WOECRYSTAL_RUNES, "Runes of Woecrystal and Their Applications, Volume XVI");
+        addLoreEntry(DwarfLoreKey.LOST_CARAVANS, "Ledger of Lost Caravans, Volume VI");
+
+        addLoreEntry(DwarfLoreKey.BREWERIES_STEWS, "Warden-Blessed Breweries and Sacred Stews, Volume XIV");
+        addLoreEntry(DwarfLoreKey.STATUE_SPIRIT_BINDING, "Spirit-Binding Rites for Guardian Statues, Year 1010");
+        addLoreEntry(DwarfLoreKey.FURNACE_EXPERIMENTS, "Experimental Furnace Designs, Year 1303");
+        addLoreEntry(DwarfLoreKey.SECRET_TRADE_ROUTES, "Secret Trade Routes of the Westward Expansion, Year 1027");
+        addLoreEntry(DwarfLoreKey.GIANT_SPORE_BLOOMS, "Giant Spore Blooms of the Deeps, Volume V");
+        addLoreEntry(DwarfLoreKey.THE_LAST_BALROG, "The Last Balrog Sighting, Year 1387");
+        addLoreEntry(DwarfLoreKey.DEEPFIRE_BALROG, "Chronicle of the Deepfire Balrog");
+        addLoreEntry(DwarfLoreKey.MAGMA_WRITINGS, "Writings from the Magma Archives, Volume XIX");
+        addLoreEntry(DwarfLoreKey.STORMCARVED_LEDGE, "Chronicle of the Stormcarved Ledge, Year 1502");
+        addLoreEntry(DwarfLoreKey.ANCIENT_TOMB_KEYS, "Keys of the Ancient Tombs, Volume X");
+        addLoreEntry(DwarfLoreKey.STARFALL_LEDGER, "Ledger of the Starfall Years, Volume XVII");
+
+        // ANCIENT
+
+        addLoreEntry(DwarfLoreKey.KEYSTONE_SHAPES, "On the Shapes and Placement of Keystones, Age of Foundations");
+        addLoreEntry(DwarfLoreKey.CISTERN_SEALS, "Inspections of Cistern Seals, Year 132");
+        addLoreEntry(DwarfLoreKey.BREW_YIELDS, "Brew Yields and Yeast Logs, Year 91");
+        addLoreEntry(DwarfLoreKey.BEARD_OILS, "Beard Oil Recipes for the Elder Kin, Volume III");
+        addLoreEntry(DwarfLoreKey.PIPE_ASSEMBLY, "Pipe Assembly Diagrams of the Early Guild, Volume I");
+        addLoreEntry(DwarfLoreKey.ANVIL_WEAR, "Patterns of Anvil Wear and Maintenance, First Forgemasters");
+        addLoreEntry(DwarfLoreKey.DOWSING_METHODS, "Practical Dowsing Methods for Water and Ore, Second Era");
+        addLoreEntry(DwarfLoreKey.HALL_GREETINGS, "Proper Greetings in the Great Halls, Year 59");
+        addLoreEntry(DwarfLoreKey.LEDGER_FORMATS, "Accepted Formats for Stone Ledger Tablets, Early Record-Keepers");
+        addLoreEntry(DwarfLoreKey.FUNGAL_COLONY_NOTES, "Notes on the Great Fungal Colony Collapse, Age of Growth");
+        addLoreEntry(DwarfLoreKey.SEATING_CHART, "Seating Charts for Guild Banquets, Old Calendar");
+
+        addLoreEntry(DwarfLoreKey.SPARE_KEYS, "The Making and Keeping of Spare Keys, Generation I");
+        addLoreEntry(DwarfLoreKey.RUNE_ACCOUNTING, "Rune-Tallies for Trade Accounting, Year 287");
+        addLoreEntry(DwarfLoreKey.CISTERN_CLEANING, "Cistern Cleaning Practices, Generation IV");
+        addLoreEntry(DwarfLoreKey.STARSTONE_RUMORS, "Rumors of Starstones Falling, Night of Terrors");
+        addLoreEntry(DwarfLoreKey.DUST_CONTROL, "Sweeping Schedules for Dust Control, Early Quarters");
+        addLoreEntry(DwarfLoreKey.LANTERN_MAINTENANCE, "Daily Maintenance of Oil Lanterns, Year 60");
+        addLoreEntry(DwarfLoreKey.CHAMPION_OATHS, "The Oaths of the First Champions, Battleborn Era");
+        addLoreEntry(DwarfLoreKey.RAT_WARNINGS, "Old Rat Infestation Warnings, Year 22");
+        addLoreEntry(DwarfLoreKey.BEDROLL_RULES, "Bedroll Placement Rules for Shared Chambers, Founders’ Years");
+        addLoreEntry(DwarfLoreKey.ROOT_PRESERVES, "Recipes for Preserving Roots and Tubers, First Preservers");
+        addLoreEntry(DwarfLoreKey.LOST_TOOLS, "The Lost Tools Ledger, Age of Loss");
+
+        addLoreEntry(DwarfLoreKey.STONEGUARD_SEATING, "Seating Charts for Stoneguard Banquets, Early Stoneguard");
+        addLoreEntry(DwarfLoreKey.ANIMAL_TOKENS, "Tokens Used in Early Kinship Rituals, Rituals Volume I");
+        addLoreEntry(DwarfLoreKey.STONEGUARD_PACT, "The Stoneguard Pact, Pact Year");
+        addLoreEntry(DwarfLoreKey.RUNE_LOCK_DIAGRAMS, "Diagrams of Rune-Locked Chests, Keymasters’ Era");
+        addLoreEntry(DwarfLoreKey.FORGE_OF_MITHRIL, "The Forging of Mithril, Old Metallurgists");
+        addLoreEntry(DwarfLoreKey.CONTRACT_SIGNATURES, "Ledger of Old Contract Signatures, Scribe’s Year");
+        addLoreEntry(DwarfLoreKey.EMBERGLASS_FORGE_LOGS, "Emberglass Forge Logs, First Era");
+        addLoreEntry(DwarfLoreKey.MEMORY_SHARD_DISCOVERY, "Discovery of the Memory Shards, Year 7");
+        addLoreEntry(DwarfLoreKey.EXILE_RECORDS, "Records of Exiles and Outcasts, Outcast Scrolls");
+        addLoreEntry(DwarfLoreKey.SPIRIT_ENCOUNTER, "An Early Encounter with a Dwarven Spirit, Lost Era");
+        addLoreEntry(DwarfLoreKey.SEALED_VAULTS, "Account of the Sealed Vaults of Hraga, Vault Year");
+
+        addLoreEntry(DwarfLoreKey.ROOT_STORAGE, "On the Storage of Root Vegetables in Deep Cellars, First Storage");
+        addLoreEntry(DwarfLoreKey.DAWN_HALL_RELICS, "Relics of the Dawn Hall, Dawn Era");
+        addLoreEntry(DwarfLoreKey.PRIMEVAL_IRONWORKS, "Primeval Ironworks of the Deep, Era of Makers");
+        addLoreEntry(DwarfLoreKey.STARFORGED_HELM, "Discovery of the Starforged Helm, Night of Comets");
+        addLoreEntry(DwarfLoreKey.FIRST_EMBERGLASS, "The First Emberglass Crucible, Age of Flames");
+        addLoreEntry(DwarfLoreKey.BINDING_OF_THE_BALROG, "The Binding of the Deepfire Balrog");
+        addLoreEntry(DwarfLoreKey.ETERNAL_EMBER, "Eternal Ember of the Ancients, Cycle XX");
+        addLoreEntry(DwarfLoreKey.ORACLE_INSCRIPTIONS, "Oracle Inscriptions of the Crystal Vault, Volume VII");
+        addLoreEntry(DwarfLoreKey.DEEP_CURSE_TABLET, "Tablet of the Deep Curse, Age of Shadows");
+        addLoreEntry(DwarfLoreKey.SUNKEN_FORGE_RITES, "Rites of the Sunken Forge, Lost Age");
+        addLoreEntry(DwarfLoreKey.CAVERN_LIGHT_CHRONICLE, "Chronicle of Cavern Light, Dawn Cycle");
+
+        addLoreEntry(DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE, "Mithril Forging Technique, Forge of the First Flame");
+        addLoreEntry(DwarfLoreKey.ANCIENT_GEMCRAFT, "The Art of Gemcutting, Archives of Karaz-Un");
+        addLoreEntry(DwarfLoreKey.FORGOTTEN_BREW_FORMULAS, "Formulas of Dwarven Brews, Vaults of Stonehearth");
+        addLoreEntry(DwarfLoreKey.COIN_PRESS_MANUAL, "Coin Press Manual, Bank of Barak-Zul");
+        addLoreEntry(DwarfLoreKey.ALCHEMY_RECIPES, "Codex Alchemica, Transcribed by the Final Thaumaturge");
 
         add("jolcraft.reputation_tier.0", "Stranger");
         add("jolcraft.reputation_tier.1", "Known Face");
@@ -587,5 +699,8 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         throw new IllegalArgumentException("Can't resolve potion name for " + potionHolder);
     }
 
-
+    public <K extends Enum<K>> void addLoreEntry(K key, String text) {
+        String translationKey = LoreHelper.getEntryTranslationKey(key);
+        addManual(translationKey, text);
+    }
 }

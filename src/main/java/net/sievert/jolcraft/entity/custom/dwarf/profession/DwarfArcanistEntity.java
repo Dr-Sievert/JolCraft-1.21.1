@@ -29,9 +29,9 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityArcanistEntity extends AbstractEntityEntity {
+public class DwarfArcanistEntity extends AbstractEntityEntity {
 
-    public EntityArcanistEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfArcanistEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.WOECRYSTAL.get()));
         this.instanceTrades = createRandomizedArcanistTrades();

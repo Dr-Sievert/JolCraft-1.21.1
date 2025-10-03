@@ -1,42 +1,33 @@
-package net.sievert.jolcraft.entity.custom.dwarf.profession;
+package net.sievert.jolcraft.entity.custom.dwarf;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.sievert.jolcraft.entity.ai.goal.dwarf.FirePanicGoal;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
-import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.MethodsReturnNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityPriestEntity extends AbstractEntityEntity {
+public class DwarfEntity extends AbstractEntityEntity {
 
-    public EntityPriestEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.SUNGLEAM.get()));
-        this.instanceTrades = createRandomizedArcanistTrades();
-        this.setProfession(DwarfProfession.PRIEST);
+        this.instanceTrades = createRandomizedDwarfTrades();
     }
 
     @Override
@@ -45,29 +36,9 @@ public class EntityPriestEntity extends AbstractEntityEntity {
     }
 
     @Override
-    public ItemStack getSignedContractItem() {
-        return new ItemStack(JolCraftItems.CONTRACT_PRIEST.get());
+    public boolean neverEndorse() {
+        return true;
     }
-
-    @Override
-    protected int getRequiredTier() {
-        return 3;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_LIBRARIAN;
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_LIBRARIAN;
-    }
-
-    @Override
-    public float getVoicePitch() { return 0.9F; }
 
     @Override
     protected void registerGoals() {
@@ -80,6 +51,7 @@ public class EntityPriestEntity extends AbstractEntityEntity {
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
         this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
+        this.goalSelector.addGoal(6, new DwarfFollowParentGoal(this, 1.25));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
@@ -101,9 +73,29 @@ public class EntityPriestEntity extends AbstractEntityEntity {
         return InteractionResult.FAIL;
     }
 
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedArcanistTrades() {
+    //Trades
+    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedDwarfTrades() {
         return AbstractEntityEntity.toIntMap(ImmutableMap.of(
+                // Novice
+                1, new DwarfTrades.ItemListing[] {
+                        new DwarfTrades.ItemsForGold(Items.STICK, 1, 4, 2, 8, 6, 500),
 
+                },
+                // Apprentice
+                2, new DwarfTrades.ItemListing[] {
+
+                },
+                // Journeyman
+                3, new DwarfTrades.ItemListing[] {
+                },
+                // Expert
+                4, new DwarfTrades.ItemListing[] {
+
+                },
+                // Master
+                5, new DwarfTrades.ItemListing[] {
+                        new DwarfTrades.ItemsAndGoldToItems(Items.PURPLE_DYE, 1, 30, JolCraftItems.GUILD_SIGIL.get(), 1, 1, 0, 0.05F)
+                }
         ));
     }
 }

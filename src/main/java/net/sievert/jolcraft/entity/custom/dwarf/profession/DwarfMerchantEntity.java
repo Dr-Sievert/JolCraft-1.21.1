@@ -39,9 +39,9 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityMerchantEntity extends AbstractEntityEntity {
+public class DwarfMerchantEntity extends AbstractEntityEntity {
 
-    public EntityMerchantEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfMerchantEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COIN_POUCH.get()));
         this.instanceTrades = createRandomizedMerchantTrades();

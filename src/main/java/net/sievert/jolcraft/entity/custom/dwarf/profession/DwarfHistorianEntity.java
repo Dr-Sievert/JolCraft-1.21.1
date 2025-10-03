@@ -32,9 +32,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityHistorianEntity extends AbstractEntityEntity {
+public class DwarfHistorianEntity extends AbstractEntityEntity {
 
-    public EntityHistorianEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfHistorianEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DWARVEN_TOME.get()));
         this.instanceTrades = createRandomizedHistorianTrades();

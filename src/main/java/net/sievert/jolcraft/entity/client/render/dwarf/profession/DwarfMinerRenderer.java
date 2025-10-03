@@ -10,11 +10,11 @@ import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.model.dwarf.profession.DwarfMinerModel;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityMinerEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfMinerEntity;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfMinerRenderer extends DwarfRenderer<EntityMinerEntity> {
+public class DwarfMinerRenderer extends DwarfRenderer<DwarfMinerEntity> {
 
     public DwarfMinerRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfMinerModel(context.bakeLayer(DwarfMinerModel.LAYER_LOCATION)));

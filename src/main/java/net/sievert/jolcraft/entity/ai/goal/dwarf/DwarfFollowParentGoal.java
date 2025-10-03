@@ -4,16 +4,16 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.sievert.jolcraft.entity.custom.dwarf.EntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.DwarfEntity;
 
 public class DwarfFollowParentGoal extends Goal {
-    private final EntityEntity dwarf;
+    private final DwarfEntity dwarf;
     @Nullable
-    private EntityEntity parent;
+    private DwarfEntity parent;
     private final double speedModifier;
     private int timeToRecalcPath;
 
-    public DwarfFollowParentGoal(EntityEntity dwarf, double speedModifier) {
+    public DwarfFollowParentGoal(DwarfEntity dwarf, double speedModifier) {
         this.dwarf = dwarf;
         this.speedModifier = speedModifier;
     }
@@ -23,13 +23,13 @@ public class DwarfFollowParentGoal extends Goal {
         if (this.dwarf.getAge() >= 0) {
             return false;
         } else {
-            List<? extends EntityEntity> list = this.dwarf
+            List<? extends DwarfEntity> list = this.dwarf
                     .level()
-                    .getEntitiesOfClass((Class<? extends EntityEntity>)this.dwarf.getClass(), this.dwarf.getBoundingBox().inflate(8.0, 4.0, 8.0));
-            EntityEntity dwarf = null;
+                    .getEntitiesOfClass((Class<? extends DwarfEntity>)this.dwarf.getClass(), this.dwarf.getBoundingBox().inflate(8.0, 4.0, 8.0));
+            DwarfEntity dwarf = null;
             double d0 = Double.MAX_VALUE;
 
-            for (EntityEntity dwarf1 : list) {
+            for (DwarfEntity dwarf1 : list) {
                 if (dwarf1.getAge() >= 0) {
                     double d1 = this.dwarf.distanceToSqr(dwarf1);
                     if (!(d1 > d0)) {

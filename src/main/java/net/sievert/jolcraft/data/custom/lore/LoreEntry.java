@@ -5,5 +5,4 @@ public interface LoreEntry<K extends Enum<K>> {
     K getKey();
     LoreAge getAge();
     LoreRarity getRarity();
-    String getText();
 }

@@ -104,10 +104,10 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState>{
     }
 
     protected void applyHeadRotation(float headYaw, float headPitch) {
-        headYaw = Mth.clamp(headYaw, -30f, 30f);
-        headPitch = Mth.clamp(headPitch, -25f, 45);
+        headYaw = Mth.clamp(headYaw, -12.5f, 12.5f);
+        headPitch = Mth.clamp(headPitch, -5f, 30f);
         this.head.yRot = headYaw * ((float)Math.PI / 180f);
-        this.head.xRot = headPitch *  ((float)Math.PI / 180f);
+        this.head.xRot = headPitch * ((float)Math.PI / 180f);
     }
 
     public void forwardAnimation(AnimationState state, AnimationDefinition def, float ageInTicks, float speed) {

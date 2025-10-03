@@ -44,16 +44,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityGuardEntity extends AbstractEntityEntity {
+public class DwarfGuardEntity extends AbstractEntityEntity {
 
-    public EntityGuardEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfGuardEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.instanceTrades = createRandomizedGuardTrades();
         this.setProfession(DwarfProfession.GUARD);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return EntityGuardEntity.createLivingAttributes()
+        return DwarfGuardEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.FOLLOW_RANGE, 24D)

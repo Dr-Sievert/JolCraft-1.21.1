@@ -2,13 +2,13 @@ package net.sievert.jolcraft.entity.custom.dwarf.profession;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,42 +16,40 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.sievert.jolcraft.entity.ai.goal.dwarf.FirePanicGoal;
+import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.MethodsReturnNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityAlchemistEntity extends AbstractEntityEntity {
+public class DwarfBrewmasterEntity extends AbstractEntityEntity {
 
-    public EntityAlchemistEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfBrewmasterEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.GLASS_BOTTLE));
-        this.instanceTrades = createRandomizedAlchemistTrades();
-        this.setProfession(DwarfProfession.ALCHEMIST);
+        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.GLASS_MUG.get()));
+        this.instanceTrades = createRandomizedBrewmasterTrades();
+        this.setProfession(DwarfProfession.BREWMASTER);
     }
 
     @Override
-    public boolean canTrade() {
-        return true;
-    }
+    public boolean canTrade() { return true; }
 
     @Override
     public ItemStack getSignedContractItem() {
-        return new ItemStack(JolCraftItems.CONTRACT_ALCHEMIST.get());
+        return new ItemStack(JolCraftItems.CONTRACT_BREWMASTER.get());
     }
 
     @Override
     protected int getRequiredTier() {
-        return 3;
+        return 1;
     }
 
     @Nullable
@@ -67,7 +65,7 @@ public class EntityAlchemistEntity extends AbstractEntityEntity {
     }
 
     @Override
-    public float getVoicePitch() { return 1.1F; }
+    public float getVoicePitch() { return 0.9F; }
 
     @Override
     protected void registerGoals() {
@@ -101,9 +99,46 @@ public class EntityAlchemistEntity extends AbstractEntityEntity {
         return InteractionResult.FAIL;
     }
 
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedAlchemistTrades() {
+    /** Generates a new randomized trade set for this Brewmaster instance.
+     * No pre-randomization! All values are min/max, the trade does the rolling. */
+    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedBrewmasterTrades() {
         return AbstractEntityEntity.toIntMap(ImmutableMap.of(
-
+                // Novice
+                1, new DwarfTrades.ItemListing[]{
+                        new DwarfTrades.GoldForItems(JolCraftItems.GLASS_MUG.get(), 1, 2, 5, 2, 1, 3),
+                        new DwarfTrades.ItemsForGold(Items.SUGAR, 1, 2, 1, 2, 10, 1)
+                },
+                // Apprentice
+                2, new DwarfTrades.ItemListing[]{
+                        new DwarfTrades.ItemsForGold(Items.CAULDRON, 7, 12, 1, 9, 10),
+                        new DwarfTrades.GoldForItems(JolCraftItems.BARLEY_MALT.get(), 12, 22, 10, 15, 1, 3)
+                },
+                // Journeyman
+                3, new DwarfTrades.ItemListing[]{
+                        new DwarfTrades.GoldForItems(JolCraftItems.ASGARNIAN_HOPS.get(), 10, 20, 10, 15, 1, 3),
+                        new DwarfTrades.GoldForItems(JolCraftItems.DUSKHOLD_HOPS.get(), 10, 20, 10, 15, 1, 3),
+                        new DwarfTrades.GoldForItems(JolCraftItems.KRANDONIAN_HOPS.get(), 10, 20, 10, 15, 1, 3),
+                        new DwarfTrades.GoldForItems(JolCraftItems.YANILLIAN_HOPS.get(), 10, 20, 10, 15, 1, 3)
+                },
+                // Expert
+                4, new DwarfTrades.ItemListing[]{
+                        new DwarfTrades.GoldForItems(JolCraftItems.DWARVEN_BREW.get(), 1, 5, 50, 3, 6),
+                        new DwarfTrades.ItemsForGold(JolCraftItems.YEAST.get(), 3, 5, 1, 2, 10, 10)
+                },
+                // Master
+                5, new DwarfTrades.ItemListing[]{
+                        new DwarfTrades.ItemsAndGoldToItemsWithData(
+                                JolCraftItems.LEGENDARY_PAGE.get(), 20,
+                                30,
+                                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
+                                1, 0, 0F,
+                                (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "forgotten_brew_formulas")
+                        ),
+                        new DwarfTrades.ItemsAndGoldToItems(
+                                JolCraftItems.EMBERGLASS_CUT.get(), 2, 20, 40,
+                                JolCraftBlocks.HEARTH.get(), 1, 1, 0, 0F
+                        )
+                }
         ));
     }
 }

@@ -33,9 +33,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityMinerEntity extends AbstractEntityEntity {
+public class DwarfMinerEntity extends AbstractEntityEntity {
 
-    public EntityMinerEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfMinerEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_PICKAXE.get()));
         this.instanceTrades = createRandomizedMinerTrades();

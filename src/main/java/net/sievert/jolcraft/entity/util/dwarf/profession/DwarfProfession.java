@@ -5,7 +5,9 @@ public enum DwarfProfession {
     ALCHEMIST("alchemist"),
     ARCANIST("arcanist"),
     ARTISAN("artisan"),
+    //BLACKSMITH("blacksmith"),
     BREWMASTER("brewmaster"),
+    //CHAMPION("champion"),
     EXPLORER("explorer"),
     GUARD("guard"),
     GUILDMASTER("guildmaster"),
@@ -15,6 +17,7 @@ public enum DwarfProfession {
     MINER("miner"),
     PRIEST("priest"),
     SCRAPPER("scrapper");
+    //SMELTER("smelter");
 
     private final String id;
     DwarfProfession(String id) { this.id = id; }

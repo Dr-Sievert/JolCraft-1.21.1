@@ -11,6 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 
@@ -39,9 +40,9 @@ public class DwarvenTomeItem extends Item {
                 }
             } else {
                 if (knowsLanguage) {
-                    String text = LoreHelper.getEntryText(stack, DwarfLoreEntries.ALL);
-                    if (text != null) {
-                        tooltip.add(Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+                    String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
+                    if (translationKey != null) {
+                        tooltip.add(Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                     } else {
                         tooltip.add(Component.translatable("tooltip.jolcraft.dwarven_tome.unlocked")
                                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));

@@ -35,9 +35,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityGuildmasterEntity extends AbstractEntityEntity {
+public class DwarfGuildmasterEntity extends AbstractEntityEntity {
 
-    public EntityGuildmasterEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfGuildmasterEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()));
         this.instanceTrades = createRandomizedGuildmasterTrades();

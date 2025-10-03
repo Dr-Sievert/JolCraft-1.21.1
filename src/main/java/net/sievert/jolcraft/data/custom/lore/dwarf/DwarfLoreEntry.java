@@ -5,8 +5,7 @@ import net.sievert.jolcraft.data.custom.lore.*;
 public record DwarfLoreEntry(
         DwarfLoreKey key,
         LoreAge age,
-        LoreRarity rarity,
-        String text
+        LoreRarity rarity
 ) implements LoreEntry<DwarfLoreKey> {
 
     @Override
@@ -27,10 +26,5 @@ public record DwarfLoreEntry(
     @Override
     public LoreRarity getRarity() {
         return rarity;
-    }
-
-    @Override
-    public String getText() {
-        return text;
     }
 }

@@ -10,11 +10,11 @@ import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.model.dwarf.profession.DwarfKeeperModel;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityKeeperEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfKeeperEntity;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfKeeperRenderer extends DwarfRenderer<EntityKeeperEntity> {
+public class DwarfKeeperRenderer extends DwarfRenderer<DwarfKeeperEntity> {
 
     public DwarfKeeperRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfKeeperModel(context.bakeLayer(DwarfKeeperModel.LAYER_LOCATION)));

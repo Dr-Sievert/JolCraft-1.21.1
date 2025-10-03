@@ -2,13 +2,13 @@ package net.sievert.jolcraft.entity.custom.dwarf.profession;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,25 +16,27 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
+import net.sievert.jolcraft.entity.ai.goal.dwarf.FirePanicGoal;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityKeeperEntity extends AbstractEntityEntity {
+public class DwarfAlchemistEntity extends AbstractEntityEntity {
 
-    public EntityKeeperEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfAlchemistEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.BARLEY.get()));
-        this.instanceTrades = createRandomizedKeeperTrades();
-        this.setProfession(DwarfProfession.KEEPER);
+        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.GLASS_BOTTLE));
+        this.instanceTrades = createRandomizedAlchemistTrades();
+        this.setProfession(DwarfProfession.ALCHEMIST);
     }
 
     @Override
@@ -44,25 +46,28 @@ public class EntityKeeperEntity extends AbstractEntityEntity {
 
     @Override
     public ItemStack getSignedContractItem() {
-        return new ItemStack(JolCraftItems.CONTRACT_KEEPER.get());
+        return new ItemStack(JolCraftItems.CONTRACT_ALCHEMIST.get());
     }
 
     @Override
     protected int getRequiredTier() {
-        return 1;
+        return 3;
     }
 
     @Nullable
     @Override
     protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_FARMER;
+        return SoundEvents.VILLAGER_WORK_CLERIC;
     }
 
     @Nullable
     @Override
     protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_FARMER;
+        return SoundEvents.VILLAGER_WORK_CLERIC;
     }
+
+    @Override
+    public float getVoicePitch() { return 1.1F; }
 
     @Override
     protected void registerGoals() {
@@ -96,51 +101,12 @@ public class EntityKeeperEntity extends AbstractEntityEntity {
         return InteractionResult.FAIL;
     }
 
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedKeeperTrades() {
+    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedAlchemistTrades() {
         return AbstractEntityEntity.toIntMap(ImmutableMap.of(
-
-                        //Novice
-                        1,
-
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsForGold(JolCraftItems.BARLEY_SEEDS.get(), 1, 2, 1, 3, 10, 1),
-
-                        },
-
-                        //Apprentice
-                        2,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.GoldForItems(JolCraftItems.BARLEY.get(), 15, 22, 10, 25, 1, 2),
-
-                        },
-
-                        //Journeyman
-                        3,
-                        new DwarfTrades.ItemListing[]{
-
-                                new DwarfTrades.GoldForItems(JolCraftItems.MUFFHORN_FUR.get(), 1, 15, 5, 2, 4),
-                                new DwarfTrades.GoldForItems(JolCraftItems.MUFFHORN_MILK_BUCKET.get(), 1, 10, 30, 3, 5),
-                        },
-
-                        //Expert
-                        4,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.GoldForItems(JolCraftItems.DEEPSLATE_BULBS.get(), 1, 2, 10, 30, 3, 5),
-
-                        },
-
-                        //Master
-                        5,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsForGold(Items.BONE_MEAL, 2, 5, 3, 5, 5, 1),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.DEEPSLATE_BULBS.get(), 5, 9, 1, 5, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.ASGARNIAN_SEEDS.get(), 5, 1, 3, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.DUSKHOLD_SEEDS.get(), 5, 1, 3, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.KRANDONIAN_SEEDS.get(), 5, 1, 3, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.YANILLIAN_SEEDS.get(), 5, 1, 3, 0),
-                        }
-                )
-        );
+                1, new DwarfTrades.ItemListing[] {
+                        new DwarfTrades.ItemsForGold(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), 4, 7, 1, 6, 0),
+                        new DwarfTrades.ItemsForGold(JolCraftItems.DEEPSLATE_PESTLE.get(), 1, 4, 1, 6, 0),
+                }
+        ));
     }
 }
-

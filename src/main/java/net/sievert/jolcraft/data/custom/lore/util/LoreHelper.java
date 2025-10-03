@@ -11,19 +11,6 @@ import java.util.*;
 
 public class LoreHelper {
 
-    public static <K extends Enum<K>, E extends LoreEntry<K>> String getEntryText(ItemStack stack, Map<K, E> entries) {
-        if (stack == null || stack.isEmpty()) return null;
-        String keyString = stack.get(JolCraftDataComponents.LORE_KEY.get());
-        if (keyString == null || keyString.isEmpty()) return null;
-        for (K key : entries.keySet()) {
-            if (key.name().equalsIgnoreCase(keyString)) {
-                E entry = entries.get(key);
-                return (entry != null) ? entry.getText() : null;
-            }
-        }
-        return null;
-    }
-
     public static <K extends Enum<K>> K getLoreKey(ItemStack stack, Class<K> keyClass) {
         if (stack == null || stack.isEmpty()) return null;
         String keyString = stack.get(JolCraftDataComponents.LORE_KEY.get());
@@ -34,6 +21,17 @@ public class LoreHelper {
     public static <K extends Enum<K>> void setLoreKey(ItemStack stack, K key) {
         if (stack == null || stack.isEmpty() || key == null) return;
         stack.set(JolCraftDataComponents.LORE_KEY.get(), key.name().toLowerCase(Locale.ROOT));
+    }
+
+    public static <K extends Enum<K>> String getEntryTranslationKey(K key) {
+        if (key == null) return null;
+        return "lore.jolcraft." + key.name().toLowerCase(Locale.ROOT);
+    }
+
+    public static <K extends Enum<K>> String getEntryTranslationKey(ItemStack stack, Class<K> keyClass) {
+        K key = getLoreKey(stack, keyClass);
+        if (key == null) return null;
+        return getEntryTranslationKey(key);
     }
 
     public static <K extends Enum<K>> K byNameIgnoreCase(Class<K> keyClass, String name) {

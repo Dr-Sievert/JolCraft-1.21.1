@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.sievert.jolcraft.entity.JolCraftEntities;
-import net.sievert.jolcraft.entity.custom.dwarf.EntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfVariant;
@@ -215,7 +215,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        EntityEntity baby = JolCraftEntities.DWARF.get().create(level, EntitySpawnReason.BREEDING);
+        DwarfEntity baby = JolCraftEntities.DWARF.get().create(level, EntitySpawnReason.BREEDING);
         DwarfVariant variant = Util.getRandom(DwarfVariant.values(), this.random);
         DwarfBeardColor beard = Util.getRandom(DwarfBeardColor.values(), this.random);
         DwarfEyeColor eye = Util.getRandom(DwarfEyeColor.values(), this.random);

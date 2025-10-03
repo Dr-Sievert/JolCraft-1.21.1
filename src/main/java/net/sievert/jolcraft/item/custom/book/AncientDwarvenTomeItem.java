@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.minecraft.ChatFormatting;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
@@ -42,21 +43,22 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
 
     @Override
     protected @NotNull List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        String text = LoreHelper.getEntryText(stack, DwarfLoreEntries.ALL);
+        String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
         return List.of(
-                (text != null)
-                        ? Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                (translationKey != null)
+                        ? Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                         : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );
     }
 
     @Override
     protected @NotNull List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        String text = LoreHelper.getEntryText(stack, DwarfLoreEntries.ALL);
+        String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
         return List.of(
-                (text != null)
-                        ? Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                (translationKey != null)
+                        ? Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                         : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );
     }
+
 }

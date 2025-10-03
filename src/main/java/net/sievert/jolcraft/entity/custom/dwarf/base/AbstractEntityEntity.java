@@ -31,7 +31,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.network.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityArtisanEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfArtisanEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.EntityData;
@@ -161,7 +161,7 @@ public class AbstractEntityEntity extends AbstractTradingEntity implements Npc, 
     //Attributes
 
     public static AttributeSupplier.Builder createAttributes() {
-        return EntityArtisanEntity.createLivingAttributes()
+        return DwarfArtisanEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D)
                 .add(Attributes.FOLLOW_RANGE, 24D)

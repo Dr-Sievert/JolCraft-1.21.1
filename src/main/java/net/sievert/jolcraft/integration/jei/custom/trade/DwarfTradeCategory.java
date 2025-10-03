@@ -22,48 +22,57 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.custom.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.profession.*;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.EnumMap;
+import java.util.Map;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
 
-    public static final IRecipeType<DwarfTradeRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, "dwarf_trades", DwarfTradeRecipe.class);
+    private static final Map<DwarfProfession, IRecipeType<DwarfTradeRecipe>> TYPES = new EnumMap<>(DwarfProfession.class);
+    public static IRecipeType<DwarfTradeRecipe> recipeTypeFor(DwarfProfession prof) {
+        return TYPES.computeIfAbsent(prof, p ->
+                IRecipeType.create(JolCraft.MOD_ID, "dwarf_trades/" + p.getId(), DwarfTradeRecipe.class)
+        );
+    }
+
     private static final java.util.Map<String, LivingEntity> DWARF_RENDER_CACHE = new java.util.HashMap<>();
     private final IDrawable background;
     private final IDrawable icon;
+    private final DwarfProfession profession;
+
     private static final ResourceLocation ARROW_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/jei/sprites/arrow_right.png");
     private static final ResourceLocation PLUS_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/jei/sprites/plus.png");
 
-
-    public DwarfTradeCategory(IGuiHelper guiHelper) {
+    public DwarfTradeCategory(IGuiHelper guiHelper, DwarfProfession profession) {
+        this.profession = profession;
         this.background = guiHelper.createBlankDrawable(150, 60);
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(JolCraftItems.GOLD_COIN.get()));
+        this.icon = guiHelper.createDrawableIngredient(
+                VanillaTypes.ITEM_STACK,
+                new ItemStack(DwarfTradeJeiHelper.getSpawnEggForProfession(profession).get())
+        );
     }
 
     @Override
     public IRecipeType<DwarfTradeRecipe> getRecipeType() {
-        return RECIPE_TYPE;
+        return recipeTypeFor(profession);
     }
 
     @Override
     public Component getTitle() {
-        return Component.translatable("jei.jolcraft.dwarf_trades");
+        // Title like: "Dwarf Trades — Guildmaster"
+        return Component.literal(Component.translatable("jei.jolcraft.dwarf_trades").getString() +
+                " — " + DwarfTradeJeiHelper.getDisplayName(profession));
     }
 
-    @Override
-    public int getWidth() {
-        return 150;
-    }
-
-    @Override
-    public int getHeight() {
-        return 60;
-    }
+    @Override public int getWidth() { return 150; }
+    @Override public int getHeight() { return 60; }
 
     @Override
     public void draw(DwarfTradeRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
@@ -75,13 +84,11 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
 
         String levelKey = "merchant.level." + level;
         String levelStr = Component.translatable(levelKey).getString();
-
-        String profText = recipe.profession();
+        String profText = DwarfTradeJeiHelper.getDisplayName(recipe.profession());
         String displayStr = levelStr + " " + profText;
 
         int x = ((getWidth() - Minecraft.getInstance().font.width(displayStr)) / 2) + offsetX;
-
-        graphics.drawString(Minecraft.getInstance().font, displayStr, x+3, textY, 0x888888, false);
+        graphics.drawString(Minecraft.getInstance().font, displayStr, x + 3, textY, 0x888888, false);
 
         boolean hasB = recipe.inputB() != null && !recipe.inputB().isEmpty();
         int plusX = 16, plusY = 27;
@@ -89,24 +96,9 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
         int arrowY = 24;
 
         if (hasB) {
-            graphics.blit(
-                    RenderType.GUI_TEXTURED,
-                    PLUS_TEXTURE,
-                    plusX, plusY,
-                    0, 0,
-                    12, 12,
-                    12, 12
-            );
+            graphics.blit(RenderType.GUI_TEXTURED, PLUS_TEXTURE, plusX, plusY, 0, 0, 12, 12, 12, 12);
         }
-
-        graphics.blit(
-                RenderType.GUI_TEXTURED,
-                ARROW_TEXTURE,
-                arrowX, arrowY,
-                0, 0,
-                22, 18,
-                22, 18
-        );
+        graphics.blit(RenderType.GUI_TEXTURED, ARROW_TEXTURE, arrowX, arrowY, 0, 0, 22, 18, 22, 18);
 
         LivingEntity dwarf = getOrCreateDwarf(recipe);
         {
@@ -114,14 +106,8 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             int minX = 100, minY = 10 + offsetY, maxX = 160, maxY = 90 + offsetY;
             int scale = 32;
             float yOffset = 0.0F;
-
             InventoryScreen.renderEntityInInventoryFollowsMouse(
-                    graphics,
-                    minX, minY, maxX, maxY,
-                    scale,
-                    yOffset,
-                    (float) mouseX, (float) mouseY,
-                    dwarf
+                    graphics, minX, minY, maxX, maxY, scale, yOffset, (float) mouseX, (float) mouseY, dwarf
             );
         }
 
@@ -175,56 +161,63 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
             graphics.drawString(Minecraft.getInstance().font, oText, 0, 0, 0x888888, false);
             graphics.pose().popPose();
         }
-
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, DwarfTradeRecipe recipe, IFocusGroup focuses) {
-        int sloty = 25;
-        builder.addSlot(RecipeIngredientRole.INPUT, 95, 42)
-                .add(recipe.spawnEgg());
-        if(recipe.inputA().is(JolCraftItems.GOLD_COIN.get())){
-            builder.addSlot(RecipeIngredientRole.INPUT, 2, sloty).add(new ItemStack(JolCraftItems.GOLD_COIN.get())).add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
-        }
-        else{
-            builder.addSlot(RecipeIngredientRole.INPUT, 2, sloty).add(recipe.inputA());
+        int slotY = 25;
+
+        ItemStack egg = new ItemStack(DwarfTradeJeiHelper.getSpawnEggForProfession(recipe.profession()).get());
+        builder.addSlot(RecipeIngredientRole.INPUT, 95, 42).add(egg);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 95, 42).add(egg);
+
+        if (recipe.inputA().is(JolCraftItems.GOLD_COIN.get())) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 2, slotY)
+                    .add(new ItemStack(JolCraftItems.GOLD_COIN.get()))
+                    .add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
+        } else {
+            builder.addSlot(RecipeIngredientRole.INPUT, 2, slotY).add(recipe.inputA());
         }
 
         if (recipe.inputB() != null && !recipe.inputB().isEmpty()) {
-            if(recipe.inputB().is(JolCraftItems.GOLD_COIN.get())){
-                builder.addSlot(RecipeIngredientRole.INPUT, 28, sloty).add(new ItemStack(JolCraftItems.GOLD_COIN.get())).add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
-            }else{
-                builder.addSlot(RecipeIngredientRole.INPUT, 28, sloty).add(recipe.inputB());
+            if (recipe.inputB().is(JolCraftItems.GOLD_COIN.get())) {
+                builder.addSlot(RecipeIngredientRole.INPUT, 28, slotY)
+                        .add(new ItemStack(JolCraftItems.GOLD_COIN.get()))
+                        .add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
+            } else {
+                builder.addSlot(RecipeIngredientRole.INPUT, 28, slotY).add(recipe.inputB());
             }
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 68, sloty).add(recipe.output());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 68, slotY).add(recipe.output());
         } else {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 45, sloty).add(recipe.output());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 45, slotY).add(recipe.output());
         }
     }
 
-    public static LivingEntity getOrCreateDwarf(DwarfTradeRecipe recipe) {
-        String profession = recipe.profession();
+    private static LivingEntity getOrCreateDwarf(DwarfTradeRecipe recipe) {
+        DwarfProfession profession = recipe.profession();
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || profession == null) return null;
 
-        String key = profession.toLowerCase();
+        String key = profession.name();
         LivingEntity cached = DWARF_RENDER_CACHE.get(key);
         if (cached != null) return cached;
 
-        LivingEntity entity;
-        switch (key) {
-            case "guildmaster" -> entity = new EntityGuildmasterEntity(JolCraftEntities.DWARF_GUILDMASTER.get(), mc.level);
-            case "historian" -> entity = new EntityHistorianEntity(JolCraftEntities.DWARF_HISTORIAN.get(), mc.level);
-            case "merchant" -> entity = new EntityMerchantEntity(JolCraftEntities.DWARF_MERCHANT.get(), mc.level);
-            case "scrapper" -> entity = new EntityScrapperEntity(JolCraftEntities.DWARF_SCRAPPER.get(), mc.level);
-            case "brewmaster" -> entity = new EntityBrewmasterEntity(JolCraftEntities.DWARF_BREWMASTER.get(), mc.level);
-            case "guard" -> entity = new EntityGuardEntity(JolCraftEntities.DWARF_GUARD.get(), mc.level);
-            case "keeper" -> entity = new EntityKeeperEntity(JolCraftEntities.DWARF_KEEPER.get(), mc.level);
-            case "artisan" -> entity = new EntityArtisanEntity(JolCraftEntities.DWARF_ARTISAN.get(), mc.level);
-            case "explorer" -> entity = new EntityExplorerEntity(JolCraftEntities.DWARF_EXPLORER.get(), mc.level);
-            case "miner" -> entity = new EntityMinerEntity(JolCraftEntities.DWARF_MINER.get(), mc.level);
-            default -> entity = new EntityEntity(JolCraftEntities.DWARF.get(), mc.level);
-        }
+        LivingEntity entity = switch (profession) {
+            case NONE       -> new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
+            case GUILDMASTER -> new DwarfGuildmasterEntity(JolCraftEntities.DWARF_GUILDMASTER.get(), mc.level);
+            case HISTORIAN  -> new DwarfHistorianEntity(JolCraftEntities.DWARF_HISTORIAN.get(), mc.level);
+            case MERCHANT   -> new DwarfMerchantEntity(JolCraftEntities.DWARF_MERCHANT.get(), mc.level);
+            case SCRAPPER   -> new DwarfScrapperEntity(JolCraftEntities.DWARF_SCRAPPER.get(), mc.level);
+            case BREWMASTER -> new DwarfBrewmasterEntity(JolCraftEntities.DWARF_BREWMASTER.get(), mc.level);
+            case GUARD      -> new DwarfGuardEntity(JolCraftEntities.DWARF_GUARD.get(), mc.level);
+            case KEEPER     -> new DwarfKeeperEntity(JolCraftEntities.DWARF_KEEPER.get(), mc.level);
+            case ARTISAN    -> new DwarfArtisanEntity(JolCraftEntities.DWARF_ARTISAN.get(), mc.level);
+            case EXPLORER   -> new DwarfExplorerEntity(JolCraftEntities.DWARF_EXPLORER.get(), mc.level);
+            case MINER      -> new DwarfMinerEntity(JolCraftEntities.DWARF_MINER.get(), mc.level);
+            case ALCHEMIST  -> new DwarfAlchemistEntity(JolCraftEntities.DWARF_ALCHEMIST.get(), mc.level);
+            case ARCANIST   -> new DwarfArcanistEntity(JolCraftEntities.DWARF_ARCANIST.get(), mc.level);
+            case PRIEST     -> new DwarfPriestEntity(JolCraftEntities.DWARF_PRIEST.get(), mc.level);
+        };
 
         DWARF_RENDER_CACHE.put(key, entity);
         return entity;

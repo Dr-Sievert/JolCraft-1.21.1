@@ -16,8 +16,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
@@ -30,21 +28,23 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class EntityBrewmasterEntity extends AbstractEntityEntity {
+public class DwarfKeeperEntity extends AbstractEntityEntity {
 
-    public EntityBrewmasterEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfKeeperEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
-        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.GLASS_MUG.get()));
-        this.instanceTrades = createRandomizedBrewmasterTrades();
-        this.setProfession(DwarfProfession.BREWMASTER);
+        this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.BARLEY.get()));
+        this.instanceTrades = createRandomizedKeeperTrades();
+        this.setProfession(DwarfProfession.KEEPER);
     }
 
     @Override
-    public boolean canTrade() { return true; }
+    public boolean canTrade() {
+        return true;
+    }
 
     @Override
     public ItemStack getSignedContractItem() {
-        return new ItemStack(JolCraftItems.CONTRACT_BREWMASTER.get());
+        return new ItemStack(JolCraftItems.CONTRACT_KEEPER.get());
     }
 
     @Override
@@ -55,17 +55,14 @@ public class EntityBrewmasterEntity extends AbstractEntityEntity {
     @Nullable
     @Override
     protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_CLERIC;
+        return SoundEvents.VILLAGER_WORK_FARMER;
     }
 
     @Nullable
     @Override
     protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_CLERIC;
+        return SoundEvents.VILLAGER_WORK_FARMER;
     }
-
-    @Override
-    public float getVoicePitch() { return 0.9F; }
 
     @Override
     protected void registerGoals() {
@@ -99,46 +96,51 @@ public class EntityBrewmasterEntity extends AbstractEntityEntity {
         return InteractionResult.FAIL;
     }
 
-    /** Generates a new randomized trade set for this Brewmaster instance.
-     * No pre-randomization! All values are min/max, the trade does the rolling. */
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedBrewmasterTrades() {
+    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedKeeperTrades() {
         return AbstractEntityEntity.toIntMap(ImmutableMap.of(
-                // Novice
-                1, new DwarfTrades.ItemListing[]{
-                        new DwarfTrades.GoldForItems(JolCraftItems.GLASS_MUG.get(), 1, 2, 5, 2, 1, 3),
-                        new DwarfTrades.ItemsForGold(Items.SUGAR, 1, 2, 1, 2, 10, 1)
-                },
-                // Apprentice
-                2, new DwarfTrades.ItemListing[]{
-                        new DwarfTrades.ItemsForGold(Items.CAULDRON, 7, 12, 1, 9, 10),
-                        new DwarfTrades.GoldForItems(JolCraftItems.BARLEY_MALT.get(), 12, 22, 10, 15, 1, 3)
-                },
-                // Journeyman
-                3, new DwarfTrades.ItemListing[]{
-                        new DwarfTrades.GoldForItems(JolCraftItems.ASGARNIAN_HOPS.get(), 10, 20, 10, 15, 1, 3),
-                        new DwarfTrades.GoldForItems(JolCraftItems.DUSKHOLD_HOPS.get(), 10, 20, 10, 15, 1, 3),
-                        new DwarfTrades.GoldForItems(JolCraftItems.KRANDONIAN_HOPS.get(), 10, 20, 10, 15, 1, 3),
-                        new DwarfTrades.GoldForItems(JolCraftItems.YANILLIAN_HOPS.get(), 10, 20, 10, 15, 1, 3)
-                },
-                // Expert
-                4, new DwarfTrades.ItemListing[]{
-                        new DwarfTrades.GoldForItems(JolCraftItems.DWARVEN_BREW.get(), 1, 5, 50, 3, 6),
-                        new DwarfTrades.ItemsForGold(JolCraftItems.YEAST.get(), 3, 5, 1, 2, 10, 10)
-                },
-                // Master
-                5, new DwarfTrades.ItemListing[]{
-                        new DwarfTrades.ItemsAndGoldToItemsWithData(
-                                JolCraftItems.LEGENDARY_PAGE.get(), 20,
-                                30,
-                                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
-                                1, 0, 0F,
-                                (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "forgotten_brew_formulas")
-                        ),
-                        new DwarfTrades.ItemsAndGoldToItems(
-                                JolCraftItems.EMBERGLASS_CUT.get(), 2, 20, 40,
-                                JolCraftBlocks.HEARTH.get(), 1, 1, 0, 0F
-                        )
-                }
-        ));
+
+                        //Novice
+                        1,
+
+                        new DwarfTrades.ItemListing[]{
+                                new DwarfTrades.ItemsForGold(JolCraftItems.BARLEY_SEEDS.get(), 1, 2, 1, 3, 10, 1),
+
+                        },
+
+                        //Apprentice
+                        2,
+                        new DwarfTrades.ItemListing[]{
+                                new DwarfTrades.GoldForItems(JolCraftItems.BARLEY.get(), 15, 22, 10, 25, 1, 2),
+
+                        },
+
+                        //Journeyman
+                        3,
+                        new DwarfTrades.ItemListing[]{
+
+                                new DwarfTrades.GoldForItems(JolCraftItems.MUFFHORN_FUR.get(), 1, 15, 5, 2, 4),
+                                new DwarfTrades.GoldForItems(JolCraftItems.MUFFHORN_MILK_BUCKET.get(), 1, 10, 30, 3, 5),
+                        },
+
+                        //Expert
+                        4,
+                        new DwarfTrades.ItemListing[]{
+                                new DwarfTrades.GoldForItems(JolCraftItems.DEEPSLATE_BULBS.get(), 1, 2, 10, 30, 3, 5),
+
+                        },
+
+                        //Master
+                        5,
+                        new DwarfTrades.ItemListing[]{
+                                new DwarfTrades.ItemsForGold(Items.BONE_MEAL, 2, 5, 3, 5, 5, 1),
+                                new DwarfTrades.ItemsForGold(JolCraftItems.DEEPSLATE_BULBS.get(), 5, 9, 1, 5, 0),
+                                new DwarfTrades.ItemsForGold(JolCraftItems.ASGARNIAN_SEEDS.get(), 5, 1, 3, 0),
+                                new DwarfTrades.ItemsForGold(JolCraftItems.DUSKHOLD_SEEDS.get(), 5, 1, 3, 0),
+                                new DwarfTrades.ItemsForGold(JolCraftItems.KRANDONIAN_SEEDS.get(), 5, 1, 3, 0),
+                                new DwarfTrades.ItemsForGold(JolCraftItems.YANILLIAN_SEEDS.get(), 5, 1, 3, 0),
+                        }
+                )
+        );
     }
 }
+

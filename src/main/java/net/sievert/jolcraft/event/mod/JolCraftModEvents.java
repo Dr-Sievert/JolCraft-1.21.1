@@ -18,20 +18,20 @@ public class JolCraftModEvents {
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
 
-        event.put(JolCraftEntities.DWARF.get(), EntityEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_GUILDMASTER.get(), EntityGuildmasterEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_HISTORIAN.get(), EntityHistorianEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_MERCHANT.get(), EntityMerchantEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_SCRAPPER.get(), EntityScrapperEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_BREWMASTER.get(), EntityBrewmasterEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_GUARD.get(), EntityGuardEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_KEEPER.get(), EntityKeeperEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_ARTISAN.get(), EntityArtisanEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_EXPLORER.get(), EntityExplorerEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_MINER.get(), EntityMinerEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_ALCHEMIST.get(), EntityAlchemistEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_ARCANIST.get(), EntityArcanistEntity.createAttributes().build());
-        event.put(JolCraftEntities.DWARF_PRIEST.get(), EntityPriestEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF.get(), DwarfEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_GUILDMASTER.get(), DwarfGuildmasterEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_HISTORIAN.get(), DwarfHistorianEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_MERCHANT.get(), DwarfMerchantEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_SCRAPPER.get(), DwarfScrapperEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_BREWMASTER.get(), DwarfBrewmasterEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_GUARD.get(), DwarfGuardEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_KEEPER.get(), DwarfKeeperEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_ARTISAN.get(), DwarfArtisanEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_EXPLORER.get(), DwarfExplorerEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_MINER.get(), DwarfMinerEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_ALCHEMIST.get(), DwarfAlchemistEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_ARCANIST.get(), DwarfArcanistEntity.createAttributes().build());
+        event.put(JolCraftEntities.DWARF_PRIEST.get(), DwarfPriestEntity.createAttributes().build());
 
         event.put(JolCraftEntities.MUFFHORN.get(), MuffhornEntity.createAttributes().build());
     }

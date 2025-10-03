@@ -1,20 +1,20 @@
 package net.sievert.jolcraft.entity.ai.goal.dwarf;
 
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityGuardEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfGuardEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
 public class DwarfBlockGoal extends Goal {
 
-    private final EntityGuardEntity dwarf;
+    private final DwarfGuardEntity dwarf;
 
-    public DwarfBlockGoal(EntityGuardEntity dwarf) {
+    public DwarfBlockGoal(DwarfGuardEntity dwarf) {
         this.dwarf = dwarf;
     }
 
     @Override
     public boolean canUse() {
-        return dwarf instanceof EntityGuardEntity && dwarf.shouldBlock;
+        return dwarf instanceof DwarfGuardEntity && dwarf.shouldBlock;
     }
 
     @Override
