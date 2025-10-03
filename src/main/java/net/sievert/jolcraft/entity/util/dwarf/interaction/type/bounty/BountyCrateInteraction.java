@@ -7,7 +7,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
@@ -24,7 +24,7 @@ public class BountyCrateInteraction extends InspectInteraction {
     }
 
     @Override
-    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public InteractionResult handle(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         if (itemstack.is(JolCraftItems.BOUNTY_CRATE.get())) {
             BountyType requiredType = BountyHelper.getBountyType(itemstack);
             Boolean complete = itemstack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get());

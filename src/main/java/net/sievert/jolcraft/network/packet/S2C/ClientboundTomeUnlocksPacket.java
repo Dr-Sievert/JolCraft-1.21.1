@@ -8,7 +8,9 @@ import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public record ClientboundTomeUnlocksPacket(Set<String> unlocks) implements CustomPacketPayload {
     public static final Type<ClientboundTomeUnlocksPacket> TYPE =
@@ -16,6 +18,13 @@ public record ClientboundTomeUnlocksPacket(Set<String> unlocks) implements Custo
 
     public static final StreamCodec<FriendlyByteBuf, ClientboundTomeUnlocksPacket> CODEC =
             CustomPacketPayload.codec(ClientboundTomeUnlocksPacket::write, ClientboundTomeUnlocksPacket::read);
+
+    public static <K extends Enum<K>> ClientboundTomeUnlocksPacket fromEnumSet(Set<K> enumUnlocks) {
+        Set<String> keys = enumUnlocks.stream()
+                .map(k -> k.name().toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+        return new ClientboundTomeUnlocksPacket(keys);
+    }
 
     public static ClientboundTomeUnlocksPacket read(FriendlyByteBuf buf) {
         int size = buf.readVarInt();

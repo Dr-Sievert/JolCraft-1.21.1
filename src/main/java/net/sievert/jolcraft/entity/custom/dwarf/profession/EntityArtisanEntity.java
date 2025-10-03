@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
@@ -31,9 +31,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfArtisanEntity extends AbstractDwarfEntity {
+public class EntityArtisanEntity extends AbstractEntityEntity {
 
-    public DwarfArtisanEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
+    public EntityArtisanEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DEEPSLATE_CHISEL.get()));
         this.instanceTrades = createRandomizedArtisanTrades();
@@ -79,7 +79,7 @@ public class DwarfArtisanEntity extends AbstractDwarfEntity {
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -104,7 +104,7 @@ public class DwarfArtisanEntity extends AbstractDwarfEntity {
 
     //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedArtisanTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
                 // Novice
                 1, new DwarfTrades.ItemListing[] {
                         new DwarfTrades.GoldForItems(JolCraftItems.AEGISCORE.get(), 1, 10, 10, 8, 15),
@@ -150,7 +150,7 @@ public class DwarfArtisanEntity extends AbstractDwarfEntity {
                                 30,
                                 JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
                                 1, 0, 0F,
-                                (stack) -> stack.set(JolCraftDataComponents.LORE_LINE_ID, "ancient_gemcraft")
+                                (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "ancient_gemcraft")
                         ),
                 }
         ));

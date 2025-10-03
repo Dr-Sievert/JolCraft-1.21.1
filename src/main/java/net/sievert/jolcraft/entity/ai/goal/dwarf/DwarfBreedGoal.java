@@ -6,23 +6,23 @@ import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 
 public class DwarfBreedGoal extends Goal {
     private static final TargetingConditions PARTNER_TARGETING = TargetingConditions.forNonCombat().range(8.0F).ignoreLineOfSight();
-    protected final AbstractDwarfEntity dwarf;
-    private final Class<? extends AbstractDwarfEntity> partnerClass;
+    protected final AbstractEntityEntity dwarf;
+    private final Class<? extends AbstractEntityEntity> partnerClass;
     protected final ServerLevel level;
     @Nullable
-    protected AbstractDwarfEntity partner;
+    protected AbstractEntityEntity partner;
     private int loveTime;
     private final double speedModifier;
 
-    public DwarfBreedGoal(AbstractDwarfEntity dwarf, double speedModifier) {
+    public DwarfBreedGoal(AbstractEntityEntity dwarf, double speedModifier) {
         this(dwarf, speedModifier, dwarf.getClass());
     }
 
-    public DwarfBreedGoal(AbstractDwarfEntity dwarf, double speedModifier, Class<? extends AbstractDwarfEntity> partnerClass) {
+    public DwarfBreedGoal(AbstractEntityEntity dwarf, double speedModifier, Class<? extends AbstractEntityEntity> partnerClass) {
         this.dwarf = dwarf;
         this.level = getServerLevel(dwarf);
         this.partnerClass = partnerClass;
@@ -61,12 +61,12 @@ public class DwarfBreedGoal extends Goal {
     }
 
     @Nullable
-    private AbstractDwarfEntity getFreePartner() {
-        List<? extends AbstractDwarfEntity> list = this.level.getNearbyEntities(this.partnerClass, PARTNER_TARGETING, this.dwarf, this.dwarf.getBoundingBox().inflate((double)8.0F));
+    private AbstractEntityEntity getFreePartner() {
+        List<? extends AbstractEntityEntity> list = this.level.getNearbyEntities(this.partnerClass, PARTNER_TARGETING, this.dwarf, this.dwarf.getBoundingBox().inflate((double)8.0F));
         double d0 = Double.MAX_VALUE;
-        AbstractDwarfEntity dwarf = null;
+        AbstractEntityEntity dwarf = null;
 
-        for(AbstractDwarfEntity dwarf1 : list) {
+        for(AbstractEntityEntity dwarf1 : list) {
             if (this.dwarf.canMate(dwarf1) && !dwarf1.isPanicking() && this.dwarf.distanceToSqr(dwarf1) < d0) {
                 dwarf = dwarf1;
                 d0 = this.dwarf.distanceToSqr(dwarf1);

@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -23,9 +23,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfEntity extends AbstractDwarfEntity {
+public class EntityEntity extends AbstractEntityEntity {
 
-    public DwarfEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
+    public EntityEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.instanceTrades = createRandomizedDwarfTrades();
     }
@@ -49,7 +49,7 @@ public class DwarfEntity extends AbstractDwarfEntity {
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new DwarfFollowParentGoal(this, 1.25));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
@@ -75,7 +75,7 @@ public class DwarfEntity extends AbstractDwarfEntity {
 
     //Trades
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedDwarfTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
                 // Novice
                 1, new DwarfTrades.ItemListing[] {
                         new DwarfTrades.ItemsForGold(Items.STICK, 1, 4, 2, 8, 6, 500),

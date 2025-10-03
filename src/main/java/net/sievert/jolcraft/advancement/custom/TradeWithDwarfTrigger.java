@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class TradeWithDwarfTrigger extends SimpleCriterionTrigger<TradeWithDwarf
     /**
      * Call this when a player successfully trades with a dwarf.
      */
-    public void trigger(ServerPlayer player, AbstractDwarfEntity dwarf) {
+    public void trigger(ServerPlayer player, AbstractEntityEntity dwarf) {
         this.trigger(player, instance -> instance.matches(dwarf));
     }
 
@@ -76,7 +76,7 @@ public class TradeWithDwarfTrigger extends SimpleCriterionTrigger<TradeWithDwarf
         /**
          * Checks if the given dwarf matches the trigger's entity type filter.
          */
-        public boolean matches(AbstractDwarfEntity dwarf) {
+        public boolean matches(AbstractEntityEntity dwarf) {
             if (dwarfTypeId.isEmpty()) return true;
             ResourceLocation entityId = dwarf.getType().builtInRegistryHolder().key().location();
             return entityId.equals(dwarfTypeId.get());

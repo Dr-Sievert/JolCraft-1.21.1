@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.util.dwarf.data;
+package net.sievert.jolcraft.entity.util;
 
 import net.minecraft.network.syncher.EntityDataAccessor;
 
@@ -6,7 +6,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
  * Generic interface for entities with arbitrary synced entity data fields.
  * Implement this on your entity to standardize access to all EntityDataAccessors via type-safe methods.
  */
-public interface DwarfData {
+public interface EntityData {
 
     /**
      * Sets a value for the specified EntityDataAccessor on this entity.

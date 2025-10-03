@@ -31,7 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.entity.util.dwarf.data.DwarfData;
+import net.sievert.jolcraft.entity.util.EntityData;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
@@ -53,7 +53,7 @@ import java.util.OptionalInt;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AbstractTradingEntity extends AbstractBreedingEntity implements DwarfMerchant, DwarfData {
+public class AbstractTradingEntity extends AbstractBreedingEntity implements DwarfMerchant, EntityData {
 
     public long lastRestockGameTime = 0L;
     public static final long RESTOCK_INTERVAL_TICKS = 6000L;
@@ -380,7 +380,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         this.rewardTradeXp(offer);
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.TRADED_WITH_VILLAGER);
-            JolCraftCriteriaTriggers.TRADE_WITH_DWARF.trigger(serverPlayer, (AbstractDwarfEntity) this);
+            JolCraftCriteriaTriggers.TRADE_WITH_DWARF.trigger(serverPlayer, (AbstractEntityEntity) this);
         }
     }
 

@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.network.util.JolCraftParticleHelper;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 
@@ -15,10 +15,10 @@ import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
  */
 public class BlockDwarfAction implements DwarfAction {
 
-    protected AbstractDwarfEntity dwarf;
+    protected AbstractEntityEntity dwarf;
     private int ticksRemaining = 0;
 
-    public BlockDwarfAction (AbstractDwarfEntity dwarf){
+    public BlockDwarfAction (AbstractEntityEntity dwarf){
         this.dwarf = dwarf;
     }
 
@@ -44,7 +44,7 @@ public class BlockDwarfAction implements DwarfAction {
         return ticksRemaining <= 0;
     }
 
-    private void spawnBlockParticles(AbstractDwarfEntity dwarf) {
+    private void spawnBlockParticles(AbstractEntityEntity dwarf) {
         float yawDeg = dwarf.yBodyRot;
         float yawRad = yawDeg * Mth.DEG_TO_RAD;
 

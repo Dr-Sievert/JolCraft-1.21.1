@@ -12,13 +12,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.util.lore.LoreAge;
+import net.sievert.jolcraft.data.util.lore.LoreRarity;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntry;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.tooltip.UnidentifiedItem;
 import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.data.util.lore.LoreHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Set;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -40,10 +45,20 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     @Override
     protected ItemStack getRandomIdentifiedItem(ServerPlayer player, ItemStack original) {
         RandomSource rng = player.getRandom();
-        String loreKey = DwarvenLoreHelper.getRandomKeyWeighted(rng, false);
-        if (loreKey.isEmpty()) return ItemStack.EMPTY;
-
-        DwarvenLoreHelper.LoreRarity rarity = DwarvenLoreHelper.getRarity(loreKey, false);
+        Set<LoreRarity> allowed = Set.of(
+                LoreRarity.COMMON,
+                LoreRarity.UNCOMMON,
+                LoreRarity.RARE,
+                LoreRarity.EPIC
+        );
+        DwarfLoreEntry entry = LoreHelper.getRandomLoreEntry(
+                rng,
+                LoreAge.MODERN,
+                DwarfLoreEntries.ALL.values(),
+                allowed
+        );
+        if (entry == null) return ItemStack.EMPTY;
+        LoreRarity rarity = entry.getRarity();
         ItemStack tome = switch (rarity) {
             case COMMON -> new ItemStack(JolCraftItems.DWARVEN_TOME_COMMON.get());
             case UNCOMMON -> new ItemStack(JolCraftItems.DWARVEN_TOME_UNCOMMON.get());
@@ -52,7 +67,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
             case LEGENDARY -> ItemStack.EMPTY;
         };
 
-        tome.set(JolCraftDataComponents.LORE_LINE_ID.get(), loreKey);
+        LoreHelper.setLoreKey(tome, entry.getKey());
         return tome;
     }
 

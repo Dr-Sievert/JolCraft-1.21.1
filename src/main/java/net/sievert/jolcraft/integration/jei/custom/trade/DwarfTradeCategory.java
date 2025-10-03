@@ -213,17 +213,17 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
 
         LivingEntity entity;
         switch (key) {
-            case "guildmaster" -> entity = new DwarfGuildmasterEntity(JolCraftEntities.DWARF_GUILDMASTER.get(), mc.level);
-            case "historian" -> entity = new DwarfHistorianEntity(JolCraftEntities.DWARF_HISTORIAN.get(), mc.level);
-            case "merchant" -> entity = new DwarfMerchantEntity(JolCraftEntities.DWARF_MERCHANT.get(), mc.level);
-            case "scrapper" -> entity = new DwarfScrapperEntity(JolCraftEntities.DWARF_SCRAPPER.get(), mc.level);
-            case "brewmaster" -> entity = new DwarfBrewmasterEntity(JolCraftEntities.DWARF_BREWMASTER.get(), mc.level);
-            case "guard" -> entity = new DwarfGuardEntity(JolCraftEntities.DWARF_GUARD.get(), mc.level);
-            case "keeper" -> entity = new DwarfKeeperEntity(JolCraftEntities.DWARF_KEEPER.get(), mc.level);
-            case "artisan" -> entity = new DwarfArtisanEntity(JolCraftEntities.DWARF_ARTISAN.get(), mc.level);
-            case "explorer" -> entity = new DwarfExplorerEntity(JolCraftEntities.DWARF_EXPLORER.get(), mc.level);
-            case "miner" -> entity = new DwarfMinerEntity(JolCraftEntities.DWARF_MINER.get(), mc.level);
-            default -> entity = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
+            case "guildmaster" -> entity = new EntityGuildmasterEntity(JolCraftEntities.DWARF_GUILDMASTER.get(), mc.level);
+            case "historian" -> entity = new EntityHistorianEntity(JolCraftEntities.DWARF_HISTORIAN.get(), mc.level);
+            case "merchant" -> entity = new EntityMerchantEntity(JolCraftEntities.DWARF_MERCHANT.get(), mc.level);
+            case "scrapper" -> entity = new EntityScrapperEntity(JolCraftEntities.DWARF_SCRAPPER.get(), mc.level);
+            case "brewmaster" -> entity = new EntityBrewmasterEntity(JolCraftEntities.DWARF_BREWMASTER.get(), mc.level);
+            case "guard" -> entity = new EntityGuardEntity(JolCraftEntities.DWARF_GUARD.get(), mc.level);
+            case "keeper" -> entity = new EntityKeeperEntity(JolCraftEntities.DWARF_KEEPER.get(), mc.level);
+            case "artisan" -> entity = new EntityArtisanEntity(JolCraftEntities.DWARF_ARTISAN.get(), mc.level);
+            case "explorer" -> entity = new EntityExplorerEntity(JolCraftEntities.DWARF_EXPLORER.get(), mc.level);
+            case "miner" -> entity = new EntityMinerEntity(JolCraftEntities.DWARF_MINER.get(), mc.level);
+            default -> entity = new EntityEntity(JolCraftEntities.DWARF.get(), mc.level);
         }
 
         DWARF_RENDER_CACHE.put(key, entity);

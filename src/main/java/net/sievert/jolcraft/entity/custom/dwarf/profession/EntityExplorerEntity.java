@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.util.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
@@ -35,9 +35,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfExplorerEntity extends AbstractDwarfEntity {
+public class EntityExplorerEntity extends AbstractEntityEntity {
 
-    public DwarfExplorerEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
+    public EntityExplorerEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()));
         this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
@@ -101,7 +101,7 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -147,7 +147,7 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedExplorerTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
                 // Novice
                 1, new DwarfTrades.ItemListing[] {
                         new DwarfTrades.ItemsForGold(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(), 5, 10,  1, 3, 0),

@@ -31,10 +31,10 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.network.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfArtisanEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityArtisanEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
-import net.sievert.jolcraft.entity.util.dwarf.data.DwarfData;
+import net.sievert.jolcraft.entity.util.EntityData;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchant;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -52,9 +52,9 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, DwarfData {
+public class AbstractEntityEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, EntityData {
 
-    public AbstractDwarfEntity(EntityType<? extends AgeableMob> entityType, Level level) {
+    public AbstractEntityEntity(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);
         ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
         this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
@@ -114,13 +114,13 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     //Data
 
     public static final EntityDataAccessor<String> PROFESSION =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.STRING);
+            SynchedEntityData.defineId(AbstractEntityEntity.class, EntityDataSerializers.STRING);
 
     public static final EntityDataAccessor<Integer> CURRENT_ACTION =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(AbstractEntityEntity.class, EntityDataSerializers.INT);
 
     public static final EntityDataAccessor<Integer> CURRENT_ACTION_SUBTYPE =
-            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(AbstractEntityEntity.class, EntityDataSerializers.INT);
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
@@ -161,7 +161,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     //Attributes
 
     public static AttributeSupplier.Builder createAttributes() {
-        return DwarfArtisanEntity.createLivingAttributes()
+        return EntityArtisanEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.MOVEMENT_SPEED, 0.2D)
                 .add(Attributes.FOLLOW_RANGE, 24D)
@@ -334,9 +334,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     //Animation
 
-    private static final Map<AbstractDwarfEntity, DwarfRenderState> CLIENT_RENDER_STATES = new WeakHashMap<>();
+    private static final Map<AbstractEntityEntity, DwarfRenderState> CLIENT_RENDER_STATES = new WeakHashMap<>();
 
-    public static DwarfRenderState getOrCreateClientRenderState(AbstractDwarfEntity entity) {
+    public static DwarfRenderState getOrCreateClientRenderState(AbstractEntityEntity entity) {
         return CLIENT_RENDER_STATES.computeIfAbsent(entity, e -> new DwarfRenderState());
     }
 

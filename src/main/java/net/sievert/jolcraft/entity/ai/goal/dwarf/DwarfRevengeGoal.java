@@ -4,7 +4,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 
 import java.util.EnumSet;
 import java.util.Objects;
@@ -12,9 +12,9 @@ import java.util.Objects;
 
 public class DwarfRevengeGoal extends Goal
 {
-    private final AbstractDwarfEntity dwarf;
+    private final AbstractEntityEntity dwarf;
 
-    public DwarfRevengeGoal(AbstractDwarfEntity entity)
+    public DwarfRevengeGoal(AbstractEntityEntity entity)
     {
         this.dwarf = entity;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));

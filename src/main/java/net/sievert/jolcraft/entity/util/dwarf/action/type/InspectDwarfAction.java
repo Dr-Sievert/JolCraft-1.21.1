@@ -8,21 +8,21 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 public class InspectDwarfAction implements DwarfAction {
 
-    protected AbstractDwarfEntity dwarf;
+    protected AbstractEntityEntity dwarf;
     protected final Player player;
     protected InteractionHand hand;
     protected ItemStack itemstack;
     protected ItemStack previousMainHandItem = ItemStack.EMPTY;
 
 
-    public InspectDwarfAction (AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack){
+    public InspectDwarfAction (AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack){
         this.dwarf = dwarf;
         this.player = player;
         this.hand = hand;
@@ -31,14 +31,14 @@ public class InspectDwarfAction implements DwarfAction {
 
     @Override public DwarfActionType getType() { return DwarfActionType.INSPECT; }
 
-    protected void startInspect(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    protected void startInspect(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         dwarf.usePlayerItem(player, hand, itemstack);
         JolCraftSoundHelper.playDwarfYes(dwarf);
         previousMainHandItem = dwarf.getMainHandItem().copy();
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
     }
 
-    protected void throwItem(AbstractDwarfEntity dwarf, Player player, ItemStack thrownItem) {
+    protected void throwItem(AbstractEntityEntity dwarf, Player player, ItemStack thrownItem) {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         Vec3 start = dwarf.position().add(0.0, dwarf.getEyeHeight(), 0.0);
         Vec3 target = player.position().add(0.0, player.getBbHeight() * 0.5, 0.0);

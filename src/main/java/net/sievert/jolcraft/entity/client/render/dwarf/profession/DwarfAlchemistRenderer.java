@@ -9,11 +9,11 @@ import net.sievert.jolcraft.entity.client.model.dwarf.profession.DwarfAlchemistM
 import net.sievert.jolcraft.entity.client.render.dwarf.DwarfRenderer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfAlchemistEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityAlchemistEntity;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfAlchemistRenderer extends DwarfRenderer<DwarfAlchemistEntity> {
+public class DwarfAlchemistRenderer extends DwarfRenderer<EntityAlchemistEntity> {
 
     public DwarfAlchemistRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfAlchemistModel(context.bakeLayer(DwarfAlchemistModel.LAYER_LOCATION)));

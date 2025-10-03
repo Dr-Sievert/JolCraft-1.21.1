@@ -9,11 +9,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.data.util.lore.LoreHelper;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.item.util.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper;
 
 import java.util.function.Supplier;
 
@@ -210,24 +211,25 @@ public class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.LEGENDARY_PAGE);
 
                         ItemStack gemTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        gemTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.CUTTING_GEMS);
+                        LoreHelper.setLoreKey(gemTome, DwarfLoreKey.ANCIENT_GEMCRAFT);
                         pOutput.accept(gemTome);
 
                         ItemStack brewTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        brewTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.BREW_MULTIPLE_HOPS);
+                        LoreHelper.setLoreKey(brewTome, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
                         pOutput.accept(brewTome);
 
                         ItemStack forgeTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        forgeTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.MITHRIL_FORGING);
+                        LoreHelper.setLoreKey(forgeTome, DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE);
                         pOutput.accept(forgeTome);
 
                         ItemStack coinTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        coinTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.COIN_PRESSING);
+                        LoreHelper.setLoreKey(coinTome, DwarfLoreKey.COIN_PRESS_MANUAL);
                         pOutput.accept(coinTome);
 
                         ItemStack alchemyTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        alchemyTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.ALCHEMY);
+                        LoreHelper.setLoreKey(alchemyTome, DwarfLoreKey.ALCHEMY_RECIPES);
                         pOutput.accept(alchemyTome);
+
 
                         pOutput.accept(JolCraftItems.COPPER_SPANNER);
                         pOutput.accept(JolCraftItems.IRON_SPANNER);

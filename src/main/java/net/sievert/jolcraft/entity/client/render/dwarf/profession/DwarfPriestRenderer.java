@@ -9,11 +9,11 @@ import net.sievert.jolcraft.entity.client.model.dwarf.profession.DwarfPriestMode
 import net.sievert.jolcraft.entity.client.render.dwarf.DwarfRenderer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfPriestEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityPriestEntity;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfPriestRenderer extends DwarfRenderer<DwarfPriestEntity> {
+public class DwarfPriestRenderer extends DwarfRenderer<EntityPriestEntity> {
 
     public DwarfPriestRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfPriestModel(context.bakeLayer(DwarfPriestModel.LAYER_LOCATION)));

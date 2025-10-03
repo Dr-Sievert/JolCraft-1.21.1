@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DwarfAttackGoal extends MeleeAttackGoal {
 
-    protected final AbstractDwarfEntity dwarf;
+    protected final AbstractEntityEntity dwarf;
     private final double speedModifier;
     private final boolean followingTargetEvenIfNotSeen;
     private Path path;
@@ -29,7 +29,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
     private int failedPathFindingPenalty = 0;
     private final boolean canPenalize = false;
 
-    public DwarfAttackGoal(AbstractDwarfEntity mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
+    public DwarfAttackGoal(AbstractEntityEntity mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
         super(mob, speedModifier, followingTargetEvenIfNotSeen);
         this.dwarf = mob;
         this.speedModifier = speedModifier;
@@ -150,7 +150,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
         }
     }
 
-    public static void chooseAndSetAttackAction(AbstractDwarfEntity dwarf, DwarfActionHelper actionHelper) {
+    public static void chooseAndSetAttackAction(AbstractEntityEntity dwarf, DwarfActionHelper actionHelper) {
         if (dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_WARHAMMER.get()) || dwarf.getMainHandItem().is(JolCraftItems.DEEPSLATE_AXE.get())) {
             actionHelper.setAction(dwarf, DwarfActionType.Subtype.ATTACK_HEAVY);
         } else {

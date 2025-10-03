@@ -31,7 +31,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -44,16 +44,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfGuardEntity extends AbstractDwarfEntity {
+public class EntityGuardEntity extends AbstractEntityEntity {
 
-    public DwarfGuardEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
+    public EntityGuardEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.instanceTrades = createRandomizedGuardTrades();
         this.setProfession(DwarfProfession.GUARD);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return DwarfGuardEntity.createLivingAttributes()
+        return EntityGuardEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 30D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.FOLLOW_RANGE, 24D)
@@ -113,7 +113,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         this.goalSelector.addGoal(2, new DwarfAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(4, new DwarfUseItemGoal<>(this, PotionContents.createItemStack(Items.POTION, Potions.STRONG_HEALING), SoundEvents.PLAYER_BURP, mob -> mob.getHealth() < mob.getMaxHealth(), 300));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(7, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -156,7 +156,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedGuardTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
                         //Master
                         5,
                         new DwarfTrades.ItemListing[]{

@@ -11,6 +11,7 @@ import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLangua
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlockImpl;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
 
 import java.util.function.Supplier;
 
@@ -40,9 +41,9 @@ public class JolCraftAttachments {
                             .build()
             );
 
-    public static final Supplier<AttachmentType<TomeUnlockImpl>> TOME_UNLOCK =
-            ATTACHMENT_TYPES.register("tome_unlock", () ->
-                    AttachmentType.serializable(TomeUnlockImpl::new)
+    public static final Supplier<AttachmentType<TomeUnlockImpl<DwarfLoreKey>>> DWARF_TOME_UNLOCK =
+            ATTACHMENT_TYPES.register("dwarf_tome_unlock", () ->
+                    AttachmentType.serializable(() -> new TomeUnlockImpl<>(DwarfLoreKey.class))
                             .copyOnDeath()
                             .build()
             );

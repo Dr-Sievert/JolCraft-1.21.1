@@ -7,8 +7,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.util.lore.LoreAge;
+import net.sievert.jolcraft.data.util.lore.LoreRarity;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntry;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.data.util.lore.LoreHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTomeItem{
@@ -19,11 +23,16 @@ public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTom
     @Override
     protected ItemStack getRandomIdentifiedItem(@NotNull ServerPlayer player, ItemStack original) {
         RandomSource rng = player.getRandom();
-        String loreKey = DwarvenLoreHelper.getRandomLegendaryKey(rng);
-        if (loreKey.isEmpty()) return ItemStack.EMPTY;
+        DwarfLoreEntry entry = LoreHelper.getRandomLoreEntry(
+                rng,
+                LoreAge.ANCIENT,
+                DwarfLoreEntries.ALL.values(),
+                LoreRarity.LEGENDARY
+        );
+        if (entry == null) return ItemStack.EMPTY;
 
         ItemStack tome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-        tome.set(JolCraftDataComponents.LORE_LINE_ID.get(), loreKey);
+        LoreHelper.setLoreKey(tome, entry.getKey());
         return tome;
     }
 

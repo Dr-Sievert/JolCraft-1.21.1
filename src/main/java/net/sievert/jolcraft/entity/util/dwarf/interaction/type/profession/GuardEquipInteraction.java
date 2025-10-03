@@ -5,7 +5,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 public class GuardEquipInteraction extends InspectInteraction {
 
     @Override
-    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public InteractionResult handle(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         assert itemstack != null;
         EquipmentSlot slot = getSlotForArmor(itemstack);
         if (slot != null && dwarf.getItemBySlot(slot).isEmpty()) {

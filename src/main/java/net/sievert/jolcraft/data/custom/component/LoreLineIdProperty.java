@@ -35,7 +35,7 @@ public final class LoreLineIdProperty implements SelectItemModelProperty<String>
     @Nullable
     @Override
     public String get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, @NotNull ItemDisplayContext context) {
-        return stack.get(JolCraftDataComponents.LORE_LINE_ID.get());
+        return stack.get(JolCraftDataComponents.LORE_KEY.get());
     }
 
     @Override

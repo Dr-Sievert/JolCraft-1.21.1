@@ -5,8 +5,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.data.util.lore.LoreHelper;
 import net.minecraft.ChatFormatting;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntry;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.custom.tooltip.AncientItemBase;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,27 +45,21 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
 
     @Override
     protected @NotNull List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        // Show SGA version of what would otherwise be visible if unlocked (base class handles SGA-ifying)
-        var dataComponentType = JolCraftDataComponents.LORE_LINE_ID.get();
-        String loreKey = stack.get(dataComponentType);
-        var entry = (loreKey != null && !loreKey.isEmpty()) ? DwarvenLoreHelper.get(loreKey, true) : null;
+        String text = LoreHelper.getEntryText(stack, DwarfLoreEntries.ALL);
         return List.of(
-                (entry != null)
-                        ? entry.text()
-                        : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY)
+                (text != null)
+                        ? Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                        : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );
     }
 
     @Override
     protected @NotNull List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        var dataComponentType = JolCraftDataComponents.LORE_LINE_ID.get();
-        String loreKey = stack.get(dataComponentType);
-        var entry = (loreKey != null && !loreKey.isEmpty()) ? DwarvenLoreHelper.get(loreKey, true) : null;
+        String text = LoreHelper.getEntryText(stack, DwarfLoreEntries.ALL);
         return List.of(
-                (entry != null)
-                        ? entry.text()
-                        : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY)
+                (text != null)
+                        ? Component.literal(text).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                        : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );
     }
-
 }

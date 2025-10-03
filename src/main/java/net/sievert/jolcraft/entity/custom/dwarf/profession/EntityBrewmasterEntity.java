@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
@@ -30,9 +30,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
+public class EntityBrewmasterEntity extends AbstractEntityEntity {
 
-    public DwarfBrewmasterEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
+    public EntityBrewmasterEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.GLASS_MUG.get()));
         this.instanceTrades = createRandomizedBrewmasterTrades();
@@ -76,7 +76,7 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -102,7 +102,7 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
     /** Generates a new randomized trade set for this Brewmaster instance.
      * No pre-randomization! All values are min/max, the trade does the rolling. */
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedBrewmasterTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
                 // Novice
                 1, new DwarfTrades.ItemListing[]{
                         new DwarfTrades.GoldForItems(JolCraftItems.GLASS_MUG.get(), 1, 2, 5, 2, 1, 3),
@@ -132,7 +132,7 @@ public class DwarfBrewmasterEntity extends AbstractDwarfEntity {
                                 30,
                                 JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
                                 1, 0, 0F,
-                                (stack) -> stack.set(JolCraftDataComponents.LORE_LINE_ID, "forgotten_brew_formulas")
+                                (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "forgotten_brew_formulas")
                         ),
                         new DwarfTrades.ItemsAndGoldToItems(
                                 JolCraftItems.EMBERGLASS_CUT.get(), 2, 20, 40,

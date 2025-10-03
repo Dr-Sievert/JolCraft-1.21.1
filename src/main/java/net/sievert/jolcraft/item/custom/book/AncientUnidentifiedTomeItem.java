@@ -11,11 +11,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.util.lore.LoreAge;
+import net.sievert.jolcraft.data.util.lore.LoreRarity;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntry;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.tooltip.AncientUnidentifiedItem;
 import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.util.attachment.language.AncientEffectHelper;
-import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.data.util.lore.LoreHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -46,18 +50,23 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
     @Override
     protected ItemStack getRandomIdentifiedItem(ServerPlayer player, ItemStack original) {
         RandomSource rng = player.getRandom();
-        String loreKey = DwarvenLoreHelper.getRandomKeyWeighted(rng, true);
-        if (loreKey.isEmpty()) return ItemStack.EMPTY;
+        DwarfLoreEntry entry = LoreHelper.getRandomLoreEntry(
+                rng,
+                LoreAge.ANCIENT,
+                DwarfLoreEntries.ALL.values()
+        );
+        if (entry == null) return ItemStack.EMPTY;
 
-        DwarvenLoreHelper.LoreRarity rarity = DwarvenLoreHelper.getRarity(loreKey, true);
+        LoreRarity rarity = entry.getRarity();
         ItemStack tome = switch (rarity) {
             case COMMON -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get());
             case UNCOMMON -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get());
             case RARE -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get());
             case EPIC -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get());
-            case LEGENDARY -> ItemStack.EMPTY;
+            case LEGENDARY -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
         };
-        tome.set(JolCraftDataComponents.LORE_LINE_ID.get(), loreKey);
+
+        LoreHelper.setLoreKey(tome, entry.getKey());
         return tome;
     }
 

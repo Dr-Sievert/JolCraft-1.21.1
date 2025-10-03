@@ -7,12 +7,13 @@ import net.sievert.jolcraft.data.JolCraftAttachments;
 
 import java.util.Set;
 
-public interface TomeUnlock extends INBTSerializable<CompoundTag> {
-    Set<String> getUnlocks();
-    void addUnlock(String id);
-    boolean hasUnlock(String id);
+public interface TomeUnlock<K extends Enum<K>> extends INBTSerializable<CompoundTag> {
+    Set<K> getUnlocks();
+    void addUnlock(K id);
+    boolean hasUnlock(K id);
 
-    static TomeUnlock get(Player player) {
-        return player.getData(JolCraftAttachments.TOME_UNLOCK.get());
+    @SuppressWarnings("unchecked")
+    static <K extends Enum<K>> TomeUnlock<K> get(Player player, Class<K> keyClass) {
+        return (TomeUnlock<K>) player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get());
     }
 }

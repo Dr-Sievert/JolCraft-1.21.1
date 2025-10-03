@@ -31,16 +31,20 @@ import net.sievert.jolcraft.block.custom.crop.BarleyCropBlock;
 import net.sievert.jolcraft.block.custom.crop.FesterlingCropBlock;
 import net.sievert.jolcraft.block.custom.crop.HopsCropBottomBlock;
 import net.sievert.jolcraft.block.custom.crop.HopsCropTopBlock;
+import net.sievert.jolcraft.data.util.lore.LoreRarity;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.data.custom.component.CoinPouchAmountProperty;
-import net.sievert.jolcraft.entity.util.dwarf.DwarvenLoreHelper;
+import net.sievert.jolcraft.data.util.lore.LoreHelper;
 import net.sievert.jolcraft.data.custom.component.LoreLineIdProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class JolCraftModelProvider extends ModelProvider {
@@ -529,17 +533,22 @@ public class JolCraftModelProvider extends ModelProvider {
         ModelTemplates.FLAT_ITEM.create(baseModelLoc, TextureMapping.layer0(fallbackTexture), itemModels.modelOutput);
         ItemModel.Unbaked fallbackModel = ItemModelUtils.plainModel(baseModelLoc);
 
-        Set<String> legendaryLoreKeys = DwarvenLoreHelper.getLegendaryKeys();
+        Set<DwarfLoreKey> legendaryLoreKeys = DwarfLoreEntries.ALL.entrySet().stream()
+                .filter(e -> e.getValue().rarity() == LoreRarity.LEGENDARY)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
         List<SelectItemModel.SwitchCase<String>> switchCases = new ArrayList<>();
 
-        for (String loreKey : legendaryLoreKeys) {
-            String modelName = "item/ancient_dwarven_tome_legendary_" + loreKey;
+        for (DwarfLoreKey loreKey : legendaryLoreKeys) {
+            String keyString = loreKey.name().toLowerCase(Locale.ROOT);
+            String modelName = "item/ancient_dwarven_tome_legendary_" + keyString;
             ResourceLocation modelLoc = ResourceLocation.fromNamespaceAndPath("jolcraft", modelName);
 
             ModelTemplates.FLAT_ITEM.create(modelLoc, TextureMapping.layer0(modelLoc), itemModels.modelOutput);
             ItemModel.Unbaked model = ItemModelUtils.plainModel(modelLoc);
 
-            switchCases.add(ItemModelUtils.when(loreKey, model));
+            switchCases.add(ItemModelUtils.when(keyString, model));
         }
 
         itemModels.itemModelOutput.accept(

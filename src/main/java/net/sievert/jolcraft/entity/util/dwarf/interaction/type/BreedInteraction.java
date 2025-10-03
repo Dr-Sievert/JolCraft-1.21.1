@@ -5,14 +5,14 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 public class BreedInteraction implements DwarfInteraction {
 
     @Override
-    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public InteractionResult handle(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         boolean client = dwarf.level().isClientSide;
         if (dwarf.isFood(itemstack)) {
             int i = dwarf.getAge();

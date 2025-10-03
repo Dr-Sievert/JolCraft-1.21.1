@@ -53,67 +53,67 @@ public class DwarfTradeJeiHelper {
             new DwarfProfession(
                     "dwarf",
                     "Dwarf",
-                    DwarfEntity.createRandomizedDwarfTrades(),
+                    EntityEntity.createRandomizedDwarfTrades(),
                     JolCraftItems.DWARF_SPAWN_EGG
             ),
             new DwarfProfession(
                     "guildmaster",
                     "Guildmaster",
-                    DwarfGuildmasterEntity.createRandomizedGuildmasterTrades(),
+                    EntityGuildmasterEntity.createRandomizedGuildmasterTrades(),
                     JolCraftItems.DWARF_GUILDMASTER_SPAWN_EGG
             ),
             new DwarfProfession(
                     "historian",
                     "Historian",
-                    DwarfHistorianEntity.createRandomizedHistorianTrades(),
+                    EntityHistorianEntity.createRandomizedHistorianTrades(),
                     JolCraftItems.DWARF_HISTORIAN_SPAWN_EGG
             ),
             new DwarfProfession(
                     "merchant",
                     "Merchant",
-                    DwarfMerchantEntity.getAllJeiTrades(),
+                    EntityMerchantEntity.getAllJeiTrades(),
                     JolCraftItems.DWARF_MERCHANT_SPAWN_EGG
             ),
             new DwarfProfession(
                     "scrapper",
                     "Scrapper",
-                    DwarfScrapperEntity.getAllJeiTrades(),
+                    EntityScrapperEntity.getAllJeiTrades(),
                     JolCraftItems.DWARF_SCRAPPER_SPAWN_EGG
             ),
             new DwarfProfession(
                     "brewmaster",
                     "Brewmaster",
-                    DwarfBrewmasterEntity.createRandomizedBrewmasterTrades(),
+                    EntityBrewmasterEntity.createRandomizedBrewmasterTrades(),
                     JolCraftItems.DWARF_BREWMASTER_SPAWN_EGG
             ),
             new DwarfProfession(
                     "guard",
                     "Guard",
-                    DwarfGuardEntity.createRandomizedGuardTrades(),
+                    EntityGuardEntity.createRandomizedGuardTrades(),
                     JolCraftItems.DWARF_GUARD_SPAWN_EGG
             ),
             new DwarfProfession(
                     "keeper",
                     "Keeper",
-                    DwarfKeeperEntity.createRandomizedKeeperTrades(),
+                    EntityKeeperEntity.createRandomizedKeeperTrades(),
                     JolCraftItems.DWARF_KEEPER_SPAWN_EGG
             ),
             new DwarfProfession(
                     "artisan",
                     "Artisan",
-                    DwarfArtisanEntity.createRandomizedArtisanTrades(),
+                    EntityArtisanEntity.createRandomizedArtisanTrades(),
                     JolCraftItems.DWARF_ARTISAN_SPAWN_EGG
             ),
             new DwarfProfession(
                     "explorer",
                     "Explorer",
-                    DwarfExplorerEntity.createRandomizedExplorerTrades(),
+                    EntityExplorerEntity.createRandomizedExplorerTrades(),
                     JolCraftItems.DWARF_EXPLORER_SPAWN_EGG
             ),
             new DwarfProfession(
                     "miner",
                     "Miner",
-                    DwarfMinerEntity.createRandomizedMinerTrades(),
+                    EntityMinerEntity.createRandomizedMinerTrades(),
                     JolCraftItems.DWARF_MINER_SPAWN_EGG
             )
     );

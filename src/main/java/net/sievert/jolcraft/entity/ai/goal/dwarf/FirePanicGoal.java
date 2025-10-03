@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import java.util.EnumSet;
 
 public class FirePanicGoal extends Goal
@@ -15,13 +15,13 @@ public class FirePanicGoal extends Goal
     private static final int HORIZONTAL_SEARCH_RANGE = 5;
     private static final int VERTICAL_SEARCH_RANGE = 2;
 
-    private final AbstractDwarfEntity dwarf;
+    private final AbstractEntityEntity dwarf;
     private final double speedModifier;
     private double randPosX;
     private double randPosY;
     private double randPosZ;
 
-    public FirePanicGoal(AbstractDwarfEntity dwarf, double speedModifier)
+    public FirePanicGoal(AbstractEntityEntity dwarf, double speedModifier)
     {
         this.dwarf = dwarf;
         this.speedModifier = speedModifier;

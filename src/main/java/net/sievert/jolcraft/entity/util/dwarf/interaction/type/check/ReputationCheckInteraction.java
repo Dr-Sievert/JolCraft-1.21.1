@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
@@ -18,7 +18,7 @@ public class ReputationCheckInteraction implements DwarfInteraction {
     }
 
     @Override
-    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player) {
+    public InteractionResult handle(AbstractEntityEntity dwarf, Player player) {
         boolean client = dwarf.level().isClientSide;
         boolean hasTier = DwarvenReputationHelper.hasTier(player, requiredTier);
         if (!hasTier) {

@@ -14,10 +14,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.network.client.data.ClientAncientLanguageData;
-import net.sievert.jolcraft.network.client.data.ClientDeliriumData;
-import net.sievert.jolcraft.network.client.data.ClientLanguageData;
-import net.sievert.jolcraft.network.client.data.ClientReputationData;
+import net.sievert.jolcraft.network.client.data.*;
 import net.sievert.jolcraft.network.packet.C2S.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.S2C.*;
 import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
@@ -149,7 +146,7 @@ public class JolCraftNetworking {
 
     public static void handleSyncTomeUnlocks(ClientboundTomeUnlocksPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
-            net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData.setUnlocks(packet.unlocks());
+            ClientTomeUnlocksData.setUnlocks(packet.unlocks());
         });
     }
 

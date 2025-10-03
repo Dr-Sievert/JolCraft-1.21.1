@@ -15,7 +15,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 
 public class DwarfNonPlayerAlertGoal extends TargetGoal {
     private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
@@ -81,7 +81,7 @@ public class DwarfNonPlayerAlertGoal extends TargetGoal {
     protected void alertOthers() {
         double d0 = this.getFollowDistance();
         AABB aabb = AABB.unitCubeFromLowerCorner(this.mob.position()).inflate(d0, 10.0, d0);
-        List<AbstractDwarfEntity> list = this.mob.level().getEntitiesOfClass(AbstractDwarfEntity.class, aabb, EntitySelector.NO_SPECTATORS);
+        List<AbstractEntityEntity> list = this.mob.level().getEntitiesOfClass(AbstractEntityEntity.class, aabb, EntitySelector.NO_SPECTATORS);
         Iterator iterator = list.iterator();
 
         while (true) {

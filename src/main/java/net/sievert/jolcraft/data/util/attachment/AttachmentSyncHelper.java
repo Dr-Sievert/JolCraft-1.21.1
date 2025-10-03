@@ -4,7 +4,9 @@ package net.sievert.jolcraft.data.util.attachment;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.data.util.attachment.language.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.util.attachment.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.util.attachment.lore.DwarfTomeHelper;
 import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.data.util.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.*;
@@ -35,7 +37,8 @@ public class AttachmentSyncHelper {
         JolCraftNetworking.sendToClient(player, new ClientboundEndorsementsPacket(endorsements));
 
         // Tome Unlocks
-        Set<String> unlocks = net.sievert.jolcraft.data.util.attachment.TomeUnlockHelper.getAllUnlocks(player);
-        JolCraftNetworking.sendToClient(player, new ClientboundTomeUnlocksPacket(unlocks));
+        Set<DwarfLoreKey> dwarfTomeUnlocks = DwarfTomeHelper.getAllUnlocks(player);
+        JolCraftNetworking.sendToClient(player, ClientboundTomeUnlocksPacket.fromEnumSet(dwarfTomeUnlocks));
+
     }
 }

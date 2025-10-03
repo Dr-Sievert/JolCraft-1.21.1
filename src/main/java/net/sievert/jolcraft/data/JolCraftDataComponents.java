@@ -21,8 +21,8 @@ public class JolCraftDataComponents {
 
     //Language
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> LORE_LINE_ID =
-            register("lore_line_id", builder -> builder.persistent(Codec.STRING));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> LORE_KEY =
+            register("lore_key", builder -> builder.persistent(Codec.STRING));
 
     //Reputation
 

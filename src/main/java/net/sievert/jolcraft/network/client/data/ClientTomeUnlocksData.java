@@ -8,11 +8,7 @@ public class ClientTomeUnlocksData {
     private static Set<String> UNLOCKS = Collections.emptySet();
 
     public static void setUnlocks(Set<String> unlocks) {
-        UNLOCKS = Collections.unmodifiableSet(new HashSet<>(unlocks));
-    }
-
-    public static boolean hasUnlock(String id) {
-        return UNLOCKS.contains(id);
+        UNLOCKS = Set.copyOf(unlocks);
     }
 
     public static Set<String> getAllUnlocks() {

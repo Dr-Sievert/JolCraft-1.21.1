@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
@@ -39,9 +39,9 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfMerchantEntity extends AbstractDwarfEntity {
+public class EntityMerchantEntity extends AbstractEntityEntity {
 
-    public DwarfMerchantEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
+    public EntityMerchantEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COIN_POUCH.get()));
         this.instanceTrades = createRandomizedMerchantTrades();
@@ -74,7 +74,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -118,7 +118,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         }
     }
 
-    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> BOUNTY_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> BOUNTY_TRADES = AbstractEntityEntity.toIntMap(ImmutableMap.of(
             1, new DwarfTrades.ItemListing[] {
                     new DwarfTrades.ItemForItemWithData(
                             JolCraftItems.PARCHMENT.get(),
@@ -182,7 +182,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             }
     ));
 
-    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> GENERAL_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> GENERAL_TRADES = AbstractEntityEntity.toIntMap(ImmutableMap.of(
             1, new DwarfTrades.ItemListing[]{
                     new DwarfTrades.ItemsForGold(Items.TORCH, 1, 2, 12, 3, 1),
                     new DwarfTrades.ItemsForGold(Items.COAL, 1, 2, 5, 3, 1),
@@ -228,7 +228,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             }
     ));
 
-    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> GEM_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> GEM_TRADES = AbstractEntityEntity.toIntMap(ImmutableMap.of(
             5, new DwarfTrades.ItemListing[]{
                     new DwarfTrades.ItemsForGold(JolCraftItems.AEGISCORE.get(), 64, 64, 1, 1, 1),
                     new DwarfTrades.ItemsForGold(JolCraftItems.ASHFANG.get(), 64, 64, 1, 1, 1),
@@ -256,7 +256,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedMerchantTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
+        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
                 1, concatTradeArrays(BOUNTY_TRADES.get(1), GENERAL_TRADES.get(1)),
                 2, concatTradeArrays(BOUNTY_TRADES.get(2), GENERAL_TRADES.get(2)),
                 3, concatTradeArrays(BOUNTY_TRADES.get(3), GENERAL_TRADES.get(3)),

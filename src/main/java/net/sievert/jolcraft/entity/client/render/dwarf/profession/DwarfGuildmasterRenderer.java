@@ -9,11 +9,11 @@ import net.sievert.jolcraft.entity.client.render.dwarf.DwarfRenderer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.model.dwarf.profession.DwarfGuildmasterModel;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfGuildmasterEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.EntityGuildmasterEntity;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfGuildmasterRenderer extends DwarfRenderer<DwarfGuildmasterEntity> {
+public class DwarfGuildmasterRenderer extends DwarfRenderer<EntityGuildmasterEntity> {
 
     public DwarfGuildmasterRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfGuildmasterModel(context.bakeLayer(DwarfGuildmasterModel.LAYER_LOCATION)));
