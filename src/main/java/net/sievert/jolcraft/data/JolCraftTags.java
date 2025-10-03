@@ -31,11 +31,15 @@ public class JolCraftTags {
 
         public static final TagKey<Item> GEODES = createTag("geodes");
 
+        public static final TagKey<Item> DURABILITY_ENCHANTABLE = createTag("jolcraft_durability_enchantable");
+
         public static final TagKey<Item> SPANNERS = createTag("spanners");
 
         public static final TagKey<Item> ARTISAN_HAMMERS = createTag("artisan_hammers");
 
         public static final TagKey<Item> CHISELS = createTag("chisels");
+
+        public static final TagKey<Item> PESTLES = createTag("pestles");
 
         public static final TagKey<Item> GEMS_UNCUT = createTag("gems_uncut");
 

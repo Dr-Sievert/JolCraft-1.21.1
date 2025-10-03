@@ -60,6 +60,13 @@ public class JolCraftRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes() {
 
+        modShaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
+                .pattern("B B")
+                .pattern(" B ")
+                .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
+                .unlockedBy("has_deepslate_plate", has(JolCraftItems.DEEPSLATE_PLATE.get())).save(output, "deepslate_mortar");
+
+
         modShaped(RecipeCategory.MISC, JolCraftItems.COIN_POUCH.get())
                 .pattern("XBX")
                 .pattern("B B")
@@ -525,6 +532,34 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .define('B', JolCraftItems.MITHRIL_INGOT.get())
                 .define('X', JolCraftItems.DEEPSLATE_ROD.get())
                 .unlockedBy("has_mithril_ingot", has(JolCraftItems.MITHRIL_INGOT.get())).save(output, "mithril_chisel_left");
+
+        modShaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PESTLE.get())
+                .pattern("X ")
+                .pattern(" B")
+                .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
+                .define('X', JolCraftItems.DEEPSLATE_ROD.get())
+                .unlockedBy("has_deepslate_plate", has(JolCraftItems.DEEPSLATE_PLATE.get())).save(output, "deepslate_pestle_right");
+
+        modShaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PESTLE.get())
+                .pattern(" X")
+                .pattern("B ")
+                .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
+                .define('X', JolCraftItems.DEEPSLATE_ROD.get())
+                .unlockedBy("has_deepslate_plate", has(JolCraftItems.DEEPSLATE_PLATE.get())).save(output, "deepslate_pestle_left");
+
+        modShaped(RecipeCategory.MISC, JolCraftItems.MITHRIL_PESTLE.get())
+                .pattern("X ")
+                .pattern(" B")
+                .define('B', JolCraftItems.MITHRIL_INGOT.get())
+                .define('X', JolCraftItems.DEEPSLATE_ROD.get())
+                .unlockedBy("has_mithril_ingot", has(JolCraftItems.MITHRIL_INGOT.get())).save(output, "mithril_pestle_right");
+
+        modShaped(RecipeCategory.MISC, JolCraftItems.MITHRIL_PESTLE.get())
+                .pattern(" X")
+                .pattern("B ")
+                .define('B', JolCraftItems.MITHRIL_INGOT.get())
+                .define('X', JolCraftItems.DEEPSLATE_ROD.get())
+                .unlockedBy("has_mithril_ingot", has(JolCraftItems.MITHRIL_INGOT.get())).save(output, "mithril_pestle_left");
 
         modShapeless(RecipeCategory.MISC, JolCraftItems.INVERIX.get(), 3)
                 .requires(JolCraftItems.MUFFHORN_MILK_BUCKET.get())

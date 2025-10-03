@@ -28,12 +28,7 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
         //Vanilla
 
         tag(ItemTags.DURABILITY_ENCHANTABLE)
-                .add(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get())
-                .add(JolCraftItems.MITHRIL_ARTISAN_HAMMER.get())
-                .add(JolCraftItems.DEEPSLATE_CHISEL.get())
-                .add(JolCraftItems.MITHRIL_CHISEL.get())
-                .add(JolCraftItems.COPPER_SPANNER.get())
-                .add(JolCraftItems.IRON_SPANNER.get());
+                .addTags(JolCraftTags.Items.DURABILITY_ENCHANTABLE);
 
         tag(ItemTags.SWORDS)
                 .add(JolCraftItems.DEEPSLATE_SWORD.get())
@@ -92,13 +87,6 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.DEEPSLATE_COMPASS.get());
 
         //Common Neoforge
-
-        tag(Tags.Items.SEEDS)
-                .add(JolCraftItems.BARLEY_SEEDS.get())
-                .add(JolCraftItems.ASGARNIAN_SEEDS.get())
-                .add(JolCraftItems.DUSKHOLD_SEEDS.get())
-                .add(JolCraftItems.KRANDONIAN_SEEDS.get())
-                .add(JolCraftItems.YANILLIAN_SEEDS.get());
 
         tag(Tags.Items.SEEDS)
                 .add(JolCraftItems.BARLEY_SEEDS.get())
@@ -453,7 +441,8 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.MITHRIL_LEGGINGS.get())
                 .add(JolCraftItems.MITHRIL_BOOTS.get())
                 .add(JolCraftItems.MITHRIL_ARTISAN_HAMMER.get())
-                .add(JolCraftItems.MITHRIL_CHISEL.get());
+                .add(JolCraftItems.MITHRIL_CHISEL.get())
+                .add(JolCraftItems.MITHRIL_PESTLE.get());
 
         tag(JolCraftTags.Items.LEGENDARY_ITEMS)
                 .add(JolCraftItems.REPUTATION_TABLET_4.get())
@@ -478,6 +467,16 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
         tag(JolCraftTags.Items.CHISELS)
                 .add(JolCraftItems.DEEPSLATE_CHISEL.get())
                 .add(JolCraftItems.MITHRIL_CHISEL.get());
+
+        tag(JolCraftTags.Items.PESTLES)
+                .add(JolCraftItems.DEEPSLATE_PESTLE.get())
+                .add(JolCraftItems.MITHRIL_PESTLE.get());
+
+        tag(JolCraftTags.Items.DURABILITY_ENCHANTABLE)
+                .addTags(JolCraftTags.Items.SPANNERS)
+                .addTags(JolCraftTags.Items.ARTISAN_HAMMERS)
+                .addTags(JolCraftTags.Items.CHISELS)
+                .addTags(JolCraftTags.Items.PESTLES);
 
     }
 }

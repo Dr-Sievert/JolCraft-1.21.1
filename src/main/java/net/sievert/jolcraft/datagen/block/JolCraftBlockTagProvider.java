@@ -32,7 +32,8 @@ public class JolCraftBlockTagProvider extends BlockTagsProvider {
                 .add(JolCraftBlocks.DEEPSLATE_BULBS_CROP.get())
                 .add(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get())
                 .add(JolCraftBlocks.HEARTH.get())
-                .add(JolCraftBlocks.FERMENTING_CAULDRON.get());
+                .add(JolCraftBlocks.FERMENTING_CAULDRON.get())
+                .add(JolCraftBlocks.DEEPSLATE_MORTAR.get());
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(JolCraftBlocks.DEEPSLATE_BULBS_CROP.get())

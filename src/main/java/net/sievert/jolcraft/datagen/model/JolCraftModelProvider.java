@@ -123,6 +123,11 @@ public class JolCraftModelProvider extends ModelProvider {
         itemModels.generateFlatItem(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
 
         //Alchemy
+
+        itemModels.generateFlatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(JolCraftItems.DEEPSLATE_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        itemModels.generateFlatItem(JolCraftItems.MITHRIL_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+
         itemModels.generateFlatItem(JolCraftItems.INVERIX.get(), ModelTemplates.FLAT_ITEM);
 
         //Animal-related
@@ -921,6 +926,7 @@ public class JolCraftModelProvider extends ModelProvider {
                     assert holder.getKey() != null;
                     return holder.getKey().location().getNamespace().equals(modId);
                 })
+                .filter(holder -> !holder.value().equals(JolCraftBlocks.DEEPSLATE_MORTAR.get()))
                 .filter(holder -> !holder.value().equals(JolCraftBlocks.STRONGBOX.get()))
                 .filter(holder -> !holder.value().equals(JolCraftBlocks.STRONGBOX_DUMMY.get()));
     }
@@ -935,7 +941,6 @@ public class JolCraftModelProvider extends ModelProvider {
                 .filter(holder -> !holder.value().equals(JolCraftItems.STRONGBOX_ITEM.get()))
                 .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS.get()))
                 .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get()));
-
     }
 
 

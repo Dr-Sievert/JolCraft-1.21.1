@@ -121,6 +121,10 @@ public class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.GEODE_MEDIUM);
                         pOutput.accept(JolCraftItems.GEODE_LARGE);
 
+                        pOutput.accept(JolCraftItems.DEEPSLATE_MORTAR_ITEM);
+                        pOutput.accept(JolCraftItems.DEEPSLATE_PESTLE);
+                        pOutput.accept(JolCraftItems.MITHRIL_PESTLE);
+
                         pOutput.accept(JolCraftItems.INVERIX);
 
                         pOutput.accept(JolCraftItems.AEGISCORE);

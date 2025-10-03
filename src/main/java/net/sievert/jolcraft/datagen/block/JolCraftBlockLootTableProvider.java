@@ -41,6 +41,8 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
 
+        dropOther(JolCraftBlocks.DEEPSLATE_MORTAR.get(), JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
+
         add(JolCraftBlocks.GEODE_BLOCK.get(),
                 createGeodeOreDrop(
                         JolCraftBlocks.GEODE_BLOCK.get(),

@@ -18,8 +18,8 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class ArtisanHammerItem extends ToolItem {
 
-    public ArtisanHammerItem(ToolMaterial material, float attackDamage, float attackSpeed, Item.Properties properties) {
-        super(material.applySwordProperties(properties, attackDamage, attackSpeed));
+    public ArtisanHammerItem(ToolMaterial material, Item.Properties properties) {
+        super(material, properties);
     }
 
     @OnlyIn(Dist.CLIENT)

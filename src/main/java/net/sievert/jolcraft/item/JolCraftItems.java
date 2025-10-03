@@ -12,6 +12,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.item.armor.JolCraftArmorMaterials;
+import net.sievert.jolcraft.item.custom.alchemy.PestleItem;
 import net.sievert.jolcraft.item.custom.bounty.BountyCrateItem;
 import net.sievert.jolcraft.item.custom.bounty.BountyItem;
 import net.sievert.jolcraft.item.custom.*;
@@ -184,6 +185,15 @@ public class JolCraftItems {
             Item::new, new Item.Properties().craftRemainder(Items.BUCKET).component(DataComponents.CONSUMABLE, Consumables.MILK_BUCKET).usingConvertsTo(Items.BUCKET).stacksTo(1));
 
     //Alchemy
+    public static final DeferredItem<BlockItem> DEEPSLATE_MORTAR_ITEM = JolCraftItems.ITEMS.registerItem("deepslate_mortar",
+            properties -> new BlockItem(JolCraftBlocks.DEEPSLATE_MORTAR.get(), properties.stacksTo(3)));
+
+    public static final DeferredItem<PestleItem> DEEPSLATE_PESTLE = ITEMS.registerItem("deepslate_pestle",
+            (properties) -> new PestleItem(JolCraftToolMaterials.DEEPSLATE, properties));
+
+    public static final DeferredItem<PestleItem> MITHRIL_PESTLE = ITEMS.registerItem("mithril_pestle",
+            (properties) -> new PestleItem(JolCraftToolMaterials.MITHRIL, properties.fireResistant().rarity(Rarity.RARE)));
+
     public static final DeferredItem<Item> INVERIX = ITEMS.registerItem("inverix",
             Item::new, new Item.Properties());
 
@@ -382,20 +392,19 @@ public class JolCraftItems {
     public static final DeferredItem<Item> MUFFHORN_SPAWN_EGG = ITEMS.registerItem("muffhorn_spawn_egg",
             (properties) -> new SpawnEggItem(JolCraftEntities.MUFFHORN.get(), properties));
 
-
     //Gems
 
     public static final DeferredItem<ArtisanHammerItem> DEEPSLATE_ARTISAN_HAMMER = ITEMS.registerItem("deepslate_artisan_hammer",
-            (properties) -> new ArtisanHammerItem(JolCraftToolMaterials.DEEPSLATE, -2.0F, -3.0F, properties));
+            (properties) -> new ArtisanHammerItem(JolCraftToolMaterials.DEEPSLATE, properties));
 
     public static final DeferredItem<ArtisanHammerItem> MITHRIL_ARTISAN_HAMMER = ITEMS.registerItem("mithril_artisan_hammer",
-            (properties) -> new ArtisanHammerItem(JolCraftToolMaterials.MITHRIL, -2.0F, -3.0F, properties.fireResistant().rarity(Rarity.RARE)));
+            (properties) -> new ArtisanHammerItem(JolCraftToolMaterials.MITHRIL, properties.fireResistant().rarity(Rarity.RARE)));
 
     public static final DeferredItem<ChiselItem> DEEPSLATE_CHISEL = ITEMS.registerItem("deepslate_chisel",
-            (properties) -> new ChiselItem(JolCraftToolMaterials.DEEPSLATE, -3.0F, -1.0F, properties));
+            (properties) -> new ChiselItem(JolCraftToolMaterials.DEEPSLATE, properties));
 
     public static final DeferredItem<ChiselItem> MITHRIL_CHISEL = ITEMS.registerItem("mithril_chisel",
-            (properties) -> new ChiselItem(JolCraftToolMaterials.MITHRIL, -3.0F, -1.0F, properties.fireResistant().rarity(Rarity.RARE)));
+            (properties) -> new ChiselItem(JolCraftToolMaterials.MITHRIL, properties.fireResistant().rarity(Rarity.RARE)));
 
     public static final DeferredItem<Item> GEODE_SMALL = ITEMS.registerItem(
             "geode_small",

@@ -29,6 +29,16 @@ public class JolCraftBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(JolCraft.MOD_ID);
 
+    public static final DeferredBlock<Block> DEEPSLATE_MORTAR = registerBlock("deepslate_mortar",
+            (properties) -> new MortarBlock(properties
+                    .mapColor(MapColor.DEEPSLATE)
+                    .sound(SoundType.POLISHED_DEEPSLATE)
+                    .strength(2.5F, 6.0F)
+                    .requiresCorrectToolForDrops()
+            ),
+            BlockBehaviour.Properties.of(), false
+    );
+
     public static final DeferredBlock<Block> GEODE_BLOCK = registerBlock("geode_block",
             (properties) -> new Block(properties
                     .mapColor(MapColor.COLOR_BLACK)
@@ -44,7 +54,7 @@ public class JolCraftBlocks {
             (properties) -> new LapidaryBenchBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .sound(SoundType.POLISHED_DEEPSLATE)
-                    .strength(4.5F, 3.0F)
+                    .strength(4.5F, 6.0F)
                     .requiresCorrectToolForDrops()
             ),
             BlockBehaviour.Properties.of(), true
