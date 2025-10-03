@@ -43,6 +43,6 @@ public class SignDwarfAction extends InspectDwarfAction {
 
     @Override
     public void stop() {
-        throwItem(dwarf, player, JolCraftItems.CONTRACT_SIGNED.toStack());
+        throwItem(dwarf, player, dwarf.getSignedContractItem());
     }
 }

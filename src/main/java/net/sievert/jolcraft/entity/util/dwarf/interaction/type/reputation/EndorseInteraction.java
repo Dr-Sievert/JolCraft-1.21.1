@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.DwarfGuildmasterEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfGuildmasterEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;

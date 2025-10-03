@@ -22,7 +22,7 @@ public class PromoteInteraction extends InspectInteraction {
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         boolean client = dwarf.level().isClientSide;
         assert itemstack != null;
-        if (itemstack.is(JolCraftTags.Items.SIGNED_CONTRACTS)) {
+        if (itemstack.is(JolCraftTags.Items.PROFESSION_CONTRACTS)) {
             if (!canPromoteToProfession(dwarf)) {
                 player.displayClientMessage(
                         Component.translatable("tooltip.jolcraft.dwarf.cannot_promote").withStyle(ChatFormatting.GRAY), true

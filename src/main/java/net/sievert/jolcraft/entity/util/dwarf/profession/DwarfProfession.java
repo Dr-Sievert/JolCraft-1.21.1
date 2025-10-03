@@ -8,6 +8,7 @@ public enum DwarfProfession {
     BREWMASTER("brewmaster"),
     EXPLORER("explorer"),
     GUARD("guard"),
+    GUILDMASTER("guildmaster"),
     HISTORIAN("historian"),
     KEEPER("keeper"),
     MERCHANT("merchant"),

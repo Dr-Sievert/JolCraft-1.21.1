@@ -381,7 +381,7 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
                 .addTag(JolCraftTags.Items.GOLD_SALVAGE)
                 .addTag(JolCraftTags.Items.MITHRIL_SALVAGE);
 
-        tag(JolCraftTags.Items.SIGNED_CONTRACTS)
+        tag(JolCraftTags.Items.PROFESSION_CONTRACTS)
                 .add(JolCraftItems.CONTRACT_GUILDMASTER.get())
                 .add(JolCraftItems.CONTRACT_MERCHANT.get())
                 .add(JolCraftItems.CONTRACT_HISTORIAN.get())

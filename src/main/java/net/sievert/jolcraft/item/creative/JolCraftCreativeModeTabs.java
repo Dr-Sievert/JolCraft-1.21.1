@@ -217,6 +217,18 @@ public class JolCraftCreativeModeTabs {
                         brewTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.BREW_MULTIPLE_HOPS);
                         pOutput.accept(brewTome);
 
+                        ItemStack forgeTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
+                        forgeTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.MITHRIL_FORGING);
+                        pOutput.accept(forgeTome);
+
+                        ItemStack coinTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
+                        coinTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.COIN_PRESSING);
+                        pOutput.accept(coinTome);
+
+                        ItemStack alchemyTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
+                        alchemyTome.set(JolCraftDataComponents.LORE_LINE_ID.get(), TomeUnlockHelper.ALCHEMY);
+                        pOutput.accept(alchemyTome);
+
                         pOutput.accept(JolCraftItems.COPPER_SPANNER);
                         pOutput.accept(JolCraftItems.IRON_SPANNER);
                         pOutput.accept(JolCraftItems.SCRAP);

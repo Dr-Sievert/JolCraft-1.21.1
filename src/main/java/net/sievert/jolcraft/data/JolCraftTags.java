@@ -49,7 +49,7 @@ public class JolCraftTags {
 
         public static final TagKey<Item> BONUS_TRIM_MATERIALS = createTag("bonus_trim_materials");
 
-        public static final TagKey<Item> SIGNED_CONTRACTS = createTag("signed_contracts");
+        public static final TagKey<Item> PROFESSION_CONTRACTS = createTag("profession_contracts");
 
         public static final TagKey<Item> REPUTATION_TABLETS = createTag("reputation_tablets");
 

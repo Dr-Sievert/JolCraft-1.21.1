@@ -147,9 +147,15 @@ public class DwarvenLoreHelper {
                             "Coin Press Manual, Bank of Barak-Zul",
                             LoreRarity.LEGENDARY
                     )
+            ),
+            Map.entry(
+                    "alchemy_recipes",
+                    entry(
+                            "alchemy_recipes",
+                            "Codex Alchemica, Transcribed by the Final Thaumaturge",
+                            LoreRarity.LEGENDARY
+                    )
             )
-
-
     );
 
     private static DwarvenLoreEntry entry(String key, String text, LoreRarity rarity) {

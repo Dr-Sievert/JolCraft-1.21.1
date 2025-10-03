@@ -46,7 +46,7 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
     @Override
     protected ItemStack getRandomIdentifiedItem(ServerPlayer player, ItemStack original) {
         RandomSource rng = player.getRandom();
-        String loreKey = DwarvenLoreHelper.getRandomKeyWeighted(rng, true); // ancient pool, excludes legendary
+        String loreKey = DwarvenLoreHelper.getRandomKeyWeighted(rng, true);
         if (loreKey.isEmpty()) return ItemStack.EMPTY;
 
         DwarvenLoreHelper.LoreRarity rarity = DwarvenLoreHelper.getRarity(loreKey, true);
@@ -55,7 +55,6 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
             case UNCOMMON -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get());
             case RARE -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get());
             case EPIC -> new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get());
-            // Should never happen, but safe fallback:
             case LEGENDARY -> ItemStack.EMPTY;
         };
         tome.set(JolCraftDataComponents.LORE_LINE_ID.get(), loreKey);

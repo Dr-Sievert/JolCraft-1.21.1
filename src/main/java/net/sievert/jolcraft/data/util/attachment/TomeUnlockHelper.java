@@ -16,8 +16,11 @@ import java.util.Set;
 public class TomeUnlockHelper {
 
     // --- Known Unlock IDs ---
+    public static final String MITHRIL_FORGING = "mithril_forge_technique";
     public static final String BREW_MULTIPLE_HOPS = "forgotten_brew_formulas";
     public static final String CUTTING_GEMS = "ancient_gemcraft";
+    public static final String COIN_PRESSING = "coin_press_manual";
+    public static final String ALCHEMY = "alchemy_recipes";
 
     /**
      * Checks if player is creative OR has the unlock (side-safe).

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.entity.custom.dwarf;
+package net.sievert.jolcraft.entity.custom.dwarf.profession;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.data.util.attachment.reputation.DwarvenReputationHelper;
@@ -40,6 +41,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()));
         this.instanceTrades = createRandomizedGuildmasterTrades();
+        this.setProfession(DwarfProfession.GUILDMASTER);
     }
 
     private int lastUnlockedLevel = 0;
