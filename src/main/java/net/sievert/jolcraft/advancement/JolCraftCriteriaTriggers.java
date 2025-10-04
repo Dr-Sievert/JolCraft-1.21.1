@@ -6,22 +6,22 @@ import net.sievert.jolcraft.advancement.custom.*;
 
 public class JolCraftCriteriaTriggers {
 
-    public static final HasAdvancementTrigger HAS_ADVANCEMENT = new HasAdvancementTrigger(); // ← Add this
+    public static final AdvancementTrigger HAS_ADVANCEMENT = new AdvancementTrigger();
 
-    public static final HasDwarvenLanguageTrigger HAS_DWARVEN_LANGUAGE = new HasDwarvenLanguageTrigger();
+    public static final DwarvenLanguageTrigger KNOWS_DWARVEN_LANGUAGE = new DwarvenLanguageTrigger();
 
-    public static final TradeWithDwarfTrigger TRADE_WITH_DWARF = TradeWithDwarfTrigger.INSTANCE;
+    public static final DwarfTradeTrigger TRADE_WITH_DWARF = DwarfTradeTrigger.INSTANCE;
 
-    public static final EndorsementGainTrigger ENDORSEMENT_GAIN = new EndorsementGainTrigger();
+    public static final EndorsementTrigger ENDORSEMENT_GAIN = new EndorsementTrigger();
 
-    public static final ReputationTierTrigger REPUTATION_TIER = new ReputationTierTrigger();
+    public static final ReputationTrigger REPUTATION_GAIN = new ReputationTrigger();
 
     public static void register(RegisterEvent event) {
         event.register(Registries.TRIGGER_TYPE, helper -> {
-            helper.register(HasAdvancementTrigger.ID, HAS_ADVANCEMENT);
-            helper.register(HasDwarvenLanguageTrigger.ID, HAS_DWARVEN_LANGUAGE);
-            helper.register(EndorsementGainTrigger.ID, ENDORSEMENT_GAIN);
-            helper.register(ReputationTierTrigger.ID, REPUTATION_TIER);
+            helper.register(AdvancementTrigger.ID, HAS_ADVANCEMENT);
+            helper.register(DwarvenLanguageTrigger.ID, KNOWS_DWARVEN_LANGUAGE);
+            helper.register(EndorsementTrigger.ID, ENDORSEMENT_GAIN);
+            helper.register(ReputationTrigger.ID, REPUTATION_GAIN);
         });
     }
 }

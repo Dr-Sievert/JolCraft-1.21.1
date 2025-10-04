@@ -21,12 +21,12 @@ import java.util.Optional;
 /**
  * Advancement trigger for trading with a dwarf, optionally filtered by entity type.
  */
-public class TradeWithDwarfTrigger extends SimpleCriterionTrigger<TradeWithDwarfTrigger.TriggerInstance> {
+public class DwarfTradeTrigger extends SimpleCriterionTrigger<DwarfTradeTrigger.TriggerInstance> {
 
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade_with_dwarf");
 
-    public static final TradeWithDwarfTrigger INSTANCE =
-            CriteriaTriggers.register("trade_with_dwarf", new TradeWithDwarfTrigger());
+    public static final DwarfTradeTrigger INSTANCE =
+            CriteriaTriggers.register("trade_with_dwarf", new DwarfTradeTrigger());
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {

@@ -6,6 +6,7 @@ import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.custom.*;
 import net.sievert.jolcraft.entity.JolCraftEntities;
@@ -20,332 +21,288 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.advancements.AdvancementSubProvider;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+
 public class JolCraftAdvancementProvider implements AdvancementSubProvider {
     @Override
     public void generate(HolderLookup.@NotNull Provider registries, @NotNull Consumer<AdvancementHolder> consumer) {
-        // Root advancement (dummy) — sets the tab name
-        ResourceLocation rootId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/root");
-        AdvancementHolder root = Advancement.Builder.advancement()
-                .display(
-                        Items.CHISELED_DEEPSLATE,
-                        Component.translatable("advancement.jolcraft.root.title"),
-                        Component.translatable("advancement.jolcraft.root.description"),
-                        ResourceLocation.withDefaultNamespace("textures/block/deepslate_bricks.png"),
-                        AdvancementType.TASK,
-                        false, false, false
+
+        String idPathPrefix = "main/";
+
+        // ROOT
+        AdvancementHolder root = addAdvancement(
+                consumer, AdvancementKey.ROOT, idPathPrefix,
+                Items.CHISELED_DEEPSLATE,
+                ResourceLocation.withDefaultNamespace("textures/block/deepslate_bricks.png"),
+                AdvancementType.TASK,
+                false, false, false,
+                CriteriaTriggers.TICK.createCriterion(
+                        new PlayerTrigger.TriggerInstance(Optional.of(ContextAwarePredicate.create()))
                 )
-                .addCriterion("tick", CriteriaTriggers.TICK.createCriterion(new PlayerTrigger.TriggerInstance(Optional.of(ContextAwarePredicate.create()))))
-                .save(consumer, rootId);
+        );
 
-        //Language
-        ResourceLocation readLexiconId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/read_lexicon");
-        AdvancementHolder readLexiconAdv = Advancement.Builder.advancement()
-                .parent(root)
-                .display(
-                        JolCraftItems.DWARVEN_LEXICON.get(),
-                        Component.translatable("advancement.jolcraft.read_lexicon.title"),
-                        Component.translatable("advancement.jolcraft.read_lexicon.description"),
-                        null, // null means no override background; inherits from root
-                        AdvancementType.CHALLENGE,
-                        true, true, false
-                )
-                .addCriterion("knows_dwarvish", HasDwarvenLanguageTrigger.hasLanguage())
-                .save(consumer, readLexiconId);
+        // LEXICON
+        AdvancementHolder read_lexicon = addChildAdvancement(
+                consumer, AdvancementKey.READ_LEXICON, idPathPrefix,
+                root,
+                JolCraftItems.DWARVEN_LEXICON.get(),
+                AdvancementType.CHALLENGE,
+                true, true, false,
+                DwarvenLanguageTrigger.hasLanguage()
+        );
 
-        //Stranger dummy
-        ResourceLocation tradedummyId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_dummy");
-        AdvancementHolder tradedummyAdv = Advancement.Builder.advancement()
-                .parent(readLexiconAdv)
-                .display(
-                        Items.CHISELED_DEEPSLATE,
-                        Component.translatable("advancement.jolcraft.trade_dummy.title"),
-                        Component.translatable("advancement.jolcraft.trade_dummy.description"),
-                        null,
-                        AdvancementType.TASK,
-                        false, false, true
-                )
-                .addCriterion("has_read_lexicon", HasAdvancementTrigger.has(readLexiconId))
-                .save(consumer, tradedummyId);
+        // STRANGER
+        AdvancementHolder rep_0_dummy = addDummyAdvancement(
+                consumer, AdvancementKey.REP_0_DUMMY, idPathPrefix, read_lexicon
+        );
 
-        //Trade with dwarf
-        ResourceLocation tradeId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade");
-        AdvancementHolder tradeAdv = Advancement.Builder.advancement()
-                .parent(tradedummyAdv)
-                .display(
-                        JolCraftItems.GOLD_COIN.get(),
-                        Component.translatable("advancement.jolcraft.trade_with_dwarf.title"),
-                        Component.translatable("advancement.jolcraft.trade_with_dwarf.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true, true, false
-                )
-                .addCriterion("generic_dwarf_trade", TradeWithDwarfTrigger.tradedWithAnyDwarf())
-                .save(consumer, tradeId);
+        // TRADE WITH DWARF
+        AdvancementHolder trade_dwarf = addChildAdvancement(
+                consumer, AdvancementKey.TRADE_DWARF, idPathPrefix,
+                rep_0_dummy,
+                JolCraftItems.GOLD_COIN.get(),
+                AdvancementType.TASK,
+                true, true, false,
+                DwarfTradeTrigger.tradedWithAnyDwarf()
+        );
 
+        // HISTORIAN
+        AdvancementHolder trade_historian = addChildAdvancement(
+                consumer, AdvancementKey.TRADE_HISTORIAN, idPathPrefix,
+                trade_dwarf,
+                JolCraftItems.DWARVEN_TOME.get(),
+                AdvancementType.TASK,
+                true, true, false,
+                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_HISTORIAN.get())
+        );
 
-        //Historian path
-        ResourceLocation tradehistorianId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_historian");
-        AdvancementHolder tradehistorianAdv = Advancement.Builder.advancement()
-                .parent(tradeAdv)
-                .display(
-                        JolCraftItems.DWARVEN_TOME.get(),
-                        Component.translatable("advancement.jolcraft.historian.trade.title"),
-                        Component.translatable("advancement.jolcraft.historian.trade.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true, true, false
-                )
-                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_HISTORIAN.get()))
-                .save(consumer, tradehistorianId);
+        AdvancementHolder endorse_historian = addChildAdvancement(
+                consumer, AdvancementKey.ENDORSE_HISTORIAN, idPathPrefix,
+                trade_historian,
+                JolCraftItems.REPUTATION_TABLET_0.get(),
+                AdvancementType.GOAL,
+                true, true, false,
+                EndorsementTrigger.endorsedBy(DwarfProfession.HISTORIAN)
+        );
 
-        ResourceLocation endorsehistorianId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_historian");
-        AdvancementHolder endorsehistorianAdv = Advancement.Builder.advancement()
-                .parent(tradehistorianAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_0.get(),
-                        Component.translatable("advancement.jolcraft.historian.endorse.title"),
-                        Component.translatable("advancement.jolcraft.historian.endorse.description"),
-                        null,
-                        AdvancementType.GOAL,
-                        true, true, false
-                )
-                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.HISTORIAN))
-                .save(consumer, endorsehistorianId);
+        // MERCHANT
+        AdvancementHolder trade_merchant = addChildAdvancement(
+                consumer, AdvancementKey.TRADE_MERCHANT, idPathPrefix,
+                trade_dwarf,
+                JolCraftItems.RESTOCK_CRATE.get(),
+                AdvancementType.TASK,
+                true, true, false,
+                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_MERCHANT.get())
+        );
 
-        //Merchant path
-        ResourceLocation trademerchantId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_merchant");
-        AdvancementHolder trademerchantAdv = Advancement.Builder.advancement()
-                .parent(tradeAdv)
-                .display(
-                        JolCraftItems.BOUNTY.get(),
-                        Component.translatable("advancement.jolcraft.merchant.trade.title"),
-                        Component.translatable("advancement.jolcraft.merchant.trade.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true, true, false
-                )
-                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_MERCHANT.get()))
-                .save(consumer, trademerchantId);
+        AdvancementHolder endorse_merchant = addChildAdvancement(
+                consumer, AdvancementKey.ENDORSE_MERCHANT, idPathPrefix,
+                trade_merchant,
+                JolCraftItems.REPUTATION_TABLET_0.get(),
+                AdvancementType.GOAL,
+                true, true, false,
+                EndorsementTrigger.endorsedBy(DwarfProfession.MERCHANT)
+        );
 
-        ResourceLocation endorsemerchantId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_merchant");
-        AdvancementHolder endorsemerchantAdv = Advancement.Builder.advancement()
-                .parent(trademerchantAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_0.get(),
-                        Component.translatable("advancement.jolcraft.merchant.endorse.title"),
-                        Component.translatable("advancement.jolcraft.merchant.endorse.description"),
-                        null,
-                        AdvancementType.GOAL,
-                        true, true, false
-                )
-                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.MERCHANT))
-                .save(consumer, endorsemerchantId);
+        // SCRAPPER
+        AdvancementHolder trade_scrapper = addChildAdvancement(
+                consumer, AdvancementKey.TRADE_SCRAPPER, idPathPrefix,
+                trade_dwarf,
+                JolCraftItems.SCRAP.get(),
+                AdvancementType.TASK,
+                true, true, false,
+                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_SCRAPPER.get())
+        );
 
+        AdvancementHolder endorse_scrapper = addChildAdvancement(
+                consumer, AdvancementKey.ENDORSE_SCRAPPER, idPathPrefix,
+                trade_scrapper,
+                JolCraftItems.REPUTATION_TABLET_0.get(),
+                AdvancementType.GOAL,
+                true, true, false,
+                EndorsementTrigger.endorsedBy(DwarfProfession.SCRAPPER)
+        );
 
-        //Scrapper path
-        ResourceLocation tradescrapperId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_scrapper");
-        AdvancementHolder tradescrapperAdv = Advancement.Builder.advancement()
-                .parent(tradeAdv)
-                .display(
-                        JolCraftItems.SCRAP.get(),
-                        Component.translatable("advancement.jolcraft.scrapper.trade.title"),
-                        Component.translatable("advancement.jolcraft.scrapper.trade.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true, true, false
-                )
-                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_SCRAPPER.get()))
-                .save(consumer, tradescrapperId);
+        // KNOWN FACE
+        AdvancementHolder rep_1 = addChildAdvancement(
+                consumer, AdvancementKey.REP_1, idPathPrefix,
+                endorse_historian,
+                JolCraftItems.REPUTATION_TABLET_1.get(),
+                AdvancementType.CHALLENGE,
+                true, true, false,
+                ReputationTrigger.hasReachedTier(1)
+        );
 
-        ResourceLocation endorsescrapperId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_scrapper");
-        AdvancementHolder endorsescrapperAdv = Advancement.Builder.advancement()
-                .parent(tradescrapperAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_0.get(),
-                        Component.translatable("advancement.jolcraft.scrapper.endorse.title"),
-                        Component.translatable("advancement.jolcraft.scrapper.endorse.description"),
-                        null,
-                        AdvancementType.GOAL,
-                        true, true, false
-                )
-                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.SCRAPPER))
-                .save(consumer, endorsescrapperId);
+        AdvancementHolder rep_1_dummy = addDummyAdvancement(
+                consumer, AdvancementKey.REP_1_DUMMY, idPathPrefix, rep_1
+        );
 
+        // BREWMASTER
+        AdvancementHolder trade_brewmaster = addChildAdvancement(
+                consumer, AdvancementKey.TRADE_BREWMASTER, idPathPrefix,
+                rep_1_dummy,
+                JolCraftItems.DWARVEN_BREW.get(),
+                AdvancementType.TASK,
+                true, true, false,
+                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_BREWMASTER.get())
+        );
 
-        //Advance tier to known face
+        AdvancementHolder endorse_brewmaster = addChildAdvancement(
+                consumer, AdvancementKey.ENDORSE_BREWMASTER, idPathPrefix,
+                trade_brewmaster,
+                JolCraftItems.REPUTATION_TABLET_1.get(),
+                AdvancementType.GOAL,
+                true, true, false,
+                EndorsementTrigger.endorsedBy(DwarfProfession.BREWMASTER)
+        );
 
-        ResourceLocation rep1Id = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/rep_known_face");
-        AdvancementHolder rep1Adv = Advancement.Builder.advancement()
-                .parent(endorsemerchantAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_1.get(),
-                        Component.translatable("advancement.jolcraft.reputation.known_face.title"),
-                        Component.translatable("advancement.jolcraft.reputation.known_face.description"),
-                        null,
-                        AdvancementType.CHALLENGE,
-                        true, true, false
-                )
-                .addCriterion("rep_known_face", ReputationTierTrigger.hasReachedTier(1))
-                .save(consumer, rep1Id);
+        // GUARD
+        AdvancementHolder trade_guard = addChildAdvancement(
+                consumer, AdvancementKey.TRADE_GUARD, idPathPrefix,
+                rep_1_dummy,
+                JolCraftItems.DEEPSLATE_AXE.get(),
+                AdvancementType.TASK,
+                true, true, false,
+                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_GUARD.get())
+        );
 
+        AdvancementHolder endorse_guard = addChildAdvancement(
+                consumer, AdvancementKey.ENDORSE_GUARD, idPathPrefix,
+                trade_guard,
+                JolCraftItems.REPUTATION_TABLET_1.get(),
+                AdvancementType.GOAL,
+                true, true, false,
+                EndorsementTrigger.endorsedBy(DwarfProfession.GUARD)
+        );
 
-        //Known face tier dummy
-        ResourceLocation rep1dummyId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/rep1_dummy");
-        AdvancementHolder rep1dummyAdv = Advancement.Builder.advancement()
-                .parent(rep1Adv)
-                .display(
-                        Items.CHISELED_DEEPSLATE,
-                        Component.translatable("advancement.jolcraft.rep1_dummy.title"),
-                        Component.translatable("advancement.jolcraft.rep1_dummy.description"),
-                        null,
-                        AdvancementType.TASK,
-                        false, false, true
-                )
-                .addCriterion("rep1_dummy", HasAdvancementTrigger.has(rep1Id))
-                .save(consumer, rep1dummyId);
+        // KEEPER
+        AdvancementHolder trade_keeper = addChildAdvancement(
+                consumer, AdvancementKey.TRADE_KEEPER, idPathPrefix,
+                rep_1_dummy,
+                JolCraftItems.BARLEY.get(),
+                AdvancementType.TASK,
+                true, true, false,
+                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_KEEPER.get())
+        );
 
+        AdvancementHolder endorse_keeper = addChildAdvancement(
+                consumer, AdvancementKey.ENDORSE_KEEPER, idPathPrefix,
+                trade_keeper,
+                JolCraftItems.REPUTATION_TABLET_1.get(),
+                AdvancementType.GOAL,
+                true, true, false,
+                EndorsementTrigger.endorsedBy(DwarfProfession.KEEPER)
+        );
 
-        //Brewmaster path
-        ResourceLocation tradebrewmasterId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_brewmaster");
-        AdvancementHolder tradebrewmasterAdv = Advancement.Builder.advancement()
-                .parent(rep1dummyAdv)
-                .display(
-                        JolCraftItems.DWARVEN_BREW.get(),
-                        Component.translatable("advancement.jolcraft.brewmaster.trade.title"),
-                        Component.translatable("advancement.jolcraft.brewmaster.trade.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true, true, false
-                )
-                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_BREWMASTER.get()))
-                .save(consumer, tradebrewmasterId);
+        // TRUSTED (REP TIER 2)
+        AdvancementHolder rep_2 = addChildAdvancement(
+                consumer, AdvancementKey.REP_2, idPathPrefix,
+                endorse_guard,
+                JolCraftItems.REPUTATION_TABLET_2.get(),
+                AdvancementType.CHALLENGE,
+                true, true, false,
+                ReputationTrigger.hasReachedTier(2)
+        );
 
-        ResourceLocation endorsebrewmasterId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_brewmaster");
-        AdvancementHolder endorsebrewmasterAdv = Advancement.Builder.advancement()
-                .parent(tradebrewmasterAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_1.get(),
-                        Component.translatable("advancement.jolcraft.brewmaster.endorse.title"),
-                        Component.translatable("advancement.jolcraft.brewmaster.endorse.description"),
-                        null,
-                        AdvancementType.GOAL,
-                        true, true, false
-                )
-                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.BREWMASTER))
-                .save(consumer, endorsebrewmasterId);
+        AdvancementHolder rep_2_dummy = addDummyAdvancement(
+                consumer, AdvancementKey.REP_2_DUMMY, idPathPrefix, rep_2
+        );
+    }
 
+    private static AdvancementHolder buildAdvancement(
+            Consumer<AdvancementHolder> consumer,
+            AdvancementKey key,
+            @Nullable String idPathPrefix,
+            @Nullable AdvancementHolder parent,
+            ItemLike icon,
+            @Nullable ResourceLocation background,
+            AdvancementType type,
+            boolean showToast, boolean announce, boolean hidden,
+            Criterion<?>... criteria
+    ) {
+        String id = key.id(); // always lowercase from enum
+        String fullId = (idPathPrefix == null ? "" : idPathPrefix) + id;
+        ResourceLocation resourceId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, fullId);
 
-        //Guard path
-        ResourceLocation tradeguardId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_guard");
-        AdvancementHolder tradeguardAdv = Advancement.Builder.advancement()
-                .parent(rep1dummyAdv)
-                .display(
-                        JolCraftItems.DEEPSLATE_AXE.get(),
-                        Component.translatable("advancement.jolcraft.guard.trade.title"),
-                        Component.translatable("advancement.jolcraft.guard.trade.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true, true, false
-                )
-                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_GUARD.get()))
-                .save(consumer, tradeguardId);
+        String keyPrefix = "advancement.jolcraft." + id;
+        Advancement.Builder builder = Advancement.Builder.advancement();
+        if (parent != null) builder.parent(parent);
+        builder.display(
+                icon,
+                Component.translatable(keyPrefix + ".title"),
+                Component.translatable(keyPrefix + ".description"),
+                background, type, showToast, announce, hidden
+        );
 
-        ResourceLocation endorseguardId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_guard");
-        AdvancementHolder endorseguardAdv = Advancement.Builder.advancement()
-                .parent(tradeguardAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_1.get(),
-                        Component.translatable("advancement.jolcraft.guard.endorse.title"),
-                        Component.translatable("advancement.jolcraft.guard.endorse.description"),
-                        null,
-                        AdvancementType.GOAL,
-                        true, true, false
-                )
-                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.GUARD))
-                .save(consumer, endorseguardId);
+        for (int i = 0; i < criteria.length; i++) {
+            builder.addCriterion("criterion_" + id + "_" + i, criteria[i]);
+        }
+        return builder.save(consumer, resourceId);
+    }
 
-
-        //Keeper path
-        ResourceLocation tradekeeperId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/trade_keeper");
-        AdvancementHolder tradekeeperAdv = Advancement.Builder.advancement()
-                .parent(rep1dummyAdv)
-                .display(
-                        JolCraftItems.BARLEY.get(),
-                        Component.translatable("advancement.jolcraft.keeper.trade.title"),
-                        Component.translatable("advancement.jolcraft.keeper.trade.description"),
-                        null,
-                        AdvancementType.TASK,
-                        true, true, false
-                )
-                .addCriterion("trade_historian", TradeWithDwarfTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_KEEPER.get()))
-                .save(consumer, tradekeeperId);
-
-        ResourceLocation endorsekeeperId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/endorse_keeper");
-        AdvancementHolder endorsekeeperAdv = Advancement.Builder.advancement()
-                .parent(tradekeeperAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_1.get(),
-                        Component.translatable("advancement.jolcraft.keeper.endorse.title"),
-                        Component.translatable("advancement.jolcraft.keeper.endorse.description"),
-                        null,
-                        AdvancementType.GOAL,
-                        true, true, false
-                )
-                .addCriterion("endorse_historian", EndorsementGainTrigger.endorsedBy(DwarfProfession.KEEPER))
-                .save(consumer, endorsekeeperId);
-
-
-        //Advance tier to trusted
-        ResourceLocation rep2Id = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/rep_trusted");
-        AdvancementHolder rep2Adv = Advancement.Builder.advancement()
-                .parent(endorseguardAdv)
-                .display(
-                        JolCraftItems.REPUTATION_TABLET_2.get(),
-                        Component.translatable("advancement.jolcraft.reputation.trusted.title"),
-                        Component.translatable("advancement.jolcraft.reputation.trusted.description"),
-                        null,
-                        AdvancementType.CHALLENGE,
-                        true, true, false
-                )
-                .addCriterion("rep_trusted", ReputationTierTrigger.hasReachedTier(2))
-                .save(consumer, rep2Id);
-
-
-        //Trusted tier dummy
-        ResourceLocation rep2dummyId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "story/rep2_dummy");
-        AdvancementHolder rep2dummyAdv = Advancement.Builder.advancement()
-                .parent(rep2Adv)
-                .display(
-                        Items.CHISELED_DEEPSLATE,
-                        Component.translatable("advancement.jolcraft.rep2_dummy.title"),
-                        Component.translatable("advancement.jolcraft.rep2_dummy.description"),
-                        null,
-                        AdvancementType.TASK,
-                        false, false, true
-                )
-                .addCriterion("rep2_dummy", HasAdvancementTrigger.has(rep2Id))
-                .save(consumer, rep2dummyId);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private static AdvancementHolder addAdvancement(
+            Consumer<AdvancementHolder> consumer,
+            AdvancementKey key,
+            @Nullable String idPathPrefix,
+            ItemLike icon,
+            @Nullable ResourceLocation background,
+            AdvancementType type,
+            boolean showToast, boolean announce, boolean hidden,
+            Criterion<?>... criteria
+    ) {
+        return buildAdvancement(
+                consumer,
+                key, idPathPrefix,
+                null,
+                icon,
+                background,
+                type,
+                showToast,
+                announce,
+                hidden,
+                criteria);
     }
 
 
+    private static AdvancementHolder addChildAdvancement(
+            Consumer<AdvancementHolder> consumer,
+            AdvancementKey key,
+            @Nullable String idPathPrefix,
+            AdvancementHolder parent,
+            ItemLike icon,
+            AdvancementType type,
+            boolean showToast, boolean announce, boolean hidden,
+            Criterion<?>... criteria
+    ) {
+        return buildAdvancement(
+                consumer,
+                key,
+                idPathPrefix,
+                parent, icon,
+                null,
+                type,
+                showToast,
+                announce,
+                hidden,
+                criteria);
+    }
+
+    private static AdvancementHolder addDummyAdvancement(
+            Consumer<AdvancementHolder> consumer,
+            AdvancementKey key,
+            @Nullable String idPathPrefix,
+            AdvancementHolder parent
+    ) {
+        return buildAdvancement(
+                consumer,
+                key,
+                idPathPrefix,
+                parent,
+                Items.CHISELED_DEEPSLATE,
+                null,
+                AdvancementType.TASK,
+                false, false, true,
+                AdvancementTrigger.has(parent.id())
+        );
+    }
 }

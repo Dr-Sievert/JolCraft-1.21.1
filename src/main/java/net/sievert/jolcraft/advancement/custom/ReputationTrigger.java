@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class ReputationTierTrigger extends SimpleCriterionTrigger<ReputationTierTrigger.TriggerInstance> {
+public class ReputationTrigger extends SimpleCriterionTrigger<ReputationTrigger.TriggerInstance> {
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "reputation_tier");
 
     @Override
@@ -29,7 +29,7 @@ public class ReputationTierTrigger extends SimpleCriterionTrigger<ReputationTier
     }
 
     public static Criterion<TriggerInstance> hasReachedTier(int tier) {
-        return JolCraftCriteriaTriggers.REPUTATION_TIER.createCriterion(
+        return JolCraftCriteriaTriggers.REPUTATION_GAIN.createCriterion(
                 new TriggerInstance(Optional.empty(), tier)
         );
     }

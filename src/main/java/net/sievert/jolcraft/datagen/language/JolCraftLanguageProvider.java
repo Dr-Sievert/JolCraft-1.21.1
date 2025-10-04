@@ -15,6 +15,7 @@ import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.LoreEntry;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.datagen.advancement.AdvancementKey;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -484,54 +485,105 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("jolcraft.reputation_tier.3", "Respected");
         add("jolcraft.reputation_tier.4", "Blood-Kin");
 
-        add("advancement.jolcraft.root.title", "The Dwarven Path");
-        add("advancement.jolcraft.root.description", "A journey through dwarven halls");
-        add("advancement.jolcraft.read_lexicon.title", "Bilingual");
-        add("advancement.jolcraft.read_lexicon.description", "Learn to understand the dwarven language");
-        add("advancement.jolcraft.trade_dummy.title", "What now?");
-        add("advancement.jolcraft.trade_dummy.description", "You are a stranger to most dwarves. You need to earn their trust.");
-        add("advancement.jolcraft.trade_with_dwarf.title", "Dwarven Commerce");
-        add("advancement.jolcraft.trade_with_dwarf.description", "Trade with a dwarf");
+        addAdvancement(AdvancementKey.ROOT,
+                "The Dwarven Path",
+                "A journey through dwarven halls"
+        );
 
-        add("advancement.jolcraft.historian.trade.title", "Curious Curator");
-        add("advancement.jolcraft.historian.trade.description", "Trade with a historian");
-        add("advancement.jolcraft.historian.endorse.title", "Footnote in History");
-        add("advancement.jolcraft.historian.endorse.description", "Get endorsed by a master historian");
+        addAdvancement(AdvancementKey.READ_LEXICON,
+                "Bilingual",
+                "Learn to understand the dwarven language"
+        );
 
-        add("advancement.jolcraft.merchant.trade.title", "Assorted goods");
-        add("advancement.jolcraft.merchant.trade.description", "Trade with a merchant");
-        add("advancement.jolcraft.merchant.endorse.title", "Distinguished fetcher");
-        add("advancement.jolcraft.merchant.endorse.description", "Get endorsed by a master merchant");
+        addAdvancement(AdvancementKey.REP_0_DUMMY,
+                "What now?",
+                "You are a stranger to most dwarves. You need to earn their trust."
+        );
 
-        add("advancement.jolcraft.scrapper.trade.title", "First Salvage");
-        add("advancement.jolcraft.scrapper.trade.description", "Trade with a scrapper");
-        add("advancement.jolcraft.scrapper.endorse.title", "Certified Scavenger");
-        add("advancement.jolcraft.scrapper.endorse.description", "Get endorsed by a master scrapper");
+        addAdvancement(AdvancementKey.TRADE_DWARF,
+                "Dwarven Commerce",
+                "Trade with a dwarf"
+        );
 
-        add("advancement.jolcraft.reputation.known_face.title", "Known Face");
-        add("advancement.jolcraft.reputation.known_face.description", "Reach this rank in reputation");
-        add("advancement.jolcraft.rep1_dummy.title", "New Faces");
-        add("advancement.jolcraft.rep1_dummy.description", "More dwarves are now willing to interact with you.");
+        addAdvancement(AdvancementKey.TRADE_HISTORIAN,
+                "Curious Curator",
+                "Trade with a historian"
+        );
 
-        add("advancement.jolcraft.brewmaster.trade.title", "Toasting Traditions");
-        add("advancement.jolcraft.brewmaster.trade.description", "Trade with a brewmaster");
-        add("advancement.jolcraft.brewmaster.endorse.title", "Honored in Hops");
-        add("advancement.jolcraft.brewmaster.endorse.description", "Get endorsed by a master brewmaster");
+        addAdvancement(AdvancementKey.ENDORSE_HISTORIAN,
+                "Footnote in History",
+                "Get endorsed by a master historian"
+        );
 
-        add("advancement.jolcraft.guard.trade.title", "Shield and Service");
-        add("advancement.jolcraft.guard.trade.description", "Trade with a guard");
-        add("advancement.jolcraft.guard.endorse.title", "Writ of Protection");
-        add("advancement.jolcraft.guard.endorse.description", "Get endorsed by a master guard");
+        addAdvancement(AdvancementKey.TRADE_MERCHANT,
+                "Assorted Goods",
+                "Trade with a merchant"
+        );
 
-        add("advancement.jolcraft.keeper.trade.title", "Horns and Harvest");
-        add("advancement.jolcraft.keeper.trade.description", "Trade with a keeper");
-        add("advancement.jolcraft.keeper.endorse.title", "Caretaker's Mark");
-        add("advancement.jolcraft.keeper.endorse.description", "Get endorsed by a master keeper");
+        addAdvancement(AdvancementKey.ENDORSE_MERCHANT,
+                "Distinguished Fetcher",
+                "Get endorsed by a master merchant"
+        );
 
-        add("advancement.jolcraft.reputation.trusted.title", "Trusted");
-        add("advancement.jolcraft.reputation.trusted.description", "Reach this rank in reputation");
-        add("advancement.jolcraft.rep2_dummy.title", "Gaining Ground");
-        add("advancement.jolcraft.rep2_dummy.description", "Your deeds echo through the halls. More dwarves are willing to work with you.");
+        addAdvancement(AdvancementKey.TRADE_SCRAPPER,
+                "First Salvage",
+                "Trade with a scrapper"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_SCRAPPER,
+                "Certified Scavenger",
+                "Get endorsed by a master scrapper"
+        );
+
+        addAdvancement(AdvancementKey.REP_1,
+                "Known Face",
+                "Reach this rank in reputation"
+        );
+
+        addAdvancement(AdvancementKey.REP_1_DUMMY,
+                "New Faces",
+                "More dwarves are now willing to interact with you."
+        );
+
+        addAdvancement(AdvancementKey.TRADE_BREWMASTER,
+                "Toasting Traditions",
+                "Trade with a brewmaster"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_BREWMASTER,
+                "Honored in Hops",
+                "Get endorsed by a master brewmaster"
+        );
+
+        addAdvancement(AdvancementKey.TRADE_GUARD,
+                "Shield and Service",
+                "Trade with a guard"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_GUARD,
+                "Writ of Protection",
+                "Get endorsed by a master guard"
+        );
+
+        addAdvancement(AdvancementKey.TRADE_KEEPER,
+                "Horns and Harvest",
+                "Trade with a keeper"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_KEEPER,
+                "Caretaker's Mark",
+                "Get endorsed by a master keeper"
+        );
+
+        addAdvancement(AdvancementKey.REP_2,
+                "Trusted",
+                "Reach this rank in reputation"
+        );
+
+        addAdvancement(AdvancementKey.REP_2_DUMMY,
+                "Gaining Ground",
+                "Your deeds echo through the halls. More dwarves are willing to work with you."
+        );
 
         add("stat.jolcraft.structures_discovered", "Structures Discovered");
 
@@ -703,4 +755,11 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         String translationKey = LoreHelper.getEntryTranslationKey(key);
         addManual(translationKey, text);
     }
+
+    private void addAdvancement(AdvancementKey key, String title, String description) {
+        String base = "advancement.jolcraft." + key.id();
+        addManual(base + ".title", title);
+        addManual(base + ".description", description);
+    }
+
 }

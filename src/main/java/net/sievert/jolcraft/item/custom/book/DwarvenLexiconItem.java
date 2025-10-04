@@ -35,7 +35,7 @@ public class DwarvenLexiconItem extends Item {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             if (!DwarvenLanguageHelper.knowsDwarvishBypassCreative(serverPlayer)) {
                 DwarvenLanguageHelper.setKnowsDwarvish(serverPlayer, true);
-                JolCraftCriteriaTriggers.HAS_DWARVEN_LANGUAGE.trigger(serverPlayer);
+                JolCraftCriteriaTriggers.KNOWS_DWARVEN_LANGUAGE.trigger(serverPlayer);
                 level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 2.0f, 0.7f);
                 level.playSound(null, player.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
                 serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.dwarven_lexicon.use").withStyle(ChatFormatting.GREEN), true);

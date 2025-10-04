@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class HasDwarvenLanguageTrigger extends SimpleCriterionTrigger<HasDwarvenLanguageTrigger.TriggerInstance> {
+public class DwarvenLanguageTrigger extends SimpleCriterionTrigger<DwarvenLanguageTrigger.TriggerInstance> {
 
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "has_dwarven_language");
 
@@ -31,7 +31,7 @@ public class HasDwarvenLanguageTrigger extends SimpleCriterionTrigger<HasDwarven
     }
 
     public static Criterion<TriggerInstance> hasLanguage() {
-        return JolCraftCriteriaTriggers.HAS_DWARVEN_LANGUAGE.createCriterion(new TriggerInstance(Optional.empty()));
+        return JolCraftCriteriaTriggers.KNOWS_DWARVEN_LANGUAGE.createCriterion(new TriggerInstance(Optional.empty()));
     }
 
     public record TriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleCriterionTrigger.SimpleInstance {

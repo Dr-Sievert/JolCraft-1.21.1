@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class EndorsementGainTrigger extends SimpleCriterionTrigger<EndorsementGainTrigger.TriggerInstance> {
+public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigger.TriggerInstance> {
 
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "endorsement_gain");
 

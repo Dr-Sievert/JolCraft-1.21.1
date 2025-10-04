@@ -55,7 +55,7 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
 
         if (player instanceof ServerPlayer serverPlayer) {
             DwarvenReputationHelper.setReputationTier(serverPlayer, rep + 1);
-            JolCraftCriteriaTriggers.REPUTATION_TIER.trigger(serverPlayer);
+            JolCraftCriteriaTriggers.REPUTATION_GAIN.trigger(serverPlayer);
         }
 
         int newRep = DwarvenReputationHelper.getTierBypassCreative(player);
