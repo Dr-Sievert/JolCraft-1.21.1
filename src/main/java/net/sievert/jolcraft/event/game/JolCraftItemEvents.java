@@ -32,7 +32,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.item.custom.scrapper.SpannerItem;
+import net.sievert.jolcraft.item.custom.tool.SpannerItem;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundPlaySoundPacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;

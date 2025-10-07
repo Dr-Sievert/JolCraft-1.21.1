@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
-import net.sievert.jolcraft.worldgen.feature.JolCraftBlockPredicateTypes;
+import net.sievert.jolcraft.worldgen.predicate.JolCraftBlockPredicateTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class DarknessPredicate implements BlockPredicate {

@@ -17,6 +17,7 @@ import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.data.JolCraftAttributes;
+import net.sievert.jolcraft.gui.util.MenuTickDispatcher;
 import net.sievert.jolcraft.item.creative.JolCraftCreativeModeTabs;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
@@ -27,7 +28,7 @@ import net.sievert.jolcraft.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.worldgen.feature.JolCraftBlockPredicateTypes;
+import net.sievert.jolcraft.worldgen.predicate.JolCraftBlockPredicateTypes;
 import net.sievert.jolcraft.worldgen.processor.JolCraftProcessors;
 import net.sievert.jolcraft.worldgen.structure.JolCraftStructures;
 import org.slf4j.Logger;
@@ -83,10 +84,6 @@ public class JolCraft {
 
     // --- Server tick handler ---
     private static void onServerTick(ServerTickEvent.Post event) {
-        for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
-            if (player.containerMenu instanceof LockMenu lockMenu) {
-                lockMenu.tick();
-            }
-        }
+        MenuTickDispatcher.tickAll(event.getServer());
     }
 }

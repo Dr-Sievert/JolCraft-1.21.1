@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -21,7 +21,7 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
 
     public int ticksRemaining = 0;
 
-    public ReputationGainDwarfAction(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public ReputationGainDwarfAction(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         super(dwarf, player, hand, itemstack);
     }
 

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.custom.tooltip;
+package net.sievert.jolcraft.item.custom.tool;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;

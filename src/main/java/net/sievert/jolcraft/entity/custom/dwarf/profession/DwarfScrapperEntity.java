@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
@@ -31,9 +31,9 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfScrapperEntity extends AbstractEntityEntity {
+public class DwarfScrapperEntity extends AbstractDwarfEntity {
 
-    public DwarfScrapperEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfScrapperEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
         this.instanceTrades = MAIN_TRADES;
@@ -79,7 +79,7 @@ public class DwarfScrapperEntity extends AbstractEntityEntity {
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -102,7 +102,7 @@ public class DwarfScrapperEntity extends AbstractEntityEntity {
         return InteractionResult.FAIL;
     }
 
-    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> MAIN_TRADES = AbstractEntityEntity.toIntMap(ImmutableMap.of(
+    public static final Int2ObjectMap<DwarfTrades.ItemListing[]> MAIN_TRADES = AbstractDwarfEntity.toIntMap(ImmutableMap.of(
             1, new DwarfTrades.ItemListing[] { new DwarfTrades.ItemsForGold(JolCraftItems.COPPER_SPANNER.get(), 8, 15, 1, 3, 10) },
             2, new DwarfTrades.ItemListing[] { new DwarfTrades.GoldForItems(JolCraftItems.SCRAP.get(), 1, 256, 5, 1) },
             3, new DwarfTrades.ItemListing[] { new DwarfTrades.ItemsForGold(JolCraftItems.IRON_SPANNER.get(), 24, 32, 1, 3, 40) },

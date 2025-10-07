@@ -7,7 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.profession.GuardEquipInteraction;
@@ -17,7 +17,7 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
 
     public int ticksRemaining = 0;
 
-    public GuardEquipDwarfAction(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public GuardEquipDwarfAction(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         super(dwarf, player, hand, itemstack);
     }
 

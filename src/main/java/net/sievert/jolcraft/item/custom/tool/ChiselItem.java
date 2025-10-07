@@ -1,25 +1,25 @@
-package net.sievert.jolcraft.item.custom.alchemy;
+package net.sievert.jolcraft.item.custom.tool;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.item.custom.tooltip.ToolItem;
+import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class PestleItem extends ToolItem {
+public class ChiselItem extends ToolItem {
 
-    public PestleItem(ToolMaterial material, Properties properties) {
+    public ChiselItem(ToolMaterial material, Item.Properties properties) {
         super(material, properties);
     }
 
@@ -44,4 +44,6 @@ public class PestleItem extends ToolItem {
 
         super.appendHoverText(stack, context, tooltip, flag);
     }
+
 }
+

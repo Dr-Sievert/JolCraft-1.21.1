@@ -4,12 +4,12 @@ import java.util.EnumSet;
 
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 
 public class DwarfTradeWithPlayerGoal extends Goal {
-    private final AbstractEntityEntity mob;
+    private final AbstractDwarfEntity mob;
 
-    public DwarfTradeWithPlayerGoal(AbstractEntityEntity mob) {
+    public DwarfTradeWithPlayerGoal(AbstractDwarfEntity mob) {
         this.mob = mob;
         this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
     }

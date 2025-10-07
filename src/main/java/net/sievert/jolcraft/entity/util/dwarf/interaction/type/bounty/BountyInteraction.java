@@ -6,7 +6,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
@@ -23,7 +23,7 @@ public class BountyInteraction extends InspectInteraction {
     }
 
     @Override
-    public InteractionResult handle(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         assert itemstack != null;
         if (itemstack.is(JolCraftItems.BOUNTY.get())) {
             BountyType requiredType = BountyHelper.getBountyType(itemstack);

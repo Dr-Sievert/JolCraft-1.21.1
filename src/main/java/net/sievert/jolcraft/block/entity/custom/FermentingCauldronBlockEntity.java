@@ -28,9 +28,9 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     private int fermentationProgress = 0;
     private final int maxFermentationProgress = 100;
     private int bubbleCooldown = 0;
-    private int yeastTickDelay = 12; //How many times we multiply 5 seconds (100 ticks)
+    private final int yeastTickDelay = 12; //How many times we multiply 5 seconds (100 ticks)
     private int yeastTickCounter = 0;
-    private int brewTickDelay = 60;
+    private final int brewTickDelay = 60;
     private int brewTickCounter = 0;
 
 

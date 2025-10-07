@@ -2,12 +2,12 @@ package net.sievert.jolcraft.entity.ai.goal.dwarf;
 
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 
 public class DwarfLookAtTradingPlayerGoal extends LookAtPlayerGoal {
-    private final AbstractEntityEntity dwarf;
+    private final AbstractDwarfEntity dwarf;
 
-    public DwarfLookAtTradingPlayerGoal(AbstractEntityEntity dwarf) {
+    public DwarfLookAtTradingPlayerGoal(AbstractDwarfEntity dwarf) {
         super(dwarf, Player.class, 8.0F);
         this.dwarf = dwarf;
     }

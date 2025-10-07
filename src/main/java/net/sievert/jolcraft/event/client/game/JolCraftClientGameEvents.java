@@ -21,7 +21,7 @@ public class JolCraftClientGameEvents {
 
         if (mc.player != null && mc.screen instanceof LockScreen lockScreen) {
             LockMenu menu = lockScreen.getMenu();
-            menu.tick();
+            menu.tick(mc.player);
         }
 
         int prevMuffleTicks = ClientDeliriumData.getAndStorePreviousTicks();

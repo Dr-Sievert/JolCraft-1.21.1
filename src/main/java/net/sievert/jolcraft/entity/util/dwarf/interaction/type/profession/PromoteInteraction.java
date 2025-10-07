@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.JolCraftEntities;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -19,7 +19,7 @@ import java.util.Set;
 public class PromoteInteraction extends InspectInteraction {
 
     @Override
-    public InteractionResult handle(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         boolean client = dwarf.level().isClientSide;
         assert itemstack != null;
         if (itemstack.is(JolCraftTags.Items.PROFESSION_CONTRACTS)) {
@@ -45,7 +45,7 @@ public class PromoteInteraction extends InspectInteraction {
 
     public static final Set<EntityType<?>> PROMOTABLE_DWARF_TYPES = Set.of(JolCraftEntities.DWARF.get());
 
-    public boolean canPromoteToProfession(AbstractEntityEntity dwarf) {
+    public boolean canPromoteToProfession(AbstractDwarfEntity dwarf) {
         return PROMOTABLE_DWARF_TYPES.contains(dwarf.getType()) && dwarf.isAlive() && !dwarf.isBaby();
     }
 }

@@ -3,7 +3,7 @@ package net.sievert.jolcraft.entity.util.dwarf.action;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.*;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.bounty.BountyCrateDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.bounty.BountyDwarfAction;
@@ -35,7 +35,7 @@ public class DwarfActionHelper {
      *
      * @param dwarf The owning entity (passed for callbacks, sound, etc).
      */
-    public void tick(AbstractEntityEntity dwarf) {
+    public void tick(AbstractDwarfEntity dwarf) {
         if (activeAction == null) {
             activeAction = IdleDwarfAction.INSTANCE;
         }
@@ -50,7 +50,7 @@ public class DwarfActionHelper {
 
     /** Sets a new active action. Null is treated as Idle. Calls start() on the new action. */
     public void setAction(
-            AbstractEntityEntity dwarf,
+            AbstractDwarfEntity dwarf,
             @Nullable DwarfActionType type,
             @Nullable DwarfActionType.Subtype subtype,
             @Nullable Player player,
@@ -86,21 +86,21 @@ public class DwarfActionHelper {
     }
 
     public void setAction(
-            AbstractEntityEntity dwarf,
+            AbstractDwarfEntity dwarf,
             DwarfActionType type
     ) {
         setAction(dwarf, type, null, null, null, null);
     }
 
     public void setAction(
-            AbstractEntityEntity dwarf,
+            AbstractDwarfEntity dwarf,
             DwarfActionType.Subtype subtype
     ) {
         setAction(dwarf, null, subtype, null, null, null);
     }
 
     public void setAction(
-            AbstractEntityEntity dwarf,
+            AbstractDwarfEntity dwarf,
             @Nullable DwarfActionType.Subtype subtype,
             @Nullable Player player,
             @Nullable InteractionHand hand,
@@ -112,18 +112,18 @@ public class DwarfActionHelper {
     /**
      * Sets the current action type value into the entity's data.
      */
-    public static void setCurrentAction(AbstractEntityEntity entity, DwarfActionType type, @Nullable DwarfActionType.Subtype subtype) {
+    public static void setCurrentAction(AbstractDwarfEntity entity, DwarfActionType type, @Nullable DwarfActionType.Subtype subtype) {
         if (subtype != null){
-            entity.getEntityData().set(AbstractEntityEntity.CURRENT_ACTION_SUBTYPE, subtype.ordinal());
-            entity.getEntityData().set(AbstractEntityEntity.CURRENT_ACTION, subtype.getParent().ordinal());
+            entity.getEntityData().set(AbstractDwarfEntity.CURRENT_ACTION_SUBTYPE, subtype.ordinal());
+            entity.getEntityData().set(AbstractDwarfEntity.CURRENT_ACTION, subtype.getParent().ordinal());
         }else{
-            entity.getEntityData().set(AbstractEntityEntity.CURRENT_ACTION, type.ordinal());
-            entity.getEntityData().set(AbstractEntityEntity.CURRENT_ACTION_SUBTYPE, -1);
+            entity.getEntityData().set(AbstractDwarfEntity.CURRENT_ACTION, type.ordinal());
+            entity.getEntityData().set(AbstractDwarfEntity.CURRENT_ACTION_SUBTYPE, -1);
         }
     }
 
     /** Stops the current action and returns the dwarf to Idle. */
-    public void stopAction(AbstractEntityEntity dwarf) {
+    public void stopAction(AbstractDwarfEntity dwarf) {
         setCurrentAction(dwarf, DwarfActionType.IDLE, null);
         activeAction = IdleDwarfAction.INSTANCE;
     }
@@ -132,32 +132,32 @@ public class DwarfActionHelper {
     /**
      * Gets the current action type from the entity's data.
      */
-    public static DwarfActionType getCurrentActionType(AbstractEntityEntity entity) {
-        int idx = entity.getEntityData().get(AbstractEntityEntity.CURRENT_ACTION);
+    public static DwarfActionType getCurrentActionType(AbstractDwarfEntity entity) {
+        int idx = entity.getEntityData().get(AbstractDwarfEntity.CURRENT_ACTION);
         return DwarfActionType.values()[idx];
     }
 
     /**
      * Gets the current action type from the entity's data.
      */
-    public static DwarfActionType.Subtype getCurrentActionSubType(AbstractEntityEntity entity) {
-        int idx = entity.getEntityData().get(AbstractEntityEntity.CURRENT_ACTION_SUBTYPE);
+    public static DwarfActionType.Subtype getCurrentActionSubType(AbstractDwarfEntity entity) {
+        int idx = entity.getEntityData().get(AbstractDwarfEntity.CURRENT_ACTION_SUBTYPE);
         return idx < 0 ? null : DwarfActionType.Subtype.values()[idx];
     }
 
     /**
      * Checks if the entity's current action matches the given type.
      */
-    public static boolean isActionType(AbstractEntityEntity entity, DwarfActionType type) {
-        int stored = entity.getEntityData().get(AbstractEntityEntity.CURRENT_ACTION);
+    public static boolean isActionType(AbstractDwarfEntity entity, DwarfActionType type) {
+        int stored = entity.getEntityData().get(AbstractDwarfEntity.CURRENT_ACTION);
         return stored == type.ordinal();
     }
 
     /**
      * Checks if the entity's current action matches the given type.
      */
-    public static boolean isActionSubType(AbstractEntityEntity entity, DwarfActionType.Subtype subtype) {
-        int stored = entity.getEntityData().get(AbstractEntityEntity.CURRENT_ACTION_SUBTYPE);
+    public static boolean isActionSubType(AbstractDwarfEntity entity, DwarfActionType.Subtype subtype) {
+        int stored = entity.getEntityData().get(AbstractDwarfEntity.CURRENT_ACTION_SUBTYPE);
         return stored == subtype.ordinal();
     }
 }

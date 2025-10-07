@@ -99,7 +99,7 @@ public class DeepslateCompassAngleState extends NeedleDirectionHelper {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static enum CompassTarget implements StringRepresentable {
+    public enum CompassTarget implements StringRepresentable {
         NONE("none") {
             @Nullable
             @Override

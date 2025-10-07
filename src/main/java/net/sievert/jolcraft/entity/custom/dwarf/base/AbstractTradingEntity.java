@@ -380,7 +380,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         this.rewardTradeXp(offer);
         if (player instanceof ServerPlayer serverPlayer) {
             player.awardStat(Stats.TRADED_WITH_VILLAGER);
-            JolCraftCriteriaTriggers.TRADE_WITH_DWARF.trigger(serverPlayer, (AbstractEntityEntity) this);
+            JolCraftCriteriaTriggers.TRADE_WITH_DWARF.trigger(serverPlayer, (AbstractDwarfEntity) this);
         }
     }
 

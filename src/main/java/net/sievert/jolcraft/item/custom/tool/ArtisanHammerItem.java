@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.custom.gem;
+package net.sievert.jolcraft.item.custom.tool;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
@@ -10,17 +10,14 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.item.custom.tooltip.ToolItem;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class ChiselItem extends ToolItem {
+public class ArtisanHammerItem extends ToolItem {
 
-    public ChiselItem(ToolMaterial material, Item.Properties properties) {
+    public ArtisanHammerItem(ToolMaterial material, Item.Properties properties) {
         super(material, properties);
     }
 
@@ -28,23 +25,15 @@ public class ChiselItem extends ToolItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Screen.hasAltDown()) {
-            tooltip.add(Component.translatable("tooltip.jolcraft.chisel")
+            tooltip.add(Component.translatable("tooltip.jolcraft.artisan_hammer")
                     .withStyle(ChatFormatting.GRAY));
-
-            if (!DwarfTomeHelper.hasUnlockClient(DwarfLoreKey.ANCIENT_GEMCRAFT)) {
-                tooltip.add(Component.translatable("tooltip.jolcraft.chisel.cut_locked")
-                        .withStyle(ChatFormatting.RED));
-            }
-
         } else {
             Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
                     .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
             tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
-
         super.appendHoverText(stack, context, tooltip, flag);
     }
 
 }
-

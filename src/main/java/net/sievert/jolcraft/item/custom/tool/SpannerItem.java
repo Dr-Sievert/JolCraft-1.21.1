@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.custom.scrapper;
+package net.sievert.jolcraft.item.custom.tool;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

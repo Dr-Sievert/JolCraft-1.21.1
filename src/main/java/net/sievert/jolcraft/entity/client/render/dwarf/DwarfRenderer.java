@@ -18,7 +18,7 @@ import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfArmorLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractBreedingEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfVariant;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfRenderer<T extends AbstractEntityEntity> extends HumanoidMobRenderer<T, DwarfRenderState, DwarfModel> {
+public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRenderer<T, DwarfRenderState, DwarfModel> {
 
     public DwarfRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfModel(context.bakeLayer(DwarfModel.LAYER_LOCATION)), 0.4f);
@@ -83,7 +83,7 @@ public class DwarfRenderer<T extends AbstractEntityEntity> extends HumanoidMobRe
     public void extractRenderState(@NotNull T entity, @NotNull DwarfRenderState reused, float partialTick) {
         super.extractRenderState(entity, reused, partialTick);
 
-        DwarfRenderState persistent = AbstractEntityEntity.getOrCreateClientRenderState(entity);
+        DwarfRenderState persistent = AbstractDwarfEntity.getOrCreateClientRenderState(entity);
 
         persistent.currentActionType    = DwarfActionHelper.getCurrentActionType(entity);
         persistent.currentActionSubtype = DwarfActionHelper.getCurrentActionSubType(entity);

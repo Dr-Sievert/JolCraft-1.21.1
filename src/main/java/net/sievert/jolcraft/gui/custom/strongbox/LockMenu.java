@@ -16,13 +16,15 @@ import net.sievert.jolcraft.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.gui.custom.slot.LockpickSlot;
+import net.sievert.jolcraft.gui.util.MenuTickDispatcher;
+import net.sievert.jolcraft.gui.util.TickableMenu;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
 
-public class LockMenu extends AbstractContainerMenu {
+public class LockMenu extends AbstractContainerMenu implements TickableMenu {
     public final StrongboxBlockEntity blockEntity;
     private final Level level;
     private final Random random = new Random();
@@ -57,43 +59,48 @@ public class LockMenu extends AbstractContainerMenu {
     private int tickCounter = 0;
     private int tickRate = 40 + new Random().nextInt(61);
 
-    public void tick() {
-        Player player = blockEntity.currentInteractingPlayer;
-
-        if (!level.isClientSide) {
-            assert player != null;
-            var effect = player.getEffect(JolCraftEffects.LOCKPICKING);
-            if (effect != null) {
-                int decayTicks = 2 + effect.getAmplifier();
-                int progressBoost = 10 + (effect.getAmplifier() * 10);
-                setDecayTicks(decayTicks);
-                setProgressBoost(progressBoost);
-            } else {
-                setDecayTicks(1);
-                setProgressBoost(0);
-            }
-            broadcastChanges();
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        if (!level.isClientSide && blockEntity.getCurrentInteractingPlayer() instanceof ServerPlayer serverPlayer) {
+            MenuTickDispatcher.register(serverPlayer);
         }
+    }
 
+    @Override
+    public void tick(Player player) {
         tickCounter++;
-
         if (tickCounter >= tickRate && isActive()) {
             tickCounter = 0;
             updateLockpickButton();
         }
 
-        if (!level.isClientSide) {
-            if (getLockpickProgress() > 0) {
-                decayCounter++;
-                int interval = getDecayTicks();
-                if (decayCounter >= interval) {
-                    decayCounter = 0;
-                    setLockpickProgress(clampLockpickProgress(getLockpickProgress() - 1));
-                    updatechanges();
-                }
-            } else {
+        if (level.isClientSide) {
+            return;
+        }
+
+        if (blockEntity.getCurrentInteractingPlayer() != player) return;
+
+        var effect = player.getEffect(JolCraftEffects.LOCKPICKING);
+        if (effect != null) {
+            setDecayTicks(2 + effect.getAmplifier());
+            setProgressBoost(10 + (effect.getAmplifier() * 10));
+        } else {
+            setDecayTicks(1);
+            setProgressBoost(0);
+        }
+
+        broadcastChanges();
+
+        if (getLockpickProgress() > 0) {
+            decayCounter++;
+            if (decayCounter >= getDecayTicks()) {
                 decayCounter = 0;
+                setLockpickProgress(clampLockpickProgress(getLockpickProgress() - 1));
+                broadcastChanges();
             }
+        } else {
+            decayCounter = 0;
         }
     }
 
@@ -108,16 +115,10 @@ public class LockMenu extends AbstractContainerMenu {
                 setUnlockSlotId(-1);
             }
             setButtonLayerUpdatePulse((getButtonLayerUpdatePulse() % 3) + 1);
-            updatechanges();
+            broadcastChanges();
         }
         tickCounter = 0;
         tickRate = 40 + new Random().nextInt(61);
-
-    }
-
-
-    public void updatechanges(){
-        this.broadcastChanges();
     }
 
     @Override
@@ -142,7 +143,7 @@ public class LockMenu extends AbstractContainerMenu {
                     setLockpickProgress(
                             clampLockpickProgress(getLockpickProgress() + 10 + random.nextInt(11) + getProgressBoost())
                     );
-                    updatechanges();
+                    broadcastChanges();
                 }
                 level.playSound(null, blockEntity.getBlockPos(), JolCraftSounds.STRONGBOX_LOCKPICK.get(), SoundSource.BLOCKS, 1.2F, 1.0F);
                 if (getLockpickProgress() >= MAX_PROGRESS) {
@@ -154,7 +155,7 @@ public class LockMenu extends AbstractContainerMenu {
                         lockpick.shrink(1);
                     }
                     setLockpickProgress(0);
-                    updatechanges();
+                    broadcastChanges();
                 }
                 level.playSound(null, blockEntity.getBlockPos(), JolCraftSounds.STRONGBOX_LOCKPICK_BREAK.get(), SoundSource.BLOCKS, 1.5F, 0.8F);
             }
@@ -213,11 +214,11 @@ public class LockMenu extends AbstractContainerMenu {
         if (blockEntity instanceof StrongboxBlockEntity strongbox) {
             if (strongbox.getCurrentInteractingPlayer() == player) {
                 strongbox.currentInteractingPlayer = null;
-                if(!level.isClientSide){
+                if (!level.isClientSide) {
+                    MenuTickDispatcher.unregister((ServerPlayer) player);
                     setLockpickProgress(0);
-                    updatechanges();
+                    broadcastChanges();
                 }
-
             }
         }
 

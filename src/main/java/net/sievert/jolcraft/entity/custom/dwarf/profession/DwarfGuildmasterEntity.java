@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -35,9 +35,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfGuildmasterEntity extends AbstractEntityEntity {
+public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
 
-    public DwarfGuildmasterEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfGuildmasterEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()));
         this.instanceTrades = createRandomizedGuildmasterTrades();
@@ -108,7 +108,7 @@ public class DwarfGuildmasterEntity extends AbstractEntityEntity {
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfUseItemGoal<>(this, PotionContents.createItemStack(Items.POTION, Potions.STRONG_HEALING), SoundEvents.PLAYER_BURP, mob -> mob.getHealth() < mob.getMaxHealth(), 300));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -151,7 +151,7 @@ public class DwarfGuildmasterEntity extends AbstractEntityEntity {
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedGuildmasterTrades() {
-        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
+        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
 
                         //Novice
                         1,

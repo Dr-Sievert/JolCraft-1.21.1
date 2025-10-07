@@ -11,7 +11,7 @@ import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputation;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
@@ -21,7 +21,7 @@ public class EndorseDwarfAction extends InspectDwarfAction {
     public int ticksRemaining = 0;
     protected ItemStack tablet = ItemStack.EMPTY;
 
-    public EndorseDwarfAction(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public EndorseDwarfAction(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         super(dwarf, player, hand, itemstack);
     }
 

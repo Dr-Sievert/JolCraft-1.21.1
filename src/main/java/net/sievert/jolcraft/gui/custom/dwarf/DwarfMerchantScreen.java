@@ -225,7 +225,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
                 this.renderProgressBar(p_283487_, i, j, merchantoffer1);
             }
 
-            if (merchantoffer1.isOutOfStock() && this.isHovering(186, 35, 22, 21, (double)p_281994_, (double)p_282099_) && this.menu.canRestock()) {
+            if (merchantoffer1.isOutOfStock() && this.isHovering(186, 35, 22, 21, p_281994_, p_282099_) && this.menu.canRestock()) {
                 p_283487_.renderTooltip(this.font, DEPRECATED_TOOLTIP, p_281994_, p_282099_);
             }
 

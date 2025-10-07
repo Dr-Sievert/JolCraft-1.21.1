@@ -13,7 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractBreedingEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -25,7 +25,7 @@ public class PromoteDwarfAction extends InspectDwarfAction {
 
     public int ticksRemaining = 0;
 
-    public PromoteDwarfAction(AbstractEntityEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public PromoteDwarfAction(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         super(dwarf, player, hand, itemstack);
     }
 
@@ -68,11 +68,11 @@ public class PromoteDwarfAction extends InspectDwarfAction {
     }
 
     @Nullable
-    public EntityType<? extends AbstractEntityEntity> resolveProfessionType(ItemStack contractStack) {
+    public EntityType<? extends AbstractDwarfEntity> resolveProfessionType(ItemStack contractStack) {
         return CONTRACT_TO_PROFESSION.get(contractStack.getItem());
     }
 
-    public static final Map<Item, EntityType<? extends AbstractEntityEntity>> CONTRACT_TO_PROFESSION = Map.ofEntries(
+    public static final Map<Item, EntityType<? extends AbstractDwarfEntity>> CONTRACT_TO_PROFESSION = Map.ofEntries(
 
             Map.entry(JolCraftItems.CONTRACT_GUILDMASTER.get(), JolCraftEntities.DWARF_GUILDMASTER.get()),
 
@@ -111,7 +111,7 @@ public class PromoteDwarfAction extends InspectDwarfAction {
         if (!dwarf.level().isClientSide) {
             ServerLevel serverLevel = (ServerLevel) dwarf.level();
 
-            EntityType<? extends AbstractEntityEntity> professionType = resolveProfessionType(itemstack);
+            EntityType<? extends AbstractDwarfEntity> professionType = resolveProfessionType(itemstack);
 
 
             if (professionType != null) {
@@ -124,7 +124,7 @@ public class PromoteDwarfAction extends InspectDwarfAction {
                         false
                 );
 
-                if (entity instanceof AbstractEntityEntity newDwarf) {
+                if (entity instanceof AbstractDwarfEntity newDwarf) {
                     newDwarf.moveTo(dwarf.getX(), dwarf.getY(), dwarf.getZ(), dwarf.getYRot(), dwarf.getXRot());
                     newDwarf.setData(AbstractBreedingEntity.BEARD_COLOR, dwarf.getData(AbstractBreedingEntity.BEARD_COLOR));
                     newDwarf.setData(AbstractBreedingEntity.EYE_COLOR, dwarf.getData(AbstractBreedingEntity.EYE_COLOR));

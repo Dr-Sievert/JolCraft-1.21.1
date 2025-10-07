@@ -17,7 +17,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.FirePanicGoal;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -29,9 +29,9 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfArcanistEntity extends AbstractEntityEntity {
+public class DwarfArcanistEntity extends AbstractDwarfEntity {
 
-    public DwarfArcanistEntity(EntityType<? extends AbstractEntityEntity> entityType, Level level) {
+    public DwarfArcanistEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.WOECRYSTAL.get()));
         this.instanceTrades = createRandomizedArcanistTrades();
@@ -77,7 +77,7 @@ public class DwarfArcanistEntity extends AbstractEntityEntity {
         this.goalSelector.addGoal(3, new DwarfRevengeGoal(this));
         this.goalSelector.addGoal(3, new DwarfTradeWithPlayerGoal(this));
         this.goalSelector.addGoal(4, new DwarfLookAtTradingPlayerGoal(this));
-        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractEntityEntity.class));
+        this.goalSelector.addGoal(5, new DwarfBreedGoal(this, 1.0, AbstractDwarfEntity.class));
         this.goalSelector.addGoal(6, new TemptGoal(this, 1.25, stack -> stack.is(JolCraftItems.GOLD_COIN), false));
         this.goalSelector.addGoal(6, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -101,7 +101,7 @@ public class DwarfArcanistEntity extends AbstractEntityEntity {
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedArcanistTrades() {
-        return AbstractEntityEntity.toIntMap(ImmutableMap.of(
+        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
 
         ));
     }

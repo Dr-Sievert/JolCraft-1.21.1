@@ -24,7 +24,7 @@ import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -41,7 +41,7 @@ public class JolCraftEntityEvents {
 
     @SubscribeEvent
     public static void onInvulnerabilityCheck(EntityInvulnerabilityCheckEvent event) {
-        if (event.getEntity() instanceof AbstractEntityEntity dwarf && dwarf.canBlock() && event.getSource().getEntity() instanceof Monster monster) {
+        if (event.getEntity() instanceof AbstractDwarfEntity dwarf && dwarf.canBlock() && event.getSource().getEntity() instanceof Monster monster) {
             if (event.getSource().getDirectEntity() instanceof Projectile) {
                 dwarf.shouldBlock = true;
                 dwarf.blockCooldownTicks = 75;
@@ -60,7 +60,7 @@ public class JolCraftEntityEvents {
     public static void onMonsterTarget(FinalizeSpawnEvent event) {
         LivingEntity entity = event.getEntity();
         if (entity instanceof Monster mob && !(entity instanceof Creeper) && !(entity instanceof EnderMan)) {
-            mob.goalSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, AbstractEntityEntity.class, true));
+            mob.goalSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, AbstractDwarfEntity.class, true));
         }
     }
 
@@ -81,7 +81,7 @@ public class JolCraftEntityEvents {
         }
 
         // Dwarf logic
-        if (target instanceof AbstractEntityEntity dwarf && !dwarf.isBaby() && dwarf.canTrade()) {
+        if (target instanceof AbstractDwarfEntity dwarf && !dwarf.isBaby() && dwarf.canTrade()) {
 
             // --- Language Check (block event if player can't interact) ---
             InteractionResult langFilter = DwarfInteractionHelper.languageCheck(dwarf, player);

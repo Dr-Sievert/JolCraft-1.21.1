@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.AnimationState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractEntityEntity;
+import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.entity.util.dwarf.variation.DwarfVariant;
@@ -35,7 +35,7 @@ public class DwarfRenderState extends HumanoidRenderState {
     public DwarfActionType.Subtype currentActionSubtype = null;
 
     /** The dwarf entity being rendered (optional, rarely needed). */
-    public AbstractEntityEntity dwarf;
+    public AbstractDwarfEntity dwarf;
 
     /**
      * The visual variant of this dwarf (e.g., skin tone or body type).

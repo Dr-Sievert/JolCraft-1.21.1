@@ -52,9 +52,9 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AbstractEntityEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, EntityData {
+public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, EntityData {
 
-    public AbstractEntityEntity(EntityType<? extends AgeableMob> entityType, Level level) {
+    public AbstractDwarfEntity(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);
         ((GroundPathNavigation)this.getNavigation()).setCanOpenDoors(true);
         this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
@@ -114,13 +114,13 @@ public class AbstractEntityEntity extends AbstractTradingEntity implements Npc, 
     //Data
 
     public static final EntityDataAccessor<String> PROFESSION =
-            SynchedEntityData.defineId(AbstractEntityEntity.class, EntityDataSerializers.STRING);
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.STRING);
 
     public static final EntityDataAccessor<Integer> CURRENT_ACTION =
-            SynchedEntityData.defineId(AbstractEntityEntity.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
 
     public static final EntityDataAccessor<Integer> CURRENT_ACTION_SUBTYPE =
-            SynchedEntityData.defineId(AbstractEntityEntity.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(AbstractDwarfEntity.class, EntityDataSerializers.INT);
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
@@ -334,9 +334,9 @@ public class AbstractEntityEntity extends AbstractTradingEntity implements Npc, 
 
     //Animation
 
-    private static final Map<AbstractEntityEntity, DwarfRenderState> CLIENT_RENDER_STATES = new WeakHashMap<>();
+    private static final Map<AbstractDwarfEntity, DwarfRenderState> CLIENT_RENDER_STATES = new WeakHashMap<>();
 
-    public static DwarfRenderState getOrCreateClientRenderState(AbstractEntityEntity entity) {
+    public static DwarfRenderState getOrCreateClientRenderState(AbstractDwarfEntity entity) {
         return CLIENT_RENDER_STATES.computeIfAbsent(entity, e -> new DwarfRenderState());
     }
 
