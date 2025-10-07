@@ -26,14 +26,10 @@ public class DwarfBeardLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     private static final Map<DwarfBeardColor, ResourceLocation> LOCATION_BY_BEARD =
             Util.make(Maps.newEnumMap(DwarfBeardColor.class), map -> {
-                map.put(DwarfBeardColor.BROWN,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/beard/beard_brown.png"));
-                map.put(DwarfBeardColor.RED,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/beard/beard_red.png"));
-                map.put(DwarfBeardColor.BLACK,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/beard/beard_black.png"));
-                map.put(DwarfBeardColor.GRAY,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/beard/beard_gray.png"));
+                map.put(DwarfBeardColor.BROWN, JolCraft.location("textures/entity/dwarf/beard/beard_brown.png"));
+                map.put(DwarfBeardColor.RED, JolCraft.location("textures/entity/dwarf/beard/beard_red.png"));
+                map.put(DwarfBeardColor.BLACK, JolCraft.location("textures/entity/dwarf/beard/beard_black.png"));
+                map.put(DwarfBeardColor.GRAY, JolCraft.location("textures/entity/dwarf/beard/beard_gray.png"));
             });
 
     public DwarfBeardLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {

@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientboundParticlePacket(
@@ -18,7 +18,7 @@ public record ClientboundParticlePacket(
 ) implements CustomPacketPayload {
 
     public static final Type<ClientboundParticlePacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath("jolcraft", "particle"));
+            new Type<>(JolCraft.location("particle"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundParticlePacket> CODEC =
             CustomPacketPayload.codec(ClientboundParticlePacket::write, ClientboundParticlePacket::read);

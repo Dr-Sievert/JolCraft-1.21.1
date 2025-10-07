@@ -17,7 +17,7 @@ import java.util.EnumMap;
 public class JolCraftArmorMaterials {
 
     public static final ResourceKey<EquipmentAsset> DEEPSLATE_KEY =
-            ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "deepslate"));
+            ResourceKey.create(EquipmentAssets.ROOT_ID, JolCraft.location("deepslate"));
 
     public static final ArmorMaterial DEEPSLATE_ARMOR_MATERIAL = new ArmorMaterial(
             24,
@@ -37,7 +37,7 @@ public class JolCraftArmorMaterials {
     );
 
     public static final ResourceKey<EquipmentAsset> MITHRIL_KEY =
-            ResourceKey.create(EquipmentAssets.ROOT_ID, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "mithril"));
+            ResourceKey.create(EquipmentAssets.ROOT_ID,  JolCraft.location("mithril"));
 
     public static final ArmorMaterial MITHRIL_ARMOR_MATERIAL = new ArmorMaterial(
             100,

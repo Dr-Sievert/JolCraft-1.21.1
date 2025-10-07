@@ -14,7 +14,7 @@ import net.sievert.jolcraft.JolCraft;
 @OnlyIn(Dist.CLIENT)
 public class StrongboxModel extends Model {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "strongbox"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("strongbox"), "main");
 
     private static final String BOTTOM = "bottom";
     private static final String LID = "lid";

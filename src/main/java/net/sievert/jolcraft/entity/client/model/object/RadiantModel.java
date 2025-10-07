@@ -5,7 +5,6 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
@@ -16,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class RadiantModel extends EntityModel<RadiantRenderState>  {
 
     /** Layer location for Radiant model (register in client init). */
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "radiant"), "main"
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("radiant"), "main"
     );
 
     public final ModelPart body;

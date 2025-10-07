@@ -11,6 +11,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.JolCraft;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -80,7 +82,7 @@ public class JolCraftRecipeBuilder implements RecipeBuilder {
     @Override
     public void save(RecipeOutput output, ResourceKey<Recipe<?>> resourceKey) {
         ResourceLocation loc = resourceKey.location();
-        ResourceLocation fixedLoc = ResourceLocation.fromNamespaceAndPath(modId, loc.getPath());
+        ResourceLocation fixedLoc = JolCraft.location(loc.getPath());
         ResourceKey<Recipe<?>> fixedKey = ResourceKey.create(Registries.RECIPE, fixedLoc);
         inner.save(output, fixedKey);
     }
@@ -88,7 +90,7 @@ public class JolCraftRecipeBuilder implements RecipeBuilder {
     @Override
     public void save(RecipeOutput output) {
         ResourceLocation defaultLoc = BuiltInRegistries.ITEM.getKey(inner.getResult());
-        ResourceLocation fixedLoc = ResourceLocation.fromNamespaceAndPath(modId, defaultLoc.getPath());
+        ResourceLocation fixedLoc = JolCraft.location(defaultLoc.getPath());
         ResourceKey<Recipe<?>> fixedKey = ResourceKey.create(Registries.RECIPE, fixedLoc);
         inner.save(output, fixedKey);
     }

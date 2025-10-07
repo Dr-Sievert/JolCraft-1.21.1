@@ -23,8 +23,6 @@ import java.util.Optional;
  */
 public class DwarfTradeTrigger extends SimpleCriterionTrigger<DwarfTradeTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade_with_dwarf");
-
     public static final DwarfTradeTrigger INSTANCE =
             CriteriaTriggers.register("trade_with_dwarf", new DwarfTradeTrigger());
 

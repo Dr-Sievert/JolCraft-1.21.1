@@ -16,7 +16,7 @@ public class JolCraftSounds {
 
     public static final DeferredHolder<SoundEvent, SoundEvent> ARMOR_EQUIP_DEEPSLATE =
             SOUND_EVENTS.register("armor_equip_deepslate", () ->
-                    SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "armor_equip_deepslate")));
+                    SoundEvent.createVariableRangeEvent(JolCraft.location("armor_equip_deepslate")));
     //Random
     public static final Supplier<SoundEvent> LEVEL_UP = registerSoundEvent("level_up");
     public static final Supplier<SoundEvent> POOF = registerSoundEvent("poof");
@@ -44,7 +44,7 @@ public class JolCraftSounds {
     public static final Supplier<SoundEvent> CURSE = registerSoundEvent("curse");
 
     private static Supplier<SoundEvent> registerSoundEvent(String name) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, name);
+        ResourceLocation id = JolCraft.location(name);
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 

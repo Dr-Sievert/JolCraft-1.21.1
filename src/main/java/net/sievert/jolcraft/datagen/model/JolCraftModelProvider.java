@@ -501,9 +501,9 @@ public class JolCraftModelProvider extends ModelProvider {
     private void generateCoinPouchModel(ItemModelGenerators itemModels) {
         Item pouch = JolCraftItems.COIN_POUCH.get();
 
-        ResourceLocation small = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/coin_pouch_small");
-        ResourceLocation large = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/coin_pouch_large");
-        ResourceLocation full  = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/coin_pouch_full");
+        ResourceLocation small = JolCraft.location("item/coin_pouch_small");
+        ResourceLocation large = JolCraft.location("item/coin_pouch_large");
+        ResourceLocation full  = JolCraft.location("item/coin_pouch_full");
 
         ModelTemplates.FLAT_ITEM.create(small, TextureMapping.layer0(small), itemModels.modelOutput);
         ModelTemplates.FLAT_ITEM.create(large,  TextureMapping.layer0(large),  itemModels.modelOutput);
@@ -542,7 +542,7 @@ public class JolCraftModelProvider extends ModelProvider {
         for (DwarfLoreKey loreKey : legendaryLoreKeys) {
             String keyString = loreKey.name().toLowerCase(Locale.ROOT);
             String modelName = "item/ancient_dwarven_tome_legendary_" + keyString;
-            ResourceLocation modelLoc = ResourceLocation.fromNamespaceAndPath("jolcraft", modelName);
+            ResourceLocation modelLoc = JolCraft.location(modelName);
 
             ModelTemplates.FLAT_ITEM.create(modelLoc, TextureMapping.layer0(modelLoc), itemModels.modelOutput);
             ItemModel.Unbaked model = ItemModelUtils.plainModel(modelLoc);
@@ -582,7 +582,7 @@ public class JolCraftModelProvider extends ModelProvider {
                 if (baseName.equals(data.name())) {
                     trimTextureName += "_darker";
                 }
-                ResourceLocation trimTextureLocation = ResourceLocation.fromNamespaceAndPath("minecraft", "trims/items/" + type + "_trim_" + trimTextureName);
+                ResourceLocation trimTextureLocation = ResourceLocation.withDefaultNamespace("trims/items/" + type + "_trim_" + trimTextureName);
 
                 ItemModel.Unbaked bakedModel;
                 if (dyeable) {
@@ -660,11 +660,11 @@ public class JolCraftModelProvider extends ModelProvider {
                 ResourceLocation caseModelLoc;
 
                 if (!isVanillaArmor && isCustom) {
-                    caseModelLoc = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName + "_" + trimName + "_trim");
+                    caseModelLoc = JolCraft.location("item/" + fileName + "_" + trimName + "_trim");
 
-                    ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName);
-                    ResourceLocation overlay = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName + "_overlay");
-                    ResourceLocation trimTexture = ResourceLocation.fromNamespaceAndPath("jolcraft", "trims/items/" + type + "_trim_" + trimName);
+                    ResourceLocation texture = JolCraft.location("item/" + fileName);
+                    ResourceLocation overlay = JolCraft.location("item/" + fileName + "_overlay");
+                    ResourceLocation trimTexture = JolCraft.location("trims/items/" + type + "_trim_" + trimName);
 
                     addTrimModelToList(
                             itemModels,
@@ -677,11 +677,11 @@ public class JolCraftModelProvider extends ModelProvider {
                             dyeable
                     );
                 } else if (isCustom) {
-                    caseModelLoc = ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName);
+                    caseModelLoc = JolCraft.location("item/" + fileName);
 
-                    ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("minecraft", "item/" + fileName);
-                    ResourceLocation overlay = ResourceLocation.fromNamespaceAndPath("minecraft", "item/" + fileName + "_overlay");
-                    ResourceLocation trimTexture = ResourceLocation.fromNamespaceAndPath("minecraft", "trims/items/" + type + "_trim_" + trimName);
+                    ResourceLocation texture = ResourceLocation.withDefaultNamespace("item/" + fileName);
+                    ResourceLocation overlay = ResourceLocation.withDefaultNamespace("item/" + fileName + "_overlay");
+                    ResourceLocation trimTexture = ResourceLocation.withDefaultNamespace("trims/items/" + type + "_trim_" + trimName);
 
                     addTrimModelToList(
                             itemModels,
@@ -694,7 +694,7 @@ public class JolCraftModelProvider extends ModelProvider {
                             dyeable
                     );
                 } else {
-                    caseModelLoc = ResourceLocation.fromNamespaceAndPath("minecraft", "item/" + fileName + "_" + trimName + "_trim");
+                    caseModelLoc = ResourceLocation.withDefaultNamespace("item/" + fileName + "_" + trimName + "_trim");
                     ItemModel.Unbaked dummyModel = ItemModelUtils.plainModel(caseModelLoc);
                     selectCases.add(ItemModelUtils.when(trim.materialKey(), dummyModel));
                 }
@@ -702,8 +702,8 @@ public class JolCraftModelProvider extends ModelProvider {
 
             ResourceLocation fallbackModelLoc = (baseName.equals("diamond") || baseName.equals("netherite") || baseName.equals("leather")
                     || baseName.equals("iron") || baseName.equals("golden") || baseName.equals("chainmail"))
-                    ? ResourceLocation.fromNamespaceAndPath("minecraft", "item/" + fileName)
-                    : ResourceLocation.fromNamespaceAndPath("jolcraft", "item/" + fileName);
+                    ? ResourceLocation.withDefaultNamespace("item/" + fileName)
+                    : JolCraft.location("item/" + fileName);
 
             ItemModel.Unbaked fallbackModel = dyeable
                     ? ItemModelUtils.tintedModel(fallbackModelLoc, new Dye(-6265536))
@@ -757,11 +757,11 @@ public class JolCraftModelProvider extends ModelProvider {
     private Item getItemFromBaseName(String baseName, String type) {
         String itemName = baseName + "_" + type;
 
-        ResourceLocation jolcraftLocation = ResourceLocation.fromNamespaceAndPath("jolcraft", itemName);
+        ResourceLocation jolcraftLocation = JolCraft.location(itemName);
         Optional<Item> itemOptional = BuiltInRegistries.ITEM.getOptional(jolcraftLocation);
 
         if (itemOptional.isEmpty()) {
-            ResourceLocation minecraftLocation = ResourceLocation.fromNamespaceAndPath("minecraft", itemName);
+            ResourceLocation minecraftLocation = ResourceLocation.withDefaultNamespace(itemName);
             itemOptional = BuiltInRegistries.ITEM.getOptional(minecraftLocation);
         }
 
@@ -848,8 +848,8 @@ public class JolCraftModelProvider extends ModelProvider {
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(hearthBlock, "_side"))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(hearthBlock, "_top"))
                 .put(TextureSlot.FRONT, TextureMapping.getBlockTexture(hearthBlock, "_front"))
-                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(hearthBlock, "_top")) // <-- matches vanilla furnace
-                .put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(hearthBlock, "_front")); // or "_side"
+                .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(hearthBlock, "_top"))
+                .put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(hearthBlock, "_front"));
 
         ResourceLocation hearthModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
                 hearthBlock,
@@ -871,7 +871,7 @@ public class JolCraftModelProvider extends ModelProvider {
                 blockModels.modelOutput
         );
 
-        ResourceLocation chimney = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "block/hearth_chimney");
+        ResourceLocation chimney = JolCraft.location("block/hearth_chimney");
 
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(hearthBlock)

@@ -52,10 +52,7 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
                     .replace("_layer_1", "")
                     .replace("_layer_2", "");
 
-            ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(
-                    JolCraft.MOD_ID,
-                    "textures/entity/dwarf/armor/dwarf_" + material + "_armor.png"
-            );
+            ResourceLocation texture = JolCraft.location("textures/entity/dwarf/armor/dwarf_" + material + "_armor.png");
 
             model.getHead().getChild("hat").visible = slot == EquipmentSlot.HEAD;
             model.body.getChild("bodywear").visible = slot == EquipmentSlot.CHEST;

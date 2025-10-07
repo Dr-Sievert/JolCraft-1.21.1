@@ -19,9 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class RadiantRenderer extends EntityRenderer<RadiantEntity, RadiantRenderState> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
-            JolCraft.MOD_ID, "textures/entity/radiant/radiant.png"
-    );
+    private static final ResourceLocation TEXTURE = JolCraft.location("textures/entity/radiant/radiant.png");
     private final RadiantModel model;
 
     public RadiantRenderer(EntityRendererProvider.Context context) {
@@ -34,7 +32,7 @@ public class RadiantRenderer extends EntityRenderer<RadiantEntity, RadiantRender
     }
 
     @Override
-    public RadiantRenderState createRenderState() {
+    public @NotNull RadiantRenderState createRenderState() {
         return new RadiantRenderState();
     }
 

@@ -17,33 +17,32 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
     private final Random guiRandom = new Random();
     private int lastSeenPulse = 0;
 
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/container/strongbox_lock.png");
+    private static final ResourceLocation TEXTURE = JolCraft.location("textures/gui/container/strongbox_lock.png");
 
-    private static final ResourceLocation HIGHLIGHT =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/widget/slot_highlighted.png");
+    private static final ResourceLocation HIGHLIGHT = JolCraft.location("textures/gui/sprites/widget/slot_highlighted.png");
 
-    private static final ResourceLocation PROGRESS_TEXTURE1 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress1.png");
-    private static final ResourceLocation PROGRESS_TEXTURE2 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress2.png");
-    private static final ResourceLocation PROGRESS_TEXTURE3 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress3.png");
-    private static final ResourceLocation PROGRESS_TEXTURE4 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress4.png");
-    private static final ResourceLocation PROGRESS_TEXTURE5 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress5.png");
-    private static final ResourceLocation PROGRESS_TEXTURE6 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress6.png");
-    private static final ResourceLocation PROGRESS_TEXTURE7 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress7.png");
-    private static final ResourceLocation PROGRESS_TEXTURE8 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress8.png");
-    private static final ResourceLocation PROGRESS_TEXTURE9 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress9.png");
-    private static final ResourceLocation PROGRESS_TEXTURE10 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress10.png");
-    private static final ResourceLocation PROGRESS_TEXTURE11 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress11.png");
-    private static final ResourceLocation PROGRESS_TEXTURE12 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress12.png");
-    private static final ResourceLocation PROGRESS_TEXTURE13 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_progress13.png");
+    private static final ResourceLocation PROGRESS_TEXTURE1 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress1.png");
+    private static final ResourceLocation PROGRESS_TEXTURE2 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress2.png");
+    private static final ResourceLocation PROGRESS_TEXTURE3 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress3.png");
+    private static final ResourceLocation PROGRESS_TEXTURE4 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress4.png");
+    private static final ResourceLocation PROGRESS_TEXTURE5 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress5.png");
+    private static final ResourceLocation PROGRESS_TEXTURE6 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress6.png");
+    private static final ResourceLocation PROGRESS_TEXTURE7 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress7.png");
+    private static final ResourceLocation PROGRESS_TEXTURE8 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress8.png");
+    private static final ResourceLocation PROGRESS_TEXTURE9 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress9.png");
+    private static final ResourceLocation PROGRESS_TEXTURE10 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress10.png");
+    private static final ResourceLocation PROGRESS_TEXTURE11 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress11.png");
+    private static final ResourceLocation PROGRESS_TEXTURE12 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress12.png");
+    private static final ResourceLocation PROGRESS_TEXTURE13 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress13.png");
 
-    private static final ResourceLocation LOCKPICK_TEXTURE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/item/lockpick.png");
+    private static final ResourceLocation LOCKPICK_TEXTURE = JolCraft.location("textures/item/lockpick.png");
 
-    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE1 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_broken1.png");
-    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE2 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_broken2.png");
-    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE3 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_broken3.png");
-    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE4 = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/lockpick_broken4.png");
+    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE1 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken1.png");
+    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE2 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken2.png");
+    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE3 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken3.png");
+    private static final ResourceLocation BROKEN_LOCKPICK_TEXTURE4 = JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken4.png");
 
-    private static final ResourceLocation UNLOCK_TEXTURE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lockpick/unlock.png");
+    private static final ResourceLocation UNLOCK_TEXTURE = JolCraft.location("textures/gui/sprites/lockpick/unlock.png");
 
     private static final ResourceLocation[] PROGRESS_TEXTURES = {
             PROGRESS_TEXTURE1,

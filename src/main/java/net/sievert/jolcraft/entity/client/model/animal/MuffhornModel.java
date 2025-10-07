@@ -9,7 +9,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -19,9 +18,8 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class MuffhornModel extends QuadrupedModel<LivingEntityRenderState> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "muffhorn"), "main");
-    public static final ModelLayerLocation BABY_LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "muffhorn"), "baby");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("muffhorn"), "main");
+    public static final ModelLayerLocation BABY_LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("muffhorn"), "baby");
 
     public static final MeshTransformer BABY_TRANSFORMER =
             new BabyModelTransform(false, 8.0F, 5.0F, Set.of());

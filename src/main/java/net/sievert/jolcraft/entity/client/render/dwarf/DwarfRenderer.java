@@ -43,20 +43,13 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
 
     private static final Map<DwarfVariant, ResourceLocation> LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(DwarfVariant.class), map -> {
-                map.put(DwarfVariant.GREY,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_grey.png"));
-                map.put(DwarfVariant.BLUE,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_blue.png"));
-                map.put(DwarfVariant.GREEN,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_green.png"));
-                map.put(DwarfVariant.RED,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_red.png"));
-                map.put(DwarfVariant.PURPLE,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_purple.png"));
-                map.put(DwarfVariant.WHITE,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_white.png"));
-                map.put(DwarfVariant.YELLOW,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_yellow.png"));
+                map.put(DwarfVariant.GREY,   JolCraft.location("textures/entity/dwarf/dwarf_grey.png"));
+                map.put(DwarfVariant.BLUE,   JolCraft.location("textures/entity/dwarf/dwarf_blue.png"));
+                map.put(DwarfVariant.GREEN,  JolCraft.location("textures/entity/dwarf/dwarf_green.png"));
+                map.put(DwarfVariant.RED,    JolCraft.location("textures/entity/dwarf/dwarf_red.png"));
+                map.put(DwarfVariant.PURPLE, JolCraft.location("textures/entity/dwarf/dwarf_purple.png"));
+                map.put(DwarfVariant.WHITE,  JolCraft.location("textures/entity/dwarf/dwarf_white.png"));
+                map.put(DwarfVariant.YELLOW, JolCraft.location("textures/entity/dwarf/dwarf_yellow.png"));
             });
 
     @Override

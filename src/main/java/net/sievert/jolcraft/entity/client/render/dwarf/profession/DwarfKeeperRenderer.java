@@ -24,7 +24,7 @@ public class DwarfKeeperRenderer extends DwarfRenderer<DwarfKeeperEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_keeper.png");
+        return JolCraft.location("textures/entity/dwarf/dwarf_keeper.png");
     }
 
 }

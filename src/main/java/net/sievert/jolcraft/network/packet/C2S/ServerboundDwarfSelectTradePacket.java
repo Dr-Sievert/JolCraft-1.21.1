@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ServerboundDwarfSelectTradePacket implements CustomPacketPayload {
     public static final Type<ServerboundDwarfSelectTradePacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "serverbound_dwarf_select_trade"));
+            new Type<>(JolCraft.location("select_dwarf_trade"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundDwarfSelectTradePacket> CODEC =
             CustomPacketPayload.codec(ServerboundDwarfSelectTradePacket::write, ServerboundDwarfSelectTradePacket::read);

@@ -222,7 +222,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
     ) {
         String id = key.id(); // always lowercase from enum
         String fullId = (idPathPrefix == null ? "" : idPathPrefix) + id;
-        ResourceLocation resourceId = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, fullId);
+        ResourceLocation resourceId = JolCraft.location(fullId);
 
         String keyPrefix = "advancement.jolcraft." + id;
         Advancement.Builder builder = Advancement.Builder.advancement();

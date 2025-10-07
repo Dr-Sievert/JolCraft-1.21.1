@@ -22,7 +22,7 @@ public class DwarfGuildmasterRenderer extends DwarfRenderer<DwarfGuildmasterEnti
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_guildmaster.png");
+        return JolCraft.location("textures/entity/dwarf/dwarf_guildmaster.png");
     }
 
 }

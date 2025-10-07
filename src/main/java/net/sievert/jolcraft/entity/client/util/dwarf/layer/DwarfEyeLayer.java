@@ -26,16 +26,11 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     private static final Map<DwarfEyeColor, ResourceLocation> LOCATION_BY_EYE =
             Util.make(Maps.newEnumMap(DwarfEyeColor.class), map -> {
-                map.put(DwarfEyeColor.BROWN,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/eye/eye_brown.png"));
-                map.put(DwarfEyeColor.DARK_BROWN,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/eye/eye_dark_brown.png"));
-                map.put(DwarfEyeColor.BLUE,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/eye/eye_blue.png"));
-                map.put(DwarfEyeColor.GREEN,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/eye/eye_green.png"));
-                map.put(DwarfEyeColor.GRAY,
-                        ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/eye/eye_gray.png"));
+                map.put(DwarfEyeColor.BROWN, JolCraft.location("textures/entity/dwarf/eye/eye_brown.png"));
+                map.put(DwarfEyeColor.DARK_BROWN, JolCraft.location("textures/entity/dwarf/eye/eye_dark_brown.png"));
+                map.put(DwarfEyeColor.BLUE, JolCraft.location("textures/entity/dwarf/eye/eye_blue.png"));
+                map.put(DwarfEyeColor.GREEN, JolCraft.location("textures/entity/dwarf/eye/eye_green.png"));
+                map.put(DwarfEyeColor.GRAY, JolCraft.location("textures/entity/dwarf/eye/eye_gray.png"));
             });
 
     public DwarfEyeLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {

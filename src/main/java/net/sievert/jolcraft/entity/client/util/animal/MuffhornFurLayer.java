@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class MuffhornFurLayer extends RenderLayer<MuffhornRenderState, MuffhornModel> {
-    private static final ResourceLocation FUR_TEXTURE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/animal/muffhorn_fur.png");
+    private static final ResourceLocation FUR_TEXTURE = JolCraft.location("textures/entity/animal/muffhorn_fur.png");
 
     private final MuffhornModel adultModel;
     private final MuffhornModel babyModel;

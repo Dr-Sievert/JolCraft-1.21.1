@@ -17,7 +17,7 @@ public record ClientboundPlaySoundPacket(
         float pitch
 ) implements CustomPacketPayload {
     public static final Type<ClientboundPlaySoundPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "play_sound"));
+            new Type<>(JolCraft.location("play_sound"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundPlaySoundPacket> CODEC =
             CustomPacketPayload.codec(ClientboundPlaySoundPacket::write, ClientboundPlaySoundPacket::read);

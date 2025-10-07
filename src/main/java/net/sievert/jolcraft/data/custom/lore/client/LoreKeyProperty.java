@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +22,7 @@ import javax.annotation.Nullable;
  */
 @OnlyIn(Dist.CLIENT)
 public final class LoreKeyProperty implements SelectItemModelProperty<String> {
-    public static final ResourceLocation KEY = ResourceLocation.fromNamespaceAndPath("jolcraft", "lore_key");
+    public static final ResourceLocation KEY = JolCraft.location("lore_key");
     public static final LoreKeyProperty INSTANCE = new LoreKeyProperty();
 
     public static final MapCodec<LoreKeyProperty> MAP_CODEC = MapCodec.unit(INSTANCE);

@@ -13,8 +13,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.item.JolCraftItems;
 
 public class JolCraftTrimPatterns {
-    public static final ResourceKey<TrimPattern> FORGE = ResourceKey.create(Registries.TRIM_PATTERN,
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "forge"));
+    public static final ResourceKey<TrimPattern> FORGE = ResourceKey.create(Registries.TRIM_PATTERN, JolCraft.location("forge"));
 
     public static void bootstrap(BootstrapContext<TrimPattern> context) {
         register(context, JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), FORGE);

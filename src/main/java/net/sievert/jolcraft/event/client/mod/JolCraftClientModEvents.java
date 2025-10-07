@@ -163,7 +163,7 @@ public class JolCraftClientModEvents {
     @SubscribeEvent
     public static void onRegisterRangeSelectItemModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
         event.register(
-                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "deepslate_compass_angle"),
+                JolCraft.location("deepslate_compass_angle"),
                 DeepslateCompassAngle.MAP_CODEC
         );
     }
@@ -171,7 +171,7 @@ public class JolCraftClientModEvents {
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void registerTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(
-                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dial_color"),
+                JolCraft.location("dial_color"),
                 DialColor.MAP_CODEC
         );
     }

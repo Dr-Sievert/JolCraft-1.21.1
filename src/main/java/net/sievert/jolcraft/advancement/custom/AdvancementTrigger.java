@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class AdvancementTrigger extends SimpleCriterionTrigger<AdvancementTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "has_advancement");
+    public static final ResourceLocation ID = JolCraft.location("has_advancement");
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {

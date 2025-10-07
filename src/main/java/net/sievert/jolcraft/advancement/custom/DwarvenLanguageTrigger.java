@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class DwarvenLanguageTrigger extends SimpleCriterionTrigger<DwarvenLanguageTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "has_dwarven_language");
+    public static final ResourceLocation ID = JolCraft.location("has_dwarven_language");
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {

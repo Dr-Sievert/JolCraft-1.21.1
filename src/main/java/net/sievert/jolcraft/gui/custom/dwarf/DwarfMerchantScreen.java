@@ -28,21 +28,20 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMenu> {
-    private static final ResourceLocation OUT_OF_STOCK_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/out_of_stock");
-    private static final ResourceLocation EXPERIENCE_BAR_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace(
-            "container/villager/experience_bar_background"
-    );
+    private static final ResourceLocation OUT_OF_STOCK_SPRITE = JolCraft.location("trade/out_of_stock");
+    private static final ResourceLocation EXPERIENCE_BAR_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_background");
     private static final ResourceLocation EXPERIENCE_BAR_CURRENT_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_current");
     private static final ResourceLocation EXPERIENCE_BAR_RESULT_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_result");
-    private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/scroller");
-    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/scroller_disabled");
-    private static final ResourceLocation TRADE_ARROW_OUT_OF_STOCK_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/trade_arrow_out_of_stock");
-    private static final ResourceLocation TRADE_ARROW_SPRITE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "trade/trade_arrow");
+    private static final ResourceLocation SCROLLER_SPRITE = JolCraft.location("trade/scroller");
+    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = JolCraft.location("trade/scroller_disabled");
+    private static final ResourceLocation TRADE_ARROW_OUT_OF_STOCK_SPRITE = JolCraft.location("trade/trade_arrow_out_of_stock");
+    private static final ResourceLocation TRADE_ARROW_SPRITE = JolCraft.location("trade/trade_arrow");
     private static final ResourceLocation DISCOUNT_STRIKETHRUOGH_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/discount_strikethrough");
+
     /**
      * The GUI texture for the villager merchant GUI.
      */
-    private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/container/dwarf_trade.png");
+    private static final ResourceLocation TEXTURE_LOCATION = JolCraft.location("textures/gui/container/dwarf_trade.png");
     private static final int TEXTURE_WIDTH = 512;
     private static final int TEXTURE_HEIGHT = 256;
     private static final int MERCHANT_MENU_PART_X = 99;
@@ -329,9 +328,9 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
         }
 
         protected static final WidgetSprites SPRITES = new WidgetSprites(
-                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "widget/button"),
-                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "widget/button_disabled"),
-                ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "widget/button_highlighted")
+                JolCraft.location("widget/button"),
+                JolCraft.location("widget/button_disabled"),
+                JolCraft.location("widget/button_highlighted")
         );
 
         @Override

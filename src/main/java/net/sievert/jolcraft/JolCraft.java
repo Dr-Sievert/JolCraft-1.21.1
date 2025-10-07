@@ -1,7 +1,6 @@
 package net.sievert.jolcraft;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -26,7 +25,6 @@ import net.sievert.jolcraft.loot.JolCraftLootModifiers;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.worldgen.predicate.JolCraftBlockPredicateTypes;
 import net.sievert.jolcraft.worldgen.processor.JolCraftProcessors;
@@ -78,7 +76,7 @@ public class JolCraft {
     }
 
     // --- Utility for ResourceLocation under this modid ---
-    public static ResourceLocation locate(String path) {
+    public static ResourceLocation location(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 

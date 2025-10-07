@@ -22,8 +22,8 @@ import net.sievert.jolcraft.entity.client.model.blockentity.StrongboxModel;
 @OnlyIn(Dist.CLIENT)
 public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implements BlockEntityRenderer<T> {
     private final BlockEntityRendererProvider.Context context;
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/block/strongbox.png");
-    private final StrongboxModel model;
+    private static final ResourceLocation TEXTURE = JolCraft.location("textures/entity/block/strongbox.png");
+    public final StrongboxModel model;
 
     public StrongboxRenderer(BlockEntityRendererProvider.Context context) {
         this.model = new StrongboxModel(context.bakeLayer(StrongboxModel.LAYER_LOCATION));

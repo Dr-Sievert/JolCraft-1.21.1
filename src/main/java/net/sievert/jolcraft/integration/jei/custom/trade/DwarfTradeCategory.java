@@ -45,10 +45,8 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
     private final IDrawable icon;
     private final DwarfProfession profession;
 
-    private static final ResourceLocation ARROW_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/jei/sprites/arrow_right.png");
-    private static final ResourceLocation PLUS_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/jei/sprites/plus.png");
+    private static final ResourceLocation ARROW_TEXTURE = JolCraft.location("textures/gui/jei/sprites/arrow_right.png");
+    private static final ResourceLocation PLUS_TEXTURE = JolCraft.location("textures/gui/jei/sprites/plus.png");
 
     public DwarfTradeCategory(IGuiHelper guiHelper, DwarfProfession profession) {
         this.profession = profession;

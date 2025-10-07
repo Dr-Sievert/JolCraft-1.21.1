@@ -4,7 +4,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,7 @@ import java.util.Set;
 public record ClientboundEndorsementsPacket(Set<DwarfProfession> endorsements) implements CustomPacketPayload {
 
     public static final Type<ClientboundEndorsementsPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "endorsement_sync"));
+            new Type<>(JolCraft.location("endorsement_sync"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundEndorsementsPacket> CODEC =
             CustomPacketPayload.codec(ClientboundEndorsementsPacket::write, ClientboundEndorsementsPacket::read);

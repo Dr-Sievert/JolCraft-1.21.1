@@ -42,6 +42,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.entity.JolCraftEntities;
@@ -64,7 +65,7 @@ public class JolCraftAttributeEvents {
             var attackDamageAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
             if (attackDamageAttr == null) return;
 
-            ResourceLocation ATTACK_DAMAGE_INCREASE_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "attack_damage_increase");
+            ResourceLocation ATTACK_DAMAGE_INCREASE_ID = JolCraft.location("attack_damage_increase");
 
             attackDamageAttr.removeModifier(ATTACK_DAMAGE_INCREASE_ID);
 
@@ -102,7 +103,7 @@ public class JolCraftAttributeEvents {
         var attr = player.getAttribute(Attributes.MOVEMENT_SPEED);
         if (attr == null) return;
 
-        ResourceLocation SLOW_RESIST_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "slow_resist");
+        ResourceLocation SLOW_RESIST_ID = JolCraft.location("slow_resist");
 
         attr.removeModifier(SLOW_RESIST_ID);
 
@@ -143,7 +144,7 @@ public class JolCraftAttributeEvents {
         var attr = player.getAttribute(Attributes.ARMOR);
         if (attr == null || percent <= 0) return false;
 
-        ResourceLocation IRONHEART_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "ironheart_armor_bonus");
+        ResourceLocation IRONHEART_ID = JolCraft.location("ironheart_armor_bonus");
 
         double baseArmor = 0;
         for (AttributeModifier mod : attr.getModifiers()) {
@@ -163,7 +164,7 @@ public class JolCraftAttributeEvents {
         var attr = player.getAttribute(Attributes.ARMOR);
         if (attr == null) return;
 
-        ResourceLocation IRONHEART_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "ironheart_armor_bonus");
+        ResourceLocation IRONHEART_ID = JolCraft.location("ironheart_armor_bonus");
         attr.removeModifier(IRONHEART_ID);
 
         if (percent > 0) {
@@ -364,8 +365,8 @@ public class JolCraftAttributeEvents {
         var movementAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
         if (movementAttr == null) return;
 
-        ResourceLocation SKYBURROW_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "skyburrow_day_speed");
-        ResourceLocation MOONSHARD_ID = ResourceLocation.fromNamespaceAndPath("jolcraft", "moonshard_night_speed");
+        ResourceLocation SKYBURROW_ID = JolCraft.location("skyburrow_day_speed");
+        ResourceLocation MOONSHARD_ID = JolCraft.location("moonshard_night_speed");
 
         movementAttr.removeModifier(SKYBURROW_ID);
         movementAttr.removeModifier(MOONSHARD_ID);

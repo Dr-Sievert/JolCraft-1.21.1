@@ -158,7 +158,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                         0.35f,
                         200
                 ).unlockedBy("has_barley", has(JolCraftItems.BARLEY.get()))
-                .save(output, ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "barley_malt_from_smelting")));
+                .save(output, ResourceKey.create(Registries.RECIPE, JolCraft.location("barley_malt_from_smelting")));
 
         SimpleCookingRecipeBuilder.smoking(
                         Ingredient.of(JolCraftItems.BARLEY.get()),
@@ -167,7 +167,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                         0.35f,
                         100
                 ).unlockedBy("has_barley", has(JolCraftItems.BARLEY.get()))
-                .save(output, ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "barley_malt_from_smoking")));
+                .save(output, ResourceKey.create(Registries.RECIPE, JolCraft.location("barley_malt_from_smoking")));
 
         modShaped(RecipeCategory.MISC, JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get())
                 .pattern("BBB")
@@ -664,7 +664,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         return List.of(
                 new TrimTemplate(
                         JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(),
-                        ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "smithing_trim_forge"))
+                        ResourceKey.create(Registries.RECIPE, JolCraft.location("smithing_trim_forge"))
                 )
         );
     }
@@ -673,10 +673,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         List<TrimTemplate> vanillaTemplates = VanillaRecipeProvider.smithingTrims()
                 .map(vanillaTrim -> {
                     ResourceLocation vanillaId = vanillaTrim.id().location();
-                    ResourceLocation newId = ResourceLocation.fromNamespaceAndPath(
-                            JolCraft.MOD_ID,
-                            "bonus_" + vanillaId.getPath()
-                    );
+                    ResourceLocation newId = JolCraft.location("bonus_" + vanillaId.getPath());
                     ResourceKey<Recipe<?>> newKey = ResourceKey.create(Registries.RECIPE, newId);
                     return new TrimTemplate(vanillaTrim.template(), newKey);
                 })
@@ -685,7 +682,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         List<TrimTemplate> customTemplates = List.of(
                 new TrimTemplate(
                         JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(),
-                        ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "bonus_smithing_trim_forge"))
+                        ResourceKey.create(Registries.RECIPE, JolCraft.location("bonus_smithing_trim_forge"))
                 )
         );
 
@@ -724,7 +721,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                     .save(output,
                             ResourceKey.create(
                                     Registries.RECIPE,
-                                    ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, name + "_from_smelting_" + getItemName(ingredient))
+                                    JolCraft.location("_from_smelting_" + getItemName(ingredient))
                             )
                     );
         }
@@ -739,7 +736,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                     .save(output,
                             ResourceKey.create(
                                     Registries.RECIPE,
-                                    ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, name + "_from_blasting_" + getItemName(ingredient))
+                                    JolCraft.location("_from_blasting_" + getItemName(ingredient))
                             )
                     );
         }
@@ -755,8 +752,8 @@ public class JolCraftRecipeProvider extends RecipeProvider {
             String unpackedName,
             @Nullable String unpackedGroup
     ) {
-        ResourceLocation unpackedRL = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, unpackedName);
-        ResourceLocation packedRL = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, packedName);
+        ResourceLocation unpackedRL = JolCraft.location(unpackedName);
+        ResourceLocation packedRL = JolCraft.location(packedName);
 
         this.shapeless(unpackedCategory, unpacked, 9)
                 .requires(packed)

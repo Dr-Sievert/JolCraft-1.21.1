@@ -18,9 +18,9 @@ import java.util.Optional;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class JolSmithingTrimRecipe extends SmithingTrimRecipe {
+public class JolCraftSmithingTrimRecipe extends SmithingTrimRecipe {
 
-    public JolSmithingTrimRecipe(Optional<Ingredient> template, Optional<Ingredient> base, Optional<Ingredient> addition) {
+    public JolCraftSmithingTrimRecipe(Optional<Ingredient> template, Optional<Ingredient> base, Optional<Ingredient> addition) {
         super(template, base, addition);
     }
 
@@ -43,7 +43,7 @@ public class JolSmithingTrimRecipe extends SmithingTrimRecipe {
         @Override
         public MapCodec<SmithingTrimRecipe> codec() {
             return RecipeSerializer.SMITHING_TRIM.codec().xmap(
-                    vanilla -> new JolSmithingTrimRecipe(
+                    vanilla -> new JolCraftSmithingTrimRecipe(
                             vanilla.templateIngredient(),
                             vanilla.baseIngredient(),
                             vanilla.additionIngredient()
@@ -59,7 +59,7 @@ public class JolSmithingTrimRecipe extends SmithingTrimRecipe {
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, SmithingTrimRecipe> streamCodec() {
             return RecipeSerializer.SMITHING_TRIM.streamCodec().map(
-                    vanilla -> new JolSmithingTrimRecipe(
+                    vanilla -> new JolCraftSmithingTrimRecipe(
                             vanilla.templateIngredient(),
                             vanilla.baseIngredient(),
                             vanilla.additionIngredient()

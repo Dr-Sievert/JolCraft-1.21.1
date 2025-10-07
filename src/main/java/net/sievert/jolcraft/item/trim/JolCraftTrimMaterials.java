@@ -20,45 +20,26 @@ import java.util.Map;
 public class JolCraftTrimMaterials {
 
 
-    //Material-based
-    public static final ResourceKey<TrimMaterial> DEEPSLATE =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "deepslate"));
+    // Material-based
+    public static final ResourceKey<TrimMaterial> DEEPSLATE  = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("deepslate"));
+    public static final ResourceKey<TrimMaterial> MITHRIL    = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("mithril"));
 
-    public static final ResourceKey<TrimMaterial> MITHRIL =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "mithril"));
-
-    //Gems
-    public static final ResourceKey<TrimMaterial> AEGISCORE =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "aegiscore"));
-    public static final ResourceKey<TrimMaterial> ASHFANG =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "ashfang"));
-    public static final ResourceKey<TrimMaterial> DEEPMARROW =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "deepmarrow"));
-    public static final ResourceKey<TrimMaterial> EARTHBLOOD =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "earthblood"));
-    public static final ResourceKey<TrimMaterial> EMBERGLASS =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "emberglass"));
-    public static final ResourceKey<TrimMaterial> FROSTVEIN =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "frostvein"));
-    public static final ResourceKey<TrimMaterial> GRIMSTONE =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "grimstone"));
-    public static final ResourceKey<TrimMaterial> IRONHEART =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "ironheart"));
-    public static final ResourceKey<TrimMaterial> LUMIERE =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "lumiere"));
-    public static final ResourceKey<TrimMaterial> MOONSHARD =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "moonshard"));
-    public static final ResourceKey<TrimMaterial> RUSTAGATE =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "rustagate"));
-    public static final ResourceKey<TrimMaterial> SKYBURROW =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "skyburrow"));
-    public static final ResourceKey<TrimMaterial> SUNGLEAM =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "sungleam"));
-    public static final ResourceKey<TrimMaterial> VERDANITE =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "verdanite"));
-    public static final ResourceKey<TrimMaterial> WOECRYSTAL =
-            ResourceKey.create(Registries.TRIM_MATERIAL, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "woecrystal"));
-
+    // Gems
+    public static final ResourceKey<TrimMaterial> AEGISCORE   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("aegiscore"));
+    public static final ResourceKey<TrimMaterial> ASHFANG     = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("ashfang"));
+    public static final ResourceKey<TrimMaterial> DEEPMARROW  = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("deepmarrow"));
+    public static final ResourceKey<TrimMaterial> EARTHBLOOD  = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("earthblood"));
+    public static final ResourceKey<TrimMaterial> EMBERGLASS  = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("emberglass"));
+    public static final ResourceKey<TrimMaterial> FROSTVEIN   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("frostvein"));
+    public static final ResourceKey<TrimMaterial> GRIMSTONE   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("grimstone"));
+    public static final ResourceKey<TrimMaterial> IRONHEART   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("ironheart"));
+    public static final ResourceKey<TrimMaterial> LUMIERE     = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("lumiere"));
+    public static final ResourceKey<TrimMaterial> MOONSHARD   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("moonshard"));
+    public static final ResourceKey<TrimMaterial> RUSTAGATE   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("rustagate"));
+    public static final ResourceKey<TrimMaterial> SKYBURROW   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("skyburrow"));
+    public static final ResourceKey<TrimMaterial> SUNGLEAM    = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("sungleam"));
+    public static final ResourceKey<TrimMaterial> VERDANITE   = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("verdanite"));
+    public static final ResourceKey<TrimMaterial> WOECRYSTAL  = ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location("woecrystal"));
 
     public static void bootstrap(BootstrapContext<TrimMaterial> context) {
         register(

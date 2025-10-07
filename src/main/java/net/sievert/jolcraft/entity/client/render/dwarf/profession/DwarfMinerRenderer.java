@@ -24,7 +24,7 @@ public class DwarfMinerRenderer extends DwarfRenderer<DwarfMinerEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_miner.png");
+        return JolCraft.location("textures/entity/dwarf/dwarf_miner.png");
     }
 
 }

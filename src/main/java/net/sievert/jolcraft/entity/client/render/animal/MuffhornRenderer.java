@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.entity.client.render.animal;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.entity.AgeableMobRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +12,10 @@ import net.sievert.jolcraft.entity.client.util.animal.MuffhornRenderState;
 import net.sievert.jolcraft.entity.client.model.animal.MuffhornModel;
 import net.sievert.jolcraft.entity.custom.animal.MuffhornEntity;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class MuffhornRenderer extends AgeableMobRenderer<MuffhornEntity, MuffhornRenderState, MuffhornModel> {
 
@@ -26,7 +31,7 @@ public class MuffhornRenderer extends AgeableMobRenderer<MuffhornEntity, Muffhor
 
     @Override
     public ResourceLocation getTextureLocation(MuffhornRenderState state) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/animal/muffhorn.png");
+        return JolCraft.location("textures/entity/animal/muffhorn.png");
     }
 
     public MuffhornRenderState createRenderState() {

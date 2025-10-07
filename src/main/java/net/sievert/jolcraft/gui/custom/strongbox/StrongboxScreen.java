@@ -10,8 +10,7 @@ import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
 public class StrongboxScreen extends AbstractContainerScreen<StrongboxMenu> {
-    private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/container/strongbox.png");
+    private static final ResourceLocation TEXTURE = JolCraft.location("textures/gui/container/strongbox.png");
 
     public StrongboxScreen(StrongboxMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

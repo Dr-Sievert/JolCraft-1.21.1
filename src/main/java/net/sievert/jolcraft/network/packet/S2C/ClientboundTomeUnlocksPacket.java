@@ -3,7 +3,6 @@ package net.sievert.jolcraft.network.packet.S2C;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 
 public record ClientboundTomeUnlocksPacket(Set<String> unlocks) implements CustomPacketPayload {
     public static final Type<ClientboundTomeUnlocksPacket> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "sync_tome_unlocks"));
+            new Type<>(JolCraft.location("sync_tome_unlocks"));
 
     public static final StreamCodec<FriendlyByteBuf, ClientboundTomeUnlocksPacket> CODEC =
             CustomPacketPayload.codec(ClientboundTomeUnlocksPacket::write, ClientboundTomeUnlocksPacket::read);

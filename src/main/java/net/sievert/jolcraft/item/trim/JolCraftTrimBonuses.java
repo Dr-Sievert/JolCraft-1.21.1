@@ -12,6 +12,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 
 import java.util.HashMap;
@@ -153,7 +154,7 @@ public class JolCraftTrimBonuses {
                 builder.add(
                         bonus.attribute,
                         new AttributeModifier(
-                                ResourceLocation.fromNamespaceAndPath("jolcraft", material + "_" + bonus.attribute.value().getDescriptionId() + "_" + bonus.slot.getName()),
+                                JolCraft.location(material + "_" + bonus.attribute.value().getDescriptionId() + "_" + bonus.slot.getName()),
                                 bonus.amount,
                                 bonus.operation
                         ),

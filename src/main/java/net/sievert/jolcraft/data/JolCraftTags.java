@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.data;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -11,7 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
 
-import static net.sievert.jolcraft.JolCraft.locate;
+import static net.sievert.jolcraft.JolCraft.location;
 
 public class JolCraftTags {
 
@@ -81,7 +80,7 @@ public class JolCraftTags {
         public static final TagKey<Item> MITHRIL_SALVAGE = createTag("mithril_salvage");
 
         private static TagKey<Item> createTag(String name) {
-            return ItemTags.create(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, name));
+            return ItemTags.create(JolCraft.location(name));
         }
     }
 
@@ -96,7 +95,7 @@ public class JolCraftTags {
         public static final TagKey<Block> HOPS_TOP = createTag("hops_top");
 
         private static TagKey<Block> createTag(String name) {
-            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, name));
+            return BlockTags.create(JolCraft.location(name));
         }
 
     }
@@ -110,7 +109,7 @@ public class JolCraftTags {
         TagKey<Structure> ANCIENT_STRUCTURES = create("ancient_structures");
 
         private static TagKey<Structure> create(String name) {
-            return TagKey.create(Registries.STRUCTURE, locate(name));
+            return TagKey.create(Registries.STRUCTURE, location(name));
         }
     }
 
@@ -118,7 +117,7 @@ public class JolCraftTags {
         public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create("mountains_and_hills");
 
         private static TagKey<Biome> create(String name) {
-            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, name));
+            return TagKey.create(Registries.BIOME, JolCraft.location(name));
         }
     }
 

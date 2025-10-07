@@ -21,13 +21,13 @@ public class JolCraftEquipmentAssets {
             EQUIPMENT_ASSETS.register("deepslate", EquipmentAsset::new);
 
     public static final ResourceKey<EquipmentAsset> DEEPSLATE_KEY =
-            ResourceKey.create(EQUIPMENT_ASSET_REGISTRY, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "deepslate"));
+            ResourceKey.create(EQUIPMENT_ASSET_REGISTRY, JolCraft.location("deepslate"));
 
     public static final DeferredHolder<EquipmentAsset, EquipmentAsset> MITHRIL =
             EQUIPMENT_ASSETS.register("mithril", EquipmentAsset::new);
 
     public static final ResourceKey<EquipmentAsset> MITHRIL_KEY =
-            ResourceKey.create(EQUIPMENT_ASSET_REGISTRY, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "mithril"));
+            ResourceKey.create(EQUIPMENT_ASSET_REGISTRY, JolCraft.location("mithril"));
 
     public static void register(IEventBus eventBus) {
         EQUIPMENT_ASSETS.register(eventBus);

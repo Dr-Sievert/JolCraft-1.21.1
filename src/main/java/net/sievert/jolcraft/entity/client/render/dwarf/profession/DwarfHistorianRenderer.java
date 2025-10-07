@@ -24,7 +24,7 @@ public class DwarfHistorianRenderer extends DwarfRenderer<DwarfHistorianEntity> 
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_historian.png");
+        return JolCraft.location("textures/entity/dwarf/dwarf_historian.png");
     }
 
 }

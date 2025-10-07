@@ -22,7 +22,7 @@ public class DwarfPriestRenderer extends DwarfRenderer<DwarfPriestEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_priest.png");
+        return JolCraft.location("textures/entity/dwarf/dwarf_priest.png");
     }
 }
 

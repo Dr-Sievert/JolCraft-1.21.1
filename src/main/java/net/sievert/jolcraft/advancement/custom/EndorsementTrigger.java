@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "endorsement_gain");
+    public static final ResourceLocation ID = JolCraft.location("endorsement_gain");
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {

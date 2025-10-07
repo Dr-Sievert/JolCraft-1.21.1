@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class ReputationTrigger extends SimpleCriterionTrigger<ReputationTrigger.TriggerInstance> {
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "reputation_tier");
+    public static final ResourceLocation ID = JolCraft.location("reputation_tier");
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {

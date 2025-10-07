@@ -21,20 +21,20 @@ public class JolCraftEntities {
             DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, JolCraft.MOD_ID);
 
     //Dwarves
-    public static ResourceKey<EntityType<?>> DWARF_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf"));
-    public static ResourceKey<EntityType<?>> DWARF_GUILDMASTER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_guildmaster"));
-    public static ResourceKey<EntityType<?>> DWARF_HISTORIAN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_historian"));
-    public static ResourceKey<EntityType<?>> DWARF_MERCHANT_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_merchant"));
-    public static ResourceKey<EntityType<?>> DWARF_SCRAPPER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_scrapper"));
-    public static ResourceKey<EntityType<?>> DWARF_BREWMASTER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_brewmaster"));
-    public static ResourceKey<EntityType<?>> DWARF_GUARD_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_guard"));
-    public static ResourceKey<EntityType<?>> DWARF_KEEPER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_keeper"));
-    public static ResourceKey<EntityType<?>> DWARF_ARTISAN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_artisan"));
-    public static ResourceKey<EntityType<?>> DWARF_EXPLORER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_explorer"));
-    public static ResourceKey<EntityType<?>> DWARF_MINER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_miner"));
-    public static ResourceKey<EntityType<?>> DWARF_ALCHEMIST_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_alchemist"));
-    public static ResourceKey<EntityType<?>> DWARF_ARCANIST_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_arcanist"));
-    public static ResourceKey<EntityType<?>> DWARF_PRIEST_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID,"dwarf_priest"));
+    public static final ResourceKey<EntityType<?>> DWARF_KEY             = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf"));
+    public static final ResourceKey<EntityType<?>> DWARF_GUILDMASTER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_guildmaster"));
+    public static final ResourceKey<EntityType<?>> DWARF_HISTORIAN_KEY   = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_historian"));
+    public static final ResourceKey<EntityType<?>> DWARF_MERCHANT_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_merchant"));
+    public static final ResourceKey<EntityType<?>> DWARF_SCRAPPER_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_scrapper"));
+    public static final ResourceKey<EntityType<?>> DWARF_BREWMASTER_KEY  = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_brewmaster"));
+    public static final ResourceKey<EntityType<?>> DWARF_GUARD_KEY       = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_guard"));
+    public static final ResourceKey<EntityType<?>> DWARF_KEEPER_KEY      = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_keeper"));
+    public static final ResourceKey<EntityType<?>> DWARF_ARTISAN_KEY     = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_artisan"));
+    public static final ResourceKey<EntityType<?>> DWARF_EXPLORER_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_explorer"));
+    public static final ResourceKey<EntityType<?>> DWARF_MINER_KEY       = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_miner"));
+    public static final ResourceKey<EntityType<?>> DWARF_ALCHEMIST_KEY   = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_alchemist"));
+    public static final ResourceKey<EntityType<?>> DWARF_ARCANIST_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_arcanist"));
+    public static final ResourceKey<EntityType<?>> DWARF_PRIEST_KEY      = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_priest"));
 
     public static final Supplier<EntityType<DwarfEntity>> DWARF =
             ENTITY_TYPES.register("dwarf", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
@@ -93,14 +93,14 @@ public class JolCraftEntities {
                     .sized(0.5f, 1.6f).build(DWARF_PRIEST_KEY));
 
     //Animals
-    public static ResourceKey<EntityType<?>> MUFFHORN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "muffhorn"));
+    public static ResourceKey<EntityType<?>> MUFFHORN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("muffhorn"));
 
     public static final Supplier<EntityType<MuffhornEntity>> MUFFHORN =
             ENTITY_TYPES.register("muffhorn", () -> EntityType.Builder.of(MuffhornEntity::new, MobCategory.CREATURE)
                     .sized(1.2f, 2.2f).build(MUFFHORN_KEY));
 
     //Objects
-    public static ResourceKey<EntityType<?>> RADIANT_KEY = ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "radiant"));
+    public static ResourceKey<EntityType<?>> RADIANT_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("radiant"));
 
     public static final Supplier<EntityType<RadiantEntity>> RADIANT =
             ENTITY_TYPES.register("radiant", () -> EntityType.Builder.of(RadiantEntity::new, MobCategory.MISC)

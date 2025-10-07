@@ -23,10 +23,10 @@ import java.util.Objects;
 public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMenu> {
 
     // Texture resources
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/container/lapidary_bench.png");
-    private static final ResourceLocation HIGHLIGHT = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/widget/slot_highlighted.png");
-    private static final ResourceLocation HAMMER = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lapidary_bench/deepslate_artisan_hammer.png");
-    private static final ResourceLocation CHISEL = ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/gui/sprites/lapidary_bench/deepslate_chisel.png");
+    private static final ResourceLocation TEXTURE    = JolCraft.location("textures/gui/container/lapidary_bench.png");
+    private static final ResourceLocation HIGHLIGHT  = JolCraft.location("textures/gui/sprites/widget/slot_highlighted.png");
+    private static final ResourceLocation HAMMER     = JolCraft.location("textures/gui/sprites/lapidary_bench/deepslate_artisan_hammer.png");
+    private static final ResourceLocation CHISEL     = JolCraft.location("textures/gui/sprites/lapidary_bench/deepslate_chisel.png");
 
     // Button positions
     private static final int HAMMER_X = 80;

@@ -24,7 +24,7 @@ public class DwarfMerchantRenderer extends DwarfRenderer<DwarfMerchantEntity> {
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_merchant.png");
+        return JolCraft.location("textures/entity/dwarf/dwarf_merchant.png");
     }
 
 }

@@ -22,7 +22,7 @@ public class DwarfAlchemistRenderer extends DwarfRenderer<DwarfAlchemistEntity> 
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(DwarfRenderState entity) {
-        return ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "textures/entity/dwarf/dwarf_alchemist.png");
+        return JolCraft.location("textures/entity/dwarf/dwarf_alchemist.png");
     }
 }
 

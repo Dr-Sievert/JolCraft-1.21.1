@@ -258,7 +258,7 @@ public class JolCraftCreativeModeTabs {
             CREATIVE_MODE_TABS.register("jolcraft_egg_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.jolcraft.jolcraft_egg_tab"))
                     .icon(() -> new ItemStack(JolCraftItems.DWARF_SPAWN_EGG.get()))
-                    .withTabsBefore(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "jolcraft_items_tab"))
+                    .withTabsBefore(JolCraft.location("jolcraft_items_tab"))
                     .displayItems((pParameters, pOutput) -> {
 
                         pOutput.accept(JolCraftItems.DWARF_SPAWN_EGG);

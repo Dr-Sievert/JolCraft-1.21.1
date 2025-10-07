@@ -15,7 +15,9 @@ import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 @OnlyIn(Dist.CLIENT)
 public class DwarfHistorianModel extends DwarfModel {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(JolCraft.MOD_ID, "dwarf_historian"), "main");
+    protected static String getModelLayerName() {
+        return "dwarf_historian";
+    }
 
     public final ModelPart glasses;
 
