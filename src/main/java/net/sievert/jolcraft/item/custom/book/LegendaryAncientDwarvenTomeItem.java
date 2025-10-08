@@ -15,12 +15,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.custom.attachment.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.data.custom.attachment.language.AncientEffectHelper;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -58,11 +58,11 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
             switch (key) {
                 case FORGOTTEN_BREW_FORMULAS -> {
-                    if (DwarfTomeHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+                    if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                         showEmptyUnlockMessage(player);
                         playIdentifyFailSound(level, player);
                     } else {
-                        DwarfTomeHelper.grantUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
+                        DwarfLoreUnlockHelper.grantUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
                         player.displayClientMessage(
                                 Component.translatable("tooltip.jolcraft.tome_unlock.brew").withStyle(ChatFormatting.GREEN), true
                         );
@@ -70,11 +70,11 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                     }
                 }
                 case ANCIENT_GEMCRAFT -> {
-                    if (DwarfTomeHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                    if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                         showEmptyUnlockMessage(player);
                         playIdentifyFailSound(level, player);
                     } else {
-                        DwarfTomeHelper.grantUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
+                        DwarfLoreUnlockHelper.grantUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
                         player.displayClientMessage(
                                 Component.translatable("tooltip.jolcraft.tome_unlock.gems").withStyle(ChatFormatting.GREEN), true
                         );

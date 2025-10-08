@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public record DialColor(int defaultColor) implements ItemTintSource {
     public static final MapCodec<DialColor> MAP_CODEC = RecordCodecBuilder.mapCodec(
-            p_386972_ -> p_386972_.group(ExtraCodecs.RGB_COLOR_CODEC.fieldOf("default").forGetter(DialColor::defaultColor)).apply(p_386972_,DialColor::new)
+            instance -> instance.group(ExtraCodecs.RGB_COLOR_CODEC.fieldOf("default").forGetter(DialColor::defaultColor)).apply(instance,DialColor::new)
     );
 
     @Override

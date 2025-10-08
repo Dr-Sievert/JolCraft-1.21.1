@@ -2,12 +2,14 @@ package net.sievert.jolcraft.entity.client.model.dwarf.profession;
 
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.HumanoidArm;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
@@ -16,9 +18,7 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class DwarfGuardModel extends DwarfModel {
 
-    protected static String getModelLayerName() {
-        return "dwarf_guard";
-    }
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("dwarf_guard"), "main");
 
     public final ModelPart shield;
 

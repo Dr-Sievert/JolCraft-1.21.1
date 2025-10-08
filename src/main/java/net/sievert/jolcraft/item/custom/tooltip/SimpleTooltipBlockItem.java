@@ -15,6 +15,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class SimpleTooltipBlockItem extends BlockItem {
+
     private final String tooltipKey;
 
     public SimpleTooltipBlockItem(Block block, Properties properties, String tooltipKey) {
@@ -32,5 +33,4 @@ public class SimpleTooltipBlockItem extends BlockItem {
         );
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
 }

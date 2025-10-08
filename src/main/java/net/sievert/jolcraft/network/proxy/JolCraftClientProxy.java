@@ -6,7 +6,7 @@ import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
-import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlockImpl;
+import net.sievert.jolcraft.data.custom.attachment.lore.LoreUnlockImpl;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.network.client.data.ClientAncientLanguageData;
@@ -41,13 +41,13 @@ public class JolCraftClientProxy implements JolCraftProxy {
             rep.getEndorsements().addAll(ClientReputationData.getAllEndorsements());
             return (T) rep;
         }
-        if (type == JolCraftAttachments.DWARF_TOME_UNLOCK.get()) {
+        if (type == JolCraftAttachments.DWARF_LORE_UNLOCK.get()) {
             Set<DwarfLoreKey> keys = new HashSet<>();
             for (String key : ClientTomeUnlocksData.getAllUnlocks()) {
                 DwarfLoreKey resolved = LoreHelper.byNameIgnoreCase(DwarfLoreKey.class, key);
                 if (resolved != null) keys.add(resolved);
             }
-            return (T) new TomeUnlockImpl<>(DwarfLoreKey.class, keys);
+            return (T) new LoreUnlockImpl<>(DwarfLoreKey.class, keys);
         }
         return player.getData(type);
     }

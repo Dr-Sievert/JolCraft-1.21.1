@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 
 @MethodsReturnNonnullByDefault
 public class LegendaryItem extends Item {
+
     public LegendaryItem(Properties properties) {
         super(properties);
     }
@@ -21,6 +22,4 @@ public class LegendaryItem extends Item {
         }
         return Component.translatable(this.getDescriptionId()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
     }
-
-
 }

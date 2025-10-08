@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.custom.attachment.unlock;
+package net.sievert.jolcraft.data.custom.attachment.lore;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -9,15 +9,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class TomeUnlockImpl<K extends Enum<K>> implements TomeUnlock<K> {
+public class LoreUnlockImpl<K extends Enum<K>> implements LoreUnlock<K> {
     private final Set<K> unlocks = new HashSet<>();
     private final Class<K> keyClass;
 
-    public TomeUnlockImpl(Class<K> keyClass) {
+    public LoreUnlockImpl(Class<K> keyClass) {
         this.keyClass = keyClass;
     }
 
-    public TomeUnlockImpl(Class<K> keyClass, Collection<K> initialUnlocks) {
+    public LoreUnlockImpl(Class<K> keyClass, Collection<K> initialUnlocks) {
         this.keyClass = keyClass;
         this.unlocks.addAll(initialUnlocks);
     }
@@ -58,10 +58,10 @@ public class TomeUnlockImpl<K extends Enum<K>> implements TomeUnlock<K> {
                 try {
                     unlocks.add(Enum.valueOf(keyClass, id.toUpperCase(Locale.ROOT)));
                 } catch (IllegalArgumentException ex) {
-                    JolCraft.LOGGER.warn("Unknown TomeUnlock key: " + id);
+                    JolCraft.LOGGER.warn("Unknown LoreUnlock key: " + id);
                 }
             } else {
-                JolCraft.LOGGER.warn("Empty TomeUnlock string found during load.");
+                JolCraft.LOGGER.warn("Empty LoreUnlock string found during load.");
             }
         }
     }

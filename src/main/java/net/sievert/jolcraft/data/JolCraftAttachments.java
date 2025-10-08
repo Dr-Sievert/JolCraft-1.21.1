@@ -10,7 +10,7 @@ import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructuresI
 import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
-import net.sievert.jolcraft.data.custom.attachment.unlock.TomeUnlockImpl;
+import net.sievert.jolcraft.data.custom.attachment.lore.LoreUnlockImpl;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 
 import java.util.function.Supplier;
@@ -41,9 +41,9 @@ public class JolCraftAttachments {
                             .build()
             );
 
-    public static final Supplier<AttachmentType<TomeUnlockImpl<DwarfLoreKey>>> DWARF_TOME_UNLOCK =
+    public static final Supplier<AttachmentType<LoreUnlockImpl<DwarfLoreKey>>> DWARF_LORE_UNLOCK =
             ATTACHMENT_TYPES.register("dwarf_tome_unlock", () ->
-                    AttachmentType.serializable(() -> new TomeUnlockImpl<>(DwarfLoreKey.class))
+                    AttachmentType.serializable(() -> new LoreUnlockImpl<>(DwarfLoreKey.class))
                             .copyOnDeath()
                             .build()
             );

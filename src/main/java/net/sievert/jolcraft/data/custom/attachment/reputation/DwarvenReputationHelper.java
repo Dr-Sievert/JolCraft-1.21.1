@@ -170,6 +170,7 @@ public class DwarvenReputationHelper {
         Player player = Minecraft.getInstance().player;
         return hasEndorsementBypassCreative(player, profession);
     }
+
     @OnlyIn(Dist.CLIENT)
     public static int getClientTier() {
         Player player = Minecraft.getInstance().player;

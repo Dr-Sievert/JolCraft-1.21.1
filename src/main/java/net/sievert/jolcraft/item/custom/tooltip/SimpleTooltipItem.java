@@ -32,5 +32,4 @@ public class SimpleTooltipItem extends Item {
         );
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
 }

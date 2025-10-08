@@ -291,7 +291,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.deepslate_compass_dial.dwarven_structures", "Dwarven Structures");
         add("tooltip.jolcraft.deepslate_compass_dial.ancient_structures", "Ancient Structures");
         add("tooltip.jolcraft.deepslate_compass.no_structure", "No structures found!");
-        add("tooltip.jolcraft.deepslate_compass.location", "The tracked %s is at %s (%s blocks away)");
+        add("tooltip.jolcraft.deepslate_compass.locate", "The tracked %s is at %s (%s blocks away)");
         add("tooltip.jolcraft.deepslate_compass", "Currently tracking: ");
         add("tooltip.jolcraft.structure.unknown", "Unknown");
         add("tooltip.jolcraft.structure.jolcraft:forge", "Dwarven Forge");

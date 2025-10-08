@@ -5,7 +5,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -52,8 +51,8 @@ public class JolCraftNetworking {
                         JolCraftNetworking::handleSyncEndorsements
                 )
                 .playToClient(
-                        ClientboundTomeUnlocksPacket.TYPE,
-                        ClientboundTomeUnlocksPacket.CODEC,
+                        ClientboundLoreUnlocksPacket.TYPE,
+                        ClientboundLoreUnlocksPacket.CODEC,
                         JolCraftNetworking::handleSyncTomeUnlocks
                 )
                 .playToClient(
@@ -144,7 +143,7 @@ public class JolCraftNetworking {
         });
     }
 
-    public static void handleSyncTomeUnlocks(ClientboundTomeUnlocksPacket packet, IPayloadContext context) {
+    public static void handleSyncTomeUnlocks(ClientboundLoreUnlocksPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
             ClientTomeUnlocksData.setUnlocks(packet.unlocks());
         });

@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.custom.attachment.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.gui.custom.slot.LapidarySlot;
@@ -29,7 +30,6 @@ import net.minecraft.core.particles.ParticleTypes;
 
 import net.minecraft.world.SimpleContainer;
 import net.sievert.jolcraft.sound.JolCraftSounds;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -176,7 +176,7 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
 
         // Chisel button: 1 (only for gems)
         if (buttonId == 1 && hasGem() && hasChisel()) {
-            if (!DwarfTomeHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (!DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 player.displayClientMessage(
                         Component.translatable("tooltip.jolcraft.lapidary_bench.locked_cut_gems").withStyle(ChatFormatting.RED),
                         true

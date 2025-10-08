@@ -11,27 +11,27 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record ClientboundTomeUnlocksPacket(Set<String> unlocks) implements CustomPacketPayload {
-    public static final Type<ClientboundTomeUnlocksPacket> TYPE =
+public record ClientboundLoreUnlocksPacket(Set<String> unlocks) implements CustomPacketPayload {
+    public static final Type<ClientboundLoreUnlocksPacket> TYPE =
             new Type<>(JolCraft.location("sync_tome_unlocks"));
 
-    public static final StreamCodec<FriendlyByteBuf, ClientboundTomeUnlocksPacket> CODEC =
-            CustomPacketPayload.codec(ClientboundTomeUnlocksPacket::write, ClientboundTomeUnlocksPacket::read);
+    public static final StreamCodec<FriendlyByteBuf, ClientboundLoreUnlocksPacket> CODEC =
+            CustomPacketPayload.codec(ClientboundLoreUnlocksPacket::write, ClientboundLoreUnlocksPacket::read);
 
-    public static <K extends Enum<K>> ClientboundTomeUnlocksPacket fromEnumSet(Set<K> enumUnlocks) {
+    public static <K extends Enum<K>> ClientboundLoreUnlocksPacket fromEnumSet(Set<K> enumUnlocks) {
         Set<String> keys = enumUnlocks.stream()
                 .map(k -> k.name().toLowerCase(Locale.ROOT))
                 .collect(Collectors.toSet());
-        return new ClientboundTomeUnlocksPacket(keys);
+        return new ClientboundLoreUnlocksPacket(keys);
     }
 
-    public static ClientboundTomeUnlocksPacket read(FriendlyByteBuf buf) {
+    public static ClientboundLoreUnlocksPacket read(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
         Set<String> unlocks = new HashSet<>(size);
         for (int i = 0; i < size; i++) {
             unlocks.add(buf.readUtf());
         }
-        return new ClientboundTomeUnlocksPacket(unlocks);
+        return new ClientboundLoreUnlocksPacket(unlocks);
     }
 
     public void write(FriendlyByteBuf buf) {

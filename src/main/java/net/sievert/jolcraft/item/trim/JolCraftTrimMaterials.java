@@ -171,10 +171,10 @@ public class JolCraftTrimMaterials {
             Map<ResourceKey<EquipmentAsset>, String> overrideArmorAssets // NEW PARAM
     ) {
         TrimMaterial trimMaterial = TrimMaterial.create(
-                trimKey.location().getPath(),  // asset_name
-                item,                          // ingredient
+                trimKey.location().getPath(),
+                item,
                 Component.translatable(Util.makeDescriptionId("trim_material", trimKey.location())).withStyle(style),
-                overrideArmorAssets            // override armor asset names (can be Map.of())
+                overrideArmorAssets
         );
         context.register(trimKey, trimMaterial);
     }

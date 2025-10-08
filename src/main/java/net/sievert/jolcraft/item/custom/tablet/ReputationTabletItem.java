@@ -28,6 +28,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class ReputationTabletItem extends Item {
+
     public ReputationTabletItem(Properties properties) {
         super(properties);
     }

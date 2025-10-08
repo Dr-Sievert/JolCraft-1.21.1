@@ -15,6 +15,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class SalvageItem extends Item {
+
     public SalvageItem(Properties properties) {
         super(properties);
     }

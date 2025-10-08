@@ -10,8 +10,8 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.data.custom.attachment.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ChiselItem extends ToolItem {
             tooltip.add(Component.translatable("tooltip.jolcraft.chisel")
                     .withStyle(ChatFormatting.GRAY));
 
-            if (!DwarfTomeHelper.hasUnlockClient(DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (!DwarfLoreUnlockHelper.hasUnlockClient(DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.chisel.cut_locked")
                         .withStyle(ChatFormatting.RED));
             }

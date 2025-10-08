@@ -3,7 +3,6 @@ package net.sievert.jolcraft.event.client.mod;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -35,7 +34,7 @@ import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantScreen;
 import net.sievert.jolcraft.gui.custom.lapidary_bench.LapidaryBenchScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.LockScreen;
 import net.sievert.jolcraft.gui.custom.strongbox.StrongboxScreen;
-import net.sievert.jolcraft.item.util.coin.CoinPouchAmountProperty;
+import net.sievert.jolcraft.item.client.coin.CoinPouchAmountProperty;
 import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
 import net.sievert.jolcraft.item.client.compass.DeepslateCompassAngle;
 

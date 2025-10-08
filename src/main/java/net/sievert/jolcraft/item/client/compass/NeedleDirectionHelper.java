@@ -58,9 +58,9 @@ public abstract class NeedleDirectionHelper {
             }
 
             @Override
-            public void update(long p_387682_, float p_388243_) {
-                this.lastUpdateTick = p_387682_;
-                float f = Mth.positiveModulo(p_388243_ - this.rotation + 0.5F, 1.0F) - 0.5F;
+            public void update(long gameTime, float targetValue) {
+                this.lastUpdateTick = gameTime;
+                float f = Mth.positiveModulo(targetValue - this.rotation + 0.5F, 1.0F) - 0.5F;
                 this.deltaRotation += f * 0.1F;
                 this.deltaRotation = this.deltaRotation * scale;
                 this.rotation = Mth.positiveModulo(this.rotation + this.deltaRotation, 1.0F);

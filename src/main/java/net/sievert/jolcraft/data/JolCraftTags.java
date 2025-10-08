@@ -32,6 +32,8 @@ public class JolCraftTags {
 
         public static final TagKey<Item> DURABILITY_ENCHANTABLE = createTag("jolcraft_durability_enchantable");
 
+        public static final TagKey<Item> WARHAMMERS = createTag("warhammers");
+
         public static final TagKey<Item> SPANNERS = createTag("spanners");
 
         public static final TagKey<Item> ARTISAN_HAMMERS = createTag("artisan_hammers");

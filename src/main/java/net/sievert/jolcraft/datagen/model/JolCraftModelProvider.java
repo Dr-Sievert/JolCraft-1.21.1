@@ -38,7 +38,7 @@ import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.sievert.jolcraft.item.util.coin.CoinPouchAmountProperty;
+import net.sievert.jolcraft.item.client.coin.CoinPouchAmountProperty;
 import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,6 +69,7 @@ public class JolCraftModelProvider extends ModelProvider {
                 JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(),
                 new Dye(0xD3D3D3)
         );
+
         createHearth(JolCraftBlocks.HEARTH.get(), blockModels);
 
         //Mithril
@@ -280,7 +281,6 @@ public class JolCraftModelProvider extends ModelProvider {
         itemModels.generateFlatItem(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.LEGENDARY_PAGE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM);
-        //itemModels.generateFlatItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM);
         generateLegendaryTomeModels(itemModels);
 
         //Tools and weapons
@@ -288,7 +288,7 @@ public class JolCraftModelProvider extends ModelProvider {
         itemModels.generateFlatItem(JolCraftItems.IRON_SPANNER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
 
-        //Scrap
+        //Salvage
         itemModels.generateFlatItem(JolCraftItems.SCRAP.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.SCRAP_HEAP.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.BROKEN_PICKAXE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
@@ -308,9 +308,11 @@ public class JolCraftModelProvider extends ModelProvider {
         itemModels.generateFlatItem(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), ModelTemplates.FLAT_ITEM);
 
-        String dwarfEggPrimary = "aa7d66";
 
         //Eggs
+
+        String dwarfEggPrimary = "aa7d66";
+
         itemModels.generateSpawnEgg(
                 JolCraftItems.DWARF_SPAWN_EGG.get(),
                 eggColorPrimary(dwarfEggPrimary),
@@ -448,6 +450,8 @@ public class JolCraftModelProvider extends ModelProvider {
 
         blockModels.createCropBlock(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
+        //Special
+
         blockModels.blockStateOutput.accept(new BlockStateGenerator() {
             @Override
             public JsonObject get() {
@@ -464,8 +468,6 @@ public class JolCraftModelProvider extends ModelProvider {
                 return JolCraftBlocks.FERMENTING_CAULDRON.get();
             }
         });
-
-
     }
 
     private static final List<ItemModelGenerators.TrimMaterialData> JOLCRAFT_TRIMS = List.of(

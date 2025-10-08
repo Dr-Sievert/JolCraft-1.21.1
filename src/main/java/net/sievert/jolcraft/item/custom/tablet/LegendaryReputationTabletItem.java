@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class LegendaryReputationTabletItem extends ReputationTabletItem {
+
     public LegendaryReputationTabletItem(Properties properties) {
         super(properties);
     }
@@ -23,6 +24,4 @@ public class LegendaryReputationTabletItem extends ReputationTabletItem {
         }
         return Component.translatable(this.getDescriptionId()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
     }
-
-
 }

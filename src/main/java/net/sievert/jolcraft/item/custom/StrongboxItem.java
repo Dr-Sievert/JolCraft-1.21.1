@@ -44,10 +44,4 @@ public class StrongboxItem extends BlockItem {
 
         super.appendHoverText(stack, ctx, tooltip, flag);
     }
-
-
-
-
-
-
 }

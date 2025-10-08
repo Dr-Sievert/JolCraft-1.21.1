@@ -8,6 +8,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -20,9 +21,11 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyC
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.item.JolCraftItems;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
-
 
 public class JolCraftEntityLootTableProvider implements LootTableSubProvider {
     private final HolderLookup.Provider registries;
@@ -31,55 +34,63 @@ public class JolCraftEntityLootTableProvider implements LootTableSubProvider {
         this.registries = registries;
     }
 
-    @Override
-    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(JolCraftEntities.MUFFHORN.get());
-        ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entities/" + id.getPath());
-        ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, lootTableId);
+    private static final Map<EntityType<?>, BiConsumer<LootTable.Builder, HolderLookup.Provider>> ENTITY_LOOT = new LinkedHashMap<>();
 
-        output.accept(
-                lootTableKey,
-                LootTable.lootTable()
-                        .withPool(LootPool.lootPool()
-                                .setRolls(UniformGenerator.between(0, 1))
-                                .add(LootItem.lootTableItem(JolCraftItems.MUFFHORN_FUR.get())
-                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
-                                )
-                        )
-                        .withPool(LootPool.lootPool()
-                                .setRolls(UniformGenerator.between(1, 1))
-                                .add(LootItem.lootTableItem(Items.LEATHER)
-                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
-                                )
-                        )
-                        .withPool(LootPool.lootPool()
-                                .setRolls(UniformGenerator.between(1, 1))
-                                .add(
-                                        LootItem.lootTableItem(Items.BEEF)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
-                                                .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
-                                                .apply(
-                                                        SmeltItemFunction.smelted().when(
-                                                                LootItemEntityPropertyCondition.hasProperties(
-                                                                        LootContext.EntityTarget.THIS,
-                                                                        EntityPredicate.Builder.entity()
-                                                                                .flags(
-                                                                                        EntityFlagsPredicate.Builder.flags().setOnFire(true)
-                                                                                )
-                                                                )
-                                                        )
-                                                )
-                                )
-                        )
-
-
-        );
-
-
+    static {
+        ENTITY_LOOT.put(JolCraftEntities.MUFFHORN.get(), JolCraftEntityLootTableProvider::buildMuffhornLoot);
     }
 
+    private static void buildMuffhornLoot(LootTable.Builder builder, HolderLookup.Provider registries) {
+        builder.withPool(
+                LootPool.lootPool()
+                        .setRolls(UniformGenerator.between(0, 1))
+                        .add(LootItem.lootTableItem(JolCraftItems.MUFFHORN_FUR.get())
+                                .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
+                        )
+        );
 
+        builder.withPool(
+                LootPool.lootPool()
+                        .setRolls(UniformGenerator.between(1, 1))
+                        .add(LootItem.lootTableItem(Items.LEATHER)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
+                                .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
+                        )
+        );
 
+        builder.withPool(
+                LootPool.lootPool()
+                        .setRolls(UniformGenerator.between(1, 1))
+                        .add(
+                                LootItem.lootTableItem(Items.BEEF)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
+                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0.0F, 1.0F)))
+                                        .apply(
+                                                SmeltItemFunction.smelted().when(
+                                                        LootItemEntityPropertyCondition.hasProperties(
+                                                                LootContext.EntityTarget.THIS,
+                                                                EntityPredicate.Builder.entity()
+                                                                        .flags(
+                                                                                EntityFlagsPredicate.Builder.flags().setOnFire(true)
+                                                                        )
+                                                        )
+                                                )
+                                        )
+                        )
+        );
+    }
 
+    @Override
+    public void generate(@NotNull BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
+        for (var entry : ENTITY_LOOT.entrySet()) {
+            EntityType<?> type = entry.getKey();
+            BiConsumer<LootTable.Builder, HolderLookup.Provider> func = entry.getValue();
+            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+            ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entities/" + id.getPath());
+            ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, lootTableId);
+            LootTable.Builder builder = LootTable.lootTable();
+            func.accept(builder, registries);
+            output.accept(lootTableKey, builder);
+        }
+    }
 }

@@ -144,7 +144,7 @@ public class JolCraftTrimBonuses {
 
         for (ItemAttributeModifiers.Entry entry : oldModifiers.modifiers()) {
             ResourceLocation id = entry.modifier().id();
-            if (!id.getNamespace().equals("jolcraft")) {
+            if (!id.getNamespace().equals(JolCraft.MOD_ID)) {
                 builder.add(entry.attribute(), entry.modifier(), entry.slot());
             }
         }

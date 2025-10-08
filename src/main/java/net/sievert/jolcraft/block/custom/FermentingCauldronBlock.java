@@ -31,9 +31,9 @@ import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.custom.attachment.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfTomeHelper;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -50,7 +50,7 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
         super(precipitationType, interactions, properties);
         this.registerDefaultState(
                 this.stateDefinition.any()
-                        .setValue(LEVEL, 3)  // This comes from LayeredCauldronBlock
+                        .setValue(LEVEL, 3)
                         .setValue(STAGE, FermentingStage.YEAST_FERMENTING)
                         .setValue(FERMENTATION_PROGRESS, 0)
                         .setValue(HOPS_TYPE, HopsType.NONE)
@@ -148,7 +148,7 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
 
                     // 2. Check unlock for adding multiple different hops
                     if (!blockEntity.getAddedHops().isEmpty() &&
-                            !DwarfTomeHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+                            !DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                         player.displayClientMessage(
                                 Component.translatable("tooltip.jolcraft.brewing.locked_hops").withStyle(ChatFormatting.RED),
                                 true

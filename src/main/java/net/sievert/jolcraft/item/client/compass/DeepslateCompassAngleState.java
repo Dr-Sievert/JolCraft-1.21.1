@@ -23,11 +23,11 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class DeepslateCompassAngleState extends NeedleDirectionHelper {
     public static final MapCodec<DeepslateCompassAngleState> MAP_CODEC = RecordCodecBuilder.mapCodec(
-            p_387422_ -> p_387422_.group(
+            instance -> instance.group(
                             Codec.BOOL.optionalFieldOf("wobble", Boolean.TRUE).forGetter(NeedleDirectionHelper::wobble),
                             DeepslateCompassAngleState.CompassTarget.CODEC.fieldOf("target").forGetter(DeepslateCompassAngleState::target)
                     )
-                    .apply(p_387422_, DeepslateCompassAngleState::new)
+                    .apply(instance, DeepslateCompassAngleState::new)
     );
     private final NeedleDirectionHelper.Wobbler wobbler;
     private final NeedleDirectionHelper.Wobbler noTargetWobbler;
@@ -42,12 +42,12 @@ public class DeepslateCompassAngleState extends NeedleDirectionHelper {
     }
 
     @Override
-    protected float calculate(ItemStack p_388108_, ClientLevel p_387750_, int p_388073_, Entity p_388489_) {
-        GlobalPos globalpos = this.compassTarget.get(p_387750_, p_388108_, p_388489_);
-        long i = p_387750_.getGameTime();
-        return !isValidCompassTargetPos(p_388489_, globalpos)
-                ? this.getRandomlySpinningRotation(p_388073_, i)
-                : this.getRotationTowardsCompassTarget(p_388489_, i, globalpos.pos());
+    protected float calculate(ItemStack stack, ClientLevel level, int seed, Entity entity) {
+        GlobalPos globalpos = this.compassTarget.get(level, stack, entity);
+        long i = level.getGameTime();
+        return !isValidCompassTargetPos(entity, globalpos)
+                ? this.getRandomlySpinningRotation(seed, i)
+                : this.getRotationTowardsCompassTarget(entity, i, globalpos.pos());
     }
 
     private float getRandomlySpinningRotation(int seed, long gameTime) {
@@ -103,7 +103,7 @@ public class DeepslateCompassAngleState extends NeedleDirectionHelper {
         NONE("none") {
             @Nullable
             @Override
-            public GlobalPos get(ClientLevel p_388090_, ItemStack p_388593_, Entity p_388853_) {
+            public GlobalPos get(ClientLevel level, ItemStack stack, Entity entity) {
                 return null;
             }
         },

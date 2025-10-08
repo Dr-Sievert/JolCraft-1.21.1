@@ -20,7 +20,7 @@ public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTom
     }
 
     @Override
-    protected ItemStack getRandomIdentifiedItem(@NotNull ServerPlayer player, ItemStack original) {
+    protected ItemStack getRandomIdentifiedItem(@NotNull ServerPlayer player, @NotNull ItemStack original) {
         RandomSource rng = player.getRandom();
         DwarfLoreEntry entry = LoreHelper.getRandomLoreEntry(
                 rng,

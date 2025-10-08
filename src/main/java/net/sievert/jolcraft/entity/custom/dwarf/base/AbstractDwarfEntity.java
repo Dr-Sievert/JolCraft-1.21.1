@@ -29,7 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.sievert.jolcraft.network.util.JolCraftParticleHelper;
+import net.sievert.jolcraft.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfArtisanEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionHelper;

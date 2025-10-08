@@ -21,11 +21,7 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class DwarfModel extends HumanoidModel<DwarfRenderState>{
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(getModelLayerName()), "main");
-
-    protected static String getModelLayerName() {
-        return "dwarf";
-    }
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("dwarf"), "main");
 
     public final ModelPart body;
     public final ModelPart right_arm;
