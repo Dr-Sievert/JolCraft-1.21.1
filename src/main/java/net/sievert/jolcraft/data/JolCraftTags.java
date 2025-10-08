@@ -30,7 +30,7 @@ public class JolCraftTags {
 
         public static final TagKey<Item> GEODES = createTag("geodes");
 
-        public static final TagKey<Item> DURABILITY_ENCHANTABLE = createTag("jolcraft_durability_enchantable");
+        public static final TagKey<Item> DURABILITY_ENCHANTABLE = createTag("durability_enchantable");
 
         public static final TagKey<Item> WARHAMMERS = createTag("warhammers");
 
@@ -64,7 +64,8 @@ public class JolCraftTags {
 
         public static final TagKey<Item> LEGENDARY_ITEMS = createTag("legendary_items");
 
-        //Scrap
+        //Salvage
+
         public static final TagKey<Item> GLOBAL_SALVAGE = createTag("global_salvage");
 
         public static final TagKey<Item> GENERAL_SALVAGE = createTag("general_salvage");

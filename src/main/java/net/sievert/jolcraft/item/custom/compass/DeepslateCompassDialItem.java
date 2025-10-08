@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.item.custom.explorer;
+package net.sievert.jolcraft.item.custom.compass;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

@@ -33,7 +33,7 @@ public class JolCraftGlobalLootModifierProvider extends GlobalLootModifierProvid
                 new AddItemModifier(
                         new LootItemCondition[] {
                                 new LootTableIdCondition.Builder(ResourceLocation.withDefaultNamespace("chests/abandoned_mineshaft")).build(),
-                                LootItemRandomChanceCondition.randomChance(0.40f).build()
+                                LootItemRandomChanceCondition.randomChance(0.20f).build()
                         },
                         JolCraftItems.DWARVEN_LEXICON.get()
                 ));

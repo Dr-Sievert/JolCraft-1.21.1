@@ -42,7 +42,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.sievert.jolcraft.data.custom.attachment.block.Hearth;
+import net.sievert.jolcraft.data.custom.attachment.hearth.Hearth;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import org.jetbrains.annotations.Nullable;
 import net.sievert.jolcraft.block.entity.custom.HearthBlockEntity;

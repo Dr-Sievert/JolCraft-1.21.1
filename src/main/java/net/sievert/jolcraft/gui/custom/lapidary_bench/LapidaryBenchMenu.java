@@ -286,11 +286,6 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
         return !stack.isEmpty() && stack.is(net.sievert.jolcraft.data.JolCraftTags.Items.GEODES);
     }
 
-    public boolean hasTool() {
-        ItemStack playerhelditem = player.getMainHandItem();
-        return playerhelditem.is(JolCraftTags.Items.ARTISAN_HAMMERS) || playerhelditem.is(JolCraftTags.Items.CHISELS);
-    }
-
     public boolean hasHammer() {
         ItemStack playerhelditem = player.getMainHandItem();
         return playerhelditem.is(JolCraftTags.Items.ARTISAN_HAMMERS);

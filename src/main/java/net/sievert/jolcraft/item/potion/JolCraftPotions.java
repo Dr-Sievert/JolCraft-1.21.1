@@ -41,8 +41,11 @@ public class JolCraftPotions {
 
     //Harmful
 
-    public static final Holder<Potion> CURSE = POTIONS.register("curse",
-            () -> new Potion("curse", new MobEffectInstance(JolCraftEffects.DELIRIUM_CURSE, 3000, 0)));
+    public static final Holder<Potion> DELIRIUM_CURSE = POTIONS.register("delirium_curse",
+            () -> new Potion("delirium_curse", new MobEffectInstance(JolCraftEffects.DELIRIUM_CURSE, 3000, 0)));
+
+    public static final Holder<Potion> CORROSION = POTIONS.register("corrosion",
+            () -> new Potion("corrosion", new MobEffectInstance(JolCraftEffects.CORROSION, 600, 0)));
 
     public static void register(IEventBus eventBus) {
         POTIONS.register(eventBus);

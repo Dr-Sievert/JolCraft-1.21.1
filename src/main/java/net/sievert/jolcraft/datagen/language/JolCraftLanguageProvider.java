@@ -229,6 +229,8 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         addPotion(JolCraftPotions.ANCIENT_MEMORY, "Ancient Memory", true, false);
         addPotion(JolCraftPotions.LOCKPICKING, "Lockpicking", true, true);
         addPotion(JolCraftPotions.DWARVEN_HASTE, "Mining", true, true);
+        addPotion(JolCraftPotions.CORROSION, "Corrosion", false, false);
+        addPotion(JolCraftPotions.DELIRIUM_CURSE, "Delirium Curse", false, false);
 
         //Tooltips
 
