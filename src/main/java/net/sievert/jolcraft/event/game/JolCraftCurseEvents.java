@@ -46,25 +46,24 @@ public class JolCraftCurseEvents {
 
     private static boolean isMilkRemoval = false;
 
+    private static final List<Holder<MobEffect>> CURSE_EFFECTS = List.of(
+            JolCraftEffects.DELIRIUM_CURSE,
+            JolCraftEffects.CURSED_WOUND
+    );
+
     @SubscribeEvent
     public static void onMilkStart(LivingEntityUseItemEvent.Start event) {
-        if (!(event.getEntity() instanceof Player)) return;
+        if (!(event.getEntity() instanceof Player player) || player.isCreative()) return;
         if ((event.getItem().is(Tags.Items.BUCKETS_MILK) || event.getItem().is(Tags.Items.DRINKS_MILK))
-                        && (event.getEntity().hasEffect(JolCraftEffects.DELIRIUM_CURSE) || event.getEntity().hasEffect(JolCraftEffects.CURSED_WOUND))
-        ) {
+                && CURSE_EFFECTS.stream().anyMatch(curse -> event.getEntity().hasEffect(curse))) {
             isMilkRemoval = true;
         }
     }
 
     @SubscribeEvent
     public static void onEffectRemove(MobEffectEvent.Remove event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (
-                isMilkRemoval &&
-                        (event.getEffect().is(JolCraftEffects.DELIRIUM_CURSE) || event.getEffect().is(JolCraftEffects.CURSED_WOUND))
-        ) {
-            event.setCanceled(true);
-
+        if (!(event.getEntity() instanceof Player player) || !isMilkRemoval) return;
+        if (CURSE_EFFECTS.stream().anyMatch(curse -> event.getEffect().is(curse))) {
             if (!player.level().isClientSide()) {
                 player.level().playSound(
                         null,
@@ -74,6 +73,7 @@ public class JolCraftCurseEvents {
                         1.0F, 1.0F
                 );
             }
+            event.setCanceled(true);
         }
     }
 
