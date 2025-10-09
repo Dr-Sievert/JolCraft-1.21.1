@@ -249,6 +249,9 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
         tag(Tags.Items.DRINKS)
                 .add(JolCraftItems.DWARVEN_BREW.get());
 
+        tag(Tags.Items.BUCKETS_MILK)
+                .add(JolCraftItems.MUFFHORN_MILK_BUCKET.get());
+
         tag(Tags.Items.DRINKS_MILK)
                 .add(JolCraftItems.MUFFHORN_MILK_BUCKET.get());
 

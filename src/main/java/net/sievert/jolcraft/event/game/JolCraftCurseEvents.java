@@ -1,15 +1,26 @@
 package net.sievert.jolcraft.event.game;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.effect.JolCraftEffects;
-import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftCurseEvents {
@@ -33,24 +44,26 @@ public class JolCraftCurseEvents {
         }
     }
 
-    private static final ThreadLocal<Boolean> isMilkRemoval = ThreadLocal.withInitial(() -> false);
+    private static boolean isMilkRemoval = false;
 
     @SubscribeEvent
     public static void onMilkStart(LivingEntityUseItemEvent.Start event) {
-        if (!(event.getEntity() instanceof Player)) {
-            return;
-        }
-        if ((event.getItem().is(Items.MILK_BUCKET) || event.getItem().is(JolCraftItems.MUFFHORN_MILK_BUCKET.get())) && event.getEntity().hasEffect(JolCraftEffects.DELIRIUM_CURSE)) {
-            isMilkRemoval.set(true);
+        if (!(event.getEntity() instanceof Player)) return;
+        if ((event.getItem().is(Tags.Items.BUCKETS_MILK) || event.getItem().is(Tags.Items.DRINKS_MILK))
+                        && (event.getEntity().hasEffect(JolCraftEffects.DELIRIUM_CURSE) || event.getEntity().hasEffect(JolCraftEffects.CURSED_WOUND))
+        ) {
+            isMilkRemoval = true;
         }
     }
 
     @SubscribeEvent
     public static void onEffectRemove(MobEffectEvent.Remove event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        if (isMilkRemoval.get() && event.getEffect().is(JolCraftEffects.DELIRIUM_CURSE)) {
+        if (
+                isMilkRemoval &&
+                        (event.getEffect().is(JolCraftEffects.DELIRIUM_CURSE) || event.getEffect().is(JolCraftEffects.CURSED_WOUND))
+        ) {
             event.setCanceled(true);
-            isMilkRemoval.set(false);
 
             if (!player.level().isClientSide()) {
                 player.level().playSound(
@@ -66,17 +79,7 @@ public class JolCraftCurseEvents {
 
     @SubscribeEvent
     public static void onMilkStopOrFinish(LivingEntityUseItemEvent.Stop event) {
-        if (!(event.getEntity() instanceof Player) || isMilkRemoval.get() == false) {
-            return;
-        }
-        isMilkRemoval.set(false);
-    }
-
-    @SubscribeEvent
-    public static void onMilkFinish(LivingEntityUseItemEvent.Finish event) {
-        if (!(event.getEntity() instanceof Player) || isMilkRemoval.get() == false) {
-            return;
-        }
-        isMilkRemoval.set(false);
+        if (!(event.getEntity() instanceof Player) || !isMilkRemoval) return;
+        isMilkRemoval = false;
     }
 }

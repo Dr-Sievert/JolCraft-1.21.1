@@ -2,7 +2,6 @@ package net.sievert.jolcraft.effect;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -11,6 +10,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.effect.custom.*;
+import net.sievert.jolcraft.effect.custom.curse.CursedWoundEffect;
+import net.sievert.jolcraft.effect.custom.curse.DeliriumCurseEffect;
 
 public class JolCraftEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS =
@@ -33,8 +34,10 @@ public class JolCraftEffects {
     public static final Holder<MobEffect> RADIANT = MOB_EFFECTS.register("radiant",
             () -> new RadiantEffect(MobEffectCategory.BENEFICIAL, 0xfaff42));
 
-
     //Harmful
+
+    public static final Holder<MobEffect> CURSED_WOUND = MOB_EFFECTS.register("cursed_wound",
+            () -> new CursedWoundEffect(MobEffectCategory.HARMFUL, 0x31193d));
 
     public static final Holder<MobEffect> DELIRIUM_CURSE = MOB_EFFECTS.register("delirium_curse",
             () -> new DeliriumCurseEffect(MobEffectCategory.HARMFUL, 0x7510a3));

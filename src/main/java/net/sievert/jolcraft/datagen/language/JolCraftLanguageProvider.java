@@ -231,6 +231,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         addPotion(JolCraftPotions.DWARVEN_HASTE, "Mining", true, true);
         addPotion(JolCraftPotions.CORROSION, "Corrosion", false, false);
         addPotion(JolCraftPotions.DELIRIUM_CURSE, "Delirium Curse", false, false);
+        addPotion(JolCraftPotions.CURSED_WOUND, "Cursed Wound", false, false);
 
         //Tooltips
 

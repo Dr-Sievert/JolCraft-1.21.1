@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.effect.custom;
+package net.sievert.jolcraft.effect.custom.curse;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.server.level.ServerLevel;

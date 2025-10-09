@@ -41,6 +41,9 @@ public class JolCraftPotions {
 
     //Harmful
 
+    public static final Holder<Potion> CURSED_WOUND = POTIONS.register("cursed_wound",
+            () -> new Potion("cursed_wound", new MobEffectInstance(JolCraftEffects.CURSED_WOUND, 600, 0)));
+
     public static final Holder<Potion> DELIRIUM_CURSE = POTIONS.register("delirium_curse",
             () -> new Potion("delirium_curse", new MobEffectInstance(JolCraftEffects.DELIRIUM_CURSE, 3000, 0)));
 
