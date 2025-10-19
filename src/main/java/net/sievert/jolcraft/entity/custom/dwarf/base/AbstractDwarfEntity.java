@@ -175,14 +175,14 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
 
+        InteractionResult blacklistFilter = DwarfInteractionHelper.blacklistCheck(this, player, itemstack);
+        if (blacklistFilter != InteractionResult.FAIL) return blacklistFilter;
+
         InteractionResult langFilter = DwarfInteractionHelper.languageCheck(this, player);
         if (langFilter != InteractionResult.FAIL) return langFilter;
 
         InteractionResult repFilter = DwarfInteractionHelper.reputationCheck(this, player, getRequiredTier());
         if (repFilter != InteractionResult.FAIL) return repFilter;
-
-        InteractionResult blacklistFilter = DwarfInteractionHelper.blacklistCheck(this, player, itemstack);
-        if (blacklistFilter != InteractionResult.FAIL) return blacklistFilter;
 
         InteractionResult actionFilter = DwarfInteractionHelper.actionCheck(this, player);
         if (actionFilter != InteractionResult.FAIL) return actionFilter;

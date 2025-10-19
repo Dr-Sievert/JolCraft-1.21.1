@@ -11,7 +11,7 @@ import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 public class BlacklistCheckInteraction implements DwarfInteraction {
 
     private boolean blacklistedProperties(AbstractDwarfEntity dwarf) {
-        return !dwarf.isAlive() || dwarf.isTrading();
+        return !dwarf.isAlive();
     }
 
     private boolean blacklistedItems(ItemStack stack) {
@@ -25,7 +25,6 @@ public class BlacklistCheckInteraction implements DwarfInteraction {
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, ItemStack stack) {
         if (isBlacklisted(dwarf, stack)) {
-            JolCraftSoundHelper.playDwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.FAIL;
