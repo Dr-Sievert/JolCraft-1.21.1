@@ -9,6 +9,7 @@ import net.sievert.jolcraft.entity.client.model.dwarf.profession.DwarfPriestMode
 import net.sievert.jolcraft.entity.client.render.dwarf.DwarfRenderer;
 import net.sievert.jolcraft.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.entity.client.util.dwarf.layer.DwarfBeardLayer;
+import net.sievert.jolcraft.entity.client.util.layer.EmissiveLayer;
 import net.sievert.jolcraft.entity.custom.dwarf.profession.DwarfPriestEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,7 @@ public class DwarfPriestRenderer extends DwarfRenderer<DwarfPriestEntity> {
     public DwarfPriestRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfPriestModel(context.bakeLayer(DwarfPriestModel.LAYER_LOCATION)));
         this.addLayer(new DwarfBeardLayer(this));
+        this.addLayer(new EmissiveLayer<>(this, JolCraft.location("textures/entity/dwarf/dwarf_priest_emissive.png")));
     }
 
     @Override
