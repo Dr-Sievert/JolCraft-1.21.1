@@ -13,8 +13,8 @@ import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 public class ActionCheckInteraction implements DwarfInteraction {
 
     private boolean isBusy(AbstractDwarfEntity dwarf) {
-        return DwarfActionHelper.isActionType(dwarf, DwarfActionType.INSPECT)
-                || DwarfActionHelper.isActionType(dwarf, DwarfActionType.DRINK);
+        return !DwarfActionHelper.isActionType(dwarf, DwarfActionType.IDLE)
+                || dwarf.isTrading();
     }
 
     @Override
@@ -26,9 +26,9 @@ public class ActionCheckInteraction implements DwarfInteraction {
                     true
             );
             JolCraftSoundHelper.playDwarfNo(dwarf);
-            return InteractionResult.FAIL;
+            return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.SUCCESS;
+        return InteractionResult.FAIL;
     }
 }

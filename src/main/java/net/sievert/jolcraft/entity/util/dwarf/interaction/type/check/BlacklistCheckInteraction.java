@@ -26,9 +26,9 @@ public class BlacklistCheckInteraction implements DwarfInteraction {
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, ItemStack stack) {
         if (isBlacklisted(dwarf, stack)) {
             JolCraftSoundHelper.playDwarfNo(dwarf);
-            return InteractionResult.FAIL;
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.FAIL;
     }
 
 }

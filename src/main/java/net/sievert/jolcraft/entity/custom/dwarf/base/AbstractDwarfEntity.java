@@ -176,16 +176,16 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         ItemStack itemstack = player.getItemInHand(hand);
 
         InteractionResult langFilter = DwarfInteractionHelper.languageCheck(this, player);
-        if (langFilter != InteractionResult.SUCCESS) return langFilter;
+        if (langFilter != InteractionResult.FAIL) return langFilter;
 
         InteractionResult repFilter = DwarfInteractionHelper.reputationCheck(this, player, getRequiredTier());
-        if (repFilter != InteractionResult.SUCCESS) return repFilter;
+        if (repFilter != InteractionResult.FAIL) return repFilter;
 
         InteractionResult blacklistFilter = DwarfInteractionHelper.blacklistCheck(this, player, itemstack);
-        if (blacklistFilter != InteractionResult.SUCCESS) return blacklistFilter;
+        if (blacklistFilter != InteractionResult.FAIL) return blacklistFilter;
 
         InteractionResult actionFilter = DwarfInteractionHelper.actionCheck(this, player);
-        if (actionFilter != InteractionResult.SUCCESS) return actionFilter;
+        if (actionFilter != InteractionResult.FAIL) return actionFilter;
 
         InteractionResult breed = DwarfInteractionHelper.breed(this, player, hand, itemstack);
         if (breed != InteractionResult.FAIL) return breed;
@@ -215,7 +215,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
             }
             if (!this.level().isClientSide) {
                 if (this.getOffers().isEmpty()) {
-                    return InteractionResult.FAIL;
+                    return InteractionResult.SUCCESS;
                 }
                 this.setTradingPlayer(player);
                 this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().getLevel());

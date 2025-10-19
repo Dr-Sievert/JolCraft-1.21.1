@@ -28,9 +28,9 @@ public class ReputationCheckInteraction implements DwarfInteraction {
                     true
             );
             JolCraftSoundHelper.playDwarfNo(dwarf);
-            return InteractionResult.FAIL;
+            return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.SUCCESS;
+        return InteractionResult.FAIL;
     }
 }
