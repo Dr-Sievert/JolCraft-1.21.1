@@ -2,7 +2,6 @@ package net.sievert.jolcraft.item.creative;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
@@ -12,9 +11,9 @@ import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
-import net.sievert.jolcraft.item.util.compass.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.item.util.compass.DeepslateCompassHelper;
 
 import java.util.function.Supplier;
 
@@ -282,7 +281,7 @@ public class JolCraftCreativeModeTabs {
     private static void addCompassDialVariant(CreativeModeTab.Output output, String group) {
         ItemStack stack = new ItemStack(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get());
         stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group);
-        stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(StructureGroupColorHelper.getColor(group)));
+        stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
         output.accept(stack);
     }
 

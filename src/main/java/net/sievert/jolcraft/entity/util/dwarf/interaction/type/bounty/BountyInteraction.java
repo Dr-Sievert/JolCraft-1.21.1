@@ -24,17 +24,23 @@ public class BountyInteraction extends InspectInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
-        assert itemstack != null;
-        if (itemstack.is(JolCraftItems.BOUNTY.get())) {
-            BountyType requiredType = BountyHelper.getBountyType(itemstack);
-            if(requiredType != type){
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                player.displayClientMessage(Component.translatable("tooltip.jolcraft.bounty.wrong_type").withStyle(ChatFormatting.GRAY), true);
-                return InteractionResult.SUCCESS;
-            }
-            dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.BOUNTY, player, hand, itemstack);
+        if (itemstack == null || !itemstack.is(JolCraftItems.BOUNTY.get())) {
+            return InteractionResult.FAIL;
+        }
+
+        BountyType requiredType = BountyHelper.getBountyType(itemstack);
+
+        if (requiredType == null || requiredType != type) {
+            JolCraftSoundHelper.playDwarfNo(dwarf);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.bounty.wrong_type").withStyle(ChatFormatting.GRAY),
+                    true
+            );
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.FAIL;
+
+        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.BOUNTY, player, hand, itemstack);
+        return InteractionResult.SUCCESS;
     }
+
 }

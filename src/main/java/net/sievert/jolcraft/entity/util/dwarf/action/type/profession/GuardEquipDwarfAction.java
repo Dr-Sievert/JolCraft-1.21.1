@@ -45,25 +45,38 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
         EquipmentSlot slot = GuardEquipInteraction.getSlotForArmor(itemstack);
         assert slot != null;
         dwarf.setItemSlot(slot, itemstack);
-        dwarf.level().playSound(null, dwarf.blockPosition(), JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get(), SoundSource.NEUTRAL, 1.0F, 1.05F);
+        dwarf.level().playSound(
+                null,
+                dwarf.blockPosition(),
+                JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get(),
+                SoundSource.NEUTRAL,
+                1.0F,
+                1.05F
+        );
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-        if (!dwarf.level().isClientSide()) {
-            dwarf.increaseMerchantCareer();
-            dwarf.updateMerchantTimer = 40;
 
-            if (player != null) {
-                int newLevel = dwarf.getVillagerData().getLevel();
-                Component rank = Component.translatable("merchant.level." + newLevel);
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.guard.promotion", rank)
-                                .withStyle(ChatFormatting.GRAY),
-                        true
-                );
-                if(!player.isCreative()){
-                    player.getItemInHand(hand).shrink(1);
-                }
+        if (dwarf.level().isClientSide()) {
+            dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
+            this.previousMainHandItem = ItemStack.EMPTY;
+            return;
+        }
+
+        dwarf.increaseMerchantCareer();
+        dwarf.updateMerchantTimer = 40;
+
+        if (player != null) {
+            int newLevel = dwarf.getVillagerData().getLevel();
+            Component rank = Component.translatable("merchant.level." + newLevel);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.guard.promotion", rank)
+                            .withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            if (!player.isCreative()) {
+                player.getItemInHand(hand).shrink(1);
             }
         }
+
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
         this.previousMainHandItem = ItemStack.EMPTY;
     }

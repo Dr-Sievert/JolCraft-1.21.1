@@ -20,27 +20,31 @@ public class PromoteInteraction extends InspectInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
-        boolean client = dwarf.level().isClientSide;
-        assert itemstack != null;
-        if (itemstack.is(JolCraftTags.Items.PROFESSION_CONTRACTS)) {
-            if (!canPromoteToProfession(dwarf)) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.dwarf.cannot_promote").withStyle(ChatFormatting.GRAY), true
-                );
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-            if (dwarf.needsPay()) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true
-                );
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-            dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.PROMOTE, player, hand, itemstack);
+
+        if (itemstack == null || !itemstack.is(JolCraftTags.Items.PROFESSION_CONTRACTS)) {
+            return InteractionResult.FAIL;
+        }
+
+        if (!canPromoteToProfession(dwarf)) {
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.dwarf.cannot_promote").withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            JolCraftSoundHelper.playDwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.FAIL;
+
+        if (dwarf.needsPay()) {
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            JolCraftSoundHelper.playDwarfNo(dwarf);
+            return InteractionResult.SUCCESS;
+        }
+
+        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.PROMOTE, player, hand, itemstack);
+        return InteractionResult.SUCCESS;
     }
 
     public static final Set<EntityType<?>> PROMOTABLE_DWARF_TYPES = Set.of(JolCraftEntities.DWARF.get());

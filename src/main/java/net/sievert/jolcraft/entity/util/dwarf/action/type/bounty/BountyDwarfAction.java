@@ -37,15 +37,25 @@ public class BountyDwarfAction extends InspectDwarfAction {
     @Override
     public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
-        if (type == BountyType.MERCHANT || type == BountyType.MINER) {
-            if (ticksRemaining == 25) {
-                dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.NEUTRAL, 1.0F, 1.2F);
-            }
-            if (ticksRemaining == 15) {
-                JolCraftSoundHelper.playVillagerFisherman(dwarf);
-            }
+
+        if (type != BountyType.MERCHANT && type != BountyType.MINER) return;
+
+        if (ticksRemaining == 25) {
+            dwarf.level().playSound(
+                    null,
+                    dwarf.blockPosition(),
+                    SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
+                    SoundSource.NEUTRAL,
+                    1.0F,
+                    1.2F
+            );
+        }
+
+        if (ticksRemaining == 15) {
+            JolCraftSoundHelper.playVillagerFisherman(dwarf);
         }
     }
+
 
     @Override
     public boolean isStopped() {

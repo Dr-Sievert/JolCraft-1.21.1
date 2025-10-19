@@ -56,7 +56,6 @@ public class DiscoveredStructuresHelper {
 
         DiscoveredStructures ds = DiscoveredStructures.get(player);
 
-        // Only act if this is a new discovery
         if (ds.addDiscovered(pos)) {
             JolCraftStats.awardStructureDiscovery(player);
 

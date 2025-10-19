@@ -13,24 +13,33 @@ public class BreedInteraction implements DwarfInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
-        boolean client = dwarf.level().isClientSide;
-        if (dwarf.isFood(itemstack)) {
-            int i = dwarf.getAge();
-            if (!client && i == 0 && dwarf.canFallInLove()) {
-                dwarf.usePlayerItem(player, hand, itemstack);
-                dwarf.setInLove(player);
-                dwarf.playEatingSound();
-                return InteractionResult.SUCCESS_SERVER;
-            }
-            if (dwarf.isBaby()) {
-                dwarf.usePlayerItem(player, hand, itemstack);
-                dwarf.ageUp(AgeableMob.getSpeedUpSecondsWhenFeeding(-i), true);
-                dwarf.playEatingSound();
-                return InteractionResult.SUCCESS;
-            }
-            if(client){return InteractionResult.CONSUME;}
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+        boolean client = dwarf.level().isClientSide();
+
+        if (!dwarf.isFood(itemstack)) {
+            return InteractionResult.FAIL;
         }
+
+        int age = dwarf.getAge();
+
+        if (!client && age == 0 && dwarf.canFallInLove()) {
+            dwarf.usePlayerItem(player, hand, itemstack);
+            dwarf.setInLove(player);
+            dwarf.playEatingSound();
+            return InteractionResult.SUCCESS_SERVER;
+        }
+
+        if (dwarf.isBaby()) {
+            dwarf.usePlayerItem(player, hand, itemstack);
+            dwarf.ageUp(AgeableMob.getSpeedUpSecondsWhenFeeding(-age), true);
+            dwarf.playEatingSound();
+            return InteractionResult.SUCCESS;
+        }
+
+        if (client) {
+            return InteractionResult.CONSUME;
+        }
+
+        JolCraftSoundHelper.playDwarfNo(dwarf);
         return InteractionResult.FAIL;
     }
 }

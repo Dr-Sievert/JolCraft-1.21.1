@@ -39,42 +39,37 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
     @Override
     public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
-        if (type == BountyType.MERCHANT || type == BountyType.MINER) {
-            if (ticksRemaining == 25) {
-                JolCraftSoundHelper.playVillagerFisherman(dwarf);
+
+        if (type != BountyType.MERCHANT && type != BountyType.MINER) return;
+
+        if (ticksRemaining == 25) {
+            JolCraftSoundHelper.playVillagerFisherman(dwarf);
+        }
+        if (ticksRemaining == 15) {
+            JolCraftSoundHelper.playDwarfYes(dwarf);
+        }
+        if (ticksRemaining == 10) {
+            if (type == BountyType.MERCHANT) {
+                spawnBountyParticles(1.0F, 0.84F, 0.0F, 0.5F);
             }
-            if (ticksRemaining == 15) {
-                JolCraftSoundHelper.playDwarfYes(dwarf);
-            }
-            if (ticksRemaining == 10) {
-                if (type == BountyType.MERCHANT) {
-                    dwarf.spawnColoredParticles(1.0F, 0.84F, 0.0F, 0.5F, 10, 1.0D);
-                    dwarf.level().playLocalSound(
-                            dwarf.getX(),
-                            dwarf.getY() + 1.0D,
-                            dwarf.getZ(),
-                            SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
-                            SoundSource.NEUTRAL,
-                            1.0F,
-                            1.2F,
-                            false
-                    );
-                }
-                if (type == BountyType.MINER) {
-                    dwarf.spawnColoredParticles(0.25F, 0.25F, 0.30F, 0.7F, 10, 1.0D);
-                    dwarf.level().playLocalSound(
-                            dwarf.getX(),
-                            dwarf.getY() + 1.0D,
-                            dwarf.getZ(),
-                            SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
-                            SoundSource.NEUTRAL,
-                            1.0F,
-                            1.2F,
-                            false
-                    );
-                }
+            if (type == BountyType.MINER) {
+                spawnBountyParticles(0.25F, 0.25F, 0.30F, 0.7F);
             }
         }
+    }
+
+    private void spawnBountyParticles(float r, float g, float b, float alpha) {
+        dwarf.spawnColoredParticles(r, g, b, alpha, 10, 1.0D);
+        dwarf.level().playLocalSound(
+                dwarf.getX(),
+                dwarf.getY() + 1.0D,
+                dwarf.getZ(),
+                SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
+                SoundSource.NEUTRAL,
+                1.0F,
+                1.2F,
+                false
+        );
     }
 
     @Override

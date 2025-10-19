@@ -19,15 +19,16 @@ public class ActionCheckInteraction implements DwarfInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player) {
-        boolean client = dwarf.level().isClientSide;
-        if (isBusy(dwarf)){
-            if(client){return InteractionResult.CONSUME;}
+
+        if (isBusy(dwarf)) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.dwarf.busy").withStyle(ChatFormatting.GRAY), true);
+                    Component.translatable("tooltip.jolcraft.dwarf.busy").withStyle(ChatFormatting.GRAY),
+                    true
+            );
             JolCraftSoundHelper.playDwarfNo(dwarf);
             return InteractionResult.FAIL;
         }
+
         return InteractionResult.SUCCESS;
     }
-
 }

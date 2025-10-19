@@ -13,15 +13,18 @@ public class LanguageCheckInteraction implements DwarfInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player) {
-        boolean client = dwarf.level().isClientSide;
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
+
         if (!knowsLanguage) {
-            if(client){return InteractionResult.CONSUME;}
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.language.locked").withStyle(ChatFormatting.RED), true);
+                    Component.translatable("tooltip.jolcraft.language.locked").withStyle(ChatFormatting.RED),
+                    true
+            );
             JolCraftSoundHelper.playDwarfNo(dwarf);
             return InteractionResult.FAIL;
         }
+
         return InteractionResult.SUCCESS;
     }
+
 }

@@ -25,22 +25,32 @@ public class BountyCrateInteraction extends InspectInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
-        if (itemstack.is(JolCraftItems.BOUNTY_CRATE.get())) {
-            BountyType requiredType = BountyHelper.getBountyType(itemstack);
-            Boolean complete = itemstack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get());
-            if(requiredType != type){
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                player.displayClientMessage(Component.translatable("tooltip.jolcraft.bounty_crate.wrong_type").withStyle(ChatFormatting.GRAY), true);
-                return InteractionResult.SUCCESS;
-            }
-            if (complete == null || !complete) {
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                player.displayClientMessage(Component.translatable("tooltip.jolcraft.bounty_crate.not_complete").withStyle(ChatFormatting.GRAY), true);
-                return InteractionResult.SUCCESS;
-            }
-            dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.BOUNTY_CRATE, player, hand, itemstack);
+        if (itemstack == null || !itemstack.is(JolCraftItems.BOUNTY_CRATE.get())) {
+            return InteractionResult.FAIL;
+        }
+
+        BountyType requiredType = BountyHelper.getBountyType(itemstack);
+        Boolean complete = itemstack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get());
+
+        if (requiredType == null || requiredType != type) {
+            JolCraftSoundHelper.playDwarfNo(dwarf);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.bounty_crate.wrong_type").withStyle(ChatFormatting.GRAY),
+                    true
+            );
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.FAIL;
+
+        if (complete == null || !complete) {
+            JolCraftSoundHelper.playDwarfNo(dwarf);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.bounty_crate.not_complete").withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            return InteractionResult.SUCCESS;
+        }
+
+        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.BOUNTY_CRATE, player, hand, itemstack);
+        return InteractionResult.SUCCESS;
     }
 }

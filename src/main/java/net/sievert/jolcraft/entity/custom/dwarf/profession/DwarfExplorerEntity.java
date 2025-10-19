@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.item.util.compass.StructureGroup;
-import net.sievert.jolcraft.item.util.compass.StructureGroupColorHelper;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -160,7 +160,7 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
                                 (stack) -> {
                                     StructureGroup group = StructureGroup.DWARVEN;
                                     stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group.id());
-                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(StructureGroupColorHelper.getColor(group)));
+                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
                                 }
                         ),
 
@@ -176,7 +176,7 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
                                 (stack) -> {
                                     StructureGroup group = StructureGroup.ANCIENT;
                                     stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group.id());
-                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(StructureGroupColorHelper.getColor(group)));
+                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
                                 }
                         ),
                 },

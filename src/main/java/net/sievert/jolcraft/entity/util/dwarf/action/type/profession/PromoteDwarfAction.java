@@ -40,20 +40,24 @@ public class PromoteDwarfAction extends InspectDwarfAction {
         dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, 0.7F, 16, 0.5D);
         dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 1.0F, 1.5F);
     }
-
     @Override
     public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
+
         if (ticksRemaining == 20) {
-            dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, 0.8F, 24, 0.7D);
-            dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 1.0F, 1.5F);
-        }
-        if (ticksRemaining == 2) {
-            dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, 1.25F, 64, 2.5D);
-            dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 1.5F, 1.0F);
+            smokeEffect(0.8F, 24, 0.7D, 1.0F, 1.5F);
         }
 
+        if (ticksRemaining == 2) {
+            smokeEffect(1.25F, 64, 2.5D, 1.5F, 1.0F);
+        }
     }
+
+    private void smokeEffect(float alpha, int count, double radius, float volume, float pitch) {
+        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, alpha, count, radius);
+        dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, volume, pitch);
+    }
+
 
     @Override
     public boolean isStopped() {

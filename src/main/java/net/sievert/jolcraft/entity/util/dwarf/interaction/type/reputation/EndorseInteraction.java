@@ -19,41 +19,50 @@ public class EndorseInteraction extends InspectInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
-        boolean client = dwarf.level().isClientSide;
-        assert itemstack != null;
-        if (itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS)) {
-            DwarfProfession profession = dwarf.getProfession();
-            boolean hasEndorsement = DwarvenReputationHelper.hasEndorsementBypassCreative(player, profession);
-            if (dwarf instanceof DwarfGuildmasterEntity) {
-                return InteractionResult.FAIL;
-            }
-            if (dwarf.neverEndorse()) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reputation.never_endorse").withStyle(ChatFormatting.GRAY), true);
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-            if (hasEndorsement) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reputation.already_endorsed").withStyle(ChatFormatting.GRAY), true);
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-            if (!dwarf.canEndorse()) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reputation.cannot_endorse").withStyle(ChatFormatting.GRAY), true);
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-            if (dwarf.needsPay()) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true);
-                JolCraftSoundHelper.playDwarfNo(dwarf);
-                return client ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
-            }
-            dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.ENDORSE, player, hand, itemstack);
+        if (itemstack == null || !itemstack.is(JolCraftTags.Items.REPUTATION_TABLETS) || dwarf instanceof DwarfGuildmasterEntity) {
+            return InteractionResult.FAIL;
+        }
+
+        DwarfProfession profession = dwarf.getProfession();
+        boolean hasEndorsement = DwarvenReputationHelper.hasEndorsementBypassCreative(player, profession);
+
+        if (dwarf.neverEndorse()) {
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.reputation.never_endorse").withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            JolCraftSoundHelper.playDwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.FAIL;
+
+        if (hasEndorsement) {
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.reputation.already_endorsed").withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            JolCraftSoundHelper.playDwarfNo(dwarf);
+            return InteractionResult.SUCCESS;
+        }
+
+        if (!dwarf.canEndorse()) {
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.reputation.cannot_endorse").withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            JolCraftSoundHelper.playDwarfNo(dwarf);
+            return InteractionResult.SUCCESS;
+        }
+
+        if (dwarf.needsPay()) {
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            JolCraftSoundHelper.playDwarfNo(dwarf);
+            return InteractionResult.SUCCESS;
+        }
+
+        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.ENDORSE, player, hand, itemstack);
+        return InteractionResult.SUCCESS;
     }
 }

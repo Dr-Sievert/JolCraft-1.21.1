@@ -19,16 +19,18 @@ public class ReputationCheckInteraction implements DwarfInteraction {
 
     @Override
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player) {
-        boolean client = dwarf.level().isClientSide;
         boolean hasTier = DwarvenReputationHelper.hasTier(player, requiredTier);
+
         if (!hasTier) {
-            if(client){return InteractionResult.CONSUME;}
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.reputation.locked", requiredTier).withStyle(ChatFormatting.RED),
-                    true);
+                    Component.translatable("tooltip.jolcraft.reputation.locked", requiredTier)
+                            .withStyle(ChatFormatting.RED),
+                    true
+            );
             JolCraftSoundHelper.playDwarfNo(dwarf);
             return InteractionResult.FAIL;
         }
+
         return InteractionResult.SUCCESS;
     }
 }
