@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "jolcraft:item/compass/empty_deepslate_compass",
+    "layer1": "jolcraft:item/compass/empty_deepslate_compass_overlay"
+  }
+}

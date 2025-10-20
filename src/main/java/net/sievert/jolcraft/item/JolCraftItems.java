@@ -48,7 +48,7 @@ public class JolCraftItems {
     //Core Items
     public static final DeferredItem<Item> DEV_KEY = ITEMS.registerItem(
             "dev_key",
-            props -> new SimpleTooltipItem(props.rarity(Rarity.EPIC), "dev_key")
+            props -> new SimpleTooltipItem(props.rarity(Rarity.EPIC).stacksTo(1), "dev_key")
     );
 
     public static final DeferredItem<Item> GOLD_COIN = ITEMS.registerItem("gold_coin",

@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "jolcraft:item/deepslate_compass_dial",
-    "layer1": "jolcraft:item/deepslate_compass_dial_overlay"
+    "layer0": "jolcraft:item/compass/deepslate_compass_dial",
+    "layer1": "jolcraft:item/compass/deepslate_compass_dial_overlay"
   }
 }

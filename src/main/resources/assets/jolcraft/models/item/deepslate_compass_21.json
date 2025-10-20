@@ -1,9 +1,9 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "jolcraft:item/empty_deepslate_compass",
-    "layer1": "jolcraft:item/empty_deepslate_compass_overlay",
-    "layer2": "jolcraft:item/deepslate_compass_dial_extra_21",
-    "layer3": "jolcraft:item/deepslate_compass_dial_21"
+    "layer0": "jolcraft:item/compass/empty_deepslate_compass",
+    "layer1": "jolcraft:item/compass/empty_deepslate_compass_overlay",
+    "layer2": "jolcraft:item/compass/deepslate_compass_dial_extra_21",
+    "layer3": "jolcraft:item/compass/deepslate_compass_dial_21"
   }
 }
