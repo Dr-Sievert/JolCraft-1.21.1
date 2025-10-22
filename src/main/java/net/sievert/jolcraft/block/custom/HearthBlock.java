@@ -24,10 +24,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -156,18 +153,17 @@ public class HearthBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.PASS;
 
         if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
             pos = pos.below();
             state = level.getBlockState(pos);
             if (!state.is(this)) {
-                return InteractionResult.CONSUME;
+                return InteractionResult.FAIL;
             }
         }
 
         if (state.getValue(LIT)) {
-            return InteractionResult.CONSUME;
+            return InteractionResult.FAIL;
         }
 
         if (player.isCreative() && !state.getValue(LIT)) {
@@ -194,68 +190,64 @@ public class HearthBlock extends BaseEntityBlock {
 
         boolean isCoal = stack.is(Items.COAL) || stack.is(Items.CHARCOAL);
 
-        if (!isCoal && !state.getValue(LIT)) {
+        if (!isCoal) {
+            System.out.println("Held item: " + stack);
             player.displayClientMessage(
                     Component.translatable("tooltip.jolcraft.hearth.need_coal").withStyle(ChatFormatting.GRAY), true
             );
-            return InteractionResult.CONSUME;
-        }
-
-        if (isCoal && !state.getValue(LIT)) {
-            boolean monstersNearby = !level.getEntitiesOfClass(
-                    Monster.class,
-                    new AABB(
-                            pos.getX() + 0.5 - 8, pos.getY() + 0.5 - 5, pos.getZ() + 0.5 - 8,
-                            pos.getX() + 0.5 + 8, pos.getY() + 0.5 + 5, pos.getZ() + 0.5 + 8
-                    ),
-                    mob -> mob.isPreventingPlayerRest(level instanceof ServerLevel s ? s : null, player)
-            ).isEmpty();
-
-            if (monstersNearby) {
-                player.displayClientMessage(
-                        net.minecraft.network.chat.Component.translatable("tooltip.jolcraft.hearth.not_safe").withStyle(ChatFormatting.RED), true
-                );
-                return InteractionResult.SUCCESS;
-            }
-
-            boolean bedNearby = false;
-            if (player instanceof ServerPlayer serverPlayer) {
-                BlockPos bed = serverPlayer.getRespawnPosition();
-                if (bed != null && serverPlayer.getRespawnDimension().equals(level.dimension())) {
-                    double distSq = bed.distSqr(pos);
-                    if (distSq <= 100) {
-                        BlockState bedState = level.getBlockState(bed);
-                        if (bedState.getBlock() instanceof net.minecraft.world.level.block.BedBlock) {
-                            bedNearby = true;
-                        }
-                    }
-                }
-            }
-
-            if (!bedNearby) {
-                player.displayClientMessage(
-                        net.minecraft.network.chat.Component.translatable("tooltip.jolcraft.hearth.no_bed_nearby").withStyle(ChatFormatting.GRAY), true
-                );
-                return InteractionResult.SUCCESS;
-            }
-
-            // Actually light the hearth
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof HearthBlockEntity hearth) {
-                boolean wasNew = hearth.activateFor(player.getUUID());
-                if (wasNew) {
-                    level.setBlock(pos, state.setValue(LIT, true), 3);
-                    level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0F, 0.8F);
-                    if (!player.isCreative()) {
-                        Hearth.get(player).setLitThisDay(true); // Set the cooldown flag
-                        stack.shrink(1); // Consume one coal/charcoal
-                    }
-                }
-            }
             return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.PASS;
+        boolean monstersNearby = !level.getEntitiesOfClass(
+                Monster.class,
+                new AABB(
+                        pos.getX() + 0.5 - 8, pos.getY() + 0.5 - 5, pos.getZ() + 0.5 - 8,
+                        pos.getX() + 0.5 + 8, pos.getY() + 0.5 + 5, pos.getZ() + 0.5 + 8
+                ),
+                mob -> mob.isPreventingPlayerRest(level instanceof ServerLevel s ? s : null, player)
+        ).isEmpty();
+
+        if (monstersNearby) {
+            player.displayClientMessage(
+                    net.minecraft.network.chat.Component.translatable("tooltip.jolcraft.hearth.not_safe").withStyle(ChatFormatting.RED), true
+            );
+            return InteractionResult.SUCCESS;
+        }
+
+        boolean bedNearby = false;
+        if (player instanceof ServerPlayer serverPlayer) {
+            BlockPos bed = serverPlayer.getRespawnPosition();
+            if (bed != null && serverPlayer.getRespawnDimension().equals(level.dimension())) {
+                double distSq = bed.distSqr(pos);
+                if (distSq <= 100) {
+                    BlockState bedState = level.getBlockState(bed);
+                    if (bedState.getBlock() instanceof BedBlock) {
+                        bedNearby = true;
+                    }
+                }
+            }
+        }
+
+        if (!bedNearby) {
+            player.displayClientMessage(
+                    net.minecraft.network.chat.Component.translatable("tooltip.jolcraft.hearth.no_bed_nearby").withStyle(ChatFormatting.GRAY), true
+            );
+            return InteractionResult.SUCCESS;
+        }
+
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof HearthBlockEntity hearth) {
+            boolean wasNew = hearth.activateFor(player.getUUID());
+            if (wasNew) {
+                level.setBlock(pos, state.setValue(LIT, true), 3);
+                level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0F, 0.8F);
+                if (!player.isCreative()) {
+                    Hearth.get(player).setLitThisDay(true);
+                    stack.shrink(1);
+                }
+            }
+        }
+        return InteractionResult.SUCCESS;
     }
 
 
