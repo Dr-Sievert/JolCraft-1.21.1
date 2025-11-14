@@ -2,9 +2,11 @@ package net.sievert.jolcraft.datagen.advancement;
 
 public enum AdvancementKey {
     ROOT,
+
     READ_LEXICON,
 
     REP_0_DUMMY,
+
     TRADE_DWARF,
 
     TRADE_HISTORIAN,
@@ -29,7 +31,40 @@ public enum AdvancementKey {
     ENDORSE_KEEPER,
 
     REP_2,
-    REP_2_DUMMY;
+    REP_2_DUMMY,
+
+    TRADE_ARTISAN,
+    ENDORSE_ARTISAN,
+
+    TRADE_EXPLORER,
+    ENDORSE_EXPLORER,
+
+    TRADE_MINER,
+    ENDORSE_MINER,
+
+    REP_3,
+    REP_3_DUMMY,
+
+    TRADE_ALCHEMIST,
+    ENDORSE_ALCHEMIST,
+
+    TRADE_ARCANIST,
+    ENDORSE_ARCANIST,
+
+    TRADE_PRIEST,
+    ENDORSE_PRIEST,
+
+    REP_4,
+    REP_4_DUMMY,
+
+    TRADE_BLACKSMITH,
+    ENDORSE_BLACKSMITH,
+
+    TRADE_CHAMPION,
+    ENDORSE_CHAMPION,
+
+    TRADE_SMELTER,
+    ENDORSE_SMELTER;
 
     public String id() {
         return name().toLowerCase();

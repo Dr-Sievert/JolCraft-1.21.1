@@ -19,7 +19,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     private int tier = 0;
     private final Set<DwarfProfession> endorsements = new HashSet<>();
 
-    private static final int[] ENDORSEMENT_THRESHOLDS = {2, 5, 9, 14};
+    public static final int[] ENDORSEMENT_THRESHOLDS = {1, 3, 6, 10};
 
     @Override
     public int getTier() {

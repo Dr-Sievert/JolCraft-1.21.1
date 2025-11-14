@@ -257,7 +257,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.geode", "Can be broken into dust using an artisan hammer at a lapidary bench.");
         add("tooltip.jolcraft.uncut_gem", "Can be broken into dust using an artisan hammer or cut using a chisel at a lapidary bench.");
         add("tooltip.jolcraft.artisan_hammer", "Can be used to break geodes and gems at a lapidary bench.");
-        add("tooltip.jolcraft.cut_gem", "Can be used to trim armor for bonus stats. Cosmetic trims do not override given stats. Only new stat trims.");
+        add("tooltip.jolcraft.cut_gem", "Can be used to trim armor for bonus stats. Applying additional cosmetic trims does not override given stats.");
         add("tooltip.jolcraft.chisel", "Can be used to cut gems at a lapidary bench.");
         add("tooltip.jolcraft.chisel.cut_locked", "You have not learned how to cut gems!");
         add("tooltip.jolcraft.need_lang", "You need to understand dwarvish to use this.");
@@ -586,6 +586,86 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         addAdvancement(AdvancementKey.REP_2_DUMMY,
                 "Gaining Ground",
                 "Your deeds echo through the halls. More dwarves are willing to work with you."
+        );
+
+        addAdvancement(AdvancementKey.TRADE_ARTISAN,
+                "Facets of Trade",
+                "Trade with an artisan"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_ARTISAN,
+                "Signature Cut",
+                "Get endorsed by a master artisan"
+        );
+
+        addAdvancement(AdvancementKey.TRADE_EXPLORER,
+                "Wayfarer’s Bargain",
+                "Trade with an explorer"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_EXPLORER,
+                "Surveyor’s Seal",
+                "Get endorsed by a master explorer"
+        );
+
+        addAdvancement(AdvancementKey.TRADE_MINER,
+                "Digging Deals",
+                "Trade with a miner"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_MINER,
+                "Deep Delver",
+                "Get endorsed by a master miner"
+        );
+
+        addAdvancement(AdvancementKey.REP_3,
+                "Respected",
+                "Reach this rank in reputation"
+        );
+
+        addAdvancement(AdvancementKey.REP_3_DUMMY,
+                "Resounding Renown",
+                "Your reputation now precedes you in every corner of the dwarven realm."
+        );
+
+        addAdvancement(AdvancementKey.TRADE_ALCHEMIST,
+                "Bubbling Business",
+                "Trade with an alchemist"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_ALCHEMIST,
+                "Formula of Fame",
+                "Get endorsed by a master alchemist"
+        );
+
+        addAdvancement(AdvancementKey.TRADE_ARCANIST,
+                "Arcane Accord",
+                "Trade with an arcanist"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_ARCANIST,
+                "Mystic Mark",
+                "Get endorsed by a master arcanist"
+        );
+
+        addAdvancement(AdvancementKey.TRADE_PRIEST,
+                "Rites and Rituals",
+                "Trade with a priest"
+        );
+
+        addAdvancement(AdvancementKey.ENDORSE_PRIEST,
+                "Divine Approval",
+                "Get endorsed by a master priest"
+        );
+
+        addAdvancement(AdvancementKey.REP_4,
+                "Blood-Kin",
+                "Reach this rank in reputation"
+        );
+
+        addAdvancement(AdvancementKey.REP_4_DUMMY,
+                "Legacy Forged",
+                "You are celebrated as family by any dwarf."
         );
 
         add("stat.jolcraft.structures_discovered", "Structures Discovered");

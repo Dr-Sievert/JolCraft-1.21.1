@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
@@ -33,7 +34,7 @@ public class ReputationTabletItem extends Item {
         super(properties);
     }
 
-    private static final int[] ENDORSEMENT_THRESHOLDS = {2, 5, 9, 14};
+    private static final int[] ENDORSEMENT_THRESHOLDS = DwarvenReputationImpl.ENDORSEMENT_THRESHOLDS;
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
