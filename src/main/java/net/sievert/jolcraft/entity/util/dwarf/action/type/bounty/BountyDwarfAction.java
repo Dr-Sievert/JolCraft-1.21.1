@@ -5,7 +5,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
@@ -68,7 +68,7 @@ public class BountyDwarfAction extends InspectDwarfAction {
         int merchantTier = dwarf.getVillagerData().getLevel();
         BountyHelper.setBountyType(crate, type);
         BountyHelper.setBountyTier(crate, BountyTier.fromValue(merchantTier));
-        crate.set(JolCraftDataComponents.BOUNTY_DATA.get(), BountyGenerator.generate(crate, dwarf.getRandom()));
+        crate.set(JolCraftComponents.BOUNTY_DATA.get(), BountyGenerator.generate(crate, dwarf.getRandom()));
         throwItem(dwarf, player, crate);
     }
 }

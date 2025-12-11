@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.item.util.coin;
 
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 
 public class CoinPouchHelper {
 
@@ -10,7 +10,7 @@ public class CoinPouchHelper {
             return 0;
         }
 
-        Integer value = stack.get(JolCraftDataComponents.COIN_POUCH_AMOUNT);
+        Integer value = stack.get(JolCraftComponents.COIN_POUCH_AMOUNT);
         return value != null ? value : 0;
     }
 
@@ -19,6 +19,6 @@ public class CoinPouchHelper {
             return;
         }
 
-        stack.set(JolCraftDataComponents.COIN_POUCH_AMOUNT, count);
+        stack.set(JolCraftComponents.COIN_POUCH_AMOUNT, count);
     }
 }

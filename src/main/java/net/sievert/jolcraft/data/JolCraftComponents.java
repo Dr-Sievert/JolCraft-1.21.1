@@ -14,7 +14,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 
 import java.util.function.UnaryOperator;
 
-public class JolCraftDataComponents {
+public class JolCraftComponents {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, JolCraft.MOD_ID);
 

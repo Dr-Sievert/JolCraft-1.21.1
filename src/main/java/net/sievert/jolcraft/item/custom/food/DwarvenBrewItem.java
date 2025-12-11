@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.block.custom.crop.HopsType;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class DwarvenBrewItem extends Item {
 
     /** Returns list of HopsType values parsed from the HOPS DataComponent string. */
     public static List<HopsType> getHopsFromItem(ItemStack stack) {
-        String data = stack.get(JolCraftDataComponents.HOPS.get());
+        String data = stack.get(JolCraftComponents.HOPS.get());
         if (data == null || data.isEmpty()) return Collections.emptyList();
 
         String[] split = data.split(",");

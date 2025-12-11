@@ -9,7 +9,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.action.type.InspectDwarfAction;
@@ -79,7 +79,7 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
 
     @Override
     public void stop() {
-        BountyData data = itemstack.get(JolCraftDataComponents.BOUNTY_DATA.get());
+        BountyData data = itemstack.get(JolCraftComponents.BOUNTY_DATA.get());
         Vec3 start = dwarf.position().add(0.0, dwarf.getEyeHeight(), 0.0);
         Vec3 target = player.position().add(0.0, player.getBbHeight() * 0.5, 0.0);
         Vec3 velocity = target.subtract(start).normalize().scale(0.4);

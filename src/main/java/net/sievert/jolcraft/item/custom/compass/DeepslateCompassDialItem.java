@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -21,7 +21,7 @@ public class DeepslateCompassDialItem extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
+        String structureId = stack.get(JolCraftComponents.STRUCTURE_GROUP);
         if (structureId != null && !structureId.isEmpty()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.deepslate_compass_dial." + structureId).withStyle(ChatFormatting.BLUE));
         } else {

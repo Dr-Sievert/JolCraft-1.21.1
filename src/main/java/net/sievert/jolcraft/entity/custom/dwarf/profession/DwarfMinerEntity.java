@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
@@ -138,8 +138,8 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
                                 1,
                                 1, 0, 0,
                                 (stack) -> {
-                                    stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 1);
-                                    stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "miner");
+                                    stack.set(JolCraftComponents.BOUNTY_TIER.get(), 1);
+                                    stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "miner");
                                 }
                         ),
                 },
@@ -151,8 +151,8 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
                                 1,
                                 1, 0, 0,
                                 (stack) -> {
-                                    stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 2);
-                                    stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "miner");
+                                    stack.set(JolCraftComponents.BOUNTY_TIER.get(), 2);
+                                    stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "miner");
                                 }                    ),
                 },
                 3, new DwarfTrades.ItemListing[] {
@@ -163,8 +163,8 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
                                 1,
                                 1, 0, 0,
                                 (stack) -> {
-                                    stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 3);
-                                    stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "miner");
+                                    stack.set(JolCraftComponents.BOUNTY_TIER.get(), 3);
+                                    stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "miner");
                                 }                    ),
                 },
                 4, new DwarfTrades.ItemListing[] {
@@ -175,8 +175,8 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
                                 1,
                                 1, 0, 0,
                                 (stack) -> {
-                                    stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 4);
-                                    stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "miner");
+                                    stack.set(JolCraftComponents.BOUNTY_TIER.get(), 4);
+                                    stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "miner");
                                 }                    ),
                 },
                 5, new DwarfTrades.ItemListing[] {
@@ -187,8 +187,8 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
                                 1,
                                 1, 0, 0,
                                 (stack) -> {
-                                    stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 5);
-                                    stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "miner");
+                                    stack.set(JolCraftComponents.BOUNTY_TIER.get(), 5);
+                                    stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "miner");
                                 }                    ),
                 }
         ));

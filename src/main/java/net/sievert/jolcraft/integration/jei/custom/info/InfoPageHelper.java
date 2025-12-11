@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.item.JolCraftItems;
 
@@ -23,10 +23,10 @@ public class InfoPageHelper {
         ItemStack compassEmpty = JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get().getDefaultInstance();
 
         ItemStack compassDial = JolCraftItems.DEEPSLATE_COMPASS_DIAL.get().getDefaultInstance();
-        compassDial.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(0xFFFF0000));
+        compassDial.set(JolCraftComponents.DIAL_COLOR, new DialItemColor(0xFFFF0000));
 
         ItemStack compassCombined = JolCraftItems.DEEPSLATE_COMPASS.get().getDefaultInstance();
-        compassCombined.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(0xFFFF0000));
+        compassCombined.set(JolCraftComponents.DIAL_COLOR, new DialItemColor(0xFFFF0000));
 
         return List.of(
                 new InfoPageRecipe(

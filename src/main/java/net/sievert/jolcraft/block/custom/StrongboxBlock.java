@@ -50,7 +50,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.block.entity.custom.StrongboxBlockEntity;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 
@@ -182,16 +182,16 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
 
                         // Store the loot table if it's not null or empty
                         if (!lootTablePath.isEmpty()) {
-                            drop.set(JolCraftDataComponents.LOOT_TABLE, lootTablePath);  // Store loot table path as a String
+                            drop.set(JolCraftComponents.LOOT_TABLE, lootTablePath);  // Store loot table path as a String
                         }
 
                         // Only set the lootTableSeed if it's not the default (0L)
                         if (lootTableSeed != 0L) {
-                            drop.set(JolCraftDataComponents.LOOT_SEED, String.valueOf(lootTableSeed));  // Store loot table seed as a String
+                            drop.set(JolCraftComponents.LOOT_SEED, String.valueOf(lootTableSeed));  // Store loot table seed as a String
                         }
 
                         if (state.getValue(StrongboxBlock.LOCKED)) {
-                            drop.set(JolCraftDataComponents.LOCKED, true);  // Add LOCKED component to the dropped item
+                            drop.set(JolCraftComponents.LOCKED, true);  // Add LOCKED component to the dropped item
                         }
 
                         // Drop the Strongbox item with loot table information attached
@@ -240,13 +240,13 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 be.setItems(items);
             }
 
-            if (stack.has(JolCraftDataComponents.LOCKED)) {
-                boolean isLocked = Boolean.TRUE.equals(stack.get(JolCraftDataComponents.LOCKED));
+            if (stack.has(JolCraftComponents.LOCKED)) {
+                boolean isLocked = Boolean.TRUE.equals(stack.get(JolCraftComponents.LOCKED));
                 level.setBlock(pos, state.setValue(StrongboxBlock.LOCKED, isLocked), 3);
             }
 
-            if (stack.has(JolCraftDataComponents.LOOT_TABLE)) {
-                String lootTableString = stack.get(JolCraftDataComponents.LOOT_TABLE);
+            if (stack.has(JolCraftComponents.LOOT_TABLE)) {
+                String lootTableString = stack.get(JolCraftComponents.LOOT_TABLE);
 
                 assert lootTableString != null;
                 ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, Objects.requireNonNull(ResourceLocation.tryParse(lootTableString)));
@@ -254,8 +254,8 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 be.setLootTable(lootTableKey, be.getLootTableSeed());
             }
 
-            if (stack.has(JolCraftDataComponents.LOOT_SEED)) {
-                String lootTableSeedString = stack.get(JolCraftDataComponents.LOOT_SEED);
+            if (stack.has(JolCraftComponents.LOOT_SEED)) {
+                String lootTableSeedString = stack.get(JolCraftComponents.LOOT_SEED);
 
                 assert lootTableSeedString != null;
                 long lootTableSeed = Long.parseLong(lootTableSeedString);

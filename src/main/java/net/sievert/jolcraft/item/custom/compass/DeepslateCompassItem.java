@@ -20,7 +20,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -37,7 +37,7 @@ public class DeepslateCompassItem extends Item {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player.isCreative() && player instanceof ServerPlayer serverPlayer) {
             ItemStack stack = player.getItemInHand(hand);
-            GlobalPos tracked = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
+            GlobalPos tracked = stack.get(JolCraftComponents.DEEPSLATE_COMPASS_TARGET);
             if (tracked != null) {
                 BlockPos pos = tracked.pos();
                 BlockPos source = player.blockPosition();
@@ -62,7 +62,7 @@ public class DeepslateCompassItem extends Item {
                         ))
                 );
 
-                String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
+                String structureId = stack.get(JolCraftComponents.STRUCTURE_GROUP);
                 Component name = (structureId != null && !structureId.isEmpty())
                         ? Component.translatable("tooltip.jolcraft.structure." + structureId).withStyle(ChatFormatting.BLUE)
                         : Component.translatable("tooltip.jolcraft.structure.unknown").withStyle(ChatFormatting.BLUE);
@@ -102,12 +102,12 @@ public class DeepslateCompassItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.jolcraft.deepslate_compass").withStyle(ChatFormatting.GRAY));
 
-        String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
+        String structureId = stack.get(JolCraftComponents.STRUCTURE_GROUP);
         if (structureId != null && !structureId.isEmpty()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.structure." + structureId).withStyle(ChatFormatting.BLUE));
 
             if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
-                var pos = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
+                var pos = stack.get(JolCraftComponents.DEEPSLATE_COMPASS_TARGET);
                 if (pos != null) {
                     tooltip.add(Component.literal(
                                     "Tracked: " + "X: " + pos.pos().getX() + ", " + "Z: " + pos.pos().getZ())

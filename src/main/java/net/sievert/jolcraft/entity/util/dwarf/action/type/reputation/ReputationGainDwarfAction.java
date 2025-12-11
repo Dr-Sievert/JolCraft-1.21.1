@@ -9,7 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
@@ -70,9 +70,9 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
             default -> ItemStack.EMPTY;
         };
 
-        nextTablet.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), DwarvenReputationHelper.getEndorsementCount(player));
-        nextTablet.set(JolCraftDataComponents.REP_TIER.get(), newRep);
-        nextTablet.set(JolCraftDataComponents.REP_OWNER.get(), player.getName().getString());
+        nextTablet.set(JolCraftComponents.REP_ENDORSEMENTS.get(), DwarvenReputationHelper.getEndorsementCount(player));
+        nextTablet.set(JolCraftComponents.REP_TIER.get(), newRep);
+        nextTablet.set(JolCraftComponents.REP_OWNER.get(), player.getName().getString());
         throwItem(dwarf, player, nextTablet);
 
         dwarf.level().playSound(null, dwarf.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.NEUTRAL, 1.2F, 1.0F);

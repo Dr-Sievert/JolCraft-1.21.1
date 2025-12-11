@@ -17,7 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
@@ -155,7 +155,7 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
                                         30,
                                         JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
                                         1, 1, 0F,
-                                        (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "mithril_forge_technique")
+                                        (stack) -> stack.set(JolCraftComponents.LORE_KEY, "mithril_forge_technique")
                                 ),
 
                                 new DwarfTrades.ItemsAndGoldToItemsWithData(
@@ -163,7 +163,7 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
                                         30,
                                         JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
                                         1, 1, 0F,
-                                        (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "coin_press_manual")
+                                        (stack) -> stack.set(JolCraftComponents.LORE_KEY, "coin_press_manual")
                                 )
 
                         }

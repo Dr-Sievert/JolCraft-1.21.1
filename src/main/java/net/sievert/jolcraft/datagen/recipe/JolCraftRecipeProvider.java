@@ -352,6 +352,13 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .define('B', JolCraftItems.MITHRIL_INGOT.get())
                 .unlockedBy("has_mithril_ingot", has(JolCraftItems.MITHRIL_INGOT.get())).save(output, "mithril_boots");
 
+        modShapeless(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PLATE.get(), 1)
+                .requires(JolCraftItems.DEEPSLATE_BULBS.get())
+                .requires(Items.IRON_INGOT)
+                .unlockedBy("has_deepslate_bulbs", has(JolCraftItems.DEEPSLATE_BULBS.get()))
+                .save(output, "deepslate_plate_from_bulbs");
+
+
         modShaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PLATE.get())
                 .pattern("BXB")
                 .define('B', Items.IRON_INGOT)

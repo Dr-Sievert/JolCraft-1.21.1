@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.item.util.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.JolCraftSounds;
@@ -39,11 +39,11 @@ public class CoinPouchItem extends Item {
     public boolean overrideOtherStackedOnMe(ItemStack pouch, ItemStack cursor, Slot slot, ClickAction action, Player player, SlotAccess access) {
 
         if (action == ClickAction.SECONDARY && cursor.isEmpty()) {
-            int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+            int current = pouch.getOrDefault(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
             if (current > 0) {
                 int toGive = Math.min(64, current);
                 ItemStack out = new ItemStack(JolCraftItems.GOLD_COIN.get(), toGive);
-                pouch.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), current - toGive);
+                pouch.set(JolCraftComponents.COIN_POUCH_AMOUNT.get(), current - toGive);
                 access.set(out);
 
                 if (toGive == 1) playSingleSound(player);
@@ -58,7 +58,7 @@ public class CoinPouchItem extends Item {
         ItemStack slotStack = access.get();
 
         if (isGoldCoin(slotStack)) {
-            int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+            int current = pouch.getOrDefault(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
             int addable = 0;
             if (action == ClickAction.PRIMARY) {
                 addable = Math.min(MAX_COINS - current, slotStack.getCount());
@@ -67,7 +67,7 @@ public class CoinPouchItem extends Item {
             }
             if (addable > 0) {
                 boolean wasEmpty = (current == 0);
-                pouch.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), current + addable);
+                pouch.set(JolCraftComponents.COIN_POUCH_AMOUNT.get(), current + addable);
                 slotStack.shrink(addable);
                 access.set(slotStack.isEmpty() ? ItemStack.EMPTY : slotStack);
 
@@ -91,13 +91,13 @@ public class CoinPouchItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack pouch = player.getItemInHand(hand);
-        int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+        int current = pouch.getOrDefault(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
         int canAdd = MAX_COINS - current;
         if (canAdd > 0) {
             int added = tryConsumeGoldCoinsFromInventory(player, canAdd);
             if (added > 0) {
                 boolean wasEmpty = (current == 0);
-                pouch.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), current + added);
+                pouch.set(JolCraftComponents.COIN_POUCH_AMOUNT.get(), current + added);
 
                 if (added == 1 && wasEmpty) {
                     playPouchInsertSound(player);
@@ -136,13 +136,13 @@ public class CoinPouchItem extends Item {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        int amount = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+        int amount = stack.getOrDefault(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
         return amount > 0;
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        int amount = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+        int amount = stack.getOrDefault(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
         return Math.min(13, (int) ((amount / (float) MAX_COINS) * 13));
     }
 
@@ -153,7 +153,7 @@ public class CoinPouchItem extends Item {
 
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-        int amount = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+        int amount = stack.getOrDefault(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
         return amount > 0
                 ? Optional.of(new CoinPouchTooltip(amount))
                 : Optional.empty();
@@ -182,7 +182,7 @@ public class CoinPouchItem extends Item {
 
     @Override
     public void onCraftedBy(ItemStack stack, Level world, Player player) {
-        stack.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+        stack.set(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
     }
 
 }

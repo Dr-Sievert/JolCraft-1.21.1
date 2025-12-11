@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ public final class CoinPouchAmountProperty implements SelectItemModelProperty<In
 
     @Override
     public @NotNull Integer get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, @NotNull ItemDisplayContext context) {
-        int coins = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+        int coins = stack.getOrDefault(JolCraftComponents.COIN_POUCH_AMOUNT.get(), 0);
 
         if (coins == 0) {
             return 0;

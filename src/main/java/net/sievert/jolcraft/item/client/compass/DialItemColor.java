@@ -7,7 +7,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 
 public record DialItemColor(int rgb) {
     private static final Codec<DialItemColor> FULL_CODEC = RecordCodecBuilder.create(inst ->
@@ -19,7 +19,7 @@ public record DialItemColor(int rgb) {
     public static final StreamCodec<ByteBuf, DialItemColor> STREAM_CODEC;
 
     public static int getOrDefault(ItemStack stack, int defaultValue) {
-        DialItemColor dialColor = stack.get(JolCraftDataComponents.DIAL_COLOR.get());
+        DialItemColor dialColor = stack.get(JolCraftComponents.DIAL_COLOR.get());
         return dialColor != null ? ARGB.opaque(dialColor.rgb()) : defaultValue;
     }
 

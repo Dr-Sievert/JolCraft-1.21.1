@@ -23,7 +23,7 @@ import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.item.util.compass.StructureGroup;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
@@ -159,8 +159,8 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
                                 3, 0, 0F,
                                 (stack) -> {
                                     StructureGroup group = StructureGroup.DWARVEN;
-                                    stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group.id());
-                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
+                                    stack.set(JolCraftComponents.STRUCTURE_GROUP, group.id());
+                                    stack.set(JolCraftComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
                                 }
                         ),
 
@@ -175,8 +175,8 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
                                 3, 0, 0F,
                                 (stack) -> {
                                     StructureGroup group = StructureGroup.ANCIENT;
-                                    stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group.id());
-                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
+                                    stack.set(JolCraftComponents.STRUCTURE_GROUP, group.id());
+                                    stack.set(JolCraftComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
                                 }
                         ),
                 },

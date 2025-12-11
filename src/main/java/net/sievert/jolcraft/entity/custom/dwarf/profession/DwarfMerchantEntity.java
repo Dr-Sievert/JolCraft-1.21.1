@@ -23,7 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.entity.ai.goal.dwarf.*;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
@@ -127,8 +127,8 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
                             1,
                             1, 0, 0,
                             (stack) -> {
-                                stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 1);
-                                stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "merchant");
+                                stack.set(JolCraftComponents.BOUNTY_TIER.get(), 1);
+                                stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "merchant");
                             }
                     ),
             },
@@ -140,8 +140,8 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
                             1,
                             1, 0, 0,
                             (stack) -> {
-                                stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 2);
-                                stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "merchant");
+                                stack.set(JolCraftComponents.BOUNTY_TIER.get(), 2);
+                                stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "merchant");
                             }                    ),
             },
             3, new DwarfTrades.ItemListing[] {
@@ -152,8 +152,8 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
                             1,
                             1, 0, 0,
                             (stack) -> {
-                                stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 3);
-                                stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "merchant");
+                                stack.set(JolCraftComponents.BOUNTY_TIER.get(), 3);
+                                stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "merchant");
                             }                    ),
             },
             4, new DwarfTrades.ItemListing[] {
@@ -164,8 +164,8 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
                             1,
                             1, 0, 0,
                             (stack) -> {
-                                stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 4);
-                                stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "merchant");
+                                stack.set(JolCraftComponents.BOUNTY_TIER.get(), 4);
+                                stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "merchant");
                             }                    ),
             },
             5, new DwarfTrades.ItemListing[] {
@@ -176,8 +176,8 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
                             1,
                             1, 0, 0,
                             (stack) -> {
-                                stack.set(JolCraftDataComponents.BOUNTY_TIER.get(), 5);
-                                stack.set(JolCraftDataComponents.BOUNTY_TYPE.get(), "merchant");
+                                stack.set(JolCraftComponents.BOUNTY_TIER.get(), 5);
+                                stack.set(JolCraftComponents.BOUNTY_TYPE.get(), "merchant");
                             }                    ),
             }
     ));

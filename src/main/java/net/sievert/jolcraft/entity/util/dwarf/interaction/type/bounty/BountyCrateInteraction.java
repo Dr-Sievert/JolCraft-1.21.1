@@ -6,7 +6,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
@@ -30,7 +30,7 @@ public class BountyCrateInteraction extends InspectInteraction {
         }
 
         BountyType requiredType = BountyHelper.getBountyType(itemstack);
-        Boolean complete = itemstack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get());
+        Boolean complete = itemstack.get(JolCraftComponents.BOUNTY_COMPLETE.get());
 
         if (requiredType == null || requiredType != type) {
             JolCraftSoundHelper.playDwarfNo(dwarf);

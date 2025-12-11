@@ -29,7 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.sievert.jolcraft.block.custom.crop.HopsType;
 import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.custom.attachment.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
@@ -93,7 +93,7 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
             if (be instanceof FermentingCauldronBlockEntity cauldron) {
                 String hopsData = cauldron.getHopsString();
                 if (!hopsData.isEmpty()) {
-                    dwarvenBrew.set(JolCraftDataComponents.HOPS.get(), hopsData);
+                    dwarvenBrew.set(JolCraftComponents.HOPS.get(), hopsData);
                 }
             }
 

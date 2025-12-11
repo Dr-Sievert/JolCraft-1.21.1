@@ -29,7 +29,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.tool.SpannerItem;
@@ -129,7 +129,7 @@ public class JolCraftItemEvents {
             InteractionHand swingHand = mainIsDial ? event.getHand()
                     : (event.getHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
 
-            String group = dial.get(JolCraftDataComponents.STRUCTURE_GROUP);
+            String group = dial.get(JolCraftComponents.STRUCTURE_GROUP);
             if (group == null) return;
 
             TagKey<Structure> structureTag = DeepslateCompassHelper.getStructureTagForGroup(group);
@@ -183,14 +183,14 @@ public class JolCraftItemEvents {
             if (dyeColor != null) {
                 result.set(DataComponents.DYED_COLOR, dyeColor);
             }
-            result.set(JolCraftDataComponents.STRUCTURE_GROUP, foundStructureFullId);
+            result.set(JolCraftComponents.STRUCTURE_GROUP, foundStructureFullId);
 
-            var dialColor = dial.get(JolCraftDataComponents.DIAL_COLOR.get());
+            var dialColor = dial.get(JolCraftComponents.DIAL_COLOR.get());
             if (dialColor != null) {
-                result.set(JolCraftDataComponents.DIAL_COLOR, dialColor);
+                result.set(JolCraftComponents.DIAL_COLOR, dialColor);
             }
 
-            result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET, targetPos);
+            result.set(JolCraftComponents.DEEPSLATE_COMPASS_TARGET, targetPos);
 
             dial.shrink(1);
             empty.shrink(1);
@@ -216,8 +216,8 @@ public class JolCraftItemEvents {
         for (ItemStack stack : player.getInventory().items) {
             if (!stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) continue;
 
-            GlobalPos tracked = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
-            String trackedStructureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
+            GlobalPos tracked = stack.get(JolCraftComponents.DEEPSLATE_COMPASS_TARGET);
+            String trackedStructureId = stack.get(JolCraftComponents.STRUCTURE_GROUP);
             if (tracked == null || trackedStructureId == null || trackedStructureId.isEmpty()) continue;
             if (!player.level().dimension().equals(tracked.dimension())) continue;
 

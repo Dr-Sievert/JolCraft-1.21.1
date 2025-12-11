@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftComponents;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
@@ -77,9 +77,9 @@ public class ReputationTabletItem extends Item {
             int tier = DwarvenReputationHelper.getTier(serverPlayer);
             int endorsements = DwarvenReputationHelper.getEndorsementCount(serverPlayer);
 
-            stack.set(JolCraftDataComponents.REP_OWNER.get(), serverPlayer.getName().getString());
-            stack.set(JolCraftDataComponents.REP_TIER.get(), tier);
-            stack.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), endorsements);
+            stack.set(JolCraftComponents.REP_OWNER.get(), serverPlayer.getName().getString());
+            stack.set(JolCraftComponents.REP_TIER.get(), tier);
+            stack.set(JolCraftComponents.REP_ENDORSEMENTS.get(), endorsements);
 
             JolCraftNetworking.sendToClient(serverPlayer,
                     new ClientboundEndorsementsPacket(DwarvenReputationHelper.getAllEndorsements(serverPlayer))
@@ -95,9 +95,9 @@ public class ReputationTabletItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (DwarvenLanguageHelper.knowsDwarvishClient()) {
-            String ownerName = stack.getOrDefault(JolCraftDataComponents.REP_OWNER.get(), "Unknown");
-            int statictier = stack.getOrDefault(JolCraftDataComponents.REP_TIER.get(), 0);
-            int staticendorsements = stack.getOrDefault(JolCraftDataComponents.REP_ENDORSEMENTS.get(), 0);
+            String ownerName = stack.getOrDefault(JolCraftComponents.REP_OWNER.get(), "Unknown");
+            int statictier = stack.getOrDefault(JolCraftComponents.REP_TIER.get(), 0);
+            int staticendorsements = stack.getOrDefault(JolCraftComponents.REP_ENDORSEMENTS.get(), 0);
                 tooltip.add(Component.translatable("tooltip.jolcraft.rep_owner", ownerName)
                         .withStyle(ChatFormatting.GRAY));
                 tooltip.add(Component.translatable("tooltip.jolcraft.reputation_tier")
