@@ -358,13 +358,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_deepslate_bulbs", has(JolCraftItems.DEEPSLATE_BULBS.get()))
                 .save(output, "deepslate_plate_from_bulbs");
 
-
-        modShaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PLATE.get())
-                .pattern("BXB")
-                .define('B', Items.IRON_INGOT)
-                .define('X', JolCraftItems.DEEPSLATE_BULBS.get())
-                .unlockedBy("has_deepslate_bulbs", has(JolCraftItems.DEEPSLATE_BULBS.get())).save(output, "deepslate_plate_from_bulbs");
-
         nineBlockStorageRecipes(
                 RecipeCategory.MISC,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
