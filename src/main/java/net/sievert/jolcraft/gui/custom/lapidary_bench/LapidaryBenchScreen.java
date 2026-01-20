@@ -5,11 +5,10 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
@@ -22,16 +21,12 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMenu> {
 
-    // Texture resources
-    private static final ResourceLocation TEXTURE    = JolCraft.location("textures/gui/container/lapidary_bench.png");
-    private static final ResourceLocation HIGHLIGHT  = JolCraft.location("textures/gui/sprites/widget/slot_highlighted.png");
-    private static final ResourceLocation HAMMER     = JolCraft.location("textures/gui/sprites/lapidary_bench/deepslate_artisan_hammer.png");
-    private static final ResourceLocation CHISEL     = JolCraft.location("textures/gui/sprites/lapidary_bench/deepslate_chisel.png");
+    private static final ResourceLocation TEXTURE   = JolCraft.location("textures/gui/container/lapidary_bench.png");
+    private static final ResourceLocation HIGHLIGHT = JolCraft.location("textures/gui/sprites/widget/slot_highlighted.png");
 
-    // Button positions
-    private static final int HAMMER_X = 80;
-    private static final int CHISEL_X = 128;
-    private static final int BUTTON_Y = 32;
+    private static final int TOOL_BTN_X = 80;
+    private static final int TOOL_BTN_Y = 32;
+
     private static final int BUTTON_SIZE = 16;
     private static final int HIGHLIGHT_SIZE = 17;
 
@@ -44,89 +39,72 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    public void render(GuiGraphics gg, int mouseX, int mouseY, float partialTicks) {
+        super.render(gg, mouseX, mouseY, partialTicks);
+        this.renderTooltip(gg, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphics gg, float partialTicks, int mouseX, int mouseY) {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
-        guiGraphics.blit(RenderType.GUI_TEXTURED, TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, 176, 150);
+        gg.blit(RenderType.GUI_TEXTURED, TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, 176, 150);
+        if (!menu.hasTool()) return;
 
-        if (menu.hasGem() || menu.hasGeode()) {
-            boolean hammerActive = menu.hasHammer();
-            renderToolButton(guiGraphics, x, y, mouseX, mouseY, HAMMER_X, HAMMER, 0, hammerActive);
-        }
+        ItemStack toolStack = menu.getToolStack();
+        boolean active = menu.isButtonActive();
 
-        if (menu.hasGem()) {
-            boolean chiselActive = menu.hasChisel();
-            renderToolButton(guiGraphics, x, y, mouseX, mouseY, CHISEL_X, CHISEL, 1, chiselActive);
-        }
-    }
+        int bx = x + TOOL_BTN_X;
+        int by = y + TOOL_BTN_Y;
 
-
-    /**
-     * Renders one tool button (hammer or chisel) with highlight on hover.
-     */
-    private void renderToolButton(
-            GuiGraphics guiGraphics, int x, int y, int mouseX, int mouseY,
-            int btnRelX, ResourceLocation icon, int btnIndex, boolean active
-    ) {
-        int bx = x + btnRelX;
-        int by = y + LapidaryBenchScreen.BUTTON_Y;
-        boolean hovered = active && mouseX >= bx && mouseY >= by && mouseX < bx + BUTTON_SIZE && mouseY < by + BUTTON_SIZE;
+        boolean hovered = active
+                && mouseX >= bx && mouseY >= by
+                && mouseX < bx + BUTTON_SIZE && mouseY < by + BUTTON_SIZE;
 
         float alpha = active ? 1.0f : 0.4f;
 
-        guiGraphics.flush();
-
+        gg.flush();
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha);
 
         if (hovered) {
-            guiGraphics.blit(RenderType.GUI_TEXTURED, HIGHLIGHT, bx, by, 0, 0, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE);
+            gg.blit(RenderType.GUI_TEXTURED, HIGHLIGHT, bx, by, 0, 0, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE);
         }
 
-        guiGraphics.blit(RenderType.GUI_TEXTURED, icon, bx, by, 0, 0, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE, BUTTON_SIZE);
-        guiGraphics.flush();
-
+        gg.renderItem(toolStack, bx, by);
+        gg.renderItemDecorations(this.font, toolStack, bx, by);
+        gg.flush();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xDDDDDD, false);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xDDDDDD, false);
+    protected void renderLabels(GuiGraphics gg, int mouseX, int mouseY) {
+        gg.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xDDDDDD, false);
+        gg.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xDDDDDD, false);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
+        if (button == 0 && menu.hasTool()) {
+            int x = (this.width - this.imageWidth) / 2;
+            int y = (this.height - this.imageHeight) / 2;
 
-        if (button == 0) {
-
-            if ((menu.hasGem() || menu.hasGeode()) && menu.hasHammer() && isOverButton(mouseX, mouseY, x + HAMMER_X, y + BUTTON_Y)) {
-                assert Objects.requireNonNull(this.minecraft).gameMode != null;
-                this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 0);
-                return true;
-            }
-
-            if (menu.hasGem() && menu.hasChisel() && isOverButton(mouseX, mouseY, x + CHISEL_X, y + BUTTON_Y)) {
-                assert Objects.requireNonNull(this.minecraft).gameMode != null;
-                this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 1);
-                return true;
+            if (menu.isButtonActive() && isOverButton(mouseX, mouseY, x + TOOL_BTN_X, y + TOOL_BTN_Y)) {
+                int actionId = menu.getActionIdForTool();
+                if (actionId >= 0) {
+                    assert Objects.requireNonNull(this.minecraft).gameMode != null;
+                    this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, actionId);
+                    return true;
+                }
             }
         }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private boolean isOverButton(double mouseX, double mouseY, int bx, int by) {
         return mouseX >= bx && mouseY >= by && mouseX < bx + BUTTON_SIZE && mouseY < by + BUTTON_SIZE;
     }
-
 }

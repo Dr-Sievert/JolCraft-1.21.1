@@ -39,7 +39,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
     private static final ResourceLocation DISCOUNT_STRIKETHRUOGH_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/discount_strikethrough");
 
     /**
-     * The GUI texture for the villager merchant GUI.
+     * The GUI texture for the dwarf trader GUI.
      */
     private static final ResourceLocation TEXTURE_LOCATION = JolCraft.location("textures/gui/container/dwarf_trade.png");
     private static final int TEXTURE_WIDTH = 512;
@@ -62,6 +62,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
     private static final int SCROLL_BAR_START_X = 94;
     private static final Component TRADES_LABEL = Component.translatable("merchant.trades");
     private static final Component DEPRECATED_TOOLTIP = Component.translatable("merchant.deprecated");
+
     /**
      * The integer value corresponding to the currently selected merchant recipe.
      */

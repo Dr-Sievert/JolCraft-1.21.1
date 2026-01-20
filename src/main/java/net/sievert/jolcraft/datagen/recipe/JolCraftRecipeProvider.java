@@ -1,9 +1,13 @@
 package net.sievert.jolcraft.datagen.recipe;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -11,6 +15,7 @@ import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,12 +32,15 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.datagen.recipe.builder.JolCraftRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.JolSmithingTrimRecipeBuilder;
 import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.recipe.custom.LapidaryBenchRecipe;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -643,8 +651,40 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_deepslate_compass", has(JolCraftItems.DEEPSLATE_COMPASS.get()))
                 .save(this.output, "jolcraft:deepslate_compass_remove_dial");
 
-
-
+        //Lapidary Bench
+        lapidary(JolCraftItems.GEODE_SMALL.get(),  LapidaryBenchRecipe.ToolType.HAMMER, JolCraftTags.Items.GEMS_UNCUT, 1, 2, 1);
+        lapidary(JolCraftItems.GEODE_MEDIUM.get(), LapidaryBenchRecipe.ToolType.HAMMER, JolCraftTags.Items.GEMS_UNCUT, 2, 3, 1);
+        lapidary(JolCraftItems.GEODE_LARGE.get(),  LapidaryBenchRecipe.ToolType.HAMMER, JolCraftTags.Items.GEMS_UNCUT, 3, 5, 1);
+        lapidary(JolCraftItems.AEGISCORE.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.AEGISCORE_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.ASHFANG.get(),    LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.ASHFANG_DUST.get()),    1, 3, 1);
+        lapidary(JolCraftItems.DEEPMARROW.get(), LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.DEEPMARROW_DUST.get()), 1, 3, 1);
+        lapidary(JolCraftItems.EARTHBLOOD.get(), LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.EARTHBLOOD_DUST.get()), 1, 3, 1);
+        lapidary(JolCraftItems.EMBERGLASS.get(), LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.EMBERGLASS_DUST.get()), 1, 3, 1);
+        lapidary(JolCraftItems.FROSTVEIN.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.FROSTVEIN_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.GRIMSTONE.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.GRIMSTONE_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.IRONHEART.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.IRONHEART_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.LUMIERE.get(),    LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.LUMIERE_DUST.get()),    1, 3, 1);
+        lapidary(JolCraftItems.MOONSHARD.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.MOONSHARD_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.RUSTAGATE.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.RUSTAGATE_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.SKYBURROW.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.SKYBURROW_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.SUNGLEAM.get(),   LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.SUNGLEAM_DUST.get()),   1, 3, 1);
+        lapidary(JolCraftItems.VERDANITE.get(),  LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.VERDANITE_DUST.get()),  1, 3, 1);
+        lapidary(JolCraftItems.WOECRYSTAL.get(), LapidaryBenchRecipe.ToolType.HAMMER, new ItemStack(JolCraftItems.WOECRYSTAL_DUST.get()), 1, 3, 1);
+        lapidary(JolCraftItems.AEGISCORE.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.AEGISCORE_CUT.get()),  1);
+        lapidary(JolCraftItems.ASHFANG.get(),    LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.ASHFANG_CUT.get()),    1);
+        lapidary(JolCraftItems.DEEPMARROW.get(), LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.DEEPMARROW_CUT.get()), 1);
+        lapidary(JolCraftItems.EARTHBLOOD.get(), LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.EARTHBLOOD_CUT.get()), 1);
+        lapidary(JolCraftItems.EMBERGLASS.get(), LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.EMBERGLASS_CUT.get()), 1);
+        lapidary(JolCraftItems.FROSTVEIN.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.FROSTVEIN_CUT.get()),  1);
+        lapidary(JolCraftItems.GRIMSTONE.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.GRIMSTONE_CUT.get()),  1);
+        lapidary(JolCraftItems.IRONHEART.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.IRONHEART_CUT.get()),  1);
+        lapidary(JolCraftItems.LUMIERE.get(),    LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.LUMIERE_CUT.get()),    1);
+        lapidary(JolCraftItems.MOONSHARD.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.MOONSHARD_CUT.get()),  1);
+        lapidary(JolCraftItems.RUSTAGATE.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.RUSTAGATE_CUT.get()),  1);
+        lapidary(JolCraftItems.SKYBURROW.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.SKYBURROW_CUT.get()),  1);
+        lapidary(JolCraftItems.SUNGLEAM.get(),   LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.SUNGLEAM_CUT.get()),   1);
+        lapidary(JolCraftItems.VERDANITE.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.VERDANITE_CUT.get()),  1);
+        lapidary(JolCraftItems.WOECRYSTAL.get(), LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.WOECRYSTAL_CUT.get()), 1);
     }
 
     protected void bonusTrimSmithing(Item templateItem, ResourceKey<Recipe<?>> key) {
@@ -790,4 +830,99 @@ public class JolCraftRecipeProvider extends RecipeProvider {
             Items.WHITE_DYE
     );
 
+    private void lapidary(
+            ItemLike input,
+            LapidaryBenchRecipe.ToolType toolType,
+            ItemStack result,
+            int xp
+    ) {
+        lapidary(input, toolType, result, result.getCount(), result.getCount(), xp);
+    }
+
+    private void lapidary(
+            ItemLike input,
+            LapidaryBenchRecipe.ToolType toolType,
+            ItemStack result,
+            int minCount,
+            int maxCount,
+            int xp
+    ) {
+        registerLapidary(
+                input,
+                toolType,
+                minCount,
+                maxCount,
+                xp,
+                inputName -> switch (toolType) {
+                    case HAMMER -> inputName + "_to_dust";
+                    case CHISEL -> "cut_" + inputName;
+                },
+                () -> new LapidaryBenchRecipe(
+                        Ingredient.of(input),
+                        toolType,
+                        result,
+                        minCount,
+                        maxCount,
+                        xp
+                )
+        );
+    }
+
+    private void lapidary(
+            ItemLike input,
+            LapidaryBenchRecipe.ToolType toolType,
+            TagKey<Item> resultTag,
+            int minCount,
+            int maxCount,
+            int xp
+    ) {
+        registerLapidary(
+                input,
+                toolType,
+                minCount,
+                maxCount,
+                xp,
+                inputName -> {
+                    String tagName = resultTag.location().getPath();
+
+                    return switch (toolType) {
+                        case HAMMER -> inputName + "_to_random_" + tagName;
+                        case CHISEL -> "cut_" + inputName;
+                    };
+                },
+                () -> new LapidaryBenchRecipe(
+                        Ingredient.of(input),
+                        toolType,
+                        resultTag,
+                        minCount,
+                        maxCount,
+                        xp
+                )
+        );
+    }
+
+    private void registerLapidary(
+            ItemLike input,
+            LapidaryBenchRecipe.ToolType toolType,
+            int minCount,
+            int maxCount,
+            int xp,
+            Function<String, String> idPathFn,
+            Supplier<LapidaryBenchRecipe> recipeFactory
+    ) {
+        String inputName = BuiltInRegistries.ITEM.getKey(input.asItem()).getPath();
+        String idPath = idPathFn.apply(inputName);
+
+        ResourceLocation id = JolCraft.location("lapidary_bench/" + idPath);
+        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, id);
+
+        LapidaryBenchRecipe recipe = recipeFactory.get();
+
+        AdvancementHolder advancement = this.output.advancement()
+                .addCriterion(getHasName(input), this.has(input))
+                .rewards(AdvancementRewards.Builder.recipe(key))
+                .build(JolCraft.location("recipes/lapidary_bench/" + idPath));
+
+        this.output.accept(key, recipe, advancement);
+    }
 }

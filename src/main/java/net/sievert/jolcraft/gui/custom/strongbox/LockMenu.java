@@ -15,7 +15,7 @@ import net.sievert.jolcraft.block.custom.StrongboxBlock;
 import net.sievert.jolcraft.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.gui.custom.slot.LockpickSlot;
+import net.sievert.jolcraft.gui.slot.strongbox.LockpickSlot;
 import net.sievert.jolcraft.gui.util.MenuTickDispatcher;
 import net.sievert.jolcraft.gui.util.TickableMenu;
 import net.sievert.jolcraft.sound.JolCraftSounds;
@@ -305,10 +305,6 @@ public class LockMenu extends AbstractContainerMenu implements TickableMenu {
             return 6;
         }
     };
-
-    public ContainerData getContainerData() {
-        return data;
-    }
 
     public int  getLockpickProgress() { return data.get(0); }
     public void setLockpickProgress(int progress) { data.set(0, progress); }

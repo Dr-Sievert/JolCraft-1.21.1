@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.gui.custom.slot;
+package net.sievert.jolcraft.gui.slot.dwarf;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.stats.Stats;
@@ -49,7 +49,7 @@ public class DwarfMerchantResultSlot extends Slot {
     /**
      * Typically increases an internal count, then calls {@code onCrafting(item)}.
      *
-     * @param stack the output - ie, iron ingots, and pickaxes, not ore and wood.
+     * @param stack the output.
      */
     @Override
     protected void onQuickCraft(ItemStack stack, int amount) {
@@ -58,7 +58,7 @@ public class DwarfMerchantResultSlot extends Slot {
     }
 
     /**
-     * @param stack the output - ie, iron ingots, and pickaxes, not ore and wood.
+     * @param stack the output.
      */
     @Override
     protected void checkTakeAchievements(ItemStack stack) {

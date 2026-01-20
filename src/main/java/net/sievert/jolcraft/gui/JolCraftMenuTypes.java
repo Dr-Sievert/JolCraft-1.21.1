@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.gui;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.IEventBus;
@@ -15,24 +16,40 @@ import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
 import net.sievert.jolcraft.gui.custom.strongbox.StrongboxMenu;
 
 public class JolCraftMenuTypes {
+
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(Registries.MENU, JolCraft.MOD_ID);
 
     public static final DeferredHolder<MenuType<?>, MenuType<StrongboxMenu>> STRONGBOX_MENU =
-            registerMenuType("strongbox_menu", StrongboxMenu::new);
+            registerExtended("strongbox_menu", StrongboxMenu::new);
 
     public static final DeferredHolder<MenuType<?>, MenuType<LockMenu>> LOCK_MENU =
-            registerMenuType("lock_menu", LockMenu::new);
+            registerExtended("lock_menu", LockMenu::new);
 
     public static final DeferredHolder<MenuType<?>, MenuType<LapidaryBenchMenu>> LAPIDARY_BENCH_MENU =
-            registerMenuType("lapidary_bench_menu", LapidaryBenchMenu::new);
+            registerSimple("lapidary_bench_menu", LapidaryBenchMenu::new);
 
     public static final DeferredHolder<MenuType<?>, MenuType<DwarfMerchantMenu>> DWARF_MERCHANT_MENU =
-            registerMenuType("dwarf_merchant_menu", DwarfMerchantMenu::new);
+            registerExtended("dwarf_merchant_menu", DwarfMerchantMenu::new);
 
-
-    private static <T extends AbstractContainerMenu>DeferredHolder<MenuType<?>, MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
+    /**
+     * Register an "extended" menu type (NeoForge): factory gets (windowId, inv, buf).
+     */
+    private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> registerExtended(
+            String name,
+            IContainerFactory<T> factory
+    ) {
         return MENUS.register(name, () -> IMenuTypeExtension.create(factory));
+    }
+
+    /**
+     * Register a vanilla-style menu type: factory gets (windowId, inv).
+     */
+    private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> registerSimple(
+            String name,
+            MenuType.MenuSupplier<T> factory
+    ) {
+        return MENUS.register(name, () -> new MenuType<>(factory, FeatureFlags.DEFAULT_FLAGS));
     }
 
     public static void register(IEventBus eventBus) {

@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.recipe;
 
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.SmithingTrimRecipe;
 import net.sievert.jolcraft.JolCraft;
 import net.minecraft.core.registries.Registries;
@@ -9,8 +10,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.recipe.custom.JolCraftSmithingTrimRecipe;
+import net.sievert.jolcraft.recipe.custom.LapidaryBenchRecipe;
 
 public class JolCraftRecipes {
+
+    public static final String LAPIDARY_BENCH_ID = "lapidary_bench";
+
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, JolCraft.MOD_ID);
 
@@ -19,6 +24,21 @@ public class JolCraftRecipes {
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> SMITHING_TRIM_SERIALIZER =
             SERIALIZERS.register("jolcraft_smithing_trim", JolCraftSmithingTrimRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LapidaryBenchRecipe>> LAPIDARY_BENCH_SERIALIZER =
+            SERIALIZERS.register(LAPIDARY_BENCH_ID, LapidaryBenchRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<LapidaryBenchRecipe>> LAPIDARY_BENCH_TYPE =
+            TYPES.register(LAPIDARY_BENCH_ID, () -> simpleType(LAPIDARY_BENCH_ID));
+
+    private static <T extends Recipe<?>> RecipeType<T> simpleType(String id) {
+        return new RecipeType<>() {
+            @Override
+            public String toString() {
+                return JolCraft.location(id).toString();
+            }
+        };
+    }
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);

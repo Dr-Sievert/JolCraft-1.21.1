@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.merchant.CoinPouchItem;
 import net.sievert.jolcraft.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.gui.custom.slot.DwarfMerchantResultSlot;
+import net.sievert.jolcraft.gui.slot.dwarf.DwarfMerchantResultSlot;
 import net.sievert.jolcraft.entity.util.dwarf.trade.*;
 import net.sievert.jolcraft.item.util.coin.CoinPouchHelper;
 
