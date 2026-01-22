@@ -694,7 +694,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         //Fermenting Cauldron
         fermentingFinalize(
                 Items.SUGAR,
-                (ItemLike) null,
+                null,
                 1200,
                 3,
                 0x40B14A
@@ -708,7 +708,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
 
         fermenting(
                 JolCraftItems.BARLEY_MALT.get(),
-                (ItemLike) null,
+                null,
                 20,
                 5,
                 0xB16A1D
@@ -1013,27 +1013,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
 
     private void fermenting(
             ItemLike ingredient,
-            @Nullable TagKey<Item> validStatesTag,
-            int brewTicks,
-            int bubbleTicks,
-            int colorRgb
-    ) {
-        registerFermenting(
-                ingredient,
-                validStatesTag == null ? null : ingredientFromTag(validStatesTag),
-                validStatesTag,
-                null,
-                brewTicks,
-                bubbleTicks,
-                colorRgb,
-                null,
-                false,
-                null
-        );
-    }
-
-    private void fermenting(
-            ItemLike ingredient,
             @Nullable ItemLike validStateItem,
             int brewTicks,
             int bubbleTicks,
@@ -1074,27 +1053,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         );
     }
 
-    private void fermentingFinalize(
-            ItemLike ingredient,
-            @Nullable ItemLike validStateItem,
-            int brewTicks,
-            int bubbleTicks,
-            int colorRgb
-    ) {
-        registerFermenting(
-                ingredient,
-                validStateItem == null ? null : Ingredient.of(validStateItem),
-                null,
-                validStateItem,
-                brewTicks,
-                bubbleTicks,
-                colorRgb,
-                null,
-                true,
-                null
-        );
-    }
-
     private void fermentingEffect(
             ItemLike ingredient,
             @Nullable TagKey<Item> validStatesTag,
@@ -1119,49 +1077,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         );
     }
 
-    private void fermentingEffect(
-            ItemLike ingredient,
-            @Nullable ItemLike validStateItem,
-            int brewTicks,
-            int bubbleTicks,
-            int colorRgb,
-            Holder<MobEffect> effect,
-            int duration,
-            int amplifier
-    ) {
-        registerFermenting(
-                ingredient,
-                validStateItem == null ? null : Ingredient.of(validStateItem),
-                null,
-                validStateItem,
-                brewTicks,
-                bubbleTicks,
-                colorRgb,
-                FermentingCauldronRecipe.EffectData.fromHolder(effect, duration, amplifier),
-                false,
-                null
-        );
-    }
-
-    private void fermentingExtract(
-            ItemLike extractor,
-            @Nullable TagKey<Item> validStatesTag,
-            ItemStack result
-    ) {
-        registerFermenting(
-                extractor,
-                validStatesTag == null ? null : ingredientFromTag(validStatesTag),
-                validStatesTag,
-                null,
-                1,
-                1,
-                0xFFFFFF,
-                null,
-                false,
-                result
-        );
-    }
-
     private void fermentingExtract(
             ItemLike extractor,
             @Nullable ItemLike validStateItem,
@@ -1180,8 +1095,6 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 result
         );
     }
-
-// --- single sink ---
 
     private void registerFermenting(
             ItemLike ingredient,

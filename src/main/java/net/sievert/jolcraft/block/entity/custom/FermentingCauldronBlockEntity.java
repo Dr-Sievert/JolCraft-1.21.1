@@ -66,7 +66,6 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     private int startColor = 0xFFFFFFFF;
     private int targetColor = 0xFFFFFFFF;
     private int blendTotalTicks = 1;
-
     private long clientBlendStartGameTime = -1L;
 
     private final Map<Integer, FermentingCauldronRecipe.EffectData> effects = new LinkedHashMap<>();
@@ -76,6 +75,89 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
 
     public FermentingCauldronBlockEntity(BlockPos pos, BlockState state) {
         super(JolCraftBlockEntities.FERMENTING_CAULDRON.get(), pos, state);
+    }
+
+    public InteractionResult handleInteraction(Player player, InteractionHand hand, ItemStack usedItem) {
+        if (level == null || level.isClientSide || hand != InteractionHand.MAIN_HAND || isBrewing() || usedItem.isEmpty()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        FermentingCauldronRecipe recipe = findRecipe(usedItem);
+        if (recipe == null) {
+            return InteractionResult.SUCCESS;
+        }
+
+        if (extractable) {
+            if (!recipe.isExtraction()) return InteractionResult.SUCCESS;
+
+            ItemStack extract = recipe.extract();
+            if (extract == null || extract.isEmpty()) return InteractionResult.SUCCESS;
+
+            extractBrew(player, usedItem, extract);
+            return InteractionResult.SUCCESS;
+        }
+
+        Item itemKey = usedItem.getItem();
+        ItemStack ingredientKey = usedItem.copyWithCount(1);
+        int count = addedIngredients.getOrDefault(itemKey, 0);
+
+        if (count >= 3) {
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.fermenting_cauldron.ingredient_max")
+                            .withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            return InteractionResult.SUCCESS;
+        }
+
+        if (recipe.effect() != null && !addedIngredients.isEmpty() && !addedIngredients.containsKey(itemKey)) {
+            if (!DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+                player.displayClientMessage(
+                        Component.translatable("tooltip.jolcraft.fermenting_cauldron.locked_multi")
+                                .withStyle(ChatFormatting.RED),
+                        true
+                );
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        if (!player.isCreative()) {
+            usedItem.shrink(1);
+        }
+
+        int newCount = count + 1;
+        addedIngredients.put(itemKey, newCount);
+
+        this.finalize = recipe.finalizeBrew();
+
+        if (recipe.effect() != null) {
+            FermentingCauldronRecipe.EffectData base = recipe.effect();
+            if (base == null) return InteractionResult.SUCCESS;
+
+            int amp = Math.min(2, newCount - 1);
+            FermentingCauldronRecipe.EffectData stacked =
+                    new FermentingCauldronRecipe.EffectData(base.id(), base.duration(), amp);
+
+            boolean updatedExisting = false;
+            for (var entry : effects.entrySet()) {
+                FermentingCauldronRecipe.EffectData existing = entry.getValue();
+                if (existing.id().equals(base.id())) {
+                    entry.setValue(stacked);
+                    updatedExisting = true;
+                    break;
+                }
+            }
+
+            if (!updatedExisting) {
+                effects.put(effects.size(), stacked);
+            }
+        }
+
+        setLastIngredient(ingredientKey);
+
+        startBrew(recipe.brewTicks(), recipe.bubbleTicks(), recipe.color());
+
+        return InteractionResult.SUCCESS;
     }
 
     private void setLastIngredient(ItemStack stack) {
@@ -170,89 +252,6 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         }
 
         return out;
-    }
-
-    public InteractionResult handleInteraction(Player player, InteractionHand hand, ItemStack usedItem) {
-        if (level == null || level.isClientSide || hand != InteractionHand.MAIN_HAND || isBrewing() || usedItem.isEmpty()) {
-            return InteractionResult.SUCCESS;
-        }
-
-        FermentingCauldronRecipe recipe = findRecipe(usedItem);
-        if (recipe == null) {
-            return InteractionResult.SUCCESS;
-        }
-
-        if (extractable) {
-            if (!recipe.isExtraction()) return InteractionResult.SUCCESS;
-
-            ItemStack extract = recipe.extract();
-            if (extract == null || extract.isEmpty()) return InteractionResult.SUCCESS;
-
-            extractBrew(player, usedItem, extract);
-            return InteractionResult.SUCCESS;
-        }
-
-        Item itemKey = usedItem.getItem();
-        ItemStack ingredientKey = usedItem.copyWithCount(1);
-        int count = addedIngredients.getOrDefault(itemKey, 0);
-
-        if (count >= 3) {
-            player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.fermenting_cauldron.ingredient_max")
-                            .withStyle(ChatFormatting.GRAY),
-                    true
-            );
-            return InteractionResult.SUCCESS;
-        }
-
-        if (recipe.effect() != null && !addedIngredients.isEmpty() && !addedIngredients.containsKey(itemKey)) {
-            if (!DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
-                player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.fermenting_cauldron.locked_multi")
-                                .withStyle(ChatFormatting.RED),
-                        true
-                );
-                return InteractionResult.SUCCESS;
-            }
-        }
-
-        if (!player.isCreative()) {
-            usedItem.shrink(1);
-        }
-
-        int newCount = count + 1;
-        addedIngredients.put(itemKey, newCount);
-
-        this.finalize = recipe.finalizeBrew();
-
-        if (recipe.effect() != null) {
-            FermentingCauldronRecipe.EffectData base = recipe.effect();
-            if (base == null) return InteractionResult.SUCCESS;
-
-            int amp = Math.min(2, newCount - 1);
-            FermentingCauldronRecipe.EffectData stacked =
-                    new FermentingCauldronRecipe.EffectData(base.id(), base.duration(), amp);
-
-            boolean updatedExisting = false;
-            for (var entry : effects.entrySet()) {
-                FermentingCauldronRecipe.EffectData existing = entry.getValue();
-                if (existing.id().equals(base.id())) {
-                    entry.setValue(stacked);
-                    updatedExisting = true;
-                    break;
-                }
-            }
-
-            if (!updatedExisting) {
-                effects.put(effects.size(), stacked);
-            }
-        }
-
-        setLastIngredient(ingredientKey);
-
-        startBrew(recipe.brewTicks(), recipe.bubbleTicks(), recipe.color());
-
-        return InteractionResult.SUCCESS;
     }
 
     @Nullable

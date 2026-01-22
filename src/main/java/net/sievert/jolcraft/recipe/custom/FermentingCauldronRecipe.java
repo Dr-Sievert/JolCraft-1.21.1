@@ -11,7 +11,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
@@ -69,100 +68,8 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
         this.extract = (extract == null || extract.isEmpty()) ? null : extract.copy();
     }
 
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            @Nullable Ingredient validStates,
-            int brewTicks,
-            int bubbleTicks,
-            int color,
-            @Nullable EffectData effect,
-            boolean finalize
-    ) {
-        this(ingredient, validStates, brewTicks, bubbleTicks, color, effect, finalize, null);
-    }
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            @Nullable Ingredient validStates,
-            int brewTicks,
-            int bubbleTicks,
-            int color,
-            @Nullable EffectData effect
-    ) {
-        this(ingredient, validStates, brewTicks, bubbleTicks, color, effect, false, null);
-    }
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            int brewTicks,
-            int bubbleTicks,
-            int color
-    ) {
-        this(ingredient, null, brewTicks, bubbleTicks, color, null, false, null);
-    }
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            int brewTicks,
-            int bubbleTicks,
-            int color,
-            boolean finalize
-    ) {
-        this(ingredient, null, brewTicks, bubbleTicks, color, null, finalize, null);
-    }
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            @Nullable Ingredient validStates,
-            int brewTicks,
-            int bubbleTicks,
-            int color
-    ) {
-        this(ingredient, validStates, brewTicks, bubbleTicks, color, null, false, null);
-    }
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            @Nullable Ingredient validStates,
-            int brewTicks,
-            int bubbleTicks,
-            int color,
-            boolean finalize
-    ) {
-        this(ingredient, validStates, brewTicks, bubbleTicks, color, null, finalize, null);
-    }
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            @Nullable Ingredient validStates,
-            int brewTicks,
-            int bubbleTicks,
-            int color,
-            ResourceKey<MobEffect> effect,
-            int duration,
-            int amplifier
-    ) {
-        this(ingredient, validStates, brewTicks, bubbleTicks, color, EffectData.fromKey(effect, duration, amplifier), false, null);
-    }
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            @Nullable Ingredient validStates,
-            int brewTicks,
-            int bubbleTicks,
-            int color,
-            ItemStack extract
-    ) {
-        this(ingredient, validStates, brewTicks, bubbleTicks, color, null, false, extract);
-    }
-
     public Ingredient ingredient() {
         return ingredient;
-    }
-
-    @Nullable
-    public Ingredient validStates() {
-        return validStates;
     }
 
     public int brewTicks() {
@@ -247,19 +154,10 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
                         Codec.INT.optionalFieldOf("amplifier", 0).forGetter(EffectData::amplifier)
                 ).apply(inst, EffectData::new));
 
-        public static EffectData fromKey(ResourceKey<MobEffect> key, int duration, int amplifier) {
-            return new EffectData(key, duration, amplifier);
-        }
-
         public static EffectData fromHolder(Holder<MobEffect> effect, int duration, int amplifier) {
             ResourceKey<MobEffect> key = effect.unwrapKey()
                     .orElseThrow(() -> new IllegalStateException("Unregistered MobEffect holder: " + effect));
             return new EffectData(key, duration, amplifier);
-        }
-
-        public Optional<MobEffectInstance> toInstance(HolderLookup.Provider registries) {
-            var lookup = registries.lookupOrThrow(Registries.MOB_EFFECT);
-            return lookup.get(id).map(h -> new MobEffectInstance(h, duration, amplifier, false, true, true));
         }
     }
 
