@@ -9,12 +9,14 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.sievert.jolcraft.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.recipe.custom.JolCraftSmithingTrimRecipe;
 import net.sievert.jolcraft.recipe.custom.LapidaryBenchRecipe;
 
 public class JolCraftRecipes {
 
     public static final String LAPIDARY_BENCH_ID = "lapidary_bench";
+    public static final String FERMENTING_CAULDRON_ID = "fermenting_cauldron";
 
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, JolCraft.MOD_ID);
@@ -30,6 +32,12 @@ public class JolCraftRecipes {
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<LapidaryBenchRecipe>> LAPIDARY_BENCH_TYPE =
             TYPES.register(LAPIDARY_BENCH_ID, () -> simpleType(LAPIDARY_BENCH_ID));
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FermentingCauldronRecipe>> FERMENTING_CAULDRON_SERIALIZER =
+            SERIALIZERS.register(FERMENTING_CAULDRON_ID, FermentingCauldronRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<FermentingCauldronRecipe>> FERMENTING_CAULDRON_TYPE =
+            TYPES.register(FERMENTING_CAULDRON_ID, () -> simpleType(FERMENTING_CAULDRON_ID));
 
     private static <T extends Recipe<?>> RecipeType<T> simpleType(String id) {
         return new RecipeType<>() {

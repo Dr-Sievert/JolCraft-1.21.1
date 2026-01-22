@@ -139,12 +139,6 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.KRANDONIAN_SEEDS.get())
                 .add(JolCraftItems.YANILLIAN_SEEDS.get());
 
-        tag(JolCraftTags.Items.HOPS)
-                .add(JolCraftItems.ASGARNIAN_HOPS.get())
-                .add(JolCraftItems.DUSKHOLD_HOPS.get())
-                .add(JolCraftItems.KRANDONIAN_HOPS.get())
-                .add(JolCraftItems.YANILLIAN_HOPS.get());
-
         tag(Tags.Items.CROPS)
                 .add(JolCraftItems.BARLEY.get())
                 .add(JolCraftItems.DEEPSLATE_BULBS.get())
@@ -153,6 +147,18 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
         tag(Tags.Items.MUSHROOMS)
                 .add(JolCraftBlocks.FESTERLING.get().asItem())
                 .add(JolCraftBlocks.DUSKCAP.get().asItem());
+
+        //Brewing
+
+        tag(JolCraftTags.Items.HOPS)
+                .add(JolCraftItems.ASGARNIAN_HOPS.get())
+                .add(JolCraftItems.DUSKHOLD_HOPS.get())
+                .add(JolCraftItems.KRANDONIAN_HOPS.get())
+                .add(JolCraftItems.YANILLIAN_HOPS.get());
+
+        tag(JolCraftTags.Items.HOPS_BREW)
+                .addTags(JolCraftTags.Items.HOPS)
+                .add(JolCraftItems.BARLEY_MALT.get());
 
         //Materials
 

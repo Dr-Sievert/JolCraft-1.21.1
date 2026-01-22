@@ -56,6 +56,8 @@ public class JolCraftTags {
 
         public static final TagKey<Item> HOPS = createTag("hops");
 
+        public static final TagKey<Item> HOPS_BREW = createTag("hops_brew");
+
         public static final TagKey<Item> REPAIRS_DEEPSLATE = createTag("repairs_deepslate");
 
         public static final TagKey<Item> REPAIRS_MITHRIL = createTag("repairs_mithril");

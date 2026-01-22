@@ -4,7 +4,9 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,6 +18,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +36,7 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.datagen.recipe.builder.JolCraftRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.JolSmithingTrimRecipeBuilder;
 import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.recipe.custom.LapidaryBenchRecipe;
 
 import javax.annotation.Nullable;
@@ -685,6 +690,86 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         lapidary(JolCraftItems.SUNGLEAM.get(),   LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.SUNGLEAM_CUT.get()),   1);
         lapidary(JolCraftItems.VERDANITE.get(),  LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.VERDANITE_CUT.get()),  1);
         lapidary(JolCraftItems.WOECRYSTAL.get(), LapidaryBenchRecipe.ToolType.CHISEL, new ItemStack(JolCraftItems.WOECRYSTAL_CUT.get()), 1);
+
+        //Fermenting Cauldron
+        fermentingFinalize(
+                Items.SUGAR,
+                (ItemLike) null,
+                1200,
+                3,
+                0x40B14A
+        );
+
+        fermentingExtract(
+                Items.GLASS_BOTTLE,
+                Items.SUGAR,
+                new ItemStack(JolCraftItems.YEAST.get())
+        );
+
+        fermenting(
+                JolCraftItems.BARLEY_MALT.get(),
+                (ItemLike) null,
+                20,
+                5,
+                0xB16A1D
+        );
+        fermentingEffect(
+                JolCraftItems.ASGARNIAN_HOPS.get(),
+                JolCraftTags.Items.HOPS_BREW,
+                20,
+                5,
+                0x6B5352,
+                MobEffects.HEALTH_BOOST,
+                6000,
+                0
+        );
+
+        fermentingEffect(
+                JolCraftItems.DUSKHOLD_HOPS.get(),
+                JolCraftTags.Items.HOPS_BREW,
+                20,
+                5,
+                0x5F5864,
+                MobEffects.NIGHT_VISION,
+                6000,
+                0
+        );
+
+        fermentingEffect(
+                JolCraftItems.KRANDONIAN_HOPS.get(),
+                JolCraftTags.Items.HOPS_BREW,
+                20,
+                5,
+                0x526B69,
+                MobEffects.DAMAGE_BOOST,
+                6000,
+                0
+        );
+
+        fermentingEffect(
+                JolCraftItems.YANILLIAN_HOPS.get(),
+                JolCraftTags.Items.HOPS_BREW,
+                20,
+                5,
+                0x2B4318,
+                MobEffects.MOVEMENT_SPEED,
+                6000,
+                0
+        );
+
+        fermentingFinalize(
+                JolCraftItems.YEAST.get(),
+                JolCraftTags.Items.HOPS,
+                6000,
+                60,
+                0x9A652B
+        );
+
+        fermentingExtract(
+                JolCraftItems.GLASS_MUG.get(),
+                JolCraftItems.YEAST.get(),
+                new ItemStack(JolCraftItems.DWARVEN_BREW.get())
+        );
     }
 
     protected void bonusTrimSmithing(Item templateItem, ResourceKey<Recipe<?>> key) {
@@ -924,5 +1009,235 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 .build(JolCraft.location("recipes/lapidary_bench/" + idPath));
 
         this.output.accept(key, recipe, advancement);
+    }
+
+    private void fermenting(
+            ItemLike ingredient,
+            @Nullable TagKey<Item> validStatesTag,
+            int brewTicks,
+            int bubbleTicks,
+            int colorRgb
+    ) {
+        registerFermenting(
+                ingredient,
+                validStatesTag == null ? null : ingredientFromTag(validStatesTag),
+                validStatesTag,
+                null,
+                brewTicks,
+                bubbleTicks,
+                colorRgb,
+                null,
+                false,
+                null
+        );
+    }
+
+    private void fermenting(
+            ItemLike ingredient,
+            @Nullable ItemLike validStateItem,
+            int brewTicks,
+            int bubbleTicks,
+            int colorRgb
+    ) {
+        registerFermenting(
+                ingredient,
+                validStateItem == null ? null : Ingredient.of(validStateItem),
+                null,
+                validStateItem,
+                brewTicks,
+                bubbleTicks,
+                colorRgb,
+                null,
+                false,
+                null
+        );
+    }
+
+    private void fermentingFinalize(
+            ItemLike ingredient,
+            @Nullable TagKey<Item> validStatesTag,
+            int brewTicks,
+            int bubbleTicks,
+            int colorRgb
+    ) {
+        registerFermenting(
+                ingredient,
+                validStatesTag == null ? null : ingredientFromTag(validStatesTag),
+                validStatesTag,
+                null,
+                brewTicks,
+                bubbleTicks,
+                colorRgb,
+                null,
+                true,
+                null
+        );
+    }
+
+    private void fermentingFinalize(
+            ItemLike ingredient,
+            @Nullable ItemLike validStateItem,
+            int brewTicks,
+            int bubbleTicks,
+            int colorRgb
+    ) {
+        registerFermenting(
+                ingredient,
+                validStateItem == null ? null : Ingredient.of(validStateItem),
+                null,
+                validStateItem,
+                brewTicks,
+                bubbleTicks,
+                colorRgb,
+                null,
+                true,
+                null
+        );
+    }
+
+    private void fermentingEffect(
+            ItemLike ingredient,
+            @Nullable TagKey<Item> validStatesTag,
+            int brewTicks,
+            int bubbleTicks,
+            int colorRgb,
+            Holder<MobEffect> effect,
+            int duration,
+            int amplifier
+    ) {
+        registerFermenting(
+                ingredient,
+                validStatesTag == null ? null : ingredientFromTag(validStatesTag),
+                validStatesTag,
+                null,
+                brewTicks,
+                bubbleTicks,
+                colorRgb,
+                FermentingCauldronRecipe.EffectData.fromHolder(effect, duration, amplifier),
+                false,
+                null
+        );
+    }
+
+    private void fermentingEffect(
+            ItemLike ingredient,
+            @Nullable ItemLike validStateItem,
+            int brewTicks,
+            int bubbleTicks,
+            int colorRgb,
+            Holder<MobEffect> effect,
+            int duration,
+            int amplifier
+    ) {
+        registerFermenting(
+                ingredient,
+                validStateItem == null ? null : Ingredient.of(validStateItem),
+                null,
+                validStateItem,
+                brewTicks,
+                bubbleTicks,
+                colorRgb,
+                FermentingCauldronRecipe.EffectData.fromHolder(effect, duration, amplifier),
+                false,
+                null
+        );
+    }
+
+    private void fermentingExtract(
+            ItemLike extractor,
+            @Nullable TagKey<Item> validStatesTag,
+            ItemStack result
+    ) {
+        registerFermenting(
+                extractor,
+                validStatesTag == null ? null : ingredientFromTag(validStatesTag),
+                validStatesTag,
+                null,
+                1,
+                1,
+                0xFFFFFF,
+                null,
+                false,
+                result
+        );
+    }
+
+    private void fermentingExtract(
+            ItemLike extractor,
+            @Nullable ItemLike validStateItem,
+            ItemStack result
+    ) {
+        registerFermenting(
+                extractor,
+                validStateItem == null ? null : Ingredient.of(validStateItem),
+                null,
+                validStateItem,
+                1,
+                1,
+                0xFFFFFF,
+                null,
+                false,
+                result
+        );
+    }
+
+// --- single sink ---
+
+    private void registerFermenting(
+            ItemLike ingredient,
+            @Nullable Ingredient validStates,
+            @Nullable TagKey<Item> validStatesTag,
+            @Nullable ItemLike validStatesItem,
+            int brewTicks,
+            int bubbleTicks,
+            int colorRgb,
+            @Nullable FermentingCauldronRecipe.EffectData effect,
+            boolean finalize,
+            @Nullable ItemStack extract
+    ) {
+        String ingredientName = BuiltInRegistries.ITEM.getKey(ingredient.asItem()).getPath();
+        String statesName = statesPart(validStatesTag, validStatesItem);
+
+        boolean isExtract = extract != null && !extract.isEmpty();
+
+        String idPath = ingredientName
+                + "_in_" + statesName
+                + (isExtract ? "_extract" : "")
+                + (finalize ? "_finalize" : "");
+
+        ResourceLocation id = JolCraft.location("fermenting_cauldron/" + idPath);
+        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, id);
+
+        int colorArgb = 0xFF000000 | (colorRgb & 0xFFFFFF);
+
+        FermentingCauldronRecipe recipe = new FermentingCauldronRecipe(
+                Ingredient.of(ingredient),
+                validStates,
+                brewTicks,
+                bubbleTicks,
+                colorArgb,
+                effect,
+                finalize,
+                isExtract ? extract.copy() : null
+        );
+
+        AdvancementHolder advancement = this.output.advancement()
+                .addCriterion(getHasName(ingredient), this.has(ingredient))
+                .rewards(AdvancementRewards.Builder.recipe(key))
+                .build(JolCraft.location("recipes/fermenting_cauldron/" + idPath));
+
+        this.output.accept(key, recipe, advancement);
+    }
+
+    private Ingredient ingredientFromTag(TagKey<Item> tag) {
+        HolderLookup.RegistryLookup<Item> items = registries.lookupOrThrow(Registries.ITEM);
+        HolderSet.Named<Item> set = items.getOrThrow(tag);
+        return Ingredient.of(set);
+    }
+
+    private static String statesPart(@Nullable TagKey<Item> tag, @Nullable ItemLike item) {
+        if (tag != null)  return tag.location().getPath();
+        if (item != null) return BuiltInRegistries.ITEM.getKey(item.asItem()).getPath();
+        return "water_cauldron";
     }
 }

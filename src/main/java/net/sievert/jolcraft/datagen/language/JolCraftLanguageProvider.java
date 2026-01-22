@@ -303,7 +303,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.structure.minecraft:trail_ruins", "Trail Ruins");
         add("tooltip.jolcraft.structure.discovered", "Discovered: ");
         add("tooltip.jolcraft.tome_unlock.empty", "This tome lacks knowledge that you find useful.");
-        add("tooltip.jolcraft.tome_unlock.brew", "You can now brew using multiple hops!");
+        add("tooltip.jolcraft.tome_unlock.brew", "You can now brew with multiple ingredients!");
         add("tooltip.jolcraft.tome_unlock.gems", "You can now cut gems using a chisel!");
         add("tooltip.jolcraft.lapidary_bench.locked_cut_gems", "You have no idea how to cut this gem without breaking it.");
         add("tooltip.jolcraft.paper.locked", "The paper is marked with unfamiliar symbols.");
@@ -360,10 +360,8 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.tablet.progress.prefix", "Endorsements for reputation advancement: ");
         add("tooltip.jolcraft.tablet.endorsements_info", "To gain endorsements, give your reputation tablet to a master-level dwarf with a profession. Endorsements are unique per profession and can only be gained once.");
         add("tooltip.jolcraft.tablet.advance_info", "To advance in reputation level you need endorsements from dwarves with professions. When you have enough, hand over your tablet to a guildmaster to update it.");
-        add("tooltip.jolcraft.brewing.hops", "You already added this hops type to the brew.");
-        add("tooltip.jolcraft.brewing.locked_hops", "Adding more hops without proper knowledge would ruin the brew.");
-        add("tooltip.jolcraft.brew.no_hops_added", "No hops added.");
-        add("tooltip.jolcraft.brew.hops_added", "Hops:");
+        add("tooltip.jolcraft.fermenting_cauldron.ingredient_max", "You already added the max amount of this ingredient to the brew.");
+        add("tooltip.jolcraft.fermenting_cauldron.locked_multi", "Adding more ingredients without proper knowledge would ruin the brew.");
         add("tooltip.jolcraft.hops.asgarnian", "Asgarnian");
         add("tooltip.jolcraft.hops.duskhold", "Duskhold");
         add("tooltip.jolcraft.hops.krandonian", "Krandonian");

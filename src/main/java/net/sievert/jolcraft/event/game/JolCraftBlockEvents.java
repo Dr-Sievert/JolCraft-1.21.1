@@ -2,13 +2,16 @@ package net.sievert.jolcraft.event.game;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,9 +23,14 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.block.custom.FermentingCauldronBlock;
-import net.sievert.jolcraft.block.custom.FermentingStage;
+import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.recipe.custom.FermentingCauldronRecipe;
+import net.sievert.jolcraft.recipe.custom.input.FermentingCauldronRecipeInput;
+
+import java.util.Optional;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftBlockEvents {
@@ -59,42 +67,33 @@ public class JolCraftBlockEvents {
             }
         }
 
-        if (!level.isClientSide()) {
-            if (state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
+        if (!level.isClientSide() && state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
 
-                // === SUGAR logic for yeast creation ===
-                if (mainHandStack.is(Items.SUGAR)) {
-                    BlockState fermentState = JolCraftBlocks.FERMENTING_CAULDRON.get().defaultBlockState()
-                            .setValue(FermentingCauldronBlock.LEVEL, 3)
-                            .setValue(FermentingCauldronBlock.STAGE, FermentingStage.YEAST_FERMENTING);
-                    level.setBlock(pos, fermentState, 3);
+            if (!(level instanceof ServerLevel serverLevel)) return;
 
-                    level.playSound(null, pos, SoundEvents.PLAYER_SPLASH, SoundSource.BLOCKS, 0.3F, 1.7F);
+            var input = new FermentingCauldronRecipeInput(mainHandStack.copyWithCount(1), ItemStack.EMPTY);
 
-                    if (!player.isCreative()) mainHandStack.shrink(1);
+            boolean hasRecipe = serverLevel.getServer()
+                    .getRecipeManager()
+                    .getRecipeFor(JolCraftRecipes.FERMENTING_CAULDRON_TYPE.get(), input, serverLevel)
+                    .isPresent();
 
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                    return;
-                }
+            if (!hasRecipe) return;
 
-                // === BARLEY MALT logic for malted stage ===
-                if (mainHandStack.is(JolCraftItems.BARLEY_MALT.get())) {
-                    BlockState maltedState = JolCraftBlocks.FERMENTING_CAULDRON.get().defaultBlockState()
-                            .setValue(FermentingCauldronBlock.LEVEL, 3)
-                            .setValue(FermentingCauldronBlock.STAGE, FermentingStage.MALTED);
+            BlockState newState = JolCraftBlocks.FERMENTING_CAULDRON.get()
+                    .defaultBlockState()
+                    .setValue(FermentingCauldronBlock.LEVEL, 3);
 
-                    level.setBlock(pos, maltedState, 3);
+            level.setBlock(pos, newState, 3);
 
-                    level.playSound(null, pos, SoundEvents.PLAYER_SPLASH, SoundSource.BLOCKS, 0.3F, 1.7F);
-
-                    if (!player.isCreative()) mainHandStack.shrink(1);
-
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                }
+            if (level.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity be) {
+                InteractionResult result = be.handleInteraction(player, event.getHand(), mainHandStack);
+                event.setCancellationResult(result);
+                event.setCanceled(true);
+                return;
             }
 
+            level.setBlock(pos, state, 3);
         }
     }
 
