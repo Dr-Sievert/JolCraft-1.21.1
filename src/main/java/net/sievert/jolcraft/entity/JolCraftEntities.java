@@ -3,7 +3,6 @@ package net.sievert.jolcraft.entity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.IEventBus;
@@ -93,14 +92,14 @@ public class JolCraftEntities {
                     .sized(0.5f, 1.6f).build(DWARF_PRIEST_KEY));
 
     //Animals
-    public static ResourceKey<EntityType<?>> MUFFHORN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("muffhorn"));
+    public static final ResourceKey<EntityType<?>> MUFFHORN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("muffhorn"));
 
     public static final Supplier<EntityType<MuffhornEntity>> MUFFHORN =
             ENTITY_TYPES.register("muffhorn", () -> EntityType.Builder.of(MuffhornEntity::new, MobCategory.CREATURE)
                     .sized(1.2f, 2.2f).build(MUFFHORN_KEY));
 
     //Objects
-    public static ResourceKey<EntityType<?>> RADIANT_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("radiant"));
+    public static final ResourceKey<EntityType<?>> RADIANT_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("radiant"));
 
     public static final Supplier<EntityType<RadiantEntity>> RADIANT =
             ENTITY_TYPES.register("radiant", () -> EntityType.Builder.of(RadiantEntity::new, MobCategory.MISC)

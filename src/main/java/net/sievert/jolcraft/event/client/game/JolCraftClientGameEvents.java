@@ -8,8 +8,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.sievert.jolcraft.network.client.data.ClientDeliriumData;
-import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
-import net.sievert.jolcraft.gui.custom.strongbox.LockScreen;
 
 
 @EventBusSubscriber(modid = "jolcraft", bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)

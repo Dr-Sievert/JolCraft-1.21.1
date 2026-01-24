@@ -15,7 +15,7 @@ import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
  */
 public class BlockDwarfAction implements DwarfAction {
 
-    protected AbstractDwarfEntity dwarf;
+    protected final AbstractDwarfEntity dwarf;
     private int ticksRemaining = 0;
 
     public BlockDwarfAction (AbstractDwarfEntity dwarf){

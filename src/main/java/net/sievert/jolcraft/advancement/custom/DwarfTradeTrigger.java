@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +40,7 @@ public class DwarfTradeTrigger extends SimpleCriterionTrigger<DwarfTradeTrigger.
     /**
      * Creates a criterion for a specific entity type (uses EntityType, stores as ResourceLocation).
      */
+    @SuppressWarnings("deprecation")
     public static Criterion<TriggerInstance> tradedWithSpecificDwarf(EntityType<?> entityType) {
         ResourceLocation id = entityType.builtInRegistryHolder().key().location();
         return JolCraftCriteriaTriggers.TRADE_WITH_DWARF.createCriterion(
@@ -74,6 +74,7 @@ public class DwarfTradeTrigger extends SimpleCriterionTrigger<DwarfTradeTrigger.
         /**
          * Checks if the given dwarf matches the trigger's entity type filter.
          */
+        @SuppressWarnings("deprecation")
         public boolean matches(AbstractDwarfEntity dwarf) {
             if (dwarfTypeId.isEmpty()) return true;
             ResourceLocation entityId = dwarf.getType().builtInRegistryHolder().key().location();

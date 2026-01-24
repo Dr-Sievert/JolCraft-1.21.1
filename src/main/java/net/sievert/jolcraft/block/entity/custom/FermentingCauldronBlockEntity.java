@@ -431,12 +431,11 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
             int total = tag.contains("blendTotalTicks", Tag.TAG_INT) ? tag.getInt("blendTotalTicks") : brewTicks;
             blendTotalTicks = Math.max(1, total);
 
-            clientBlendStartGameTime = -1L;
         } else {
             startColor = targetColor;
             blendTotalTicks = 1;
-            clientBlendStartGameTime = -1L;
         }
+        clientBlendStartGameTime = -1L;
 
         effects.clear();
         if (tag.contains("effects", Tag.TAG_COMPOUND)) {

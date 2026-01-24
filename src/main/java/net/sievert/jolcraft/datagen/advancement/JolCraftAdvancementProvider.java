@@ -12,7 +12,6 @@ import net.sievert.jolcraft.advancement.custom.*;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.item.JolCraftItems;
-import net.minecraft.advancements.AdvancementHolder;
 
 import java.util.Optional;
 import java.util.function.Consumer;

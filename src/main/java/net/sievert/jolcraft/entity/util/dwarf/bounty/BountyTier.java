@@ -1,7 +1,5 @@
 package net.sievert.jolcraft.entity.util.dwarf.bounty;
 
-import org.jetbrains.annotations.Nullable;
-
 public enum BountyTier {
 
     UNKNOWN(0, "Unknown"),

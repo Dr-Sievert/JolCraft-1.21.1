@@ -11,7 +11,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,12 +24,8 @@ import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.block.custom.FermentingCauldronBlock;
 import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.effect.JolCraftEffects;
-import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.recipe.custom.input.FermentingCauldronRecipeInput;
-
-import java.util.Optional;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftBlockEvents {

@@ -1,10 +1,6 @@
 package net.sievert.jolcraft.event.game;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,10 +13,6 @@ import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftCurseEvents {
@@ -61,6 +53,7 @@ public class JolCraftCurseEvents {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @SubscribeEvent
     public static void onEffectRemove(MobEffectEvent.Remove event) {
         if (!(event.getEntity() instanceof Player player) || !isMilkRemoval) return;

@@ -2,7 +2,6 @@ package net.sievert.jolcraft.datagen.recipe;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -70,6 +69,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void buildRecipes() {
 

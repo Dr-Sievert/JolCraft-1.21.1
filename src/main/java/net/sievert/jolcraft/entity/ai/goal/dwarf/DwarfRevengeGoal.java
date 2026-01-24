@@ -26,6 +26,7 @@ public class DwarfRevengeGoal extends Goal
         return this.dwarf.getLastHurtByMob() != null && this.dwarf.getLastHurtByMob().isAlive() && this.dwarf.distanceTo(this.dwarf.getLastHurtByMob()) <= 10.0F && (!(this.dwarf.getLastHurtByMob() instanceof Player) || !((Player)this.dwarf.getLastHurtByMob()).isCreative());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void tick() {
         LivingEntity revengeTarget = this.dwarf.getLastHurtByMob();

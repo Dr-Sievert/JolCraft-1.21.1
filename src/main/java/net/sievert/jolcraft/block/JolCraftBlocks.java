@@ -178,6 +178,7 @@ public class JolCraftBlocks {
             BlockBehaviour.Properties.of(), true
     );
 
+    @SuppressWarnings("deprecation")
     public static final DeferredBlock<FlowerPotBlock> POTTED_DUSKCAP = registerBlock(
             "potted_duskcap",
             (properties) -> new FlowerPotBlock(DUSKCAP.get(), properties),
@@ -209,7 +210,7 @@ public class JolCraftBlocks {
             BlockBehaviour.Properties.of(), true
     );
 
-
+    @SuppressWarnings("deprecation")
     public static final DeferredBlock<FlowerPotBlock> POTTED_FESTERLING = registerBlock(
             "potted_festerling",
             (properties) -> new FlowerPotBlock(FESTERLING.get(), properties),
@@ -369,6 +370,7 @@ public class JolCraftBlocks {
             )
     );
 
+    @SuppressWarnings("deprecation")
     public static final DeferredBlock<FermentingCauldronBlock> FERMENTING_CAULDRON = BLOCKS.registerBlock(
             "fermenting_cauldron",
             props -> new FermentingCauldronBlock(

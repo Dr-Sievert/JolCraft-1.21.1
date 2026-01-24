@@ -14,7 +14,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

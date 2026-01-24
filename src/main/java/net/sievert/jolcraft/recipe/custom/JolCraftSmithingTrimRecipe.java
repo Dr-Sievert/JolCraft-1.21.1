@@ -56,6 +56,7 @@ public class JolCraftSmithingTrimRecipe extends SmithingTrimRecipe {
             );
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, SmithingTrimRecipe> streamCodec() {
             return RecipeSerializer.SMITHING_TRIM.streamCodec().map(

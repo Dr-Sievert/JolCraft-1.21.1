@@ -25,7 +25,6 @@ import net.sievert.jolcraft.item.custom.bounty.BountyCrateItem;
 import net.sievert.jolcraft.item.custom.bounty.BountyItem;
 import net.sievert.jolcraft.item.custom.*;
 import net.sievert.jolcraft.item.custom.contract.ProfessionContractItem;
-import net.sievert.jolcraft.item.custom.QuillItem;
 import net.sievert.jolcraft.item.custom.contract.SignedContractItem;
 import net.sievert.jolcraft.item.custom.contract.WrittenContractItem;
 import net.sievert.jolcraft.item.custom.compass.DeepslateCompassDialItem;

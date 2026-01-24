@@ -32,8 +32,8 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
     public static final IRecipeType<InfoPageRecipe> RECIPE_TYPE =
             IRecipeType.create(JolCraft.MOD_ID, "info_page", InfoPageRecipe.class);
 
-    int textStartY = 32;
-    int textHeight = getHeight() - textStartY - 8;
+    private final int textStartY = 32;
+    private final int textHeight = getHeight() - textStartY - 8;
     private int scrollOffset = 0;
     private boolean draggingScrollThumb = false;
     private int dragStartMouseY = 0;

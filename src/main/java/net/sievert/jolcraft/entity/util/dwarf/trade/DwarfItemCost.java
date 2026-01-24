@@ -36,6 +36,7 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
         this(itemLike, 1);
     }
 
+    @SuppressWarnings("deprecation")
     public DwarfItemCost(ItemLike itemLike, int count) {
         this(itemLike.asItem().builtInRegistryHolder(), count, DataComponentPredicate.EMPTY);
     }

@@ -213,10 +213,8 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
                     p_283487_.renderItemDecorations(this.font, itemstack3, i + 5 + 68, j1);
                     p_283487_.pose().popPose();
                     k += 20;
-                    i1++;
-                } else {
-                    i1++;
                 }
+                i1++;
             }
 
             int k1 = this.shopItem;

@@ -16,6 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+@SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 public class MuffhornRenderer extends AgeableMobRenderer<MuffhornEntity, MuffhornRenderState, MuffhornModel> {
 

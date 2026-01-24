@@ -15,10 +15,10 @@ import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 public class InspectDwarfAction implements DwarfAction {
 
-    protected AbstractDwarfEntity dwarf;
+    protected final AbstractDwarfEntity dwarf;
     protected final Player player;
-    protected InteractionHand hand;
-    protected ItemStack itemstack;
+    protected final InteractionHand hand;
+    protected final ItemStack itemstack;
     protected ItemStack previousMainHandItem = ItemStack.EMPTY;
 
 

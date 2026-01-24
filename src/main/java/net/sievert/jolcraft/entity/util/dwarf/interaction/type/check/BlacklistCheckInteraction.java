@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteraction;
-import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
 
 public class BlacklistCheckInteraction implements DwarfInteraction {
 

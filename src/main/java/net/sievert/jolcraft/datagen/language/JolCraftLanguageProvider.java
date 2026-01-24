@@ -12,7 +12,6 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.data.custom.lore.LoreEntry;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.datagen.advancement.AdvancementKey;
@@ -23,7 +22,6 @@ import net.sievert.jolcraft.item.potion.JolCraftPotions;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 

@@ -41,6 +41,7 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
         this.lootTable = lootTable;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public StructureTemplate.StructureBlockInfo processBlock(
             LevelReader level,

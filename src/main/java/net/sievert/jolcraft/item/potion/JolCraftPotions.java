@@ -10,6 +10,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 
 public class JolCraftPotions {
+
     public static final DeferredRegister<Potion> POTIONS =
             DeferredRegister.create(BuiltInRegistries.POTION, JolCraft.MOD_ID);
 

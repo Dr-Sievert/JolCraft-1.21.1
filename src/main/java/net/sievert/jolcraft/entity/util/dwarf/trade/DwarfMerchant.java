@@ -98,7 +98,6 @@ public interface DwarfMerchant {
         JolCraftNetworking.sendToClient(player, packet);
     }
 
-
     boolean isClientSide();
 
     boolean stillValid(Player player);

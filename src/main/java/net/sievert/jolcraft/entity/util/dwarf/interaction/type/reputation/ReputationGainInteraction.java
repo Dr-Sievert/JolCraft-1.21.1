@@ -6,8 +6,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
@@ -15,8 +13,6 @@ import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
-
-import javax.annotation.Nullable;
 
 public class ReputationGainInteraction extends InspectInteraction {
 

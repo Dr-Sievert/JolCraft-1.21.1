@@ -172,6 +172,7 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         return Items.ROTTEN_FLESH;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected ItemStack getCloneItemStack(LevelReader p_304482_, BlockPos p_52255_, BlockState p_52256_, boolean p_387989_) {
         return new ItemStack(this.getBaseSeedId());

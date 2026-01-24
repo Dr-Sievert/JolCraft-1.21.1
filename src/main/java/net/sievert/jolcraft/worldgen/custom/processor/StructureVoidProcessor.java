@@ -23,6 +23,7 @@ public class StructureVoidProcessor extends StructureProcessor {
     public static final MapCodec<StructureVoidProcessor> CODEC = MapCodec.unit(StructureVoidProcessor::new);
     private StructureVoidProcessor() { }
 
+    @SuppressWarnings("deprecation")
     @Override
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader worldView, BlockPos pos, BlockPos blockPos, StructureTemplate.StructureBlockInfo structureBlockInfoLocal, StructureTemplate.StructureBlockInfo structureBlockInfoWorld, StructurePlaceSettings structurePlacementData) {
         if (structureBlockInfoWorld.state().is(Blocks.STRUCTURE_VOID)) {
