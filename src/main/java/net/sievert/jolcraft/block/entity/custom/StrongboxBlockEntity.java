@@ -1,268 +1,570 @@
-package net.sievert.jolcraft.block.entity.custom;
+    package net.sievert.jolcraft.block.entity.custom;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.ChestLidController;
-import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
-import net.minecraft.world.level.block.entity.LidBlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.sievert.jolcraft.block.custom.StrongboxBlock;
-import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
-import net.sievert.jolcraft.gui.custom.strongbox.StrongboxMenu;
-import net.sievert.jolcraft.sound.JolCraftSounds;
+    import net.minecraft.MethodsReturnNonnullByDefault;
+    import net.minecraft.core.BlockPos;
+    import net.minecraft.core.HolderLookup;
+    import net.minecraft.core.NonNullList;
+    import net.minecraft.nbt.CompoundTag;
+    import net.minecraft.network.chat.Component;
+    import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+    import net.minecraft.server.level.ServerPlayer;
+    import net.minecraft.sounds.SoundEvent;
+    import net.minecraft.sounds.SoundSource;
+    import net.minecraft.world.ContainerHelper;
+    import net.minecraft.world.MenuProvider;
+    import net.minecraft.world.entity.player.Inventory;
+    import net.minecraft.world.entity.player.Player;
+    import net.minecraft.world.inventory.AbstractContainerMenu;
+    import net.minecraft.world.item.ItemStack;
+    import net.minecraft.world.level.Level;
+    import net.minecraft.world.level.block.Block;
+    import net.minecraft.world.level.block.entity.ChestLidController;
+    import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
+    import net.minecraft.world.level.block.entity.LidBlockEntity;
+    import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+    import net.minecraft.world.level.block.state.BlockState;
+    import net.sievert.jolcraft.block.custom.StrongboxBlock;
+    import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
+    import net.sievert.jolcraft.effect.JolCraftEffects;
+    import net.sievert.jolcraft.gui.custom.strongbox.LockMenu;
+    import net.sievert.jolcraft.gui.custom.strongbox.StrongboxMenu;
+    import net.sievert.jolcraft.sound.JolCraftSounds;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+    import javax.annotation.Nullable;
+    import javax.annotation.ParametersAreNonnullByDefault;
+    import java.util.concurrent.ThreadLocalRandom;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public class StrongboxBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity, MenuProvider {
+    @ParametersAreNonnullByDefault
+    @MethodsReturnNonnullByDefault
+    public class StrongboxBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity, MenuProvider {
 
-    @Nullable
-    public Player currentInteractingPlayer = null;
-    private NonNullList<ItemStack> items = NonNullList.withSize(18, ItemStack.EMPTY);
-    private boolean allowLootUnpack = false;
+        // ---------------------------------------------------------------------
+        // Constants
+        // ---------------------------------------------------------------------
 
+        private static final int CONTAINER_SIZE = 18;
 
-    private final ContainerOpenersCounter openersCounter =
-            new ContainerOpenersCounter() {
+        private static final int LOCK_MAX_PROGRESS = 130;
+        private static final int REROLL_MIN_TICKS = 40;
+        private static final int REROLL_EXTRA_TICKS = 61; // 40..100
 
-                @Override
-                protected void onOpen(Level level, BlockPos pos, BlockState state) {
-                    StrongboxBlockEntity.playSound(level, pos, JolCraftSounds.STRONGBOX_OPEN.get());
+        // ---------------------------------------------------------------------
+        // Vanilla container / lid state
+        // ---------------------------------------------------------------------
 
-                }
+        private NonNullList<ItemStack> items = NonNullList.withSize(CONTAINER_SIZE, ItemStack.EMPTY);
 
-                @Override
-                protected void onClose(Level level, BlockPos pos, BlockState state) {
-                    StrongboxBlockEntity.playSound(level, pos, JolCraftSounds.STRONGBOX_CLOSE.get());
-                }
+        @Nullable
+        private Player currentInteractingPlayer;
 
-                @Override
-                protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int oldCount, int newCount) {
-                    StrongboxBlockEntity.this.signalOpenCount(level, pos, state, oldCount, newCount);
-                }
+        private boolean allowLootUnpack = false;
 
-                @Override
-                public void incrementOpeners(Player player, Level level, BlockPos pos, BlockState state) {
-                    super.incrementOpeners(player, level, pos, state);
-                    currentInteractingPlayer = player;
-                }
+        private final ChestLidController lidController = new ChestLidController();
 
-                @Override
-                public void decrementOpeners(Player player, Level level, BlockPos pos, BlockState state) {
-                    super.decrementOpeners(player, level, pos, state);
-                    if (currentInteractingPlayer == player) {
-                        currentInteractingPlayer = null;
-                    }
-                }
+        private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
 
-                @Override
-                protected boolean isOwnContainer(Player player) {
-
-                    if (player.containerMenu instanceof StrongboxMenu menu) {
-                        return menu.getBlockEntity() == StrongboxBlockEntity.this;
-                    }
-
-                    if (player.containerMenu instanceof LockMenu) {
-                        return false;
-                    }
-
-                    return false;
-                }
-
-            };
-
-    private final ChestLidController lidController = new ChestLidController();
-
-    public StrongboxBlockEntity(BlockPos pos, BlockState state) {
-        super(JolCraftBlockEntities.STRONGBOX.get(), pos, state);
-    }
-
-    @Override
-    public void setLootTable(@Nullable ResourceKey<LootTable> lootTable) {
-        this.lootTable = lootTable;
-    }
-
-    @Override
-    public void unpackLootTable(@Nullable Player player) {
-        if (this.isLocked()) {
-            return;
-        }
-        if(allowLootUnpack){
-            super.unpackLootTable(player);
-        }
-    }
-
-    @Override
-    public NonNullList<ItemStack> getItems() {
-        return items;
-    }
-
-    @Override
-    public void setItems(NonNullList<ItemStack> items) {
-        if (this.isLocked()) {
-            this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);  // Clear inventory
-        } else {
-            this.items = items;
-        }
-    }
-
-    @Override
-    public void clearContent() {
-        if (this.isLocked()) {
-            for (int i = 1; i < this.getContainerSize(); i++) {
-                this.setItem(i, ItemStack.EMPTY);
+            @Override
+            protected void onOpen(Level level, BlockPos pos, BlockState state) {
+                StrongboxBlockEntity.playSound(level, pos, JolCraftSounds.STRONGBOX_OPEN.get());
             }
-        } else {
-            super.clearContent();
+
+            @Override
+            protected void onClose(Level level, BlockPos pos, BlockState state) {
+                StrongboxBlockEntity.playSound(level, pos, JolCraftSounds.STRONGBOX_CLOSE.get());
+            }
+
+            @Override
+            protected void openerCountChanged(Level level, BlockPos pos, BlockState state, int oldCount, int newCount) {
+                StrongboxBlockEntity.this.signalOpenCount(level, pos, state, oldCount, newCount);
+            }
+
+            @Override
+            public void incrementOpeners(Player player, Level level, BlockPos pos, BlockState state) {
+                super.incrementOpeners(player, level, pos, state);
+                currentInteractingPlayer = player;
+            }
+
+            @Override
+            public void decrementOpeners(Player player, Level level, BlockPos pos, BlockState state) {
+                super.decrementOpeners(player, level, pos, state);
+                if (currentInteractingPlayer == player) {
+                    currentInteractingPlayer = null;
+                }
+            }
+
+            @Override
+            protected boolean isOwnContainer(Player player) {
+                // StrongboxMenu counts as "owning" the open count.
+                // LockMenu is a session UI; it should NOT affect lid open count.
+                return player.containerMenu instanceof StrongboxMenu menu
+                        && menu.getBlockEntity() == StrongboxBlockEntity.this;
+            }
+        };
+
+        // ---------------------------------------------------------------------
+        // Lockpicking session state (server-authoritative, NOT persisted)
+        // ---------------------------------------------------------------------
+
+        // session guards
+        private boolean lockSessionClearedWhileUnlocked = true;
+        private boolean hasLockpickInserted = false;
+
+        // synced-to-UI values (mirrored into LockMenu ContainerData on server)
+        private int lockProgress = 0;        // 0..LOCK_MAX_PROGRESS
+        private int correctButtonId = 0;     // 0..2, or 3 = "unlock mode"
+        private int unlockSlotId = -1;       // 0..2 if unlock mode, else -1
+        private int buttonLayerPulse = 0;    // increment to refresh client layer randomization
+
+        // gameplay tuning (derived from player effects during server tick)
+        private int decayTicks = 1;          // >= 1
+        private int progressBoost = 0;       // >= 0
+
+        // timers/counters (server-only)
+        private int rerollCounter = 0;
+        private int rerollTargetTicks = rollNextRerollTicks(null);
+        private int decayCounter = 0;
+
+        // ---------------------------------------------------------------------
+        // Construction
+        // ---------------------------------------------------------------------
+
+        public StrongboxBlockEntity(BlockPos pos, BlockState state) {
+            super(JolCraftBlockEntities.STRONGBOX.get(), pos, state);
         }
-    }
 
-    @Override
-    public int getContainerSize() { return items.size(); }
+        // ---------------------------------------------------------------------
+        // Public hooks (menu -> BE)
+        // ---------------------------------------------------------------------
+
+        public void clearCurrentInteractingPlayer(Player player) {
+            if (this.currentInteractingPlayer == player) {
+                this.currentInteractingPlayer = null;
+            }
+        }
+
+        public @Nullable Player getCurrentInteractingPlayer() {
+            return currentInteractingPlayer;
+        }
+
+        public void setHasLockpickInserted(boolean value) {
+            if (this.hasLockpickInserted == value) return;
+
+            this.hasLockpickInserted = value;
+
+            if (!value) {
+                resetLockSession();
+                setChanged();
+                return;
+            }
+
+            forceImmediateReroll();
+        }
 
 
-    @Override
-    protected Component getDefaultName() {
-        return Component.translatable("container.jolcraft.strongbox");
-    }
+        // ---------------------------------------------------------------------
+        // Lock session getters (mirrored into menu ContainerData)
+        // ---------------------------------------------------------------------
 
-    @Override
-    public float getOpenNess(float partialTicks) {
-        return lidController.getOpenness(partialTicks);
-    }
+        public int getLockpickProgress()       { return this.lockProgress; }
+        public int getCorrectButtonId()        { return this.correctButtonId; }
+        public int getUnlockSlotId()           { return this.unlockSlotId; }
+        public int getButtonLayerUpdatePulse() { return this.buttonLayerPulse; }
+        public int getDecayTicks()             { return this.decayTicks; }
+        public int getProgressBoost()          { return this.progressBoost; }
 
-    public static void lidAnimateTick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity be) {
-        be.lidController.tickLid();
-    }
+        // ---------------------------------------------------------------------
+        // Lock session core
+        // ---------------------------------------------------------------------
 
-    @Override
-    public boolean triggerEvent(int id, int param) {
-        if (id == 1) {
-            this.lidController.shouldBeOpen(param > 0);
+        public void resetLockSession() {
+            this.lockProgress = 0;
+            this.correctButtonId = 0;
+            this.unlockSlotId = -1;
+            this.buttonLayerPulse = 0;
+
+            this.decayTicks = 1;
+            this.progressBoost = 0;
+
+            this.rerollCounter = 0;
+            this.decayCounter = 0;
+            this.rerollTargetTicks = rollNextRerollTicks(this.level);
+        }
+
+        private boolean isLockSessionActive() {
+            return this.isLocked()
+                    && this.currentInteractingPlayer != null
+                    && this.hasLockpickInserted;
+        }
+
+        private static int rollNextRerollTicks(@Nullable Level level) {
+            int add = (level != null)
+                    ? level.random.nextInt(REROLL_EXTRA_TICKS)
+                    : ThreadLocalRandom.current().nextInt(REROLL_EXTRA_TICKS);
+            return REROLL_MIN_TICKS + add;
+        }
+
+        private static int clampProgress(int value) {
+            if (value <= 0) return 0;
+            return Math.min(value, LOCK_MAX_PROGRESS);
+        }
+
+        private void bumpVisualPulse() {
+            this.buttonLayerPulse++;
+        }
+
+        private void setDecayTicks(int value) {
+            this.decayTicks = Math.max(1, value);
+        }
+
+        private void setProgressBoost(int value) {
+            this.progressBoost = Math.max(0, value);
+        }
+
+        private void setLockpickProgress(int value) {
+            this.lockProgress = clampProgress(value);
+        }
+
+        private void forceImmediateReroll() {
+            this.rerollCounter = 0;
+            this.rerollTargetTicks = rollNextRerollTicks(this.level);
+            rerollButtons();
+            bumpVisualPulse();
+            setChanged();
+        }
+
+        private void rerollButtons() {
+            if (this.level == null) return;
+
+            int decay = Math.max(1, this.decayTicks);
+
+            // IMPORTANT: guard against 101/decay becoming 0 (would crash nextInt(0)).
+            int denom = Math.max(1, 101 / decay);
+
+            // decay-scaled chance to enter "unlock mode"
+            if (this.level.random.nextInt(denom) == 0) {
+                this.correctButtonId = 3;
+                this.unlockSlotId = this.level.random.nextInt(3);
+            } else {
+                this.correctButtonId = this.level.random.nextInt(3);
+                this.unlockSlotId = -1;
+            }
+        }
+
+        private void serverTickLockSession() {
+            if (!isLockSessionActive()) {
+                // If anything is mid-session but not active anymore, wipe it.
+                if (this.lockProgress != 0 || this.rerollCounter != 0 || this.decayCounter != 0) {
+                    resetLockSession();
+                    setChanged();
+                }
+                return;
+            }
+
+            Player player = this.currentInteractingPlayer;
+            if (player == null) return;
+
+            var effect = player.getEffect(JolCraftEffects.LOCKPICKING);
+            if (effect != null) {
+                setDecayTicks(2 + effect.getAmplifier());
+                setProgressBoost(10 + (effect.getAmplifier() * 10));
+            } else {
+                setDecayTicks(1);
+                setProgressBoost(0);
+            }
+
+            // Button reroll cadence (40..100 ticks)
+            this.rerollCounter++;
+            if (this.rerollCounter >= this.rerollTargetTicks) {
+                this.rerollCounter = 0;
+                this.rerollTargetTicks = rollNextRerollTicks(this.level);
+                rerollButtons();
+                bumpVisualPulse();
+                setChanged();
+            }
+
+            // Progress decay
+            if (this.lockProgress > 0) {
+                this.decayCounter++;
+                if (this.decayCounter >= this.decayTicks) {
+                    this.decayCounter = 0;
+                    setLockpickProgress(this.lockProgress - 1);
+                    setChanged();
+                }
+            } else {
+                this.decayCounter = 0;
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // Server-authoritative click handling (menu forwards clicks here)
+        // ---------------------------------------------------------------------
+
+        public boolean handleLockButtonPress(ServerPlayer player, int buttonId, ItemStack lockpickSlot) {
+            if (this.level == null || this.level.isClientSide) return true;
+
+            if (!this.isLocked()) return false;
+            if (this.currentInteractingPlayer != player) return false;
+            if (!this.hasLockpickInserted || lockpickSlot.isEmpty()) return false;
+
+            // --- Unlock mode ---
+            boolean unlockMode = (this.correctButtonId == 3);
+            if (unlockMode) {
+                if (buttonId == this.unlockSlotId) {
+                    player.closeContainer();
+
+                    this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_UNLOCK.get(),
+                            SoundSource.BLOCKS, 1.5F, 1.0F);
+
+                    BlockState oldState = getBlockState();
+                    BlockState newState = oldState.setValue(StrongboxBlock.LOCKED, false);
+
+                    this.level.setBlock(this.worldPosition, newState, Block.UPDATE_ALL);
+                    this.level.sendBlockUpdated(this.worldPosition, oldState, newState, Block.UPDATE_ALL);
+
+                    this.hasLockpickInserted = false;
+                    resetLockSession();
+                    syncToClient();
+                    return true;
+                }
+
+                // Wrong in unlock mode
+                if (!player.isCreative()) {
+                    lockpickSlot.shrink(1);
+                }
+                setLockpickProgress(0);
+
+                this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_LOCKPICK_BREAK.get(),
+                        SoundSource.BLOCKS, 1.5F, 0.8F);
+
+                forceImmediateReroll();
+                return true;
+            }
+
+            // --- Normal mode ---
+            if (buttonId == this.correctButtonId) {
+                int gain = 10 + this.level.random.nextInt(11) + this.progressBoost; // 10..20 + boost
+                setLockpickProgress(this.lockProgress + gain);
+
+                this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_LOCKPICK.get(),
+                        SoundSource.BLOCKS, 1.2F, 1.0F);
+
+                if (this.lockProgress >= LOCK_MAX_PROGRESS) {
+                    player.closeContainer();
+
+                    this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_UNLOCK.get(),
+                            SoundSource.BLOCKS, 1.5F, 1.0F);
+
+                    this.level.setBlock(this.worldPosition,
+                            this.getBlockState().setValue(StrongboxBlock.LOCKED, false), 3);
+
+                    this.hasLockpickInserted = false;
+                    resetLockSession();
+                    setChanged();
+                    return true;
+                }
+            } else {
+                if (!player.isCreative()) {
+                    lockpickSlot.shrink(1);
+                }
+                setLockpickProgress(0);
+
+                this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_LOCKPICK_BREAK.get(),
+                        SoundSource.BLOCKS, 1.5F, 0.8F);
+            }
+
+            forceImmediateReroll();
             return true;
         }
-        return super.triggerEvent(id, param);
-    }
 
-    @Override
-    public void startOpen(Player player) {
-        if (!this.remove && !player.isSpectator()) {
+        // ---------------------------------------------------------------------
+        // Lid / openers behavior
+        // ---------------------------------------------------------------------
+
+        @Override
+        public float getOpenNess(float partialTicks) {
+            return lidController.getOpenness(partialTicks);
+        }
+
+        public static void lidAnimateTick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity be) {
+            be.lidController.tickLid();
+        }
+
+        @Override
+        public boolean triggerEvent(int id, int param) {
+            if (id == 1) {
+                this.lidController.shouldBeOpen(param > 0);
+                return true;
+            }
+            return super.triggerEvent(id, param);
+        }
+
+        @Override
+        public void startOpen(Player player) {
+            if (this.remove || player.isSpectator()) return;
             assert this.getLevel() != null;
             this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-    }
 
-    @Override
-    public void stopOpen(Player player) {
-        if (!this.remove && !player.isSpectator()) {
+        @Override
+        public void stopOpen(Player player) {
+            if (this.remove || player.isSpectator()) return;
             assert this.getLevel() != null;
             this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
-    }
 
-    protected void signalOpenCount(Level level, BlockPos pos, BlockState state, int eventId, int eventParam) {
-        Block block = state.getBlock();
-        level.blockEvent(pos, block, 1, eventParam);
-    }
-
-    public void recheckOpen() {
-        if (!this.remove && this.level != null && !this.level.isClientSide) {
-            assert this.getLevel() != null;
-            this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
+        protected void signalOpenCount(Level level, BlockPos pos, BlockState state, int eventId, int eventParam) {
+            level.blockEvent(pos, state.getBlock(), 1, eventParam);
         }
-    }
 
-    public static void playSound(Level level, BlockPos pos, SoundEvent sound) {
-        double x = pos.getX() + 0.5, y = pos.getY() + 0.5, z = pos.getZ() + 0.5;
-        level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        if (!this.trySaveLootTable(tag)) {
-            ContainerHelper.saveAllItems(tag, this.items, provider);
-        }
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        this.items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
-        if (!this.tryLoadLootTable(tag)) {
-            ContainerHelper.loadAllItems(tag, this.items, provider);
-        }
-    }
-
-    @Override
-    protected AbstractContainerMenu createMenu(int id, Inventory inv) {
-        if (this.isLocked()) {
-            if (this.currentInteractingPlayer != null && this.currentInteractingPlayer != inv.player) {
-                inv.player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.strongbox.busy").withStyle(ChatFormatting.GRAY), true
-                );
-                return null;
+        public void recheckOpen() {
+            if (!this.remove && this.level != null && !this.level.isClientSide) {
+                assert this.getLevel() != null;
+                this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
             }
-            currentInteractingPlayer = inv.player;
-            return new LockMenu(id, inv, this);
-        } else {
-            this.allowLootUnpack = true;
-            currentInteractingPlayer = inv.player;
-            return new StrongboxMenu(id, inv, this);
         }
-    }
 
-    @Override
-    public Component getDisplayName() {
-        if (this.isLocked()) {
-            return Component.translatable("container.jolcraft.strongbox_locked");
-        } else {
+        public static void playSound(Level level, BlockPos pos, SoundEvent sound) {
+            double x = pos.getX() + 0.5;
+            double y = pos.getY() + 0.5;
+            double z = pos.getZ() + 0.5;
+
+            level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
+        }
+
+        // ---------------------------------------------------------------------
+        // Container / loot behavior
+        // ---------------------------------------------------------------------
+
+        @Override
+        public void unpackLootTable(@Nullable Player player) {
+            if (this.isLocked()) return;
+            if (this.allowLootUnpack) {
+                super.unpackLootTable(player);
+            }
+        }
+
+        @Override
+        public NonNullList<ItemStack> getItems() {
+            return items;
+        }
+
+        @Override
+        public void setItems(NonNullList<ItemStack> items) {
+            if (this.isLocked()) {
+                this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+            } else {
+                this.items = items;
+            }
+        }
+
+        @Override
+        public void clearContent() {
+            if (this.isLocked()) {
+                for (int i = 1; i < this.getContainerSize(); i++) {
+                    this.setItem(i, ItemStack.EMPTY);
+                }
+            } else {
+                super.clearContent();
+            }
+        }
+
+        @Override
+        public int getContainerSize() {
+            return items.size();
+        }
+
+        @Override
+        protected Component getDefaultName() {
             return Component.translatable("container.jolcraft.strongbox");
         }
+
+        // ---------------------------------------------------------------------
+        // NBT persistence (inventory + loot table only)
+        // ---------------------------------------------------------------------
+
+        @Override
+        protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+            super.saveAdditional(tag, provider);
+            if (!this.trySaveLootTable(tag)) {
+                ContainerHelper.saveAllItems(tag, this.items, provider);
+            }
+        }
+
+        @Override
+        protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+            super.loadAdditional(tag, provider);
+            this.items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
+            if (!this.tryLoadLootTable(tag)) {
+                ContainerHelper.loadAllItems(tag, this.items, provider);
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // Menu creation / display name
+        // ---------------------------------------------------------------------
+
+        @Override
+        protected AbstractContainerMenu createMenu(int id, Inventory inv) {
+            this.currentInteractingPlayer = inv.player;
+
+            if (this.isLocked()) {
+                return new LockMenu(id, inv, this);
+            }
+
+            this.allowLootUnpack = true;
+            return new StrongboxMenu(id, inv, this);
+        }
+
+        @Override
+        public Component getDisplayName() {
+            return this.isLocked()
+                    ? Component.translatable("container.jolcraft.strongbox_locked")
+                    : Component.translatable("container.jolcraft.strongbox");
+        }
+
+        // ---------------------------------------------------------------------
+        // Tick entrypoint + lock state
+        // ---------------------------------------------------------------------
+
+        public boolean isLocked() {
+            return this.getBlockState().getValue(StrongboxBlock.LOCKED);
+        }
+
+        public static void tick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity strongbox) {
+            if (level.isClientSide) return;
+
+            if (!state.getValue(StrongboxBlock.LOCKED)) {
+                if (!strongbox.lockSessionClearedWhileUnlocked) {
+                    strongbox.resetLockSession();
+                    strongbox.lockSessionClearedWhileUnlocked = true;
+                    strongbox.setChanged();
+                }
+                return;
+            }
+
+            strongbox.lockSessionClearedWhileUnlocked = false;
+            strongbox.serverTickLockSession();
+        }
+
+        // ---------------------------------------------------------------------
+        // Networking / misc
+        // ---------------------------------------------------------------------
+
+        @Override
+        public @Nullable ClientboundBlockEntityDataPacket getUpdatePacket() {
+            return ClientboundBlockEntityDataPacket.create(this);
+        }
+
+        @Override
+        public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+            return this.saveWithoutMetadata(registries);
+        }
+
+        private void syncToClient() {
+            setChanged();
+            if (level != null && !level.isClientSide) {
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+            }
+        }
     }
-
-    private boolean silkTouched = false;
-
-    public void setSilkTouched(boolean value) {
-        this.silkTouched = value;
-    }
-
-    public boolean wasSilkTouched() {
-        return this.silkTouched;
-    }
-
-    public boolean isLocked() {
-        BlockState state = this.getBlockState();
-
-        return state.getValue(StrongboxBlock.LOCKED);
-    }
-
-    public static void tick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity strongbox) {
-    }
-
-    public @Nullable Player getCurrentInteractingPlayer() {
-        return currentInteractingPlayer;
-    }
-
-}

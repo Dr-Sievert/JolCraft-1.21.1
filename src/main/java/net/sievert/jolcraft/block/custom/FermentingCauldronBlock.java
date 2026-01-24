@@ -66,14 +66,17 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            Level level, BlockState state, BlockEntityType<T> type
+    ) {
+        if (level.isClientSide) return null;
+
         if (type == JolCraftBlockEntities.FERMENTING_CAULDRON.get()) {
-            return (lvl, p, st, blockEntity) -> {
-                if (blockEntity instanceof FermentingCauldronBlockEntity fermenting) {
-                    fermenting.tick();
-                }
+            return (lvl, pos, st, be) -> {
+                ((FermentingCauldronBlockEntity) be).tick();
             };
         }
+
         return null;
     }
 

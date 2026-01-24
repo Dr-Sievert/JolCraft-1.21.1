@@ -110,7 +110,7 @@ public class JolCraftBlocks {
             "strongbox",
             (properties) -> new StrongboxBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
-                    .strength(5.0F, 8.0F)
+                    .strength(5.0F, 1200.0F)
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.DEEPSLATE_TILES)
@@ -123,7 +123,7 @@ public class JolCraftBlocks {
     public static final DeferredBlock<Block> STRONGBOX_DUMMY = BLOCKS.registerBlock("strongbox_dummy",
             (properties) -> new StrongboxBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
-                    .strength(5.0F, 8.0F)
+                    .strength(5.0F, 1200.0F)
                     .instrument(NoteBlockInstrument.BASS)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.DEEPSLATE_TILES)

@@ -19,20 +19,19 @@ public class JolCraftClientGameEvents {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.player != null && mc.screen instanceof LockScreen lockScreen) {
-            LockMenu menu = lockScreen.getMenu();
-            menu.tick(mc.player);
-        }
-
         int prevMuffleTicks = ClientDeliriumData.getAndStorePreviousTicks();
         int currentMuffleTicks = ClientDeliriumData.getMuffleTicks();
 
         if (prevMuffleTicks == 0 && currentMuffleTicks > 0) {
-            if (mc.player != null) {
-                assert mc.level != null;
-                mc.player.playSound(SoundEvents.AMBIENT_CAVE.value(), 0.7F + mc.level.random.nextFloat() * 0.4F, 0.8F + mc.level.random.nextFloat() * 0.4F);
+            if (mc.player != null && mc.level != null) {
+                mc.player.playSound(
+                        SoundEvents.AMBIENT_CAVE.value(),
+                        0.7F + mc.level.random.nextFloat() * 0.4F,
+                        0.8F + mc.level.random.nextFloat() * 0.4F
+                );
             }
         }
+
         ClientDeliriumData.tick();
     }
 

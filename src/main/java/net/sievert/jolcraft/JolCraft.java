@@ -5,8 +5,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
@@ -16,7 +14,6 @@ import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.gui.util.MenuTickDispatcher;
 import net.sievert.jolcraft.item.creative.JolCraftCreativeModeTabs;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
@@ -66,9 +63,6 @@ public class JolCraft {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(JolCraftNetworking::register);
         modEventBus.addListener(JolCraftCriteriaTriggers::register);
-
-        // --- Server tick ---
-        NeoForge.EVENT_BUS.addListener(ServerTickEvent.Post.class, JolCraft::onServerTick);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -78,10 +72,5 @@ public class JolCraft {
     // --- Utility for ResourceLocation under this modid ---
     public static ResourceLocation location(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
-    }
-
-    // --- Server tick handler ---
-    private static void onServerTick(ServerTickEvent.Post event) {
-        MenuTickDispatcher.tickAll(event.getServer());
     }
 }

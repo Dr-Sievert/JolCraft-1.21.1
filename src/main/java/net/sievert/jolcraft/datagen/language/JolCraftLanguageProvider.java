@@ -311,6 +311,7 @@ public class JolCraftLanguageProvider extends LanguageProvider {
         add("tooltip.jolcraft.strongbox.not_empty", "This strongbox has items inside.");
         add("tooltip.jolcraft.strongbox.loot", "This strongbox has loot inside.");
         add("tooltip.jolcraft.strongbox.set_locked", "You have locked this strongbox.");
+        add("tooltip.jolcraft.strongbox.set_unlocked", "You have unlocked this strongbox.");
         add("tooltip.jolcraft.strongbox.locked", "This strongbox is locked.");
         add("tooltip.jolcraft.strongbox.busy", "Someone else is trying to pick this lock.");
         add("tooltip.jolcraft.bounty.locked", "The parchment is marked with unfamiliar symbols.");

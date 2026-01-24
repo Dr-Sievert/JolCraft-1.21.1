@@ -294,16 +294,9 @@ public class HearthBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (type == JolCraftBlockEntities.HEARTH.get()) {
-            return (lvl, pos, st, blockEntity) -> {
-                if (lvl instanceof ServerLevel serverLevel) {
-                    if (blockEntity instanceof HearthBlockEntity hearth) {
-                        hearth.tick();
-                    }
-                }
-            };
-        }
-        return null;
+        if (level.isClientSide) return null;
+        return createTickerHelper(type, JolCraftBlockEntities.HEARTH.get(), (lvl, pos, st, be) -> {
+            be.tick();
+        });
     }
-
 }

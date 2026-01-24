@@ -41,14 +41,4 @@ public class DuskcapBlock extends JolCraftMushroomBlock{
     protected MapCodec<? extends BushBlock> codec() {
         return CODEC;
     }
-
-
-    @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        BlockPos blockpos = pos.below();
-        BlockState blockstate = level.getBlockState(blockpos);
-        net.neoforged.neoforge.common.util.TriState soilDecision = blockstate.canSustainPlant(level, blockpos, net.minecraft.core.Direction.UP, state);
-        return blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK) || (soilDecision.isDefault() ? (level.getRawBrightness(pos, 0) < 8 && this.mayPlaceOn(blockstate, level, blockpos)) : soilDecision.isTrue());
-    }
-
 }
