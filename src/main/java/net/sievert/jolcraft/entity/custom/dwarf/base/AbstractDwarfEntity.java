@@ -412,14 +412,18 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
             double velocityY = this.random.nextDouble() * 0.1D;
             double velocityZ = (this.random.nextDouble() - 0.5D) * 0.1D;
 
-            JolCraftParticleHelper.sendParticle(
+            JolCraftParticleHelper.spawn(
                     this.level(),
-                    this.blockPosition(),
+                    32.0D,
                     dust,
-                    false, false,
-                    offsetX, offsetY, offsetZ,
-                    velocityX, velocityY, velocityZ,
-                    32.0D
+                    false,
+                    false,
+                    offsetX,
+                    offsetY,
+                    offsetZ,
+                    velocityX,
+                    velocityY,
+                    velocityZ
             );
         }
     }

@@ -1,125 +1,89 @@
 package net.sievert.jolcraft.network;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.network.client.data.*;
+import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.packet.C2S.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.S2C.*;
-import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
-
-import java.util.Set;
 
 public class JolCraftNetworking {
 
     public static void register(RegisterPayloadHandlersEvent event) {
-        event.registrar(JolCraft.MOD_ID)
-                .versioned("1.0")
-                .playToClient(
-                        ClientboundDeliriumPacket.TYPE,
-                        ClientboundDeliriumPacket.CODEC,
-                        JolCraftNetworking::handleDelirium
-                )
-                .playToClient(
-                        ClientboundLanguagePacket.TYPE,
-                        ClientboundLanguagePacket.CODEC,
-                        JolCraftNetworking::handleSyncLanguage
-                )
-                .playToClient(
-                        ClientboundAncientLanguagePacket.TYPE,
-                        ClientboundAncientLanguagePacket.CODEC,
-                        JolCraftNetworking::handleSyncAncientLanguage
-                )
-                .playToClient(
-                        ClientboundReputationPacket.TYPE,
-                        ClientboundReputationPacket.CODEC,
-                        JolCraftNetworking::handleSyncReputation
-                )
-                .playToClient(
-                        ClientboundEndorsementsPacket.TYPE,
-                        ClientboundEndorsementsPacket.CODEC,
-                        JolCraftNetworking::handleSyncEndorsements
-                )
-                .playToClient(
-                        ClientboundLoreUnlocksPacket.TYPE,
-                        ClientboundLoreUnlocksPacket.CODEC,
-                        JolCraftNetworking::handleSyncTomeUnlocks
-                )
-                .playToClient(
-                        ClientboundDwarfMerchantOffersPacket.TYPE,
-                        ClientboundDwarfMerchantOffersPacket.CODEC,
-                        JolCraftNetworking::handleDwarfMerchantOffers
-                )
-                .playToServer(
-                        ServerboundDwarfSelectTradePacket.TYPE,
-                        ServerboundDwarfSelectTradePacket.CODEC,
-                        JolCraftNetworking::handleServerboundDwarfSelectTrade
-                )
-                .playToClient(
-                        ClientboundPlaySoundPacket.TYPE,
-                        ClientboundPlaySoundPacket.CODEC,
-                        JolCraftNetworking::handlePlaySound
-                )
-                .playToClient(
-                        ClientboundParticlePacket.TYPE,
-                        ClientboundParticlePacket.CODEC,
-                        JolCraftNetworking::handleParticle
-                );
+        var registrar = event.registrar(JolCraft.MOD_ID).versioned("1.0");
 
+        registrar.playToServer(
+                ServerboundDwarfSelectTradePacket.TYPE,
+                ServerboundDwarfSelectTradePacket.CODEC,
+                JolCraftNetworking::handleServerboundDwarfSelectTrade
+        );
 
+        if (FMLEnvironment.dist.isClient()) {
+            registrar
+                    .playToClient(
+                            ClientboundDeliriumPacket.TYPE,
+                            ClientboundDeliriumPacket.CODEC,
+                            ClientHandlers::handleDelirium
+                    )
+                    .playToClient(
+                            ClientboundLanguagePacket.TYPE,
+                            ClientboundLanguagePacket.CODEC,
+                            ClientHandlers::handleSyncLanguage
+                    )
+                    .playToClient(
+                            ClientboundAncientLanguagePacket.TYPE,
+                            ClientboundAncientLanguagePacket.CODEC,
+                            ClientHandlers::handleSyncAncientLanguage
+                    )
+                    .playToClient(
+                            ClientboundReputationPacket.TYPE,
+                            ClientboundReputationPacket.CODEC,
+                            ClientHandlers::handleSyncReputation
+                    )
+                    .playToClient(
+                            ClientboundEndorsementsPacket.TYPE,
+                            ClientboundEndorsementsPacket.CODEC,
+                            ClientHandlers::handleSyncEndorsements
+                    )
+                    .playToClient(
+                            ClientboundLoreUnlocksPacket.TYPE,
+                            ClientboundLoreUnlocksPacket.CODEC,
+                            ClientHandlers::handleSyncTomeUnlocks
+                    )
+                    .playToClient(
+                            ClientboundDwarfMerchantOffersPacket.TYPE,
+                            ClientboundDwarfMerchantOffersPacket.CODEC,
+                            ClientHandlers::handleDwarfMerchantOffers
+                    )
+                    .playToClient(
+                            ClientboundPlaySoundPacket.TYPE,
+                            ClientboundPlaySoundPacket.CODEC,
+                            ClientHandlers::handlePlaySound
+                    )
+                    .playToClient(
+                            ClientboundParticlePacket.TYPE,
+                            ClientboundParticlePacket.CODEC,
+                            ClientHandlers::handleParticle
+                    );
+        }
     }
 
-    public static void handleParticle(ClientboundParticlePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            var mc = Minecraft.getInstance();
-            if (mc.level instanceof ClientLevel clientLevel) {
-                clientLevel.addParticle(
-                        packet.particle(),
-                        packet.overrideLimiter(),
-                        packet.alwaysShow(),
-                        packet.x(), packet.y(), packet.z(),
-                        packet.vx(), packet.vy(), packet.vz()
-                );
-            }
-        });
-    }
+    // ----------------------------
+    // Serverbound handlers (safe on dedicated server)
+    // ----------------------------
 
-    public static void handlePlaySound(ClientboundPlaySoundPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            var mc = Minecraft.getInstance();
-            var player = mc.player;
-            if (player == null) return;
-
-            var optHolder = BuiltInRegistries.SOUND_EVENT.get(packet.soundId());
-            if (optHolder.isEmpty()) return;
-            var sound = optHolder.get().value();
-
-            player.level().playLocalSound(
-                    packet.x(), packet.y(), packet.z(),
-                    sound,
-                    packet.source(),
-                    packet.volume(),
-                    packet.pitch(),
-                    false
-            );
-        });
-    }
-
-
-    public static void handleServerboundDwarfSelectTrade(ServerboundDwarfSelectTradePacket packet, net.neoforged.neoforge.network.handling.IPayloadContext context) {
+    public static void handleServerboundDwarfSelectTrade(
+            ServerboundDwarfSelectTradePacket packet,
+            IPayloadContext context
+    ) {
         context.enqueueWork(() -> {
             var player = context.player();
-
             if (player.containerMenu instanceof DwarfMerchantMenu menu) {
                 menu.setSelectionHint(packet.getItem());
                 menu.tryMoveItems(packet.getItem());
@@ -127,50 +91,9 @@ public class JolCraftNetworking {
         });
     }
 
-    public static void handleDwarfMerchantOffers(ClientboundDwarfMerchantOffersPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Minecraft mc = Minecraft.getInstance();
-            assert mc.player != null;
-            AbstractContainerMenu abstractContainerMenu = mc.player.containerMenu;
-            if (packet.containerId() == abstractContainerMenu.containerId && abstractContainerMenu instanceof DwarfMerchantMenu dwarfMenu) {
-                dwarfMenu.setOffers(packet.offers());
-                dwarfMenu.setXp(packet.dwarfXp());
-                dwarfMenu.setMerchantLevel(packet.dwarfLevel());
-                dwarfMenu.setShowProgressBar(packet.showProgress());
-                dwarfMenu.setshowLevel(packet.showLevel());
-                dwarfMenu.setCanRestock(packet.canRestock());
-            }
-        });
-    }
-
-    public static void handleSyncTomeUnlocks(ClientboundLoreUnlocksPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ClientTomeUnlocksData.setUnlocks(packet.unlocks());
-        });
-    }
-
-    public static void handleDelirium(ClientboundDeliriumPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> ClientDeliriumData.setMuffleTicks(packet.durationTicks()));
-    }
-
-    public static void handleSyncLanguage(ClientboundLanguagePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> ClientLanguageData.setKnows(packet.knowsLanguage()));
-    }
-
-    public static void handleSyncAncientLanguage(ClientboundAncientLanguagePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> ClientAncientLanguageData.setKnows(packet.knowsLanguage()));
-    }
-
-    public static void handleSyncReputation(ClientboundReputationPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> ClientReputationData.setTier(packet.tier()));
-    }
-
-    public static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            Set<DwarfProfession> set = packet.endorsements();
-            ClientReputationData.setEndorsements(set);
-        });
-    }
+    // ----------------------------
+    // Sending helpers (server-side)
+    // ----------------------------
 
     public static void sendToClient(ServerPlayer player, CustomPacketPayload payload) {
         player.connection.send(payload);
@@ -178,6 +101,7 @@ public class JolCraftNetworking {
 
     public static void sendToNearbyClients(Level world, BlockPos pos, double radius, CustomPacketPayload payload) {
         if (!(world instanceof ServerLevel serverLevel)) return;
+
         double radiusSq = radius * radius;
         for (ServerPlayer player : serverLevel.players()) {
             if (player.blockPosition().distSqr(pos) <= radiusSq) {
@@ -186,4 +110,87 @@ public class JolCraftNetworking {
         }
     }
 
+    // ----------------------------
+    // Clientbound handlers (isolated so the server never loads client classes)
+    // ----------------------------
+
+    private static final class ClientHandlers {
+
+        private static void handleParticle(ClientboundParticlePacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> {
+                var mc = net.minecraft.client.Minecraft.getInstance();
+                if (mc.level instanceof net.minecraft.client.multiplayer.ClientLevel clientLevel) {
+                    clientLevel.addParticle(
+                            packet.particle(),
+                            packet.overrideLimiter(),
+                            packet.alwaysShow(),
+                            packet.x(), packet.y(), packet.z(),
+                            packet.vx(), packet.vy(), packet.vz()
+                    );
+                }
+            });
+        }
+
+        private static void handlePlaySound(ClientboundPlaySoundPacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> {
+                var mc = net.minecraft.client.Minecraft.getInstance();
+                var player = mc.player;
+                if (player == null) return;
+
+                var optHolder = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.get(packet.soundId());
+                if (optHolder.isEmpty()) return;
+
+                var sound = optHolder.get().value();
+                player.level().playLocalSound(
+                        packet.x(), packet.y(), packet.z(),
+                        sound,
+                        packet.source(),
+                        packet.volume(),
+                        packet.pitch(),
+                        false
+                );
+            });
+        }
+
+        private static void handleDwarfMerchantOffers(ClientboundDwarfMerchantOffersPacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> {
+                var mc = net.minecraft.client.Minecraft.getInstance();
+                if (mc.player == null) return;
+
+                var menu = mc.player.containerMenu;
+                if (packet.containerId() == menu.containerId && menu instanceof DwarfMerchantMenu dwarfMenu) {
+                    dwarfMenu.setOffers(packet.offers());
+                    dwarfMenu.setXp(packet.dwarfXp());
+                    dwarfMenu.setMerchantLevel(packet.dwarfLevel());
+                    dwarfMenu.setShowProgressBar(packet.showProgress());
+                    dwarfMenu.setshowLevel(packet.showLevel());
+                    dwarfMenu.setCanRestock(packet.canRestock());
+                }
+            });
+        }
+
+        private static void handleSyncTomeUnlocks(ClientboundLoreUnlocksPacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData.setUnlocks(packet.unlocks()));
+        }
+
+        private static void handleDelirium(ClientboundDeliriumPacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientDeliriumData.setMuffleTicks(packet.durationTicks()));
+        }
+
+        private static void handleSyncLanguage(ClientboundLanguagePacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientLanguageData.setKnows(packet.knowsLanguage()));
+        }
+
+        private static void handleSyncAncientLanguage(ClientboundAncientLanguagePacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientAncientLanguageData.setKnows(packet.knowsLanguage()));
+        }
+
+        private static void handleSyncReputation(ClientboundReputationPacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setTier(packet.tier()));
+        }
+
+        private static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setEndorsements(packet.endorsements()));
+        }
+    }
 }

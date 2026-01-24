@@ -68,14 +68,18 @@ public class BlockDwarfAction implements DwarfAction {
             double vy = dwarf.getRandom().nextDouble() * 0.1D;
             double vz = (dwarf.getRandom().nextDouble() - 0.5D) * 0.1D;
 
-            JolCraftParticleHelper.sendParticle(
+            JolCraftParticleHelper.spawn(
                     dwarf.level(),
-                    dwarf.blockPosition(),
+                    32.0D,
                     dust,
-                    false, false,
-                    ox, oy, oz,
-                    vx, vy, vz,
-                    32.0D
+                    false,
+                    false,
+                    ox,
+                    oy,
+                    oz,
+                    vx,
+                    vy,
+                    vz
             );
         }
     }

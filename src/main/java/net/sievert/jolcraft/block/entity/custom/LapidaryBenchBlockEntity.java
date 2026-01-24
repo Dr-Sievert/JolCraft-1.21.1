@@ -170,19 +170,15 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
             );
         }
 
-        JolCraftParticleHelper.sendParticle(
+        JolCraftParticleHelper.spawn(
                 level,
-                player.blockPosition(),
                 ParticleTypes.CRIT,
-                false,
-                true,
                 player.getX(),
-                player.getY() + 1.1,
+                player.getY() + 1.1D,
                 player.getZ(),
-                (level.random.nextDouble() - 0.5) * 0.24,
-                level.random.nextDouble() * 0.10,
-                (level.random.nextDouble() - 0.5) * 0.24,
-                32.0
+                (level.random.nextDouble() - 0.5D) * 0.24D,
+                level.random.nextDouble() * 0.10D,
+                (level.random.nextDouble() - 0.5D) * 0.24D
         );
     }
 
