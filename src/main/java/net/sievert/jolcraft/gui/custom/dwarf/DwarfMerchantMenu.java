@@ -52,18 +52,18 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        trader.setTradingPlayer(null);
+        this.trader.setTradingPlayer(null);
 
-        if (!trader.isClientSide()) {
-            for (int i = 0; i < 2; i++) {
-                ItemStack stack = tradeContainer.removeItemNoUpdate(i);
-                if (!stack.isEmpty()) {
-                    if (!player.isAlive() || (player instanceof ServerPlayer && ((ServerPlayer) player).hasDisconnected())) {
-                        player.drop(stack, false);
-                    } else {
-                        player.getInventory().placeItemBackInInventory(stack);
-                    }
-                }
+        if (!this.trader.isClientSide()) {
+            ItemStack a = this.tradeContainer.removeItemNoUpdate(0);
+            ItemStack b = this.tradeContainer.removeItemNoUpdate(1);
+
+            if (!player.isAlive()) {
+                if (!a.isEmpty()) player.drop(a, false);
+                if (!b.isEmpty()) player.drop(b, false);
+            } else {
+                player.getInventory().placeItemBackInInventory(a);
+                player.getInventory().placeItemBackInInventory(b);
             }
         }
     }

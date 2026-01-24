@@ -427,6 +427,9 @@ public class JolCraftAttributeEvents {
         Player player = event.getEntity();
         Level level = player.level();
         if (level.isClientSide()) return;
+        if (player.tickCount % 10 != 0) {
+            return;
+        }
 
         for (RadiantEntity radiant : ACTIVE_RADIANT_ENTITIES.values()) {
             if (radiant.isRemoved()) continue;
