@@ -46,6 +46,7 @@ public interface DwarfMerchant {
     }
 
     default void openTradingScreen(Player player, Component displayName, int level) {
+        this.setTradingPlayer(player);
         OptionalInt optionalInt = player.openMenu(
                 new SimpleMenuProvider(
                         (containerId, inventory, accessingPlayer) -> new DwarfMerchantMenu(containerId, inventory, this),
@@ -53,7 +54,12 @@ public interface DwarfMerchant {
                 )
         );
 
-        if (optionalInt.isPresent() && !player.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
+        if (optionalInt.isEmpty()) {
+            this.setTradingPlayer(null);
+            return;
+        }
+
+        if (!player.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
             DwarfMerchantOffers merchantOffers = this.getOffers();
             if (!merchantOffers.isEmpty()) {
                 SendDwarfMerchantOffers(
