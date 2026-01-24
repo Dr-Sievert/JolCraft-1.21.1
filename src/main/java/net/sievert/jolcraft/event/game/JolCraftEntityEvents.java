@@ -392,8 +392,5 @@ public class JolCraftEntityEvents {
                 event.setCanceled(true);
             }
         }
-
     }
-
-
 }

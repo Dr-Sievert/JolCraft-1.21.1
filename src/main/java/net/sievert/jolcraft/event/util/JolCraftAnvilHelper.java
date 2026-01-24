@@ -50,7 +50,6 @@ public class JolCraftAnvilHelper {
             j += (long) left.getOrDefault(DataComponents.REPAIR_COST, 0)
                     + (long) right.getOrDefault(DataComponents.REPAIR_COST, 0);
             boolean flag = false;
-            // Skipping hooks here; call your hooks outside the helper if needed
 
             if (!right.isEmpty()) {
                 flag = right.has(DataComponents.STORED_ENCHANTMENTS);
@@ -139,13 +138,11 @@ public class JolCraftAnvilHelper {
                 }
             }
 
-            // Rename logic
             String filtered = (rename != null) ? StringUtil.filterText(rename) : "";
             if (!filtered.isBlank()) {
                 if (!filtered.equals(left.getHoverName().getString())) {
                     k = 1;
                     i += k;
-                    // Vanilla: CUSTOM_NAME, *not* ITEM_NAME
                     itemstack1.set(DataComponents.CUSTOM_NAME, Component.literal(filtered));
                 }
             } else if (left.has(DataComponents.CUSTOM_NAME)) {
@@ -164,7 +161,6 @@ public class JolCraftAnvilHelper {
                 if (cost >= 40) {
                     cost = 39;
                 }
-                // onlyRenaming = true; // Unneeded here
             }
 
             if (cost >= 40 && !player.getAbilities().instabuild) {
@@ -191,7 +187,6 @@ public class JolCraftAnvilHelper {
         }
     }
 
-    // Vanilla logic: (old * 2) + 1, capped.
     public static int calculateIncreasedRepairCost(int oldRepairCost) {
         return (int)Math.min((long)oldRepairCost * 2L + 1L, Integer.MAX_VALUE);
     }

@@ -222,6 +222,10 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
         return this.showLevel;
     }
 
+    public DwarfMerchant getTrader() {
+        return trader;
+    }
+
     @Override
     public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
         return false;

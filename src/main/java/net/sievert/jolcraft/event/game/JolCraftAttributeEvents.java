@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -21,14 +20,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -79,24 +74,31 @@ public class JolCraftAttributeEvents {
         fullMarkDirty(event);
     }
 
-    @SubscribeEvent
-    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.getEntity() instanceof ServerPlayer sp) {
-            UUID uuid = sp.getUUID();
-            LAST_SLOWNESS_AMP.remove(uuid);
-            CHEST_LOOT_TO_REROLL.remove(uuid);
-            RadiantEntity existing = ACTIVE_RADIANT_ENTITIES.remove(uuid);
-            if (existing != null && !existing.isRemoved()) {
-                existing.discard();
-            }
-            LAST_PLAYER_POS.remove(uuid);
-            STATIONARY_TICKS.remove(uuid);
-        }
-    }
-
     private static void fullMarkDirty(PlayerEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         player.getData(JolCraftAttachments.ATTRIBUTES.get()).markDirtyAll();
+    }
+
+    @SubscribeEvent
+    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer sp) cleanupPlayerState(sp);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer sp) cleanupPlayerState(sp);
+    }
+
+    private static void cleanupPlayerState(ServerPlayer sp) {
+        UUID uuid = sp.getUUID();
+        LAST_SLOWNESS_AMP.remove(uuid);
+        CHEST_LOOT_TO_REROLL.remove(uuid);
+        RadiantEntity existing = ACTIVE_RADIANT_ENTITIES.remove(uuid);
+        if (existing != null && !existing.isRemoved()) {
+            existing.discard();
+        }
+        LAST_PLAYER_POS.remove(uuid);
+        STATIONARY_TICKS.remove(uuid);
     }
 
     @SubscribeEvent
@@ -350,14 +352,9 @@ public class JolCraftAttributeEvents {
 
         RadiantEntity existing = ACTIVE_RADIANT_ENTITIES.get(uuid);
 
-        if ((existing == null || existing.isRemoved())) {
-            for (RadiantEntity e : level.getEntitiesOfClass(RadiantEntity.class, player.getBoundingBox().inflate(32))) {
-                if (uuid.equals(e.getOwnerUUID())) {
-                    existing = e;
-                    ACTIVE_RADIANT_ENTITIES.put(uuid, e);
-                    break;
-                }
-            }
+        if (existing != null && existing.isRemoved()) {
+            ACTIVE_RADIANT_ENTITIES.remove(uuid);
+            existing = null;
         }
 
         if (lightLevel == 0) {
@@ -373,17 +370,25 @@ public class JolCraftAttributeEvents {
             return;
         }
 
-        if (existing == null || existing.isRemoved()) {
+        if (existing == null) {
+            for (RadiantEntity e : level.getEntitiesOfClass(RadiantEntity.class, player.getBoundingBox().inflate(32))) {
+                if (uuid.equals(e.getOwnerUUID())) {
+                    e.discard();
+                }
+            }
+
             RadiantEntity entity = new RadiantEntity(JolCraftEntities.RADIANT.get(), level);
             BlockPos spawnPos = player.blockPosition().above();
             entity.moveTo(spawnPos.getX() + 0.5, spawnPos.getY() + 1, spawnPos.getZ() + 0.5);
             entity.setOwner(player);
             entity.setRadiantLightLevel(lightLevel);
             level.addFreshEntity(entity);
+
             ACTIVE_RADIANT_ENTITIES.put(uuid, entity);
             LAST_PLAYER_POS.put(uuid, player.blockPosition());
             STATIONARY_TICKS.put(uuid, 0);
-        } else {
+        }
+        else {
             existing.setRadiantLightLevel(lightLevel);
 
             BlockPos current = player.blockPosition();
@@ -427,11 +432,9 @@ public class JolCraftAttributeEvents {
         Player player = event.getEntity();
         Level level = player.level();
         if (level.isClientSide()) return;
-        if (player.tickCount % 10 != 0) {
-            return;
-        }
+        if (player.tickCount % 10 != 0) return;
 
-        for (RadiantEntity radiant : ACTIVE_RADIANT_ENTITIES.values()) {
+        for (RadiantEntity radiant : List.copyOf(ACTIVE_RADIANT_ENTITIES.values())) {
             if (radiant.isRemoved()) continue;
 
             Entity ownerEntity = radiant.getOwner();

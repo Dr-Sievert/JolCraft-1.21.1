@@ -88,10 +88,23 @@ public class JolCraftNetworking {
     ) {
         context.enqueueWork(() -> {
             var player = context.player();
-            if (player.containerMenu instanceof DwarfMerchantMenu menu) {
-                menu.setSelectionHint(packet.getItem());
-                menu.tryMoveItems(packet.getItem());
-            }
+            if (!(player instanceof ServerPlayer sp)) return;
+
+            if (!(sp.containerMenu instanceof DwarfMerchantMenu menu)) return;
+
+            int selected = packet.getItem();
+
+            var offers = menu.getOffers();
+            if (selected < 0 || selected >= offers.size()) return;
+
+            if (!menu.stillValid(sp)) return;
+
+            var trader = menu.getTrader();
+            var tradingPlayer = trader.getTradingPlayer();
+            if (tradingPlayer != null && tradingPlayer != sp) return;
+
+            menu.setSelectionHint(selected);
+            menu.tryMoveItems(selected);
         });
     }
 

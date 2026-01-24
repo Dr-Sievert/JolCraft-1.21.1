@@ -68,7 +68,6 @@ public class JolCraftUtilityEvents {
         }
     }
 
-
     @SubscribeEvent
     public static void onEnchantItem(PlayerEnchantItemEvent event) {
         ItemStack stack = event.getEnchantedItem();
@@ -89,5 +88,4 @@ public class JolCraftUtilityEvents {
                     Component.literal(baseName).withStyle(ChatFormatting.AQUA));
         }
     }
-
 }

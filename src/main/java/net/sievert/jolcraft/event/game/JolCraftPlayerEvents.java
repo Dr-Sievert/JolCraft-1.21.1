@@ -11,21 +11,31 @@ import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.custom.attachment.hearth.Hearth;
+import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.util.AttachmentSyncHelper;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftPlayerEvents {
 
     @SubscribeEvent
-    public static void onAdvancementEarned(AdvancementEvent.AdvancementEarnEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        JolCraftCriteriaTriggers.HAS_ADVANCEMENT.trigger(player, event.getAdvancement().id());
-    }
-
-    @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
         AttachmentSyncHelper.syncAll(serverPlayer);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        if (player.containerMenu instanceof DwarfMerchantMenu menu) {
+            menu.getTrader().setTradingPlayer(null);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAdvancementEarned(AdvancementEvent.AdvancementEarnEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        JolCraftCriteriaTriggers.HAS_ADVANCEMENT.trigger(player, event.getAdvancement().id());
     }
 
     @SubscribeEvent

@@ -121,7 +121,6 @@ public class JolCraftClientModEvents {
 
         //Blocks
         event.registerLayerDefinition(StrongboxModel.LAYER_LOCATION, StrongboxModel::createBodyLayer);
-
     }
 
     @SubscribeEvent
@@ -139,38 +138,23 @@ public class JolCraftClientModEvents {
 
     @SubscribeEvent
     public static void registerTooltipFactories(RegisterClientTooltipComponentFactoriesEvent event) {
-        event.register(
-                CoinPouchTooltip.class,
-                CoinPouchTooltipRenderer::new
-        );
+        event.register(CoinPouchTooltip.class, CoinPouchTooltipRenderer::new);
     }
 
     @SubscribeEvent
     public static void onRegisterSelectItemModelProperty(RegisterSelectItemModelPropertyEvent event) {
-        event.register(
-                LoreKeyProperty.KEY,
-                LoreKeyProperty.TYPE
-        );
-        event.register(
-                CoinPouchAmountProperty.KEY,
-                CoinPouchAmountProperty.TYPE
-        );
+        event.register(LoreKeyProperty.KEY, LoreKeyProperty.TYPE);
+        event.register(CoinPouchAmountProperty.KEY, CoinPouchAmountProperty.TYPE);
     }
 
     @SubscribeEvent
     public static void onRegisterRangeSelectItemModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
-        event.register(
-                JolCraft.location("deepslate_compass_angle"),
-                DeepslateCompassAngle.MAP_CODEC
-        );
+        event.register(JolCraft.location("deepslate_compass_angle"), DeepslateCompassAngle.MAP_CODEC);
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void registerTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
-        event.register(
-                JolCraft.location("dial_color"),
-                DialColor.MAP_CODEC
-        );
+    public static void onRegisterTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(JolCraft.location("dial_color"), DialColor.MAP_CODEC);
     }
 
     @SubscribeEvent
