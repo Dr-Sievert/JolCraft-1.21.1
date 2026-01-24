@@ -5,7 +5,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -16,7 +15,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -34,7 +32,7 @@ public final class AttributesAttachment {
     private static final Map<ResourceLocation, EnumSet<RefreshKey>> ATTRIBUTE_TO_REFRESH = new HashMap<>();
 
     private static ResourceLocation attrKey(DeferredHolder<?, ?> holder) {
-        return Objects.requireNonNull(BuiltInRegistries.ATTRIBUTE.getKey((Attribute) holder.get()));
+        return holder.getId();
     }
 
     static {
