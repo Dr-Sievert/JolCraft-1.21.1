@@ -1,8 +1,15 @@
 package net.sievert.jolcraft.item;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.neoforged.bus.api.IEventBus;
@@ -10,6 +17,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.item.armor.JolCraftArmorMaterials;
 import net.sievert.jolcraft.item.custom.tool.PestleItem;
@@ -485,21 +493,41 @@ public class JolCraftItems {
 
 
 
-    public static final DeferredItem<Item> AEGISCORE_CUT    = ITEMS.registerItem("aegiscore_cut",    props -> new CutGemItem(props, "aegiscore"));
-    public static final DeferredItem<Item> ASHFANG_CUT      = ITEMS.registerItem("ashfang_cut",      props -> new CutGemItem(props, "ashfang"));
-    public static final DeferredItem<Item> DEEPMARROW_CUT   = ITEMS.registerItem("deepmarrow_cut",   props -> new CutGemItem(props, "deepmarrow"));
-    public static final DeferredItem<Item> EARTHBLOOD_CUT   = ITEMS.registerItem("earthblood_cut",   props -> new CutGemItem(props, "earthblood"));
-    public static final DeferredItem<Item> EMBERGLASS_CUT   = ITEMS.registerItem("emberglass_cut",   props -> new CutGemItem(props, "emberglass"));
-    public static final DeferredItem<Item> FROSTVEIN_CUT    = ITEMS.registerItem("frostvein_cut",    props -> new CutGemItem(props, "frostvein"));
-    public static final DeferredItem<Item> GRIMSTONE_CUT    = ITEMS.registerItem("grimstone_cut",    props -> new CutGemItem(props, "grimstone"));
-    public static final DeferredItem<Item> IRONHEART_CUT    = ITEMS.registerItem("ironheart_cut",    props -> new CutGemItem(props, "ironheart"));
-    public static final DeferredItem<Item> LUMIERE_CUT      = ITEMS.registerItem("lumiere_cut",      props -> new CutGemItem(props, "lumiere"));
-    public static final DeferredItem<Item> MOONSHARD_CUT    = ITEMS.registerItem("moonshard_cut",    props -> new CutGemItem(props, "moonshard"));
-    public static final DeferredItem<Item> RUSTAGATE_CUT    = ITEMS.registerItem("rustagate_cut",    props -> new CutGemItem(props, "rustagate"));
-    public static final DeferredItem<Item> SKYBURROW_CUT    = ITEMS.registerItem("skyburrow_cut",    props -> new CutGemItem(props, "skyburrow"));
-    public static final DeferredItem<Item> SUNGLEAM_CUT     = ITEMS.registerItem("sungleam_cut",     props -> new CutGemItem(props, "sungleam"));
-    public static final DeferredItem<Item> VERDANITE_CUT    = ITEMS.registerItem("verdanite_cut",    props -> new CutGemItem(props, "verdanite"));
-    public static final DeferredItem<Item> WOECRYSTAL_CUT   = ITEMS.registerItem("woecrystal_cut",   props -> new CutGemItem(props, "woecrystal"));
+    public static final DeferredItem<Item> AEGISCORE_CUT  = registerCutGem("aegiscore",  Attributes.ARMOR_TOUGHNESS, 0.5,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> ASHFANG_CUT    = registerCutGem("ashfang",    JolCraftAttributes.ATTACK_DAMAGE_INCREASE, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> DEEPMARROW_CUT = registerCutGem("deepmarrow", JolCraftAttributes.XP_BOOST, 0.125, AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> EARTHBLOOD_CUT = registerCutGem("earthblood", Attributes.MINING_EFFICIENCY, 0.05,  AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    public static final DeferredItem<Item> EMBERGLASS_CUT = registerCutGem("emberglass", Attributes.MAX_HEALTH, 2.0,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> FROSTVEIN_CUT  = registerCutGem("frostvein",  JolCraftAttributes.SLOW_RESIST, 0.2,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> GRIMSTONE_CUT  = registerCutGem("grimstone",  Attributes.ATTACK_SPEED, 0.05,  AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    public static final DeferredItem<Item> IRONHEART_CUT  = registerCutGem("ironheart",  JolCraftAttributes.ARMOR_INCREASE, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> LUMIERE_CUT    = registerCutGem("lumiere",    JolCraftAttributes.RADIANT, 0.25,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> MOONSHARD_CUT  = registerCutGem("moonshard",  JolCraftAttributes.MOVEMENT_SPEED_BOOST_NIGHT, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> RUSTAGATE_CUT  = registerCutGem("rustagate",  JolCraftAttributes.ARMOR_UNBREAKING, 0.075,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> SKYBURROW_CUT  = registerCutGem("skyburrow",  JolCraftAttributes.MOVEMENT_SPEED_BOOST_DAY, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> SUNGLEAM_CUT   = registerCutGem("sungleam",   JolCraftAttributes.EXTRA_CHEST_LOOT, 0.1,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> VERDANITE_CUT  = registerCutGem("verdanite",  JolCraftAttributes.EXTRA_CROP, 0.25,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> WOECRYSTAL_CUT = registerCutGem("woecrystal", JolCraftAttributes.MAGIC_RESISTANCE, 0.1,  AttributeModifier.Operation.ADD_VALUE);
+
+    private static DeferredItem<Item> registerCutGem(
+            String gemKey,
+            Holder<Attribute> attribute,
+            double amount,
+            AttributeModifier.Operation op
+    ) {
+        ResourceLocation id = JolCraft.location("gem/" + gemKey);
+
+        ItemAttributeModifiers modifiers = ItemAttributeModifiers.builder()
+                .add(attribute, new AttributeModifier(id, amount, op), EquipmentSlotGroup.ARMOR)
+                .build();
+
+        return ITEMS.registerItem(
+                gemKey + "_cut",
+                props -> new CutGemItem(
+                        props.component(DataComponents.ATTRIBUTE_MODIFIERS, modifiers)
+                )
+        );
+    }
 
     //Crops, food and brewing
 

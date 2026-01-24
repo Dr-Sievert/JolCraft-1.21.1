@@ -16,12 +16,9 @@ import net.sievert.jolcraft.network.util.AttachmentSyncHelper;
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftPlayerEvents {
 
-    //General
-
     @SubscribeEvent
     public static void onAdvancementEarned(AdvancementEvent.AdvancementEarnEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-
         JolCraftCriteriaTriggers.HAS_ADVANCEMENT.trigger(player, event.getAdvancement().id());
     }
 
@@ -39,5 +36,4 @@ public class JolCraftPlayerEvents {
             hearth.setLitThisDay(false);
         }
     }
-
 }

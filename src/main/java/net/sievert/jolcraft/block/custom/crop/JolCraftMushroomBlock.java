@@ -30,7 +30,6 @@ public class JolCraftMushroomBlock extends BushBlock implements BonemealableBloc
 
     protected static final VoxelShape SHAPE = Block.box(5.0, 0.0, 5.0, 11.0, 6.0, 11.0);
 
-
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;

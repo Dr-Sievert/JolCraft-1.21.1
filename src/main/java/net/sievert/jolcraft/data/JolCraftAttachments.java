@@ -9,6 +9,7 @@ import net.sievert.jolcraft.data.custom.attachment.hearth.HearthImpl;
 import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructuresImpl;
 import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLanguageImpl;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
+import net.sievert.jolcraft.data.custom.attachment.player.AttributesAttachment;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.attachment.lore.LoreUnlockImpl;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
@@ -19,6 +20,11 @@ public class JolCraftAttachments {
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, JolCraft.MOD_ID);
+
+    public static final Supplier<AttachmentType<AttributesAttachment>> ATTRIBUTES =
+            ATTACHMENT_TYPES.register("attributes", () ->
+                    AttachmentType.builder(AttributesAttachment::new).build()
+            );
 
     public static final Supplier<AttachmentType<DwarvenLanguageImpl>> DWARVEN_LANGUAGE =
             ATTACHMENT_TYPES.register("dwarven_language", () ->

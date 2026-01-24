@@ -67,10 +67,11 @@ public class JolCraftComponents {
                     .networkSynchronized(ByteBufCodecs.STRING_UTF8)
             );
 
-    // NOTE: This is still persistent-only because BountyData doesn't currently expose a StreamCodec here.
-    // Next "top tier" step is to add BountyData.STREAM_CODEC and plug it in.
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<BountyData>> BOUNTY_DATA =
-            register("bounty_data", builder -> builder.persistent(BountyData.CODEC));
+            register("bounty_data", builder -> builder
+                    .persistent(BountyData.CODEC)
+                    .networkSynchronized(BountyData.STREAM_CODEC)
+            );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BOUNTY_FILL =
             register("bounty_fill", builder -> builder

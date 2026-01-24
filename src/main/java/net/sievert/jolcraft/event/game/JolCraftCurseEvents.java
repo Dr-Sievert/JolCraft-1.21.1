@@ -27,6 +27,7 @@ public class JolCraftCurseEvents {
 
     //Delirium
 
+    @SuppressWarnings("deprecation")
     @SubscribeEvent
     public static void onDeliriumCurseAdded(MobEffectEvent.Added event) {
         if (!(event.getEntity() instanceof Player player)) return;
