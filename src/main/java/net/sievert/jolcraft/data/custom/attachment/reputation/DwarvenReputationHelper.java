@@ -144,48 +144,4 @@ public class DwarvenReputationHelper {
                     new ClientboundReputationPacket(tier));
         }
     }
-
-    // --- CLIENT utility methods (for local player only) ---
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean hasClientTier(int minTier) {
-        Player player = Minecraft.getInstance().player;
-        return hasTier(player, minTier);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean hasClientTierBypassCreative(int minTier) {
-        Player player = Minecraft.getInstance().player;
-        return hasTierBypassCreative(player, minTier);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean hasClientEndorsement(DwarfProfession profession) {
-        Player player = Minecraft.getInstance().player;
-        return hasEndorsement(player, profession);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean hasClientEndorsementBypassCreative(DwarfProfession profession) {
-        Player player = Minecraft.getInstance().player;
-        return hasEndorsementBypassCreative(player, profession);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static int getClientTier() {
-        Player player = Minecraft.getInstance().player;
-        return getTier(player);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static int getClientEndorsementCount() {
-        Player player = Minecraft.getInstance().player;
-        return getEndorsementCount(player);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static Set<DwarfProfession> getAllClientEndorsements() {
-        Player player = Minecraft.getInstance().player;
-        return getAllEndorsements(player);
-    }
 }

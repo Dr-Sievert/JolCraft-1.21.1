@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -12,6 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.custom.attachment.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -23,13 +25,19 @@ public class UncutGemItem extends Item {
     }
 
     @OnlyIn(Dist.CLIENT)
+    @Nullable
+    protected final Player clientPlayer() {
+        return net.minecraft.client.Minecraft.getInstance().player;
+    }
+
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Screen.hasAltDown()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.uncut_gem")
                     .withStyle(ChatFormatting.GRAY));
 
-            if (!DwarfLoreUnlockHelper.hasUnlockClient(DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (!DwarfLoreUnlockHelper.hasUnlock(clientPlayer(), DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.chisel.cut_locked")
                         .withStyle(ChatFormatting.RED));
             }

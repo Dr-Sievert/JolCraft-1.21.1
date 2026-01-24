@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.custom.lore.LoreAge;
 import net.sievert.jolcraft.data.custom.lore.LoreRarity;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
@@ -20,6 +22,7 @@ import net.sievert.jolcraft.item.custom.tooltip.UnidentifiedItem;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +32,12 @@ import java.util.Set;
 public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     public UnidentifiedDwarvenTomeItem(Properties properties) {
         super(properties);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Nullable
+    protected final Player clientPlayer() {
+        return net.minecraft.client.Minecraft.getInstance().player;
     }
 
     @Override
@@ -72,7 +81,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
 
     @Override
     protected List<Component> getAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
+        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(clientPlayer());
         return List.of(
                 knowsLanguage
                         ? Component.translatable("tooltip.jolcraft.unidentified").withStyle(ChatFormatting.GRAY)
@@ -82,7 +91,7 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
 
     @Override
     protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
+        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(clientPlayer());
         return List.of(
                 knowsLanguage
                         ? Component.translatable("tooltip.jolcraft.unidentified_dwarven_tome").withStyle(ChatFormatting.GRAY)

@@ -49,15 +49,4 @@ public class DwarvenLanguageHelper {
                     new ClientboundLanguagePacket(value));
         }
     }
-
-    /**
-     * CLIENT-ONLY: Checks if the local player knows Dwarvish, or is creative.
-     * Always routed through JolCraftProxy for correct side handling.
-     * Use in tooltips, GUIs, and client-only renders.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static boolean knowsDwarvishClient() {
-        Player player = Minecraft.getInstance().player;
-        return knowsDwarvish(player);
-    }
 }

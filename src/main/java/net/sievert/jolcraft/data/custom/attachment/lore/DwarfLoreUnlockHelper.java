@@ -58,24 +58,4 @@ public class DwarfLoreUnlockHelper {
         LoreUnlock<DwarfLoreKey> unlock = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARF_LORE_UNLOCK.get(), player);
         return unlock != null ? unlock.getUnlocks() : Set.of();
     }
-
-    // --- CLIENT ONLY: For local player convenience ---
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean hasUnlockClient(DwarfLoreKey unlockId) {
-        Player player = Minecraft.getInstance().player;
-        return hasUnlock(player, unlockId);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean hasUnlockClientBypassCreative(DwarfLoreKey unlockId) {
-        Player player = Minecraft.getInstance().player;
-        return hasUnlockBypassCreative(player, unlockId);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static Set<DwarfLoreKey> getAllUnlocksClient() {
-        Player player = Minecraft.getInstance().player;
-        return getAllUnlocks(player);
-    }
 }

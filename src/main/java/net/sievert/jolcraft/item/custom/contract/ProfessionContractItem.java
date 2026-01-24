@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -12,6 +13,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -23,9 +25,15 @@ public class ProfessionContractItem extends Item {
     }
 
     @OnlyIn(Dist.CLIENT)
+    @Nullable
+    protected final Player clientPlayer() {
+        return net.minecraft.client.Minecraft.getInstance().player;
+    }
+
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (DwarvenLanguageHelper.knowsDwarvishClient()) {
+        if (DwarvenLanguageHelper.knowsDwarvish(clientPlayer())) {
             if (Screen.hasAltDown()) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.profession_contract")
                         .withStyle(ChatFormatting.GRAY));

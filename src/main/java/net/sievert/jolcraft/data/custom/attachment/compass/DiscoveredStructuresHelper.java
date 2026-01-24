@@ -156,5 +156,4 @@ public class DiscoveredStructuresHelper {
         }
         return GlobalPos.of(level.dimension(), patchedPos);
     }
-
 }

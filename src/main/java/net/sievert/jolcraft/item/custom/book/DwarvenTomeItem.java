@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -15,6 +16,7 @@ import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
@@ -28,10 +30,16 @@ public class DwarvenTomeItem extends Item {
     }
 
     @OnlyIn(Dist.CLIENT)
+    @Nullable
+    protected final Player clientPlayer() {
+        return net.minecraft.client.Minecraft.getInstance().player;
+    }
+
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
-            boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
+            boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(clientPlayer());
 
             if (Screen.hasAltDown()) {
                 if (knowsLanguage) {

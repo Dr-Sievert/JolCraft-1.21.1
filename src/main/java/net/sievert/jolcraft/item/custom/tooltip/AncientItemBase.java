@@ -13,6 +13,7 @@ import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelpe
 import net.sievert.jolcraft.data.custom.attachment.language.AncientEffectHelper;
 import net.sievert.jolcraft.item.util.tooltip.TooltipHelper;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
@@ -29,19 +30,25 @@ public abstract class AncientItemBase extends Item {
     }
 
     @OnlyIn(Dist.CLIENT)
+    @Nullable
+    protected final Player clientPlayer() {
+        return net.minecraft.client.Minecraft.getInstance().player;
+    }
+
+    @OnlyIn(Dist.CLIENT)
     @Override
     public final void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
-            Player player = net.minecraft.client.Minecraft.getInstance().player;
+            Player player = clientPlayer();
             if (player != null) {
                 if (net.minecraft.client.gui.screens.Screen.hasAltDown() && hasAlt()) {
                     if (AncientEffectHelper.hasAncientMemoryClient()) {
-                        if (DwarvenLanguageHelper.knowsDwarvishClient()) {
+                        if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                             tooltip.addAll(getFullyReadableTooltip(stack, player, tooltip, flag));
                         } else {
                             tooltip.addAll(getLockedTooltip(stack, player, tooltip, flag));
                         }
-                    } else if (DwarvenLanguageHelper.knowsDwarvishClient()) {
+                    } else if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                         tooltip.addAll(getPartialUnderstandingTooltip(stack, player, tooltip, flag));
                     } else {
                         tooltip.addAll(AncientEffectHelper.getAncientText(player,
@@ -52,7 +59,7 @@ public abstract class AncientItemBase extends Item {
                         tooltip.add(Component.translatable("tooltip.jolcraft.need_ancient")
                                 .withStyle(ChatFormatting.RED));
                     }
-                    if(!DwarvenLanguageHelper.knowsDwarvishClient()) {
+                    if(!DwarvenLanguageHelper.knowsDwarvish(player)) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.need_lang")
                                 .withStyle(ChatFormatting.RED));
                         tooltip.add(Component.translatable("tooltip.jolcraft.ancient_memory")
@@ -60,12 +67,12 @@ public abstract class AncientItemBase extends Item {
                     }
                 } else {
                     if (AncientEffectHelper.hasAncientMemoryClient()) {
-                        if (DwarvenLanguageHelper.knowsDwarvishClient()) {
+                        if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                             tooltip.addAll(getNoAltTooltip(stack, player, tooltip, flag));
                         } else {
                             tooltip.addAll(getLockedTooltip(stack, player, tooltip, flag));
                         }
-                    } else if (DwarvenLanguageHelper.knowsDwarvishClient()) {
+                    } else if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                         tooltip.addAll(getPartialUnderstandingTooltip(stack, player, tooltip, flag));
                     } else {
                         tooltip.addAll(AncientEffectHelper.getAncientText(player,

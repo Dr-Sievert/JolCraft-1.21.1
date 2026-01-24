@@ -19,6 +19,7 @@ import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -28,6 +29,12 @@ public class DwarvenLexiconItem extends Item {
 
     public DwarvenLexiconItem(Properties properties) {
         super(properties);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @Nullable
+    protected final Player clientPlayer() {
+        return net.minecraft.client.Minecraft.getInstance().player;
     }
 
     @Override
@@ -50,7 +57,7 @@ public class DwarvenLexiconItem extends Item {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        boolean knows = DwarvenLanguageHelper.knowsDwarvishClient();
+        boolean knows = DwarvenLanguageHelper.knowsDwarvish(clientPlayer());
             // Normal summary
             if (knows) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.dwarven_lexicon.unlocked")

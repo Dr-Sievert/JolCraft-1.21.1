@@ -31,6 +31,7 @@ import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyTier;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +46,12 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
     private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.0F, 1.0F, 0.0F);  // Green (Completed)
     private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);  // Red (In Progress)
+
+    @OnlyIn(Dist.CLIENT)
+    @Nullable
+    protected final Player clientPlayer() {
+        return net.minecraft.client.Minecraft.getInstance().player;
+    }
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access) {
@@ -211,7 +218,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvishClient();
+        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(clientPlayer());
 
         if (Screen.hasAltDown()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate")
