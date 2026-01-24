@@ -22,6 +22,7 @@ import java.util.Objects;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DwarvenTomeItem extends Item {
+
     public DwarvenTomeItem(Properties properties) {
         super(properties);
     }
@@ -41,12 +42,7 @@ public class DwarvenTomeItem extends Item {
             } else {
                 if (knowsLanguage) {
                     String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
-                    if (translationKey != null) {
-                        tooltip.add(Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-                    } else {
-                        tooltip.add(Component.translatable("tooltip.jolcraft.dwarven_tome.unlocked")
-                                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-                    }
+                    tooltip.add(Component.translatable(Objects.requireNonNullElse(translationKey, "tooltip.jolcraft.dwarven_tome.unlocked")).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                 }
                 else {
                     tooltip.add(Component.translatable("tooltip.jolcraft.dwarven_tome.locked").withStyle(ChatFormatting.GRAY));

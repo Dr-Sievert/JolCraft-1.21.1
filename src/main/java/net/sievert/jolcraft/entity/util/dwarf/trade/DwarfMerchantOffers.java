@@ -33,7 +33,7 @@ public class DwarfMerchantOffers extends ArrayList<DwarfMerchantOffer> {
 
     @Nullable
     public DwarfMerchantOffer getRecipeFor(ItemStack stackA, ItemStack stackB, int index) {
-        if (index > 0 && index < this.size()) {
+        if (index >= 0 && index < this.size()) {
             DwarfMerchantOffer merchantoffer1 = this.get(index);
             return merchantoffer1.satisfiedBy(stackA, stackB) ? merchantoffer1 : null;
         } else {

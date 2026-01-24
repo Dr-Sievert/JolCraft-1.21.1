@@ -104,7 +104,7 @@ public class JolCraftEntities {
 
     public static final Supplier<EntityType<RadiantEntity>> RADIANT =
             ENTITY_TYPES.register("radiant", () -> EntityType.Builder.of(RadiantEntity::new, MobCategory.MISC)
-                    .sized(0.25F, 0.25F).build(RADIANT_KEY));
+                    .sized(0.25F, 0.25F).noSave().build(RADIANT_KEY));
 
 
     public static void register(IEventBus eventBus) {

@@ -39,6 +39,9 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     public final net.minecraft.world.entity.AnimationState idleAnimationState = new net.minecraft.world.entity.AnimationState();
     private int idleAnimationTimeout = 0;
 
+    // --- Light Level ---
+    private int radiantLightLevel = 15;
+
     public RadiantEntity(EntityType<? extends RadiantEntity> type, Level level) {
         super(type, level);
     }
@@ -97,9 +100,6 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         super.remove(reason);
     }
 
-    // --- Light Level ---
-    private int radiantLightLevel = 15;
-
     /** Returns the current light level emitted (0-15). */
     public int getRadiantLightLevel() {
         return radiantLightLevel;
@@ -136,22 +136,14 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         }
     }
 
-    // === SAVE/SYNC ===
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        // No synched data needed yet
-    }
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag tag) {
-        if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
-        }
-    }
+    protected void readAdditionalSaveData(CompoundTag tag) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag tag) {
-    }
+    protected void addAdditionalSaveData(CompoundTag tag) {}
 
     // === INVULNERABILITY/PHYSICS ===
     @Override
@@ -160,8 +152,5 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     }
 
     @Override public boolean isNoGravity() { return true; }
-    @Override public void move(MoverType type, Vec3 vec) {
-
-    }
-
+    @Override public void move(MoverType type, Vec3 vec) {}
 }

@@ -27,10 +27,13 @@ public class ChiselItem extends ToolItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Screen.hasAltDown()) {
-            tooltip.add(Component.translatable("tooltip.jolcraft.chisel")
-                    .withStyle(ChatFormatting.GRAY));
 
-            if (!DwarfLoreUnlockHelper.hasUnlockClient(DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+
+            if (DwarfLoreUnlockHelper.hasUnlockClient(DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                tooltip.add(Component.translatable("tooltip.jolcraft.chisel")
+                        .withStyle(ChatFormatting.GRAY));
+            }
+            else {
                 tooltip.add(Component.translatable("tooltip.jolcraft.chisel.cut_locked")
                         .withStyle(ChatFormatting.RED));
             }

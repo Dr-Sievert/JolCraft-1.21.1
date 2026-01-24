@@ -8,6 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.custom.merchant.CoinPouchItem;
 import net.sievert.jolcraft.item.util.coin.CoinPouchHelper;
 
@@ -205,80 +206,65 @@ public class DwarfMerchantOffer {
         return this.rewardExp;
     }
 
+    private static boolean matchesCostWithCount(DwarfItemCost cost, int requiredCount, ItemStack stack) {
+        if (stack.is(cost.item()) && stack.getCount() >= requiredCount && cost.components().test(stack)) {
+            return true;
+        }
+
+        if (stack.getItem() instanceof CoinPouchItem && cost.item().value() == JolCraftItems.GOLD_COIN.get()) {
+            return CoinPouchHelper.getCoins(stack) >= requiredCount;
+        }
+
+        return false;
+    }
+
     public boolean satisfiedBy(ItemStack playerOfferA, ItemStack playerOfferB) {
-        // Check if the cost is for GOLD_COIN and either slot contains a CoinPouchItem
-        boolean pouchInFirstSlot = playerOfferA.getItem() instanceof CoinPouchItem;
-        boolean pouchInSecondSlot = playerOfferB.getItem() instanceof CoinPouchItem;
+        int requiredA = this.getModifiedCostCount(this.baseCostA);
 
-        // If playerOfferA contains a CoinPouchItem, check if it has enough coins
-        if (pouchInFirstSlot) {
-            int coinsInPouch = CoinPouchHelper.getCoins(playerOfferA);
-            if (coinsInPouch < this.getModifiedCostCount(this.baseCostA)) {
-                return false; // Not enough coins in the pouch
-            }
-        }
-        // If playerOfferB contains a CoinPouchItem, check if it has enough coins
-        else if (pouchInSecondSlot) {
-            int coinsInPouch = CoinPouchHelper.getCoins(playerOfferB);
-            if (coinsInPouch < this.getModifiedCostCount(this.baseCostA)) {
-                return false; // Not enough coins in the pouch
-            }
-        }
-        // If neither slot contains a CoinPouchItem, just check item count for playerOfferA
-        else if (!this.baseCostA.test(playerOfferA) || playerOfferA.getCount() < this.getModifiedCostCount(this.baseCostA)) {
-            return false; // Check if the offer has enough items
+        if (!matchesCostWithCount(this.baseCostA, requiredA, playerOfferA)) {
+            return false;
         }
 
-        // Handle costB (if any)
-        // No second item required
-        // Check second item
-        return this.costB.map(dwarfItemCost -> dwarfItemCost.test(playerOfferB) && playerOfferB.getCount() >= dwarfItemCost.count()).orElseGet(playerOfferB::isEmpty);
+        return this.costB
+                .map(costB -> matchesCostWithCount(costB, costB.count(), playerOfferB))
+                .orElseGet(playerOfferB::isEmpty);
     }
 
 
-
     public boolean take(ItemStack playerOfferA, ItemStack playerOfferB) {
-
-        // Check if the offer is satisfied
         if (!this.satisfiedBy(playerOfferA, playerOfferB)) {
             return false;
         }
 
-        // Shrink item stack A (unless it is a coin pouch)
         int costA = this.getModifiedCostCount(this.baseCostA);
-        if (playerOfferA.getItem() instanceof CoinPouchItem) {
-            // Handle shrinking the coins inside the coin pouch if necessary
+
+        if (playerOfferA.getItem() instanceof CoinPouchItem
+                && this.baseCostA.item().value() == JolCraftItems.GOLD_COIN.get()) {
+
             int currentCoins = CoinPouchHelper.getCoins(playerOfferA);
-            if (currentCoins >= costA) {
-                CoinPouchHelper.setCoins(playerOfferA, currentCoins - costA);
-            }
+            CoinPouchHelper.setCoins(playerOfferA, currentCoins - costA);
+
         } else {
-            // Handle non-coin pouch items normally
-            if (playerOfferA.getCount() >= costA) {
-                playerOfferA.shrink(costA);
-            }
+            playerOfferA.shrink(costA);
         }
 
-        // Shrink item stack B if applicable
-        if (!this.getCostB().isEmpty()) {
-            int costB = this.getCostB().getCount();
-            if (playerOfferB.getItem() instanceof CoinPouchItem) {
-                // Handle shrinking the coins inside the coin pouch if necessary
+        if (this.costB.isPresent()) {
+            DwarfItemCost costB = this.costB.get();
+            int countB = costB.count();
+
+            if (playerOfferB.getItem() instanceof CoinPouchItem
+                    && costB.item().value() == JolCraftItems.GOLD_COIN.get()) {
+
                 int currentCoinsB = CoinPouchHelper.getCoins(playerOfferB);
-                if (currentCoinsB >= costB) {
-                    CoinPouchHelper.setCoins(playerOfferB, currentCoinsB - costB);
-                }
+                CoinPouchHelper.setCoins(playerOfferB, currentCoinsB - countB);
+
             } else {
-                // Handle non-coin pouch items normally
-                if (playerOfferB.getCount() >= costB) {
-                    playerOfferB.shrink(costB);
-                }
+                playerOfferB.shrink(countB);
             }
         }
 
         return true;
     }
-
 
     public DwarfMerchantOffer copy() {
         return new DwarfMerchantOffer(this);
