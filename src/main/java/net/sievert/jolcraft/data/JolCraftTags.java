@@ -9,6 +9,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.worldgen.structure.JolCraftStructures;
 
 import static net.sievert.jolcraft.JolCraft.location;
 
@@ -119,11 +120,23 @@ public class JolCraftTags {
     }
 
     public static final class Biomes {
+
+        //General
+
         public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create("mountains_and_hills");
+        public static final TagKey<Biome> DWARVEN = create("dwarven");
+
+        //Has structure
+
+        public static final TagKey<Biome> HAS_FORGE = hasStructure(JolCraftStructures.FORGE_ID);
+        public static final TagKey<Biome> HAS_DWARVEN_TRAIL_RUIN = hasStructure(JolCraftStructures.DWARVEN_TRAIL_RUIN_ID);
 
         private static TagKey<Biome> create(String name) {
             return TagKey.create(Registries.BIOME, JolCraft.location(name));
         }
-    }
 
+        private static TagKey<Biome> hasStructure(String structureId) {
+            return create("has_structure/" + structureId);
+        }
+    }
 }

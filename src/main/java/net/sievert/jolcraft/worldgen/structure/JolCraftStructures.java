@@ -22,9 +22,11 @@ public class JolCraftStructures {
      * Registers the base structure itself and sets what its path is. In this case,
      * this base structure will have the resourcelocation of structure_tutorial:sky_structures.
      */
-    public static final DeferredHolder<StructureType<?>, StructureType<ForgeStructure>> FORGE_STRUCTURE = DEFERRED_REGISTRY_STRUCTURE.register("forge", () -> explicitStructureTypeTyping(ForgeStructure.CODEC));
+    public static final String FORGE_ID = "forge";
+    public static final DeferredHolder<StructureType<?>, StructureType<ForgeStructure>> FORGE_STRUCTURE = DEFERRED_REGISTRY_STRUCTURE.register(FORGE_ID, () -> explicitStructureTypeTyping(ForgeStructure.CODEC));
 
-    public static final DeferredHolder<StructureType<?>, StructureType<DwarvenTrailStructure>> DWARVEN_TRAIL_STRUCTURE = DEFERRED_REGISTRY_STRUCTURE.register("dwarven_trail_ruin", () -> explicitStructureTypeTyping(DwarvenTrailStructure.CODEC));
+    public static final String DWARVEN_TRAIL_RUIN_ID = "dwarven_trail_ruin";
+    public static final DeferredHolder<StructureType<?>, StructureType<DwarvenTrailStructure>> DWARVEN_TRAIL_STRUCTURE = DEFERRED_REGISTRY_STRUCTURE.register(DWARVEN_TRAIL_RUIN_ID, () -> explicitStructureTypeTyping(DwarvenTrailStructure.CODEC));
 
     /**
      * Originally, I had a double lambda ()->()-> for the RegistryObject line above, but it turns out that
