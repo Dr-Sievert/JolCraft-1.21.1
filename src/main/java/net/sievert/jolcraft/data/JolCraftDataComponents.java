@@ -14,7 +14,7 @@ import net.sievert.jolcraft.item.client.compass.DialItemColor;
 
 import java.util.function.UnaryOperator;
 
-public class JolCraftComponents {
+public class JolCraftDataComponents {
 
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, JolCraft.MOD_ID);

@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -110,7 +110,7 @@ public class DeepslateCompassAngleState extends NeedleDirectionHelper {
         STRUCTURE("structure") {
             @Override
             public @Nullable GlobalPos get(ClientLevel level, ItemStack stack, Entity entity) {
-                return stack.get(JolCraftComponents.DEEPSLATE_COMPASS_TARGET.get());
+                return stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET.get());
             }
         };
         public static final Codec<DeepslateCompassAngleState.CompassTarget> CODEC = StringRepresentable.fromEnum(DeepslateCompassAngleState.CompassTarget::values);

@@ -2,7 +2,7 @@ package net.sievert.jolcraft.data.custom.lore.util;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.custom.lore.LoreAge;
 import net.sievert.jolcraft.data.custom.lore.LoreEntry;
 import net.sievert.jolcraft.data.custom.lore.LoreRarity;
@@ -13,14 +13,14 @@ public class LoreHelper {
 
     public static <K extends Enum<K>> K getLoreKey(ItemStack stack, Class<K> keyClass) {
         if (stack == null || stack.isEmpty()) return null;
-        String keyString = stack.get(JolCraftComponents.LORE_KEY.get());
+        String keyString = stack.get(JolCraftDataComponents.LORE_KEY.get());
         if (keyString == null || keyString.isEmpty()) return null;
         return byNameIgnoreCase(keyClass, keyString);
     }
 
     public static <K extends Enum<K>> void setLoreKey(ItemStack stack, K key) {
         if (stack == null || stack.isEmpty() || key == null) return;
-        stack.set(JolCraftComponents.LORE_KEY.get(), key.name().toLowerCase(Locale.ROOT));
+        stack.set(JolCraftDataComponents.LORE_KEY.get(), key.name().toLowerCase(Locale.ROOT));
     }
 
     public static <K extends Enum<K>> String getEntryTranslationKey(K key) {

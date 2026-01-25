@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -35,7 +35,7 @@ public final class LoreKeyProperty implements SelectItemModelProperty<String> {
     @Nullable
     @Override
     public String get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, @NotNull ItemDisplayContext context) {
-        return stack.get(JolCraftComponents.LORE_KEY.get());
+        return stack.get(JolCraftDataComponents.LORE_KEY.get());
     }
 
     @Override

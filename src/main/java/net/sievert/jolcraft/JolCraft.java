@@ -9,7 +9,7 @@ import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftAttachments;
-import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.effect.JolCraftEffects;
 import net.sievert.jolcraft.entity.JolCraftEntities;
@@ -45,7 +45,7 @@ public class JolCraft {
         JolCraftBlockEntities.register(modEventBus);
         JolCraftMenuTypes.register(modEventBus);
         JolCraftCreativeModeTabs.register(modEventBus);
-        JolCraftComponents.register(modEventBus);
+        JolCraftDataComponents.register(modEventBus);
         JolCraftLootModifiers.register(modEventBus);
         JolCraftSounds.register(modEventBus);
         JolCraftEffects.register(modEventBus);

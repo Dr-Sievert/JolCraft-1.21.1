@@ -11,7 +11,7 @@ import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
-import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
 import net.sievert.jolcraft.item.util.compass.DeepslateCompassHelper;
 
@@ -280,8 +280,8 @@ public class JolCraftCreativeModeTabs {
 
     private static void addCompassDialVariant(CreativeModeTab.Output output, String group) {
         ItemStack stack = new ItemStack(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get());
-        stack.set(JolCraftComponents.STRUCTURE_GROUP, group);
-        stack.set(JolCraftComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
+        stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group);
+        stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
         output.accept(stack);
     }
 

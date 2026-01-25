@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftAttachments;
-import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputation;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -58,9 +58,9 @@ public class EndorseDwarfAction extends InspectDwarfAction {
             JolCraftCriteriaTriggers.ENDORSEMENT_GAIN.trigger(serverPlayer, profession);
         }
         ItemStack updatedTablet = tablet;
-        updatedTablet.set(JolCraftComponents.REP_ENDORSEMENTS.get(), rep.getEndorsementCount());
-        updatedTablet.set(JolCraftComponents.REP_TIER.get(), rep.getTier());
-        updatedTablet.set(JolCraftComponents.REP_OWNER.get(), player.getName().getString());
+        updatedTablet.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), rep.getEndorsementCount());
+        updatedTablet.set(JolCraftDataComponents.REP_TIER.get(), rep.getTier());
+        updatedTablet.set(JolCraftDataComponents.REP_OWNER.get(), player.getName().getString());
         throwItem(dwarf, player, updatedTablet);
         tablet = ItemStack.EMPTY;
     }

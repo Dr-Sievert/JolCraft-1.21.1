@@ -11,7 +11,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -26,12 +26,12 @@ public class StrongboxItem extends BlockItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
-            if (stack.has(JolCraftComponents.LOCKED)) {
+            if (stack.has(JolCraftDataComponents.LOCKED)) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.strongbox.locked")
                         .withStyle(ChatFormatting.RED));
             }
 
-            if (stack.has(JolCraftComponents.LOOT_TABLE)) {
+            if (stack.has(JolCraftDataComponents.LOOT_TABLE)) {
                 tooltip.add(Component.translatable("tooltip.jolcraft.strongbox.loot")
                         .withStyle(ChatFormatting.GREEN));
             }
