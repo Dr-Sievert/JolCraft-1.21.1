@@ -13,6 +13,7 @@ import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.packet.C2S.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.S2C.*;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public class JolCraftNetworking {
@@ -184,7 +185,8 @@ public class JolCraftNetworking {
         }
 
         private static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setEndorsements((List<?>) packet.endorsements()));
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setEndorsements(EnumSet.copyOf(packet.endorsements())));
         }
+
     }
 }

@@ -16,6 +16,7 @@ import net.sievert.jolcraft.data.custom.attachment.lore.LoreUnlockImpl;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.network.client.data.ClientAncientLanguageData;
 import net.sievert.jolcraft.network.client.data.ClientLanguageData;
 import net.sievert.jolcraft.network.client.data.ClientReputationData;
@@ -23,11 +24,12 @@ import net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings({"unchecked", "unused", "rawtypes"})
+@SuppressWarnings({"unchecked", "unused"})
 @OnlyIn(Dist.CLIENT)
 public final class JolCraftClientProxy implements JolCraftClientAccess {
 
@@ -81,9 +83,9 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
                 cachedRep.setTier(ClientReputationData.getTier());
                 cachedRep.getEndorsements().clear();
 
-                List<?> endorsements = ClientReputationData.getAllEndorsements();
+                EnumSet<DwarfProfession> endorsements = ClientReputationData.getAllEndorsements();
                 if (endorsements != null && !endorsements.isEmpty()) {
-                    cachedRep.getEndorsements().addAll((List) endorsements);
+                    cachedRep.getEndorsements().addAll(endorsements);
                 }
             }
             return (T) cachedRep;

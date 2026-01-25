@@ -3,6 +3,7 @@ package net.sievert.jolcraft.event.game;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -17,12 +18,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.block.JolCraftBlocks;
@@ -35,8 +39,16 @@ import net.sievert.jolcraft.network.util.AttachmentSyncHelper;
 import net.sievert.jolcraft.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.recipe.custom.input.FermentingCauldronRecipeInput;
 
+import java.util.HashSet;
+
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftPlayerEvents {
+
+    @SubscribeEvent
+    public static void onAdvancementEarned(AdvancementEvent.AdvancementEarnEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        JolCraftCriteriaTriggers.HAS_ADVANCEMENT.trigger(player, event.getAdvancement().id());
+    }
 
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -54,17 +66,42 @@ public class JolCraftPlayerEvents {
     }
 
     @SubscribeEvent
-    public static void onAdvancementEarned(AdvancementEvent.AdvancementEarnEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        JolCraftCriteriaTriggers.HAS_ADVANCEMENT.trigger(player, event.getAdvancement().id());
-    }
-
-    @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
         Player player = event.getEntity();
         Hearth hearth = Hearth.get(player);
         if (hearth.hasLitThisDay()) {
             hearth.setLitThisDay(false);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onSleepFinished(SleepFinishedTimeEvent event) {
+        ServerLevel level = (ServerLevel) event.getLevel();
+        long skipped = event.getNewTime();
+        if (skipped <= 0) return;
+
+        final int chunkRadius = 4;
+        HashSet<BlockPos> seen = new HashSet<>();
+
+        for (var player : level.players()) {
+            int centerChunkX = SectionPos.blockToSectionCoord(player.blockPosition().getX());
+            int centerChunkZ = SectionPos.blockToSectionCoord(player.blockPosition().getZ());
+
+            for (int dx = -chunkRadius; dx <= chunkRadius; dx++) {
+                for (int dz = -chunkRadius; dz <= chunkRadius; dz++) {
+                    int cx = centerChunkX + dx;
+                    int cz = centerChunkZ + dz;
+
+                    var chunk = level.getChunk(cx, cz, ChunkStatus.FULL, false);
+                    if (!(chunk instanceof LevelChunk levelChunk)) continue;
+
+                    for (var be : levelChunk.getBlockEntities().values()) {
+                        if (be instanceof FermentingCauldronBlockEntity cauldron && cauldron.isBrewing() && seen.add(be.getBlockPos())) {
+                            cauldron.fastForwardBrew(skipped);
+                        }
+                    }
+                }
+            }
         }
     }
 

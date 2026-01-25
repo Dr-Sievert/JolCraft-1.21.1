@@ -30,6 +30,7 @@ import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -164,7 +165,7 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         this.lastIngredient = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
     }
 
-    private boolean isBrewing() {
+    public boolean isBrewing() {
         return brewTicks > 0;
     }
 
@@ -294,6 +295,27 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
+    public void fastForwardBrew(long skippedTicks) {
+        if (level == null || skippedTicks <= 0) return;
+
+        int skip = (int) Math.min(skippedTicks, Integer.MAX_VALUE);
+        int total = Math.max(1, blendTotalTicks);
+        int remaining = brewTicks;
+        int elapsed = total - remaining;
+        int newElapsed = Math.min(total, elapsed + skip);
+        float t = clamp01(newElapsed / (float) total);
+        int progressed = lerpArgb(startColor, targetColor, t);
+        int newRemaining = remaining - skip;
+
+        currentColor = progressed;
+        startColor = progressed;
+        brewTicks = newRemaining <= 0 ? 1 : newRemaining;
+        blendTotalTicks = brewTicks;
+        clientBlendStartGameTime = -1L;
+        bubbleDelay = 0;
+        syncToClient();
+    }
+    
     @Override
     public void setLevel(Level level) {
         super.setLevel(level);
@@ -317,7 +339,7 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     private void syncToClient() {
         setChanged();
         if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
