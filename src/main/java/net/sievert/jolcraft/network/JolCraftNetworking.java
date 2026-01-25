@@ -164,39 +164,27 @@ public class JolCraftNetworking {
         }
 
         private static void handleSyncTomeUnlocks(ClientboundLoreUnlocksPacket packet, IPayloadContext context) {
-            context.enqueueWork(() ->
-                    net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData.setUnlocks(packet.unlocks())
-            );
+            context.enqueueWork(() -> {net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData.setUnlocks(List.copyOf(packet.unlocks()));});
         }
 
         private static void handleDelirium(ClientboundDeliriumPacket packet, IPayloadContext context) {
-            context.enqueueWork(() ->
-                    net.sievert.jolcraft.network.client.data.ClientDeliriumData.setMuffleTicks(packet.durationTicks())
-            );
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientDeliriumData.setMuffleTicks(packet.durationTicks()));
         }
 
         private static void handleSyncLanguage(ClientboundLanguagePacket packet, IPayloadContext context) {
-            context.enqueueWork(() ->
-                    net.sievert.jolcraft.network.client.data.ClientLanguageData.setKnows(packet.knowsLanguage())
-            );
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientLanguageData.setKnows(packet.knowsLanguage()));
         }
 
         private static void handleSyncAncientLanguage(ClientboundAncientLanguagePacket packet, IPayloadContext context) {
-            context.enqueueWork(() ->
-                    net.sievert.jolcraft.network.client.data.ClientAncientLanguageData.setKnows(packet.knowsLanguage())
-            );
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientAncientLanguageData.setKnows(packet.knowsLanguage()));
         }
 
         private static void handleSyncReputation(ClientboundReputationPacket packet, IPayloadContext context) {
-            context.enqueueWork(() ->
-                    net.sievert.jolcraft.network.client.data.ClientReputationData.setTier(packet.tier())
-            );
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setTier(packet.tier()));
         }
 
         private static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
-            context.enqueueWork(() ->
-                    net.sievert.jolcraft.network.client.data.ClientReputationData.setEndorsements((List<?>) packet.endorsements())
-            );
+            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setEndorsements((List<?>) packet.endorsements()));
         }
     }
 }

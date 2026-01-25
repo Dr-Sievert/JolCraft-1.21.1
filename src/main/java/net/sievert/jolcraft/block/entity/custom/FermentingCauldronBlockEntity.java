@@ -275,7 +275,8 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
 
         if (level.isClientSide) {
             if (isBrewing()) {
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 0);
+                BlockState state = getBlockState();
+                level.sendBlockUpdated(worldPosition, state, state, 8);
             }
             return;
         }

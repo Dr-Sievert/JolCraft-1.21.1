@@ -3,6 +3,7 @@ package net.sievert.jolcraft.event.client.mod;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -36,7 +37,7 @@ import net.sievert.jolcraft.item.client.coin.CoinPouchAmountProperty;
 import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
 import net.sievert.jolcraft.item.client.compass.DeepslateCompassAngle;
 
-
+@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class JolCraftClientModEvents {
 
