@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.network.data;
 
-public class ClientDeliriumData {
+public final class ClientDeliriumData {
     private static int muffleTicks = 0;
     private static int prevMuffleTicks = 0;
 

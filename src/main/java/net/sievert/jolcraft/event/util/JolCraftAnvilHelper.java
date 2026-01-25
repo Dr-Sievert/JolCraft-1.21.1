@@ -15,7 +15,6 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 /**
  * An exact copy of AnvilMenu#createResult, adapted as a helper.
- * If you need JolCraft-specific logic (like gold name), do it *after* calling this.
  */
 public class JolCraftAnvilHelper {
     /**
