@@ -191,7 +191,6 @@ public class HearthBlock extends BaseEntityBlock {
         boolean isCoal = stack.is(Items.COAL) || stack.is(Items.CHARCOAL);
 
         if (!isCoal) {
-            System.out.println("Held item: " + stack);
             player.displayClientMessage(
                     Component.translatable("tooltip.jolcraft.hearth.need_coal").withStyle(ChatFormatting.GRAY), true
             );

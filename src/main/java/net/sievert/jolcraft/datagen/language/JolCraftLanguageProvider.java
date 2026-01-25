@@ -778,7 +778,6 @@ public class JolCraftLanguageProvider extends LanguageProvider {
 
                 String key = type + "." + id.getNamespace() + "." + id.getPath();
                 if (addedKeys.contains(key)) {
-                    System.out.println("Skipping (already added): " + key);
                     continue;
                 }
 
