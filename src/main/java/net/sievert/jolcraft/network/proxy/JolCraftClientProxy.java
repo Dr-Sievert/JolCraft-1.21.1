@@ -1,9 +1,10 @@
-package net.sievert.jolcraft.network.proxy.client;
+package net.sievert.jolcraft.network.proxy;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -17,10 +18,8 @@ import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationI
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.network.client.data.ClientAncientLanguageData;
-import net.sievert.jolcraft.network.client.data.ClientLanguageData;
-import net.sievert.jolcraft.network.client.data.ClientReputationData;
-import net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData;
+import net.sievert.jolcraft.network.client.data.*;
+import net.sievert.jolcraft.network.packet.S2C.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -32,10 +31,6 @@ import java.util.Set;
 @SuppressWarnings({"unchecked", "unused"})
 @OnlyIn(Dist.CLIENT)
 public final class JolCraftClientProxy implements JolCraftClientAccess {
-
-    // ----------------------------
-    // Cached "views" (rebuilt only when client data revisions change)
-    // ----------------------------
 
     private final DwarvenLanguageImpl cachedLang = new DwarvenLanguageImpl();
     private int lastLangRevision = -1;
@@ -49,10 +44,6 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     private LoreUnlockImpl<DwarfLoreKey> cachedLoreUnlock =
             new LoreUnlockImpl<>(DwarfLoreKey.class, Set.of());
     private int lastLoreRevision = -1;
-
-    // ----------------------------
-    // Attachments (client-cached views)
-    // ----------------------------
 
     @Override
     public <T> T getAttachment(AttachmentType<T> type, Player player) {
@@ -113,10 +104,6 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
         return player.getData(type);
     }
 
-    // ----------------------------
-    // Tooltip / client input
-    // ----------------------------
-
     @Override
     public boolean isAltDown() {
         return Screen.hasAltDown();
@@ -131,5 +118,89 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     public @NotNull Component getAltKeyComponent() {
         return InputConstants.getKey(InputConstants.KEY_LALT, -1)
                 .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
+    }
+
+    // ----------------------------
+    // Clientbound packet application
+    // ----------------------------
+
+    @Override
+    public void apply(ClientboundParticlePacket packet) {
+        var mc = Minecraft.getInstance();
+        if (mc.level instanceof net.minecraft.client.multiplayer.ClientLevel clientLevel) {
+            clientLevel.addParticle(
+                    packet.particle(),
+                    packet.overrideLimiter(),
+                    packet.alwaysShow(),
+                    packet.x(), packet.y(), packet.z(),
+                    packet.vx(), packet.vy(), packet.vz()
+            );
+        }
+    }
+
+    @Override
+    public void apply(ClientboundPlaySoundPacket packet) {
+        var mc = Minecraft.getInstance();
+        var player = mc.player;
+        if (player == null) return;
+
+        var optHolder = BuiltInRegistries.SOUND_EVENT.get(packet.soundId());
+        if (optHolder.isEmpty()) return;
+
+        var sound = optHolder.get().value();
+        player.level().playLocalSound(
+                packet.x(), packet.y(), packet.z(),
+                sound,
+                packet.source(),
+                packet.volume(),
+                packet.pitch(),
+                false
+        );
+    }
+
+    @Override
+    public void apply(ClientboundDwarfMerchantOffersPacket packet) {
+        var mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+
+        var menu = mc.player.containerMenu;
+        if (packet.containerId() == menu.containerId && menu instanceof net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu dwarfMenu) {
+            dwarfMenu.setOffers(packet.offers());
+            dwarfMenu.setXp(packet.dwarfXp());
+            dwarfMenu.setMerchantLevel(packet.dwarfLevel());
+            dwarfMenu.setShowProgressBar(packet.showProgress());
+            dwarfMenu.setshowLevel(packet.showLevel());
+            dwarfMenu.setCanRestock(packet.canRestock());
+        }
+    }
+
+    @Override
+    public void apply(ClientboundLoreUnlocksPacket packet) {
+        ClientTomeUnlocksData.setUnlocks(List.copyOf(packet.unlocks()));
+    }
+
+    @Override
+    public void apply(ClientboundDeliriumPacket packet) {
+        ClientDeliriumData.setMuffleTicks(packet.durationTicks());
+    }
+
+    @Override
+    public void apply(ClientboundLanguagePacket packet) {
+        ClientLanguageData.setKnows(packet.knowsLanguage());
+    }
+
+    @Override
+    public void apply(ClientboundAncientLanguagePacket packet) {
+        ClientAncientLanguageData.setKnows(packet.knowsLanguage());
+    }
+
+    @Override
+    public void apply(ClientboundReputationPacket packet) {
+        ClientReputationData.setTier(packet.tier());
+    }
+
+    @Override
+    public void apply(ClientboundEndorsementsPacket packet) {
+        ClientReputationData.setEndorsements(EnumSet.copyOf(packet.endorsements()));
     }
 }

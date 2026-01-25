@@ -2,7 +2,6 @@ package net.sievert.jolcraft.network.proxy;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.sievert.jolcraft.network.proxy.client.JolCraftClientAccess;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -57,7 +56,7 @@ public final class JolCraftProxy {
         }
     }
 
-    private static final String CLIENT_ACCESS_IMPL = "net.sievert.jolcraft.network.proxy.client.JolCraftClientProxy";
+    private static final String CLIENT_ACCESS_IMPL = "net.sievert.jolcraft.network.proxy.JolCraftClientProxy";
 
     public static JolCraftClientAccess access() {
         return get(
