@@ -1,6 +1,8 @@
 package net.sievert.jolcraft.recipe.custom;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -163,6 +165,23 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
 
     public static class Serializer implements RecipeSerializer<FermentingCauldronRecipe> {
 
+        private static final Codec<Integer> COLOR_CODEC =
+                Codec.either(Codec.INT, Codec.STRING).comapFlatMap(
+                        either -> either.map(
+                                DataResult::success,
+                                Serializer::parseColorStringResult
+                        ),
+                        argb -> Either.right(toRgbString(argb))
+                );
+
+        private static DataResult<Integer> parseColorStringResult(String s) {
+            try {
+                return DataResult.success(parseColorString(s));
+            } catch (RuntimeException e) {
+                return DataResult.error(() -> "Invalid color: " + s + " (expected #RRGGBB or #AARRGGBB)");
+            }
+        }
+
         public static final MapCodec<FermentingCauldronRecipe> CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
                         Ingredient.CODEC.fieldOf("ingredient").forGetter(r -> r.ingredient),
@@ -172,7 +191,8 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
 
                         Codec.INT.fieldOf("brew_ticks").forGetter(r -> r.brewTicks),
                         Codec.INT.fieldOf("bubble_ticks").forGetter(r -> r.bubbleTicks),
-                        Codec.INT.fieldOf("color").forGetter(r -> r.color),
+
+                        COLOR_CODEC.fieldOf("color").forGetter(r -> r.color),
 
                         EffectData.CODEC.optionalFieldOf("effect").forGetter(r -> Optional.ofNullable(r.effect)),
                         Codec.BOOL.optionalFieldOf("finalize", false).forGetter(r -> r.finalize),
@@ -203,6 +223,27 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, FermentingCauldronRecipe> streamCodec() {
             return STREAM_CODEC;
+        }
+
+        private static int parseColorString(String s) {
+            String str = s.trim();
+            if (str.startsWith("#")) str = str.substring(1);
+
+            if (str.length() == 6) {
+                int rgb = Integer.parseUnsignedInt(str, 16);
+                return 0xFF000000 | rgb;
+            }
+
+            if (str.length() == 8) {
+                return (int) Long.parseUnsignedLong(str, 16);
+            }
+
+            throw new IllegalArgumentException("Invalid color: " + s + " (expected #RRGGBB or #AARRGGBB)");
+        }
+
+        private static String toRgbString(int argb) {
+            int rgb = argb & 0xFFFFFF;
+            return String.format("#%06X", rgb);
         }
 
         private static FermentingCauldronRecipe fromNetwork(RegistryFriendlyByteBuf buf) {

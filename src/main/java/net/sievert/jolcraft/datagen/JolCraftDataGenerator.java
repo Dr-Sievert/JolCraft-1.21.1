@@ -32,15 +32,19 @@ public class JolCraftDataGenerator {
 
     @SubscribeEvent
     public static void gatherClientData(GatherDataEvent.Client event) {
-        addProviders(event.getGenerator(), event.getLookupProvider());
+        addServerProviders(event.getGenerator(), event.getLookupProvider());
+        addClientProviders(event.getGenerator(), event.getLookupProvider());
     }
 
     @SubscribeEvent
     public static void gatherServerData(GatherDataEvent.Server event) {
-        addProviders(event.getGenerator(), event.getLookupProvider());
+        addServerProviders(event.getGenerator(), event.getLookupProvider());
     }
 
-    private static void addProviders(DataGenerator generator, CompletableFuture<HolderLookup.Provider> lookup) {
+    private static void addServerProviders(
+            DataGenerator generator,
+            CompletableFuture<HolderLookup.Provider> lookup
+    ) {
         PackOutput packOutput = generator.getPackOutput();
 
         BlockTagsProvider blockTagsProvider = new JolCraftBlockTagProvider(packOutput, lookup);
@@ -49,8 +53,6 @@ public class JolCraftDataGenerator {
         generator.addProvider(true, new JolCraftDataMapProvider(packOutput, lookup));
 
         generator.addProvider(true, new JolCraftRecipeProvider.Runner(packOutput, lookup));
-
-        generator.addProvider(true, new JolCraftModelProvider(packOutput));
 
         generator.addProvider(true, new LootTableProvider(
                 packOutput,
@@ -81,7 +83,15 @@ public class JolCraftDataGenerator {
         ));
 
         generator.addProvider(true, new JolCraftDatapackProvider(packOutput, lookup));
+    }
 
+    private static void addClientProviders(
+            DataGenerator generator,
+            CompletableFuture<HolderLookup.Provider> lookup
+    ) {
+        PackOutput packOutput = generator.getPackOutput();
+
+        generator.addProvider(true, new JolCraftModelProvider(packOutput));
         generator.addProvider(true, new JolCraftLanguageProvider(packOutput));
     }
 }
