@@ -36,8 +36,16 @@ import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundPlaySoundPacket;
 import net.sievert.jolcraft.sound.JolCraftSounds;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftCompassEvents {
+
+    private static final Map<UUID, BlockPos> LAST_COMPASS_POS = new HashMap<>();
+    private static final Map<java.util.UUID, Integer> LAST_COMPASS_SLOT = new java.util.HashMap<>();
+    private static final Map<UUID, Integer> NEXT_FULL_SCAN_TICK = new java.util.HashMap<>();
 
     @SubscribeEvent
     public static void onCompassCrafted(PlayerEvent.ItemCraftedEvent event) {
@@ -164,80 +172,116 @@ public class JolCraftCompassEvents {
         if (!(player.level() instanceof ServerLevel serverLevel)) return;
         if (player.tickCount % 5 != 0) return;
 
-        var items = player.getInventory().items;
 
-        for (int invIdx = 0; invIdx < items.size(); invIdx++) {
-            ItemStack stack = items.get(invIdx);
-            if (!stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) continue;
+        BlockPos currentPos = player.blockPosition();
+        BlockPos lastPos = LAST_COMPASS_POS.get(player.getUUID());
+        if (currentPos.equals(lastPos)) return;
+        LAST_COMPASS_POS.put(player.getUUID(), currentPos);
 
-            GlobalPos tracked = stack.get(JolCraftComponents.DEEPSLATE_COMPASS_TARGET);
-            String trackedStructureId = stack.get(JolCraftComponents.STRUCTURE_GROUP);
-            if (tracked == null || trackedStructureId == null || trackedStructureId.isEmpty()) continue;
-            if (!player.level().dimension().equals(tracked.dimension())) continue;
+        var inv = player.getInventory();
+        var items = inv.items;
 
-            var structureRegistry = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE);
-            ResourceLocation trackedStructureKey = ResourceLocation.tryParse(trackedStructureId);
-            if (trackedStructureKey == null) continue;
-            var trackedStructureHolder = structureRegistry.get(trackedStructureKey).orElse(null);
-            if (trackedStructureHolder == null) continue;
+        UUID id = player.getUUID();
 
-            BlockPos trackedPosXZ = BlockPos.containing(tracked.pos().getX(), player.blockPosition().getY(), tracked.pos().getZ());
-            StructureManager structureManager = serverLevel.structureManager();
-            StructureStart start = structureManager.getStructureAt(trackedPosXZ, trackedStructureHolder.value());
+        int nextScan = NEXT_FULL_SCAN_TICK.getOrDefault(id, 0);
+        int slot = LAST_COMPASS_SLOT.getOrDefault(id, -1);
 
-            if (!start.isValid()) {
-                continue;
+        boolean needScan = player.tickCount >= nextScan;
+
+        if (!needScan) {
+            if (slot < 0 || slot >= items.size() || !items.get(slot).is(JolCraftItems.DEEPSLATE_COMPASS.get())) {
+                needScan = true;
             }
-            BoundingBox box = start.getBoundingBox();
+        }
 
-            if (!box.isInside(player.blockPosition())) {
-                continue;
+        if (needScan) {
+            int found = -1;
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).is(JolCraftItems.DEEPSLATE_COMPASS.get())) {
+                    found = i;
+                    break;
+                }
             }
-
-            BlockPos patchedEntrance = BlockPos.containing(tracked.pos().getX(), box.getCenter().getY(), tracked.pos().getZ());
-
-            boolean alreadyDiscovered = DiscoveredStructuresHelper.getDiscoveredStructures(player).stream()
-                    .anyMatch(gp -> gp.dimension().equals(tracked.dimension()) && gp.pos().equals(patchedEntrance));
-            if (alreadyDiscovered) continue;
-
-            // --- Discovery action ---
-            DiscoveredStructuresHelper.addDiscoveredStructureServer(
-                    player,
-                    GlobalPos.of(tracked.dimension(), patchedEntrance),
-                    trackedStructureKey
-            );
-
-            ItemStack emptyCompass = new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
-            var dye = stack.get(DataComponents.DYED_COLOR);
-            if (dye != null) emptyCompass.set(DataComponents.DYED_COLOR, dye);
-
-            items.set(invIdx, emptyCompass);
-            player.getInventory().setChanged();
-
-            player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.structure.discovered")
-                            .withStyle(ChatFormatting.GRAY)
-                            .append(Component.translatable("tooltip.jolcraft.structure." + trackedStructureId)
-                                    .withStyle(ChatFormatting.BLUE)),
-                    true
-            );
-
-            if (player instanceof ServerPlayer serverPlayer) {
-                JolCraftNetworking.sendToClient(serverPlayer,
-                        new ClientboundPlaySoundPacket(
-                                SoundEvents.ITEM_BREAK.location(),
-                                player.getX(), player.getY(), player.getZ(),
-                                SoundSource.PLAYERS, 1.0F, 1.5F
-                        ));
-                JolCraftNetworking.sendToClient(serverPlayer,
-                        new ClientboundPlaySoundPacket(
-                                JolCraftSounds.LEVEL_UP.get().location(),
-                                player.getX(), player.getY(), player.getZ(),
-                                SoundSource.PLAYERS, 1.0F, 1.0F
-                        ));
+            if (found < 0) {
+                LAST_COMPASS_SLOT.remove(id);
+                NEXT_FULL_SCAN_TICK.put(id, player.tickCount + 20);
+                return;
             }
+            slot = found;
+            LAST_COMPASS_SLOT.put(id, slot);
+            NEXT_FULL_SCAN_TICK.put(id, player.tickCount + 20);
+        }
 
-            break;
+        // From here: only evaluate ONE compass (the first one we care about).
+        ItemStack stack = items.get(slot);
+        if (!stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) return;
+
+        GlobalPos tracked = stack.get(JolCraftComponents.DEEPSLATE_COMPASS_TARGET);
+        String trackedStructureId = stack.get(JolCraftComponents.STRUCTURE_GROUP);
+        if (tracked == null || trackedStructureId == null || trackedStructureId.isEmpty()) return;
+        if (!player.level().dimension().equals(tracked.dimension())) return;
+
+        var structureRegistry = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE);
+        ResourceLocation trackedStructureKey = ResourceLocation.tryParse(trackedStructureId);
+        if (trackedStructureKey == null) return;
+        var trackedStructureHolder = structureRegistry.get(trackedStructureKey).orElse(null);
+        if (trackedStructureHolder == null) return;
+
+        BlockPos trackedPosXZ = BlockPos.containing(tracked.pos().getX(), player.blockPosition().getY(), tracked.pos().getZ());
+        StructureManager structureManager = serverLevel.structureManager();
+        StructureStart start = structureManager.getStructureAt(trackedPosXZ, trackedStructureHolder.value());
+        if (!start.isValid()) return;
+
+        BoundingBox box = start.getBoundingBox();
+        if (!box.isInside(player.blockPosition())) return;
+
+        BlockPos patchedEntrance = BlockPos.containing(tracked.pos().getX(), box.getCenter().getY(), tracked.pos().getZ());
+
+        // Avoid stream allocs every tick: plain loop
+        boolean alreadyDiscovered = false;
+        for (GlobalPos gp : DiscoveredStructuresHelper.getDiscoveredStructures(player)) {
+            if (gp.dimension().equals(tracked.dimension()) && gp.pos().equals(patchedEntrance)) {
+                alreadyDiscovered = true;
+                break;
+            }
+        }
+        if (alreadyDiscovered) return;
+
+        // --- Discovery action ---
+        DiscoveredStructuresHelper.addDiscoveredStructureServer(
+                player,
+                GlobalPos.of(tracked.dimension(), patchedEntrance),
+                trackedStructureKey
+        );
+
+        ItemStack emptyCompass = new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
+        var dye = stack.get(DataComponents.DYED_COLOR);
+        if (dye != null) emptyCompass.set(DataComponents.DYED_COLOR, dye);
+
+        items.set(slot, emptyCompass);
+        inv.setChanged();
+
+        player.displayClientMessage(
+                Component.translatable("tooltip.jolcraft.structure.discovered")
+                        .withStyle(ChatFormatting.GRAY)
+                        .append(Component.translatable("tooltip.jolcraft.structure." + trackedStructureId)
+                                .withStyle(ChatFormatting.BLUE)),
+                true
+        );
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            JolCraftNetworking.sendToClient(serverPlayer,
+                    new ClientboundPlaySoundPacket(
+                            SoundEvents.ITEM_BREAK.location(),
+                            player.getX(), player.getY(), player.getZ(),
+                            SoundSource.PLAYERS, 1.0F, 1.5F
+                    ));
+            JolCraftNetworking.sendToClient(serverPlayer,
+                    new ClientboundPlaySoundPacket(
+                            JolCraftSounds.LEVEL_UP.get().location(),
+                            player.getX(), player.getY(), player.getZ(),
+                            SoundSource.PLAYERS, 1.0F, 1.0F
+                    ));
         }
     }
 }

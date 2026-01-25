@@ -428,14 +428,19 @@ public class JolCraftAttributeEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerTickRadiantAura(PlayerTickEvent.Post event) {
-        Player player = event.getEntity();
-        Level level = player.level();
-        if (level.isClientSide()) return;
-        if (player.tickCount % 10 != 0) return;
+    public static void onLevelTickRadiantAura(LevelTickEvent.Post event) {
+        if (!(event.getLevel() instanceof ServerLevel level)) return;
+        if ((level.getGameTime() % 10L) != 0L) return;
 
-        for (RadiantEntity radiant : List.copyOf(ACTIVE_RADIANT_ENTITIES.values())) {
-            if (radiant.isRemoved()) continue;
+        Iterator<Map.Entry<UUID, RadiantEntity>> it = ACTIVE_RADIANT_ENTITIES.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<UUID, RadiantEntity> entry = it.next();
+            RadiantEntity radiant = entry.getValue();
+
+            if (radiant == null || radiant.isRemoved() || radiant.level() != level) {
+                it.remove();
+                continue;
+            }
 
             Entity ownerEntity = radiant.getOwner();
             if (!(ownerEntity instanceof Player owner)) continue;
@@ -445,19 +450,20 @@ public class JolCraftAttributeEvents {
 
             int percent = (int) (radiantAttr * 100);
             int nearest25 = (percent / 25) * 25;
+
             int radius = 1 + (nearest25 / 25);
             int amplifier = (nearest25 / 25) - 1;
 
-            double dx = radiant.getX() - player.getX();
-            double dz = radiant.getZ() - player.getZ();
-            double dy = radiant.getY() - player.getY();
+            var box = radiant.getBoundingBox().inflate(radius, 4.0D, radius);
+            for (Player player : level.getEntitiesOfClass(Player.class, box)) {
+                double dy = radiant.getY() - player.getY();
+                if (dy < 0 || dy > 4) continue;
 
-            double horizontalDistSq = dx * dx + dz * dz;
-            boolean withinY = dy >= 0 && dy <= 4;
+                double dx = radiant.getX() - player.getX();
+                double dz = radiant.getZ() - player.getZ();
+                if ((dx * dx + dz * dz) > (radius * radius)) continue;
 
-            if (horizontalDistSq <= radius * radius && withinY) {
                 MobEffectInstance existing = player.getEffect(JolCraftEffects.RADIANT);
-
                 if (existing != null && existing.getAmplifier() == amplifier && existing.getDuration() >= 200) {
                     continue;
                 }

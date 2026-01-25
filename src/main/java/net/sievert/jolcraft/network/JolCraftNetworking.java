@@ -13,6 +13,8 @@ import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.packet.C2S.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.S2C.*;
 
+import java.util.List;
+
 public class JolCraftNetworking {
 
     public static void register(RegisterPayloadHandlersEvent event) {
@@ -26,57 +28,32 @@ public class JolCraftNetworking {
 
         final boolean isClient = FMLEnvironment.dist.isClient();
 
-        registrar
-                .playToClient(
-                        ClientboundDeliriumPacket.TYPE,
-                        ClientboundDeliriumPacket.CODEC,
-                        isClient ? ClientHandlers::handleDelirium : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundLanguagePacket.TYPE,
-                        ClientboundLanguagePacket.CODEC,
-                        isClient ? ClientHandlers::handleSyncLanguage : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundAncientLanguagePacket.TYPE,
-                        ClientboundAncientLanguagePacket.CODEC,
-                        isClient ? ClientHandlers::handleSyncAncientLanguage : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundReputationPacket.TYPE,
-                        ClientboundReputationPacket.CODEC,
-                        isClient ? ClientHandlers::handleSyncReputation : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundEndorsementsPacket.TYPE,
-                        ClientboundEndorsementsPacket.CODEC,
-                        isClient ? ClientHandlers::handleSyncEndorsements : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundLoreUnlocksPacket.TYPE,
-                        ClientboundLoreUnlocksPacket.CODEC,
-                        isClient ? ClientHandlers::handleSyncTomeUnlocks : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundDwarfMerchantOffersPacket.TYPE,
-                        ClientboundDwarfMerchantOffersPacket.CODEC,
-                        isClient ? ClientHandlers::handleDwarfMerchantOffers : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundPlaySoundPacket.TYPE,
-                        ClientboundPlaySoundPacket.CODEC,
-                        isClient ? ClientHandlers::handlePlaySound : JolCraftNetworking::handleNoopClientbound
-                )
-                .playToClient(
-                        ClientboundParticlePacket.TYPE,
-                        ClientboundParticlePacket.CODEC,
-                        isClient ? ClientHandlers::handleParticle : JolCraftNetworking::handleNoopClientbound
-                );
+        if (isClient) {
+            registrar
+                    .playToClient(ClientboundDeliriumPacket.TYPE, ClientboundDeliriumPacket.CODEC, ClientHandlers::handleDelirium)
+                    .playToClient(ClientboundLanguagePacket.TYPE, ClientboundLanguagePacket.CODEC, ClientHandlers::handleSyncLanguage)
+                    .playToClient(ClientboundAncientLanguagePacket.TYPE, ClientboundAncientLanguagePacket.CODEC, ClientHandlers::handleSyncAncientLanguage)
+                    .playToClient(ClientboundReputationPacket.TYPE, ClientboundReputationPacket.CODEC, ClientHandlers::handleSyncReputation)
+                    .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, ClientHandlers::handleSyncEndorsements)
+                    .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, ClientHandlers::handleSyncTomeUnlocks)
+                    .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, ClientHandlers::handleDwarfMerchantOffers)
+                    .playToClient(ClientboundPlaySoundPacket.TYPE, ClientboundPlaySoundPacket.CODEC, ClientHandlers::handlePlaySound)
+                    .playToClient(ClientboundParticlePacket.TYPE, ClientboundParticlePacket.CODEC, ClientHandlers::handleParticle);
+        } else {
+            registrar
+                    .playToClient(ClientboundDeliriumPacket.TYPE, ClientboundDeliriumPacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundLanguagePacket.TYPE, ClientboundLanguagePacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundAncientLanguagePacket.TYPE, ClientboundAncientLanguagePacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundReputationPacket.TYPE, ClientboundReputationPacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundPlaySoundPacket.TYPE, ClientboundPlaySoundPacket.CODEC, JolCraftNetworking::handleNoopClientbound)
+                    .playToClient(ClientboundParticlePacket.TYPE, ClientboundParticlePacket.CODEC, JolCraftNetworking::handleNoopClientbound);
+        }
     }
 
-    private static void handleNoopClientbound(CustomPacketPayload payload, IPayloadContext ctx) {
-        // Intentionally empty.
-    }
+    private static <T extends CustomPacketPayload> void handleNoopClientbound(T payload, IPayloadContext ctx) {}
 
     // ----------------------------
     // Serverbound handlers (safe on dedicated server)
@@ -92,7 +69,7 @@ public class JolCraftNetworking {
 
             if (!(sp.containerMenu instanceof DwarfMerchantMenu menu)) return;
 
-            int selected = packet.getItem();
+            int selected = packet.item();
 
             var offers = menu.getOffers();
             if (selected < 0 || selected >= offers.size()) return;
@@ -187,27 +164,39 @@ public class JolCraftNetworking {
         }
 
         private static void handleSyncTomeUnlocks(ClientboundLoreUnlocksPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData.setUnlocks(packet.unlocks()));
+            context.enqueueWork(() ->
+                    net.sievert.jolcraft.network.client.data.ClientTomeUnlocksData.setUnlocks(packet.unlocks())
+            );
         }
 
         private static void handleDelirium(ClientboundDeliriumPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientDeliriumData.setMuffleTicks(packet.durationTicks()));
+            context.enqueueWork(() ->
+                    net.sievert.jolcraft.network.client.data.ClientDeliriumData.setMuffleTicks(packet.durationTicks())
+            );
         }
 
         private static void handleSyncLanguage(ClientboundLanguagePacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientLanguageData.setKnows(packet.knowsLanguage()));
+            context.enqueueWork(() ->
+                    net.sievert.jolcraft.network.client.data.ClientLanguageData.setKnows(packet.knowsLanguage())
+            );
         }
 
         private static void handleSyncAncientLanguage(ClientboundAncientLanguagePacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientAncientLanguageData.setKnows(packet.knowsLanguage()));
+            context.enqueueWork(() ->
+                    net.sievert.jolcraft.network.client.data.ClientAncientLanguageData.setKnows(packet.knowsLanguage())
+            );
         }
 
         private static void handleSyncReputation(ClientboundReputationPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setTier(packet.tier()));
+            context.enqueueWork(() ->
+                    net.sievert.jolcraft.network.client.data.ClientReputationData.setTier(packet.tier())
+            );
         }
 
         private static void handleSyncEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
-            context.enqueueWork(() -> net.sievert.jolcraft.network.client.data.ClientReputationData.setEndorsements(packet.endorsements()));
+            context.enqueueWork(() ->
+                    net.sievert.jolcraft.network.client.data.ClientReputationData.setEndorsements((List<?>) packet.endorsements())
+            );
         }
     }
 }

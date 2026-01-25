@@ -12,6 +12,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
@@ -39,12 +40,13 @@ import java.util.Optional;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class BountyCrateItem extends Item implements IItemExtension {
+
+    private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.0F, 1.0F, 0.0F);  // Green (Completed)
+    private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);      // Red (In Progress)
+
     public BountyCrateItem(Properties properties) {
         super(properties);
     }
-
-    private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.0F, 1.0F, 0.0F);  // Green (Completed)
-    private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);  // Red (In Progress)
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access) {
@@ -93,7 +95,6 @@ public class BountyCrateItem extends Item implements IItemExtension {
         return false;
     }
 
-
     private boolean tryFillCrate(ItemStack crate, ItemStack target, SlotAccess access, int maxTransfer) {
         BountyData data = crate.get(JolCraftComponents.BOUNTY_DATA.get());
         if (data == null) return false;
@@ -103,9 +104,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 .orElse(null);
         if (targetItem == null || !target.is(targetItem)) return false;
 
-        int currentFilled = crate.has(JolCraftComponents.BOUNTY_FILL.get())
-                ? crate.get(JolCraftComponents.BOUNTY_FILL.get())
-                : 0;
+        int currentFilled = crate.getOrDefault(JolCraftComponents.BOUNTY_FILL.get(), 0);
 
         int toTransfer = Math.min(data.requiredCount() - currentFilled, Math.min(maxTransfer, target.getCount()));
         if (toTransfer <= 0) return false;
@@ -129,14 +128,15 @@ public class BountyCrateItem extends Item implements IItemExtension {
         BountyData data = crate.get(JolCraftComponents.BOUNTY_DATA.get());
         if (data == null) return InteractionResult.PASS;
 
-        int currentFilled = crate.has(JolCraftComponents.BOUNTY_FILL.get())
-                ? crate.get(JolCraftComponents.BOUNTY_FILL.get())
-                : 0;
-
+        int currentFilled = crate.getOrDefault(JolCraftComponents.BOUNTY_FILL.get(), 0);
         int needed = data.requiredCount() - currentFilled;
+
         if (needed <= 0) {
             crate.set(JolCraftComponents.BOUNTY_COMPLETE.get(), true);
-            player.displayClientMessage(Component.translatable("tooltip.jolcraft.bounty_crate.filled").withStyle(ChatFormatting.GRAY), true);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.bounty_crate.filled").withStyle(ChatFormatting.GRAY),
+                    true
+            );
             return InteractionResult.SUCCESS;
         }
 
@@ -145,19 +145,32 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 .orElse(null);
         if (targetItem == null) return InteractionResult.PASS;
 
-        int collected = 0;
-        for (int i = 0; i < player.getInventory().items.size(); i++) {
-            ItemStack stack = player.getInventory().items.get(i);
-            if (stack.is(targetItem)) {
-                int transfer = Math.min(needed - collected, stack.getCount());
-                stack.shrink(transfer);
-                collected += transfer;
+        Inventory inv = player.getInventory();
 
-                if (stack.isEmpty()) {
-                    player.getInventory().items.set(i, ItemStack.EMPTY);
-                }
-                if (collected >= needed) break;
+        int collected = 0;
+        boolean invChanged = false;
+
+        for (int i = 0; i < inv.items.size(); i++) {
+            ItemStack stack = inv.items.get(i);
+            if (!stack.is(targetItem)) continue;
+
+            int transfer = Math.min(needed - collected, stack.getCount());
+            if (transfer <= 0) continue;
+
+            stack.shrink(transfer);
+            collected += transfer;
+            invChanged = true;
+
+            if (stack.isEmpty()) {
+                inv.items.set(i, ItemStack.EMPTY);
             }
+
+            if (collected >= needed) break;
+        }
+
+        if (invChanged) {
+            inv.setChanged();
+            player.containerMenu.broadcastChanges();
         }
 
         if (collected > 0) {
@@ -167,10 +180,16 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 crate.set(JolCraftComponents.BOUNTY_COMPLETE.get(), true);
             }
 
-            player.displayClientMessage(Component.translatable("tooltip.jolcraft.bounty_crate.filled_some", collected).withStyle(ChatFormatting.GRAY), true);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.bounty_crate.filled_some", collected).withStyle(ChatFormatting.GRAY),
+                    true
+            );
             level.playSound(null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.6f, 1.2f);
         } else {
-            player.displayClientMessage(Component.translatable("tooltip.jolcraft.bounty_crate.no_items").withStyle(ChatFormatting.GRAY), true);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.bounty_crate.no_items").withStyle(ChatFormatting.GRAY),
+                    true
+            );
         }
 
         return InteractionResult.SUCCESS;
@@ -178,10 +197,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        int currentFilled = stack.has(JolCraftComponents.BOUNTY_FILL.get())
-                ? stack.get(JolCraftComponents.BOUNTY_FILL.get())
-                : 0;
-        return currentFilled > 0;
+        return stack.getOrDefault(JolCraftComponents.BOUNTY_FILL.get(), 0) > 0;
     }
 
     @Override
@@ -190,20 +206,15 @@ public class BountyCrateItem extends Item implements IItemExtension {
         if (data == null) return 0;
 
         int requiredCount = data.requiredCount();
-        int currentFilled = stack.has(JolCraftComponents.BOUNTY_FILL.get())
-                ? stack.get(JolCraftComponents.BOUNTY_FILL.get())
-                : 0;
+        int currentFilled = stack.getOrDefault(JolCraftComponents.BOUNTY_FILL.get(), 0);
 
         double progress = (double) currentFilled / requiredCount;
-
         return Math.min(13, (int) (progress * 13));
     }
 
     @Override
     public int getBarColor(ItemStack stack) {
-        int currentFilled = stack.has(JolCraftComponents.BOUNTY_FILL.get())
-                ? stack.get(JolCraftComponents.BOUNTY_FILL.get())
-                : 0;
+        int currentFilled = stack.getOrDefault(JolCraftComponents.BOUNTY_FILL.get(), 0);
         return currentFilled == Objects.requireNonNull(stack.get(JolCraftComponents.BOUNTY_DATA.get())).requiredCount()
                 ? FULL_BAR_COLOR : BAR_COLOR;
     }
@@ -217,7 +228,6 @@ public class BountyCrateItem extends Item implements IItemExtension {
         if (JolCraftProxy.access().isAltDown()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate")
                     .withStyle(ChatFormatting.GRAY));
-
         } else {
             if (knowsLanguage) {
                 BountyData data = stack.get(JolCraftComponents.BOUNTY_DATA.get());

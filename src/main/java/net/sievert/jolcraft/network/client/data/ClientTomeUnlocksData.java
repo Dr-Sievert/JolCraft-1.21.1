@@ -1,20 +1,21 @@
 package net.sievert.jolcraft.network.client.data;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
-public class ClientTomeUnlocksData {
-    private static Set<String> UNLOCKS = Collections.emptySet();
+public final class ClientTomeUnlocksData {
+    private static List<String> unlocks = List.of();
+    private static int revision;
 
-    public static void setUnlocks(Set<String> unlocks) {
-        UNLOCKS = Set.copyOf(unlocks);
+    public static java.util.List<String> getAllUnlocks() {
+        return unlocks;
     }
 
-    public static Set<String> getAllUnlocks() {
-        return UNLOCKS;
+    public static int revision() {
+        return revision;
     }
 
-    public static void clear() {
-        UNLOCKS = Collections.emptySet();
+    public static void setUnlocks(List<String> value) {
+        unlocks = (value == null) ? List.of() : List.copyOf(value);
+        revision++;
     }
 }

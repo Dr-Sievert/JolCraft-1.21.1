@@ -7,13 +7,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.item.JolCraftItems;
 
-import java.util.*;
-import java.util.function.IntSupplier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.ToIntFunction;
 
 public class BountyGenerator {
 
     /** Holds all data for a given item in a bounty pool. */
-    public record BountyEntry(Item item, IntSupplier count) {}
+    public record BountyEntry(Item item, ToIntFunction<RandomSource> count) {}
 
     /** Pool for a single tier: a list of entries. */
     public record BountyPool(List<BountyEntry> entries) {}
@@ -26,70 +30,69 @@ public class BountyGenerator {
         // MERCHANT
         POOLS.put(BountyType.MERCHANT, List.of(
                 new BountyPool(List.of(
-                        new BountyEntry(Items.COAL, () -> 5 + randomInt(8)),
-                        new BountyEntry(Items.FLINT, () -> 5 + randomInt(8)),
-                        new BountyEntry(Items.COPPER_INGOT, () -> 5 + randomInt(8)),
-                        new BountyEntry(Items.COBBLED_DEEPSLATE, () -> 5 + randomInt(8)),
-                        new BountyEntry(Items.TORCH, () -> 5 + randomInt(8)),
-                        new BountyEntry(Items.CLAY_BALL, () -> 5 + randomInt(8)),
-                        new BountyEntry(Items.IRON_NUGGET, () -> 5 + randomInt(8))
+                        new BountyEntry(Items.COAL,          r -> 5 + r.nextInt(8)),
+                        new BountyEntry(Items.FLINT,         r -> 5 + r.nextInt(8)),
+                        new BountyEntry(Items.COPPER_INGOT,  r -> 5 + r.nextInt(8)),
+                        new BountyEntry(Items.COBBLED_DEEPSLATE, r -> 5 + r.nextInt(8)),
+                        new BountyEntry(Items.TORCH,         r -> 5 + r.nextInt(8)),
+                        new BountyEntry(Items.CLAY_BALL,     r -> 5 + r.nextInt(8)),
+                        new BountyEntry(Items.IRON_NUGGET,   r -> 5 + r.nextInt(8))
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.IRON_INGOT, () -> 4 + randomInt(5)),
-                        new BountyEntry(Items.LAPIS_LAZULI, () -> 4 + randomInt(5)),
-                        new BountyEntry(Items.REDSTONE, () -> 4 + randomInt(5)),
-                        new BountyEntry(Items.GLOW_INK_SAC, () -> 3 + randomInt(4)),
-                        new BountyEntry(Items.SPIDER_EYE, () -> 3 + randomInt(4)),
-                        new BountyEntry(Items.GUNPOWDER, () -> 3 + randomInt(4)),
-                        new BountyEntry(Items.BONE, () -> 5 + randomInt(5))
+                        new BountyEntry(Items.IRON_INGOT,    r -> 4 + r.nextInt(5)),
+                        new BountyEntry(Items.LAPIS_LAZULI,  r -> 4 + r.nextInt(5)),
+                        new BountyEntry(Items.REDSTONE,      r -> 4 + r.nextInt(5)),
+                        new BountyEntry(Items.GLOW_INK_SAC,  r -> 3 + r.nextInt(4)),
+                        new BountyEntry(Items.SPIDER_EYE,    r -> 3 + r.nextInt(4)),
+                        new BountyEntry(Items.GUNPOWDER,     r -> 3 + r.nextInt(4)),
+                        new BountyEntry(Items.BONE,          r -> 5 + r.nextInt(5))
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.GOLD_INGOT, () -> 3 + randomInt(4)),
-                        new BountyEntry(Items.EMERALD, () -> 2 + randomInt(4)),
-                        new BountyEntry(Items.AMETHYST_SHARD, () -> 3 + randomInt(4)),
-                        new BountyEntry(Items.BLAZE_POWDER, () -> 3 + randomInt(4)),
-                        new BountyEntry(Items.INK_SAC, () -> 3 + randomInt(4))
+                        new BountyEntry(Items.GOLD_INGOT,    r -> 3 + r.nextInt(4)),
+                        new BountyEntry(Items.EMERALD,       r -> 2 + r.nextInt(4)),
+                        new BountyEntry(Items.AMETHYST_SHARD, r -> 3 + r.nextInt(4)),
+                        new BountyEntry(Items.BLAZE_POWDER,  r -> 3 + r.nextInt(4)),
+                        new BountyEntry(Items.INK_SAC,       r -> 3 + r.nextInt(4))
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.ANVIL, () -> 1),
-                        new BountyEntry(Items.GOLDEN_APPLE, () -> 1 + randomInt(2)),
-                        new BountyEntry(Items.BOOK, () -> 1 + randomInt(2)),
-                        new BountyEntry(Items.CAULDRON, () -> 1),
-                        new BountyEntry(Items.ITEM_FRAME, () -> 1 + randomInt(3)),
-                        new BountyEntry(Items.ENDER_PEARL, () -> 1)
+                        new BountyEntry(Items.ANVIL,         r -> 1),
+                        new BountyEntry(Items.GOLDEN_APPLE,  r -> 1 + r.nextInt(2)),
+                        new BountyEntry(Items.BOOK,          r -> 1 + r.nextInt(2)),
+                        new BountyEntry(Items.CAULDRON,      r -> 1),
+                        new BountyEntry(Items.ITEM_FRAME,    r -> 1 + r.nextInt(3)),
+                        new BountyEntry(Items.ENDER_PEARL,   r -> 1)
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.NETHERITE_SCRAP, () -> 1 + randomInt(2)),
-                        new BountyEntry(Items.HEART_OF_THE_SEA, () -> 1),
-                        new BountyEntry(Items.DRAGON_BREATH, () -> 1 + randomInt(2))
-                        // JolCraftItems: new BountyEntry(JolCraftItems.YOUR_GEM.get(), () -> 1),
+                        new BountyEntry(Items.NETHERITE_SCRAP, r -> 1 + r.nextInt(2)),
+                        new BountyEntry(Items.HEART_OF_THE_SEA, r -> 1),
+                        new BountyEntry(Items.DRAGON_BREATH, r -> 1 + r.nextInt(2))
                 ))
         ));
 
         // MINER
         POOLS.put(BountyType.MINER, List.of(
                 new BountyPool(List.of(
-                        new BountyEntry(Items.STONE, () -> 8 + randomInt(8)),
-                        new BountyEntry(Items.GRANITE, () -> 8 + randomInt(8)),
-                        new BountyEntry(Items.DIORITE, () -> 8 + randomInt(8)),
-                        new BountyEntry(Items.ANDESITE, () -> 8 + randomInt(8)),
-                        new BountyEntry(Items.TUFF, () -> 8 + randomInt(8))
+                        new BountyEntry(Items.STONE,     r -> 8 + r.nextInt(8)),
+                        new BountyEntry(Items.GRANITE,   r -> 8 + r.nextInt(8)),
+                        new BountyEntry(Items.DIORITE,   r -> 8 + r.nextInt(8)),
+                        new BountyEntry(Items.ANDESITE,  r -> 8 + r.nextInt(8)),
+                        new BountyEntry(Items.TUFF,      r -> 8 + r.nextInt(8))
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.IRON_ORE, () -> 4 + randomInt(5)),
-                        new BountyEntry(Items.COPPER_ORE, () -> 4 + randomInt(5)),
-                        new BountyEntry(Items.DEEPSLATE_IRON_ORE, () -> 4 + randomInt(5))
+                        new BountyEntry(Items.IRON_ORE,            r -> 4 + r.nextInt(5)),
+                        new BountyEntry(Items.COPPER_ORE,          r -> 4 + r.nextInt(5)),
+                        new BountyEntry(Items.DEEPSLATE_IRON_ORE,  r -> 4 + r.nextInt(5))
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.GOLD_ORE, () -> 3 + randomInt(4)),
-                        new BountyEntry(Items.EMERALD_ORE, () -> 2 + randomInt(3))
+                        new BountyEntry(Items.GOLD_ORE,     r -> 3 + r.nextInt(4)),
+                        new BountyEntry(Items.EMERALD_ORE,  r -> 2 + r.nextInt(3))
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.DIAMOND_ORE, () -> 1 + randomInt(2)),
-                        new BountyEntry(Items.DEEPSLATE_DIAMOND_ORE, () -> 1 + randomInt(2))
+                        new BountyEntry(Items.DIAMOND_ORE,           r -> 1 + r.nextInt(2)),
+                        new BountyEntry(Items.DEEPSLATE_DIAMOND_ORE, r -> 1 + r.nextInt(2))
                 )),
                 new BountyPool(List.of(
-                        new BountyEntry(Items.ANCIENT_DEBRIS, () -> 1)
+                        new BountyEntry(Items.ANCIENT_DEBRIS, r -> 1)
                 ))
         ));
     }
@@ -112,6 +115,7 @@ public class BountyGenerator {
                     default -> 0;
                 };
                 if (coins > 0) rewards.add(new ItemStack(JolCraftItems.GOLD_COIN.get(), coins));
+
                 float crateChance = switch (tier) {
                     case APPRENTICE -> 0.125f;
                     case JOURNEYMAN -> 0.25f;
@@ -121,9 +125,7 @@ public class BountyGenerator {
                 };
                 if (crateChance > 0 && random.nextFloat() < crateChance) {
                     boolean restock = random.nextBoolean();
-                    rewards.add(new ItemStack(
-                            restock ? JolCraftItems.RESTOCK_CRATE.get() : JolCraftItems.REROLL_CRATE.get()
-                    ));
+                    rewards.add(new ItemStack(restock ? JolCraftItems.RESTOCK_CRATE.get() : JolCraftItems.REROLL_CRATE.get()));
                 }
             }
             case MINER -> {
@@ -168,7 +170,7 @@ public class BountyGenerator {
 
         List<BountyEntry> entries = pool.entries();
         BountyEntry entry = entries.get(random.nextInt(entries.size()));
-        int count = entry.count().getAsInt();
+        int count = entry.count().applyAsInt(random);
 
         return new BountyData(
                 BuiltInRegistries.ITEM.getKey(entry.item()),
@@ -176,10 +178,5 @@ public class BountyGenerator {
                 tier.getValue(),
                 type.getId()
         );
-    }
-
-    /** Helper for static lambdas */
-    private static int randomInt(int bound) {
-        return RandomSource.create().nextInt(bound);
     }
 }
