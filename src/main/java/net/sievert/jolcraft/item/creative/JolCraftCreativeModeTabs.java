@@ -10,6 +10,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.item.client.BrewColor;
 import net.sievert.jolcraft.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.item.JolCraftItems;
@@ -70,7 +71,9 @@ public class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.YANILLIAN_HOPS);
                         pOutput.accept(JolCraftItems.YEAST);
                         pOutput.accept(JolCraftItems.GLASS_MUG);
-                        pOutput.accept(JolCraftItems.DWARVEN_BREW);
+                        ItemStack brew = new ItemStack(JolCraftItems.DWARVEN_BREW.get());
+                        brew.set(JolCraftDataComponents.BREW_COLOR.get(), 0xFF9A652B);
+                        pOutput.accept(brew);
 
                         pOutput.accept(JolCraftItems.MUFFHORN_MILK_BUCKET);
                         pOutput.accept(JolCraftItems.MUFFHORN_FUR);

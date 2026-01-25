@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "jolcraft:item/brewing/glass_mug",
+    "layer1": "jolcraft:item/brewing/dwarven_brew"
+  }
+}

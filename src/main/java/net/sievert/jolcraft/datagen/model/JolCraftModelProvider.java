@@ -221,9 +221,8 @@ public class JolCraftModelProvider extends ModelProvider {
         //Brewing
 
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.BARLEY_MALT.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "brewing");
-        JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.YEAST.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "brewing");
-        JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.GLASS_MUG.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "brewing");
-        JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.DWARVEN_BREW.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "brewing");
+        JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.YEAST.get(), ModelTemplates.FLAT_ITEM, "brewing");
+        JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.GLASS_MUG.get(), ModelTemplates.FLAT_ITEM, "brewing");
 
         blockModels.blockStateOutput.accept(new BlockStateGenerator() {
             @Override
@@ -408,6 +407,7 @@ public class JolCraftModelProvider extends ModelProvider {
                 .filter(holder -> !holder.value().equals(JolCraftItems.STRONGBOX_ITEM.get()))
                 .filter(holder -> !holder.value().equals(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()))
                 .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS.get()))
-                .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get()));
+                .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get()))
+                .filter(holder -> !holder.value().equals(JolCraftItems.DWARVEN_BREW.get()));
     }
 }

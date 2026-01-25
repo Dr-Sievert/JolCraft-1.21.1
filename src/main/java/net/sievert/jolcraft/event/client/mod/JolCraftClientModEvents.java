@@ -14,6 +14,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.block.JolCraftBlocks;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
+import net.sievert.jolcraft.item.client.BrewColor;
 import net.sievert.jolcraft.item.client.coin.CoinPouchTooltipRenderer;
 import net.sievert.jolcraft.item.client.compass.DialColor;
 import net.sievert.jolcraft.item.util.coin.CoinPouchTooltip;
@@ -167,6 +168,7 @@ public class JolCraftClientModEvents {
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void onRegisterTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(JolCraft.location("dial_color"), DialColor.MAP_CODEC);
+        event.register(JolCraft.location("brew_color"), BrewColor.MAP_CODEC);
     }
 
     @SubscribeEvent

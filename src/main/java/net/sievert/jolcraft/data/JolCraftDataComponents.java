@@ -149,6 +149,12 @@ public class JolCraftDataComponents {
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
             );
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BREW_COLOR =
+            register("brew_color", builder -> builder
+                    .persistent(Codec.INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+            );
+
     // -----------------
     // Register helper
     // -----------------

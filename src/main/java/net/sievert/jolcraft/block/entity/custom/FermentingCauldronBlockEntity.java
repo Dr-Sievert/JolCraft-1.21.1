@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.custom.attachment.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.recipe.JolCraftRecipes;
@@ -251,6 +252,8 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
                     )
             );
         }
+
+        out.set(JolCraftDataComponents.BREW_COLOR.get(), this.currentColor);
 
         return out;
     }
