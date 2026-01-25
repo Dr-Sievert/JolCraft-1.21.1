@@ -711,14 +711,14 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 null,
                 20,
                 5,
-                0xB16A1D
+                0x805d37
         );
         fermentingEffect(
                 JolCraftItems.ASGARNIAN_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
                 20,
                 5,
-                0x6B5352,
+                0x91706e,
                 MobEffects.HEALTH_BOOST,
                 6000,
                 0
@@ -729,7 +729,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 JolCraftTags.Items.HOPS_BREW,
                 20,
                 5,
-                0x5F5864,
+                0x817788,
                 MobEffects.NIGHT_VISION,
                 6000,
                 0
@@ -740,7 +740,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 JolCraftTags.Items.HOPS_BREW,
                 20,
                 5,
-                0x526B69,
+                0x6e918f,
                 MobEffects.DAMAGE_BOOST,
                 6000,
                 0
@@ -751,7 +751,7 @@ public class JolCraftRecipeProvider extends RecipeProvider {
                 JolCraftTags.Items.HOPS_BREW,
                 20,
                 5,
-                0x2B4318,
+                0x54832e,
                 MobEffects.MOVEMENT_SPEED,
                 6000,
                 0
