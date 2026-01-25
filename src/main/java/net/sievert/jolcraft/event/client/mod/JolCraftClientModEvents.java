@@ -16,8 +16,6 @@ import net.sievert.jolcraft.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.item.client.coin.CoinPouchTooltipRenderer;
 import net.sievert.jolcraft.item.client.compass.DialColor;
-import net.sievert.jolcraft.entity.client.model.dwarf.profession.*;
-import net.sievert.jolcraft.entity.client.render.dwarf.profession.*;
 import net.sievert.jolcraft.item.util.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.entity.JolCraftEntities;
 import net.sievert.jolcraft.entity.client.model.animal.MuffhornModel;
@@ -47,19 +45,45 @@ public class JolCraftClientModEvents {
     {
         //Dwarves
         EntityRenderers.register(JolCraftEntities.DWARF.get(), DwarfRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_GUILDMASTER.get(), DwarfGuildmasterRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_HISTORIAN.get(), DwarfHistorianRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_MERCHANT.get(), DwarfMerchantRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_SCRAPPER.get(), DwarfScrapperRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_BREWMASTER.get(), DwarfBrewmasterRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_GUARD.get(), DwarfGuardRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_KEEPER.get(), DwarfKeeperRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_ARTISAN.get(), DwarfArtisanRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_EXPLORER.get(), DwarfExplorerRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_MINER.get(), DwarfMinerRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_ALCHEMIST.get(), DwarfAlchemistRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_ARCANIST.get(), DwarfArcanistRenderer::new);
-        EntityRenderers.register(JolCraftEntities.DWARF_PRIEST.get(), DwarfPriestRenderer::new);
+
+        EntityRenderers.register(JolCraftEntities.DWARF_GUILDMASTER.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_GUILDMASTER.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_HISTORIAN.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_HISTORIAN.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_MERCHANT.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_MERCHANT.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_SCRAPPER.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_SCRAPPER.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_BREWMASTER.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_BREWMASTER.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_GUARD.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_GUARD.get(), 1.1f));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_KEEPER.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_KEEPER.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_ARTISAN.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_ARTISAN.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_EXPLORER.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_EXPLORER.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_MINER.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_MINER.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_ALCHEMIST.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_ALCHEMIST.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_ARCANIST.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_ARCANIST.get()));
+
+        EntityRenderers.register(JolCraftEntities.DWARF_PRIEST.get(),
+                ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_PRIEST.get()));
 
         //Animals
         EntityRenderers.register(JolCraftEntities.MUFFHORN.get(), MuffhornRenderer::new);
@@ -96,19 +120,6 @@ public class JolCraftClientModEvents {
 
         //Dwarves
         event.registerLayerDefinition(DwarfModel.LAYER_LOCATION, DwarfModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfGuildmasterModel.LAYER_LOCATION, DwarfGuildmasterModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfHistorianModel.LAYER_LOCATION, DwarfHistorianModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfMerchantModel.LAYER_LOCATION, DwarfMerchantModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfScrapperModel.LAYER_LOCATION, DwarfScrapperModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfBrewmasterModel.LAYER_LOCATION, DwarfBrewmasterModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfGuardModel.LAYER_LOCATION, DwarfGuardModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfKeeperModel.LAYER_LOCATION, DwarfKeeperModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfArtisanModel.LAYER_LOCATION, DwarfArtisanModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfExplorerModel.LAYER_LOCATION, DwarfExplorerModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfMinerModel.LAYER_LOCATION, DwarfMinerModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfAlchemistModel.LAYER_LOCATION, DwarfAlchemistModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfArcanistModel.LAYER_LOCATION, DwarfArcanistModel::createBodyLayer);
-        event.registerLayerDefinition(DwarfPriestModel.LAYER_LOCATION, DwarfPriestModel::createBodyLayer);
 
         //Animals
         event.registerLayerDefinition(MuffhornModel.LAYER_LOCATION, MuffhornModel::createBodyLayer);

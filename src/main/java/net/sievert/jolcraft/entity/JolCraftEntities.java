@@ -16,8 +16,8 @@ import net.sievert.jolcraft.entity.custom.object.RadiantEntity;
 import java.util.function.Supplier;
 
 public class JolCraftEntities {
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
-            DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, JolCraft.MOD_ID);
+
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, JolCraft.MOD_ID);
 
     //Dwarves
     public static final ResourceKey<EntityType<?>> DWARF_KEY             = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf"));
