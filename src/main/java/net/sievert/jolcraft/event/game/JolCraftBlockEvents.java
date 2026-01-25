@@ -32,10 +32,13 @@ public class JolCraftBlockEvents {
 
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
         var player = event.getEntity();
-        var level = event.getLevel();
         var pos = event.getPos();
-        var state = level.getBlockState(pos);
+        var state = serverLevel.getBlockState(pos);
         var mainHandStack = player.getMainHandItem();
 
         if (mainHandStack.is(Items.ROTTEN_FLESH)) {
@@ -46,14 +49,13 @@ public class JolCraftBlockEvents {
                     && state.hasProperty(BlockStateProperties.AXIS)
                     && state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y);
 
-            boolean onSoil = (event.getFace() == Direction.UP
-                    && (state.is(JolCraftBlocks.VERDANT_SOIL.get())));
+            boolean onSoil = (event.getFace() == Direction.UP && (state.is(JolCraftBlocks.VERDANT_SOIL.get())));
 
             boolean canPlant = onLog || onSoil;
 
-            if (canPlant && level.getBlockState(above).isAir()) {
-                level.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
-                level.playSound(null, above, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1.0F, 1.0F);
+            if (canPlant && serverLevel.getBlockState(above).isAir()) {
+                serverLevel.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
+                serverLevel.playSound(null, above, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1.0F, 1.0F);
 
                 if (!player.isCreative()) mainHandStack.shrink(1);
 
@@ -62,10 +64,7 @@ public class JolCraftBlockEvents {
             }
         }
 
-        if (!level.isClientSide() && state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
-
-            if (!(level instanceof ServerLevel serverLevel)) return;
-
+        if (!serverLevel.isClientSide() && state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
             var input = new FermentingCauldronRecipeInput(mainHandStack.copyWithCount(1), ItemStack.EMPTY);
 
             boolean hasRecipe = serverLevel.getServer()
@@ -79,16 +78,16 @@ public class JolCraftBlockEvents {
                     .defaultBlockState()
                     .setValue(FermentingCauldronBlock.LEVEL, 3);
 
-            level.setBlock(pos, newState, 3);
+            serverLevel.setBlock(pos, newState, 3);
 
-            if (level.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity be) {
+            if (serverLevel.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity be) {
                 InteractionResult result = be.handleInteraction(player, event.getHand(), mainHandStack);
                 event.setCancellationResult(result);
                 event.setCanceled(true);
                 return;
             }
 
-            level.setBlock(pos, state, 3);
+            serverLevel.setBlock(pos, state, 3);
         }
     }
 

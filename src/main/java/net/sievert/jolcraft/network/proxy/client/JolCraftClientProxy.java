@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.sievert.jolcraft.data.JolCraftAttachments;
 import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLanguageImpl;
@@ -25,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @SuppressWarnings({"unchecked", "unused"})
+@OnlyIn(Dist.CLIENT)
 public final class JolCraftClientProxy implements JolCraftClientAccess {
 
     // ----------------------------
