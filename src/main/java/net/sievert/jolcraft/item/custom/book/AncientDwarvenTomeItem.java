@@ -36,15 +36,13 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
 
     @Override
     protected @NotNull List<Component> getPartialUnderstandingTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding")
-                .withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected @NotNull List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
-        return List.of(
-                (translationKey != null)
+        return List.of((translationKey != null)
                         ? Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                         : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );
@@ -53,8 +51,7 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
     @Override
     protected @NotNull List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
-        return List.of(
-                (translationKey != null)
+        return List.of((translationKey != null)
                         ? Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                         : Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unlocked").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );

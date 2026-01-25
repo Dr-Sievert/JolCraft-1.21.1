@@ -8,8 +8,7 @@ import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientboundAncientLanguagePacket(boolean knowsLanguage) implements CustomPacketPayload {
-    public static final Type<ClientboundAncientLanguagePacket> TYPE =
-            new Type<>(JolCraft.location("sync_ancient_language"));
+    public static final Type<ClientboundAncientLanguagePacket> TYPE = new Type<>(JolCraft.location("sync_ancient_language"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundAncientLanguagePacket> CODEC =
             CustomPacketPayload.codec(ClientboundAncientLanguagePacket::write, ClientboundAncientLanguagePacket::read);

@@ -2,7 +2,6 @@ package net.sievert.jolcraft.item.custom.compass;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.ClickEvent;
@@ -21,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftComponents;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -100,13 +100,16 @@ public class DeepslateCompassItem extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.jolcraft.deepslate_compass").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.jolcraft.deepslate_compass")
+                .withStyle(ChatFormatting.GRAY));
 
         String structureId = stack.get(JolCraftComponents.STRUCTURE_GROUP);
         if (structureId != null && !structureId.isEmpty()) {
-            tooltip.add(Component.translatable("tooltip.jolcraft.structure." + structureId).withStyle(ChatFormatting.BLUE));
+            tooltip.add(Component.translatable("tooltip.jolcraft.structure." + structureId)
+                    .withStyle(ChatFormatting.BLUE));
 
-            if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCreative()) {
+            Player player = JolCraftProxy.access().getLocalPlayer();
+            if (player != null && player.isCreative()) {
                 var pos = stack.get(JolCraftComponents.DEEPSLATE_COMPASS_TARGET);
                 if (pos != null) {
                     tooltip.add(Component.literal(
@@ -114,10 +117,11 @@ public class DeepslateCompassItem extends Item {
                             .withStyle(ChatFormatting.GRAY));
                 }
             }
+        } else {
+            tooltip.add(Component.translatable("tooltip.jolcraft.structure.unknown")
+                    .withStyle(ChatFormatting.DARK_GRAY));
         }
-        else {
-            tooltip.add(Component.translatable("tooltip.jolcraft.structure.unknown").withStyle(ChatFormatting.DARK_GRAY));
-        }
-    }
 
+        super.appendHoverText(stack, context, tooltip, flag);
+    }
 }

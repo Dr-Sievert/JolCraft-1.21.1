@@ -51,14 +51,14 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
     @Override
     public void stop() {
 
-        int rep = DwarvenReputationHelper.getTierBypassCreative(player);
+        int rep = DwarvenReputationHelper.getTier(player);
 
         if (player instanceof ServerPlayer serverPlayer) {
             DwarvenReputationHelper.setReputationTier(serverPlayer, rep + 1);
             JolCraftCriteriaTriggers.REPUTATION_GAIN.trigger(serverPlayer);
         }
 
-        int newRep = DwarvenReputationHelper.getTierBypassCreative(player);
+        int newRep = DwarvenReputationHelper.getTier(player);
 
         player.displayClientMessage(Component.translatable("tooltip.jolcraft.reputation.level_up").withStyle(ChatFormatting.DARK_PURPLE), true);
 

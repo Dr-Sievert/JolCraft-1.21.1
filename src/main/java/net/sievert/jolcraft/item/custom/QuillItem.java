@@ -43,5 +43,4 @@ public class QuillItem extends SimpleTooltipItem {
         }
         return super.interactLivingEntity(stack, player, target, hand);
     }
-
 }

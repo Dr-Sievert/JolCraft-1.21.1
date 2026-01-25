@@ -24,9 +24,8 @@ public class ReputationGainInteraction extends InspectInteraction {
 
         boolean client = dwarf.level().isClientSide();
         int maxTier = DwarvenReputationImpl.getThresholdCount();
-        int strictTier = client ? DwarvenReputationHelper.getTier(player) : DwarvenReputationHelper.getTierBypassCreative(player);
-        int strictEndorsementCount = client ?
-                DwarvenReputationHelper.getEndorsementCount(player) : DwarvenReputationHelper.getEndorsementCountBypassCreative(player);
+        int strictTier = DwarvenReputationHelper.getTier(player);
+        int strictEndorsementCount = DwarvenReputationHelper.getEndorsementCount(player);
 
         if (strictTier >= maxTier) {
             if (client) {

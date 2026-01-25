@@ -1,9 +1,7 @@
 package net.sievert.jolcraft.item.custom.bounty;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -30,8 +28,9 @@ import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyData;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyTier;
 import net.sievert.jolcraft.entity.util.dwarf.bounty.BountyType;
+import net.sievert.jolcraft.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
@@ -46,12 +45,6 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
     private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.0F, 1.0F, 0.0F);  // Green (Completed)
     private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);  // Red (In Progress)
-
-    @OnlyIn(Dist.CLIENT)
-    @Nullable
-    protected final Player clientPlayer() {
-        return net.minecraft.client.Minecraft.getInstance().player;
-    }
 
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack stack, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access) {
@@ -218,9 +211,10 @@ public class BountyCrateItem extends Item implements IItemExtension {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(clientPlayer());
+        Player player = JolCraftProxy.access().getLocalPlayer();
+        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
 
-        if (Screen.hasAltDown()) {
+        if (JolCraftProxy.access().isAltDown()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate")
                     .withStyle(ChatFormatting.GRAY));
 
@@ -242,7 +236,8 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
                     BountyType type = BountyHelper.getBountyType(stack);
                     if (type == BountyType.UNKNOWN) {
-                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty.type.invalid").withStyle(ChatFormatting.RED));
+                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty.type.invalid")
+                                .withStyle(ChatFormatting.RED));
                     } else {
                         tooltip.add(Component.translatable("tooltip.jolcraft.bounty.type")
                                 .append(Component.translatable("entity.jolcraft.dwarf_" + type.getId()))
@@ -251,9 +246,9 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
                     BountyTier tier = BountyTier.fromValue(tierInt);
                     if (tier == BountyTier.UNKNOWN) {
-                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty.tier.invalid").withStyle(ChatFormatting.RED));
+                        tooltip.add(Component.translatable("tooltip.jolcraft.bounty.tier.invalid")
+                                .withStyle(ChatFormatting.RED));
                     } else {
-                        assert tier != null;
                         tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.tier", tier.getDisplayName())
                                 .withStyle(ChatFormatting.GRAY));
                     }
@@ -264,13 +259,11 @@ public class BountyCrateItem extends Item implements IItemExtension {
                     tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.count", count)
                             .withStyle(ChatFormatting.GRAY));
 
-                    if (stack.has(JolCraftComponents.BOUNTY_COMPLETE.get()) &&
-                            Boolean.TRUE.equals(stack.get(JolCraftComponents.BOUNTY_COMPLETE.get()))) {
+                    if (Boolean.TRUE.equals(stack.get(JolCraftComponents.BOUNTY_COMPLETE.get()))) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.complete")
                                 .withStyle(ChatFormatting.GREEN));
                     }
-                }
-                else {
+                } else {
                     tooltip.add(Component.translatable("tooltip.jolcraft.bounty_crate.invalid")
                             .withStyle(ChatFormatting.RED));
                 }
@@ -279,14 +272,10 @@ public class BountyCrateItem extends Item implements IItemExtension {
                         .withStyle(ChatFormatting.GRAY));
             }
 
-            Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
-                    .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
-            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
+            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
-
 }

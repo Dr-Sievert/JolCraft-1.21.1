@@ -3,6 +3,7 @@ package net.sievert.jolcraft.entity.custom.object;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -140,10 +141,50 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag tag) {}
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        if (tag.hasUUID("Owner")) {
+            this.ownerUUID = tag.getUUID("Owner");
+            this.cachedOwner = null;
+        } else {
+            this.ownerUUID = null;
+            this.cachedOwner = null;
+        }
+
+        if (tag.contains("LightPos")) {
+            this.currentLightPos = BlockPos.of(tag.getLong("LightPos"));
+        } else {
+            this.currentLightPos = null;
+        }
+
+        if (tag.contains("ReplacedState")) {
+            this.lastReplacedBlockState = NbtUtils.readBlockState(level().holderLookup(net.minecraft.core.registries.Registries.BLOCK), tag.getCompound("ReplacedState"));
+        } else {
+            this.lastReplacedBlockState = null;
+        }
+
+        if (tag.contains("RadiantLightLevel")) {
+            this.radiantLightLevel = Math.max(0, Math.min(15, tag.getInt("RadiantLightLevel")));
+        } else {
+            this.radiantLightLevel = 15;
+        }
+    }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag tag) {}
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        if (this.ownerUUID != null) {
+            tag.putUUID("Owner", this.ownerUUID);
+        }
+
+        if (this.currentLightPos != null) {
+            tag.putLong("LightPos", this.currentLightPos.asLong());
+        }
+
+        if (this.lastReplacedBlockState != null) {
+            tag.put("ReplacedState", NbtUtils.writeBlockState(this.lastReplacedBlockState));
+        }
+
+        tag.putInt("RadiantLightLevel", this.radiantLightLevel);
+    }
 
     // === INVULNERABILITY/PHYSICS ===
     @Override

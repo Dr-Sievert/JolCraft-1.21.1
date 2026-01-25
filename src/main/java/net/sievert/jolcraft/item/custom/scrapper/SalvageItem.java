@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.item.custom.scrapper;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -27,13 +27,10 @@ public class SalvageItem extends Item {
                 tooltip,
                 () -> Component.translatable("tooltip.jolcraft.salvage").withStyle(ChatFormatting.GRAY),
                 () -> List.of(Component.translatable("tooltip.jolcraft.salvage_tag").withStyle(ChatFormatting.GRAY)),
-                Screen::hasAltDown,
-                () -> Component.translatable(
-                        "tooltip.jolcraft.hold_key",
-                        TooltipHelper.ALT_KEY
-                ).withStyle(ChatFormatting.DARK_GRAY)
+                () -> JolCraftProxy.access().isAltDown(),
+                () -> Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
+                        .withStyle(ChatFormatting.DARK_GRAY)
         );
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
 }

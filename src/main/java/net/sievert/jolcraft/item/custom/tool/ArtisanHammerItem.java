@@ -1,8 +1,6 @@
 package net.sievert.jolcraft.item.custom.tool;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +8,8 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -24,16 +24,14 @@ public class ArtisanHammerItem extends ToolItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Screen.hasAltDown()) {
+        if (JolCraftProxy.access().isAltDown()) {
             tooltip.add(Component.translatable("tooltip.jolcraft.artisan_hammer")
                     .withStyle(ChatFormatting.GRAY));
         } else {
-            Component altKey = InputConstants.getKey(InputConstants.KEY_LALT, -1)
-                    .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
-            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
+            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
+
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
 }

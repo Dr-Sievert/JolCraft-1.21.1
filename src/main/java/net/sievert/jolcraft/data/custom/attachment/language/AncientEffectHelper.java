@@ -1,73 +1,42 @@
 package net.sievert.jolcraft.data.custom.attachment.language;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.effect.JolCraftEffects;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import java.util.List;
+public final class AncientEffectHelper {
 
-public class AncientEffectHelper {
+    private AncientEffectHelper() {}
+
     public static final ResourceLocation SGA_FONT = ResourceLocation.withDefaultNamespace("alt");
 
     /**
-     * Returns a Component: readable if the player has Ancient Memory (effect or permanent), otherwise SGA runes.
-     * SERVER/client-proxy version.
+     * Returns readable text if the player has Ancient Memory (effect or permanent),
+     * otherwise applies SGA rune font.
+     * Safe on both logical sides.
      */
     public static Component getAncientText(Player player, Component readable) {
-        if (hasAncientMemory(player)) {
-            return readable;
-        } else {
-            return readable.copy().withStyle(style -> style.withFont(SGA_FONT));
-        }
+        if (player == null) return readable.copy().withStyle(style -> style.withFont(SGA_FONT));
+        if (hasAncientMemory(player)) return readable;
+        return readable.copy().withStyle(style -> style.withFont(SGA_FONT));
     }
 
     /**
-     * Returns a List<Component>: readable if the player has Ancient Memory (effect or permanent),
-     * otherwise every line SGA-wrapped. CLIENT-side.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static List<Component> getAncientText(Player player, List<Component> readableLines) {
-        if (hasAncientMemoryClient()) {
-            return readableLines;
-        } else {
-            return readableLines.stream()
-                    .map(line -> (Component) line.copy().withStyle(style -> style.withFont(SGA_FONT)))
-                    .collect(java.util.stream.Collectors.toList());
-        }
-    }
-
-    /**
-     * Checks if player has Ancient Memory effect or permanent knowledge (using helper).
-     * This works on both sides (safe through proxy).
+     * Checks if the player has Ancient Memory effect or permanent knowledge.
+     * Creative mode DOES bypass.
      */
     public static boolean hasAncientMemory(Player player) {
-        return player != null && (
-                player.hasEffect(JolCraftEffects.ANCIENT_MEMORY)
-                        || AncientDwarvenLanguageHelper.knowsAncientDwarvish(player)
-        );
+        if (player == null) return false;
+        if (player.isCreative()) return true;
+        return hasAncientMemoryBypassCreative(player);
     }
 
     /**
-     * Same as above, but creative does NOT bypass.
+     * Same as above, but creative mode does NOT bypass.
      */
     public static boolean hasAncientMemoryBypassCreative(Player player) {
-        return player != null && (
-                player.hasEffect(JolCraftEffects.ANCIENT_MEMORY)
-                        || AncientDwarvenLanguageHelper.knowsAncientDwarvishBypassCreative(player)
-        );
-    }
-
-    /**
-     * CLIENT-side version: check local effect + client helper.
-     * Used for tooltips, GUIs, render, etc.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static boolean hasAncientMemoryClient() {
-        Player player = Minecraft.getInstance().player;
-        return hasAncientMemory(player);
+        if (player == null) return false;
+        return player.hasEffect(JolCraftEffects.ANCIENT_MEMORY) || AncientDwarvenLanguageHelper.knowsAncientDwarvishBypassCreative(player);
     }
 }

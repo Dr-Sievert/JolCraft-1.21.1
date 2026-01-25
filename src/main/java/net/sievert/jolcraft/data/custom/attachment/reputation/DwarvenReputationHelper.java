@@ -11,12 +11,9 @@ import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import java.util.Set;
 
-/**
- * Helper for Dwarven Reputation attachment, using the JolCraftProxy system for server/client safety.
- */
-public class DwarvenReputationHelper {
+public final class DwarvenReputationHelper {
 
-    // --- Universal access (safe both sides) ---
+    private DwarvenReputationHelper() {}
 
     /**
      * Checks if player is creative OR has at least the specified tier.
@@ -24,8 +21,7 @@ public class DwarvenReputationHelper {
     public static boolean hasTier(Player player, int minTier) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
-        return rep != null && rep.getTier() >= minTier;
+        return hasTierBypassCreative(player, minTier);
     }
 
     /**
@@ -33,7 +29,7 @@ public class DwarvenReputationHelper {
      */
     public static boolean hasTierBypassCreative(Player player, int minTier) {
         if (player == null) return false;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null && rep.getTier() >= minTier;
     }
 
@@ -43,88 +39,59 @@ public class DwarvenReputationHelper {
     public static boolean hasEndorsement(Player player, DwarfProfession profession) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
-        return rep != null && rep.hasEndorsement(profession);
+        return hasEndorsementBypassCreative(player, profession);
     }
+
     /**
      * Checks if player has the specified profession endorsement (does NOT bypass creative).
      */
     public static boolean hasEndorsementBypassCreative(Player player, DwarfProfession profession) {
         if (player == null) return false;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null && rep.hasEndorsement(profession);
     }
 
     /**
-     * Gets the count of profession endorsements (bypasses creative, returns 0 if null).
+     * Gets the count of profession endorsements (returns 0 if null).
+     * (Creative bypass is irrelevant for a numeric query; use hasEndorsement(...) for gating.)
      */
     public static int getEndorsementCount(Player player) {
         if (player == null) return 0;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getEndorsementCount() : 0;
     }
 
     /**
-     * Gets the count of profession endorsements (bypasses creative, returns 0 if null).
-     */
-    public static int getEndorsementCountBypassCreative(Player player) {
-        if (player == null) return 0;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
-        return rep != null ? rep.getEndorsementCount() : 0;
-    }
-
-    /**
-     * Gets the full set of profession endorsements for the player (bypasses creative, returns empty if null).
-     * @return A set of endorsed professions for this player, or an empty set if unavailable.
+     * Gets the full set of profession endorsements for the player (returns empty if null).
+     * (Creative bypass is irrelevant for a set query; use hasEndorsement(...) for gating.)
      */
     public static Set<DwarfProfession> getAllEndorsements(Player player) {
         if (player == null) return Set.of();
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getEndorsements() : Set.of();
     }
 
-    /**
-     * Gets the full set of profession endorsements for the player (bypasses creative, returns empty if null).
-     * Provided for API parity; identical to getAllEndorsements().
-     * @return A set of endorsed professions for this player, or an empty set if unavailable.
-     */
-    public static Set<DwarfProfession> getAllEndorsementsBypassCreative(Player player) {
-        if (player == null) return Set.of();
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
-        return rep != null ? rep.getEndorsements() : Set.of();
-    }
 
     /**
      * Adds a profession endorsement to the player.
      * Only call this on the server. Also syncs the client view.
-     * @param player The player to endorse.
-     * @param profession The profession to endorse (enum, not ResourceLocation).
      */
     public static void addEndorsement(Player player, DwarfProfession profession) {
         if (player == null || profession == null || profession == DwarfProfession.NONE) return;
         DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
         rep.addEndorsement(profession);
         if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundEndorsementsPacket(rep.getEndorsements()));
+            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundEndorsementsPacket(rep.getEndorsements()));
         }
     }
 
     /**
-     * Gets the player's Dwarven Reputation tier (bypasses creative, returns 0 if null).
+     * Gets the player's Dwarven Reputation tier (returns 0 if null).
+     * (Creative bypass is irrelevant for a numeric query; use hasTier(...) for gating.)
      */
     public static int getTier(Player player) {
         if (player == null) return 0;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
-        return rep != null ? rep.getTier() : 0;
-    }
-
-    /**
-     * Gets the player's Dwarven Reputation tier (bypasses creative mode).
-     */
-    public static int getTierBypassCreative(Player player) {
-        if (player == null) return 0;
-        DwarvenReputation rep = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
+        DwarvenReputation rep = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARVEN_REP.get(), player);
         return rep != null ? rep.getTier() : 0;
     }
 
@@ -137,8 +104,7 @@ public class DwarvenReputationHelper {
         DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
         rep.setTier(tier);
         if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundReputationPacket(tier));
+            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundReputationPacket(tier));
         }
     }
 }

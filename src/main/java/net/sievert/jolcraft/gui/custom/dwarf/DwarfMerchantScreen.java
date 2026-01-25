@@ -23,6 +23,7 @@ import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffers;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -81,7 +82,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
         this.menu.setSelectionHint(this.shopItem);
         this.menu.tryMoveItems(this.shopItem);
         assert this.minecraft != null;
-        this.minecraft.getConnection().send(new ServerboundDwarfSelectTradePacket(this.shopItem));
+        Objects.requireNonNull(this.minecraft.getConnection()).send(new ServerboundDwarfSelectTradePacket(this.shopItem));
     }
 
     @Override

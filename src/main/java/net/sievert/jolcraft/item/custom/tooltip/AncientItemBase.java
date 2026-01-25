@@ -12,8 +12,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.custom.attachment.language.AncientEffectHelper;
 import net.sievert.jolcraft.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
@@ -30,19 +30,15 @@ public abstract class AncientItemBase extends Item {
     }
 
     @OnlyIn(Dist.CLIENT)
-    @Nullable
-    protected final Player clientPlayer() {
-        return net.minecraft.client.Minecraft.getInstance().player;
-    }
-
-    @OnlyIn(Dist.CLIENT)
     @Override
     public final void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
-            Player player = clientPlayer();
+            Player player = JolCraftProxy.access().getLocalPlayer();
             if (player != null) {
-                if (net.minecraft.client.gui.screens.Screen.hasAltDown() && hasAlt()) {
-                    if (AncientEffectHelper.hasAncientMemoryClient()) {
+                boolean altDown = JolCraftProxy.access().isAltDown() && hasAlt();
+
+                if (altDown) {
+                    if (AncientEffectHelper.hasAncientMemory(player)) {
                         if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                             tooltip.addAll(getFullyReadableTooltip(stack, player, tooltip, flag));
                         } else {
@@ -51,22 +47,23 @@ public abstract class AncientItemBase extends Item {
                     } else if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                         tooltip.addAll(getPartialUnderstandingTooltip(stack, player, tooltip, flag));
                     } else {
-                        tooltip.addAll(AncientEffectHelper.getAncientText(player,
-                                getUnreadableTooltipSGA(stack, player, tooltip, flag)));
+                        for (Component line : getUnreadableTooltipSGA(stack, player, tooltip, flag)) {
+                            tooltip.add(AncientEffectHelper.getAncientText(player, line));
+                        }
                     }
 
-                    if (!AncientEffectHelper.hasAncientMemoryClient()) {
+                    if (!AncientEffectHelper.hasAncientMemory(player)) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.need_ancient")
                                 .withStyle(ChatFormatting.RED));
                     }
-                    if(!DwarvenLanguageHelper.knowsDwarvish(player)) {
+                    if (!DwarvenLanguageHelper.knowsDwarvish(player)) {
                         tooltip.add(Component.translatable("tooltip.jolcraft.need_lang")
                                 .withStyle(ChatFormatting.RED));
                         tooltip.add(Component.translatable("tooltip.jolcraft.ancient_memory")
                                 .withStyle(ChatFormatting.GRAY));
                     }
                 } else {
-                    if (AncientEffectHelper.hasAncientMemoryClient()) {
+                    if (AncientEffectHelper.hasAncientMemory(player)) {
                         if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                             tooltip.addAll(getNoAltTooltip(stack, player, tooltip, flag));
                         } else {
@@ -75,19 +72,22 @@ public abstract class AncientItemBase extends Item {
                     } else if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                         tooltip.addAll(getPartialUnderstandingTooltip(stack, player, tooltip, flag));
                     } else {
-                        tooltip.addAll(AncientEffectHelper.getAncientText(player,
-                                getUnreadableTooltipSGA(stack, player, tooltip, flag)));
+                        for (Component line : getUnreadableTooltipSGA(stack, player, tooltip, flag)) {
+                            tooltip.add(AncientEffectHelper.getAncientText(player, line));
+                        }
                     }
-                    if(hasAlt()){
-                        Component altKey = TooltipHelper.ALT_KEY;
-                        tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
+
+                    if (hasAlt()) {
+                        tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
                                 .withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
             }
         }
+
         super.appendHoverText(stack, context, tooltip, flag);
     }
+
 
     /**
      * Subclass provides the fully readable tooltip for this item.

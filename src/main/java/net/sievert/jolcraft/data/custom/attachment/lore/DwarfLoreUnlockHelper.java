@@ -11,7 +11,9 @@ import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DwarfLoreUnlockHelper {
+public final class DwarfLoreUnlockHelper {
+
+    private DwarfLoreUnlockHelper() {}
 
     /**
      * Checks if player is creative OR has the unlock (side-safe).
@@ -19,8 +21,7 @@ public class DwarfLoreUnlockHelper {
     public static boolean hasUnlock(Player player, DwarfLoreKey unlockId) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        LoreUnlock<DwarfLoreKey> unlock = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARF_LORE_UNLOCK.get(), player);
-        return unlock != null && unlock.hasUnlock(unlockId);
+        return hasUnlockBypassCreative(player, unlockId);
     }
 
     /**
@@ -28,8 +29,17 @@ public class DwarfLoreUnlockHelper {
      */
     public static boolean hasUnlockBypassCreative(Player player, DwarfLoreKey unlockId) {
         if (player == null) return false;
-        LoreUnlock<DwarfLoreKey> unlock = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARF_LORE_UNLOCK.get(), player);
+        LoreUnlock<DwarfLoreKey> unlock = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARF_LORE_UNLOCK.get(), player);
         return unlock != null && unlock.hasUnlock(unlockId);
+    }
+
+    /**
+     * Gets all unlocks for a player (side-safe).
+     */
+    public static Set<DwarfLoreKey> getAllUnlocks(Player player) {
+        if (player == null) return Set.of();
+        LoreUnlock<DwarfLoreKey> unlock = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARF_LORE_UNLOCK.get(), player);
+        return unlock != null ? unlock.getUnlocks() : Set.of();
     }
 
     /**
@@ -41,18 +51,11 @@ public class DwarfLoreUnlockHelper {
         LoreUnlock<DwarfLoreKey> unlock = player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
         unlock.addUnlock(unlockId);
         if (player instanceof ServerPlayer serverPlayer) {
-            Set<String> unlockKeys = unlock.getUnlocks().stream().map(e -> e.name().toLowerCase()).collect(Collectors.toSet());
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundLoreUnlocksPacket(unlockKeys));
+            Set<String> unlockKeys = unlock.getUnlocks()
+                    .stream()
+                    .map(e -> e.name().toLowerCase())
+                    .collect(Collectors.toSet());
+            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundLoreUnlocksPacket(unlockKeys));
         }
-    }
-
-    /**
-     * Gets all unlocks for a player (side-safe).
-     */
-    public static Set<DwarfLoreKey> getAllUnlocks(Player player) {
-        if (player == null) return Set.of();
-        LoreUnlock<DwarfLoreKey> unlock = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARF_LORE_UNLOCK.get(), player);
-        return unlock != null ? unlock.getUnlocks() : Set.of();
     }
 }

@@ -29,11 +29,11 @@ public class AttachmentSyncHelper {
         JolCraftNetworking.sendToClient(player, new ClientboundAncientLanguagePacket(knowsAncient));
 
         // Reputation tier
-        int tier = DwarvenReputationHelper.getTierBypassCreative(player);
+        int tier = DwarvenReputationHelper.getTier(player);
         JolCraftNetworking.sendToClient(player, new ClientboundReputationPacket(tier));
 
         // Endorsements
-        Set<DwarfProfession> endorsements = DwarvenReputationHelper.getAllEndorsementsBypassCreative(player);
+        Set<DwarfProfession> endorsements = DwarvenReputationHelper.getAllEndorsements(player);
         JolCraftNetworking.sendToClient(player, new ClientboundEndorsementsPacket(endorsements));
 
         // Tome Unlocks

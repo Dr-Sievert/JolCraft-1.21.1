@@ -3,13 +3,14 @@ package net.sievert.jolcraft.event.client.game;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.sievert.jolcraft.network.client.data.ClientDeliriumData;
 
-
+@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = "jolcraft", bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class JolCraftClientGameEvents {
 

@@ -22,8 +22,8 @@ import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
 import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -36,12 +36,6 @@ public class ReputationTabletItem extends Item {
     }
 
     private static final int[] ENDORSEMENT_THRESHOLDS = DwarvenReputationImpl.ENDORSEMENT_THRESHOLDS;
-
-    @OnlyIn(Dist.CLIENT)
-    @Nullable
-    protected final Player clientPlayer() {
-        return net.minecraft.client.Minecraft.getInstance().player;
-    }
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
@@ -101,7 +95,8 @@ public class ReputationTabletItem extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (DwarvenLanguageHelper.knowsDwarvish(clientPlayer())) {
+        Player player = JolCraftProxy.access().getLocalPlayer();
+        if (DwarvenLanguageHelper.knowsDwarvish(player)) {
             String ownerName = stack.getOrDefault(JolCraftComponents.REP_OWNER.get(), "Unknown");
             int statictier = stack.getOrDefault(JolCraftComponents.REP_TIER.get(), 0);
             int staticendorsements = stack.getOrDefault(JolCraftComponents.REP_ENDORSEMENTS.get(), 0);

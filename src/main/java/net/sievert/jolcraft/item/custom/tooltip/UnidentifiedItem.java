@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -103,22 +104,25 @@ public abstract class UnidentifiedItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (context.level() != null && Objects.requireNonNull(context.level()).isClientSide()) {
-            Player player = net.minecraft.client.Minecraft.getInstance().player;
+            Player player = JolCraftProxy.access().getLocalPlayer();
             if (player != null) {
-                if (net.minecraft.client.gui.screens.Screen.hasAltDown() && hasAlt()) {
+                boolean showAlt = hasAlt() && JolCraftProxy.access().isAltDown();
+
+                if (showAlt) {
                     tooltip.addAll(getAltTooltip(stack, player, tooltip, flag));
                 } else {
                     tooltip.addAll(getNoAltTooltip(stack, player, tooltip, flag));
-                    if(hasAlt()){
-                        Component altKey = TooltipHelper.ALT_KEY;
-                        tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", altKey)
-                                .withStyle(ChatFormatting.DARK_GRAY));
-                    }
 
+                    if (hasAlt()) {
+                        tooltip.add(
+                                Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
+                                        .withStyle(ChatFormatting.DARK_GRAY)
+                        );
+                    }
                 }
             }
         }
+
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
 }

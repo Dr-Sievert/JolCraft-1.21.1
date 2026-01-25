@@ -7,43 +7,38 @@ import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.S2C.ClientboundLanguagePacket;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
-/**
- * Helper for Dwarven Language capability, using the JolCraftProxy system for server/client safety.
- */
-public class DwarvenLanguageHelper {
+public final class DwarvenLanguageHelper {
+
+    private DwarvenLanguageHelper() {}
 
     /**
      * Checks if a player knows Dwarvish, or is creative (bypasses language checks).
-     * Always uses the JolCraftProxy for correct context.
      */
     public static boolean knowsDwarvish(Player player) {
         if (player == null) return false;
         if (player.isCreative()) return true;
-        DwarvenLanguage lang = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
-        return lang != null && lang.knowsLanguage();
+        return knowsDwarvishBypassCreative(player);
     }
 
     /**
      * Checks if a player knows Dwarvish, WITHOUT creative-mode bypass.
-     * Uses the JolCraftProxy for context safety.
      */
     public static boolean knowsDwarvishBypassCreative(Player player) {
         if (player == null) return false;
-        DwarvenLanguage lang = JolCraftProxy.get(player.level()).getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
+        DwarvenLanguage lang = JolCraftProxy.access().getAttachment(JolCraftAttachments.DWARVEN_LANGUAGE.get(), player);
         return lang != null && lang.knowsLanguage();
     }
 
     /**
      * Sets the "knows Dwarvish" flag for a player.
-     * Only ever use this on the SERVER. Also syncs the client view.
+     * Server-authoritative: writes to the live attachment and syncs the client view.
      */
     public static void setKnowsDwarvish(Player player, boolean value) {
         if (player == null) return;
         DwarvenLanguage lang = player.getData(JolCraftAttachments.DWARVEN_LANGUAGE.get());
         lang.setKnowsLanguage(value);
         if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundLanguagePacket(value));
+            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundLanguagePacket(value));
         }
     }
 }

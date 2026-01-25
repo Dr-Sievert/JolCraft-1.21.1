@@ -73,8 +73,7 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
 
     @Override
     protected List<Component> getPartialUnderstandingTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding")
-                .withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
