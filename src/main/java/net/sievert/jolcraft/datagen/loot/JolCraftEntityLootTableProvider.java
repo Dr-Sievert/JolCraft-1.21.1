@@ -19,8 +19,8 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.sievert.jolcraft.entity.JolCraftEntities;
-import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.world.entity.JolCraftEntities;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;

@@ -8,17 +8,17 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
-import net.sievert.jolcraft.network.packet.C2S.ServerboundDwarfSelectTradePacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundAncientLanguagePacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundDeliriumPacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundDwarfMerchantOffersPacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundLanguagePacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundLoreUnlocksPacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundParticlePacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundPlaySoundPacket;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundReputationPacket;
+import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientLanguagePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundLanguagePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundLoreUnlocksPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundParticlePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundPlaySoundPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 public class JolCraftNetworking {

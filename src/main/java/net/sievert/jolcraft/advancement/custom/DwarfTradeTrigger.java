@@ -12,7 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

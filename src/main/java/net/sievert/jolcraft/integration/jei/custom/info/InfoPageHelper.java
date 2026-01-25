@@ -6,11 +6,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
-import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.item.client.compass.DialItemColor;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import java.util.ArrayList;
 import java.util.List;

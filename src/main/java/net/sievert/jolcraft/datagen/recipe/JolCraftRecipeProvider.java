@@ -30,13 +30,13 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.datagen.recipe.builder.JolCraftRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.JolSmithingTrimRecipeBuilder;
-import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.recipe.custom.FermentingCauldronRecipe;
-import net.sievert.jolcraft.recipe.custom.LapidaryBenchRecipe;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
+import net.sievert.jolcraft.data.recipe.custom.LapidaryBenchRecipe;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

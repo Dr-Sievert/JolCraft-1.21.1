@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
 import org.jetbrains.annotations.NotNull;
 

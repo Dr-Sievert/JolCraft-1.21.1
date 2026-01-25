@@ -6,7 +6,7 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.integration.jei.custom.info.InfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.InfoPageHelper;
 import net.sievert.jolcraft.integration.jei.custom.trade.DwarfTradeCategory;

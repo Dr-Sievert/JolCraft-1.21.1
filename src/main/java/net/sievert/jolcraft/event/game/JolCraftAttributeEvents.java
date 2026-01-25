@@ -46,12 +46,12 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftAttachments;
+import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.data.custom.attachment.player.AttributesAttachment;
-import net.sievert.jolcraft.effect.JolCraftEffects;
-import net.sievert.jolcraft.entity.JolCraftEntities;
-import net.sievert.jolcraft.entity.custom.object.RadiantEntity;
+import net.sievert.jolcraft.data.attachment.custom.player.AttributesAttachment;
+import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.JolCraftEntities;
+import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
 
 import java.util.*;
 

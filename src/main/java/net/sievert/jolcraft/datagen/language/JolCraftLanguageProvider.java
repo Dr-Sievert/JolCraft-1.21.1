@@ -11,14 +11,14 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.datagen.advancement.AdvancementKey;
-import net.sievert.jolcraft.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.item.potion.JolCraftPotions;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;

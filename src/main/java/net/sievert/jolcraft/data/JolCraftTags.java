@@ -9,7 +9,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.worldgen.structure.JolCraftStructures;
+import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
 import static net.sievert.jolcraft.JolCraft.location;
 

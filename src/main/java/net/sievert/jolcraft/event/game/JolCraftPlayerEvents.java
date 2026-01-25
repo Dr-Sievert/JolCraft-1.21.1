@@ -29,15 +29,15 @@ import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.block.custom.FermentingCauldronBlock;
-import net.sievert.jolcraft.block.entity.custom.FermentingCauldronBlockEntity;
-import net.sievert.jolcraft.data.custom.attachment.hearth.Hearth;
-import net.sievert.jolcraft.effect.JolCraftEffects;
-import net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu;
-import net.sievert.jolcraft.network.util.AttachmentSyncHelper;
-import net.sievert.jolcraft.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.recipe.custom.input.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.custom.FermentingCauldronBlock;
+import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
+import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
+import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.data.attachment.AttachmentSyncHelper;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
 
 import java.util.HashSet;
 

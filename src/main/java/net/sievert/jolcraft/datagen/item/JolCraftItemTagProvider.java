@@ -8,9 +8,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;

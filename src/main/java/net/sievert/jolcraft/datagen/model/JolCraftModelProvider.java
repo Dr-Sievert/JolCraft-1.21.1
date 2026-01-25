@@ -4,9 +4,11 @@ import com.google.gson.JsonObject;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
-import net.minecraft.client.data.models.blockstates.*;
-import net.minecraft.client.data.models.model.*;
+import net.minecraft.client.data.models.blockstates.BlockStateGenerator;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TexturedModel;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
@@ -14,26 +16,31 @@ import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.minecraft.world.level.block.Block;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.block.JolCraftBlocks;
-import net.sievert.jolcraft.block.custom.crop.BarleyCropBlock;
-import net.sievert.jolcraft.block.custom.crop.HopsCropBottomBlock;
-import net.sievert.jolcraft.item.armor.JolCraftEquipmentAssets;
-import net.sievert.jolcraft.item.JolCraftItems;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.custom.crop.BarleyCropBlock;
+import net.sievert.jolcraft.world.block.custom.crop.HopsCropBottomBlock;
+import net.sievert.jolcraft.world.item.armor.JolCraftEquipmentAssets;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class JolCraftModelProvider extends ModelProvider {
 
     public JolCraftModelProvider(PackOutput output) {
         super(output, JolCraft.MOD_ID);
-
     }
 
     @Override
     protected void registerModels(@NotNull BlockModelGenerators blockModels, @NotNull ItemModelGenerators itemModels) {
+        registerItemModels(itemModels);
+        registerBlockModels(blockModels);
+    }
+
+    private static void registerItemModels(@NotNull ItemModelGenerators itemModels) {
 
         //Core
         itemModels.generateFlatItem(JolCraftItems.DEV_KEY.get(), ModelTemplates.FLAT_ITEM);
@@ -61,78 +68,26 @@ public class JolCraftModelProvider extends ModelProvider {
 
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.MUFFHORN_MILK_BUCKET.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "material/entity");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.MUFFHORN_FUR.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "material/entity");
-        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.MUFFHORN_FUR_BLOCK.get(), "material/entity");
 
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.GEODE_SMALL.get(), ModelTemplates.FLAT_ITEM, "material/geode");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.GEODE_MEDIUM.get(), ModelTemplates.FLAT_ITEM, "material/geode");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.GEODE_LARGE.get(), ModelTemplates.FLAT_ITEM, "material/geode");
-        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.GEODE_BLOCK.get(), "material/geode");
 
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.DEEPSLATE_PLATE.get(), ModelTemplates.FLAT_ITEM, "material/deepslate");
-        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get(), "material/deepslate");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.DEEPSLATE_ROD.get(), ModelTemplates.FLAT_ITEM, "material/deepslate");
 
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.IMPURE_MITHRIL.get(), ModelTemplates.FLAT_ITEM, "material/mithril");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.PURE_MITHRIL.get(), ModelTemplates.FLAT_ITEM, "material/mithril");
-        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.PURE_MITHRIL_BLOCK.get(), "material/mithril");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.MITHRIL_INGOT.get(), ModelTemplates.FLAT_ITEM, "material/mithril");
-        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.MITHRIL_BLOCK.get(), "material/mithril");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.MITHRIL_NUGGET.get(), ModelTemplates.FLAT_ITEM, "material/mithril");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.MITHRIL_CHAINWEAVE.get(), ModelTemplates.FLAT_ITEM, "material/mithril");
 
         //Misc
-
-        JolCraftModelHelper.createHearth(JolCraftBlocks.HEARTH.get(), blockModels);
-
         itemModels.generateFlatItem(JolCraftItems.LOCKPICK.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-
         itemModels.generateFlatItem(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
 
-        //Crops
-
-        JolCraftModelHelper.createVerdantFarmland(blockModels);
-        blockModels.createTrivialCube(JolCraftBlocks.VERDANT_SOIL.get());
-
-        blockModels.createCropBlock(JolCraftBlocks.BARLEY_CROP.get(), BarleyCropBlock.AGE,  0, 1, 2, 3, 4, 5, 6, 7);
+        //Crops (items)
         itemModels.generateFlatItem(JolCraftItems.BARLEY.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-        blockModels.createRotatedPillarWithHorizontalVariant(
-                JolCraftBlocks.BARLEY_BLOCK.get(),
-                TexturedModel.COLUMN,
-                TexturedModel.COLUMN_HORIZONTAL
-        );
-
-        blockModels.createPlantWithDefaultItem(JolCraftBlocks.DUSKCAP.get(), JolCraftBlocks.POTTED_DUSKCAP.get(), BlockModelGenerators.PlantType.NOT_TINTED);
-
-        JolCraftModelHelper.createFesterlingCrop(blockModels);
-        blockModels.createPlantWithDefaultItem(JolCraftBlocks.FESTERLING.get(), JolCraftBlocks.POTTED_FESTERLING.get(), BlockModelGenerators.PlantType.NOT_TINTED);
-
-        JolCraftModelHelper.createTopCropBlock(
-                blockModels,
-                JolCraftBlocks.ASGARNIAN_CROP_TOP.get(),
-                0, 1, 2, 3, 4
-        );
-        blockModels.createCropBlock(JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-
-        JolCraftModelHelper.createTopCropBlock(
-                blockModels,
-                JolCraftBlocks.DUSKHOLD_CROP_TOP.get(),
-                0, 1, 2, 3, 4
-        );
-        blockModels.createCropBlock(JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-
-        JolCraftModelHelper.createTopCropBlock(
-                blockModels,
-                JolCraftBlocks.KRANDONIAN_CROP_TOP.get(),
-                0, 1, 2, 3, 4
-        );
-        blockModels.createCropBlock(JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-
-        JolCraftModelHelper.createTopCropBlock(
-                blockModels,
-                JolCraftBlocks.YANILLIAN_CROP_TOP.get(),
-                0, 1, 2, 3, 4
-        );
-        blockModels.createCropBlock(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 
         itemModels.generateFlatItem(JolCraftItems.ASGARNIAN_HOPS.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.DUSKHOLD_HOPS.get(), ModelTemplates.FLAT_ITEM);
@@ -140,29 +95,11 @@ public class JolCraftModelProvider extends ModelProvider {
         itemModels.generateFlatItem(JolCraftItems.YANILLIAN_HOPS.get(), ModelTemplates.FLAT_ITEM);
 
         itemModels.generateFlatItem(JolCraftItems.DEEPSLATE_BULBS.get(), ModelTemplates.FLAT_ITEM);
-        blockModels.blockStateOutput.accept(new BlockStateGenerator() {
-            @Override
-            public JsonObject get() {
-                JsonObject root = new JsonObject();
-                JsonObject variants = new JsonObject();
-                for (int age = 0; age <= 9; age++) {
-                    variants.add("age=" + age, modelObj("block/deepslate_bulbs_crop_stage" + age));
-                }
-                root.add("variants", variants);
-                return root;
-            }
-
-            @Override
-            public @NotNull Block getBlock() {
-                return JolCraftBlocks.DEEPSLATE_BULBS_CROP.get();
-            }
-        });
 
         //Eggs
-
         String dwarfEggPrimary = "aa7d66";
 
-        JolCraftModelHelper.generateSpawnEgg(itemModels, JolCraftItems.DWARF_SPAWN_EGG.get(),             dwarfEggPrimary, "4a342c");
+        JolCraftModelHelper.generateSpawnEgg(itemModels, JolCraftItems.DWARF_SPAWN_EGG.get(),              dwarfEggPrimary, "4a342c");
         JolCraftModelHelper.generateSpawnEgg(itemModels, JolCraftItems.DWARF_GUILDMASTER_SPAWN_EGG.get(), dwarfEggPrimary, "4f2144");
         JolCraftModelHelper.generateSpawnEgg(itemModels, JolCraftItems.DWARF_HISTORIAN_SPAWN_EGG.get(),   dwarfEggPrimary, "49652d");
         JolCraftModelHelper.generateSpawnEgg(itemModels, JolCraftItems.DWARF_MERCHANT_SPAWN_EGG.get(),    dwarfEggPrimary, "842610");
@@ -178,13 +115,6 @@ public class JolCraftModelProvider extends ModelProvider {
         JolCraftModelHelper.generateSpawnEgg(itemModels, JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get(),      dwarfEggPrimary, "fff05a");
 
         JolCraftModelHelper.generateSpawnEgg(itemModels, JolCraftItems.MUFFHORN_SPAWN_EGG.get(), "723119", "4b1f12");
-
-        //Ores
-        blockModels.createRotatedPillarWithHorizontalVariant(
-                JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get(),
-                TexturedModel.COLUMN,
-                TexturedModel.COLUMN_HORIZONTAL
-        );
 
         //Tools and Weapons
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.DEEPSLATE_SWORD.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "weapon/deepslate");
@@ -211,35 +141,16 @@ public class JolCraftModelProvider extends ModelProvider {
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.IRON_SPANNER.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "tool");
 
         //Alchemy
-
         itemModels.generateFlatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(JolCraftItems.DEEPSLATE_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(JolCraftItems.MITHRIL_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
         itemModels.generateFlatItem(JolCraftItems.INVERIX.get(), ModelTemplates.FLAT_ITEM);
 
-        //Brewing
-
+        //Brewing (items)
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.BARLEY_MALT.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "brewing");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.YEAST.get(), ModelTemplates.FLAT_ITEM, "brewing");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.GLASS_MUG.get(), ModelTemplates.FLAT_ITEM, "brewing");
-
-        blockModels.blockStateOutput.accept(new BlockStateGenerator() {
-            @Override
-            public JsonObject get() {
-                JsonObject root = new JsonObject();
-                JsonObject variants = new JsonObject();
-                variants.add("level=1", modelObj("block/fermenting_cauldron_level1"));
-                variants.add("level=2", modelObj("block/fermenting_cauldron_level2"));
-                variants.add("level=3", modelObj("block/fermenting_cauldron_full"));
-                root.add("variants", variants);
-                return root;
-            }
-            @Override
-            public @NotNull Block getBlock() {
-                return JolCraftBlocks.FERMENTING_CAULDRON.get();
-            }
-        });
 
         //Bounty
         itemModels.generateFlatItem(JolCraftItems.BOUNTY.get(), ModelTemplates.FLAT_ITEM);
@@ -269,9 +180,7 @@ public class JolCraftModelProvider extends ModelProvider {
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.CONTRACT_BLACKSMITH.get(), ModelTemplates.FLAT_ITEM, "contract");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.CONTRACT_SMELTER.get(), ModelTemplates.FLAT_ITEM, "contract");
 
-        //Artisan
-        blockModels.createTrivialBlock(JolCraftBlocks.LAPIDARY_BENCH.get(), TexturedModel.CUBE_TOP_BOTTOM);
-
+        //Artisan (items)
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.AEGISCORE.get(), ModelTemplates.FLAT_ITEM, "material/gem/uncut");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.ASHFANG.get(), ModelTemplates.FLAT_ITEM, "material/gem/uncut");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.DEEPMARROW.get(), ModelTemplates.FLAT_ITEM, "material/gem/uncut");
@@ -320,7 +229,6 @@ public class JolCraftModelProvider extends ModelProvider {
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.VERDANITE_DUST.get(), ModelTemplates.FLAT_ITEM, "material/gem/dust");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.WOECRYSTAL_DUST.get(), ModelTemplates.FLAT_ITEM, "material/gem/dust");
 
-
         //Tomes
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, "book/tome");
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get(), JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, "book/tome");
@@ -360,12 +268,11 @@ public class JolCraftModelProvider extends ModelProvider {
         JolCraftModelHelper.generateFlatItem(itemModels, JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), ModelTemplates.FLAT_ITEM, "material/salvage");
 
         //Trim
-
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         List<ItemModelGenerators.TrimMaterialData> allTrimMaterials = new ArrayList<>();
         for (Map.Entry<String, ResourceKey<TrimMaterial>> entry : JolCraftModelHelper.VANILLA_TRIMS.entrySet()) {
             allTrimMaterials.add(new ItemModelGenerators.TrimMaterialData(entry.getKey(), entry.getValue(), Map.of()));
         }
-
         allTrimMaterials.addAll(JolCraftModelHelper.JOLCRAFT_TRIMS);
 
         JolCraftModelHelper.generateTrimmableArmorSetWithCustom(itemModels, "deepslate", JolCraftEquipmentAssets.DEEPSLATE_KEY, false);
@@ -375,8 +282,96 @@ public class JolCraftModelProvider extends ModelProvider {
         JolCraftModelHelper.generateArmorWithTrim(itemModels, "chainmail", EquipmentAssets.CHAINMAIL, false);
         JolCraftModelHelper.generateArmorWithTrim(itemModels, "iron", EquipmentAssets.IRON, false);
         JolCraftModelHelper.generateArmorWithTrim(itemModels, "golden", EquipmentAssets.GOLD, false);
-        JolCraftModelHelper.generateArmorWithTrim(itemModels, "diamond", EquipmentAssets.DIAMOND,false);
+        JolCraftModelHelper.generateArmorWithTrim(itemModels, "diamond", EquipmentAssets.DIAMOND, false);
         JolCraftModelHelper.generateArmorWithTrim(itemModels, "netherite", EquipmentAssets.NETHERITE, false);
+    }
+
+    private static void registerBlockModels(@NotNull BlockModelGenerators blockModels) {
+
+        //Materials & Crafting Ingredients (blocks)
+        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.MUFFHORN_FUR_BLOCK.get(), "material/entity");
+        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.GEODE_BLOCK.get(), "material/geode");
+        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get(), "material/deepslate");
+        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.PURE_MITHRIL_BLOCK.get(), "material/mithril");
+        JolCraftModelHelper.createTrivialCube(blockModels, JolCraftBlocks.MITHRIL_BLOCK.get(), "material/mithril");
+
+        //Misc
+        JolCraftModelHelper.createHearth(JolCraftBlocks.HEARTH.get(), blockModels);
+
+        //Crops (blocks)
+        JolCraftModelHelper.createVerdantFarmland(blockModels);
+        blockModels.createTrivialCube(JolCraftBlocks.VERDANT_SOIL.get());
+
+        blockModels.createCropBlock(JolCraftBlocks.BARLEY_CROP.get(), BarleyCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
+        blockModels.createRotatedPillarWithHorizontalVariant(
+                JolCraftBlocks.BARLEY_BLOCK.get(),
+                TexturedModel.COLUMN,
+                TexturedModel.COLUMN_HORIZONTAL
+        );
+
+        blockModels.createPlantWithDefaultItem(JolCraftBlocks.DUSKCAP.get(), JolCraftBlocks.POTTED_DUSKCAP.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+
+        JolCraftModelHelper.createFesterlingCrop(blockModels);
+        blockModels.createPlantWithDefaultItem(JolCraftBlocks.FESTERLING.get(), JolCraftBlocks.POTTED_FESTERLING.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+
+        JolCraftModelHelper.createTopCropBlock(blockModels, JolCraftBlocks.ASGARNIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        blockModels.createCropBlock(JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        JolCraftModelHelper.createTopCropBlock(blockModels, JolCraftBlocks.DUSKHOLD_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        blockModels.createCropBlock(JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        JolCraftModelHelper.createTopCropBlock(blockModels, JolCraftBlocks.KRANDONIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        blockModels.createCropBlock(JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        JolCraftModelHelper.createTopCropBlock(blockModels, JolCraftBlocks.YANILLIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        blockModels.createCropBlock(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        blockModels.blockStateOutput.accept(new BlockStateGenerator() {
+            @Override
+            public JsonObject get() {
+                JsonObject root = new JsonObject();
+                JsonObject variants = new JsonObject();
+                for (int age = 0; age <= 9; age++) {
+                    variants.add("age=" + age, modelObj("block/deepslate_bulbs_crop_stage" + age));
+                }
+                root.add("variants", variants);
+                return root;
+            }
+
+            @Override
+            public @NotNull Block getBlock() {
+                return JolCraftBlocks.DEEPSLATE_BULBS_CROP.get();
+            }
+        });
+
+        //Brewing (blockstates)
+        blockModels.blockStateOutput.accept(new BlockStateGenerator() {
+            @Override
+            public JsonObject get() {
+                JsonObject root = new JsonObject();
+                JsonObject variants = new JsonObject();
+                variants.add("level=1", modelObj("block/fermenting_cauldron_level1"));
+                variants.add("level=2", modelObj("block/fermenting_cauldron_level2"));
+                variants.add("level=3", modelObj("block/fermenting_cauldron_full"));
+                root.add("variants", variants);
+                return root;
+            }
+
+            @Override
+            public @NotNull Block getBlock() {
+                return JolCraftBlocks.FERMENTING_CAULDRON.get();
+            }
+        });
+
+        //Artisan (blocks)
+        blockModels.createTrivialBlock(JolCraftBlocks.LAPIDARY_BENCH.get(), TexturedModel.CUBE_TOP_BOTTOM);
+
+        //Ores
+        blockModels.createRotatedPillarWithHorizontalVariant(
+                JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get(),
+                TexturedModel.COLUMN,
+                TexturedModel.COLUMN_HORIZONTAL
+        );
     }
 
     private static JsonObject modelObj(String path) {

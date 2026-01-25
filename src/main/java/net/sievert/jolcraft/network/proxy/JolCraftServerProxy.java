@@ -3,7 +3,7 @@ package net.sievert.jolcraft.network.proxy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.sievert.jolcraft.network.packet.S2C.*;
+import net.sievert.jolcraft.network.packet.s2c.*;
 
 import javax.annotation.Nullable;
 

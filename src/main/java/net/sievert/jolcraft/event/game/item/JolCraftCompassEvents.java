@@ -29,12 +29,12 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.custom.attachment.compass.DiscoveredStructuresHelper;
-import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.item.util.compass.DeepslateCompassHelper;
+import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.S2C.ClientboundPlaySoundPacket;
-import net.sievert.jolcraft.sound.JolCraftSounds;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundPlaySoundPacket;
+import net.sievert.jolcraft.world.sound.JolCraftSounds;
 
 import java.util.HashMap;
 import java.util.Map;

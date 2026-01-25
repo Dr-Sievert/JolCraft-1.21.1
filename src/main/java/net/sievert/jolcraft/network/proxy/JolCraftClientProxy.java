@@ -10,16 +10,17 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.sievert.jolcraft.data.JolCraftAttachments;
-import net.sievert.jolcraft.data.custom.attachment.language.AncientDwarvenLanguageImpl;
-import net.sievert.jolcraft.data.custom.attachment.language.DwarvenLanguageImpl;
-import net.sievert.jolcraft.data.custom.attachment.lore.LoreUnlockImpl;
-import net.sievert.jolcraft.data.custom.attachment.reputation.DwarvenReputationImpl;
+import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
+import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageImpl;
+import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageImpl;
+import net.sievert.jolcraft.data.attachment.custom.lore.LoreUnlockImpl;
+import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
-import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.network.client.data.*;
-import net.sievert.jolcraft.network.packet.S2C.*;
+import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.network.data.*;
+import net.sievert.jolcraft.network.packet.s2c.*;
+import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -164,7 +165,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
         if (mc.player == null) return;
 
         var menu = mc.player.containerMenu;
-        if (packet.containerId() == menu.containerId && menu instanceof net.sievert.jolcraft.gui.custom.dwarf.DwarfMerchantMenu dwarfMenu) {
+        if (packet.containerId() == menu.containerId && menu instanceof DwarfMerchantMenu dwarfMenu) {
             dwarfMenu.setOffers(packet.offers());
             dwarfMenu.setXp(packet.dwarfXp());
             dwarfMenu.setMerchantLevel(packet.dwarfLevel());

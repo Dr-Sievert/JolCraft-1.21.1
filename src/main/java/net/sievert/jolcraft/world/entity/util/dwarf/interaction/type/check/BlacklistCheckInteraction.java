@@ -1,0 +1,32 @@
+package net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.check;
+
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction;
+
+public class BlacklistCheckInteraction implements DwarfInteraction {
+
+    private boolean blacklistedProperties(AbstractDwarfEntity dwarf) {
+        return !dwarf.isAlive();
+    }
+
+    private boolean blacklistedItems(ItemStack stack) {
+        return stack.is(JolCraftTags.Items.DWARF_SPAWN_EGGS);
+    }
+
+    private boolean isBlacklisted(AbstractDwarfEntity dwarf, ItemStack stack) {
+        return blacklistedProperties(dwarf) || blacklistedItems(stack);
+    }
+
+    @Override
+    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, ItemStack stack) {
+        if (isBlacklisted(dwarf, stack)) {
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.FAIL;
+    }
+
+}

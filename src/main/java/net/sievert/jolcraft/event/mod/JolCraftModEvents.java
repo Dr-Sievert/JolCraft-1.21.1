@@ -6,11 +6,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.JolCraftEntities;
+import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.entity.custom.animal.MuffhornEntity;
-import net.sievert.jolcraft.entity.custom.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.*;
+import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
+import net.sievert.jolcraft.world.entity.custom.dwarf.*;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.*;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class JolCraftModEvents {

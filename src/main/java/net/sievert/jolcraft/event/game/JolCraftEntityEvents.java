@@ -24,11 +24,11 @@ import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.entity.util.dwarf.interaction.DwarfInteractionHelper;
-import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

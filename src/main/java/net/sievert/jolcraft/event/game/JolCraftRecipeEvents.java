@@ -14,8 +14,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.item.potion.JolCraftPotions;
-import net.sievert.jolcraft.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import java.util.*;
 

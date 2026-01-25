@@ -7,11 +7,11 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.item.trim.JolCraftTrimMaterials;
-import net.sievert.jolcraft.item.trim.JolCraftTrimPatterns;
-import net.sievert.jolcraft.worldgen.biome.JolCraftBiomeModifiers;
-import net.sievert.jolcraft.worldgen.feature.JolCraftConfiguredFeatures;
-import net.sievert.jolcraft.worldgen.feature.JolCraftPlacedFeatures;
+import net.sievert.jolcraft.world.item.trim.JolCraftTrimMaterials;
+import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
+import net.sievert.jolcraft.world.worldgen.biome.JolCraftBiomeModifiers;
+import net.sievert.jolcraft.world.worldgen.feature.JolCraftConfiguredFeatures;
+import net.sievert.jolcraft.world.worldgen.feature.JolCraftPlacedFeatures;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

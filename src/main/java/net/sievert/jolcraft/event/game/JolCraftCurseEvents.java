@@ -10,8 +10,8 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.effect.JolCraftEffects;
-import net.sievert.jolcraft.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.sound.JolCraftSounds;
 
 import java.util.List;
 import java.util.Set;

@@ -3,7 +3,7 @@ package net.sievert.jolcraft.integration.jei.custom.trade;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
 
 import javax.annotation.Nullable;
 

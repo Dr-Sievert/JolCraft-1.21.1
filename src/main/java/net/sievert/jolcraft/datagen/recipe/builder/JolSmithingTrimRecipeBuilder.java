@@ -13,7 +13,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.sievert.jolcraft.recipe.custom.JolCraftSmithingTrimRecipe;
+import net.sievert.jolcraft.data.recipe.custom.JolCraftSmithingTrimRecipe;
 
 public class JolSmithingTrimRecipeBuilder {
     private final RecipeCategory category;

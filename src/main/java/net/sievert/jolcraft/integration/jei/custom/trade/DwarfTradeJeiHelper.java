@@ -4,11 +4,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.entity.custom.dwarf.*;
-import net.sievert.jolcraft.entity.custom.dwarf.profession.*;
-import net.sievert.jolcraft.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.item.JolCraftItems;
-import net.sievert.jolcraft.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.*;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.*;
+import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
 
 import java.util.ArrayList;
 import java.util.List;

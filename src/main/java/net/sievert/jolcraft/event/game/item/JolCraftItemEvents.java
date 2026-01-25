@@ -13,8 +13,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.item.custom.tool.SpannerItem;
-import net.sievert.jolcraft.entity.util.dwarf.SalvageLootHelper;
+import net.sievert.jolcraft.world.item.custom.tool.SpannerItem;
+import net.sievert.jolcraft.world.entity.util.dwarf.SalvageLootHelper;
 
 import java.util.List;
 

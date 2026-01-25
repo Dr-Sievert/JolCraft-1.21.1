@@ -6,7 +6,7 @@ import net.minecraft.data.tags.StructureTagsProvider;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.worldgen.structure.JolCraftStructures;
+import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
