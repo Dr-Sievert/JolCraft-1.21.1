@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.ai.goal.dwarf;
+package net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf;
 
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;

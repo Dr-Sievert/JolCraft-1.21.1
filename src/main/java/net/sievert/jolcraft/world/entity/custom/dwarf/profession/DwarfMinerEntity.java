@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.world.entity.ai.goal.dwarf.*;
+import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteractionHelper;

@@ -90,8 +90,9 @@ public class HearthBlock extends BaseEntityBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        int maxBuildY = level.dimensionType().logicalHeight();
-        if (pos.getY() < maxBuildY - 1 && level.getBlockState(pos.above()).canBeReplaced(context)) {
+        int minY = level.dimensionType().minY();
+        int maxY = minY + level.dimensionType().height();
+        if (pos.getY() < maxY - 1 && level.getBlockState(pos.above()).canBeReplaced(context)) {
             return this.defaultBlockState()
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
                     .setValue(HALF, DoubleBlockHalf.LOWER)
@@ -111,6 +112,24 @@ public class HearthBlock extends BaseEntityBlock {
             preventDropFromBottomPart(level, pos, state, player);
         }
         return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.is(newState.getBlock())) {
+            super.onRemove(state, level, pos, newState, isMoving);
+            return;
+        }
+
+        DoubleBlockHalf half = state.getValue(HALF);
+        BlockPos otherPos = (half == DoubleBlockHalf.LOWER) ? pos.above() : pos.below();
+        BlockState otherState = level.getBlockState(otherPos);
+
+        if (otherState.is(this) && otherState.getValue(HALF) != half) {
+            level.removeBlock(otherPos, false);
+        }
+
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     public static void preventDropFromBottomPart(Level level, BlockPos pos, BlockState state, Player player) {
@@ -162,6 +181,8 @@ public class HearthBlock extends BaseEntityBlock {
             }
         }
 
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+
         if (state.getValue(LIT)) {
             return InteractionResult.FAIL;
         }
@@ -171,7 +192,7 @@ public class HearthBlock extends BaseEntityBlock {
             if (be instanceof HearthBlockEntity hearth) {
                 boolean wasNew = hearth.activateFor(player.getUUID());
                 if (wasNew) {
-                    level.setBlock(pos, state.setValue(LIT, true), 3);
+                    setLitBoth(level, pos);
                     level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0F, 0.8F);
                 }
             }
@@ -238,7 +259,7 @@ public class HearthBlock extends BaseEntityBlock {
         if (be instanceof HearthBlockEntity hearth) {
             boolean wasNew = hearth.activateFor(player.getUUID());
             if (wasNew) {
-                level.setBlock(pos, state.setValue(LIT, true), 3);
+                setLitBoth(level, pos);
                 level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0F, 0.8F);
                 if (!player.isCreative()) {
                     Hearth.get(player).setLitThisDay(true);
@@ -249,6 +270,23 @@ public class HearthBlock extends BaseEntityBlock {
         return InteractionResult.SUCCESS;
     }
 
+    private static void setLitBoth(Level level, BlockPos lowerPos) {
+        BlockState lower = level.getBlockState(lowerPos);
+        if (!(lower.getBlock() instanceof HearthBlock)) return;
+        if (lower.getValue(HALF) != DoubleBlockHalf.LOWER) return;
+
+        if (!lower.getValue(LIT)) {
+            level.setBlock(lowerPos, lower.setValue(LIT, true), 3);
+        }
+
+        BlockPos upperPos = lowerPos.above();
+        BlockState upper = level.getBlockState(upperPos);
+        if (upper.is(lower.getBlock()) && upper.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            if (!upper.getValue(LIT)) {
+                level.setBlock(upperPos, upper.setValue(LIT, true), 3);
+            }
+        }
+    }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {

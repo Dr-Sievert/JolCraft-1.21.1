@@ -4,7 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
-public class BooleanFlagAttachmentImpl implements BooleanFlagAttachment {
+public final class BooleanFlagAttachmentImpl {
 
     private final String tagKey;
     private boolean value;
@@ -14,25 +14,27 @@ public class BooleanFlagAttachmentImpl implements BooleanFlagAttachment {
         this.value = defaultValue;
     }
 
-    @Override
     public boolean flag() {
         return value;
     }
 
-    @Override
+    public boolean setFlagIfChanged(boolean value) {
+        if (this.value == value) return false;
+        this.value = value;
+        return true;
+    }
+
     public void setFlag(boolean value) {
         this.value = value;
     }
 
-    @Override
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean(tagKey, value);
         return tag;
     }
 
-    @Override
-    public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, @NotNull CompoundTag tag) {
         this.value = tag.getBoolean(tagKey);
     }
 }

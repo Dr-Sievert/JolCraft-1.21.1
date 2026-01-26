@@ -13,66 +13,79 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-public class DiscoveredStructuresImpl implements DiscoveredStructures {
+public final class DiscoveredStructuresImpl implements DiscoveredStructures {
+
+    private static final String TAG_DISCOVERED = "discovered";
+    private static final String TAG_SCORE = "score";
+    private static final String TAG_DIM = "dim";
+    private static final String TAG_POS = "pos";
+
     private final Set<GlobalPos> discovered = new HashSet<>();
+    private int discoveryScore;
 
     @Override
     public boolean addDiscovered(GlobalPos pos) {
-        return discovered.add(pos);
+        return pos != null && discovered.add(pos);
     }
 
     @Override
     public boolean isDiscovered(GlobalPos pos) {
-        return discovered.contains(pos);
+        return pos != null && discovered.contains(pos);
     }
 
     @Override
-    public List<GlobalPos> getDiscovered() {
-        return List.copyOf(discovered); // immutable list
+    public Set<GlobalPos> getDiscovered() {
+        return Set.copyOf(discovered);
     }
 
-    private int discoveryScore = 0;
-
+    @Override
     public int getScore() {
         return discoveryScore;
     }
 
-    public void addScore(int amount) {
-        this.discoveryScore += amount;
+    @Override
+    public boolean addScore(int amount) {
+        if (amount == 0) return false;
+        discoveryScore += amount;
+        return true;
     }
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
+
         for (GlobalPos pos : discovered) {
             CompoundTag t = new CompoundTag();
-            t.putString("dim", pos.dimension().location().toString());
-            t.putLong("pos", pos.pos().asLong());
+            t.putString(TAG_DIM, pos.dimension().location().toString());
+            t.putLong(TAG_POS, pos.pos().asLong());
             list.add(t);
         }
-        tag.put("discovered", list);
-        tag.putInt("score", discoveryScore);
+
+        tag.put(TAG_DISCOVERED, list);
+        tag.putInt(TAG_SCORE, discoveryScore);
         return tag;
     }
 
     @Override
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
         discovered.clear();
-        ListTag list = tag.getList("discovered", Tag.TAG_COMPOUND);
-        for (Tag base : list) {
-            CompoundTag t = (CompoundTag) base;
-            String dimStr = t.getString("dim");
-            long posLong = t.getLong("pos");
-            ResourceLocation dimRL = ResourceLocation.tryParse(dimStr);
-            if (dimRL == null) continue;
-            ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRL);
-            discovered.add(GlobalPos.of(dimKey, BlockPos.of(posLong)));
-        }
-        discoveryScore = tag.getInt("score");
-    }
 
+        ListTag list = tag.getList(TAG_DISCOVERED, Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag t = list.getCompound(i);
+
+            ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(TAG_DIM));
+            if (dimRL == null) continue;
+
+            ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRL);
+            BlockPos pos = BlockPos.of(t.getLong(TAG_POS));
+
+            discovered.add(GlobalPos.of(dimKey, pos));
+        }
+
+        discoveryScore = tag.getInt(TAG_SCORE);
+    }
 }

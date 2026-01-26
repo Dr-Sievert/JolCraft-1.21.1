@@ -24,7 +24,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.world.entity.ai.goal.dwarf.*;
+import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;

@@ -27,8 +27,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.FermentingCauldronBlock;
 import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
@@ -67,10 +69,34 @@ public class JolCraftPlayerEvents {
 
     @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
-        Player player = event.getEntity();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        ServerLevel level = player.serverLevel();
+        long day = level.getDayTime() / 24000L;
+
         Hearth hearth = Hearth.get(player);
-        if (hearth.hasLitThisDay()) {
-            hearth.setLitThisDay(false);
+
+        if (hearth.lastResetDay() != day) {
+            hearth.setHasLitThisDay(false);
+            hearth.setLastResetDay(day);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if ((player.tickCount % 40) != 0) return;
+
+        ServerLevel level = player.serverLevel();
+        long day = level.getDayTime() / 24000L;
+
+        Hearth hearth = Hearth.get(player);
+
+        if (hearth.lastResetDay() == day) return;
+
+        if (!hearth.hasLitThisDay()) {
+            hearth.setHasLitThisDay(false);
+            hearth.setLastResetDay(day);
         }
     }
 

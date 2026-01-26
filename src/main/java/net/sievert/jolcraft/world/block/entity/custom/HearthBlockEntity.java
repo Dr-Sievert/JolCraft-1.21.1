@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.sievert.jolcraft.world.block.custom.HearthBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
@@ -83,22 +84,46 @@ public class HearthBlockEntity extends BlockEntity {
 
         boolean anyValidBed = hasAnyValidBed(serverlevel);
 
+        BlockPos pos = this.getBlockPos();
         BlockState state = this.getBlockState();
         boolean lit = state.getValue(HearthBlock.LIT);
 
-        if (!anyValidBed && lit) {
-            serverlevel.setBlock(this.getBlockPos(), state.setValue(HearthBlock.LIT, false), 3);
-            serverlevel.playSound(null, this.getBlockPos(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 0.8f);
+        // Turn off if no valid beds remain.
+        if (!anyValidBed) {
+            if (lit) {
+                setLitBoth(serverlevel, pos, false);
+                serverlevel.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 0.8f);
+            }
             return;
         }
 
-        if (anyValidBed && !lit) {
-            serverlevel.setBlock(this.getBlockPos(), state.setValue(HearthBlock.LIT, true), 3);
-            serverlevel.playSound(null, this.getBlockPos(), SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0f, 0.8f);
+        // Turn on if at least one valid bed exists.
+        if (!lit) {
+            setLitBoth(serverlevel, pos, true);
+            serverlevel.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0f, 0.8f);
         }
 
-        if (state.getValue(HearthBlock.LIT)) {
+        // Refresh state after potential changes above.
+        state = serverlevel.getBlockState(pos);
+        if (state.is(this.getBlockState().getBlock()) && state.getValue(HearthBlock.LIT)) {
             applyHomesteadEffect(serverlevel);
+        }
+    }
+
+    private static void setLitBoth(ServerLevel level, BlockPos lowerPos, boolean lit) {
+        BlockState lower = level.getBlockState(lowerPos);
+        if (!(lower.getBlock() instanceof HearthBlock)) return;
+
+        if (lower.getValue(HearthBlock.LIT) != lit) {
+            level.setBlock(lowerPos, lower.setValue(HearthBlock.LIT, lit), 3);
+        }
+
+        BlockPos upperPos = lowerPos.above();
+        BlockState upper = level.getBlockState(upperPos);
+        if (upper.is(lower.getBlock()) && upper.hasProperty(HearthBlock.HALF) && upper.getValue(HearthBlock.HALF) == DoubleBlockHalf.UPPER) {
+            if (upper.getValue(HearthBlock.LIT) != lit) {
+                level.setBlock(upperPos, upper.setValue(HearthBlock.LIT, lit), 3);
+            }
         }
     }
 

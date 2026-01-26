@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.ai.goal.dwarf;
+package net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf;
 
 import java.util.EnumSet;
 import java.util.Iterator;

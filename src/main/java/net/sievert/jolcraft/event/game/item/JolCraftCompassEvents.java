@@ -29,6 +29,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructures;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
@@ -46,6 +47,15 @@ public class JolCraftCompassEvents {
     private static final Map<UUID, BlockPos> LAST_COMPASS_POS = new HashMap<>();
     private static final Map<java.util.UUID, Integer> LAST_COMPASS_SLOT = new java.util.HashMap<>();
     private static final Map<UUID, Integer> NEXT_FULL_SCAN_TICK = new java.util.HashMap<>();
+
+    @SubscribeEvent
+    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        Player player = event.getEntity();
+        UUID id = player.getUUID();
+        LAST_COMPASS_POS.remove(id);
+        LAST_COMPASS_SLOT.remove(id);
+        NEXT_FULL_SCAN_TICK.remove(id);
+    }
 
     @SubscribeEvent
     public static void onCompassCrafted(PlayerEvent.ItemCraftedEvent event) {
@@ -72,6 +82,7 @@ public class JolCraftCompassEvents {
     public static void onDialCombine(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
         Level level = event.getLevel();
+
         ItemStack main = event.getItemStack();
         ItemStack offhand = player.getOffhandItem();
 
@@ -82,88 +93,76 @@ public class JolCraftCompassEvents {
 
         if (!((mainIsDial && offIsEmpty) || (offIsDial && mainIsEmpty))) return;
 
-        if (!level.isClientSide) {
-            ItemStack dial = mainIsDial ? main : offhand;
-            ItemStack empty = mainIsEmpty ? main : offhand;
-            InteractionHand swingHand = mainIsDial ? event.getHand()
-                    : (event.getHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
-
-            String group = dial.get(JolCraftDataComponents.STRUCTURE_GROUP);
-            if (group == null) return;
-
-            TagKey<Structure> structureTag = DeepslateCompassHelper.getStructureTagForGroup(group);
-
-            GlobalPos targetPos = null;
-            String foundStructureFullId = "unknown";
-
-            if (structureTag != null && player.level() instanceof ServerLevel serverLevel) {
-                try {
-                    targetPos = DiscoveredStructuresHelper.findNearestUndiscoveredStructure(
-                            serverLevel,
-                            structureTag,
-                            player.blockPosition(),
-                            100,
-                            player
-                    );
-
-                    if (targetPos != null) {
-                        var registry = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE);
-                        var allRefs = serverLevel.structureManager().getAllStructuresAt(targetPos.pos());
-
-                        for (Structure structure : allRefs.keySet()) {
-                            for (Holder<Structure> holder : registry.getTagOrEmpty(structureTag)) {
-                                if (holder.value() == structure) {
-                                    ResourceLocation id = registry.getKey(structure);
-                                    if (id != null) {
-                                        foundStructureFullId = id.toString();
-                                    }
-                                    break;
-                                }
-                            }
-                            if (!foundStructureFullId.equals("unknown")) break;
-                        }
-
-                        if (foundStructureFullId.equals("unknown")) {
-                            foundStructureFullId = group;
-                        }
-                    }
-                } catch (Exception e) {
-                    targetPos = null;
-                }
-            }
-
-            if (targetPos == null) {
-                return;
-            }
-
-            ItemStack result = new ItemStack(JolCraftItems.DEEPSLATE_COMPASS.get());
-
-            var dyeColor = empty.get(DataComponents.DYED_COLOR);
-            if (dyeColor != null) {
-                result.set(DataComponents.DYED_COLOR, dyeColor);
-            }
-            result.set(JolCraftDataComponents.STRUCTURE_GROUP, foundStructureFullId);
-
-            var dialColor = dial.get(JolCraftDataComponents.DIAL_COLOR.get());
-            if (dialColor != null) {
-                result.set(JolCraftDataComponents.DIAL_COLOR, dialColor);
-            }
-
-            result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET, targetPos);
-
-            dial.shrink(1);
-            empty.shrink(1);
-
-            if (!player.addItem(result)) {
-                player.drop(result, false);
-            }
-
-            player.swing(swingHand, true);
-            level.playSound(null, player.blockPosition(), SoundEvents.METAL_HIT, SoundSource.PLAYERS, 1.0F, 1.4F);
-        }
-
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
+
+        if (level.isClientSide) return;
+        if (!(player.level() instanceof ServerLevel serverLevel)) return;
+
+        ItemStack dial = mainIsDial ? main : offhand;
+        ItemStack empty = mainIsEmpty ? main : offhand;
+
+        InteractionHand swingHand = mainIsDial
+                ? event.getHand()
+                : (event.getHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+
+        String group = dial.get(JolCraftDataComponents.STRUCTURE_GROUP);
+        if (group == null || group.isBlank()) return;
+
+        TagKey<Structure> structureTag = DeepslateCompassHelper.getStructureTagForGroup(group);
+        if (structureTag == null) return;
+
+        GlobalPos targetPos = DiscoveredStructuresHelper.findNearestUndiscoveredStructure(
+                serverLevel,
+                structureTag,
+                player.blockPosition(),
+                100,
+                player
+        );
+        if (targetPos == null) return;
+
+        String foundStructureFullId = group;
+        var registry = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE);
+        var allRefs = serverLevel.structureManager().getAllStructuresAt(targetPos.pos());
+
+        outer:
+        for (Structure structure : allRefs.keySet()) {
+            for (Holder<Structure> holder : registry.getTagOrEmpty(structureTag)) {
+                if (holder.value() == structure) {
+                    ResourceLocation id = registry.getKey(structure);
+                    if (id != null) {
+                        foundStructureFullId = id.toString();
+                    }
+                    break outer;
+                }
+            }
+        }
+
+        ItemStack result = new ItemStack(JolCraftItems.DEEPSLATE_COMPASS.get());
+
+        var dyeColor = empty.get(DataComponents.DYED_COLOR);
+        if (dyeColor != null) {
+            result.set(DataComponents.DYED_COLOR, dyeColor);
+        }
+
+        result.set(JolCraftDataComponents.STRUCTURE_GROUP, foundStructureFullId);
+
+        var dialColor = dial.get(JolCraftDataComponents.DIAL_COLOR.get());
+        if (dialColor != null) {
+            result.set(JolCraftDataComponents.DIAL_COLOR, dialColor);
+        }
+
+        result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET, targetPos);
+
+        dial.shrink(1);
+        empty.shrink(1);
+
+        if (!player.addItem(result)) {
+            player.drop(result, false);
+        }
+
+        player.swing(swingHand, true);
+        level.playSound(null, player.blockPosition(), SoundEvents.METAL_HIT, SoundSource.PLAYERS, 1.0F, 1.4F);
     }
 
     @SubscribeEvent
@@ -212,7 +211,6 @@ public class JolCraftCompassEvents {
             NEXT_FULL_SCAN_TICK.put(id, player.tickCount + 20);
         }
 
-        // From here: only evaluate ONE compass (the first one we care about).
         ItemStack stack = items.get(slot);
         if (!stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) return;
 
@@ -238,14 +236,8 @@ public class JolCraftCompassEvents {
         BlockPos patchedEntrance = BlockPos.containing(tracked.pos().getX(), box.getCenter().getY(), tracked.pos().getZ());
 
         // Avoid stream allocs every tick: plain loop
-        boolean alreadyDiscovered = false;
-        for (GlobalPos gp : DiscoveredStructuresHelper.getDiscoveredStructures(player)) {
-            if (gp.dimension().equals(tracked.dimension()) && gp.pos().equals(patchedEntrance)) {
-                alreadyDiscovered = true;
-                break;
-            }
-        }
-        if (alreadyDiscovered) return;
+        GlobalPos entrancePos = GlobalPos.of(tracked.dimension(), patchedEntrance);
+        if (DiscoveredStructures.get(player).isDiscovered(entrancePos)) return;
 
         // --- Discovery action ---
         DiscoveredStructuresHelper.addDiscoveredStructureServer(
