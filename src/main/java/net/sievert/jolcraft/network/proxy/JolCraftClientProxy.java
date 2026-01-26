@@ -4,104 +4,48 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageImpl;
-import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageImpl;
-import net.sievert.jolcraft.data.attachment.custom.lore.LoreUnlockImpl;
+import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguage;
+import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguage;
+import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlock;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.network.data.ClientDeliriumData;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientLanguagePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundLanguagePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundLoreUnlocksPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundParticlePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundPlaySoundPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
 import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.network.data.*;
-import net.sievert.jolcraft.network.packet.s2c.*;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@SuppressWarnings({"unchecked", "unused"})
+@SuppressWarnings({"unused"})
 @OnlyIn(Dist.CLIENT)
 public final class JolCraftClientProxy implements JolCraftClientAccess {
 
-    private final DwarvenLanguageImpl cachedLang = new DwarvenLanguageImpl();
-    private int lastLangRevision = -1;
-
-    private final AncientDwarvenLanguageImpl cachedAncientLang = new AncientDwarvenLanguageImpl();
-    private int lastAncientLangRevision = -1;
-
-    private final DwarvenReputationImpl cachedRep = new DwarvenReputationImpl();
-    private int lastReputationRevision = -1;
-
-    private LoreUnlockImpl<DwarfLoreKey> cachedLoreUnlock =
-            new LoreUnlockImpl<>(DwarfLoreKey.class, Set.of());
-    private int lastLoreRevision = -1;
-
     @Override
     public <T> T getAttachment(AttachmentType<T> type, Player player) {
-
-        if (type == JolCraftAttachments.DWARVEN_LANGUAGE.get()) {
-            int rev = ClientLanguageData.revision();
-            if (rev != lastLangRevision) {
-                lastLangRevision = rev;
-                cachedLang.setKnowsLanguage(ClientLanguageData.knowsLanguage());
-            }
-            return (T) cachedLang;
-        }
-
-        if (type == JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get()) {
-            int rev = ClientAncientLanguageData.revision();
-            if (rev != lastAncientLangRevision) {
-                lastAncientLangRevision = rev;
-                cachedAncientLang.setKnowsLanguage(ClientAncientLanguageData.knowsLanguage());
-            }
-            return (T) cachedAncientLang;
-        }
-
-        if (type == JolCraftAttachments.DWARVEN_REP.get()) {
-            int rev = ClientReputationData.revision();
-            if (rev != lastReputationRevision) {
-                lastReputationRevision = rev;
-
-                cachedRep.setTier(ClientReputationData.getTier());
-                cachedRep.getEndorsements().clear();
-
-                EnumSet<DwarfProfession> endorsements = ClientReputationData.getAllEndorsements();
-                if (endorsements != null && !endorsements.isEmpty()) {
-                    cachedRep.getEndorsements().addAll(endorsements);
-                }
-            }
-            return (T) cachedRep;
-        }
-
-        if (type == JolCraftAttachments.DWARF_LORE_UNLOCK.get()) {
-            int rev = ClientTomeUnlocksData.revision();
-            if (rev != lastLoreRevision) {
-                lastLoreRevision = rev;
-
-                Set<DwarfLoreKey> keys = new HashSet<>();
-                List<String> unlocks = ClientTomeUnlocksData.getAllUnlocks();
-                if (unlocks != null && !unlocks.isEmpty()) {
-                    for (String key : unlocks) {
-                        DwarfLoreKey resolved = LoreHelper.byNameIgnoreCase(DwarfLoreKey.class, key);
-                        if (resolved != null) keys.add(resolved);
-                    }
-                }
-
-                cachedLoreUnlock = new LoreUnlockImpl<>(DwarfLoreKey.class, keys);
-            }
-            return (T) cachedLoreUnlock;
-        }
-
+        if (player == null) return null;
         return player.getData(type);
     }
 
@@ -121,14 +65,10 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
                 .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
     }
 
-    // ----------------------------
-    // Clientbound packet application
-    // ----------------------------
-
     @Override
     public void apply(ClientboundParticlePacket packet) {
         var mc = Minecraft.getInstance();
-        if (mc.level instanceof net.minecraft.client.multiplayer.ClientLevel clientLevel) {
+        if (mc.level instanceof ClientLevel clientLevel) {
             clientLevel.addParticle(
                     packet.particle(),
                     packet.overrideLimiter(),
@@ -177,7 +117,27 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
 
     @Override
     public void apply(ClientboundLoreUnlocksPacket packet) {
-        ClientTomeUnlocksData.setUnlocks(List.copyOf(packet.unlocks()));
+        var player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        DwarfLoreUnlock unlock = player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
+
+        Set<DwarfLoreKey> snapshot =
+                (packet.unlocks() == null) ? Set.of() :
+                        packet.unlocks().stream()
+                                .filter(s -> s != null && !s.isBlank())
+                                .map(s -> s.trim().toUpperCase(Locale.ROOT))
+                                .map(s -> {
+                                    try {
+                                        return DwarfLoreKey.valueOf(s);
+                                    } catch (IllegalArgumentException ignored) {
+                                        return null;
+                                    }
+                                })
+                                .filter(java.util.Objects::nonNull)
+                                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+
+        unlock.setUnlocks(snapshot);
     }
 
     @Override
@@ -187,21 +147,43 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
 
     @Override
     public void apply(ClientboundLanguagePacket packet) {
-        ClientLanguageData.setKnows(packet.knowsLanguage());
+        var player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        DwarvenLanguage lang = player.getData(JolCraftAttachments.DWARVEN_LANGUAGE.get());
+        lang.setHasLanguage(packet.knowsLanguage());
     }
 
     @Override
     public void apply(ClientboundAncientLanguagePacket packet) {
-        ClientAncientLanguageData.setKnows(packet.knowsLanguage());
+        var player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        AncientDwarvenLanguage lang = player.getData(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get());
+        lang.setHasLanguage(packet.knowsLanguage());
     }
 
     @Override
     public void apply(ClientboundReputationPacket packet) {
-        ClientReputationData.setTier(packet.tier());
+        var player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        DwarvenReputationImpl rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
+        rep.setTier(packet.tier());
     }
 
     @Override
     public void apply(ClientboundEndorsementsPacket packet) {
-        ClientReputationData.setEndorsements(EnumSet.copyOf(packet.endorsements()));
+        var player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        DwarvenReputationImpl rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
+
+        Set<ResourceLocation> ids = EnumSet.copyOf(packet.endorsements()).stream()
+                .filter(p -> p != null && p != DwarfProfession.NONE)
+                .map(p -> JolCraft.location(p.id))
+                .collect(Collectors.toUnmodifiableSet());
+
+        rep.setEndorsements(ids);
     }
 }

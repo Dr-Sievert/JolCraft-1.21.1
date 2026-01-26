@@ -2,31 +2,31 @@ package net.sievert.jolcraft.data.attachment.custom.language.ancient;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.sievert.jolcraft.data.attachment.util.BooleanFlagAttachmentImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class AncientDwarvenLanguageImpl implements AncientDwarvenLanguage {
-    private boolean knowsLanguage = false;
+public final class AncientDwarvenLanguageImpl implements AncientDwarvenLanguage {
+
+    private static final String TAG_HAS_LANGUAGE = "hasLanguage";
+    private final BooleanFlagAttachmentImpl flag = new BooleanFlagAttachmentImpl(TAG_HAS_LANGUAGE, false);
 
     @Override
-    public boolean knowsLanguage() {
-        return knowsLanguage;
+    public boolean hasLanguage() {
+        return flag.flag();
     }
 
     @Override
-    public void setKnowsLanguage(boolean value) {
-        this.knowsLanguage = value;
+    public void setHasLanguage(boolean value) {
+        flag.setFlag(value);
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        tag.putBoolean("KnowsLanguage", knowsLanguage);
-        return tag;
+    public CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
+        return flag.serializeNBT(provider);
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
-        this.knowsLanguage = tag.getBoolean("KnowsLanguage");
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, @NotNull CompoundTag tag) {
+        flag.deserializeNBT(provider, tag);
     }
 }
-

@@ -6,8 +6,16 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 
 public interface DwarvenLanguage extends INBTSerializable<CompoundTag> {
-    boolean knowsLanguage();
-    void setKnowsLanguage(boolean value);
+
+    boolean hasLanguage();
+
+    void setHasLanguage(boolean value);
+
+    default boolean setHasLanguageIfChanged(boolean value) {
+        if (hasLanguage() == value) return false;
+        setHasLanguage(value);
+        return true;
+    }
 
     static DwarvenLanguage get(Player player) {
         return player.getData(JolCraftAttachments.DWARVEN_LANGUAGE.get());

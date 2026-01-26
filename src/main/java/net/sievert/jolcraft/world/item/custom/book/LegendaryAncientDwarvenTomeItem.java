@@ -34,54 +34,74 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
-            boolean hasAncientMemory = AncientEffectHelper.hasAncientMemory(serverPlayer);
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
 
-            if (!(knowsLanguage && hasAncientMemory)) {
-                playIdentifyFailSound(level, player);
-                if (!knowsLanguage) {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.dwarven_tome.identify_fail").withStyle(ChatFormatting.RED), true
-                    );
-                } else {
-                    player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.RED), true
-                    );
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.SUCCESS;
+        }
+
+        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
+        boolean hasAncientMemory = AncientEffectHelper.hasAncientMemory(serverPlayer);
+
+        if (!knowsLanguage) {
+            playIdentifyFailSound(level, player);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.dwarven_tome.identify_fail").withStyle(ChatFormatting.RED),
+                    true
+            );
+            return InteractionResult.SUCCESS;
+        }
+
+        if (!hasAncientMemory) {
+            playIdentifyFailSound(level, player);
+            player.displayClientMessage(
+                    Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.RED),
+                    true
+            );
+            return InteractionResult.SUCCESS;
+        }
+
+        ItemStack stack = player.getItemInHand(hand);
+        DwarfLoreKey key = LoreHelper.getLoreKey(stack, DwarfLoreKey.class);
+
+        if (key == null) {
+            showEmptyUnlockMessage(player);
+            playIdentifyFailSound(level, player);
+            return InteractionResult.SUCCESS;
+        }
+
+        switch (key) {
+            case FORGOTTEN_BREW_FORMULAS -> {
+                if (DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+                    showEmptyUnlockMessage(player);
                     playIdentifyFailSound(level, player);
+                } else {
+                    DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
+                    player.displayClientMessage(
+                            Component.translatable("tooltip.jolcraft.tome_unlock.brew").withStyle(ChatFormatting.GREEN),
+                            true
+                    );
+                    playUnlockSounds(level, player);
                 }
-                return InteractionResult.SUCCESS;
             }
-
-            ItemStack stack = player.getItemInHand(hand);
-            DwarfLoreKey key = LoreHelper.getLoreKey(stack, DwarfLoreKey.class);
-
-            switch (key) {
-                case FORGOTTEN_BREW_FORMULAS -> {
-                    if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
-                        showEmptyUnlockMessage(player);
-                        playIdentifyFailSound(level, player);
-                    } else {
-                        DwarfLoreUnlockHelper.grantUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
-                        player.displayClientMessage(
-                                Component.translatable("tooltip.jolcraft.tome_unlock.brew").withStyle(ChatFormatting.GREEN), true
-                        );
-                        playUnlockSounds(level, player);
-                    }
+            case ANCIENT_GEMCRAFT -> {
+                if (DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                    showEmptyUnlockMessage(player);
+                    playIdentifyFailSound(level, player);
+                } else {
+                    DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
+                    player.displayClientMessage(
+                            Component.translatable("tooltip.jolcraft.tome_unlock.gems").withStyle(ChatFormatting.GREEN),
+                            true
+                    );
+                    playUnlockSounds(level, player);
                 }
-                case ANCIENT_GEMCRAFT -> {
-                    if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
-                        showEmptyUnlockMessage(player);
-                        playIdentifyFailSound(level, player);
-                    } else {
-                        DwarfLoreUnlockHelper.grantUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
-                        player.displayClientMessage(
-                                Component.translatable("tooltip.jolcraft.tome_unlock.gems").withStyle(ChatFormatting.GREEN), true
-                        );
-                        playUnlockSounds(level, player);
-                    }
-                }
-                default -> showEmptyUnlockMessage(player);
+            }
+            default -> {
+                showEmptyUnlockMessage(player);
+                playIdentifyFailSound(level, player);
             }
         }
 

@@ -25,7 +25,7 @@ public class DwarvenLanguageTrigger extends SimpleCriterionTrigger<DwarvenLangua
 
     public void trigger(ServerPlayer player) {
         DwarvenLanguage lang = player.getData(JolCraftAttachments.DWARVEN_LANGUAGE.get());
-        if (lang.knowsLanguage()) {
+        if (lang.hasLanguage()) {
             this.trigger(player, instance -> true);
         }
     }

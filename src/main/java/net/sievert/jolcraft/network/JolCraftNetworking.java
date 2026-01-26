@@ -106,7 +106,6 @@ public class JolCraftNetworking {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
-
     public static void sendToClient(ServerPlayer player, CustomPacketPayload payload) {
         player.connection.send(payload);
     }

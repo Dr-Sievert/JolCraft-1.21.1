@@ -19,7 +19,7 @@ public enum DwarfProfession {
     SCRAPPER("scrapper");
     //SMELTER("smelter");
 
-    private final String id;
+    public final String id;
     DwarfProfession(String id) { this.id = id; }
     public String getId() { return id; }
 

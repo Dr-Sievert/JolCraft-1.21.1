@@ -3,6 +3,7 @@ package net.sievert.jolcraft.data.attachment.custom.language.ancient;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 
 public final class AncientEffectHelper {
@@ -17,7 +18,6 @@ public final class AncientEffectHelper {
      * Safe on both logical sides.
      */
     public static Component getAncientText(Player player, Component readable) {
-        if (player == null) return readable.copy().withStyle(style -> style.withFont(SGA_FONT));
         if (hasAncientMemory(player)) return readable;
         return readable.copy().withStyle(style -> style.withFont(SGA_FONT));
     }
@@ -37,6 +37,7 @@ public final class AncientEffectHelper {
      */
     public static boolean hasAncientMemoryBypassCreative(Player player) {
         if (player == null) return false;
-        return player.hasEffect(JolCraftEffects.ANCIENT_MEMORY) || AncientDwarvenLanguageHelper.knowsAncientDwarvishBypassCreative(player);
+        if (player.hasEffect(JolCraftEffects.ANCIENT_MEMORY)) return true;
+        return player.getData(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get()).hasLanguage();
     }
 }

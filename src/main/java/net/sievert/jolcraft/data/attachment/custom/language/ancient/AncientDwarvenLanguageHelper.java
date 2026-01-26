@@ -5,7 +5,6 @@ import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientLanguagePacket;
-import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 public final class AncientDwarvenLanguageHelper {
 
@@ -25,8 +24,7 @@ public final class AncientDwarvenLanguageHelper {
      */
     public static boolean knowsAncientDwarvishBypassCreative(Player player) {
         if (player == null) return false;
-        AncientDwarvenLanguage lang = JolCraftProxy.access().getAttachment(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get(), player);
-        return lang != null && lang.knowsLanguage();
+        return player.getData(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get()).hasLanguage();
     }
 
     /**
@@ -35,8 +33,10 @@ public final class AncientDwarvenLanguageHelper {
      */
     public static void setKnowsAncientDwarvish(Player player, boolean value) {
         if (player == null) return;
+
         AncientDwarvenLanguage lang = player.getData(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get());
-        lang.setKnowsLanguage(value);
+        if (!lang.setHasLanguageIfChanged(value)) return;
+
         if (player instanceof ServerPlayer serverPlayer) {
             JolCraftNetworking.sendToClient(serverPlayer, new ClientboundAncientLanguagePacket(value));
         }
