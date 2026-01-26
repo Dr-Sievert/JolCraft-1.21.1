@@ -124,8 +124,7 @@ public class JolCraftAttributeEvents {
 
         trackFrostvein(player, attrs);
 
-        var pending = attrs.consumePending();
-
+        EnumSet<AttributesAttachment.RefreshKey> pending = attrs.consumePending();
         if (pending.isEmpty()) return;
 
         if (pending.contains(AttributesAttachment.RefreshKey.FULL)) {
@@ -133,24 +132,15 @@ public class JolCraftAttributeEvents {
             return;
         }
 
-        if (pending.contains(AttributesAttachment.RefreshKey.ASHFANG)) {
-            refreshAshfangAttribute(player);
-        }
-
-        if (pending.contains(AttributesAttachment.RefreshKey.IRONHEART)) {
-            refreshIronheartAttribute(player);
-        }
-
-        if (pending.contains(AttributesAttachment.RefreshKey.FROSTVEIN)) {
-            refreshFrostveinAttribute(player);
-        }
-
-        if (pending.contains(AttributesAttachment.RefreshKey.SKYBURROW)) {
-            refreshSkyburrowAttribute(player);
-        }
-
-        if (pending.contains(AttributesAttachment.RefreshKey.MOONSHARD)) {
-            refreshMoonshardAttribute(player);
+        for (AttributesAttachment.RefreshKey key : pending) {
+            switch (key) {
+                case ASHFANG -> refreshAshfangAttribute(player);
+                case IRONHEART -> refreshIronheartAttribute(player);
+                case FROSTVEIN -> refreshFrostveinAttribute(player);
+                case SKYBURROW -> refreshSkyburrowAttribute(player);
+                case MOONSHARD -> refreshMoonshardAttribute(player);
+                case FULL -> { /* handled above */ }
+            }
         }
     }
 
@@ -176,16 +166,15 @@ public class JolCraftAttributeEvents {
     }
 
     private static void refreshIronheartAttribute(ServerPlayer player) {
-        double percent = player.getAttributeValue(JolCraftAttributes.ARMOR_INCREASE);
-        if (percent <= 0.0D) return;
-
         AttributeInstance armor = player.getAttribute(Attributes.ARMOR);
         if (armor == null) return;
 
         armor.removeModifier(IRONHEART_ID);
 
-        double baseArmor = armor.getBaseValue();
+        double percent = player.getAttributeValue(JolCraftAttributes.ARMOR_INCREASE);
+        if (percent <= 0.0D) return;
 
+        double baseArmor = armor.getBaseValue();
         for (AttributeModifier mod : armor.getModifiers()) {
             if (mod.operation() == AttributeModifier.Operation.ADD_VALUE) {
                 baseArmor += mod.amount();
@@ -196,11 +185,10 @@ public class JolCraftAttributeEvents {
         if (bonus <= 0.0D) return;
 
         armor.addTransientModifier(new AttributeModifier(
-                IRONHEART_ID,
-                bonus,
-                AttributeModifier.Operation.ADD_VALUE
+                IRONHEART_ID, bonus, AttributeModifier.Operation.ADD_VALUE
         ));
     }
+
 
     private static void refreshFrostveinAttribute(ServerPlayer player) {
         var speed = player.getAttribute(Attributes.MOVEMENT_SPEED);

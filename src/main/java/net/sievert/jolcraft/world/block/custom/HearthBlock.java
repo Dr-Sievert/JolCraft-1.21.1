@@ -262,7 +262,7 @@ public class HearthBlock extends BaseEntityBlock {
                 setLitBoth(level, pos);
                 level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0F, 0.8F);
                 if (!player.isCreative()) {
-                    Hearth.get(player).setLitThisDay(true);
+                    Hearth.get(player).setHasLitThisDay(true);
                     stack.shrink(1);
                 }
             }
