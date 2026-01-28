@@ -27,15 +27,12 @@ public abstract class AbstractLanguageProvider extends LanguageProvider {
         return addedKeys.contains(key);
     }
 
-    /** Marks a key as added. */
-    protected final void markKey(String key) {
-        addedKeys.add(key);
-    }
-
     /** Convenience: add and track. Prefer using this over calling {@link #add(String, String)} directly. */
     public final void put(String key, String value) {
+        if (!addedKeys.add(key)) {
+            throw new IllegalStateException("Duplicate lang key added: '" + key + "' (provider: " + getClass().getSimpleName() + ")");
+        }
         add(key, value);
-        markKey(key);
     }
 
     /** Convenience: add many keys with the same display value. */

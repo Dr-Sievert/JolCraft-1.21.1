@@ -109,11 +109,11 @@ public final class ReputationLangSubProvider implements AbstractLanguageProvider
         // Reputation tiers (jolcraft.reputation_tier.<n>)
         // -----------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.mod(REPUTATION_TIER_0), "Stranger");
-        p.putManual(JolCraftLanguageKeys.mod(REPUTATION_TIER_1), "Known Face");
-        p.putManual(JolCraftLanguageKeys.mod(REPUTATION_TIER_2), "Trusted");
-        p.putManual(JolCraftLanguageKeys.mod(REPUTATION_TIER_3), "Respected");
-        p.putManual(JolCraftLanguageKeys.mod(REPUTATION_TIER_4), "Blood-Kin");
+        p.putManual(REPUTATION_TIER_0, "Stranger");
+        p.putManual(REPUTATION_TIER_1, "Known Face");
+        p.putManual(REPUTATION_TIER_2, "Trusted");
+        p.putManual(REPUTATION_TIER_3, "Respected");
+        p.putManual(REPUTATION_TIER_4, "Blood-Kin");
 
     }
 }

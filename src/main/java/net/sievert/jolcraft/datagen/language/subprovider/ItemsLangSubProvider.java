@@ -9,14 +9,16 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 public final class ItemsLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     public static final String JOLCRAFT_GENERAL_CREATIVE_TAB = "jolcraft_items_tab";
+    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB_KEY = JolCraftLanguageKeys.itemGroup(JOLCRAFT_GENERAL_CREATIVE_TAB);
     public static final String JOLCRAFT_EGG_CREATIVE_TAB = "jolcraft_egg_tab";
+    public static final String JOLCRAFT_EGG_CREATIVE_TAB_KEY = JolCraftLanguageKeys.itemGroup(JOLCRAFT_EGG_CREATIVE_TAB);
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
 
         // Creative tabs
-        p.putManual(JolCraftLanguageKeys.itemGroup(JOLCRAFT_GENERAL_CREATIVE_TAB), "JolCraft");
-        p.putManual(JolCraftLanguageKeys.itemGroup(JOLCRAFT_EGG_CREATIVE_TAB), "JolCraft Spawn Eggs");
+        p.putManual(JOLCRAFT_GENERAL_CREATIVE_TAB_KEY, "JolCraft");
+        p.putManual(JOLCRAFT_EGG_CREATIVE_TAB_KEY, "JolCraft Spawn Eggs");
 
         // Structure maps
         p.putManual("filled_map.forge", "Map to a Dwarven Forge");

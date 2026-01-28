@@ -25,7 +25,7 @@ public class JolCraftCreativeModeTabs {
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_ITEMS =
             CREATIVE_MODE_TABS.register(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.jolcraft.jolcraft_items_tab"))
+                    .title(Component.translatable(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB_KEY))
                     .icon(() -> new ItemStack(JolCraftItems.GOLD_COIN.get()))
                     .displayItems((pParameters, pOutput) -> {
 
@@ -261,7 +261,7 @@ public class JolCraftCreativeModeTabs {
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_EGGS =
             CREATIVE_MODE_TABS.register(ItemsLangSubProvider.JOLCRAFT_EGG_CREATIVE_TAB, () -> CreativeModeTab.builder()
-                    .title(Component.translatable("itemGroup.jolcraft.jolcraft_egg_tab"))
+                    .title(Component.translatable(ItemsLangSubProvider.JOLCRAFT_EGG_CREATIVE_TAB_KEY))
                     .icon(() -> new ItemStack(JolCraftItems.DWARF_SPAWN_EGG.get()))
                     .withTabsBefore(JolCraft.location(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB))
                     .displayItems((pParameters, pOutput) -> {

@@ -477,7 +477,7 @@
 
         @Override
         protected Component getDefaultName() {
-            return Component.translatable("container.jolcraft.strongbox");
+            return Component.translatable(ContainerLangSubProvider.CONTAINER_STRONGBOX);
         }
 
         // ---------------------------------------------------------------------
