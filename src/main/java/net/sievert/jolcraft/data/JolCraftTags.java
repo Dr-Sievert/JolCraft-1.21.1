@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.data;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -128,15 +129,21 @@ public class JolCraftTags {
 
         //Has structure
 
-        public static final TagKey<Biome> HAS_FORGE = hasStructure(JolCraftStructures.FORGE_ID);
-        public static final TagKey<Biome> HAS_DWARVEN_TRAIL_RUIN = hasStructure(JolCraftStructures.DWARVEN_TRAIL_RUIN_ID);
+        public static final TagKey<Biome> HAS_FORGE = hasStructure(JolCraftStructures.FORGE.id());
+        public static final TagKey<Biome> HAS_DWARVEN_TRAIL_RUIN = hasStructure(JolCraftStructures.DWARVEN_TRAIL_RUIN.id());
 
         private static TagKey<Biome> create(String name) {
             return TagKey.create(Registries.BIOME, JolCraft.location(name));
         }
 
-        private static TagKey<Biome> hasStructure(String structureId) {
-            return create("has_structure/" + structureId);
+        private static TagKey<Biome> hasStructure(String structurePath) {
+            return TagKey.create(Registries.BIOME, JolCraft.location("has_structure/" + structurePath));
         }
+
+        private static TagKey<Biome> hasStructure(ResourceLocation structureId) {
+            return hasStructure(structureId.getPath());
+        }
+
+
     }
 }

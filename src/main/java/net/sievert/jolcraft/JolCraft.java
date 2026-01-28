@@ -57,7 +57,7 @@ public class JolCraft {
         JolCraftEquipmentAssets.register(modEventBus);
         JolCraftRecipes.register(modEventBus);
         JolCraftAttributes.register(modEventBus);
-        JolCraftStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
+        JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);
 
         // --- Events ---
         modEventBus.addListener(this::commonSetup);

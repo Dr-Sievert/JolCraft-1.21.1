@@ -73,8 +73,8 @@ public class DiscoveredStructuresHelper {
     private static final Map<ResourceLocation, Integer> STRUCTURE_SCORES = Map.of(
             BuiltinStructures.TRAIL_RUINS.location(), 25,
             BuiltinStructures.ANCIENT_CITY.location(), 100,
-            JolCraft.location(JolCraftStructures.DWARVEN_TRAIL_RUIN_ID), 25,
-            JolCraft.location(JolCraftStructures.FORGE_ID), 100
+            JolCraft.location(JolCraftStructures.DWARVEN_TRAIL_RUIN.toString()), 25,
+            JolCraft.location(JolCraftStructures.FORGE.toString()), 100
     );
 
     /**

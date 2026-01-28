@@ -133,6 +133,6 @@ public class ForgeStructure extends Structure {
 
     @Override
     public StructureType<?> type() {
-        return JolCraftStructures.FORGE_STRUCTURE.get();
+        return JolCraftStructures.FORGE.type().get();
     }
 }

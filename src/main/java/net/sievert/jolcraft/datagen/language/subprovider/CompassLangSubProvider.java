@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.language.subprovider;
 
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.sievert.jolcraft.JolCraft;
@@ -69,14 +68,15 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
         }
 
         // Vanilla structures
-        for (ResourceLocation id : reflectStructureIds(BuiltinStructures.class, "minecraft")) {
+        for (ResourceLocation id : reflectStructureIds()) {
             putStructureNameIfMissing(p, id);
         }
 
         // JolCraft structures
-        for (ResourceLocation id : reflectStructureIds(JolCraftStructures.class, JolCraft.MOD_ID)) {
+        for (ResourceLocation id : reflectRegisteredStructureIds()) {
             putStructureNameIfMissing(p, id);
         }
+
     }
 
     private static void putStructureNameIfMissing(AbstractLanguageProvider p, ResourceLocation structureId) {
@@ -87,17 +87,13 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
         p.putManual(key, english);
     }
 
-    /**
-     * Reflect public static ResourceKey<?> fields and collect their locations.
-     * Works for interfaces (BuiltinStructures) and classes (JolCraftStructures).
-     */
-    private static List<ResourceLocation> reflectStructureIds(Class<?> owner, String namespaceFilter) {
+    private static List<ResourceLocation> reflectStructureIds() {
         List<ResourceLocation> ids = new ArrayList<>();
 
-        for (Field f : owner.getDeclaredFields()) {
+        for (Field f : BuiltinStructures.class.getDeclaredFields()) {
             int m = f.getModifiers();
             if (!Modifier.isPublic(m) || !Modifier.isStatic(m)) continue;
-            if (f.getType() != ResourceKey.class) continue;
+            if (f.getType() != net.minecraft.resources.ResourceKey.class) continue;
 
             Object val;
             try {
@@ -105,10 +101,37 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
             } catch (IllegalAccessException ignored) {
                 continue;
             }
-            if (!(val instanceof ResourceKey<?> rk)) continue;
+            if (!(val instanceof net.minecraft.resources.ResourceKey<?> rk)) continue;
 
             ResourceLocation id = rk.location();
-            if (!namespaceFilter.equals(id.getNamespace())) continue;
+            if (!"minecraft".equals(id.getNamespace())) continue;
+
+            ids.add(id);
+        }
+
+        return ids;
+    }
+
+    private static List<ResourceLocation> reflectRegisteredStructureIds() {
+        List<ResourceLocation> ids = new ArrayList<>();
+
+        for (Field f : JolCraftStructures.class.getDeclaredFields()) {
+            int m = f.getModifiers();
+            if (!Modifier.isPublic(m) || !Modifier.isStatic(m)) continue;
+
+            if (f.getType() != JolCraftStructures.RegisteredStructure.class) continue;
+
+            Object val;
+            try {
+                val = f.get(null);
+            } catch (IllegalAccessException ignored) {
+                continue;
+            }
+
+            if (!(val instanceof JolCraftStructures.RegisteredStructure<?> rs)) continue;
+
+            ResourceLocation id = rs.id();
+            if (!JolCraft.MOD_ID.equals(id.getNamespace())) continue;
 
             ids.add(id);
         }

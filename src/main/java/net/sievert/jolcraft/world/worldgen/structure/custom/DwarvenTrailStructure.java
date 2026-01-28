@@ -136,6 +136,6 @@ public class DwarvenTrailStructure extends Structure {
 
     @Override
     public StructureType<?> type() {
-        return JolCraftStructures.DWARVEN_TRAIL_STRUCTURE.get();
+        return JolCraftStructures.DWARVEN_TRAIL_RUIN.type().get();
     }
 }

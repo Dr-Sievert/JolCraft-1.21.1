@@ -22,11 +22,11 @@ public final class JolCraftStructureTagProvider extends StructureTagsProvider {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
         this.tag(JolCraftTags.Structures.ON_FORGE_EXPLORER_MAPS)
-                .addOptional(location(JolCraftStructures.FORGE_ID));
+                .addOptional(JolCraftStructures.FORGE.id());
 
         this.tag(JolCraftTags.Structures.DWARVEN_STRUCTURES)
-                .addOptional(location(JolCraftStructures.FORGE_ID))
-                .addOptional(location(JolCraftStructures.DWARVEN_TRAIL_RUIN_ID));
+                .addOptional(JolCraftStructures.FORGE.id())
+                .addOptional(JolCraftStructures.DWARVEN_TRAIL_RUIN.id());
 
         this.tag(JolCraftTags.Structures.ANCIENT_STRUCTURES)
                 .add(BuiltinStructures.ANCIENT_CITY)
