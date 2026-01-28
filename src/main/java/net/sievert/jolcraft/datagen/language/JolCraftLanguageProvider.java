@@ -26,6 +26,7 @@ public final class JolCraftLanguageProvider extends AbstractLanguageProvider {
                 new MiscLangSubProvider(),
                 new PotionsLangSubProvider(),
                 new SubtitlesLangSubProvider(),
+                new TrimsLangSubProvider(),
                 new TooltipsLangSubProvider()
 
         );
