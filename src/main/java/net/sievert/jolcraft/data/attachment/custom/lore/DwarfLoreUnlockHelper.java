@@ -23,7 +23,7 @@ public final class DwarfLoreUnlockHelper {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean hasUnlock(Player player, DwarfLoreKey key) {
         if (player == null || key == null) return false;
-        if(player.isCreative()) return true;
+        if (player.isCreative()) return true;
         return hasUnlockBypassCreative(player, key);
     }
 

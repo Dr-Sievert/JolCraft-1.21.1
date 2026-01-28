@@ -32,7 +32,7 @@ public class ChiselItem extends ToolItem {
         Player player = JolCraftProxy.access().getLocalPlayer();
 
         if (JolCraftProxy.access().isAltDown()) {
-            if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 tooltip.add(Component.translatable(ContainerLangSubProvider.TOOLTIP_CHISEL)
                         .withStyle(ChatFormatting.GRAY));
             } else {
