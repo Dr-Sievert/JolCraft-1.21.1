@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientItemBase;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
@@ -40,19 +41,19 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
                 AncientDwarvenLanguageHelper.setKnowsAncientDwarvish(serverPlayer, true);
                 level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 2.0f, 0.7f);
                 level.playSound(null, player.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
-                serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.use")
+                serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_USE)
                         .withStyle(ChatFormatting.GREEN), true);
             } else {
                 if (!knowsLang) {
-                    serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.cant_read")
+                    serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_READ)
                             .withStyle(ChatFormatting.RED), true);
                     level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
                 } else if (!hasEffect) {
-                    serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.cant_use")
+                    serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_USE)
                             .withStyle(ChatFormatting.RED), true);
                     level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
                 } else {
-                    serverPlayer.displayClientMessage(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.knows")
+                    serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS)
                             .withStyle(ChatFormatting.GRAY), true);
                     level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
                 }
@@ -63,21 +64,21 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
 
     @Override
     protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.unlocked").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_UNLOCKED).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected List<Component> getLockedTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.locked").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_LOCKED).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected List<Component> getPartialUnderstandingTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_lexicon.unlocked").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_UNLOCKED).withStyle(ChatFormatting.GRAY));
     }
 }

@@ -31,6 +31,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructures;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.CompassLangSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.network.JolCraftNetworking;
@@ -254,10 +255,9 @@ public class JolCraftCompassEvents {
         inv.setChanged();
 
         player.displayClientMessage(
-                Component.translatable("tooltip.jolcraft.structure.discovered")
+                Component.translatable(CompassLangSubProvider.TOOLTIP_STRUCTURE_DISCOVERED)
                         .withStyle(ChatFormatting.GRAY)
-                        .append(Component.translatable("tooltip.jolcraft.structure." + trackedStructureId)
-                                .withStyle(ChatFormatting.BLUE)),
+                        .append(Component.translatable(CompassLangSubProvider.tooltipStructure(trackedStructureId)).withStyle(ChatFormatting.BLUE)),
                 true
         );
 

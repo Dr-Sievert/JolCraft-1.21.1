@@ -18,6 +18,7 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
@@ -48,7 +49,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         if (!knowsLanguage) {
             playIdentifyFailSound(level, player);
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.dwarven_tome.identify_fail").withStyle(ChatFormatting.RED),
+                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_IDENTIFY_FAIL).withStyle(ChatFormatting.RED),
                     true
             );
             return InteractionResult.SUCCESS;
@@ -57,7 +58,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         if (!hasAncientMemory) {
             playIdentifyFailSound(level, player);
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.RED),
+                    Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.RED),
                     true
             );
             return InteractionResult.SUCCESS;
@@ -80,7 +81,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                 } else {
                     DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.tome_unlock.brew").withStyle(ChatFormatting.GREEN),
+                            Component.translatable(DwarfLangSubProvider.TOOLTIP_TOME_UNLOCK_BREW).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     playUnlockSounds(level, player);
@@ -93,7 +94,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                 } else {
                     DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.tome_unlock.gems").withStyle(ChatFormatting.GREEN),
+                            Component.translatable(DwarfLangSubProvider.TOOLTIP_TOME_UNLOCK_GEMS).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     playUnlockSounds(level, player);
@@ -110,7 +111,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
     public static void showEmptyUnlockMessage(Player player) {
         player.displayClientMessage(
-                Component.translatable("tooltip.jolcraft.tome_unlock.empty").withStyle(ChatFormatting.GRAY),
+                Component.translatable(DwarfLangSubProvider.TOOLTIP_TOME_UNLOCK_EMPTY).withStyle(ChatFormatting.GRAY),
                 true
         );
     }
@@ -140,11 +141,9 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         var dataComponentType = JolCraftDataComponents.LORE_KEY.get();
         String loreKey = stack.get(dataComponentType);
         if(loreKey != null){
-            return List.of(Component.translatable("tooltip.jolcraft.legendary_ancient_dwarven_tome.shift").withStyle(ChatFormatting.GRAY));
+            return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_LEGENDARY_ANCIENT_DWARVEN_TOME_SHIFT).withStyle(ChatFormatting.GRAY));
         }
-        return List.of(Component.translatable("tooltip.jolcraft.tome_unlock.empty").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_TOME_UNLOCK_EMPTY).withStyle(ChatFormatting.GRAY));
     }
-
-
 }
 

@@ -23,6 +23,7 @@
     import net.minecraft.world.level.block.entity.LidBlockEntity;
     import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
     import net.minecraft.world.level.block.state.BlockState;
+    import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
     import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
     import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
     import net.sievert.jolcraft.world.effect.JolCraftEffects;
@@ -519,8 +520,8 @@
         @Override
         public Component getDisplayName() {
             return this.isLocked()
-                    ? Component.translatable("container.jolcraft.strongbox_locked")
-                    : Component.translatable("container.jolcraft.strongbox");
+                    ? Component.translatable(ContainerLangSubProvider.CONTAINER_STRONGBOX_LOCKED)
+                    : Component.translatable(ContainerLangSubProvider.CONTAINER_STRONGBOX);
         }
 
         // ---------------------------------------------------------------------

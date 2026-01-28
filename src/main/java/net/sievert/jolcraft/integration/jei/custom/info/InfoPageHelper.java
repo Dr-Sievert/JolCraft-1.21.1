@@ -6,6 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
+import net.sievert.jolcraft.datagen.language.subprovider.JeiLangSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
@@ -31,44 +32,44 @@ public class InfoPageHelper {
         return List.of(
                 new InfoPageRecipe(
                         JolCraftTags.Items.REPUTATION_TABLETS,
-                        Component.translatable("jei.jolcraft.info_page.reputation_tablet")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_REPUTATION_TABLET)
                 ),
                 new InfoPageRecipe(
                         JolCraftItems.STRONGBOX_ITEM.get().getDefaultInstance(),
-                        Component.translatable("jei.jolcraft.info_page.strongbox")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_STRONGBOX)
                 ),
                 new InfoPageRecipe(
                         List.of(compassEmpty, compassDial, compassCombined),
-                        Component.translatable("jei.jolcraft.info_page.deepslate_compass"),
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_DEEPSLATE_COMPASS),
                         "compass"
                 ),
                 new InfoPageRecipe(
                         JolCraftItems.COIN_POUCH.get().getDefaultInstance(),
-                        Component.translatable("jei.jolcraft.info_page.coin_pouch")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_COIN_POUCH)
                 ),
                 new InfoPageRecipe(
                         JolCraftItems.DWARVEN_LEXICON.get().getDefaultInstance(),
-                        Component.translatable("jei.jolcraft.info_page.dwarven_lexicon")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_DWARVEN_LEXICON)
                 ),
                 new InfoPageRecipe(
                         JolCraftItems.ANCIENT_DWARVEN_LEXICON.get().getDefaultInstance(),
-                        Component.translatable("jei.jolcraft.info_page.ancient_dwarven_lexicon")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_ANCIENT_DWARVEN_LEXICON)
                 ),
                 new InfoPageRecipe(
                         JolCraftBlocks.HEARTH.get().asItem().getDefaultInstance(),
-                        Component.translatable("jei.jolcraft.info_page.hearth")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_HEARTH)
                 ),
                 InfoPageRecipe.fromBlockTag(
                         JolCraftTags.Blocks.VERDANT,
-                        Component.translatable("jei.jolcraft.info_page.verdant")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_VERDANT)
                 ),
                 new InfoPageRecipe(
                         JolCraftBlocks.DUSKCAP.get().asItem().getDefaultInstance(),
-                        Component.translatable("jei.jolcraft.info_page.mushroom")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_MUSHROOM)
                 ),
                 new InfoPageRecipe(
                         JolCraftBlocks.FESTERLING.get().asItem().getDefaultInstance(),
-                        Component.translatable("jei.jolcraft.info_page.festerling")
+                        Component.translatable(JeiLangSubProvider.JEI_INFO_FESTERLING)
                 )
         );
     }

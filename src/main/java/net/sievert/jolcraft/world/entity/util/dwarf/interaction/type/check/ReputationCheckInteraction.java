@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.ReputationLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -23,7 +24,7 @@ public class ReputationCheckInteraction implements DwarfInteraction {
 
         if (!hasTier) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.reputation.locked", requiredTier)
+                    Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_LOCKED, requiredTier)
                             .withStyle(ChatFormatting.RED),
                     true
             );

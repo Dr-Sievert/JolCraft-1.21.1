@@ -6,6 +6,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyHelper;
@@ -33,7 +34,7 @@ public class BountyInteraction extends InspectInteraction {
         if (requiredType == null || requiredType != type) {
             JolCraftSoundHelper.playDwarfNo(dwarf);
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.bounty.wrong_type").withStyle(ChatFormatting.GRAY),
+                    Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_WRONG_TYPE).withStyle(ChatFormatting.GRAY),
                     true
             );
             return InteractionResult.SUCCESS;

@@ -15,6 +15,7 @@ import net.sievert.jolcraft.data.custom.lore.LoreAge;
 import net.sievert.jolcraft.data.custom.lore.LoreRarity;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntry;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.tooltip.UnidentifiedItem;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
@@ -74,8 +75,8 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     protected List<Component> getAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
         return List.of(knowsLanguage
-                        ? Component.translatable("tooltip.jolcraft.unidentified").withStyle(ChatFormatting.GRAY)
-                        : Component.translatable("tooltip.jolcraft.dwarven_tome.locked").withStyle(ChatFormatting.GRAY)
+                        ? Component.translatable(DwarfLangSubProvider.TOOLTIP_UNIDENTIFIED).withStyle(ChatFormatting.GRAY)
+                        : Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_LOCKED).withStyle(ChatFormatting.GRAY)
         );
     }
 
@@ -83,19 +84,19 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     protected List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
         return List.of(knowsLanguage
-                        ? Component.translatable("tooltip.jolcraft.unidentified_dwarven_tome").withStyle(ChatFormatting.GRAY)
-                        : Component.translatable("tooltip.jolcraft.dwarven_tome.locked").withStyle(ChatFormatting.GRAY)
+                        ? Component.translatable(DwarfLangSubProvider.TOOLTIP_UNIDENTIFIED_DWARVEN_TOME).withStyle(ChatFormatting.GRAY)
+                        : Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_LOCKED).withStyle(ChatFormatting.GRAY)
         );
     }
 
     @Override
     protected Component getIdentifySuccessMessage(ServerPlayer player, ItemStack identified) {
-        return Component.translatable("tooltip.jolcraft.dwarven_tome.identify_success").withStyle(ChatFormatting.GREEN);
+        return Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_IDENTIFY_SUCCESS).withStyle(ChatFormatting.GREEN);
     }
 
     @Override
     protected Component getIdentifyFailMessage(ServerPlayer player) {
-        return Component.translatable("tooltip.jolcraft.dwarven_tome.identify_fail").withStyle(ChatFormatting.RED);
+        return Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_IDENTIFY_FAIL).withStyle(ChatFormatting.RED);
     }
 
     @Override

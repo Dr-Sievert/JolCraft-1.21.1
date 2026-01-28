@@ -24,6 +24,7 @@ import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -72,7 +73,7 @@ public class JolCraftEntityEvents {
 
         if (player.getCooldowns().isOnCooldown(stack)) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.crate.cooldown").withStyle(ChatFormatting.GRAY),
+                    Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_COOLDOWN).withStyle(ChatFormatting.GRAY),
                     true
             );
             event.setCancellationResult(InteractionResult.SUCCESS);
@@ -104,7 +105,7 @@ public class JolCraftEntityEvents {
                 //Needs to actually have offers
                 if (dwarf.getOffers().isEmpty()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.crate.no_offers_dwarf").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playDwarfNo(dwarf);
@@ -117,13 +118,13 @@ public class JolCraftEntityEvents {
 
                 if (!needsRestock && !dwarf.hasRandomTrades()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.restock_crate.no_need").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playDwarfNo(dwarf);
                 } else {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.restock_crate.success").withStyle(ChatFormatting.GREEN),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     dwarf.crateRestock();
@@ -149,7 +150,7 @@ public class JolCraftEntityEvents {
                 //Needs to actually have offers
                 if (dwarf.getOffers().isEmpty()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.crate.no_offers_dwarf").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playDwarfNo(dwarf);
@@ -160,13 +161,13 @@ public class JolCraftEntityEvents {
 
                 if (!dwarf.canReroll()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.reroll_crate.fail").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_FAIL).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playDwarfNo(dwarf);
                 } else {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.reroll_crate.success").withStyle(ChatFormatting.GREEN),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     dwarf.rerollTrades();
@@ -197,7 +198,7 @@ public class JolCraftEntityEvents {
                 //Needs to actually have offers
                 if (villager.getOffers().isEmpty()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.crate.no_offers_villager").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playVillagerNo(villager);
@@ -210,13 +211,13 @@ public class JolCraftEntityEvents {
 
                 if (!needsRestock) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.restock_crate.no_need").withStyle(ChatFormatting.GRAY),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.GRAY),
                             true
                     );
                     JolCraftSoundHelper.playVillagerNo(villager);
                 } else {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.restock_crate.success").withStyle(ChatFormatting.GREEN),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     JolCraftSoundHelper.playVillagerFisherman(villager);
@@ -243,7 +244,7 @@ public class JolCraftEntityEvents {
                 //Needs to actually have offers
                 if (villager.getOffers().isEmpty()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.crate.no_offers_villager").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playVillagerNo(villager);
@@ -271,7 +272,7 @@ public class JolCraftEntityEvents {
                 JolCraftSoundHelper.playVillagerFisherman(villager);
                 JolCraftSoundHelper.playVillagerYes(villager);
                 player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reroll_crate.success").withStyle(ChatFormatting.GREEN),
+                        Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                         true
                 );
                 if (!player.isCreative()) stack.shrink(1);
@@ -299,7 +300,7 @@ public class JolCraftEntityEvents {
                 //Needs to actually have offers
                 if (trader.getOffers().isEmpty()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.crate.no_offers_villager").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playVillagerNo(trader);
@@ -312,13 +313,13 @@ public class JolCraftEntityEvents {
 
                 if (!needsRestock) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.restock_crate.no_need").withStyle(ChatFormatting.GRAY),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.GRAY),
                             true
                     );
                     JolCraftSoundHelper.playVillagerNo(trader);
                 } else {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.restock_crate.success").withStyle(ChatFormatting.GREEN),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     JolCraftSoundHelper.playVillagerFisherman(trader);
@@ -347,7 +348,7 @@ public class JolCraftEntityEvents {
                 //Needs to actually have offers
                 if (trader.getOffers().isEmpty()) {
                     player.displayClientMessage(
-                            Component.translatable("tooltip.jolcraft.crate.no_offers_villager").withStyle(ChatFormatting.RED),
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
                     JolCraftSoundHelper.playVillagerNo(trader);
@@ -383,7 +384,7 @@ public class JolCraftEntityEvents {
                 JolCraftSoundHelper.playVillagerFisherman(trader);
                 JolCraftSoundHelper.playVillagerYes(trader);
                 player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reroll_crate.success").withStyle(ChatFormatting.GREEN),
+                        Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                         true
                 );
                 if (!player.isCreative()) stack.shrink(1);

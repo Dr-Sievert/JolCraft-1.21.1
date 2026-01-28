@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.ReputationLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.type.InspectDwarfAction;
@@ -60,7 +61,7 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
 
         int newRep = DwarvenReputationHelper.getTier(player);
 
-        player.displayClientMessage(Component.translatable("tooltip.jolcraft.reputation.level_up").withStyle(ChatFormatting.DARK_PURPLE), true);
+        player.displayClientMessage(Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_LEVEL_UP).withStyle(ChatFormatting.DARK_PURPLE), true);
 
         ItemStack nextTablet = switch (newRep) {
             case 1 -> new ItemStack(JolCraftItems.REPUTATION_TABLET_1.get());

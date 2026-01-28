@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.datagen.language.subprovider.JeiLangSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -29,8 +30,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
-    public static final IRecipeType<InfoPageRecipe> RECIPE_TYPE =
-            IRecipeType.create(JolCraft.MOD_ID, "info_page", InfoPageRecipe.class);
+    public static final IRecipeType<InfoPageRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, "info_page", InfoPageRecipe.class);
 
     private final int textStartY = 32;
     private final int textHeight = getHeight() - textStartY - 8;
@@ -54,7 +54,7 @@ public class InfoPageCategory implements IRecipeCategory<InfoPageRecipe> {
 
     @Override
     public Component getTitle() {
-        return Component.translatable("jei.jolcraft.info_page");
+        return Component.translatable(JeiLangSubProvider.JEI_CATEGORY_INFO_PAGE);
     }
 
     @Override

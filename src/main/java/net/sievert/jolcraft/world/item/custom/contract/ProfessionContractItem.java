@@ -10,6 +10,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
@@ -31,14 +33,14 @@ public class ProfessionContractItem extends Item {
 
         if (DwarvenLanguageHelper.knowsDwarvish(player)) {
             if (JolCraftProxy.access().isAltDown()) {
-                tooltip.add(Component.translatable("tooltip.jolcraft.profession_contract")
+                tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_PROFESSION_CONTRACT)
                         .withStyle(ChatFormatting.GRAY));
             } else {
-                tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
+                tooltip.add(Component.translatable(MiscLangSubProvider.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
                         .withStyle(ChatFormatting.DARK_GRAY));
             }
         } else {
-            tooltip.add(Component.translatable("tooltip.jolcraft.paper.locked")
+            tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_PAPER_LOCKED)
                     .withStyle(ChatFormatting.GRAY));
         }
 

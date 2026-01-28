@@ -23,6 +23,8 @@ public class PestleItem extends ToolItem {
         super(material, properties);
     }
 
+    /*
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
@@ -45,4 +47,7 @@ public class PestleItem extends ToolItem {
 
         super.appendHoverText(stack, context, tooltip, flag);
     }
+
+
+     */
 }

@@ -18,6 +18,10 @@ public final class JolCraftLanguageProvider extends AbstractLanguageProvider {
                 new AdvancementsLangSubProvider(),
                 new AttributesLangSubProvider(),
                 new BlocksLangSubProvider(),
+                new BountyLangSubProvider(),
+                new CompassLangSubProvider(),
+                new ContainerLangSubProvider(),
+                new DwarfLangSubProvider(),
                 new EffectsLangSubProvider(),
                 new EntitiesLangSubProvider(),
                 new ItemsLangSubProvider(),
@@ -25,10 +29,10 @@ public final class JolCraftLanguageProvider extends AbstractLanguageProvider {
                 new LoreLangSubProvider(),
                 new MiscLangSubProvider(),
                 new PotionsLangSubProvider(),
+                new ReputationLangSubProvider(),
+                new StatsLangSubProvider(),
                 new SubtitlesLangSubProvider(),
-                new TrimsLangSubProvider(),
-                new TooltipsLangSubProvider()
-
+                new TrimsLangSubProvider()
         );
     }
 

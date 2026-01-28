@@ -9,6 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.language.subprovider.ReputationLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.InspectInteraction;
@@ -30,7 +32,7 @@ public class ReputationGainInteraction extends InspectInteraction {
         if (strictTier >= maxTier) {
             if (client) {
                 player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reputation.max_tier").withStyle(ChatFormatting.GRAY), true
+                        Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_MAX_TIER).withStyle(ChatFormatting.GRAY), true
                 );
             }
             JolCraftSoundHelper.playDwarfNo(dwarf);
@@ -41,7 +43,7 @@ public class ReputationGainInteraction extends InspectInteraction {
             if (!client) {
                 int needed = DwarvenReputationImpl.getThresholdForTier(strictTier);
                 player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reputation.not_enough_endorsements", needed, strictEndorsementCount)
+                        Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_NOT_ENOUGH_ENDORSEMENTS, needed, strictEndorsementCount)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );
@@ -53,7 +55,7 @@ public class ReputationGainInteraction extends InspectInteraction {
         if (dwarf.needsPay()) {
             if (!client) {
                 player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY), true
+                        Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY), true
                 );
             }
             JolCraftSoundHelper.playDwarfNo(dwarf);

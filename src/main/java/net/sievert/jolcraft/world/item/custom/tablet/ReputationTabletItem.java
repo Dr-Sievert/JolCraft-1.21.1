@@ -17,6 +17,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.language.subprovider.ReputationLangSubProvider;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
@@ -42,7 +44,7 @@ public class ReputationTabletItem extends Item {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             if (!DwarvenLanguageHelper.knowsDwarvish(serverPlayer)) {
                 serverPlayer.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.tablet.locked").withStyle(ChatFormatting.GRAY),
+                        Component.translatable(DwarfLangSubProvider.TOOLTIP_STONE_LOCKED).withStyle(ChatFormatting.GRAY),
                         true
                 );
                 return InteractionResult.SUCCESS;
@@ -53,13 +55,13 @@ public class ReputationTabletItem extends Item {
 
             if (currentTier >= ENDORSEMENT_THRESHOLDS.length) {
                 serverPlayer.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.reputation.max_tier").withStyle(ChatFormatting.GRAY),
+                        Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_MAX_TIER).withStyle(ChatFormatting.GRAY),
                         true
                 );
             } else {
                 int needed = ENDORSEMENT_THRESHOLDS[currentTier];
                 serverPlayer.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.tablet.progress", endorsements, needed)
+                        Component.translatable(ReputationLangSubProvider.TOOLTIP_TABLET_PROGRESS, endorsements, needed)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );
@@ -100,15 +102,15 @@ public class ReputationTabletItem extends Item {
             String ownerName = stack.getOrDefault(JolCraftDataComponents.REP_OWNER.get(), "Unknown");
             int statictier = stack.getOrDefault(JolCraftDataComponents.REP_TIER.get(), 0);
             int staticendorsements = stack.getOrDefault(JolCraftDataComponents.REP_ENDORSEMENTS.get(), 0);
-                tooltip.add(Component.translatable("tooltip.jolcraft.rep_owner", ownerName)
+                tooltip.add(Component.translatable(ReputationLangSubProvider.TOOLTIP_TABLET_OWNER, ownerName)
                         .withStyle(ChatFormatting.GRAY));
-                tooltip.add(Component.translatable("tooltip.jolcraft.reputation_tier")
+                tooltip.add(Component.translatable(ReputationLangSubProvider.TOOLTIP_TABLET_REPUTATION)
                         .append(Component.translatable("jolcraft.reputation_tier." + statictier))
                         .withStyle(ChatFormatting.GRAY));
-                tooltip.add(Component.translatable("tooltip.jolcraft.endorsement_count", staticendorsements)
+                tooltip.add(Component.translatable(ReputationLangSubProvider.TOOLTIP_TABLET_ENDORSEMENTS, staticendorsements)
                         .withStyle(ChatFormatting.GRAY));
         } else {
-            tooltip.add(Component.translatable("tooltip.jolcraft.tablet.locked")
+            tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_STONE_LOCKED)
                     .withStyle(ChatFormatting.GRAY));
         }
         super.appendHoverText(stack, context, tooltip, flag);

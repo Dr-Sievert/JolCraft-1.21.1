@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.datagen.language.subprovider.ItemsLangSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
@@ -14,6 +15,7 @@ import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
+import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 
 import java.util.function.Supplier;
 
@@ -22,7 +24,7 @@ public class JolCraftCreativeModeTabs {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, JolCraft.MOD_ID);
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_ITEMS =
-            CREATIVE_MODE_TABS.register("jolcraft_items_tab", () -> CreativeModeTab.builder()
+            CREATIVE_MODE_TABS.register(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.jolcraft.jolcraft_items_tab"))
                     .icon(() -> new ItemStack(JolCraftItems.GOLD_COIN.get()))
                     .displayItems((pParameters, pOutput) -> {
@@ -44,8 +46,10 @@ public class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.REPUTATION_TABLET_4);
 
                         pOutput.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
-                        addCompassDialVariant(pOutput, "dwarven_structures");
-                        addCompassDialVariant(pOutput, "ancient_structures");
+
+                        for (StructureGroup group : StructureGroup.values()) {
+                            addCompassDialVariant(pOutput, group.id());
+                        }
 
                         pOutput.accept(JolCraftBlocks.HEARTH);
                         pOutput.accept(JolCraftItems.STRONGBOX_ITEM);
@@ -256,10 +260,10 @@ public class JolCraftCreativeModeTabs {
                     }).build());
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_EGGS =
-            CREATIVE_MODE_TABS.register("jolcraft_egg_tab", () -> CreativeModeTab.builder()
+            CREATIVE_MODE_TABS.register(ItemsLangSubProvider.JOLCRAFT_EGG_CREATIVE_TAB, () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.jolcraft.jolcraft_egg_tab"))
                     .icon(() -> new ItemStack(JolCraftItems.DWARF_SPAWN_EGG.get()))
-                    .withTabsBefore(JolCraft.location("jolcraft_items_tab"))
+                    .withTabsBefore(JolCraft.location(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB))
                     .displayItems((pParameters, pOutput) -> {
 
                         pOutput.accept(JolCraftItems.DWARF_SPAWN_EGG);

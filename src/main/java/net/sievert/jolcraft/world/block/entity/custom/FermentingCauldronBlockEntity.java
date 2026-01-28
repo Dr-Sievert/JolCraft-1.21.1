@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
@@ -133,7 +134,7 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
 
         if (count >= 3) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.fermenting_cauldron.ingredient_max")
+                    Component.translatable(ContainerLangSubProvider.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX)
                             .withStyle(ChatFormatting.GRAY),
                     true
             );
@@ -143,7 +144,7 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         if (recipe.effect() != null && !ingredients.isEmpty() && !ingredients.containsKey(itemKey)) {
             if (!DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                 player.displayClientMessage(
-                        Component.translatable("tooltip.jolcraft.fermenting_cauldron.locked_multi")
+                        Component.translatable(ContainerLangSubProvider.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI)
                                 .withStyle(ChatFormatting.RED),
                         true
                 );
@@ -165,9 +166,7 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
             if (base == null) return InteractionResult.SUCCESS;
 
             int amp = Math.min(2, newCount - 1);
-            FermentingCauldronRecipe.EffectData stacked =
-                    new FermentingCauldronRecipe.EffectData(base.id(), base.duration(), amp);
-
+            FermentingCauldronRecipe.EffectData stacked = new FermentingCauldronRecipe.EffectData(base.id(), base.duration(), amp);
             upsertEffect(stacked);
         }
 

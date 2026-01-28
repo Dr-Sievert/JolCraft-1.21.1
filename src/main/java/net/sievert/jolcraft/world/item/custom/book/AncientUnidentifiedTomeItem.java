@@ -14,6 +14,7 @@ import net.sievert.jolcraft.data.custom.lore.LoreAge;
 import net.sievert.jolcraft.data.custom.lore.LoreRarity;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntry;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientUnidentifiedItem;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
@@ -71,42 +72,42 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
 
     @Override
     protected @NotNull List<Component> getFullyReadableTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.unidentified").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_UNIDENTIFIED).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected @NotNull List<Component> getLockedTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.dwarven_tome.locked").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_LOCKED).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected @NotNull List<Component> getPartialUnderstandingTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
     }
 
     @Override
     protected @NotNull List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unidentified").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_UNIDENTIFIED).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected @NotNull List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.unidentified").withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_UNIDENTIFIED).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected Component getIdentifySuccessMessage(ServerPlayer player, ItemStack identified) {
-        return Component.translatable("tooltip.jolcraft.dwarven_tome.identify_success").withStyle(ChatFormatting.GREEN);
+        return Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_IDENTIFY_SUCCESS).withStyle(ChatFormatting.GREEN);
     }
 
     @Override
     protected Component getFailMessageMissingLanguage(ServerPlayer player) {
-        return Component.translatable("tooltip.jolcraft.dwarven_tome.identify_fail").withStyle(ChatFormatting.RED);
+        return Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_IDENTIFY_FAIL).withStyle(ChatFormatting.RED);
     }
 
     @Override
     protected Component getFailMessageMissingEffect(ServerPlayer player) {
-        return Component.translatable("tooltip.jolcraft.ancient_dwarven_tome.partial_understanding").withStyle(ChatFormatting.RED);
+        return Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.RED);
     }
 
     @Override

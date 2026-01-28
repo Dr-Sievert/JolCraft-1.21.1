@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
+import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
@@ -68,7 +69,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
         if (toolType == LapidaryBenchRecipe.ToolType.CHISEL
                 && !DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.lapidary_bench.locked_cut_gems")
+                    Component.translatable(ContainerLangSubProvider.TOOLTIP_LAPIDARY_BENCH_LOCKED_CUT_GEMS)
                             .withStyle(ChatFormatting.RED),
                     true
             );
@@ -217,7 +218,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
 
     @Override
     protected Component getDefaultName() {
-        return Component.translatable("container.jolcraft.lapidary_bench");
+        return Component.translatable(ContainerLangSubProvider.CONTAINER_LAPIDARY_BENCH);
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
@@ -25,10 +26,10 @@ public class SalvageItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         TooltipHelper.addAltTooltipCustom(
                 tooltip,
-                () -> Component.translatable("tooltip.jolcraft.salvage").withStyle(ChatFormatting.GRAY),
-                () -> List.of(Component.translatable("tooltip.jolcraft.salvage_tag").withStyle(ChatFormatting.GRAY)),
+                () -> Component.translatable(MiscLangSubProvider.TOOLTIP_SALVAGE).withStyle(ChatFormatting.GRAY),
+                () -> List.of(Component.translatable(MiscLangSubProvider.TOOLTIP_SALVAGEABLE).withStyle(ChatFormatting.GRAY)),
                 () -> JolCraftProxy.access().isAltDown(),
-                () -> Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
+                () -> Component.translatable(MiscLangSubProvider.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
                         .withStyle(ChatFormatting.DARK_GRAY)
         );
         super.appendHoverText(stack, context, tooltip, flag);

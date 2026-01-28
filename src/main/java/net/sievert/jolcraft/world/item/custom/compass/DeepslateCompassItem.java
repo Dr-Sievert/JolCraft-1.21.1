@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.datagen.language.subprovider.CompassLangSubProvider;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -64,17 +65,18 @@ public class DeepslateCompassItem extends Item {
 
                 String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
                 Component name = (structureId != null && !structureId.isEmpty())
-                        ? Component.translatable("tooltip.jolcraft.structure." + structureId).withStyle(ChatFormatting.BLUE)
-                        : Component.translatable("tooltip.jolcraft.structure.unknown").withStyle(ChatFormatting.BLUE);
+                        ? Component.translatable(CompassLangSubProvider.tooltipStructure(structureId)).withStyle(ChatFormatting.BLUE)
+                        : Component.translatable(CompassLangSubProvider.TOOLTIP_STRUCTURE_UNKNOWN).withStyle(ChatFormatting.BLUE);
 
                 serverPlayer.sendSystemMessage(
                         Component.translatable(
-                                "tooltip.jolcraft.deepslate_compass.locate",
+                                CompassLangSubProvider.TOOLTIP_DEEPSLATE_COMPASS_LOCATE,
                                 name,
                                 coord,
                                 distance
                         )
                 );
+
                 return InteractionResult.SUCCESS;
             }
         }
@@ -100,25 +102,22 @@ public class DeepslateCompassItem extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.jolcraft.deepslate_compass")
+        tooltip.add(Component.translatable(CompassLangSubProvider.TOOLTIP_DEEPSLATE_COMPASS_TRACKING)
                 .withStyle(ChatFormatting.GRAY));
 
         String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
         if (structureId != null && !structureId.isEmpty()) {
-            tooltip.add(Component.translatable("tooltip.jolcraft.structure." + structureId)
-                    .withStyle(ChatFormatting.BLUE));
+            tooltip.add(Component.translatable(CompassLangSubProvider.tooltipStructure(structureId)).withStyle(ChatFormatting.BLUE));
 
             Player player = JolCraftProxy.access().getLocalPlayer();
             if (player != null && player.isCreative()) {
                 var pos = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
                 if (pos != null) {
-                    tooltip.add(Component.literal(
-                                    "Tracked: " + "X: " + pos.pos().getX() + ", " + "Z: " + pos.pos().getZ())
-                            .withStyle(ChatFormatting.GRAY));
+                    tooltip.add(Component.literal("X: " + pos.pos().getX() + ", " + "Z: " + pos.pos().getZ()).withStyle(ChatFormatting.GRAY));
                 }
             }
         } else {
-            tooltip.add(Component.translatable("tooltip.jolcraft.structure.unknown")
+            tooltip.add(Component.translatable(CompassLangSubProvider.TOOLTIP_STRUCTURE_UNKNOWN)
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 

@@ -10,6 +10,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyTier;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyType;
@@ -33,45 +36,35 @@ public class BountyItem extends Item {
         Player player = JolCraftProxy.access().getLocalPlayer();
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
         BountyType type = BountyHelper.getBountyType(stack);
+        BountyTier tier = BountyHelper.getBountyTier(stack);
 
-        if (JolCraftProxy.access().isAltDown()) {
-            if (type == BountyType.UNKNOWN) {
-                tooltip.add(Component.translatable("tooltip.jolcraft.bounty.no_type")
-                        .withStyle(ChatFormatting.GRAY));
-            } else {
-                tooltip.add(Component.translatable("tooltip.jolcraft.bounty." + type)
-                        .withStyle(ChatFormatting.GRAY));
-            }
+        if (JolCraftProxy.access().isAltDown() && type != BountyType.UNKNOWN) {
+            tooltip.add(Component.translatable("tooltip.jolcraft.bounty." + type)
+                    .withStyle(ChatFormatting.GRAY));
         } else {
             if (knowsLanguage) {
-                if (type == BountyType.UNKNOWN) {
-                    tooltip.add(Component.translatable("tooltip.jolcraft.bounty.type.invalid")
+                if (type == BountyType.UNKNOWN || tier == BountyTier.UNKNOWN) {
+                    tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_INVALID)
                             .withStyle(ChatFormatting.RED));
                 } else {
                     tooltip.add(
-                            Component.translatable("tooltip.jolcraft.bounty.type")
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_TYPE)
                                     .append(Component.translatable("entity.jolcraft.dwarf_" + type.getId()))
                                     .withStyle(ChatFormatting.GRAY)
                     );
-                }
-
-                BountyTier tier = BountyHelper.getBountyTier(stack);
-                if (tier == BountyTier.UNKNOWN) {
-                    tooltip.add(Component.translatable("tooltip.jolcraft.bounty.tier.invalid")
-                            .withStyle(ChatFormatting.RED));
-                } else {
                     tooltip.add(
-                            Component.translatable("tooltip.jolcraft.bounty.tier", tier.getDisplayName())
+                            Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_TIER, tier.getDisplayName())
                                     .withStyle(ChatFormatting.GRAY)
                     );
                 }
             } else {
-                tooltip.add(Component.translatable("tooltip.jolcraft.bounty.locked")
+                tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_PARCHMENT_LOCKED)
                         .withStyle(ChatFormatting.GRAY));
             }
-
-            tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
-                    .withStyle(ChatFormatting.DARK_GRAY));
+            if (type != BountyType.UNKNOWN) {
+                tooltip.add(Component.translatable(MiscLangSubProvider.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
+                        .withStyle(ChatFormatting.DARK_GRAY));
+            }
         }
 
         super.appendHoverText(stack, context, tooltip, flag);

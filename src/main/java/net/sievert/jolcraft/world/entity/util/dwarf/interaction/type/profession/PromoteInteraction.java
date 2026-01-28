@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
@@ -27,7 +28,7 @@ public class PromoteInteraction extends InspectInteraction {
 
         if (!canPromoteToProfession(dwarf)) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.dwarf.cannot_promote").withStyle(ChatFormatting.GRAY),
+                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_CANNOT_PROMOTE).withStyle(ChatFormatting.GRAY),
                     true
             );
             JolCraftSoundHelper.playDwarfNo(dwarf);
@@ -36,7 +37,7 @@ public class PromoteInteraction extends InspectInteraction {
 
         if (dwarf.needsPay()) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.dwarf.not_paid").withStyle(ChatFormatting.GRAY),
+                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
                     true
             );
             JolCraftSoundHelper.playDwarfNo(dwarf);

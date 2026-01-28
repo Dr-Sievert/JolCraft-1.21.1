@@ -28,36 +28,20 @@ public final class JolCraftLanguageKeys {
     }
 
     // ---------------------------------------------------------------------
-    // Standard categories
+    // Specific categories
     // ---------------------------------------------------------------------
 
     public static String tooltip(String category, String path) { return category(JolCraftLanguageCategory.TOOLTIP, category + "." + path); }
     public static String container(String path) { return category(JolCraftLanguageCategory.CONTAINER, path); }
-    public static String jei(String path)       { return category(JolCraftLanguageCategory.JEI, path); }
     public static String stat(String path)      { return category(JolCraftLanguageCategory.STAT, path); }
-
-    /** itemGroup.<modid>.<path> */
-    public static String itemGroup(String path) {
-        return "itemGroup." + MODID + "." + path;
-    }
-
-    /** subtitles.<modid>.<path> */
+    public static String itemGroup(String path) { return "itemGroup." + MODID + "." + path; }
     public static String subtitles(String path) {
         return "subtitles." + MODID + "." + path;
     }
-
-    /** jolcraft.reputation_tier.<n> */
-    public static String reputationTier(int tier) {
-        return mod("reputation_tier." + tier);
+    public static String trimMaterial(String path) {
+        return "trim_material." + MODID + "." + path;
     }
-
-    /** trim_material.jolcraft.<id> */
-    public static String trimMaterial(String id) {
-        return "trim_material." + MODID + "." + id;
-    }
-
-    /** trim_pattern.jolcraft.<id> */
-    public static String trimPattern(String id) {
-        return "trim_pattern." + MODID + "." + id;
+    public static String trimPattern(String path) {
+        return "trim_pattern." + MODID + "." + path;
     }
 }

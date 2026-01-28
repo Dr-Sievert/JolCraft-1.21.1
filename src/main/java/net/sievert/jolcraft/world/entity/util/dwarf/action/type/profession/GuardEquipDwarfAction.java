@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.type.InspectDwarfAction;
@@ -68,7 +69,7 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
             int newLevel = dwarf.getVillagerData().getLevel();
             Component rank = Component.translatable("merchant.level." + newLevel);
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.guard.promotion", rank)
+                    Component.translatable(DwarfLangSubProvider.TOOLTIP_GUARD_PROMOTION, rank)
                             .withStyle(ChatFormatting.GRAY),
                     true
             );

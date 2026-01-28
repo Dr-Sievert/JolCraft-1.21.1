@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.datagen.language.subprovider.JeiLangSubProvider;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.*;
@@ -65,7 +66,7 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
     @Override
     public Component getTitle() {
         // Title like: "Dwarf Trades — Guildmaster"
-        return Component.literal(Component.translatable("jei.jolcraft.dwarf_trades").getString() +
+        return Component.literal(Component.translatable(JeiLangSubProvider.JEI_CATEGORY_INFO_PAGE).getString() +
                 " — " + DwarfTradeJeiHelper.getDisplayName(profession));
     }
 

@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
@@ -22,7 +23,7 @@ public class ActionCheckInteraction implements DwarfInteraction {
 
         if (isBusy(dwarf)) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.dwarf.busy").withStyle(ChatFormatting.GRAY),
+                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_BUSY).withStyle(ChatFormatting.GRAY),
                     true
             );
             JolCraftSoundHelper.playDwarfNo(dwarf);

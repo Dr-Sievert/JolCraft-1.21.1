@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -17,7 +18,7 @@ public class LanguageCheckInteraction implements DwarfInteraction {
 
         if (!knowsLanguage) {
             player.displayClientMessage(
-                    Component.translatable("tooltip.jolcraft.language.locked").withStyle(ChatFormatting.RED),
+                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_LOCKED).withStyle(ChatFormatting.RED),
                     true
             );
             JolCraftSoundHelper.playDwarfNo(dwarf);

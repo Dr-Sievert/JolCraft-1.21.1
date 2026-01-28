@@ -11,6 +11,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
+import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
@@ -53,13 +55,13 @@ public abstract class AncientItemBase extends Item {
                     }
 
                     if (!AncientEffectHelper.hasAncientMemory(player)) {
-                        tooltip.add(Component.translatable("tooltip.jolcraft.need_ancient")
+                        tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_NEED_ANCIENT)
                                 .withStyle(ChatFormatting.RED));
                     }
                     if (!DwarvenLanguageHelper.knowsDwarvish(player)) {
-                        tooltip.add(Component.translatable("tooltip.jolcraft.need_lang")
+                        tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_NEED_LANG)
                                 .withStyle(ChatFormatting.RED));
-                        tooltip.add(Component.translatable("tooltip.jolcraft.ancient_memory")
+                        tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_MEMORY)
                                 .withStyle(ChatFormatting.GRAY));
                     }
                 } else {
@@ -78,7 +80,7 @@ public abstract class AncientItemBase extends Item {
                     }
 
                     if (hasAlt()) {
-                        tooltip.add(Component.translatable("tooltip.jolcraft.hold_key", TooltipHelper.altKey())
+                        tooltip.add(Component.translatable(MiscLangSubProvider.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
                                 .withStyle(ChatFormatting.DARK_GRAY));
                     }
                 }
