@@ -7,6 +7,6 @@ public class StatsLangSubProvider implements AbstractLanguageProvider.LangSubPro
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
-        p.putManual(JolCraftLanguageKeys.stat("structures_discovered"), "Structures Discovered");
+        p.putManual(JolCraftLanguageKeys.stat("structures_discovered"), "Compass Structures Discovered");
     }
 }
