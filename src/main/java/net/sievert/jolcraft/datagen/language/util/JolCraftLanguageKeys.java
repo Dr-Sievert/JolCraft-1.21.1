@@ -32,16 +32,4 @@ public final class JolCraftLanguageKeys {
     // ---------------------------------------------------------------------
 
     public static String tooltip(String category, String path) { return category(JolCraftLanguageCategory.TOOLTIP, category + "." + path); }
-    public static String container(String path) { return category(JolCraftLanguageCategory.CONTAINER, path); }
-    public static String stat(String path)      { return category(JolCraftLanguageCategory.STAT, path); }
-    public static String itemGroup(String path) { return "itemGroup." + MODID + "." + path; }
-    public static String subtitles(String path) {
-        return "subtitles." + MODID + "." + path;
-    }
-    public static String trimMaterial(String path) {
-        return "trim_material." + MODID + "." + path;
-    }
-    public static String trimPattern(String path) {
-        return "trim_pattern." + MODID + "." + path;
-    }
 }

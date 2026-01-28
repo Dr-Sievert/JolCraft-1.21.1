@@ -6,7 +6,6 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
 
@@ -26,7 +25,7 @@ public final class TrimsLangSubProvider implements AbstractLanguageProvider.Lang
             ResourceLocation id = key.location();
             if (!JolCraft.MOD_ID.equals(id.getNamespace())) continue;
 
-            String langKey = JolCraftLanguageKeys.trimMaterial(id.getPath());
+            String langKey = trimMaterial(id.getPath());
             if (p.hasKey(langKey)) continue;
 
             p.putManual(langKey, AbstractLanguageProvider.toTitleCase(id.getPath()));
@@ -38,7 +37,7 @@ public final class TrimsLangSubProvider implements AbstractLanguageProvider.Lang
             ResourceLocation id = key.location();
             if (!JolCraft.MOD_ID.equals(id.getNamespace())) continue;
 
-            String langKey = JolCraftLanguageKeys.trimPattern(id.getPath());
+            String langKey = trimPattern(id.getPath());
             if (p.hasKey(langKey)) continue;
 
             p.putManual(langKey, AbstractLanguageProvider.toTitleCase(id.getPath()) + " Armor Trim");
@@ -62,5 +61,12 @@ public final class TrimsLangSubProvider implements AbstractLanguageProvider.Lang
         } catch (IllegalAccessException ignored) {
             return null;
         }
+    }
+
+    public static String trimMaterial(String path) {
+        return "trim_material." + JolCraft.MOD_ID + "." + path;
+    }
+    public static String trimPattern(String path) {
+        return "trim_pattern." + JolCraft.MOD_ID + "." + path;
     }
 }

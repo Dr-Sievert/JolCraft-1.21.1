@@ -2,16 +2,16 @@ package net.sievert.jolcraft.datagen.language.subprovider;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 public final class ItemsLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     public static final String JOLCRAFT_GENERAL_CREATIVE_TAB = "jolcraft_items_tab";
-    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB_KEY = JolCraftLanguageKeys.itemGroup(JOLCRAFT_GENERAL_CREATIVE_TAB);
+    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB_KEY = itemGroup(JOLCRAFT_GENERAL_CREATIVE_TAB);
     public static final String JOLCRAFT_EGG_CREATIVE_TAB = "jolcraft_egg_tab";
-    public static final String JOLCRAFT_EGG_CREATIVE_TAB_KEY = JolCraftLanguageKeys.itemGroup(JOLCRAFT_EGG_CREATIVE_TAB);
+    public static final String JOLCRAFT_EGG_CREATIVE_TAB_KEY = itemGroup(JOLCRAFT_EGG_CREATIVE_TAB);
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
@@ -116,4 +116,7 @@ public final class ItemsLangSubProvider implements AbstractLanguageProvider.Lang
             p.put(key, AbstractLanguageProvider.toTitleCase(id.getPath()));
         }
     }
+
+    public static String itemGroup(String path) { return "itemGroup." + JolCraft.MOD_ID + "." + path; }
+
 }

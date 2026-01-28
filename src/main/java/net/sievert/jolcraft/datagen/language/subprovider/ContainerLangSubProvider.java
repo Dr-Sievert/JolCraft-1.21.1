@@ -11,7 +11,7 @@ public final class ContainerLangSubProvider implements AbstractLanguageProvider.
     // ---------------------------------------------------------------------
 
     public static final String LAPIDARY_BENCH = "lapidary_bench";
-    public static final String CONTAINER_LAPIDARY_BENCH = JolCraftLanguageKeys.container(LAPIDARY_BENCH);
+    public static final String CONTAINER_LAPIDARY_BENCH = container(LAPIDARY_BENCH);
     public static final String TOOLTIP_LAPIDARY_BENCH_LOCKED_CUT_GEMS = JolCraftLanguageKeys.tooltip(LAPIDARY_BENCH, "locked_cut_gems");
     public static final String TOOLTIP_GEODE = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "geode");
     public static final String TOOLTIP_UNCUT_GEM = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "uncut_gem");
@@ -33,8 +33,8 @@ public final class ContainerLangSubProvider implements AbstractLanguageProvider.
     // ---------------------------------------------------------------------
 
     public static final String STRONGBOX = "strongbox";
-    public static final String CONTAINER_STRONGBOX = JolCraftLanguageKeys.container(STRONGBOX);
-    public static final String CONTAINER_STRONGBOX_LOCKED = JolCraftLanguageKeys.container("strongbox_locked");
+    public static final String CONTAINER_STRONGBOX = container(STRONGBOX);
+    public static final String CONTAINER_STRONGBOX_LOCKED = container("strongbox_locked");
     public static final String TOOLTIP_LOCKPICK = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "lockpick");
     public static final String TOOLTIP_STRONGBOX_NOT_EMPTY = JolCraftLanguageKeys.tooltip(STRONGBOX, "not_empty");
     public static final String TOOLTIP_STRONGBOX_LOOT = JolCraftLanguageKeys.tooltip(STRONGBOX, "loot");
@@ -99,4 +99,7 @@ public final class ContainerLangSubProvider implements AbstractLanguageProvider.
         p.putManual(TOOLTIP_HEARTH_NOT_SAFE, "Cannot light with monsters nearby!");
         p.putManual(TOOLTIP_HEARTH_NO_BED_NEARBY, "No claimed bed nearby.");
     }
+
+    public static String container(String path) { return JolCraftLanguageKeys.category(JolCraftLanguageCategory.CONTAINER, path); }
+
 }

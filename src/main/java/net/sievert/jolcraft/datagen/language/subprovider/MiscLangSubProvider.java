@@ -6,10 +6,11 @@ import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageKeys;
 
 public final class MiscLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
-    public static final String TOOLTIP_HOLD_KEY = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "hold_key");
     // ---------------------------------------------------------------------
     // Root tooltip keys (tooltip.<modid>.<path>)
     // ---------------------------------------------------------------------
+
+    public static final String TOOLTIP_HOLD_KEY = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "hold_key");
 
     public static final String TOOLTIP_DEV_KEY = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "dev_key");
 
