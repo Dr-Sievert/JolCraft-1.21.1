@@ -35,7 +35,7 @@ public class UncutGemItem extends Item {
             tooltip.add(Component.translatable(ContainerLangSubProvider.TOOLTIP_UNCUT_GEM)
                     .withStyle(ChatFormatting.GRAY));
 
-            if (player != null && !DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (player != null && !DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 tooltip.add(Component.translatable(ContainerLangSubProvider.TOOLTIP_CUT_LOCKED)
                         .withStyle(ChatFormatting.RED));
             }

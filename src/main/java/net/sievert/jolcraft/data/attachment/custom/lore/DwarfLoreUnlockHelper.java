@@ -18,8 +18,19 @@ public final class DwarfLoreUnlockHelper {
     /**
      * Read-only helper.
      * Safe on both logical sides – reads directly from the attachment.
+     * Does NOT bypass creative mode
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean hasUnlock(Player player, DwarfLoreKey key) {
+        if (player == null || key == null) return false;
+        if(player.isCreative()) return true;
+        return hasUnlockBypassCreative(player, key);
+    }
+
+    /**
+     * Creative mode bypass
+     */
+    public static boolean hasUnlockBypassCreative(Player player, DwarfLoreKey key) {
         if (player == null || key == null) return false;
         return player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get()).hasUnlock(key);
     }
@@ -34,7 +45,6 @@ public final class DwarfLoreUnlockHelper {
         return player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get()).getUnlocks();
     }
 
-
     /**
      * Server-authoritative mutation.
      * Adds a single unlock and syncs a full snapshot to the client if changed.
@@ -46,26 +56,6 @@ public final class DwarfLoreUnlockHelper {
         if (!unlock.addUnlockIfAbsent(key)) return;
 
         // Packet transports a snapshot only; attachment remains the single source of truth
-        JolCraftNetworking.sendToClient(
-                serverPlayer,
-                new ClientboundLoreUnlocksPacket(
-                        unlock.getUnlocks().stream()
-                                .map(k -> k.name().toLowerCase(Locale.ROOT))
-                                .collect(Collectors.toUnmodifiableSet())
-                )
-        );
-    }
-
-    /**
-     * Server-authoritative snapshot replace.
-     * Used for bulk sync (login, reload, migration).
-     */
-    public static void setUnlocks(Player player, Set<DwarfLoreKey> snapshot) {
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
-
-        DwarfLoreUnlock unlock = serverPlayer.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
-        if (!unlock.setUnlocksIfChanged(snapshot)) return;
-
         JolCraftNetworking.sendToClient(
                 serverPlayer,
                 new ClientboundLoreUnlocksPacket(

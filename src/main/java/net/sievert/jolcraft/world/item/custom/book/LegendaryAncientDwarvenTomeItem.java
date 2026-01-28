@@ -75,7 +75,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
         switch (key) {
             case FORGOTTEN_BREW_FORMULAS -> {
-                if (DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+                if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                     showEmptyUnlockMessage(player);
                     playIdentifyFailSound(level, player);
                 } else {
@@ -88,7 +88,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                 }
             }
             case ANCIENT_GEMCRAFT -> {
-                if (DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                     showEmptyUnlockMessage(player);
                     playIdentifyFailSound(level, player);
                 } else {
