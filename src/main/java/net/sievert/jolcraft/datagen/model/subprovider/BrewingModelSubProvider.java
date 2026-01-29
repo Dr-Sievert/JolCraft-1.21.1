@@ -21,9 +21,9 @@ public class BrewingModelSubProvider implements AbstractModelProvider.ModelSubPr
     @Override
     public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
 
-        generateFlatItem(items, JolCraftItems.BARLEY_MALT.get(), ModelTemplates.FLAT_HANDHELD_ITEM, "brewing");
-        generateFlatItem(items, JolCraftItems.YEAST.get(), ModelTemplates.FLAT_ITEM, "brewing");
-        generateFlatItem(items, JolCraftItems.GLASS_MUG.get(), ModelTemplates.FLAT_ITEM, "brewing");
+        generateFlatItem(items, JolCraftItems.BARLEY_MALT.get(), ModelTemplates.FLAT_HANDHELD_ITEM, SUB_BREWING);
+        generateFlatItem(items, JolCraftItems.YEAST.get(), ModelTemplates.FLAT_ITEM, SUB_BREWING);
+        generateFlatItem(items, JolCraftItems.GLASS_MUG.get(), ModelTemplates.FLAT_ITEM, SUB_BREWING);
 
         blocks.blockStateOutput.accept(new BlockStateGenerator() {
             @Override

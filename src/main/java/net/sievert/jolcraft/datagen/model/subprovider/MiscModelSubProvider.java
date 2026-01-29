@@ -55,7 +55,6 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
         items.generateFlatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), ModelTemplates.FLAT_ITEM);
         items.generateFlatItem(JolCraftItems.DEEPSLATE_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         items.generateFlatItem(JolCraftItems.MITHRIL_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-
         items.generateFlatItem(JolCraftItems.INVERIX.get(), ModelTemplates.FLAT_ITEM);
 
         /* ---------------------------- */
