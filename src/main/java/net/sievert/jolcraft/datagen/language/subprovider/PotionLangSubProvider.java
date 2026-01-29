@@ -6,7 +6,7 @@ import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-public final class PotionsLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class PotionLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {

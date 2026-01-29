@@ -12,7 +12,7 @@ import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public final class TrimsLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class TrimLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {

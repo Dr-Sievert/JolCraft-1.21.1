@@ -7,7 +7,7 @@ import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.minecraft.world.effect.MobEffect;
 
-public final class EffectsLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class EffectLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {

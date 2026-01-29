@@ -2,9 +2,8 @@ package net.sievert.jolcraft.datagen.language.subprovider;
 
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageKeys;
 
-public final class SubtitlesLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class SubtitleLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {

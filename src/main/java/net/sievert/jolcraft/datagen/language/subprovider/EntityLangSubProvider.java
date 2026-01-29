@@ -9,7 +9,7 @@ import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageCategory;
 import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 
-public final class EntitiesLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class EntityLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {

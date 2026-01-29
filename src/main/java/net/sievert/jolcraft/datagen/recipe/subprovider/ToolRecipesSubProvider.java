@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class ToolsRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
+public final class ToolRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
 
     private static final String FOLDER = "tool";
 

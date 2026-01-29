@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.language.subprovider.ItemsLangSubProvider;
+import net.sievert.jolcraft.datagen.language.subprovider.ItemLangSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
@@ -24,8 +24,8 @@ public class JolCraftCreativeModeTabs {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, JolCraft.MOD_ID);
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_ITEMS =
-            CREATIVE_MODE_TABS.register(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()
-                    .title(Component.translatable(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB_KEY))
+            CREATIVE_MODE_TABS.register(ItemLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()
+                    .title(Component.translatable(ItemLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB_KEY))
                     .icon(() -> new ItemStack(JolCraftItems.GOLD_COIN.get()))
                     .displayItems((pParameters, pOutput) -> {
 
@@ -260,10 +260,10 @@ public class JolCraftCreativeModeTabs {
                     }).build());
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_EGGS =
-            CREATIVE_MODE_TABS.register(ItemsLangSubProvider.JOLCRAFT_EGG_CREATIVE_TAB, () -> CreativeModeTab.builder()
-                    .title(Component.translatable(ItemsLangSubProvider.JOLCRAFT_EGG_CREATIVE_TAB_KEY))
+            CREATIVE_MODE_TABS.register(ItemLangSubProvider.JOLCRAFT_EGG_CREATIVE_TAB, () -> CreativeModeTab.builder()
+                    .title(Component.translatable(ItemLangSubProvider.JOLCRAFT_EGG_CREATIVE_TAB_KEY))
                     .icon(() -> new ItemStack(JolCraftItems.DWARF_SPAWN_EGG.get()))
-                    .withTabsBefore(JolCraft.location(ItemsLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB))
+                    .withTabsBefore(JolCraft.location(ItemLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB))
                     .displayItems((pParameters, pOutput) -> {
 
                         pOutput.accept(JolCraftItems.DWARF_SPAWN_EGG);

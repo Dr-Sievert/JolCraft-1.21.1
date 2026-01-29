@@ -11,7 +11,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class MaterialsRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
+public final class MaterialRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
 
     @Override
     public void addRecipes(AbstractRecipeProvider p) {

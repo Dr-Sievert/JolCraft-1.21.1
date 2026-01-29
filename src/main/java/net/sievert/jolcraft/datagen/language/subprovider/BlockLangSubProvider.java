@@ -5,7 +5,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 
-public final class BlocksLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class BlockLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     @Override
     public void addTranslations(AbstractLanguageProvider p) {

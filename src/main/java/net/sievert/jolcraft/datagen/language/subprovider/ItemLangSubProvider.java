@@ -6,7 +6,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
-public final class ItemsLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class ItemLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
     public static final String JOLCRAFT_GENERAL_CREATIVE_TAB = "jolcraft_items_tab";
     public static final String JOLCRAFT_GENERAL_CREATIVE_TAB_KEY = itemGroup(JOLCRAFT_GENERAL_CREATIVE_TAB);

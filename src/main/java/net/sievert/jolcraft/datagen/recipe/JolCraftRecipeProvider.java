@@ -43,9 +43,9 @@ public final class JolCraftRecipeProvider extends AbstractRecipeProvider {
                 new EquipmentRecipesSubProvider(),
                 new FermentingCauldronRecipesSubProvider(),
                 new LapidaryRecipesSubProvider(),
-                new MaterialsRecipesSubProvider(),
+                new MaterialRecipesSubProvider(),
                 new MiscRecipesSubProvider(),
-                new ToolsRecipesSubProvider(),
+                new ToolRecipesSubProvider(),
                 new TrimRecipesSubProvider()
         ));
     }

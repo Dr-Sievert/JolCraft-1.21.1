@@ -16,23 +16,23 @@ public final class JolCraftLanguageProvider extends AbstractLanguageProvider {
 
         this.subs = List.of(
                 new AdvancementsLangSubProvider(),
-                new AttributesLangSubProvider(),
-                new BlocksLangSubProvider(),
+                new AttributeLangSubProvider(),
+                new BlockLangSubProvider(),
                 new BountyLangSubProvider(),
                 new CompassLangSubProvider(),
                 new ContainerLangSubProvider(),
                 new DwarfLangSubProvider(),
-                new EffectsLangSubProvider(),
-                new EntitiesLangSubProvider(),
-                new ItemsLangSubProvider(),
+                new EffectLangSubProvider(),
+                new EntityLangSubProvider(),
+                new ItemLangSubProvider(),
                 new JeiLangSubProvider(),
                 new LoreLangSubProvider(),
                 new MiscLangSubProvider(),
-                new PotionsLangSubProvider(),
+                new PotionLangSubProvider(),
                 new ReputationLangSubProvider(),
-                new StatsLangSubProvider(),
-                new SubtitlesLangSubProvider(),
-                new TrimsLangSubProvider()
+                new StatLangSubProvider(),
+                new SubtitleLangSubProvider(),
+                new TrimLangSubProvider()
         );
     }
 
