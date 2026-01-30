@@ -16,6 +16,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.JolCraftEnumParams;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
@@ -39,9 +40,7 @@ import net.sievert.jolcraft.world.item.custom.food.DwarvenBrewItem;
 import net.sievert.jolcraft.world.item.custom.tool.ArtisanHammerItem;
 import net.sievert.jolcraft.world.item.custom.tool.ChiselItem;
 import net.sievert.jolcraft.world.item.custom.tool.SpannerItem;
-import net.sievert.jolcraft.world.item.custom.tablet.LegendaryReputationTabletItem;
 import net.sievert.jolcraft.world.item.custom.tablet.ReputationTabletItem;
-import net.sievert.jolcraft.world.item.custom.tooltip.LegendaryItem;
 import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipBlockItem;
 import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipItem;
 import net.sievert.jolcraft.world.item.tool.JolCraftToolMaterials;
@@ -608,8 +607,8 @@ public class JolCraftItems {
                     new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final DeferredItem<Item> REPUTATION_TABLET_4 =
-            ITEMS.registerItem("reputation_tablet_4", LegendaryReputationTabletItem::new,
-                    new Item.Properties().stacksTo(1));
+            ITEMS.registerItem("reputation_tablet_4", ReputationTabletItem::new,
+                    new Item.Properties().stacksTo(1).rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
 
     // Tomes
     public static final DeferredItem<Item> DWARVEN_TOME = ITEMS.registerSimpleItem("dwarven_tome");
@@ -656,18 +655,17 @@ public class JolCraftItems {
             ITEMS.registerItem("ancient_dwarven_tome_epic", properties -> new AncientDwarvenTomeItem(properties) {
             }, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
-    public static final DeferredItem<Item> LEGENDARY_PAGE = ITEMS.registerItem(
-            "legendary_page",
-            LegendaryItem::new
-    );
+    public static final DeferredItem<Item> LEGENDARY_PAGE = ITEMS.registerItem("legendary_page",
+            Item::new, new Item.Properties().rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
+
 
     public static final DeferredItem<Item> LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME =
             ITEMS.registerItem("legendary_unidentified_ancient_dwarven_tome", properties -> new LegendaryAncientUnidentifiedTomeItem(properties) {
-            }, new Item.Properties().stacksTo(16));
+            }, new Item.Properties().stacksTo(16).rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
 
     public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME_LEGENDARY =
             ITEMS.registerItem("ancient_dwarven_tome_legendary", properties -> new LegendaryAncientDwarvenTomeItem(properties) {
-            }, new Item.Properties().stacksTo(1));
+            }, new Item.Properties().stacksTo(1).rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
 
 
     //Tools

@@ -127,16 +127,6 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
     }
 
     @Override
-    public Component getName(ItemStack stack) {
-        Component customName = stack.getComponents().get(DataComponents.ITEM_NAME);
-        assert customName != null;
-        if (!customName.getString().isEmpty()) {
-            return Component.literal(customName.getString()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
-        }
-        return Component.translatable(this.getDescriptionId()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
-    }
-
-    @Override
     protected List<Component> getFullyReadableTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
         var dataComponentType = JolCraftDataComponents.LORE_KEY.get();
         String loreKey = stack.get(dataComponentType);

@@ -11,6 +11,7 @@ import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEnchantItemEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.JolCraftEnumParams;
 import net.sievert.jolcraft.event.util.JolCraftAnvilHelper;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
@@ -22,7 +23,7 @@ public class JolCraftUtilityEvents {
         ItemStack right = event.getRight();
         String rename = event.getName();
 
-        if (!left.isEmpty() && left.is(JolCraftTags.Items.LEGENDARY_ITEMS)) {
+        if (!left.isEmpty() && left.getRarity() == JolCraftEnumParams.LEGENDARY_RARITY.getValue()) {
             var vanilla = JolCraftAnvilHelper.vanillaResult(left, right, rename, event.getPlayer());
             ItemStack result = vanilla.result();
 
@@ -38,7 +39,7 @@ public class JolCraftUtilityEvents {
                 result.remove(DataComponents.ITEM_NAME);
 
                 result.set(DataComponents.ITEM_NAME,
-                        Component.literal(baseName).withStyle(ChatFormatting.GOLD));
+                        Component.literal(baseName).withStyle(JolCraftEnumParams.LEGENDARY_RARITY.getValue().getStyleModifier()));
             }
 
             event.setOutput(result);
@@ -46,6 +47,7 @@ public class JolCraftUtilityEvents {
             event.setMaterialCost(vanilla.materialCost());
         }
 
+        // Mithril: keep tag-based behavior
         if (!left.isEmpty() && left.is(JolCraftTags.Items.MITHRIL_ITEMS)) {
             var vanilla = JolCraftAnvilHelper.vanillaResult(left, right, rename, event.getPlayer());
             ItemStack result = vanilla.result();
@@ -74,16 +76,18 @@ public class JolCraftUtilityEvents {
     @SubscribeEvent
     public static void onEnchantItem(PlayerEnchantItemEvent event) {
         ItemStack stack = event.getEnchantedItem();
+        if (stack.isEmpty()) return;
 
-        if (!stack.isEmpty() && stack.is(JolCraftTags.Items.LEGENDARY_ITEMS)) {
+        if (stack.getRarity() == JolCraftEnumParams.LEGENDARY_RARITY.getValue()) {
             String baseName = stack.getHoverName().getString();
             stack.remove(DataComponents.CUSTOM_NAME);
             stack.remove(DataComponents.ITEM_NAME);
             stack.set(DataComponents.ITEM_NAME,
-                    Component.literal(baseName).withStyle(ChatFormatting.GOLD));
+                    Component.literal(baseName).withStyle(JolCraftEnumParams.LEGENDARY_RARITY.getValue().getStyleModifier()));
         }
 
-        if (!stack.isEmpty() && stack.is(JolCraftTags.Items.MITHRIL_ITEMS)) {
+        // Mithril: keep tag-based behavior
+        if (stack.is(JolCraftTags.Items.MITHRIL_ITEMS)) {
             String baseName = stack.getHoverName().getString();
             stack.remove(DataComponents.CUSTOM_NAME);
             stack.remove(DataComponents.ITEM_NAME);

@@ -66,8 +66,6 @@ public class JolCraftTags {
 
         public static final TagKey<Item> MITHRIL_ITEMS = createTag("mithril_items");
 
-        public static final TagKey<Item> LEGENDARY_ITEMS = createTag("legendary_items");
-
         //Salvage
 
         public static final TagKey<Item> GLOBAL_SALVAGE = createTag("global_salvage");

@@ -411,12 +411,6 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.MITHRIL_CHISEL.get())
                 .add(JolCraftItems.MITHRIL_PESTLE.get());
 
-        tag(JolCraftTags.Items.LEGENDARY_ITEMS)
-                .add(JolCraftItems.REPUTATION_TABLET_4.get())
-                .add(JolCraftItems.LEGENDARY_PAGE.get())
-                .add(JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get())
-                .add(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-
         //Custom Misc
 
         tag(JolCraftTags.Items.INK_AND_QUILLS)

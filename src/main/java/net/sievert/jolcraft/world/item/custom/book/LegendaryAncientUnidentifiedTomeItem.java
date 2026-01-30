@@ -34,14 +34,4 @@ public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTom
         LoreHelper.setLoreKey(tome, entry.getKey());
         return tome;
     }
-
-    @Override
-    public @NotNull Component getName(ItemStack stack) {
-        Component customName = stack.getComponents().getOrDefault(DataComponents.ITEM_NAME, null);
-        if (!customName.getString().isEmpty()) {
-            return Component.literal(customName.getString()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
-        }
-        return Component.translatable(this.getDescriptionId()).withStyle(style -> style.withColor(ChatFormatting.GOLD));
-    }
-
 }
