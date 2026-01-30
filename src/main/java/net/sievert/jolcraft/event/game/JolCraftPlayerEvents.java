@@ -30,7 +30,6 @@ import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.FermentingCauldronBlock;
 import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
@@ -103,7 +102,7 @@ public class JolCraftPlayerEvents {
     @SubscribeEvent
     public static void onSleepFinished(SleepFinishedTimeEvent event) {
         ServerLevel level = (ServerLevel) event.getLevel();
-        long skipped = event.getNewTime();
+        long skipped = event.getNewTime() - level.getDayTime();
         if (skipped <= 0) return;
 
         final int chunkRadius = 4;
@@ -155,9 +154,9 @@ public class JolCraftPlayerEvents {
         var player = event.getEntity();
         var pos = event.getPos();
         var state = serverLevel.getBlockState(pos);
-        var mainHandStack = player.getMainHandItem();
+        var used =  event.getItemStack();
 
-        if (mainHandStack.is(Items.ROTTEN_FLESH)) {
+        if (used.is(Items.ROTTEN_FLESH)) {
             BlockPos above = pos.above();
 
             boolean onLog = (event.getFace() == Direction.UP
@@ -173,7 +172,7 @@ public class JolCraftPlayerEvents {
                 serverLevel.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
                 serverLevel.playSound(null, above, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1.0F, 1.0F);
 
-                if (!player.isCreative()) mainHandStack.shrink(1);
+                if (!player.isCreative()) used.shrink(1);
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
@@ -181,7 +180,7 @@ public class JolCraftPlayerEvents {
         }
 
         if (!serverLevel.isClientSide() && state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
-            var input = new FermentingCauldronRecipeInput(mainHandStack.copyWithCount(1), ItemStack.EMPTY);
+            var input = new FermentingCauldronRecipeInput(used.copyWithCount(1), ItemStack.EMPTY);
 
             boolean hasRecipe = serverLevel.getServer()
                     .getRecipeManager()
@@ -197,7 +196,7 @@ public class JolCraftPlayerEvents {
             serverLevel.setBlock(pos, newState, 3);
 
             if (serverLevel.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity be) {
-                InteractionResult result = be.handleInteraction(player, event.getHand(), mainHandStack);
+                InteractionResult result = be.handleInteraction(player, event.getHand(), used);
                 event.setCancellationResult(result);
                 event.setCanceled(true);
                 return;

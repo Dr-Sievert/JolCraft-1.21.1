@@ -38,8 +38,6 @@ import java.util.List;
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class JolCraftEntityEvents {
 
-    //Dwarf
-
     @SubscribeEvent
     public static void onInvulnerabilityCheck(EntityInvulnerabilityCheckEvent event) {
         if (event.getEntity() instanceof AbstractDwarfEntity dwarf && dwarf.canBlock() && event.getSource().getEntity() instanceof Monster monster) {
@@ -71,11 +69,16 @@ public class JolCraftEntityEvents {
         Entity target = event.getTarget();
         ItemStack stack = event.getItemStack();
 
-        if (player.getCooldowns().isOnCooldown(stack)) {
-            player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_COOLDOWN).withStyle(ChatFormatting.GRAY),
-                    true
-            );
+        // Cooldowns are stack-keyed in 1.21.x, so use a stable 1-count copy.
+        ItemStack cooldownStack = stack.copyWithCount(1);
+
+        if (player.getCooldowns().isOnCooldown(cooldownStack)) {
+            if (!player.level().isClientSide) {
+                player.displayClientMessage(
+                        Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_COOLDOWN).withStyle(ChatFormatting.GRAY),
+                        true
+                );
+            }
             event.setCancellationResult(InteractionResult.SUCCESS);
             event.setCanceled(true);
             return;
@@ -129,8 +132,10 @@ public class JolCraftEntityEvents {
                     );
                     dwarf.crateRestock();
                     JolCraftSoundHelper.playDwarfYes(dwarf);
+
+                    // Apply cooldown BEFORE shrinking (stack may become empty)
+                    player.getCooldowns().addCooldown(cooldownStack, 60);
                     if (!player.isCreative()) stack.shrink(1);
-                    player.getCooldowns().addCooldown(stack, 60);
                 }
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
@@ -172,8 +177,10 @@ public class JolCraftEntityEvents {
                     );
                     dwarf.rerollTrades();
                     JolCraftSoundHelper.playDwarfYes(dwarf);
+
+                    // Apply cooldown BEFORE shrinking (stack may become empty)
+                    player.getCooldowns().addCooldown(cooldownStack, 60);
                     if (!player.isCreative()) stack.shrink(1);
-                    player.getCooldowns().addCooldown(stack, 60);
                 }
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
@@ -183,7 +190,6 @@ public class JolCraftEntityEvents {
 
         // Villager logic
         if (target instanceof Villager villager) {
-
 
             // Restock Crate
             if (stack.is(JolCraftItems.RESTOCK_CRATE.get()) && !villager.isBaby() && villager.canRestock()) {
@@ -223,8 +229,10 @@ public class JolCraftEntityEvents {
                     JolCraftSoundHelper.playVillagerFisherman(villager);
                     JolCraftSoundHelper.playVillagerYes(villager);
                     villager.restock();
+
+                    // Apply cooldown BEFORE shrinking (stack may become empty)
+                    player.getCooldowns().addCooldown(cooldownStack, 60);
                     if (!player.isCreative()) stack.shrink(1);
-                    player.getCooldowns().addCooldown(stack, 60);
                 }
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
@@ -260,6 +268,7 @@ public class JolCraftEntityEvents {
 
                 for (int level = 1; level <= currentLevel; level++) {
                     villager.setVillagerData(data.setLevel(level));
+                    //noinspection DataFlowIssue
                     villager.setOffers(null);
                     MerchantOffers thisLevelOffers = villager.getOffers();
 
@@ -275,17 +284,18 @@ public class JolCraftEntityEvents {
                         Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                         true
                 );
+
+                // Apply cooldown BEFORE shrinking (stack may become empty)
+                player.getCooldowns().addCooldown(cooldownStack, 60);
                 if (!player.isCreative()) stack.shrink(1);
-                player.getCooldowns().addCooldown(stack, 60);
+
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
             }
-
         }
 
         // Wandering Trader logic
         if (target instanceof WanderingTrader trader) {
-
 
             // Restock Crate
             if (stack.is(JolCraftItems.RESTOCK_CRATE.get())) {
@@ -327,8 +337,10 @@ public class JolCraftEntityEvents {
                     for (MerchantOffer merchantoffer : trader.getOffers()) {
                         merchantoffer.resetUses();
                     }
+
+                    // Apply cooldown BEFORE shrinking (stack may become empty)
+                    player.getCooldowns().addCooldown(cooldownStack, 60);
                     if (!player.isCreative()) stack.shrink(1);
-                    player.getCooldowns().addCooldown(stack, 60);
                 }
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
@@ -387,8 +399,10 @@ public class JolCraftEntityEvents {
                         Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                         true
                 );
+
+                player.getCooldowns().addCooldown(cooldownStack, 60);
                 if (!player.isCreative()) stack.shrink(1);
-                player.getCooldowns().addCooldown(stack, 60);
+
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
             }

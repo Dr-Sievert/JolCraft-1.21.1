@@ -71,6 +71,7 @@ public class JolCraftAttributeEvents {
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer sp) cleanupPlayerState(sp);
         fullMarkDirty(event);
     }
 
