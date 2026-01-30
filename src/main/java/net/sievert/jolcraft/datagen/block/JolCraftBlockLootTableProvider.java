@@ -277,30 +277,6 @@ public class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                 .withPool(geodePool);
     }
 
-    protected LootTable.Builder createMultipleOreDrops(Block block, Item item, float minDrops, float maxDrops) {
-        HolderLookup.RegistryLookup<Enchantment> enchantments = registries.lookupOrThrow(Registries.ENCHANTMENT);
-
-        LootPool.Builder defaultPool = LootPool.lootPool()
-                .setRolls(ConstantValue.exactly(1))
-                .when(hasSilkTouch().invert())
-                .add(LootItem.lootTableItem(item)
-                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(minDrops, maxDrops)))
-                );
-        enchantments.get(Enchantments.FORTUNE).ifPresent(fortune ->
-                defaultPool.apply(ApplyBonusCount.addOreBonusCount(fortune))
-        );
-        defaultPool.apply(ApplyExplosionDecay.explosionDecay());
-
-        LootPool.Builder silkTouchPool = LootPool.lootPool()
-                .setRolls(ConstantValue.exactly(1))
-                .when(hasSilkTouch())
-                .add(LootItem.lootTableItem(block));
-
-        return LootTable.lootTable()
-                .withPool(silkTouchPool)
-                .withPool(defaultPool);
-    }
-
     @Override
     protected @NotNull Iterable<Block> getKnownBlocks() {
         return JolCraftBlocks.BLOCKS.getEntries().stream().map(Holder::value)::iterator;

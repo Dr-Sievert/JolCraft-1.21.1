@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/world/item/Rarity",
+      "name": "JOLCRAFT_LEGENDARY",
+      "constructor": "(ILjava/lang/String;Ljava/util/function/UnaryOperator;)V",
+      "parameters": {
+        "class": "net/sievert/jolcraft/data/JolCraftEnumParams",
+        "field": "LEGENDARY_RARITY"
+      }
+    }
+  ]
+}
