@@ -22,7 +22,6 @@ public final class JolCraftParticleHelper {
 
     private JolCraftParticleHelper() {}
 
-    // Reasonable default for "nearby effects" (tweak per call if needed)
     public static final double DEFAULT_RADIUS = 32.0D;
 
     public static void spawn(Level level, ParticleOptions particle,

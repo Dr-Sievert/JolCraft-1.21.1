@@ -82,14 +82,13 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     @Override
     public void apply(ClientboundPlaySoundPacket packet) {
         var mc = Minecraft.getInstance();
-        var player = mc.player;
-        if (player == null) return;
+        if (mc.level == null) return;
 
         var optHolder = BuiltInRegistries.SOUND_EVENT.get(packet.soundId());
         if (optHolder.isEmpty()) return;
 
         var sound = optHolder.get().value();
-        player.level().playLocalSound(
+        mc.level.playLocalSound(
                 packet.x(), packet.y(), packet.z(),
                 sound,
                 packet.source(),
