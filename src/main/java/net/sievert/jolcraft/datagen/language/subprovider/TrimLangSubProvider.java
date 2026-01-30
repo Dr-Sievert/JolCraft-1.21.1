@@ -6,6 +6,7 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
 
@@ -14,8 +15,11 @@ import java.lang.reflect.Modifier;
 
 public final class TrimLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
+    public static final String TOOLTIP_TRIM_MATERIALS = JolCraftLanguageKeys.category("tooltip", "trim_material");
+
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
+        p.putManual((TOOLTIP_TRIM_MATERIALS), "Can be used to trim armor.");
         addTrimMaterials(p);
         addTrimPatterns(p);
     }

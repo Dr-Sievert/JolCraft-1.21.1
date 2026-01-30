@@ -99,6 +99,7 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
 
     public static final String TOOLTIP_PROFESSION_CONTRACT = JolCraftLanguageKeys.tooltip("contract","profession");
 
+    public static final String TOOLTIP_GUILD_SIGIL = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "guild_sigil");
 
     // ---------------------------------------------------------------------
     // Dwarf unlock keys
@@ -196,6 +197,12 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
                 TOOLTIP_PROFESSION_CONTRACT,
                 "Profession contracts can be given to dwarves without professions to set their profession."
         );
+
+        p.putManual(
+                TOOLTIP_GUILD_SIGIL,
+                "Can be bought from a master dwarf without a profession."
+        );
+
 
         // -----------------------------------------------------------------
         // Dwarf

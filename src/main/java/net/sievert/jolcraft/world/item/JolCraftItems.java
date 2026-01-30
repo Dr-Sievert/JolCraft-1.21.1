@@ -667,7 +667,6 @@ public class JolCraftItems {
             ITEMS.registerItem("ancient_dwarven_tome_legendary", properties -> new LegendaryAncientDwarvenTomeItem(properties) {
             }, new Item.Properties().stacksTo(1).rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
 
-
     //Tools
     public static final DeferredItem<Item> COPPER_SPANNER =
             ITEMS.registerItem("copper_spanner",
