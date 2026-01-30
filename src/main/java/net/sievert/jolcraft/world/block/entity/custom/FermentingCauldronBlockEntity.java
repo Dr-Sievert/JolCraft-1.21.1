@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -43,6 +42,8 @@ import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -538,19 +539,19 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     }
 
     private void doBubbleEffects() {
-        if (!(level instanceof ServerLevel serverLevel)) return;
+        if (level == null) return;
         if (!isBrewing()) return;
         if (bubbleTicks <= 0) return;
         if (bubbleDelay > 0) { bubbleDelay--; return; }
 
-        double x = worldPosition.getX() + 0.5 + (serverLevel.random.nextDouble() - 0.5);
-        double y = worldPosition.getY() + 1.01;
-        double z = worldPosition.getZ() + 0.5 + (serverLevel.random.nextDouble() - 0.5);
+        double x = worldPosition.getX() + 0.5D + (level.random.nextDouble() - 0.5D);
+        double y = worldPosition.getY() + 1.01D;
+        double z = worldPosition.getZ() + 0.5D + (level.random.nextDouble() - 0.5D);
 
-        serverLevel.sendParticles(ParticleTypes.BUBBLE_POP, x, y, z, 1, 0.0, 0.05, 0.0, 0.05);
-        serverLevel.playSound(null, x, y, z, SoundEvents.BUBBLE_POP, SoundSource.BLOCKS, 0.3f, 1.4f);
+        JolCraftParticleHelper.spawn(level, ParticleTypes.BUBBLE_POP, x, y, z, 0.0D, 0.05D, 0.0D);
+        JolCraftSoundHelper.play(level, SoundEvents.BUBBLE_POP, SoundSource.BLOCKS, x, y, z, 0.3F, 1.4F);
 
-        bubbleDelay = 3 + serverLevel.random.nextInt(bubbleTicks);
+        bubbleDelay = 3 + level.random.nextInt(bubbleTicks);
     }
 
     private void lowerFillLevel() {
