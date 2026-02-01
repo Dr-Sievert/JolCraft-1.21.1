@@ -32,6 +32,6 @@ public final class JolCraftClientGameEvents {
 
         if (soundLocation.equals(caveLocation)) return;
 
-        event.setNewVolume(event.getOriginalVolume() * 0.3F);
+        event.setNewVolume(event.getOriginalVolume() * 0.15F);
     }
 }
