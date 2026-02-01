@@ -18,9 +18,9 @@ public class JolCraftAttributes {
                             .setSyncable(true)
             );
 
-    public static final DeferredHolder<Attribute, Attribute> SLOW_RESIST =
-            ATTRIBUTES.register("slow_resist", () ->
-                    new PercentageAttribute("attribute.jolcraft.slow_resist", 0.0D, 0.0D, 1.0D)
+    public static final DeferredHolder<Attribute, Attribute> SLOW_RESISTANCE =
+            ATTRIBUTES.register("slow_resistance", () ->
+                    new PercentageAttribute("attribute.jolcraft.slow_resistance", 0.0D, 0.0D, 1.0D)
                             .setSyncable(true)
             );
 

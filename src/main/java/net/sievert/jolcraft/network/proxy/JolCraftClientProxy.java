@@ -134,7 +134,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
 
     @Override
     public void apply(ClientboundDeliriumPacket packet) {
-        ClientDeliriumData.setMuffleTicks(packet.durationTicks());
+        ClientDeliriumData.start(packet.durationTicks());
     }
 
     @Override

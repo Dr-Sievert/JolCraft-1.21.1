@@ -197,7 +197,7 @@ public class JolCraftAttributeEvents {
 
         speed.removeModifier(FROSTVEIN_ID);
 
-        double resist = player.getAttributeValue(JolCraftAttributes.SLOW_RESIST);
+        double resist = player.getAttributeValue(JolCraftAttributes.SLOW_RESISTANCE);
         if (resist <= 0.0D) return;
 
         resist = Math.max(0.0D, Math.min(1.0D, resist));
@@ -233,7 +233,7 @@ public class JolCraftAttributeEvents {
     }
 
     private static void trackFrostvein(ServerPlayer player, AttributesAttachment attrs) {
-        double resist = player.getAttributeValue(JolCraftAttributes.SLOW_RESIST);
+        double resist = player.getAttributeValue(JolCraftAttributes.SLOW_RESISTANCE);
         int amp = getSlownessAmp(player);
 
         if (resist <= 0.0D && amp < 0) {
@@ -632,10 +632,9 @@ public class JolCraftAttributeEvents {
     public static void onMagicDamage(LivingDamageEvent.Pre event) {
         DamageSource source = event.getSource();
         LivingEntity entity = event.getEntity();
+        if (!(entity instanceof Player player) || !source.is(Tags.DamageTypes.IS_MAGIC)) return;
 
-        if (!source.is(Tags.DamageTypes.IS_MAGIC)) return;
-
-        double resist = entity.getAttributeValue(JolCraftAttributes.MAGIC_RESISTANCE);
+        double resist = player.getAttributeValue(JolCraftAttributes.MAGIC_RESISTANCE);
         if (resist <= 0.0) return;
 
         float original = event.getOriginalDamage();

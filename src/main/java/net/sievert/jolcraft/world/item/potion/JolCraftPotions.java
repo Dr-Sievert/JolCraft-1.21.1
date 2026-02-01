@@ -49,7 +49,13 @@ public class JolCraftPotions {
             () -> new Potion("delirium_curse", new MobEffectInstance(JolCraftEffects.DELIRIUM_CURSE, 3000, 0)));
 
     public static final Holder<Potion> CORROSION = POTIONS.register("corrosion",
-            () -> new Potion("corrosion", new MobEffectInstance(JolCraftEffects.CORROSION, 600, 0)));
+            () -> new Potion("corrosion", new MobEffectInstance(JolCraftEffects.CORROSION, 300, 0)));
+
+    public static final Holder<Potion> LONG_CORROSION = POTIONS.register("long_corrosion",
+            () -> new Potion("long_corrosion", new MobEffectInstance(JolCraftEffects.CORROSION, 600, 0)));
+
+    public static final Holder<Potion> STRONG_CORROSION = POTIONS.register("strong_corrosion",
+            () -> new Potion("strong_corrosion", new MobEffectInstance(JolCraftEffects.CORROSION, 300, 1)));
 
     public static void register(IEventBus eventBus) {
         POTIONS.register(eventBus);

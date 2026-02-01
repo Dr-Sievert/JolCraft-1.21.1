@@ -33,7 +33,7 @@ public final class JolCraftTrimBonuses {
             Map.entry("deepmarrow", allSlots(JolCraftAttributes.XP_BOOST, 0.125, AttributeModifier.Operation.ADD_VALUE)),
             Map.entry("earthblood", allSlots(Attributes.MINING_EFFICIENCY, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_BASE)),
             Map.entry("emberglass", allSlots(Attributes.MAX_HEALTH, 2.0, AttributeModifier.Operation.ADD_VALUE)),
-            Map.entry("frostvein", allSlots(JolCraftAttributes.SLOW_RESIST, 0.2, AttributeModifier.Operation.ADD_VALUE)),
+            Map.entry("frostvein", allSlots(JolCraftAttributes.SLOW_RESISTANCE, 0.2, AttributeModifier.Operation.ADD_VALUE)),
             Map.entry("grimstone", allSlots(Attributes.ATTACK_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_BASE)),
             Map.entry("ironheart", allSlots(JolCraftAttributes.ARMOR_INCREASE, 0.05, AttributeModifier.Operation.ADD_VALUE)),
             Map.entry("lumiere", allSlots(JolCraftAttributes.RADIANT, 0.25, AttributeModifier.Operation.ADD_VALUE)),

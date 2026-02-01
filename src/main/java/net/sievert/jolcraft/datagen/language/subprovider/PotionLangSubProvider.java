@@ -14,7 +14,7 @@ public final class PotionLangSubProvider implements AbstractLanguageProvider.Lan
         addPotion(p, JolCraftPotions.ANCIENT_MEMORY, "Ancient Memory", true, false);
         addPotion(p, JolCraftPotions.LOCKPICKING, "Lockpicking", true, true);
         addPotion(p, JolCraftPotions.DWARVEN_HASTE, "Mining", true, true);
-        addPotion(p, JolCraftPotions.CORROSION, "Corrosion", false, false);
+        addPotion(p, JolCraftPotions.CORROSION, "Corrosion", true, true);
         addPotion(p, JolCraftPotions.DELIRIUM_CURSE, "Delirium Curse", false, false);
         addPotion(p, JolCraftPotions.CURSED_WOUND, "Cursed Wound", false, false);
     }

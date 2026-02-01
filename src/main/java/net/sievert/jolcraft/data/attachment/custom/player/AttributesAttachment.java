@@ -35,7 +35,7 @@ public final class AttributesAttachment {
         Map<ResourceLocation, EnumSet<RefreshKey>> map = new HashMap<>();
         map.put(attrKey(JolCraftAttributes.ATTACK_DAMAGE_INCREASE), EnumSet.of(RefreshKey.ASHFANG));
         map.put(attrKey(JolCraftAttributes.ARMOR_INCREASE), EnumSet.of(RefreshKey.IRONHEART));
-        map.put(attrKey(JolCraftAttributes.SLOW_RESIST), EnumSet.of(RefreshKey.FROSTVEIN));
+        map.put(attrKey(JolCraftAttributes.SLOW_RESISTANCE), EnumSet.of(RefreshKey.FROSTVEIN));
         map.put(attrKey(JolCraftAttributes.MOVEMENT_SPEED_BOOST_DAY), EnumSet.of(RefreshKey.SKYBURROW));
         map.put(attrKey(JolCraftAttributes.MOVEMENT_SPEED_BOOST_NIGHT), EnumSet.of(RefreshKey.MOONSHARD));
         return Map.copyOf(map);

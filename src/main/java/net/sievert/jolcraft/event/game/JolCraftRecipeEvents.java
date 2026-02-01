@@ -37,6 +37,9 @@ public class JolCraftRecipeEvents {
         builder.addMix(JolCraftPotions.DWARVEN_HASTE, Items.REDSTONE, JolCraftPotions.LONG_DWARVEN_HASTE);
         builder.addMix(JolCraftPotions.DWARVEN_HASTE, Items.GLOWSTONE_DUST, JolCraftPotions.STRONG_DWARVEN_HASTE);
 
+        builder.addMix(Potions.OOZING, JolCraftItems.RUSTAGATE_DUST.asItem(), JolCraftPotions.CORROSION);
+        builder.addMix(JolCraftPotions.CORROSION, Items.REDSTONE, JolCraftPotions.LONG_CORROSION);
+        builder.addMix(JolCraftPotions.CORROSION, Items.GLOWSTONE_DUST, JolCraftPotions.STRONG_CORROSION);
     }
 
     @SubscribeEvent

@@ -39,7 +39,7 @@ public class JolCraftModEvents {
     @SubscribeEvent
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
         event.add(EntityType.PLAYER, JolCraftAttributes.XP_BOOST);
-        event.add(EntityType.PLAYER, JolCraftAttributes.SLOW_RESIST);
+        event.add(EntityType.PLAYER, JolCraftAttributes.SLOW_RESISTANCE);
         event.add(EntityType.PLAYER, JolCraftAttributes.EXTRA_CROP);
         event.add(EntityType.PLAYER, JolCraftAttributes.EXTRA_CHEST_LOOT);
         event.add(EntityType.PLAYER, JolCraftAttributes.RADIANT);
