@@ -387,15 +387,25 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
                 double d0 = this.random.nextGaussian() * 0.02;
                 double d1 = this.random.nextGaussian() * 0.02;
                 double d2 = this.random.nextGaussian() * 0.02;
-                this.level().addParticle(ParticleTypes.HEART, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d0, d1, d2);
+
+                JolCraftParticleHelper.spawn(
+                        this.level(),
+                        ParticleTypes.HEART,
+                        this.getRandomX(1.0),
+                        this.getRandomY() + 0.5,
+                        this.getRandomZ(1.0),
+                        d0, d1, d2
+                );
             }
+            return;
         }
+
         if (id == 19) {
             this.spawnColoredParticles(1.0F, 0.84F, 0.0F, 1.0F, 7, 0.5D);
+            return;
         }
-        else {
-            super.handleEntityEvent(id);
-        }
+
+        super.handleEntityEvent(id);
     }
 
     public void spawnColoredParticles(float r, float g, float b, float scale, int count, double scatter) {

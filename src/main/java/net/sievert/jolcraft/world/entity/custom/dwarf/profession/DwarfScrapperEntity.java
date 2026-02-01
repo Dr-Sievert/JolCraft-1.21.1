@@ -208,7 +208,12 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
 
         fillRandomSalvageOffers(currentLevel);
 
-        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRerollSound()), SoundSource.NEUTRAL, 1.0F, 1.05F);
+        JolCraftSoundHelper.entity(
+                this,
+                Objects.requireNonNull(getRerollSound()),
+                1.0F,
+                1.05F
+        );
     }
 
     public static Int2ObjectMap<DwarfTrades.ItemListing[]> getAllJeiTrades() {
