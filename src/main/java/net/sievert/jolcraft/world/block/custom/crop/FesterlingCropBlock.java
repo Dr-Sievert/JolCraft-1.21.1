@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -102,10 +103,11 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
                 double dx = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.7;
                 double dy = pos.getY() + 0.7 + (random.nextDouble() * 0.3);
                 double dz = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.7;
-                level.sendParticles(
+                JolCraftParticleHelper.spawn(
+                        level,
                         ParticleTypes.HAPPY_VILLAGER,
                         dx, dy, dz,
-                        1, 0.0D, 0.0D, 0.0D, 0.0D
+                        0.0, 0.0, 0.0
                 );
             }
         }

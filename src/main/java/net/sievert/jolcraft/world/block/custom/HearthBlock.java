@@ -42,6 +42,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
 import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.Nullable;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
@@ -324,8 +325,8 @@ public class HearthBlock extends BaseEntityBlock {
             double d5 = axis == Direction.Axis.X ? direction.getStepX() * 0.52 : d4;
             double d6 = random.nextDouble() * 6.0 / 16.0;
             double d7 = axis == Direction.Axis.Z ? direction.getStepZ() * 0.52 : d4;
-            level.addParticle(ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
-            level.addParticle(ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
+            JolCraftParticleHelper.spawn(level, ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
+            JolCraftParticleHelper.spawn(level, ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
 
             BlockState above = level.getBlockState(pos.above());
             if (above.getBlock() == state.getBlock() && above.getValue(HALF) == DoubleBlockHalf.UPPER) {
@@ -336,7 +337,7 @@ public class HearthBlock extends BaseEntityBlock {
                 for (int i = 0; i < 2 + random.nextInt(2); i++) {
                     double ox = random.nextGaussian() * 0.06;
                     double oz = random.nextGaussian() * 0.06;
-                    level.addParticle(ParticleTypes.SMOKE, cx + ox, cy, cz + oz, 0.0, 0.06 + random.nextDouble() * 0.02, 0.0);
+                    JolCraftParticleHelper.spawn(level, ParticleTypes.SMOKE, cx + ox, cy, cz + oz, 0.0, 0.06 + random.nextDouble() * 0.02, 0.0);
                 }
             }
         }

@@ -244,7 +244,8 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         if (this.level().isClientSide) {
             if (this.forcedAgeTimer > 0) {
                 if (this.forcedAgeTimer % 4 == 0) {
-                    this.level().addParticle(
+                    JolCraftParticleHelper.spawn(
+                            this.level(),
                             ParticleTypes.HAPPY_VILLAGER,
                             this.getRandomX(1.0),
                             this.getRandomY() + 0.5,
@@ -265,7 +266,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
                 double d0 = this.random.nextGaussian() * 0.02;
                 double d1 = this.random.nextGaussian() * 0.02;
                 double d2 = this.random.nextGaussian() * 0.02;
-                this.level().addParticle(ParticleTypes.HEART, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d0, d1, d2);
+                if (!this.level().isClientSide) {
+                    JolCraftParticleHelper.spawn(this.level(), ParticleTypes.HEART, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d0, d1, d2);
+                }
             }
         }
 
@@ -413,13 +416,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
             double velocityX = (this.random.nextDouble() - 0.5D) * 0.1D;
             double velocityY = this.random.nextDouble() * 0.1D;
             double velocityZ = (this.random.nextDouble() - 0.5D) * 0.1D;
-
             JolCraftParticleHelper.spawn(
                     this.level(),
-                    32.0D,
                     dust,
-                    false,
-                    false,
                     offsetX,
                     offsetY,
                     offsetZ,

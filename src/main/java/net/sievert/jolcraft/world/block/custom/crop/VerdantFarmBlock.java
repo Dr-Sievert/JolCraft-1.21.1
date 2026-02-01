@@ -18,6 +18,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -79,14 +80,13 @@ public class VerdantFarmBlock extends FarmBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
         if (random.nextInt(100) == 0) {
-            level.addParticle(
+            JolCraftParticleHelper.spawn(
+                    level,
                     ParticleTypes.HAPPY_VILLAGER,
-                    (double)pos.getX() + random.nextDouble(),
-                    (double)pos.getY() + 1.1,
-                    (double)pos.getZ() + random.nextDouble(),
-                    0.0,
-                    0.0,
-                    0.0
+                    pos.getX() + random.nextDouble(),
+                    pos.getY() + 1.1,
+                    pos.getZ() + random.nextDouble(),
+                    0.0, 0.0, 0.0
             );
         }
     }
