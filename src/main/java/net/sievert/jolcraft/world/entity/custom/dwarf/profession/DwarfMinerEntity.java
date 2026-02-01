@@ -27,6 +27,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -108,7 +109,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
         if (bounty != InteractionResult.FAIL) return bounty;
         InteractionResult bountyCrate = DwarfInteractionHelper.bountyCrate(this, player, hand, itemstack, BountyType.MINER);
         if (bountyCrate != InteractionResult.FAIL) return bountyCrate;
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 
@@ -120,7 +121,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
             if (this.shouldIncreaseLevel()) {
                 this.increaseMerchantCareer();
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-                JolCraftSoundHelper.playDwarfYes(this);
+                PlaySound.dwarfYes(this);
                 this.updateMerchantTimer = 40;
             }
         } else if (this.updateMerchantTimer > 0) {

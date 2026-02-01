@@ -30,6 +30,7 @@ import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -126,12 +127,12 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
             if (targetLevel > currentLevel) {
                 this.setVillagerData(this.getVillagerData().setLevel(targetLevel));
                 this.updateTrades();
-                JolCraftSoundHelper.playDwarfYes(this);
+                PlaySound.dwarfYes(this);
             }
         }
         InteractionResult result = super.mobInteract(player, hand);
         if (result != InteractionResult.FAIL) return result;
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 

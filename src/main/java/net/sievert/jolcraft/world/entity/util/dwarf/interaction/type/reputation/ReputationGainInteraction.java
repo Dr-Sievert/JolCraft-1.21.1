@@ -15,6 +15,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class ReputationGainInteraction extends InspectInteraction {
 
@@ -35,7 +36,7 @@ public class ReputationGainInteraction extends InspectInteraction {
                         Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_MAX_TIER).withStyle(ChatFormatting.GRAY), true
                 );
             }
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 
@@ -48,7 +49,7 @@ public class ReputationGainInteraction extends InspectInteraction {
                         true
                 );
             }
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 
@@ -58,7 +59,7 @@ public class ReputationGainInteraction extends InspectInteraction {
                         Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY), true
                 );
             }
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 

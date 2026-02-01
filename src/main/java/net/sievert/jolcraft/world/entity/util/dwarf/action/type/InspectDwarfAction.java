@@ -12,6 +12,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class InspectDwarfAction implements DwarfAction {
 
@@ -33,7 +34,7 @@ public class InspectDwarfAction implements DwarfAction {
 
     protected void startInspect(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         dwarf.usePlayerItem(player, hand, itemstack);
-        JolCraftSoundHelper.playDwarfYes(dwarf);
+        PlaySound.dwarfYes(dwarf);
         previousMainHandItem = dwarf.getMainHandItem().copy();
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
     }
@@ -47,7 +48,12 @@ public class InspectDwarfAction implements DwarfAction {
         thrown.setDeltaMovement(velocity);
         thrown.setPickUpDelay(10);
         dwarf.level().addFreshEntity(thrown);
-        dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.5F, 0.8F);
+        JolCraftSoundHelper.entity(
+                dwarf,
+                SoundEvents.SNOWBALL_THROW,
+                0.5F,
+                0.8F
+        );
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
         previousMainHandItem = ItemStack.EMPTY;
     }

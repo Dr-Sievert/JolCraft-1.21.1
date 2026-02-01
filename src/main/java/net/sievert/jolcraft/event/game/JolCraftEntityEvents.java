@@ -2,6 +2,7 @@ package net.sievert.jolcraft.event.game;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,6 +31,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,7 +113,7 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playDwarfNo(dwarf);
+                    PlaySound.dwarfNo(dwarf);
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
@@ -124,16 +126,14 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playDwarfNo(dwarf);
+                    PlaySound.dwarfNo(dwarf);
                 } else {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     dwarf.crateRestock();
-                    JolCraftSoundHelper.playDwarfYes(dwarf);
-
-                    // Apply cooldown BEFORE shrinking (stack may become empty)
+                    PlaySound.dwarfYes(dwarf);
                     player.getCooldowns().addCooldown(cooldownStack, 60);
                     if (!player.isCreative()) stack.shrink(1);
                 }
@@ -158,7 +158,7 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playDwarfNo(dwarf);
+                    PlaySound.dwarfNo(dwarf);
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
@@ -169,14 +169,14 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_FAIL).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playDwarfNo(dwarf);
+                    PlaySound.dwarfNo(dwarf);
                 } else {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
                     dwarf.rerollTrades();
-                    JolCraftSoundHelper.playDwarfYes(dwarf);
+                    PlaySound.dwarfYes(dwarf);
 
                     // Apply cooldown BEFORE shrinking (stack may become empty)
                     player.getCooldowns().addCooldown(cooldownStack, 60);
@@ -207,7 +207,7 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerNo(villager);
+                    PlaySound.villagerNo(villager);
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
@@ -220,14 +220,17 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.GRAY),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerNo(villager);
+                    PlaySound.villagerNo(villager);
                 } else {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerFisherman(villager);
-                    JolCraftSoundHelper.playVillagerYes(villager);
+                    JolCraftSoundHelper.entity(
+                            villager,
+                            SoundEvents.VILLAGER_WORK_FISHERMAN
+                    );
+                    PlaySound.villagerYes(villager);
                     villager.restock();
 
                     // Apply cooldown BEFORE shrinking (stack may become empty)
@@ -255,7 +258,7 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerNo(villager);
+                    PlaySound.villagerNo(villager);
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
@@ -278,8 +281,11 @@ public class JolCraftEntityEvents {
                 villager.setOffers(accumulated);
                 villager.setVillagerData(data.setLevel(currentLevel)); // restore
 
-                JolCraftSoundHelper.playVillagerFisherman(villager);
-                JolCraftSoundHelper.playVillagerYes(villager);
+                JolCraftSoundHelper.entity(
+                        villager,
+                        SoundEvents.VILLAGER_WORK_FISHERMAN
+                );
+                PlaySound.villagerYes(villager);
                 player.displayClientMessage(
                         Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                         true
@@ -313,7 +319,7 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerNo(trader);
+                    PlaySound.villagerNo(trader);
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
@@ -326,14 +332,17 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.GRAY),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerNo(trader);
+                    PlaySound.villagerNo(trader);
                 } else {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerFisherman(trader);
-                    JolCraftSoundHelper.playVillagerYes(trader);
+                    JolCraftSoundHelper.entity(
+                            trader,
+                            SoundEvents.VILLAGER_WORK_FISHERMAN
+                    );
+                    PlaySound.villagerYes(trader);
                     for (MerchantOffer merchantoffer : trader.getOffers()) {
                         merchantoffer.resetUses();
                     }
@@ -363,7 +372,7 @@ public class JolCraftEntityEvents {
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
                             true
                     );
-                    JolCraftSoundHelper.playVillagerNo(trader);
+                    PlaySound.villagerNo(trader);
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
@@ -393,8 +402,11 @@ public class JolCraftEntityEvents {
                     }
                 }
 
-                JolCraftSoundHelper.playVillagerFisherman(trader);
-                JolCraftSoundHelper.playVillagerYes(trader);
+                JolCraftSoundHelper.entity(
+                        trader,
+                        SoundEvents.VILLAGER_WORK_FISHERMAN
+                );
+                PlaySound.villagerYes(trader);
                 player.displayClientMessage(
                         Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                         true

@@ -12,6 +12,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class SignInteraction extends InspectInteraction {
 
@@ -26,7 +27,7 @@ public class SignInteraction extends InspectInteraction {
                     Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_CANNOT_SIGN).withStyle(ChatFormatting.GRAY),
                     true
             );
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 
@@ -35,7 +36,7 @@ public class SignInteraction extends InspectInteraction {
                     Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
                     true
             );
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 

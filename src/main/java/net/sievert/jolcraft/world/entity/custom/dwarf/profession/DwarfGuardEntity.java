@@ -35,9 +35,9 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -139,7 +139,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         ItemStack itemstack = player.getItemInHand(hand);
         InteractionResult guardEquip = DwarfInteractionHelper.guardEquip(this, player, hand, itemstack);
         if (guardEquip != InteractionResult.FAIL) return guardEquip;
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 
@@ -149,7 +149,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
             --this.updateMerchantTimer;
             if (this.updateMerchantTimer == 0) {
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 100, 0));
-                JolCraftSoundHelper.playDwarfYes(this);
+                PlaySound.dwarfYes(this);
             }
         }
         super.aiStep();

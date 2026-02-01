@@ -172,12 +172,22 @@ public class MuffhornEntity extends Animal implements IShearable {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState block) {
-        this.playSound(SoundEvents.COW_STEP, 0.3F, 0.7F);
+        JolCraftSoundHelper.entity(
+                this,
+                SoundEvents.COW_STEP,
+                0.3F,
+                0.7F
+        );
     }
 
     @Override
     protected void playEatingSound() {
-        this.playSound(SoundEvents.HORSE_EAT, 1.0F, this.getVoicePitch());
+        JolCraftSoundHelper.entity(
+                this,
+                SoundEvents.HORSE_EAT,
+                1.0F,
+                this.getVoicePitch()
+        );
     }
 
     @Override

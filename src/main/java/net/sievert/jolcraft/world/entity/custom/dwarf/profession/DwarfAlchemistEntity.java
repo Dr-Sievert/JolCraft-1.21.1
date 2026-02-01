@@ -26,6 +26,7 @@ import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -96,7 +97,7 @@ public class DwarfAlchemistEntity extends AbstractDwarfEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         InteractionResult result = super.mobInteract(player, hand);
         if (result != InteractionResult.FAIL) return result;
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 

@@ -14,6 +14,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class BountyInteraction extends InspectInteraction {
 
@@ -32,7 +33,7 @@ public class BountyInteraction extends InspectInteraction {
         BountyType requiredType = BountyHelper.getBountyType(itemstack);
 
         if (requiredType == null || requiredType != type) {
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             player.displayClientMessage(
                     Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_WRONG_TYPE).withStyle(ChatFormatting.GRAY),
                     true

@@ -26,6 +26,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -96,7 +97,7 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         InteractionResult result = super.mobInteract(player, hand);
         if (result != InteractionResult.FAIL) return result;
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 

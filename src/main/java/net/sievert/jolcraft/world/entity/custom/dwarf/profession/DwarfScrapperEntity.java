@@ -24,6 +24,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -98,7 +99,7 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         InteractionResult result = super.mobInteract(player, hand);
         if (result != InteractionResult.FAIL) return result;
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 
@@ -179,7 +180,13 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
         fillRandomSalvageOffers(level);
 
         this.lastRestockGameTime = this.level().getGameTime();
-        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRestockSound()), SoundSource.NEUTRAL, 1.0F, 0.95F);
+        JolCraftSoundHelper.entity(
+                this,
+                Objects.requireNonNull(getRestockSound()),
+                1.0F,
+                0.95F
+        );
+
     }
 
     @Override

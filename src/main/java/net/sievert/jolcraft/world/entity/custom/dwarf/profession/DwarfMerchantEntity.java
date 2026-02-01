@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -33,6 +32,7 @@ import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
@@ -98,7 +98,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         if (bounty != InteractionResult.FAIL) return bounty;
         InteractionResult bountyCrate = DwarfInteractionHelper.bountyCrate(this, player, hand, itemstack, BountyType.MERCHANT);
         if (bountyCrate != InteractionResult.FAIL) return bountyCrate;
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 
@@ -110,7 +110,7 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
             if (this.shouldIncreaseLevel()) {
                 this.increaseMerchantCareer();
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-                JolCraftSoundHelper.playDwarfYes(this);
+                PlaySound.dwarfNo(this);
                 this.updateMerchantTimer = 40;
             }
         } else if (this.updateMerchantTimer > 0) {
@@ -397,7 +397,12 @@ public class DwarfMerchantEntity extends AbstractDwarfEntity {
         }
 
         this.lastRestockGameTime = this.level().getGameTime();
-        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRestockSound()), SoundSource.NEUTRAL, 1.0F, 1.05F);
+        JolCraftSoundHelper.entity(
+                this,
+                Objects.requireNonNull(getRestockSound()),
+                1.0F,
+                1.05F
+        );
     }
 
     @Override

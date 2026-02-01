@@ -40,7 +40,6 @@ public final class PlaySound {
     }
 
     // ---- Dwarf Yes / No ----
-    // (volume varies, pitch comes from voice pitch)
 
     public static void dwarfYes(LivingEntity entity) {
         JolCraftSoundHelper.entity(entity, JolCraftSounds.DWARF_YES.get(), entity.level().random.nextFloat() * 0.2F + 0.8F);
@@ -48,6 +47,16 @@ public final class PlaySound {
 
     public static void dwarfNo(LivingEntity entity) {
         JolCraftSoundHelper.entity(entity, JolCraftSounds.DWARF_NO.get(), entity.level().random.nextFloat() * 0.2F + 0.8F);
+    }
+
+    // ---- Villager Yes / No ----
+
+    public static void villagerYes(LivingEntity entity) {
+        JolCraftSoundHelper.entity(entity, SoundEvents.VILLAGER_YES);
+    }
+
+    public static void villagerNo(LivingEntity entity) {
+        JolCraftSoundHelper.entity(entity, SoundEvents.VILLAGER_NO);
     }
 
     // ---- Strongbox ----

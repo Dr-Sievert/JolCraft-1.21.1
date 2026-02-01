@@ -10,6 +10,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class ActionCheckInteraction implements DwarfInteraction {
 
@@ -26,7 +27,7 @@ public class ActionCheckInteraction implements DwarfInteraction {
                     Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_BUSY).withStyle(ChatFormatting.GRAY),
                     true
             );
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 

@@ -15,6 +15,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.*;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import java.util.List;
 
@@ -43,10 +44,13 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
         if (type != BountyType.MERCHANT && type != BountyType.MINER) return;
 
         if (ticksRemaining == 25) {
-            JolCraftSoundHelper.playVillagerFisherman(dwarf);
+            JolCraftSoundHelper.entity(
+                    dwarf,
+                    SoundEvents.VILLAGER_WORK_FISHERMAN
+            );
         }
         if (ticksRemaining == 15) {
-            JolCraftSoundHelper.playDwarfYes(dwarf);
+            PlaySound.dwarfYes(dwarf);
         }
         if (ticksRemaining == 10) {
             if (type == BountyType.MERCHANT) {
@@ -60,15 +64,15 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
 
     private void spawnBountyParticles(float r, float g, float b, float alpha) {
         dwarf.spawnColoredParticles(r, g, b, alpha, 10, 1.0D);
-        dwarf.level().playLocalSound(
+        JolCraftSoundHelper.play(
+                dwarf.level(),
+                SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
+                dwarf.getSoundSource(),
                 dwarf.getX(),
                 dwarf.getY() + 1.0D,
                 dwarf.getZ(),
-                SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
-                SoundSource.NEUTRAL,
                 1.0F,
-                1.2F,
-                false
+                1.2F
         );
     }
 
@@ -102,8 +106,18 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
         };
         dwarf.dwarfXp += xp;
         dwarf.level().addFreshEntity(new ExperienceOrb(dwarf.level(), dwarf.getX(), dwarf.getY() + 1.0, dwarf.getZ(), 3 + dwarf.getRandom().nextInt(3)));
-        dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.8F, 1.2F);
-        dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.5F, 0.7F);
+        JolCraftSoundHelper.entity(
+                dwarf,
+                SoundEvents.EXPERIENCE_ORB_PICKUP,
+                0.8F,
+                1.2F
+        );
+        JolCraftSoundHelper.entity(
+                dwarf,
+                SoundEvents.SNOWBALL_THROW,
+                0.5F,
+                0.7F
+        );
         dwarf.restockBountiesOnly();
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
         this.previousMainHandItem = ItemStack.EMPTY;

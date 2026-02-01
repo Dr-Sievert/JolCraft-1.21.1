@@ -41,18 +41,21 @@ public class BountyDwarfAction extends InspectDwarfAction {
         if (type != BountyType.MERCHANT && type != BountyType.MINER) return;
 
         if (ticksRemaining == 25) {
-            dwarf.level().playSound(
-                    null,
-                    dwarf.blockPosition(),
+            JolCraftSoundHelper.entity(
+                    dwarf,
                     SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
-                    SoundSource.NEUTRAL,
                     1.0F,
                     1.2F
             );
         }
 
         if (ticksRemaining == 15) {
-            JolCraftSoundHelper.playVillagerFisherman(dwarf);
+            JolCraftSoundHelper.entity(
+                    dwarf,
+                    SoundEvents.VILLAGER_WORK_FISHERMAN,
+                    1.0F,
+                    1.0F
+            );
         }
     }
 

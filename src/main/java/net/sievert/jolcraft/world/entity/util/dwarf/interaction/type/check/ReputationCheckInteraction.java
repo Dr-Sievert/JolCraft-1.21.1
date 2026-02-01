@@ -9,6 +9,7 @@ import net.sievert.jolcraft.datagen.language.subprovider.ReputationLangSubProvid
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class ReputationCheckInteraction implements DwarfInteraction {
 
@@ -28,7 +29,7 @@ public class ReputationCheckInteraction implements DwarfInteraction {
                             .withStyle(ChatFormatting.RED),
                     true
             );
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 

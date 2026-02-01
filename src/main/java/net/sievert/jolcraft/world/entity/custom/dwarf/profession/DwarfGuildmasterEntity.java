@@ -29,6 +29,7 @@ import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationH
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -146,7 +147,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
         InteractionResult reputationGain = DwarfInteractionHelper.reputationGain(this, player, hand, itemstack);
         if (reputationGain != InteractionResult.FAIL) return reputationGain;
 
-        JolCraftSoundHelper.playDwarfNo(this);
+        PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
     }
 

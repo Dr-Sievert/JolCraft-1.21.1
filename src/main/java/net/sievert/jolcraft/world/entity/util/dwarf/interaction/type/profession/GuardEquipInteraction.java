@@ -11,6 +11,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class GuardEquipInteraction extends InspectInteraction {
     public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         EquipmentSlot slot = (itemstack == null) ? null : getSlotForArmor(itemstack);
         if (slot == null || !dwarf.getItemBySlot(slot).isEmpty()) {
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.FAIL;
         }
 

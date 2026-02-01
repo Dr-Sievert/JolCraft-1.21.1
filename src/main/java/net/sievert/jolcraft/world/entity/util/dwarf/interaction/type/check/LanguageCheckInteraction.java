@@ -9,6 +9,7 @@ import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class LanguageCheckInteraction implements DwarfInteraction {
 
@@ -21,7 +22,7 @@ public class LanguageCheckInteraction implements DwarfInteraction {
                     Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_LOCKED).withStyle(ChatFormatting.RED),
                     true
             );
-            JolCraftSoundHelper.playDwarfNo(dwarf);
+            PlaySound.dwarfNo(dwarf);
             return InteractionResult.SUCCESS;
         }
 
