@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -304,40 +305,54 @@ public class HearthBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (state.getValue(LIT)) {
-            double d0 = pos.getX() + 0.5;
-            double d1 = pos.getY();
-            double d2 = pos.getZ() + 0.5;
-            if (random.nextDouble() < 0.1) {
-                JolCraftSoundHelper.block(
-                        level,
-                        pos,
-                        SoundEvents.FURNACE_FIRE_CRACKLE,
-                        0.5F,
-                        0.8F
+        if (!state.getValue(LIT)) return;
+
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY();
+        double z = pos.getZ() + 0.5D;
+
+        if (random.nextDouble() < 0.1D) {
+            level.playLocalSound(
+                    x, y, z,
+                    SoundEvents.FURNACE_FIRE_CRACKLE,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    0.8F,
+                    false
+            );
+        }
+
+        Direction facing = state.getValue(FACING);
+        Direction.Axis axis = facing.getAxis();
+        double lateral = random.nextDouble() * 0.6D - 0.3D;
+
+        double dx = axis == Direction.Axis.X ? facing.getStepX() * 0.52D : lateral;
+        double dz = axis == Direction.Axis.Z ? facing.getStepZ() * 0.52D : lateral;
+        double dy = random.nextDouble() * 6.0D / 16.0D;
+
+        level.addParticle(ParticleTypes.SMOKE, x + dx, y + dy, z + dz, 0.0D, 0.0D, 0.0D);
+        level.addParticle(ParticleTypes.FLAME, x + dx, y + dy, z + dz, 0.0D, 0.0D, 0.0D);
+
+        BlockState above = level.getBlockState(pos.above());
+        if (above.getBlock() == state.getBlock() && above.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            double cx = pos.getX() + 0.5D;
+            double cy = pos.getY() + 1.85D;
+            double cz = pos.getZ() + 0.5D;
+
+            int count = 2 + random.nextInt(2);
+            for (int i = 0; i < count; i++) {
+                double ox = random.nextGaussian() * 0.06D;
+                double oz = random.nextGaussian() * 0.06D;
+
+                level.addParticle(
+                        ParticleTypes.SMOKE,
+                        cx + ox,
+                        cy,
+                        cz + oz,
+                        0.0D,
+                        0.06D + random.nextDouble() * 0.02D,
+                        0.0D
                 );
-            }
-
-            Direction direction = state.getValue(FACING);
-            Direction.Axis axis = direction.getAxis();
-            double d4 = random.nextDouble() * 0.6 - 0.3;
-            double d5 = axis == Direction.Axis.X ? direction.getStepX() * 0.52 : d4;
-            double d6 = random.nextDouble() * 6.0 / 16.0;
-            double d7 = axis == Direction.Axis.Z ? direction.getStepZ() * 0.52 : d4;
-            JolCraftParticleHelper.spawn(level, ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
-            JolCraftParticleHelper.spawn(level, ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0);
-
-            BlockState above = level.getBlockState(pos.above());
-            if (above.getBlock() == state.getBlock() && above.getValue(HALF) == DoubleBlockHalf.UPPER) {
-                double cx = pos.getX() + 0.5;
-                double cy = pos.getY() + 1.85;
-                double cz = pos.getZ() + 0.5;
-
-                for (int i = 0; i < 2 + random.nextInt(2); i++) {
-                    double ox = random.nextGaussian() * 0.06;
-                    double oz = random.nextGaussian() * 0.06;
-                    JolCraftParticleHelper.spawn(level, ParticleTypes.SMOKE, cx + ox, cy, cz + oz, 0.0, 0.06 + random.nextDouble() * 0.02, 0.0);
-                }
             }
         }
     }

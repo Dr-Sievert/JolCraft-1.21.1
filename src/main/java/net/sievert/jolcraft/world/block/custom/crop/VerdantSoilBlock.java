@@ -37,17 +37,15 @@ public class VerdantSoilBlock extends Block {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
+
         if (random.nextInt(100) == 0) {
-            JolCraftParticleHelper.spawn(
-                    level,
+            level.addParticle(
                     ParticleTypes.HAPPY_VILLAGER,
                     pos.getX() + random.nextDouble(),
                     pos.getY() + 1.1,
                     pos.getZ() + random.nextDouble(),
                     0.0, 0.0, 0.0
             );
-
         }
     }
-
 }

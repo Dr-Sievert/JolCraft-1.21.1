@@ -243,12 +243,11 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         if (this.level().isClientSide) {
             if (this.forcedAgeTimer > 0) {
                 if (this.forcedAgeTimer % 4 == 0) {
-                    JolCraftParticleHelper.spawn(
-                            this.level(),
+                    this.level().addParticle(
                             ParticleTypes.HAPPY_VILLAGER,
-                            this.getRandomX(1.0),
-                            this.getRandomY() + 0.5,
-                            this.getRandomZ(1.0),
+                            this.getX() + random.nextGaussian() * 0.2,
+                            this.getY() + 0.5 + random.nextDouble(),
+                            this.getZ() + random.nextGaussian() * 0.2,
                             0.0, 0.0, 0.0
                     );
                 }
@@ -383,25 +382,49 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 18) {
-            for (int i = 0; i < 7; i++) {
-                double d0 = this.random.nextGaussian() * 0.02;
-                double d1 = this.random.nextGaussian() * 0.02;
-                double d2 = this.random.nextGaussian() * 0.02;
+            if (this.level().isClientSide) {
+                for (int i = 0; i < 7; i++) {
+                    double d0 = this.random.nextGaussian() * 0.02;
+                    double d1 = this.random.nextGaussian() * 0.02;
+                    double d2 = this.random.nextGaussian() * 0.02;
 
-                JolCraftParticleHelper.spawn(
-                        this.level(),
-                        ParticleTypes.HEART,
-                        this.getRandomX(1.0),
-                        this.getRandomY() + 0.5,
-                        this.getRandomZ(1.0),
-                        d0, d1, d2
-                );
+                    this.level().addParticle(
+                            ParticleTypes.HEART,
+                            this.getRandomX(1.0),
+                            this.getRandomY() + 0.5,
+                            this.getRandomZ(1.0),
+                            d0, d1, d2
+                    );
+                }
             }
             return;
         }
 
         if (id == 19) {
-            this.spawnColoredParticles(1.0F, 0.84F, 0.0F, 1.0F, 7, 0.5D);
+            if (this.level().isClientSide) {
+                int rgb = ((int)(1.0F * 255) << 16) | ((int)(0.84F * 255) << 8) | (int)(0.0F * 255);
+                DustParticleOptions dust = new DustParticleOptions(rgb, 1.0F);
+
+                Vec3 forward = this.getLookAngle().normalize();
+                double baseX = this.getX() + forward.x * 0.6;
+                double baseY = this.getY() + 1.8D;
+                double baseZ = this.getZ() + forward.z * 0.5;
+
+                int count = 7;
+                double scatter = 0.5D;
+
+                for (int i = 0; i < count; i++) {
+                    double offsetX = baseX + (this.random.nextDouble() - 0.5D) * scatter;
+                    double offsetY = baseY + (this.random.nextDouble() - 0.5D) * scatter;
+                    double offsetZ = baseZ + (this.random.nextDouble() - 0.5D) * scatter;
+
+                    double velocityX = (this.random.nextDouble() - 0.5D) * 0.1D;
+                    double velocityY = this.random.nextDouble() * 0.1D;
+                    double velocityZ = (this.random.nextDouble() - 0.5D) * 0.1D;
+
+                    this.level().addParticle(dust, offsetX, offsetY, offsetZ, velocityX, velocityY, velocityZ);
+                }
+            }
             return;
         }
 

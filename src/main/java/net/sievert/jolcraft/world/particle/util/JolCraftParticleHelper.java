@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.world.particle.util;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
+import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -86,7 +86,9 @@ public final class JolCraftParticleHelper {
         Level level = player.level();
 
         if (level.isClientSide) {
-            if (!(player instanceof LocalPlayer)) return;
+            Player local = JolCraftProxy.access().getLocalPlayer();
+            if (local != player) return;
+
             level.addParticle(particle, overrideLimiter, alwaysShow, x, y, z, vx, vy, vz);
             return;
         }

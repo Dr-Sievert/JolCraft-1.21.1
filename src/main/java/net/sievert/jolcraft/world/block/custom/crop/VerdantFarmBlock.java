@@ -79,9 +79,9 @@ public class VerdantFarmBlock extends FarmBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
+
         if (random.nextInt(100) == 0) {
-            JolCraftParticleHelper.spawn(
-                    level,
+            level.addParticle(
                     ParticleTypes.HAPPY_VILLAGER,
                     pos.getX() + random.nextDouble(),
                     pos.getY() + 1.1,
@@ -90,5 +90,4 @@ public class VerdantFarmBlock extends FarmBlock {
             );
         }
     }
-
 }
