@@ -65,9 +65,7 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
 
     @Override
     public Component getTitle() {
-        // Title like: "Dwarf Trades — Guildmaster"
-        return Component.literal(Component.translatable(JeiLangSubProvider.JEI_CATEGORY_INFO_PAGE).getString() +
-                " — " + DwarfTradeJeiHelper.getDisplayName(profession));
+        return Component.literal(Component.translatable(JeiLangSubProvider.JEI_CATEGORY_INFO_PAGE).getString() + " — " + DwarfTradeJeiHelper.getDisplayName(profession));
     }
 
     @Override public int getWidth() { return 150; }
@@ -77,17 +75,31 @@ public class DwarfTradeCategory implements IRecipeCategory<DwarfTradeRecipe> {
     public void draw(DwarfTradeRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         background.draw(graphics, 0, 0);
 
-        int textY = 12;
-        int offsetX = -19;
         int level = recipe.level();
 
         String levelKey = "merchant.level." + level;
         String levelStr = Component.translatable(levelKey).getString();
         String profText = DwarfTradeJeiHelper.getDisplayName(recipe.profession());
-        String displayStr = levelStr + " " + profText;
 
-        int x = ((getWidth() - Minecraft.getInstance().font.width(displayStr)) / 2) + offsetX;
-        graphics.drawString(Minecraft.getInstance().font, displayStr, x + 3, textY, 0x888888, false);
+        int levelX = 50 - (Minecraft.getInstance().font.width(levelStr) / 2);
+        graphics.drawString(
+                Minecraft.getInstance().font,
+                levelStr,
+                levelX,
+                2,
+                0x888888,
+                false
+        );
+
+        int profX = 50 - (Minecraft.getInstance().font.width(profText) / 2);
+        graphics.drawString(
+                Minecraft.getInstance().font,
+                profText,
+                profX,
+                12,
+                0x888888,
+                false
+        );
 
         boolean hasB = recipe.inputB() != null && !recipe.inputB().isEmpty();
         int plusX = 16, plusY = 27;
