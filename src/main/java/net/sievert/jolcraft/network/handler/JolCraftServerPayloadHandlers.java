@@ -15,11 +15,42 @@ import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public final class JolCraftServerPayloadHandlers {
 
     private JolCraftServerPayloadHandlers() {}
+
+    private static final class PerTickLimiter {
+        private static final class Counter {
+            long tick;
+            int used;
+        }
+
+        private final Map<UUID, Counter> counters = new HashMap<>();
+
+        boolean tryConsume(ServerPlayer player, long currentTick, int maxPerTick) {
+            UUID id = player.getUUID();
+            Counter c = counters.computeIfAbsent(id, k -> new Counter());
+            if (c.tick != currentTick) {
+                c.tick = currentTick;
+                c.used = 0;
+            }
+            if (c.used >= maxPerTick) return false;
+            c.used++;
+            return true;
+        }
+    }
+
+    private static final PerTickLimiter PARTICLE_LIMITER = new PerTickLimiter();
+    private static final PerTickLimiter SOUND_LIMITER = new PerTickLimiter();
+
+    private static final int MAX_PARTICLE_PACKETS_PER_TICK = 6;
+    private static final int MAX_SOUND_PACKETS_PER_TICK = 2;
+
 
     public static void handleServerboundDwarfSelectTrade(
             ServerboundDwarfSelectTradePacket packet,
@@ -60,6 +91,9 @@ public final class JolCraftServerPayloadHandlers {
 
             var level = sp.serverLevel();
 
+            long tick = level.getGameTime();
+            if (!SOUND_LIMITER.tryConsume(sp, tick, MAX_SOUND_PACKETS_PER_TICK)) return;
+
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;
 
@@ -93,10 +127,19 @@ public final class JolCraftServerPayloadHandlers {
 
             var level = sp.serverLevel();
 
+            long tick = level.getGameTime();
+            if (!PARTICLE_LIMITER.tryConsume(sp, tick, MAX_PARTICLE_PACKETS_PER_TICK)) return;
+
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;
 
-            double maxDist = packet.overrideLimiter() ? 512.0D : 32.0D;
+            boolean overrideLimiter = packet.overrideLimiter();
+            if (overrideLimiter && !sp.hasPermissions(2)) {
+                overrideLimiter = false;
+            }
+
+            double maxDist = overrideLimiter ? 512.0D : 32.0D;
+
             if (sp.distanceToSqr(packet.x(), packet.y(), packet.z()) > (maxDist * maxDist)) return;
 
             double vx = packet.vx();
@@ -106,7 +149,7 @@ public final class JolCraftServerPayloadHandlers {
 
             level.sendParticles(
                     packet.particle(),
-                    packet.overrideLimiter(),
+                    overrideLimiter,
                     packet.alwaysShow(),
                     packet.x(), packet.y(), packet.z(),
                     0,

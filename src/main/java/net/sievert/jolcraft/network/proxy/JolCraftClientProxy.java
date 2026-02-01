@@ -17,7 +17,7 @@ import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarv
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlock;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.network.data.ClientDeliriumData;
+import net.sievert.jolcraft.network.data.client.ClientDeliriumData;
 import net.sievert.jolcraft.network.packet.s2c.*;
 import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;

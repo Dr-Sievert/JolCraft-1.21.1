@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.network.data;
+package net.sievert.jolcraft.network.data.client;
 
 import net.minecraft.client.Minecraft;
 
@@ -21,15 +21,5 @@ public final class ClientDeliriumData {
         if (mc.level == null) return false;
 
         return mc.level.getGameTime() < endGameTime;
-    }
-
-    public static int getRemainingTicks() {
-        var mc = Minecraft.getInstance();
-        if (mc.level == null) return 0;
-
-        long remaining = endGameTime - mc.level.getGameTime();
-        if (remaining <= 0L) return 0;
-        if (remaining > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-        return (int) remaining;
     }
 }

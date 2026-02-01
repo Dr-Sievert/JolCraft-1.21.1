@@ -7,7 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.network.data.ClientDeliriumData;
+import net.sievert.jolcraft.network.data.client.ClientDeliriumData;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
