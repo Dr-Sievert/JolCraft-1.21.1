@@ -4,8 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +19,6 @@ import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationI
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.network.data.ClientDeliriumData;
 import net.sievert.jolcraft.network.packet.s2c.*;
-import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import org.jetbrains.annotations.NotNull;
@@ -56,25 +53,6 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     public @NotNull Component getAltKeyComponent() {
         return InputConstants.getKey(InputConstants.KEY_LALT, -1)
                 .getDisplayName().copy().withStyle(ChatFormatting.BLUE);
-    }
-
-    @Override
-    public void apply(ClientboundPlaySoundPacket packet) {
-        var mc = Minecraft.getInstance();
-        if (mc.level == null) return;
-
-        var optHolder = BuiltInRegistries.SOUND_EVENT.get(packet.soundId());
-        if (optHolder.isEmpty()) return;
-
-        var sound = optHolder.get().value();
-        mc.level.playLocalSound(
-                packet.x(), packet.y(), packet.z(),
-                sound,
-                packet.source(),
-                packet.volume(),
-                packet.pitch(),
-                false
-        );
     }
 
     @Override

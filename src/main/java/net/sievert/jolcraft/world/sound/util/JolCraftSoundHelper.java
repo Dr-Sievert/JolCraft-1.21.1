@@ -4,27 +4,26 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.sievert.jolcraft.network.JolCraftNetworking;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Sound helper safe to call from common code.
- *
  * Naming:
  * - play(...)      → world sound (vanilla broadcast, dupe-safe)
  * - playLocal(...) → single-player only
- *
  * Vanilla guarantee:
  * Level#playSound(@Nullable Player player, ...)
  * - Server: broadcasts to everyone EXCEPT player
@@ -40,7 +39,10 @@ public final class JolCraftSoundHelper {
     // PRIMITIVES
     // ------------------------------------------------------------
 
-    /** World sound without actor semantics (server-authoritative). */
+    /**
+     * World sound without actor semantics (server authoritative).
+     * If called on client, forwards to server via ServerboundPlaySoundPacket.
+     */
     public static void play(Level level,
                             SoundEvent sound,
                             SoundSource source,
@@ -48,19 +50,17 @@ public final class JolCraftSoundHelper {
                             float volume,
                             float pitch) {
 
-        if (level.isClientSide) return;
-        level.playSound(null, x, y, z, sound, source, volume, pitch);
-    }
+        if (!level.isClientSide) {
+            level.playSound(null, x, y, z, sound, source, volume, pitch);
+            return;
+        }
 
-    /** World sound with actor semantics (dupe-safe, side-safe). */
-    public static void play(Player actor,
-                            SoundEvent sound,
-                            SoundSource source,
-                            double x, double y, double z,
-                            float volume,
-                            float pitch) {
+        ResourceLocation soundId = BuiltInRegistries.SOUND_EVENT.getKey(sound);
+        if (soundId == null) return;
 
-        actor.level().playSound(actor, x, y, z, sound, source, volume, pitch);
+        JolCraftNetworking.sendToServer(new ServerboundPlaySoundPacket(
+                soundId, x, y, z, source, volume, pitch
+        ));
     }
 
     /** Local-only positional sound for exactly one player. */
@@ -81,9 +81,7 @@ public final class JolCraftSoundHelper {
         if (player instanceof ServerPlayer sp) {
             Holder<SoundEvent> holder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
             long seed = level.getRandom().nextLong();
-            sp.connection.send(
-                    new ClientboundSoundPacket(holder, source, x, y, z, volume, pitch, seed)
-            );
+            sp.connection.send(new ClientboundSoundPacket(holder, source, x, y, z, volume, pitch, seed));
         }
     }
 
@@ -91,14 +89,14 @@ public final class JolCraftSoundHelper {
     // PLAYER
     // ------------------------------------------------------------
 
-    /** World sound at player position using player's sound source. */
+    /** World sound at player position using player's sound source (broadcast to everyone). */
     public static void player(Player player,
                               SoundEvent sound,
                               float volume,
                               float pitch) {
 
         play(
-                player,
+                player.level(),
                 sound,
                 player.getSoundSource(),
                 player.getX(), player.getY(), player.getZ(),
@@ -108,7 +106,9 @@ public final class JolCraftSoundHelper {
     }
 
     /** World sound at player position (1.0 / 1.0). */
-    public static void player(Player player, SoundEvent sound) {
+    public static void player(Player player,
+                              SoundEvent sound) {
+
         player(player, sound, 1.0F, 1.0F);
     }
 
@@ -116,16 +116,30 @@ public final class JolCraftSoundHelper {
     // ENTITY
     // ------------------------------------------------------------
 
-    /** World sound at entity position using voice pitch. */
+    /** World sound at entity position. */
     public static void entity(LivingEntity entity,
                               SoundEvent sound,
-                              float volume) {
+                              float volume,
+                              float pitch) {
 
         play(
                 entity.level(),
                 sound,
                 entity.getSoundSource(),
                 entity.getX(), entity.getY(), entity.getZ(),
+                volume,
+                pitch
+        );
+    }
+
+    /** World sound at entity position using voice pitch. */
+    public static void entity(LivingEntity entity,
+                              SoundEvent sound,
+                              float volume) {
+
+        entity(
+                entity,
+                sound,
                 volume,
                 entity.getVoicePitch()
         );

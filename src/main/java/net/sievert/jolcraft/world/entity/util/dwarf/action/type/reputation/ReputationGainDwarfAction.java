@@ -17,6 +17,8 @@ import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class ReputationGainDwarfAction extends InspectDwarfAction {
 
@@ -40,7 +42,7 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
     public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
         if (ticksRemaining == 20) {
-            dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.NEUTRAL, 1.2F, 0.6F);
+            JolCraftSoundHelper.entity(dwarf, SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.2F, 0.6F);
         }
     }
 
@@ -75,8 +77,7 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
         nextTablet.set(JolCraftDataComponents.REP_TIER.get(), newRep);
         nextTablet.set(JolCraftDataComponents.REP_OWNER.get(), player.getName().getString());
         throwItem(dwarf, player, nextTablet);
-
-        dwarf.level().playSound(null, dwarf.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.NEUTRAL, 1.2F, 1.0F);
+        PlaySound.levelUp(player);
         dwarf.spawnColoredParticles(0.4F, 0.0F, 0.5F, 1.25F, 64, 2.5D);
     }
 }

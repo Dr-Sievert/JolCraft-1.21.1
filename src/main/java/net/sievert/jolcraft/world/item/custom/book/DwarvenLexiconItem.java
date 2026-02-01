@@ -20,6 +20,7 @@ import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -38,12 +39,12 @@ public class DwarvenLexiconItem extends Item {
             if (!DwarvenLanguageHelper.knowsDwarvishBypassCreative(serverPlayer)) {
                 DwarvenLanguageHelper.setKnowsDwarvish(serverPlayer, true);
                 JolCraftCriteriaTriggers.KNOWS_DWARVEN_LANGUAGE.trigger(serverPlayer);
-                level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 2.0f, 0.7f);
-                level.playSound(null, player.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+                PlaySound.bookPageTurn(player);
+                PlaySound.levelUp(player);
                 serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_LEXICON_USE).withStyle(ChatFormatting.GREEN), true);
             } else {
                 serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_LEXICON_KNOWS).withStyle(ChatFormatting.GRAY), true);
-                level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
+                PlaySound.bookPut(player);
             }
         }
         return InteractionResult.SUCCESS;

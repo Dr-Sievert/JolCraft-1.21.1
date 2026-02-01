@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.type.InspectDwarfAction;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 public class SignDwarfAction extends InspectDwarfAction {
 
@@ -31,7 +32,7 @@ public class SignDwarfAction extends InspectDwarfAction {
     public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
         if (ticksRemaining == 25 || ticksRemaining == 15) {
-            dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.NEUTRAL, 1.0F, 1.2F);
+            JolCraftSoundHelper.entity(dwarf, SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.0F, 1.2F);
         }
     }
 

@@ -9,6 +9,7 @@ import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 /**
  * Action for handling dwarf blocking behavior and associated particle effects.
@@ -31,7 +32,7 @@ public class BlockDwarfAction implements DwarfAction {
     public void start() {
         this.ticksRemaining = 15;
         this.spawnBlockParticles(dwarf);
-        dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.NEUTRAL, 1.0F, 1.0F);
+        JolCraftSoundHelper.entity(dwarf, SoundEvents.SHIELD_BLOCK);
     }
 
     @Override

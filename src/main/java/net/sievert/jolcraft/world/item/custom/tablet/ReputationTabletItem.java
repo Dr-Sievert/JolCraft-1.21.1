@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +24,7 @@ import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -67,7 +67,7 @@ public class ReputationTabletItem extends Item {
                 );
             }
 
-            level.playSound(null, player.blockPosition(), SoundEvents.CHISELED_BOOKSHELF_INSERT, SoundSource.PLAYERS, 1.0f, 0.5f);
+            JolCraftSoundHelper.player(player, SoundEvents.CHISELED_BOOKSHELF_INSERT, 1.0F, 0.5F);
         }
 
         return InteractionResult.SUCCESS;

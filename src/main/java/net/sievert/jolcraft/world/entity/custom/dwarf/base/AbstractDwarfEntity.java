@@ -48,6 +48,8 @@ import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteraction
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
+
 import java.util.*;
 
 @ParametersAreNonnullByDefault
@@ -194,7 +196,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
         if (itemstack.is(JolCraftItems.GOLD_COIN.get()) && this.canBePaid()) {
             this.setPaid(player);
-            this.level().playSound(null, this.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.NEUTRAL, 1.0F, 1.4F);
+            JolCraftSoundHelper.entity(this, SoundEvents.EXPERIENCE_ORB_PICKUP, 1.0F, 1.4F);
             this.usePlayerItem(player, hand, itemstack);
             return InteractionResult.SUCCESS;
         }
@@ -290,7 +292,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
                 }
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-                JolCraftSoundHelper.playDwarfYes(this);
+                PlaySound.dwarfYes(this);
             }
         }
         if (this.shouldRestock()) {

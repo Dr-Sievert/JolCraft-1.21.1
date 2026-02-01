@@ -17,6 +17,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -38,26 +39,31 @@ public class PromoteDwarfAction extends InspectDwarfAction {
         dwarf.resetPaid();
         startInspect(dwarf, player, hand, itemstack);
         dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, 0.7F, 16, 0.5D);
-        dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, 1.0F, 1.5F);
+        JolCraftSoundHelper.entity(dwarf, SoundEvents.EVOKER_CAST_SPELL, 1.0F, 1.5F);
     }
+
     @Override
     public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
 
         if (ticksRemaining == 20) {
-            smokeEffect(0.8F, 24, 0.7D, 1.0F, 1.5F);
+            smokeEffect();
         }
 
         if (ticksRemaining == 2) {
-            smokeEffect(1.25F, 64, 2.5D, 1.5F, 1.0F);
+            transformEffect();
         }
     }
 
-    private void smokeEffect(float alpha, int count, double radius, float volume, float pitch) {
-        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, alpha, count, radius);
-        dwarf.level().playSound(null, dwarf.blockPosition(), SoundEvents.EVOKER_CAST_SPELL, SoundSource.NEUTRAL, volume, pitch);
+    private void smokeEffect() {
+        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, (float) 0.8, 24, 0.7);
+        JolCraftSoundHelper.entity(dwarf, SoundEvents.EVOKER_CAST_SPELL, 1.0F, 1.5F);
     }
 
+    private void transformEffect() {
+        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, (float) 1.25, 64, 2.5);
+        JolCraftSoundHelper.entity(dwarf, SoundEvents.EVOKER_CAST_SPELL, 1.5F, 1.0F);
+    }
 
     @Override
     public boolean isStopped() {

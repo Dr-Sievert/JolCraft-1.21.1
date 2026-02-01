@@ -18,6 +18,8 @@ import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -39,23 +41,23 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
 
             if (!alreadyKnows && knowsLang && hasEffect) {
                 AncientDwarvenLanguageHelper.setKnowsAncientDwarvish(serverPlayer, true);
-                level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 2.0f, 0.7f);
-                level.playSound(null, player.blockPosition(), JolCraftSounds.LEVEL_UP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+                JolCraftSoundHelper.player(player, SoundEvents.BOOK_PAGE_TURN, 2.0F, 0.7F);
+                PlaySound.levelUp(player);
                 serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_USE)
                         .withStyle(ChatFormatting.GREEN), true);
             } else {
                 if (!knowsLang) {
                     serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_READ)
                             .withStyle(ChatFormatting.RED), true);
-                    level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
+                    PlaySound.bookPut(player);
                 } else if (!hasEffect) {
                     serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_USE)
                             .withStyle(ChatFormatting.RED), true);
-                    level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
+                    PlaySound.bookPut(player);
                 } else {
                     serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS)
                             .withStyle(ChatFormatting.GRAY), true);
-                    level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
+                    PlaySound.bookPut(player);
                 }
             }
         }

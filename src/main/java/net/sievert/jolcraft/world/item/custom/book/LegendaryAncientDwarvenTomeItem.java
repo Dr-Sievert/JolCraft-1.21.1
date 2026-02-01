@@ -2,12 +2,8 @@ package net.sievert.jolcraft.world.item.custom.book;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -19,9 +15,9 @@ import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
-import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -47,7 +43,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         boolean hasAncientMemory = AncientEffectHelper.hasAncientMemory(serverPlayer);
 
         if (!knowsLanguage) {
-            playIdentifyFailSound(level, player);
+            playIdentifyFailSound(player);
             player.displayClientMessage(
                     Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_IDENTIFY_FAIL).withStyle(ChatFormatting.RED),
                     true
@@ -56,7 +52,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         }
 
         if (!hasAncientMemory) {
-            playIdentifyFailSound(level, player);
+            playIdentifyFailSound(player);
             player.displayClientMessage(
                     Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.RED),
                     true
@@ -69,7 +65,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
         if (key == null) {
             showEmptyUnlockMessage(player);
-            playIdentifyFailSound(level, player);
+            playIdentifyFailSound(player);
             return InteractionResult.SUCCESS;
         }
 
@@ -77,32 +73,32 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
             case FORGOTTEN_BREW_FORMULAS -> {
                 if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                     showEmptyUnlockMessage(player);
-                    playIdentifyFailSound(level, player);
+                    playIdentifyFailSound(player);
                 } else {
                     DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
                     player.displayClientMessage(
                             Component.translatable(DwarfLangSubProvider.TOOLTIP_TOME_UNLOCK_BREW).withStyle(ChatFormatting.GREEN),
                             true
                     );
-                    playUnlockSounds(level, player);
+                    playUnlockSounds(player);
                 }
             }
             case ANCIENT_GEMCRAFT -> {
                 if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                     showEmptyUnlockMessage(player);
-                    playIdentifyFailSound(level, player);
+                    playIdentifyFailSound(player);
                 } else {
                     DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
                     player.displayClientMessage(
                             Component.translatable(DwarfLangSubProvider.TOOLTIP_TOME_UNLOCK_GEMS).withStyle(ChatFormatting.GREEN),
                             true
                     );
-                    playUnlockSounds(level, player);
+                    playUnlockSounds(player);
                 }
             }
             default -> {
                 showEmptyUnlockMessage(player);
-                playIdentifyFailSound(level, player);
+                playIdentifyFailSound(player);
             }
         }
 
@@ -116,14 +112,13 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         );
     }
 
-    public static void playUnlockSounds(Level level, Player player) {
-        BlockPos pos = player.blockPosition();
-        level.playSound(null, pos, SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.0F, 1.0F);
-        level.playSound(null, pos, JolCraftSounds.LEVEL_UP.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
+    public static void playUnlockSounds(Player player) {
+        PlaySound.bookPageTurn(player);
+        PlaySound.levelUp(player);
     }
 
-    protected void playIdentifyFailSound(Level level, Player player) {
-        level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.7f);
+    protected void playIdentifyFailSound(Player player) {
+        PlaySound.bookPut(player);
     }
 
     @Override

@@ -16,7 +16,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
@@ -45,6 +44,7 @@ import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -286,13 +286,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         }
 
         if (level != null) {
-            JolCraftSoundHelper.block(
-                    level,
-                    worldPosition,
-                    SoundEvents.BOTTLE_FILL,
-                    0.8F,
-                    0.9F
-            );
+            PlaySound.bottleFill(player, 0.8F, 0.9F);
         }
 
         if (!player.getInventory().add(out)) {

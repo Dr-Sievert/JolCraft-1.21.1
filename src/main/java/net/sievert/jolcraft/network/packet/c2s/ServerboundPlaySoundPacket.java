@@ -9,7 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
-public record ServerboundPlayWorldSoundPacket(
+public record ServerboundPlaySoundPacket(
         ResourceLocation soundId,
         double x, double y, double z,
         SoundSource source,
@@ -17,14 +17,13 @@ public record ServerboundPlayWorldSoundPacket(
         float pitch
 ) implements CustomPacketPayload {
 
-    public static final Type<ServerboundPlayWorldSoundPacket> TYPE =
-            new Type<>(JolCraft.location("play_world_sound"));
+    public static final Type<ServerboundPlaySoundPacket> TYPE = new Type<>(JolCraft.location("play_sound"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundPlayWorldSoundPacket> CODEC =
-            CustomPacketPayload.codec(ServerboundPlayWorldSoundPacket::write, ServerboundPlayWorldSoundPacket::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundPlaySoundPacket> CODEC =
+            CustomPacketPayload.codec(ServerboundPlaySoundPacket::write, ServerboundPlaySoundPacket::read);
 
-    public static ServerboundPlayWorldSoundPacket read(FriendlyByteBuf buf) {
-        return new ServerboundPlayWorldSoundPacket(
+    public static ServerboundPlaySoundPacket read(FriendlyByteBuf buf) {
+        return new ServerboundPlaySoundPacket(
                 buf.readResourceLocation(),
                 buf.readDouble(),
                 buf.readDouble(),

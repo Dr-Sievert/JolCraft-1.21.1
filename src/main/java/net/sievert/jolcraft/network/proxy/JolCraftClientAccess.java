@@ -17,7 +17,6 @@ public interface JolCraftClientAccess {
 
     @Nullable Component getAltKeyComponent();
 
-    void apply(ClientboundPlaySoundPacket packet);
     void apply(ClientboundDwarfMerchantOffersPacket packet);
     void apply(ClientboundDeliriumPacket packet);
     void apply(ClientboundLanguagePacket packet);

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom.merchant;
+package net.sievert.jolcraft.world.item.custom.container;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.util.ARGB;
@@ -19,6 +19,7 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
@@ -160,20 +161,31 @@ public class CoinPouchItem extends Item {
     }
 
     private void playStackSound(Player player) {
-        player.playSound(JolCraftSounds.COIN_STACK.get(), 0.8F + player.level().random.nextFloat() * 0.2F, 1.0F + player.level().random.nextFloat() * 0.2F);
+        JolCraftSoundHelper.player(
+                player,
+                JolCraftSounds.COIN_STACK.get(),
+                0.8F + player.level().random.nextFloat() * 0.2F,
+                1.0F + player.level().random.nextFloat() * 0.2F
+        );
     }
 
     private void playSingleSound(Player player) {
-        player.playSound(JolCraftSounds.COIN_SINGLE.get(), 0.8F + player.level().random.nextFloat() * 0.2F, 1.0F + player.level().random.nextFloat() * 0.2F);
+        JolCraftSoundHelper.player(
+                player,
+                JolCraftSounds.COIN_SINGLE.get(),
+                0.8F + player.level().random.nextFloat() * 0.2F,
+                1.0F + player.level().random.nextFloat() * 0.2F
+        );
     }
 
     private void playPouchInsertSound(Player player) {
-        player.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 1.3F);
+        JolCraftSoundHelper.player(player, SoundEvents.BUNDLE_INSERT, 0.8F, 1.3F);
     }
 
     private void playInsertFailSound(Player player) {
-        player.playSound(SoundEvents.BUNDLE_INSERT_FAIL, 0.6F, 1.3F);
+        JolCraftSoundHelper.player(player, SoundEvents.BUNDLE_INSERT_FAIL, 0.6F, 1.3F);
     }
+
 
     private void broadcastChangesOnContainerMenu(Player player) {
         AbstractContainerMenu menu = player.containerMenu;

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom;
+package net.sievert.jolcraft.world.item.custom.paper;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.sounds.SoundEvents;
@@ -11,6 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipItem;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -37,7 +39,7 @@ public class QuillItem extends SimpleTooltipItem {
                         player.drop(fullQuill, false);
                     }
                 }
-                player.level().playSound(null, player.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 1.0F, 1.5F);
+                PlaySound.bottleFill(player, 1.0F, 1.5F);
             }
             return InteractionResult.SUCCESS;
         }

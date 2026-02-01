@@ -11,8 +11,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
-import net.sievert.jolcraft.network.packet.c2s.ServerboundPlayWorldSoundPacket;
-import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnWorldParticlePacket;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 
 import java.util.Optional;
@@ -48,7 +48,7 @@ public final class JolCraftServerPayloadHandlers {
     }
 
     public static void handleServerboundPlayWorldSound(
-            ServerboundPlayWorldSoundPacket packet,
+            ServerboundPlaySoundPacket packet,
             IPayloadContext context
     ) {
         context.enqueueWork(() -> {
@@ -84,7 +84,7 @@ public final class JolCraftServerPayloadHandlers {
     }
 
     public static void handleServerboundSpawnWorldParticle(
-            ServerboundSpawnWorldParticlePacket packet,
+            ServerboundSpawnParticlePacket packet,
             IPayloadContext context
     ) {
         context.enqueueWork(() -> {

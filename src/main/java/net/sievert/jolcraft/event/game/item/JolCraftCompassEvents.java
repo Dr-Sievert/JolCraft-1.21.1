@@ -37,6 +37,8 @@ import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundPlaySoundPacket;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -163,7 +165,7 @@ public class JolCraftCompassEvents {
         }
 
         player.swing(swingHand, true);
-        level.playSound(null, player.blockPosition(), SoundEvents.METAL_HIT, SoundSource.PLAYERS, 1.0F, 1.4F);
+        JolCraftSoundHelper.player(player, SoundEvents.METAL_HIT, 1.0F, 1.4F);
     }
 
     @SubscribeEvent
@@ -261,19 +263,7 @@ public class JolCraftCompassEvents {
                 true
         );
 
-        if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundPlaySoundPacket(
-                            SoundEvents.ITEM_BREAK.location(),
-                            player.getX(), player.getY(), player.getZ(),
-                            SoundSource.PLAYERS, 1.0F, 1.5F
-                    ));
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundPlaySoundPacket(
-                            JolCraftSounds.LEVEL_UP.get().location(),
-                            player.getX(), player.getY(), player.getZ(),
-                            SoundSource.PLAYERS, 1.0F, 1.0F
-                    ));
-        }
+        JolCraftSoundHelper.player(player, SoundEvents.ITEM_BREAK, 1.0F, 1.5F);
+        PlaySound.levelUp(player);
     }
 }

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom.contract;
+package net.sievert.jolcraft.world.item.custom.paper;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;

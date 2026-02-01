@@ -9,7 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.custom.merchant.CoinPouchItem;
+import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
 public class DwarfMerchantOffer {

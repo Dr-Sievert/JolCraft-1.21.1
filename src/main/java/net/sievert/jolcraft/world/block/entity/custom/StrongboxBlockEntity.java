@@ -30,6 +30,7 @@
     import net.sievert.jolcraft.world.gui.custom.menu.LockMenu;
     import net.sievert.jolcraft.world.gui.custom.menu.StrongboxMenu;
     import net.sievert.jolcraft.world.sound.JolCraftSounds;
+    import net.sievert.jolcraft.world.sound.util.PlaySound;
 
     import javax.annotation.Nullable;
     import javax.annotation.ParametersAreNonnullByDefault;
@@ -66,12 +67,12 @@
 
             @Override
             protected void onOpen(Level level, BlockPos pos, BlockState state) {
-                StrongboxBlockEntity.playSound(level, pos, JolCraftSounds.STRONGBOX_OPEN.get());
+                PlaySound.strongboxOpen(level, pos);
             }
 
             @Override
             protected void onClose(Level level, BlockPos pos, BlockState state) {
-                StrongboxBlockEntity.playSound(level, pos, JolCraftSounds.STRONGBOX_CLOSE.get());
+                PlaySound.strongboxClose(level, pos);
             }
 
             @Override
@@ -313,8 +314,7 @@
                 if (buttonId == this.unlockSlotId) {
                     player.closeContainer();
 
-                    this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_UNLOCK.get(),
-                            SoundSource.BLOCKS, 1.5F, 1.0F);
+                    PlaySound.strongboxUnlock(this.level, this.getBlockPos());
 
                     BlockState oldState = getBlockState();
                     BlockState newState = oldState.setValue(StrongboxBlock.LOCKED, false);
@@ -334,8 +334,7 @@
                 }
                 setLockpickProgress(0);
 
-                this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_LOCKPICK_BREAK.get(),
-                        SoundSource.BLOCKS, 1.5F, 0.8F);
+                PlaySound.strongboxLockpickBreak(this.level, this.getBlockPos());
 
                 forceImmediateReroll();
                 return true;
@@ -346,14 +345,12 @@
                 int gain = 10 + this.level.random.nextInt(11) + this.progressBoost; // 10..20 + boost
                 setLockpickProgress(this.lockProgress + gain);
 
-                this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_LOCKPICK.get(),
-                        SoundSource.BLOCKS, 1.2F, 1.0F);
+                PlaySound.strongboxLockpick(this.level, this.getBlockPos());
 
                 if (this.lockProgress >= LOCK_MAX_PROGRESS) {
                     player.closeContainer();
 
-                    this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_UNLOCK.get(),
-                            SoundSource.BLOCKS, 1.5F, 1.0F);
+                    PlaySound.strongboxUnlock(this.level, this.getBlockPos());
 
                     this.level.setBlock(this.worldPosition,
                             this.getBlockState().setValue(StrongboxBlock.LOCKED, false), 3);
@@ -369,8 +366,7 @@
                 }
                 setLockpickProgress(0);
 
-                this.level.playSound(null, this.worldPosition, JolCraftSounds.STRONGBOX_LOCKPICK_BREAK.get(),
-                        SoundSource.BLOCKS, 1.5F, 0.8F);
+                PlaySound.strongboxLockpickBreak(this.level, this.getBlockPos());
             }
 
             forceImmediateReroll();
@@ -422,15 +418,6 @@
                 assert this.getLevel() != null;
                 this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
             }
-        }
-
-        public static void playSound(Level level, BlockPos pos, SoundEvent sound) {
-            double x = pos.getX() + 0.5;
-            double y = pos.getY() + 0.5;
-            double z = pos.getZ() + 0.5;
-
-            level.playSound(null, x, y, z, sound, SoundSource.BLOCKS, 0.5F,
-                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         // ---------------------------------------------------------------------

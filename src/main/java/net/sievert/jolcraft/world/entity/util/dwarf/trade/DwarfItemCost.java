@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.custom.merchant.CoinPouchItem;
+import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
 public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate components, ItemStack itemStack) {

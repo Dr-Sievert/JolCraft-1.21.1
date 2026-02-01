@@ -20,6 +20,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.tooltip.UnidentifiedItem;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -101,11 +102,11 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
 
     @Override
     protected void playIdentifySuccessSound(Level level, Player player) {
-        level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.2f, 0.8f);
+        PlaySound.bookPageTurn(player);
     }
 
     @Override
     protected void playIdentifyFailSound(Level level, Player player) {
-        level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.8f);
+        PlaySound.bookPut(player);
     }
 }

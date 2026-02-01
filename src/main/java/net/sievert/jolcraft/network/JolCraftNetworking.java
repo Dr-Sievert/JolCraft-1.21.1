@@ -11,8 +11,8 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.network.handler.JolCraftClientPayloadHandlers;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
-import net.sievert.jolcraft.network.packet.c2s.ServerboundPlayWorldSoundPacket;
-import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnWorldParticlePacket;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 import net.sievert.jolcraft.network.packet.s2c.*;
 
 public class JolCraftNetworking {
@@ -22,8 +22,8 @@ public class JolCraftNetworking {
 
         registrar
                 .playToServer(ServerboundDwarfSelectTradePacket.TYPE, ServerboundDwarfSelectTradePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundDwarfSelectTrade)
-                .playToServer(ServerboundPlayWorldSoundPacket.TYPE, ServerboundPlayWorldSoundPacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundPlayWorldSound)
-                .playToServer(ServerboundSpawnWorldParticlePacket.TYPE, ServerboundSpawnWorldParticlePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundSpawnWorldParticle);
+                .playToServer(ServerboundPlaySoundPacket.TYPE, ServerboundPlaySoundPacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundPlayWorldSound)
+                .playToServer(ServerboundSpawnParticlePacket.TYPE, ServerboundSpawnParticlePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundSpawnWorldParticle);
 
         registrar
                 .playToClient(ClientboundDeliriumPacket.TYPE, ClientboundDeliriumPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDelirium)
@@ -32,8 +32,7 @@ public class JolCraftNetworking {
                 .playToClient(ClientboundReputationPacket.TYPE, ClientboundReputationPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundReputation)
                 .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundEndorsements)
                 .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)
-                .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers)
-                .playToClient(ClientboundPlaySoundPacket.TYPE, ClientboundPlaySoundPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundPlaySound);
+                .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers);
     }
 
     public static final double DEFAULT_RADIUS = 32.0D;

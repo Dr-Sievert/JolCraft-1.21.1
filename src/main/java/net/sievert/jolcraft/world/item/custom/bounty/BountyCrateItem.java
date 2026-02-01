@@ -7,7 +7,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,6 +32,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyTier;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyType;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -71,9 +71,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                     stack.set(JolCraftDataComponents.BOUNTY_FILL.get(), remaining);
                     stack.set(JolCraftDataComponents.BOUNTY_COMPLETE.get(), remaining >= data.requiredCount());
 
-                    player.level().playSound(
-                            null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.6f, 1.2f
-                    );
+                    JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
                     return true;
                 }
             }
@@ -83,14 +81,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
             int maxTransfer = action == ClickAction.PRIMARY ? Integer.MAX_VALUE : 1;
             boolean filled = tryFillCrate(stack, access.get(), access, maxTransfer);
             if (filled) {
-                player.level().playSound(
-                        null,
-                        player.blockPosition(),
-                        SoundEvents.ITEM_PICKUP,
-                        SoundSource.PLAYERS,
-                        0.6f,
-                        1.2f
-                );
+                JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
             }
             return filled;
         }
@@ -186,7 +177,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                     Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_FILLED_SOME, collected).withStyle(ChatFormatting.GRAY),
                     true
             );
-            level.playSound(null, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.6f, 1.2f);
+            JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
         } else {
             player.displayClientMessage(
                     Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_NO_ITEMS).withStyle(ChatFormatting.GRAY),

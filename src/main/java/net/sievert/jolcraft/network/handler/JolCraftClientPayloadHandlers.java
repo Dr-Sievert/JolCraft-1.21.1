@@ -8,10 +8,6 @@ public final class JolCraftClientPayloadHandlers {
 
     private JolCraftClientPayloadHandlers() {}
 
-    public static void handleClientboundPlaySound(ClientboundPlaySoundPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
     public static void handleClientboundDwarfMerchantOffers(ClientboundDwarfMerchantOffersPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }

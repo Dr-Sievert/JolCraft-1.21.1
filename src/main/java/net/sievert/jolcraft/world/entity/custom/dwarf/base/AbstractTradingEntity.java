@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
@@ -41,6 +42,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
@@ -284,7 +286,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         }
         if (needsRestock) {
             this.lastRestockGameTime = this.level().getGameTime();
-            this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRestockSound()), SoundSource.NEUTRAL, 1.2F, 1.0F);
+            JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRestockSound()));
         }
     }
 
@@ -299,7 +301,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             }
         }
         if (restocked) {
-            this.playSound(SoundEvents.VILLAGER_WORK_CARTOGRAPHER, 1.0F, 1.0F);
+            JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRestockSound()));
         }
     }
 
@@ -311,8 +313,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             this.updateTrades();
         }
         this.setVillagerData(this.getVillagerData().setLevel(originalLevel));
-        this.level().playSound(null, this.blockPosition(), Objects.requireNonNull(getRerollSound()), SoundSource.NEUTRAL, 1.2F, 1.0F);
-    }
+        JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRerollSound()));    }
 
     protected void rewardTradeXp(DwarfMerchantOffer offer) {
         int i = 3 + this.random.nextInt(4);

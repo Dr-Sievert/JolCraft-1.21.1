@@ -11,13 +11,15 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.gui.custom.container.DwarfMerchantContainer;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.custom.merchant.CoinPouchItem;
+import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.world.gui.custom.slot.DwarfMerchantResultSlot;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.*;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -110,9 +112,17 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
     private void playTradeSound() {
         if (!trader.isClientSide()) {
             Entity e = (Entity) trader;
-            e.level().playLocalSound(e.getX(), e.getY(), e.getZ(), trader.getNotifyTradeSound(), SoundSource.NEUTRAL, 1.0F, 1.0F, false);
+            JolCraftSoundHelper.playLocal(
+                    Objects.requireNonNull(trader.getTradingPlayer()),
+                    trader.getNotifyTradeSound(),
+                    SoundSource.NEUTRAL,
+                    e.getX(), e.getY(), e.getZ(),
+                    1.0F,
+                    1.0F
+            );
         }
     }
+
 
     public void tryMoveItems(int selectedRecipe) {
         if (selectedRecipe < 0 || selectedRecipe >= getOffers().size()) return;

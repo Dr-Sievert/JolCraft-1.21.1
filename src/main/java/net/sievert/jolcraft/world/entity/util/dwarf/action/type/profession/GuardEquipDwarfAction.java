@@ -13,6 +13,7 @@ import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.profession.GuardEquipInteraction;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 public class GuardEquipDwarfAction extends InspectDwarfAction {
 
@@ -46,14 +47,7 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
         EquipmentSlot slot = GuardEquipInteraction.getSlotForArmor(itemstack);
         assert slot != null;
         dwarf.setItemSlot(slot, itemstack);
-        dwarf.level().playSound(
-                null,
-                dwarf.blockPosition(),
-                JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get(),
-                SoundSource.NEUTRAL,
-                1.0F,
-                1.05F
-        );
+        JolCraftSoundHelper.entity(dwarf, JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get());
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
         if (dwarf.level().isClientSide()) {

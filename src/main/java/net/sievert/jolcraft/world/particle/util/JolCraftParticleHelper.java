@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnWorldParticlePacket;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -53,7 +53,7 @@ public final class JolCraftParticleHelper {
         }
 
         JolCraftNetworking.sendToServer(
-                new ServerboundSpawnWorldParticlePacket(
+                new ServerboundSpawnParticlePacket(
                         particle,
                         overrideLimiter,
                         alwaysShow,

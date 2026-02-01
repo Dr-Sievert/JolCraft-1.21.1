@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.sievert.jolcraft.world.entity.util.EntityData;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import java.util.UUID;
 
@@ -107,7 +108,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     }
 
     public void playEatingSound() {
-        this.playSound(SoundEvents.PLAYER_BURP, 1.0F, this.getVoicePitch());
+        JolCraftSoundHelper.entity(this, SoundEvents.PLAYER_BURP);
     }
 
     public boolean canFallInLove() {

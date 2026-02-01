@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
-public record ServerboundSpawnWorldParticlePacket(
+public record ServerboundSpawnParticlePacket(
         ParticleOptions particle,
         boolean overrideLimiter,
         boolean alwaysShow,
@@ -17,13 +17,12 @@ public record ServerboundSpawnWorldParticlePacket(
         double vx, double vy, double vz
 ) implements CustomPacketPayload {
 
-    public static final Type<ServerboundSpawnWorldParticlePacket> TYPE =
-            new Type<>(JolCraft.location("spawn_world_particle"));
+    public static final Type<ServerboundSpawnParticlePacket> TYPE = new Type<>(JolCraft.location("spawn_particle"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundSpawnWorldParticlePacket> CODEC =
-            CustomPacketPayload.codec(ServerboundSpawnWorldParticlePacket::write, ServerboundSpawnWorldParticlePacket::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundSpawnParticlePacket> CODEC =
+            CustomPacketPayload.codec(ServerboundSpawnParticlePacket::write, ServerboundSpawnParticlePacket::read);
 
-    public static ServerboundSpawnWorldParticlePacket read(FriendlyByteBuf buf) {
+    public static ServerboundSpawnParticlePacket read(FriendlyByteBuf buf) {
         RegistryFriendlyByteBuf regBuf = (RegistryFriendlyByteBuf) buf;
 
         ParticleOptions particle = ParticleTypes.STREAM_CODEC.decode(regBuf);
@@ -36,7 +35,7 @@ public record ServerboundSpawnWorldParticlePacket(
         double vy = buf.readDouble();
         double vz = buf.readDouble();
 
-        return new ServerboundSpawnWorldParticlePacket(
+        return new ServerboundSpawnParticlePacket(
                 particle,
                 overrideLimiter,
                 alwaysShow,

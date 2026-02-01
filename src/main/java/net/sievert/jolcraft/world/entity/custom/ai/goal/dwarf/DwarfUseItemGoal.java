@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 public class DwarfUseItemGoal<T extends Mob> extends Goal {
     private final T mob;
@@ -61,7 +62,12 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
         }
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
         if (this.finishUsingSound != null) {
-            this.mob.playSound(this.finishUsingSound, 1.0F, this.mob.getRandom().nextFloat() * 0.2F + 0.9F);
+            JolCraftSoundHelper.entity(
+                    this.mob,
+                    this.finishUsingSound,
+                    1.0F,
+                    this.mob.getRandom().nextFloat() * 0.2F + 0.9F
+            );
         }
         this.cooldownTimer = cooldownTicks;
         this.previousMainHandItem = ItemStack.EMPTY;

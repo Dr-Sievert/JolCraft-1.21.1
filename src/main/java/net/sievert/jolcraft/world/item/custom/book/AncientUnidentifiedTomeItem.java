@@ -20,6 +20,7 @@ import net.sievert.jolcraft.world.item.custom.tooltip.AncientUnidentifiedItem;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -112,11 +113,11 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
 
     @Override
     protected void playIdentifySuccessSound(Level level, Player player) {
-        level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.2f, 0.7f);
+        PlaySound.bookPageTurn(player);
     }
 
     @Override
     protected void playIdentifyFailSound(Level level, Player player) {
-        level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PUT, SoundSource.PLAYERS, 1.2f, 0.7f);
+        PlaySound.bookPut(player);
     }
 }

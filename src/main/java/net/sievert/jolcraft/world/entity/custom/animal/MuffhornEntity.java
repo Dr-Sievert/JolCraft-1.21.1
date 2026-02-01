@@ -42,6 +42,7 @@ import net.neoforged.neoforge.common.IShearable;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import java.util.List;
 
@@ -131,9 +132,10 @@ public class MuffhornEntity extends Animal implements IShearable {
 
     @Override
     public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+        if (player == null) return List.of();
         this.setSheared(true);
         if (!level.isClientSide()) {
-            level.playSound(null, this, SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 0.7F);
+            JolCraftSoundHelper.player(player, SoundEvents.SHEEP_SHEAR, 1.0F, 0.8F);
             return List.of(new ItemStack(JolCraftItems.MUFFHORN_FUR.get(), 1 + this.random.nextInt(2)));
         }
         return List.of();
@@ -199,7 +201,7 @@ public class MuffhornEntity extends Animal implements IShearable {
                 int cooldownTicks = 12000;
                 if (gameTime >= this.nextMilkTick) {
                     this.nextMilkTick = gameTime + cooldownTicks;
-                    player.playSound(SoundEvents.COW_MILK, 1.0F, 0.9F);
+                    JolCraftSoundHelper.player(player, SoundEvents.COW_MILK, 1.0F, 0.9F);
                     ItemStack result = ItemUtils.createFilledResult(itemstack, player, JolCraftItems.MUFFHORN_MILK_BUCKET.get().getDefaultInstance());
                     player.setItemInHand(hand, result);
                     return InteractionResult.SUCCESS;
