@@ -13,7 +13,6 @@ import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class BountyInteraction extends InspectInteraction {

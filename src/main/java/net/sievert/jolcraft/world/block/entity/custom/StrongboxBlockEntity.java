@@ -8,8 +8,6 @@
     import net.minecraft.network.chat.Component;
     import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
     import net.minecraft.server.level.ServerPlayer;
-    import net.minecraft.sounds.SoundEvent;
-    import net.minecraft.sounds.SoundSource;
     import net.minecraft.world.ContainerHelper;
     import net.minecraft.world.MenuProvider;
     import net.minecraft.world.entity.player.Inventory;
@@ -29,7 +27,6 @@
     import net.sievert.jolcraft.world.effect.JolCraftEffects;
     import net.sievert.jolcraft.world.gui.custom.menu.LockMenu;
     import net.sievert.jolcraft.world.gui.custom.menu.StrongboxMenu;
-    import net.sievert.jolcraft.world.sound.JolCraftSounds;
     import net.sievert.jolcraft.world.sound.util.PlaySound;
 
     import javax.annotation.Nullable;

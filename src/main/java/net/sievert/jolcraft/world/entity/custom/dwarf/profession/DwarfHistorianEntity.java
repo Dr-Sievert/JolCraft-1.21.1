@@ -25,7 +25,6 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;

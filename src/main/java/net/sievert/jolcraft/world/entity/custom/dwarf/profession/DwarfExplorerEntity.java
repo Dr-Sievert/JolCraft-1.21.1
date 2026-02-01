@@ -26,7 +26,6 @@ import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;

@@ -8,7 +8,6 @@ import net.minecraft.client.data.models.blockstates.Variant;
 import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.sievert.jolcraft.datagen.model.util.AbstractModelProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;

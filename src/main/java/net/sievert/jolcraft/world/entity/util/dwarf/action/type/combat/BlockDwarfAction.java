@@ -2,7 +2,6 @@ package net.sievert.jolcraft.world.entity.util.dwarf.action.type.combat;
 
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
@@ -71,7 +70,6 @@ public class BlockDwarfAction implements DwarfAction {
 
             JolCraftParticleHelper.spawn(
                     dwarf.level(),
-                    32.0D,
                     dust,
                     false,
                     false,

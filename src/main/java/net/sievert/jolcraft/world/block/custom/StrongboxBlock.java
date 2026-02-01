@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -58,8 +57,7 @@ import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.sound.JolCraftSounds;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -325,14 +323,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                     true
             );
 
-            JolCraftSoundHelper.block(
-                    level,
-                    pos,
-                    JolCraftSounds.STRONGBOX_UNLOCK.get(),
-                    SoundSource.BLOCKS,
-                    1.5F,
-                    1.0F
-            );
+            PlaySound.strongboxUnlock(level, pos);
 
             return InteractionResult.SUCCESS;
         }

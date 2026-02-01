@@ -14,7 +14,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 

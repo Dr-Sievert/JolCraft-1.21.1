@@ -23,7 +23,6 @@ import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;

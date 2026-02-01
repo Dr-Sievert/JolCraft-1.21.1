@@ -73,7 +73,7 @@ public class DeliriumCurseEffect extends MobEffect {
             }
 
             // Episode ambience: local-only to this player (server-triggered)
-            JolCraftSoundHelper.playLocalOnly(
+            JolCraftSoundHelper.playLocal(
                     player,
                     SoundEvents.AMBIENT_CAVE.value(),
                     player.getSoundSource(),

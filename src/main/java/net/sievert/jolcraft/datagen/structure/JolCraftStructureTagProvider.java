@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-import static net.sievert.jolcraft.JolCraft.location;
-
 public final class JolCraftStructureTagProvider extends StructureTagsProvider {
 
     public JolCraftStructureTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {

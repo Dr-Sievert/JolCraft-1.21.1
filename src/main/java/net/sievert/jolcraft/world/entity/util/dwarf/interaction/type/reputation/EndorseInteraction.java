@@ -15,7 +15,6 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfGuildmaste
 import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.interaction.type.InspectInteraction;
 import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public class EndorseInteraction extends InspectInteraction {

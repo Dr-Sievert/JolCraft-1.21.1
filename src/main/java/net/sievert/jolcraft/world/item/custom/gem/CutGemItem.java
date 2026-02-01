@@ -2,17 +2,12 @@ package net.sievert.jolcraft.world.item.custom.gem;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
-import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
-import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;

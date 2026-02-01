@@ -13,7 +13,6 @@ import net.neoforged.neoforge.client.event.*;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
 import net.sievert.jolcraft.world.item.client.BrewColor;
 import net.sievert.jolcraft.world.item.client.coin.CoinPouchTooltipRenderer;
