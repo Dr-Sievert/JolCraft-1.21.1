@@ -1,110 +1,50 @@
 package net.sievert.jolcraft.network;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.network.packet.s2c.*;
-import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
-import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.network.handler.JolCraftClientPayloadHandlers;
+import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
-import net.sievert.jolcraft.network.proxy.JolCraftProxy;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundPlayWorldSoundPacket;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnWorldParticlePacket;
+import net.sievert.jolcraft.network.packet.s2c.*;
 
 public class JolCraftNetworking {
 
     public static void register(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar(JolCraft.MOD_ID).versioned("1.0");
 
-        registrar.playToServer(
-                ServerboundDwarfSelectTradePacket.TYPE,
-                ServerboundDwarfSelectTradePacket.CODEC,
-                JolCraftNetworking::handleServerboundDwarfSelectTrade
-        );
+        registrar
+                .playToServer(ServerboundDwarfSelectTradePacket.TYPE, ServerboundDwarfSelectTradePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundDwarfSelectTrade)
+                .playToServer(ServerboundPlayWorldSoundPacket.TYPE, ServerboundPlayWorldSoundPacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundPlayWorldSound)
+                .playToServer(ServerboundSpawnWorldParticlePacket.TYPE, ServerboundSpawnWorldParticlePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundSpawnWorldParticle);
 
         registrar
-                .playToClient(ClientboundDeliriumPacket.TYPE, ClientboundDeliriumPacket.CODEC, JolCraftNetworking::handleClientboundDelirium)
-                .playToClient(ClientboundLanguagePacket.TYPE, ClientboundLanguagePacket.CODEC, JolCraftNetworking::handleClientboundLanguage)
-                .playToClient(ClientboundAncientLanguagePacket.TYPE, ClientboundAncientLanguagePacket.CODEC, JolCraftNetworking::handleClientboundAncientLanguage)
-                .playToClient(ClientboundReputationPacket.TYPE, ClientboundReputationPacket.CODEC, JolCraftNetworking::handleClientboundReputation)
-                .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, JolCraftNetworking::handleClientboundEndorsements)
-                .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftNetworking::handleClientboundLoreUnlocks)
-                .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftNetworking::handleClientboundDwarfMerchantOffers)
-                .playToClient(ClientboundPlaySoundPacket.TYPE, ClientboundPlaySoundPacket.CODEC, JolCraftNetworking::handleClientboundPlaySound)
-                .playToClient(ClientboundParticlePacket.TYPE, ClientboundParticlePacket.CODEC, JolCraftNetworking::handleClientboundParticle);
+                .playToClient(ClientboundDeliriumPacket.TYPE, ClientboundDeliriumPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDelirium)
+                .playToClient(ClientboundLanguagePacket.TYPE, ClientboundLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLanguage)
+                .playToClient(ClientboundAncientLanguagePacket.TYPE, ClientboundAncientLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundAncientLanguage)
+                .playToClient(ClientboundReputationPacket.TYPE, ClientboundReputationPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundReputation)
+                .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundEndorsements)
+                .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)
+                .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers)
+                .playToClient(ClientboundPlaySoundPacket.TYPE, ClientboundPlaySoundPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundPlaySound);
     }
 
-    public static void handleServerboundDwarfSelectTrade(
-            ServerboundDwarfSelectTradePacket packet,
-            IPayloadContext context
-    ) {
-        context.enqueueWork(() -> {
-            var player = context.player();
-            if (!(player instanceof ServerPlayer sp)) return;
+    public static final double DEFAULT_RADIUS = 32.0D;
 
-            if (!(sp.containerMenu instanceof DwarfMerchantMenu menu)) return;
-
-            int selected = packet.item();
-
-            var offers = menu.getOffers();
-            if (selected < 0 || selected >= offers.size()) return;
-
-            if (!menu.stillValid(sp)) return;
-
-            var trader = menu.getTrader();
-            var tradingPlayer = trader.getTradingPlayer();
-            if (tradingPlayer != null && tradingPlayer != sp) return;
-
-            menu.setSelectionHint(selected);
-            menu.tryMoveItems(selected);
-        });
-    }
-
-    private static void handleClientboundParticle(ClientboundParticlePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundPlaySound(ClientboundPlaySoundPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundDwarfMerchantOffers(ClientboundDwarfMerchantOffersPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundLoreUnlocks(ClientboundLoreUnlocksPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundDelirium(ClientboundDeliriumPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundLanguage(ClientboundLanguagePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundAncientLanguage(ClientboundAncientLanguagePacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundReputation(ClientboundReputationPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
-    }
-
-    private static void handleClientboundEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
-        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
+    public static void sendToServer(CustomPacketPayload payload) {
+        PacketDistributor.sendToServer(payload);
     }
 
     public static void sendToClient(ServerPlayer player, CustomPacketPayload payload) {
         player.connection.send(payload);
     }
-
-    public static final double DEFAULT_RADIUS = 32.0D;
 
     public static void sendToNearbyClients(Level world, BlockPos pos, CustomPacketPayload payload) {
         sendToNearbyClients(world, pos, DEFAULT_RADIUS, payload);

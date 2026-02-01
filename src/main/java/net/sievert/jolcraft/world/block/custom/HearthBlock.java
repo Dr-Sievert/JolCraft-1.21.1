@@ -42,6 +42,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
 import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.Nullable;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
 
@@ -194,7 +195,13 @@ public class HearthBlock extends BaseEntityBlock {
                 boolean wasNew = hearth.activateFor(player.getUUID());
                 if (wasNew) {
                     setLitBoth(level, pos);
-                    level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0F, 0.8F);
+                    JolCraftSoundHelper.block(
+                            level,
+                            pos,
+                            SoundEvents.BLAZE_SHOOT,
+                            1.0F,
+                            0.8F
+                    );
                 }
             }
             return InteractionResult.SUCCESS;
@@ -261,7 +268,13 @@ public class HearthBlock extends BaseEntityBlock {
             boolean wasNew = hearth.activateFor(player.getUUID());
             if (wasNew) {
                 setLitBoth(level, pos);
-                level.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0F, 0.8F);
+                JolCraftSoundHelper.block(
+                        level,
+                        pos,
+                        SoundEvents.BLAZE_SHOOT,
+                        1.0F,
+                        0.8F
+                );
                 if (!player.isCreative()) {
                     Hearth.get(player).setHasLitThisDay(true);
                     stack.shrink(1);
@@ -296,7 +309,13 @@ public class HearthBlock extends BaseEntityBlock {
             double d1 = pos.getY();
             double d2 = pos.getZ() + 0.5;
             if (random.nextDouble() < 0.1) {
-                level.playLocalSound(d0, d1, d2, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 0.5F, 0.8F, false);
+                JolCraftSoundHelper.block(
+                        level,
+                        pos,
+                        SoundEvents.FURNACE_FIRE_CRACKLE,
+                        0.5F,
+                        0.8F
+                );
             }
 
             Direction direction = state.getValue(FACING);

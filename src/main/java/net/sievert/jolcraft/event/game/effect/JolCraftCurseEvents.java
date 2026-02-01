@@ -12,8 +12,7 @@ import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
-import net.sievert.jolcraft.world.sound.JolCraftSounds;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import java.util.List;
 import java.util.Set;
@@ -38,13 +37,7 @@ public class JolCraftCurseEvents {
         var instance = event.getEffectInstance();
 
         if (CURSE_EFFECTS.stream().anyMatch(curse -> instance.getEffect().is(curse))) {
-            JolCraftSoundHelper.play(
-                    player.level(),
-                    JolCraftSounds.CURSE.get(),
-                    player.getSoundSource(),
-                    player.getX(), player.getY(), player.getZ(),
-                    0.8F, 1.0F
-            );
+            PlaySound.curse(player);
         }
     }
 
@@ -66,15 +59,7 @@ public class JolCraftCurseEvents {
         if (!MILK_REMOVAL_PLAYERS.contains(player.getUUID())) return;
 
         if (CURSE_EFFECTS.stream().anyMatch(curse -> event.getEffect().is(curse))) {
-            if (!player.level().isClientSide()) {
-                player.level().playSound(
-                        null,
-                        player.getX(), player.getY(), player.getZ(),
-                        JolCraftSounds.CURSE.get(),
-                        player.getSoundSource(),
-                        1.0F, 1.0F
-                );
-            }
+            PlaySound.curse(player);
             event.setCanceled(true);
         }
     }

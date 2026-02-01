@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.network.packet.s2c;
+package net.sievert.jolcraft.network.packet.c2s;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
-public record ClientboundParticlePacket(
+public record ServerboundSpawnWorldParticlePacket(
         ParticleOptions particle,
         boolean overrideLimiter,
         boolean alwaysShow,
@@ -17,14 +17,15 @@ public record ClientboundParticlePacket(
         double vx, double vy, double vz
 ) implements CustomPacketPayload {
 
-    public static final Type<ClientboundParticlePacket> TYPE =
-            new Type<>(JolCraft.location("particle"));
+    public static final Type<ServerboundSpawnWorldParticlePacket> TYPE =
+            new Type<>(JolCraft.location("spawn_world_particle"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundParticlePacket> CODEC =
-            CustomPacketPayload.codec(ClientboundParticlePacket::write, ClientboundParticlePacket::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundSpawnWorldParticlePacket> CODEC =
+            CustomPacketPayload.codec(ServerboundSpawnWorldParticlePacket::write, ServerboundSpawnWorldParticlePacket::read);
 
-    public static ClientboundParticlePacket read(FriendlyByteBuf buf) {
+    public static ServerboundSpawnWorldParticlePacket read(FriendlyByteBuf buf) {
         RegistryFriendlyByteBuf regBuf = (RegistryFriendlyByteBuf) buf;
+
         ParticleOptions particle = ParticleTypes.STREAM_CODEC.decode(regBuf);
         boolean overrideLimiter = buf.readBoolean();
         boolean alwaysShow = buf.readBoolean();
@@ -34,11 +35,19 @@ public record ClientboundParticlePacket(
         double vx = buf.readDouble();
         double vy = buf.readDouble();
         double vz = buf.readDouble();
-        return new ClientboundParticlePacket(particle, overrideLimiter, alwaysShow, x, y, z, vx, vy, vz);
+
+        return new ServerboundSpawnWorldParticlePacket(
+                particle,
+                overrideLimiter,
+                alwaysShow,
+                x, y, z,
+                vx, vy, vz
+        );
     }
 
     public void write(FriendlyByteBuf buf) {
         RegistryFriendlyByteBuf regBuf = (RegistryFriendlyByteBuf) buf;
+
         ParticleTypes.STREAM_CODEC.encode(regBuf, this.particle);
         buf.writeBoolean(this.overrideLimiter);
         buf.writeBoolean(this.alwaysShow);

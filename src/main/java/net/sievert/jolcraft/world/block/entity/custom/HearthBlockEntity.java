@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.sievert.jolcraft.world.block.custom.HearthBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -92,7 +93,13 @@ public class HearthBlockEntity extends BlockEntity {
         if (!anyValidBed) {
             if (lit) {
                 setLitBoth(serverlevel, pos, false);
-                serverlevel.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 0.8f);
+                JolCraftSoundHelper.block(
+                        serverlevel,
+                        pos,
+                        SoundEvents.FIRE_EXTINGUISH,
+                        1.0F,
+                        0.8F
+                );
             }
             return;
         }
@@ -100,7 +107,13 @@ public class HearthBlockEntity extends BlockEntity {
         // Turn on if at least one valid bed exists.
         if (!lit) {
             setLitBoth(serverlevel, pos, true);
-            serverlevel.playSound(null, pos, SoundEvents.BLAZE_SHOOT, SoundSource.BLOCKS, 1.0f, 0.8f);
+            JolCraftSoundHelper.block(
+                    level,
+                    pos,
+                    SoundEvents.BLAZE_SHOOT,
+                    1.0F,
+                    0.8F
+            );
         }
 
         // Refresh state after potential changes above.

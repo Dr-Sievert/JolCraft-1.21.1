@@ -2,21 +2,22 @@ package net.sievert.jolcraft.world.particle.util;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundParticlePacket;
+import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnWorldParticlePacket;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Particle spawning helper safe to call from common code.
+ * Particle helper safe to call from common code.
  * Rules:
  * - World particles are SERVER-authoritative and must be spawned once.
- * - Client NEVER spawns world particles.
+ * - Client NEVER spawns world particles (prevents double-spawn).
  * - Local-only particles are seen only by the owning client.
  */
 @ParametersAreNonnullByDefault
@@ -25,43 +26,34 @@ public final class JolCraftParticleHelper {
 
     private JolCraftParticleHelper() {}
 
-    public static final double DEFAULT_RADIUS = JolCraftNetworking.DEFAULT_RADIUS;
-
     // ------------------------------------------------------------
     // WORLD PARTICLES (server-authoritative, called once)
     // ------------------------------------------------------------
 
     public static void spawn(Level level,
                              ParticleOptions particle,
-                             double x, double y, double z,
-                             double vx, double vy, double vz) {
-        spawn(level, DEFAULT_RADIUS, particle, false, false, x, y, z, vx, vy, vz);
-    }
-
-    public static void spawn(Level level,
-                             double radius,
-                             ParticleOptions particle,
-                             double x, double y, double z,
-                             double vx, double vy, double vz) {
-        spawn(level, radius, particle, false, false, x, y, z, vx, vy, vz);
-    }
-
-    public static void spawn(Level level,
-                             double radius,
-                             ParticleOptions particle,
                              boolean overrideLimiter,
                              boolean alwaysShow,
                              double x, double y, double z,
                              double vx, double vy, double vz) {
 
-        if (level.isClientSide) return;
+        if (!level.isClientSide) {
+            if (!(level instanceof ServerLevel serverLevel)) return;
 
-        BlockPos pos = BlockPos.containing(x, y, z);
-        JolCraftNetworking.sendToNearbyClients(
-                level,
-                pos,
-                radius,
-                new ClientboundParticlePacket(
+            serverLevel.sendParticles(
+                    particle,
+                    overrideLimiter,
+                    alwaysShow,
+                    x, y, z,
+                    0,
+                    vx, vy, vz,
+                    1.0D
+            );
+            return;
+        }
+
+        JolCraftNetworking.sendToServer(
+                new ServerboundSpawnWorldParticlePacket(
                         particle,
                         overrideLimiter,
                         alwaysShow,
@@ -71,16 +63,25 @@ public final class JolCraftParticleHelper {
         );
     }
 
+    public static void spawn(Level level,
+                             ParticleOptions particle,
+                             double x, double y, double z,
+                             double vx, double vy, double vz) {
+        spawn(level, particle, particle.getType().getOverrideLimiter(), false, x, y, z, vx, vy, vz);
+    }
+
     // ------------------------------------------------------------
     // LOCAL-ONLY PARTICLES (single player sees it)
     // ------------------------------------------------------------
 
-    public static void spawnLocalOnly(Player player,
-                                      ParticleOptions particle,
-                                      boolean overrideLimiter,
-                                      boolean alwaysShow,
-                                      double x, double y, double z,
-                                      double vx, double vy, double vz) {
+    public static void spawnLocal(Player player,
+                                  ParticleOptions particle,
+                                  boolean overrideLimiter,
+                                  boolean alwaysShow,
+                                  double x, double y, double z,
+                                  double vx, double vy, double vz) {
+
+        if (!Double.isFinite(vx) || !Double.isFinite(vy) || !Double.isFinite(vz)) return;
 
         Level level = player.level();
 
@@ -91,16 +92,24 @@ public final class JolCraftParticleHelper {
         }
 
         if (player instanceof ServerPlayer sp) {
-            JolCraftNetworking.sendToClient(
-                    sp,
-                    new ClientboundParticlePacket(
-                            particle,
-                            overrideLimiter,
-                            alwaysShow,
-                            x, y, z,
-                            vx, vy, vz
-                    )
-            );
+            sp.connection.send(new ClientboundLevelParticlesPacket(
+                    particle,
+                    overrideLimiter,
+                    alwaysShow,
+                    x, y, z,
+                    (float) vx,
+                    (float) vy,
+                    (float) vz,
+                    1.0F,
+                    0
+            ));
         }
+    }
+
+    public static void spawnLocal(Player player,
+                                  ParticleOptions particle,
+                                  double x, double y, double z,
+                                  double vx, double vy, double vz) {
+        spawnLocal(player, particle, particle.getType().getOverrideLimiter(), false, x, y, z, vx, vy, vz);
     }
 }

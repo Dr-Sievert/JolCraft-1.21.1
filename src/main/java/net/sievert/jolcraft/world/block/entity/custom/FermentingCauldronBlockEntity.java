@@ -163,6 +163,14 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             usedItem.shrink(1);
         }
 
+        JolCraftSoundHelper.block(
+                level,
+                worldPosition,
+                SoundEvents.PLAYER_SPLASH,
+                0.4F,
+                1.5F
+        );
+
         int newCount = count + 1;
         ingredients.put(itemKey, new IngredientData(newCount, recipe.color()));
 
@@ -278,7 +286,13 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         }
 
         if (level != null) {
-            level.playSound(null, worldPosition, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.8F, 0.5F);
+            JolCraftSoundHelper.block(
+                    level,
+                    worldPosition,
+                    SoundEvents.BOTTLE_FILL,
+                    0.8F,
+                    0.9F
+            );
         }
 
         if (!player.getInventory().add(out)) {
@@ -536,7 +550,13 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         double z = worldPosition.getZ() + 0.5D + (level.random.nextDouble() - 0.5D);
 
         JolCraftParticleHelper.spawn(level, ParticleTypes.BUBBLE_POP, x, y, z, 0.0D, 0.05D, 0.0D);
-        JolCraftSoundHelper.play(level, SoundEvents.BUBBLE_POP, SoundSource.BLOCKS, x, y, z, 0.3F, 1.4F);
+        JolCraftSoundHelper.block(
+                level,
+                BlockPos.containing(x, y, z),
+                SoundEvents.BUBBLE_POP,
+                0.3F,
+                1.4F
+        );
 
         bubbleDelay = 3 + level.random.nextInt(bubbleTicks);
     }

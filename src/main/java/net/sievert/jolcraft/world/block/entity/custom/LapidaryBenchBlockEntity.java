@@ -31,6 +31,7 @@ import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.LapidaryBenchRecipe;
 import net.sievert.jolcraft.data.recipe.custom.input.LapidaryRecipeInput;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -152,22 +153,25 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
             else if (geodeLarge) pitch = 0.8F;
             else pitch = 1.3F;
 
-            level.playSound(
-                    null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.DEEPSLATE_BREAK, SoundSource.BLOCKS,
-                    1.3F, pitch
+            JolCraftSoundHelper.player(
+                    player,
+                    SoundEvents.DEEPSLATE_BREAK,
+                    1.3F,
+                    pitch
             );
         } else if (toolType == LapidaryBenchRecipe.ToolType.HAMMER) {
-            level.playSound(
-                    null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.BLOCKS,
-                    0.8F, 1.5F
+            JolCraftSoundHelper.player(
+                    player,
+                    SoundEvents.AMETHYST_BLOCK_BREAK,
+                    0.8F,
+                    1.5F
             );
         } else {
-            level.playSound(
-                    null, player.getX(), player.getY(), player.getZ(),
-                    JolCraftSounds.GEM_CUT.get(), SoundSource.BLOCKS,
-                    1.0F, 1.9F
+            JolCraftSoundHelper.player(
+                    player,
+                    JolCraftSounds.GEM_CUT.get(),
+                    1.0F,
+                    1.9F
             );
         }
 

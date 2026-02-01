@@ -59,6 +59,7 @@ import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -324,13 +325,13 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                     true
             );
 
-            level.playSound(
-                    null,
+            JolCraftSoundHelper.block(
+                    level,
                     pos,
                     JolCraftSounds.STRONGBOX_UNLOCK.get(),
                     SoundSource.BLOCKS,
-                    1.2F,
-                    newLocked ? 0.8F : 1.2F
+                    1.5F,
+                    1.0F
             );
 
             return InteractionResult.SUCCESS;

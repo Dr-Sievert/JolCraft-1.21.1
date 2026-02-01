@@ -15,6 +15,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.item.custom.tool.SpannerItem;
 import net.sievert.jolcraft.world.entity.util.dwarf.SalvageLootHelper;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import java.util.List;
 
@@ -53,7 +54,12 @@ public class JolCraftItemEvents {
                 spanner.hurtAndBreak(1, player, spannerSlot);
             }
             player.swing(swingHand, true);
-            level.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.5F);
+            JolCraftSoundHelper.player(
+                    player,
+                    SoundEvents.ITEM_BREAK,
+                    1.0F,
+                    1.5F
+            );
         }
 
         event.setCancellationResult(InteractionResult.SUCCESS);

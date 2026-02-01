@@ -30,9 +30,6 @@ public final class JolCraftServerProxy implements JolCraftClientAccess {
     }
 
     @Override
-    public void apply(ClientboundParticlePacket packet) {}
-
-    @Override
     public void apply(ClientboundPlaySoundPacket packet) {}
 
     @Override

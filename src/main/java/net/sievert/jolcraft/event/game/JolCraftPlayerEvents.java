@@ -39,6 +39,7 @@ import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.data.attachment.AttachmentSyncHelper;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import java.util.HashSet;
 
@@ -170,7 +171,13 @@ public class JolCraftPlayerEvents {
 
             if (canPlant && serverLevel.getBlockState(above).isAir()) {
                 serverLevel.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
-                serverLevel.playSound(null, above, SoundEvents.CROP_PLANTED, SoundSource.BLOCKS, 1.0F, 1.0F);
+                JolCraftSoundHelper.block(
+                        serverLevel,
+                        above,
+                        SoundEvents.CROP_PLANTED,
+                        1.0F,
+                        1.0F
+                );
 
                 if (!player.isCreative()) used.shrink(1);
 

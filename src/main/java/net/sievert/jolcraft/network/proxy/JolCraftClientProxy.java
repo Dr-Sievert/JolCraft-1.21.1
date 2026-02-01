@@ -59,20 +59,6 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     }
 
     @Override
-    public void apply(ClientboundParticlePacket packet) {
-        var mc = Minecraft.getInstance();
-        if (mc.level instanceof ClientLevel clientLevel) {
-            clientLevel.addParticle(
-                    packet.particle(),
-                    packet.overrideLimiter(),
-                    packet.alwaysShow(),
-                    packet.x(), packet.y(), packet.z(),
-                    packet.vx(), packet.vy(), packet.vz()
-            );
-        }
-    }
-
-    @Override
     public void apply(ClientboundPlaySoundPacket packet) {
         var mc = Minecraft.getInstance();
         if (mc.level == null) return;
