@@ -1,4 +1,4 @@
-    package net.sievert.jolcraft.world.block.entity.custom;
+package net.sievert.jolcraft.world.block.entity.custom;
 
     import net.minecraft.MethodsReturnNonnullByDefault;
     import net.minecraft.core.BlockPos;
