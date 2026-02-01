@@ -2,8 +2,8 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "jolcraft:block/deepslate_plate_block",
-		"particle": "jolcraft:block/deepslate_plate_block"
+		"0": "jolcraft:block/material/deepslate/deepslate_plate_block",
+		"particle": "jolcraft:block/material/deepslate/deepslate_plate_block"
 	},
 	"elements": [
 		{
