@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.network;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -8,17 +9,10 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.network.packet.s2c.*;
+import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientLanguagePacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundLanguagePacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundLoreUnlocksPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundParticlePacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundPlaySoundPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 public class JolCraftNetworking {
@@ -108,6 +102,12 @@ public class JolCraftNetworking {
 
     public static void sendToClient(ServerPlayer player, CustomPacketPayload payload) {
         player.connection.send(payload);
+    }
+
+    public static final double DEFAULT_RADIUS = 32.0D;
+
+    public static void sendToNearbyClients(Level world, BlockPos pos, CustomPacketPayload payload) {
+        sendToNearbyClients(world, pos, DEFAULT_RADIUS, payload);
     }
 
     public static void sendToNearbyClients(Level world, BlockPos pos, double radius, CustomPacketPayload payload) {

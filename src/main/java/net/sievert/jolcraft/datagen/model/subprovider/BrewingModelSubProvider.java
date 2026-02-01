@@ -1,12 +1,15 @@
 package net.sievert.jolcraft.datagen.model.subprovider;
 
-import com.google.gson.JsonObject;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.blockstates.BlockStateGenerator;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.blockstates.Variant;
+import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.sievert.jolcraft.JolCraft;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.sievert.jolcraft.datagen.model.util.AbstractModelProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -24,30 +27,18 @@ public class BrewingModelSubProvider implements AbstractModelProvider.ModelSubPr
         generateFlatItem(items, JolCraftItems.BARLEY_MALT.get(), ModelTemplates.FLAT_HANDHELD_ITEM, SUB_BREWING);
         generateFlatItem(items, JolCraftItems.YEAST.get(), ModelTemplates.FLAT_ITEM, SUB_BREWING);
         generateFlatItem(items, JolCraftItems.GLASS_MUG.get(), ModelTemplates.FLAT_ITEM, SUB_BREWING);
-
-        blocks.blockStateOutput.accept(new BlockStateGenerator() {
-            @Override
-            public JsonObject get() {
-                JsonObject root = new JsonObject();
-                JsonObject variants = new JsonObject();
-                variants.add("level=1", modelObj("block/fermenting_cauldron_level1"));
-                variants.add("level=2", modelObj("block/fermenting_cauldron_level2"));
-                variants.add("level=3", modelObj("block/fermenting_cauldron_full"));
-                root.add("variants", variants);
-                return root;
-            }
-
-            @Override
-            public @NotNull Block getBlock() {
-                return JolCraftBlocks.FERMENTING_CAULDRON.get();
-            }
-        });
+        fermentingCauldron(blocks);
     }
 
-    private static JsonObject modelObj(String path) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("model", JolCraft.MOD_ID + ":" + path);
-        return obj;
+    private static void fermentingCauldron(BlockModelGenerators blocks) {
+        var cauldronModel = ResourceLocation.withDefaultNamespace("block/cauldron");
+        blocks.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(JolCraftBlocks.FERMENTING_CAULDRON.get())
+                        .with(PropertyDispatch.property(LayeredCauldronBlock.LEVEL)
+                                .select(1, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
+                                .select(2, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
+                                .select(3, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
+                        )
+        );
     }
-
 }

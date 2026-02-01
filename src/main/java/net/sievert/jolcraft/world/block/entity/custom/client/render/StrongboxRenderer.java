@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.client.render.block;
+package net.sievert.jolcraft.world.block.entity.custom.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -17,7 +17,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
-import net.sievert.jolcraft.world.entity.client.model.blockentity.StrongboxModel;
+import net.sievert.jolcraft.world.block.entity.custom.client.model.StrongboxModel;
 
 @OnlyIn(Dist.CLIENT)
 public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implements BlockEntityRenderer<T> {

@@ -5,6 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -14,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -34,16 +34,18 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
-import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -55,10 +57,12 @@ import java.util.Optional;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class FermentingCauldronBlockEntity extends BlockEntity {
+public final class FermentingCauldronBlockEntity extends BlockEntity {
 
     // ===== NBT keys =====
-    private static final String NBT_BREW_TICKS = "brewTicks";
+    private static final String NBT_BREW_START_TIME = "brewStartTime";
+    private static final String NBT_BLEND_TOTAL_TICKS = "blendTotalTicks";
+
     private static final String NBT_BUBBLE_TICKS = "bubbleTicks";
     private static final String NBT_BUBBLE_DELAY = "bubbleDelay";
 
@@ -69,10 +73,9 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     private static final String NBT_COUNT = "count";
     private static final String NBT_COLOR = "color";
 
-    private static final String NBT_TARGET_COLOR = "targetColor";
     private static final String NBT_CURRENT_COLOR = "currentColor";
     private static final String NBT_START_COLOR = "startColor";
-    private static final String NBT_BLEND_TOTAL_TICKS = "blendTotalTicks";
+    private static final String NBT_TARGET_COLOR = "targetColor";
 
     private static final String NBT_FINALIZE = "finalize";
     private static final String NBT_EXTRACTABLE = "extractable";
@@ -82,46 +85,49 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     private static final String NBT_EFFECT_DURATION = "duration";
     private static final String NBT_EFFECT_AMPLIFIER = "amplifier";
 
-    // ===== state =====
+    // ===== gameplay state =====
     private ItemStack lastIngredient = ItemStack.EMPTY;
 
     private final Map<Item, IngredientData> ingredients = new HashMap<>();
-    private record IngredientData(int count, int color) {}
+    private record IngredientData(int count, int color) implements FermentingCauldronColorHelper.IngredientView {}
 
-    private int brewTicks = 0;
+    private final List<FermentingCauldronRecipe.EffectData> effects = new ArrayList<>();
+    private boolean finalize;
+    private boolean extractable;
 
+    // ===== server-only visuals =====
     private int bubbleTicks = 0;
     private int bubbleDelay = 0;
 
-    private int currentColor = 0xFFFFFFFF;
-    private int startColor = 0xFFFFFFFF;
-    private int targetColor = 0xFFFFFFFF;
-    private int blendTotalTicks = 1;
-
-    private final List<FermentingCauldronRecipe.EffectData> effects = new ArrayList<>();
-
-    private boolean finalize;
-    private boolean extractable;
+    // ===== synced render state (FIELDS ONLY) =====
+    private int currentColor = FermentingCauldronColorHelper.UNSET_COLOR;
+    private int startColor = FermentingCauldronColorHelper.UNSET_COLOR;
+    private int targetColor = FermentingCauldronColorHelper.UNSET_COLOR;
+    private long brewStartTime = 0L;     // 0 = not brewing
+    private int blendTotalTicks = 1;     // duration for current blend
 
     public FermentingCauldronBlockEntity(BlockPos pos, BlockState state) {
         super(JolCraftBlockEntities.FERMENTING_CAULDRON.get(), pos, state);
     }
 
+    // =====================================================================
+    // Interaction
+    // =====================================================================
+
     public InteractionResult handleInteraction(Player player, InteractionHand hand, ItemStack usedItem) {
-        if (level == null || level.isClientSide || hand != InteractionHand.MAIN_HAND || isBrewing() || usedItem.isEmpty()) {
-            return InteractionResult.SUCCESS;
-        }
+        if (level == null || level.isClientSide) return InteractionResult.FAIL;
+        if (hand != InteractionHand.MAIN_HAND) return InteractionResult.FAIL;
+        if (isBrewing()) return InteractionResult.FAIL;
+        if (usedItem.isEmpty()) return InteractionResult.FAIL;
 
         FermentingCauldronRecipe recipe = findRecipe(usedItem);
-        if (recipe == null) {
-            return InteractionResult.SUCCESS;
-        }
+        if (recipe == null) return InteractionResult.FAIL;
 
         if (extractable) {
-            if (!recipe.isExtraction()) return InteractionResult.SUCCESS;
+            if (!recipe.isExtraction()) return InteractionResult.FAIL;
 
             ItemStack extract = recipe.extract();
-            if (extract == null || extract.isEmpty()) return InteractionResult.SUCCESS;
+            if (extract == null || extract.isEmpty()) return InteractionResult.FAIL;
 
             extractBrew(player, usedItem, extract);
             return InteractionResult.SUCCESS;
@@ -164,10 +170,10 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
 
         if (recipe.effect() != null) {
             FermentingCauldronRecipe.EffectData base = recipe.effect();
-            if (base == null) return InteractionResult.SUCCESS;
-
+            if (base == null) return InteractionResult.FAIL;
             int amp = Math.min(2, newCount - 1);
-            FermentingCauldronRecipe.EffectData stacked = new FermentingCauldronRecipe.EffectData(base.id(), base.duration(), amp);
+            FermentingCauldronRecipe.EffectData stacked =
+                    new FermentingCauldronRecipe.EffectData(base.id(), base.duration(), amp);
             upsertEffect(stacked);
         }
 
@@ -192,44 +198,76 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         this.lastIngredient = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
     }
 
+    // =====================================================================
+    // Brewing (no color math here)
+    // =====================================================================
+
     public boolean isBrewing() {
-        return brewTicks > 0;
+        return brewStartTime > 0L;
     }
 
-    private void startBrew(int recipeBrewTicks, int recipeBubbleTicks) {
-        ensureBaseWaterColor();
+    private void startBrew(int recipeBlendTicks, int recipeBubbleTicks) {
+        if (level == null || level.isClientSide) return;
 
-        brewTicks = Math.max(1, recipeBrewTicks);
+        currentColor = FermentingCauldronColorHelper.resolveBaseWaterColor(level, worldPosition, currentColor);
+
+        blendTotalTicks = Math.max(1, recipeBlendTicks);
         bubbleTicks = Math.max(0, recipeBubbleTicks);
         bubbleDelay = 0;
 
         startColor = currentColor;
-        targetColor = computeMixedIngredientColor();
-        blendTotalTicks = brewTicks;
+        targetColor = FermentingCauldronColorHelper.computeMixedIngredientColor(ingredients.values(), currentColor);
 
-        syncToClient();
-    }
-
-    private void resetBrewState() {
-        brewTicks = 0;
-        bubbleTicks = 0;
-        bubbleDelay = 0;
-
-        startColor = currentColor;
-        targetColor = currentColor;
-        blendTotalTicks = 1;
+        brewStartTime = level.getGameTime();
+        sync();
     }
 
     private void finalizeBrew() {
         currentColor = targetColor;
-        resetBrewState();
 
-        if (finalize) {
-            extractable = true;
+        brewStartTime = 0L;
+        blendTotalTicks = 1;
+
+        bubbleTicks = 0;
+        bubbleDelay = 0;
+
+        startColor = currentColor;
+
+        if (finalize) extractable = true;
+
+        sync();
+    }
+
+    public void tick() {
+        if (level == null || level.isClientSide) return;
+        if (!isBrewing()) return;
+
+        doBubbleEffects();
+
+        if (FermentingCauldronColorHelper.isComplete(level, brewStartTime, blendTotalTicks)) {
+            finalizeBrew();
+        }
+    }
+
+    public void fastForwardBrew(long skippedTicks) {
+        if (level == null || level.isClientSide) return;
+        if (skippedTicks <= 0L) return;
+        if (!isBrewing()) return;
+
+        long newStart = FermentingCauldronColorHelper.fastForwardStartTime(level, brewStartTime, blendTotalTicks, skippedTicks);
+        if (newStart <= 0L) {
+            finalizeBrew();
+            return;
         }
 
-        syncToClient();
+        brewStartTime = newStart;
+        bubbleDelay = 0;
+        sync();
     }
+
+    // =====================================================================
+    // Extraction
+    // =====================================================================
 
     private void extractBrew(Player player, ItemStack usedItem, ItemStack result) {
         ItemStack out = createBrewStack(result.copy());
@@ -281,6 +319,10 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         return out;
     }
 
+    // =====================================================================
+    // Recipes
+    // =====================================================================
+
     @Nullable
     private FermentingCauldronRecipe findRecipe(ItemStack usedItem) {
         if (level == null || level.getServer() == null) return null;
@@ -297,90 +339,47 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
                 .orElse(null);
     }
 
-    public void tick() {
-        if (level == null) return;
-        if (!isBrewing()) return;
-
-        brewTicks--;
-        doBubbleEffects();
-
-        if (brewTicks <= 0) {
-            finalizeBrew();
-        }
-
-        if (level.isClientSide) {
-            BlockState state = getBlockState();
-            level.sendBlockUpdated(worldPosition, state, state, 8);
-        }
-    }
-
-    public void fastForwardBrew(long skippedTicks) {
-        if (level == null || skippedTicks <= 0) return;
-
-        int total = Math.max(1, blendTotalTicks);
-        int remaining = Math.max(0, brewTicks);
-
-        int skip = (int) Math.min(skippedTicks, remaining);
-        int elapsed = total - remaining;
-        int newElapsed = Math.min(total, elapsed + skip);
-
-        float t = clamp01(newElapsed / (float) total);
-        int progressed = lerpArgb(startColor, targetColor, t);
-
-        currentColor = progressed;
-        startColor = progressed;
-
-        brewTicks = Math.max(1, remaining - skip);
-
-        bubbleDelay = 0;
-        syncToClient();
-    }
+    // =====================================================================
+    // Level hooks / sync (standard BE packets only)
+    // =====================================================================
 
     @Override
     public void setLevel(Level level) {
         super.setLevel(level);
 
-        if (level.isClientSide) {
-            ensureBaseWaterColor();
+        if (!level.isClientSide) {
+            if (brewStartTime > 0L && FermentingCauldronColorHelper.isComplete(level, brewStartTime, blendTotalTicks)) {
+                finalizeBrew();
+            }
         }
     }
 
-    @Nullable
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    public @NotNull ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(NBT_BREW_TICKS, brewTicks);
-        tag.putInt(NBT_BLEND_TOTAL_TICKS, blendTotalTicks);
+        tag.putInt(NBT_CURRENT_COLOR, currentColor);
         tag.putInt(NBT_START_COLOR, startColor);
         tag.putInt(NBT_TARGET_COLOR, targetColor);
-        tag.putInt(NBT_CURRENT_COLOR, currentColor);
-        tag.putInt(NBT_BUBBLE_TICKS, bubbleTicks);
-        tag.putBoolean(NBT_FINALIZE, finalize);
-        if (extractable) tag.putBoolean(NBT_EXTRACTABLE, true);
-        else tag.remove(NBT_EXTRACTABLE);
+        tag.putLong(NBT_BREW_START_TIME, brewStartTime);
+        tag.putInt(NBT_BLEND_TOTAL_TICKS, blendTotalTicks);
         return tag;
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        brewTicks = Math.max(0, tag.getInt(NBT_BREW_TICKS));
-        bubbleTicks = Math.max(0, tag.getInt(NBT_BUBBLE_TICKS));
-        blendTotalTicks = Math.max(1, tag.getInt(NBT_BLEND_TOTAL_TICKS));
-
+        if (tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT)) currentColor = tag.getInt(NBT_CURRENT_COLOR);
         if (tag.contains(NBT_START_COLOR, Tag.TAG_INT)) startColor = tag.getInt(NBT_START_COLOR);
         if (tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT)) targetColor = tag.getInt(NBT_TARGET_COLOR);
-        if (tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT)) currentColor = tag.getInt(NBT_CURRENT_COLOR);
-
-        finalize = tag.getBoolean(NBT_FINALIZE);
-        extractable = tag.getBoolean(NBT_EXTRACTABLE);
+        if (tag.contains(NBT_BREW_START_TIME, Tag.TAG_LONG)) brewStartTime = tag.getLong(NBT_BREW_START_TIME);
+        if (tag.contains(NBT_BLEND_TOTAL_TICKS, Tag.TAG_INT)) blendTotalTicks = Math.max(1, tag.getInt(NBT_BLEND_TOTAL_TICKS));
     }
 
-    private void syncToClient() {
+    private void sync() {
         setChanged();
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
@@ -388,24 +387,26 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
+    // =====================================================================
+    // Persistence
+    // =====================================================================
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
 
-        tag.putInt(NBT_BREW_TICKS, brewTicks);
+        tag.putLong(NBT_BREW_START_TIME, brewStartTime);
+        tag.putInt(NBT_BLEND_TOTAL_TICKS, blendTotalTicks);
+
         tag.putInt(NBT_BUBBLE_TICKS, bubbleTicks);
         tag.putInt(NBT_BUBBLE_DELAY, bubbleDelay);
 
         if (!lastIngredient.isEmpty()) {
             ResourceLocation id = BuiltInRegistries.ITEM.getKey(lastIngredient.getItem());
             tag.putString(NBT_LAST_INGREDIENT_ID, id.toString());
-        } else {
-            tag.remove(NBT_LAST_INGREDIENT_ID);
         }
 
-        if (ingredients.isEmpty()) {
-            tag.remove(NBT_INGREDIENTS);
-        } else {
+        if (!ingredients.isEmpty()) {
             ListTag list = new ListTag();
             for (var e : ingredients.entrySet()) {
                 Item item = e.getKey();
@@ -424,29 +425,17 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
 
                 list.add(one);
             }
-
-            if (list.isEmpty()) tag.remove(NBT_INGREDIENTS);
-            else tag.put(NBT_INGREDIENTS, list);
+            if (!list.isEmpty()) tag.put(NBT_INGREDIENTS, list);
         }
 
-        tag.putInt(NBT_TARGET_COLOR, targetColor);
         tag.putInt(NBT_CURRENT_COLOR, currentColor);
+        tag.putInt(NBT_START_COLOR, startColor);
+        tag.putInt(NBT_TARGET_COLOR, targetColor);
 
         tag.putBoolean(NBT_FINALIZE, finalize);
         if (extractable) tag.putBoolean(NBT_EXTRACTABLE, true);
-        else tag.remove(NBT_EXTRACTABLE);
 
-        if (brewTicks > 0) {
-            tag.putInt(NBT_START_COLOR, startColor);
-            tag.putInt(NBT_BLEND_TOTAL_TICKS, blendTotalTicks);
-        } else {
-            tag.remove(NBT_START_COLOR);
-            tag.remove(NBT_BLEND_TOTAL_TICKS);
-        }
-
-        if (effects.isEmpty()) {
-            tag.remove(NBT_EFFECTS);
-        } else {
+        if (!effects.isEmpty()) {
             ListTag list = new ListTag();
             for (FermentingCauldronRecipe.EffectData eff : effects) {
                 CompoundTag one = new CompoundTag();
@@ -463,7 +452,9 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
 
-        brewTicks = Math.max(0, tag.getInt(NBT_BREW_TICKS));
+        brewStartTime = tag.getLong(NBT_BREW_START_TIME);
+        blendTotalTicks = Math.max(1, tag.getInt(NBT_BLEND_TOTAL_TICKS));
+
         bubbleTicks = Math.max(0, tag.getInt(NBT_BUBBLE_TICKS));
         bubbleDelay = Math.max(0, tag.getInt(NBT_BUBBLE_DELAY));
 
@@ -505,18 +496,9 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         finalize = tag.getBoolean(NBT_FINALIZE);
         extractable = tag.getBoolean(NBT_EXTRACTABLE);
 
-        targetColor = tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_TARGET_COLOR) : 0xFFFFFFFF;
-        currentColor = tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_CURRENT_COLOR) : targetColor;
-
-        if (brewTicks > 0) {
-            startColor = tag.contains(NBT_START_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_START_COLOR) : currentColor;
-            int total = tag.contains(NBT_BLEND_TOTAL_TICKS, Tag.TAG_INT) ? tag.getInt(NBT_BLEND_TOTAL_TICKS) : brewTicks;
-            blendTotalTicks = Math.max(1, total);
-        } else {
-            startColor = targetColor;
-            blendTotalTicks = 1;
-            currentColor = targetColor;
-        }
+        currentColor = tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_CURRENT_COLOR) : FermentingCauldronColorHelper.UNSET_COLOR;
+        startColor = tag.contains(NBT_START_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_START_COLOR) : currentColor;
+        targetColor = tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_TARGET_COLOR) : currentColor;
 
         effects.clear();
         if (tag.contains(NBT_EFFECTS, Tag.TAG_LIST)) {
@@ -538,9 +520,14 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
+    // =====================================================================
+    // Server visuals / misc
+    // =====================================================================
+
     private void doBubbleEffects() {
-        if (level == null) return;
+        if (level == null || level.isClientSide) return;
         if (!isBrewing()) return;
+
         if (bubbleTicks <= 0) return;
         if (bubbleDelay > 0) { bubbleDelay--; return; }
 
@@ -569,94 +556,13 @@ public class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
-    public int getRenderColor() {
-        if (level == null) return currentColor;
+    // =====================================================================
+    // Getters (renderer reads these; no color math here)
+    // =====================================================================
 
-        if (level.isClientSide && currentColor == 0xFFFFFFFF) {
-            ensureBaseWaterColor();
-        }
-
-        if (!isBrewing()) return currentColor;
-
-        int total = Math.max(1, blendTotalTicks);
-        int remaining = Math.max(0, brewTicks);
-        int elapsed = total - remaining;
-
-        float t = clamp01(elapsed / (float) total);
-        return lerpArgb(startColor, targetColor, t);
-    }
-
-    private int computeMixedIngredientColor() {
-        double sumW = 0.0;
-        double sumR = 0.0;
-        double sumG = 0.0;
-        double sumB = 0.0;
-
-        for (var e : ingredients.entrySet()) {
-            IngredientData data = e.getValue();
-            if (data == null) continue;
-
-            int count = data.count();
-            if (count <= 0) continue;
-
-            int c = data.color();
-            int r = (c >>> 16) & 0xFF;
-            int g = (c >>> 8) & 0xFF;
-            int b = c & 0xFF;
-
-            int steps = Math.min(3, count);
-            for (int i = 0; i < steps; i++) {
-                double w = 1.0 / (1 << i);
-                sumW += w;
-                sumR += r * w;
-                sumG += g * w;
-                sumB += b * w;
-            }
-        }
-
-        if (sumW <= 0.0) {
-            return currentColor;
-        }
-
-        int outR = clamp255((int) Math.round(sumR / sumW));
-        int outG = clamp255((int) Math.round(sumG / sumW));
-        int outB = clamp255((int) Math.round(sumB / sumW));
-
-        return 0xFF000000 | (outR << 16) | (outG << 8) | outB;
-    }
-
-    private static int clamp255(int v) {
-        return v < 0 ? 0 : Math.min(v, 255);
-    }
-
-    private static float clamp01(float v) {
-        return v < 0f ? 0f : Math.min(v, 1f);
-    }
-
-    private static int lerpArgb(int a, int b, float t) {
-        int aA = (a >>> 24) & 0xFF, aR = (a >>> 16) & 0xFF, aG = (a >>> 8) & 0xFF, aB = a & 0xFF;
-        int bA = (b >>> 24) & 0xFF, bR = (b >>> 16) & 0xFF, bG = (b >>> 8) & 0xFF, bB = b & 0xFF;
-
-        int oA = (int) (aA + (bA - aA) * t);
-        int oR = (int) (aR + (bR - aR) * t);
-        int oG = (int) (aG + (bG - aG) * t);
-        int oB = (int) (aB + (bB - aB) * t);
-
-        return (oA << 24) | (oR << 16) | (oG << 8) | oB;
-    }
-
-    private void ensureBaseWaterColor() {
-        if (level == null) return;
-        if (currentColor != 0xFFFFFFFF) return;
-
-        int rgb = level.getBiome(worldPosition).value().getWaterColor();
-        int argb = 0xFF000000 | (rgb & 0xFFFFFF);
-
-        currentColor = argb;
-        startColor = argb;
-
-        if (targetColor == 0xFFFFFFFF) {
-            targetColor = argb;
-        }
-    }
+    public int getCurrentColor() { return currentColor; }
+    public int getStartColor() { return startColor; }
+    public int getTargetColor() { return targetColor; }
+    public long getBrewStartTime() { return brewStartTime; }
+    public int getBlendTotalTicks() { return blendTotalTicks; }
 }

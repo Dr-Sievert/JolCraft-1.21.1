@@ -31,7 +31,7 @@ public final class JolCraftSoundHelper {
 
     private JolCraftSoundHelper() {}
 
-    public static final double DEFAULT_RADIUS = 32.0D;
+    public static final double DEFAULT_RADIUS = JolCraftNetworking.DEFAULT_RADIUS;
 
     // ------------------------------------------------------------
     // WORLD SOUNDS (server-authoritative, called once)
@@ -62,7 +62,15 @@ public final class JolCraftSoundHelper {
                             double x, double y, double z,
                             float volume,
                             float pitch) {
-        play(level, DEFAULT_RADIUS, soundId, source, x, y, z, volume, pitch);
+
+        if (level.isClientSide) return;
+
+        BlockPos pos = BlockPos.containing(x, y, z);
+        JolCraftNetworking.sendToNearbyClients(
+                level,
+                pos,
+                new ClientboundPlaySoundPacket(soundId, x, y, z, source, volume, pitch)
+        );
     }
 
     public static void play(Level level,
@@ -85,7 +93,11 @@ public final class JolCraftSoundHelper {
                             double x, double y, double z,
                             float volume,
                             float pitch) {
-        play(level, DEFAULT_RADIUS, sound, source, x, y, z, volume, pitch);
+
+        ResourceLocation id = BuiltInRegistries.SOUND_EVENT.getKey(sound);
+        if (id == null) return;
+
+        play(level, id, source, x, y, z, volume, pitch);
     }
 
     // ------------------------------------------------------------

@@ -14,17 +14,18 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
+import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
 import net.sievert.jolcraft.world.item.client.BrewColor;
 import net.sievert.jolcraft.world.item.client.coin.CoinPouchTooltipRenderer;
 import net.sievert.jolcraft.world.item.client.compass.DialColor;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.client.model.animal.MuffhornModel;
-import net.sievert.jolcraft.world.entity.client.model.blockentity.StrongboxModel;
+import net.sievert.jolcraft.world.block.entity.custom.client.model.StrongboxModel;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.*;
 import net.sievert.jolcraft.world.entity.client.model.object.RadiantModel;
 import net.sievert.jolcraft.world.entity.client.render.animal.MuffhornRenderer;
-import net.sievert.jolcraft.world.entity.client.render.block.StrongboxRenderer;
+import net.sievert.jolcraft.world.block.entity.custom.client.render.StrongboxRenderer;
 import net.sievert.jolcraft.world.entity.client.render.dwarf.*;
 import net.sievert.jolcraft.world.entity.client.render.object.RadiantRenderer;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
@@ -139,6 +140,7 @@ public class JolCraftClientModEvents {
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(JolCraftBlockEntities.STRONGBOX.get(), StrongboxRenderer::new);
+        event.registerBlockEntityRenderer(JolCraftBlockEntities.FERMENTING_CAULDRON.get(), FermentingCauldronRenderer::new);
     }
 
     @SubscribeEvent
@@ -169,19 +171,5 @@ public class JolCraftClientModEvents {
     public static void onRegisterTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(JolCraft.location("dial_color"), DialColor.MAP_CODEC);
         event.register(JolCraft.location("brew_color"), BrewColor.MAP_CODEC);
-    }
-
-    @SubscribeEvent
-    public static void onFermentingCauldronBlend(RegisterColorHandlersEvent.Block event) {
-        event.register((state, level, pos, tintIndex) -> {
-            if (level == null || pos == null) return 0xFFFFFFFF;
-
-            var be = level.getBlockEntity(pos);
-            if (be instanceof FermentingCauldronBlockEntity cauldron) {
-                return cauldron.getRenderColor();
-            }
-
-            return 0xFFFFFFFF;
-        }, JolCraftBlocks.FERMENTING_CAULDRON.get());
     }
 }
