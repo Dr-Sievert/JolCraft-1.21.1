@@ -339,7 +339,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     private static final Map<AbstractDwarfEntity, DwarfRenderState> CLIENT_RENDER_STATES = new WeakHashMap<>();
 
-    public static DwarfRenderState getOrCreateClientRenderState(AbstractDwarfEntity entity) {
+    public static DwarfRenderState getOrCreate(AbstractDwarfEntity entity) {
         return CLIENT_RENDER_STATES.computeIfAbsent(entity, e -> new DwarfRenderState());
     }
 

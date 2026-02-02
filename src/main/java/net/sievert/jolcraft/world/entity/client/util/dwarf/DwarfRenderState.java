@@ -5,19 +5,33 @@ import net.minecraft.world.entity.AnimationState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfBeardColor;
 import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfEyeColor;
 import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfVariant;
-import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
 
 import java.util.EnumMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Holds per-frame state for rendering a dwarf entity.
- * This includes animation states, visual appearance, and current action information.
+ * Client-only. Use {@link #getOrCreate(AbstractDwarfEntity)} from renderer/model code.
  */
 @OnlyIn(Dist.CLIENT)
 public class DwarfRenderState extends HumanoidRenderState {
+
+    /**
+     * Client-side persistent render state per dwarf entity.
+     */
+    private static final Map<AbstractDwarfEntity, DwarfRenderState> STATES = new WeakHashMap<>();
+
+    /**
+     * Returns the persistent render state for the given dwarf entity, creating it if necessary.
+     */
+    public static DwarfRenderState getOrCreate(AbstractDwarfEntity entity) {
+        return STATES.computeIfAbsent(entity, e -> new DwarfRenderState());
+    }
 
     /**
      * Per-action animation states used to track and drive custom dwarf animations.
@@ -60,13 +74,5 @@ public class DwarfRenderState extends HumanoidRenderState {
         for (DwarfActionType type : DwarfActionType.values()) {
             animationStates.put(type, new AnimationState());
         }
-    }
-
-    /**
-     * Interface for dwarf entities that provide a render state.
-     * Used by models to retrieve animation data safely.
-     */
-    public interface Provider {
-        DwarfRenderState getDwarfRenderState();
     }
 }
