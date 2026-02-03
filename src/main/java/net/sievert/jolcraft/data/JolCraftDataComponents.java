@@ -9,7 +9,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.entity.util.dwarf.bounty.BountyData;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyData;
 import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 
 import java.util.function.UnaryOperator;

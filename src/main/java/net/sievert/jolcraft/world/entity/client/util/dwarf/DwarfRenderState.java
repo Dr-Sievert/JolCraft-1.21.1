@@ -5,10 +5,10 @@ import net.minecraft.world.entity.AnimationState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionType;
-import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfVariant;
 
 import java.util.EnumMap;
 import java.util.Map;

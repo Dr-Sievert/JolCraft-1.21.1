@@ -473,46 +473,46 @@ public class DwarfTrades {
     }
 
     //JEI
-    public static ItemStack getExampleInputA(ItemListing listing) {
+    public static ItemStack getExampleInputA(DwarfTrades.ItemListing listing) {
         // Revert to original logic without the alternating logic
-        if (listing instanceof ItemsForGold) {
+        if (listing instanceof DwarfTrades.ItemsForGold) {
             return new ItemStack(JolCraftItems.GOLD_COIN.get());
-        } else if (listing instanceof GoldForItems trade) {
+        } else if (listing instanceof DwarfTrades.GoldForItems trade) {
             return new ItemStack(trade.item.asItem());
-        } else if (listing instanceof ItemsAndGoldToItems || listing instanceof ItemsAndGoldToItemsWithData) {
+        } else if (listing instanceof DwarfTrades.ItemsAndGoldToItems || listing instanceof DwarfTrades.ItemsAndGoldToItemsWithData) {
             return new ItemStack(JolCraftItems.GOLD_COIN.get());
         } else if (listing instanceof ItemForItemWithData trade) {
             return new ItemStack(trade.inputItem);
-        } else if (listing instanceof TreasureMapForGold) {
+        } else if (listing instanceof DwarfTrades.TreasureMapForGold) {
             return new ItemStack(JolCraftItems.GOLD_COIN.get());
         }
 
         return ItemStack.EMPTY;
     }
 
-    public static ItemStack getExampleInputB(ItemListing listing) {
-        if (listing instanceof ItemsAndGoldToItems trade) {
+    public static ItemStack getExampleInputB(DwarfTrades.ItemListing listing) {
+        if (listing instanceof DwarfTrades.ItemsAndGoldToItems trade) {
             return new ItemStack(trade.inputItem);
-        } else if (listing instanceof ItemsAndGoldToItemsWithData) {
-            return new ItemStack(((ItemsAndGoldToItemsWithData) listing).inputItem);
-        } else if (listing instanceof TreasureMapForGold) {
+        } else if (listing instanceof DwarfTrades.ItemsAndGoldToItemsWithData) {
+            return new ItemStack(((DwarfTrades.ItemsAndGoldToItemsWithData) listing).inputItem);
+        } else if (listing instanceof DwarfTrades.TreasureMapForGold) {
             return new ItemStack(Items.MAP);
         }
         return ItemStack.EMPTY;
     }
 
-    public static ItemStack getExampleOutput(ItemListing listing) {
-        if (listing instanceof ItemsForGold trade) {
+    public static ItemStack getExampleOutput(DwarfTrades.ItemListing listing) {
+        if (listing instanceof DwarfTrades.ItemsForGold trade) {
             return new ItemStack(trade.item);
-        } else if (listing instanceof GoldForItems) {
+        } else if (listing instanceof DwarfTrades.GoldForItems) {
             return new ItemStack(JolCraftItems.GOLD_COIN.get());
-        } else if (listing instanceof ItemsAndGoldToItems trade) {
+        } else if (listing instanceof DwarfTrades.ItemsAndGoldToItems trade) {
             return new ItemStack(trade.outputItem);
-        } else if (listing instanceof ItemsWithDataForGold trade) {
+        } else if (listing instanceof DwarfTrades.ItemsWithDataForGold trade) {
             ItemStack stack = new ItemStack(trade.item);
             trade.stackModifier.accept(stack);
             return stack;
-        } else if (listing instanceof ItemsAndGoldToItemsWithData trade) {
+        } else if (listing instanceof DwarfTrades.ItemsAndGoldToItemsWithData trade) {
             ItemStack stack = new ItemStack(trade.outputItem);
             trade.stackModifier.accept(stack);
             return stack;
@@ -520,7 +520,7 @@ public class DwarfTrades {
             ItemStack stack = new ItemStack(trade.outputItem);
             trade.stackModifier.accept(stack);
             return stack;
-        } else if (listing instanceof TreasureMapForGold trade) {
+        } else if (listing instanceof DwarfTrades.TreasureMapForGold trade) {
             ItemStack stack = new ItemStack(Items.FILLED_MAP);
             stack.set(DataComponents.ITEM_NAME, Component.translatable(trade.displayName));
             return stack;

@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.item.custom.tool.SpannerItem;
-import net.sievert.jolcraft.world.entity.util.dwarf.SalvageLootHelper;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.SalvageLootHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import java.util.List;

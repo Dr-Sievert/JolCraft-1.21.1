@@ -23,10 +23,10 @@ import net.sievert.jolcraft.world.entity.client.util.dwarf.layer.DwarfEyeLayer;
 import net.sievert.jolcraft.world.entity.client.util.layer.EmissiveLayer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.util.dwarf.action.DwarfActionHelper;
-import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.world.entity.util.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.action.DwarfActionHelper;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfVariant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

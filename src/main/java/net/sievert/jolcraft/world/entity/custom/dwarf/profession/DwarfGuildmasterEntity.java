@@ -21,13 +21,13 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.util.dwarf.interaction.DwarfInteractionHelper;
-import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;

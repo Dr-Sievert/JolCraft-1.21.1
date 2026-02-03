@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty;
 
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.component.DataComponentType;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 
 public class BountyHelper {

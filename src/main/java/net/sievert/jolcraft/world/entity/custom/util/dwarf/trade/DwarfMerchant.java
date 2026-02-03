@@ -1,5 +1,7 @@
 package net.sievert.jolcraft.world.entity.custom.util.dwarf.trade;
 
+import java.util.OptionalInt;
+import javax.annotation.Nullable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -9,9 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
-
-import javax.annotation.Nullable;
-import java.util.OptionalInt;
 
 public interface DwarfMerchant {
     void setTradingPlayer(@Nullable Player tradingPlayer);
@@ -28,7 +27,7 @@ public interface DwarfMerchant {
     /**
      * Notifies the merchant of a possible merchant recipe being fulfilled or not.
      * Usually, this is just a sound byte being played depending on whether the
-     * suggested {@link ItemStack} is not empty.
+     * suggested {@link net.minecraft.world.item.ItemStack} is not empty.
      */
     void notifyTradeUpdated(ItemStack stack);
 

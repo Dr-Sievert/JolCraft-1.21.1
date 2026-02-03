@@ -19,8 +19,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
-import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.util.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 
 import javax.annotation.ParametersAreNonnullByDefault;

@@ -12,10 +12,7 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.util.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.util.dwarf.action.type.InspectDwarfAction;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyData;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyGenerator;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyType;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.*;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 

@@ -2,6 +2,8 @@ package net.sievert.jolcraft.world.entity.custom.util.dwarf.trade;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import java.util.Optional;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
@@ -9,8 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
-
-import java.util.Optional;
 
 public class DwarfMerchantOffer {
     public static final Codec<DwarfMerchantOffer> CODEC = RecordCodecBuilder.create(

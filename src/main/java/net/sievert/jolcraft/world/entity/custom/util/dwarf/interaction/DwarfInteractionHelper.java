@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyType;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.type.BreedInteraction;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.type.*;
 import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.type.bounty.BountyCrateInteraction;
 import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.type.bounty.BountyInteraction;
 import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.type.check.ActionCheckInteraction;

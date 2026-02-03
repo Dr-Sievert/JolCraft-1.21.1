@@ -23,7 +23,7 @@ import net.sievert.jolcraft.datagen.language.subprovider.JeiLangSubProvider;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.*;
-import net.sievert.jolcraft.world.entity.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;

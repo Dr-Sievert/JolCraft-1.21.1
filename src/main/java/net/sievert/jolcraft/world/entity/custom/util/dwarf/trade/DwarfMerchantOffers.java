@@ -1,16 +1,15 @@
 package net.sievert.jolcraft.world.entity.custom.util.dwarf.trade;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import javax.annotation.Nullable;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
 
 public class DwarfMerchantOffers extends ArrayList<DwarfMerchantOffer> {
     public static final Codec<DwarfMerchantOffers> CODEC = DwarfMerchantOffer.CODEC

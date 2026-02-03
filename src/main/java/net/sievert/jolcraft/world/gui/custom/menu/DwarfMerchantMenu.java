@@ -14,7 +14,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.world.gui.custom.slot.DwarfMerchantResultSlot;
-import net.sievert.jolcraft.world.entity.util.dwarf.trade.*;
+import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.*;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
