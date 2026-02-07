@@ -29,8 +29,10 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.goal.DwarfGoals;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.loadout.DwarfLoadouts;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
@@ -72,21 +74,23 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     //General fields
 
     public boolean canSign() {
-        return true;
+        return DwarfProfessionTraits.of(this.getProfession()).canSign().test(this);
     }
 
     public boolean canEndorse() {
-        return this.getMerchantLevel() >= 1;
+        return DwarfProfessionTraits.of(this.getProfession()).canEndorse().test(this);
     }
 
-    public boolean neverEndorse() { return false; }
+    public boolean neverEndorse() {
+        return DwarfProfessionTraits.of(this.getProfession()).neverEndorse();
+    }
 
     public int getRequiredTier() {
-        return 0;
+        return DwarfProfessionTraits.of(this.getProfession()).requiredTier();
     }
 
     public ItemStack getSignedContractItem() {
-        return new ItemStack(JolCraftItems.CONTRACT_SIGNED.get());
+        return DwarfProfessionTraits.of(this.getProfession()).contract().create();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -107,25 +111,22 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     }
 
     protected DwarfProfession getSpawnProfession() {
-        return DwarfProfession.NONE;
+        return DwarfProfession.fromEntityType(this.getType());
     }
 
     public void setProfession(@Nullable DwarfProfession profession) {
+        if (!(this.level() instanceof ServerLevel)) return;
         if (profession == null) profession = DwarfProfession.NONE;
 
         DwarfProfession current = this.getProfession();
         if (current == profession) {
-            if (!this.level().isClientSide) {
-                DwarfAttributes.applyTo(this, profession);
-            }
+            DwarfAttributes.applyTo(this, profession);
             return;
         }
 
         this.setData(PROFESSION, profession.getId());
-
-        if (!this.level().isClientSide) {
-            DwarfAttributes.applyTo(this, profession);
-        }
+        DwarfAttributes.applyTo(this, profession);
+        DwarfGoals.rebuildGoals(this, profession);
     }
 
     @Override
@@ -141,6 +142,13 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     public boolean canBeLeashed() {
         return false;
+    }
+
+    //Goals
+
+    @Override
+    protected void registerGoals() {
+        DwarfGoals.registerGoals(this);
     }
 
     //Data
@@ -177,21 +185,22 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+
         if (compound.contains("Profession", 8)) {
-            this.setData(PROFESSION, compound.getString("Profession"));
+            this.setProfession(DwarfProfession.byId(compound.getString("Profession")));
         }
+
         if (compound.contains("CurrentAction", 3)) {
             this.getEntityData().set(CURRENT_ACTION, compound.getInt("CurrentAction"));
         }
         if (compound.contains("CurrentActionSubtype", 3)) {
             this.getEntityData().set(CURRENT_ACTION_SUBTYPE, compound.getInt("CurrentActionSubtype"));
         }
+
         this.paidTicks = compound.getInt("PaidTicks");
         this.paidCause = compound.hasUUID("PaidCause") ? compound.getUUID("PaidCause") : null;
-        if (!this.level().isClientSide) {
-            DwarfAttributes.applyTo(this, this.getProfession());
-        }
     }
+
 
     //Attributes
 
@@ -491,6 +500,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
+        if (this.isBlocking()) {
+            return null;
+        }
         return JolCraftSounds.DWARF_HURT.get();
     }
 
@@ -502,7 +514,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     @Override
     public float getVoicePitch() {
-        return this.isBaby() ? 1.5F : 1.0F;
+        return this.isBaby() ? 1.5F : DwarfProfessionTraits.of(this.getProfession()).adultVoicePitch();
     }
 
     //Spawn

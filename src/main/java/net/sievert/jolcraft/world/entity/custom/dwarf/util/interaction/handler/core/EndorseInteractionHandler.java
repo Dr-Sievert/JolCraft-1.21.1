@@ -8,9 +8,9 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.datagen.language.subprovider.ReputationLangSubProvider;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfGuildmasterEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -35,7 +35,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
         }
 
         // Guildmaster is intentionally not handled here
-        if (dwarf instanceof DwarfGuildmasterEntity) {
+        if (dwarf.getProfession() == DwarfProfession.GUILDMASTER) {
             return InteractionResult.PASS;
         }
 

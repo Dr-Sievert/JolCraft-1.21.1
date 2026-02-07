@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -34,6 +35,7 @@ import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
@@ -219,7 +221,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     // ------------------------------------------------------------
 
     public boolean canTrade() {
-        return true;
+        return DwarfProfessionTraits.of(this.getTradeProfession()).canTrade().test((AbstractDwarfEntity) this);
     }
 
     @Nullable
@@ -242,7 +244,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     }
 
     public boolean canReroll() {
-        return true;
+        return DwarfProfessionTraits.of(this.getTradeProfession()).canReroll();
     }
 
     /**
@@ -275,7 +277,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     @Override
     public boolean showProgressBar() {
-        return true;
+        return DwarfProfessionTraits.of(this.getTradeProfession()).showProgressBar();
     }
 
     public boolean showLevel() {
@@ -325,14 +327,14 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         return isYesSound ? JolCraftSounds.DWARF_YES.get() : JolCraftSounds.DWARF_NO.get();
     }
 
-    @Nullable
-    protected SoundEvent getRestockSound() {
-        return SoundEvents.VILLAGER_WORK_FISHERMAN;
+    public SoundEvent getRestockSound() {
+        SoundEvent sound = DwarfProfessionTraits.of(this.getTradeProfession()).restockSound();
+        return sound != null ? sound : SoundEvents.VILLAGER_WORK_FISHERMAN;
     }
 
-    @Nullable
-    protected SoundEvent getRerollSound() {
-        return SoundEvents.VILLAGER_WORK_FISHERMAN;
+    public SoundEvent getRerollSound() {
+        SoundEvent sound = DwarfProfessionTraits.of(this.getTradeProfession()).rerollSound();
+        return sound != null ? sound : SoundEvents.VILLAGER_WORK_FISHERMAN;
     }
 
     // ------------------------------------------------------------
@@ -545,7 +547,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     private static RecipeHolder<DwarfTradeRecipe> rollOneFromRemainingByUnlockLevel(
             List<RecipeHolder<DwarfTradeRecipe>> remaining,
             int unlockLevel,
-            net.minecraft.util.RandomSource random
+            RandomSource random
     ) {
         int totalWeight = 0;
         for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
@@ -575,7 +577,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             List<RecipeHolder<DwarfTradeRecipe>> remaining,
             int rolls,
             int unlockLevel,
-            net.minecraft.util.RandomSource random
+            RandomSource random
     ) {
         int capped = Math.min(Math.max(rolls, 0), remaining.size());
         List<RecipeHolder<DwarfTradeRecipe>> out = new ArrayList<>(capped);
@@ -605,7 +607,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     private static RecipeHolder<DwarfTradeRecipe> rollOneFromExactLevel(
             List<RecipeHolder<DwarfTradeRecipe>> remaining,
             int exactLevel,
-            net.minecraft.util.RandomSource random
+            RandomSource random
     ) {
         int totalWeight = 0;
         for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
@@ -642,8 +644,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             int currentLevel,
             @Nullable DwarfProfessionSettings.TradeSettings tradeSettings
     ) {
-        List<RecipeHolder<DwarfTradeRecipe>> remainingRestock =
-                DwarfTrades.getTradeRecipesUpToLevel(serverLevel, profession, DwarfTradeRecipe.TradePool.RESTOCK_POOL, currentLevel);
+        List<RecipeHolder<DwarfTradeRecipe>> remainingRestock = DwarfTrades.getTradeRecipesUpToLevel(serverLevel, profession, DwarfTradeRecipe.TradePool.RESTOCK_POOL, currentLevel);
 
         int added = 0;
         for (int lvl = 1; lvl <= currentLevel; lvl++) {

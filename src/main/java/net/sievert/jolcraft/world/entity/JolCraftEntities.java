@@ -9,15 +9,15 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.*;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.*;
+import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
 
 import java.util.function.Supplier;
 
 public class JolCraftEntities {
 
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, JolCraft.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
+            DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, JolCraft.MOD_ID);
 
     //Dwarves
     public static final ResourceKey<EntityType<?>> DWARF_KEY             = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf"));
@@ -39,56 +39,56 @@ public class JolCraftEntities {
             ENTITY_TYPES.register("dwarf", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_KEY));
 
-    public static final Supplier<EntityType<DwarfGuildmasterEntity>> DWARF_GUILDMASTER =
-            ENTITY_TYPES.register("dwarf_guildmaster", () -> EntityType.Builder.of(DwarfGuildmasterEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_GUILDMASTER =
+            ENTITY_TYPES.register("dwarf_guildmaster", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_GUILDMASTER_KEY));
 
-    public static final Supplier<EntityType<DwarfHistorianEntity>> DWARF_HISTORIAN =
-            ENTITY_TYPES.register("dwarf_historian", () -> EntityType.Builder.of(DwarfHistorianEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_HISTORIAN =
+            ENTITY_TYPES.register("dwarf_historian", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_HISTORIAN_KEY));
 
-    public static final Supplier<EntityType<DwarfMerchantEntity>> DWARF_MERCHANT =
-            ENTITY_TYPES.register("dwarf_merchant", () -> EntityType.Builder.of(DwarfMerchantEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_MERCHANT =
+            ENTITY_TYPES.register("dwarf_merchant", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_MERCHANT_KEY));
 
-    public static final Supplier<EntityType<DwarfScrapperEntity>> DWARF_SCRAPPER =
-            ENTITY_TYPES.register("dwarf_scrapper", () -> EntityType.Builder.of(DwarfScrapperEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_SCRAPPER =
+            ENTITY_TYPES.register("dwarf_scrapper", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_SCRAPPER_KEY));
 
-    public static final Supplier<EntityType<DwarfBrewmasterEntity>> DWARF_BREWMASTER =
-            ENTITY_TYPES.register("dwarf_brewmaster", () -> EntityType.Builder.of(DwarfBrewmasterEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_BREWMASTER =
+            ENTITY_TYPES.register("dwarf_brewmaster", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_BREWMASTER_KEY));
 
-    public static final Supplier<EntityType<DwarfGuardEntity>> DWARF_GUARD =
-            ENTITY_TYPES.register("dwarf_guard", () -> EntityType.Builder.of(DwarfGuardEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_GUARD =
+            ENTITY_TYPES.register("dwarf_guard", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_GUARD_KEY));
 
-    public static final Supplier<EntityType<DwarfKeeperEntity>> DWARF_KEEPER =
-            ENTITY_TYPES.register("dwarf_keeper", () -> EntityType.Builder.of(DwarfKeeperEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_KEEPER =
+            ENTITY_TYPES.register("dwarf_keeper", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_KEEPER_KEY));
 
-    public static final Supplier<EntityType<DwarfArtisanEntity>> DWARF_ARTISAN =
-            ENTITY_TYPES.register("dwarf_artisan", () -> EntityType.Builder.of(DwarfArtisanEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_ARTISAN =
+            ENTITY_TYPES.register("dwarf_artisan", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_ARTISAN_KEY));
 
-    public static final Supplier<EntityType<DwarfExplorerEntity>> DWARF_EXPLORER =
-            ENTITY_TYPES.register("dwarf_explorer", () -> EntityType.Builder.of(DwarfExplorerEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_EXPLORER =
+            ENTITY_TYPES.register("dwarf_explorer", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_EXPLORER_KEY));
 
-    public static final Supplier<EntityType<DwarfMinerEntity>> DWARF_MINER =
-            ENTITY_TYPES.register("dwarf_miner", () -> EntityType.Builder.of(DwarfMinerEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_MINER =
+            ENTITY_TYPES.register("dwarf_miner", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_MINER_KEY));
 
-    public static final Supplier<EntityType<DwarfAlchemistEntity>> DWARF_ALCHEMIST =
-            ENTITY_TYPES.register("dwarf_alchemist", () -> EntityType.Builder.of(DwarfAlchemistEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_ALCHEMIST =
+            ENTITY_TYPES.register("dwarf_alchemist", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_ALCHEMIST_KEY));
 
-    public static final Supplier<EntityType<DwarfArcanistEntity>> DWARF_ARCANIST =
-            ENTITY_TYPES.register("dwarf_arcanist", () -> EntityType.Builder.of(DwarfArcanistEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_ARCANIST =
+            ENTITY_TYPES.register("dwarf_arcanist", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_ARCANIST_KEY));
 
-    public static final Supplier<EntityType<DwarfPriestEntity>> DWARF_PRIEST =
-            ENTITY_TYPES.register("dwarf_priest", () -> EntityType.Builder.of(DwarfPriestEntity::new, MobCategory.CREATURE)
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_PRIEST =
+            ENTITY_TYPES.register("dwarf_priest", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.6f).build(DWARF_PRIEST_KEY));
 
     //Animals
@@ -104,8 +104,6 @@ public class JolCraftEntities {
     public static final Supplier<EntityType<RadiantEntity>> RADIANT =
             ENTITY_TYPES.register("radiant", () -> EntityType.Builder.of(RadiantEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F).build(RADIANT_KEY));
-
-
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

@@ -1,5 +1,8 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.profession;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+
 public enum DwarfProfession {
     NONE("none"),
     ALCHEMIST("alchemist"),
@@ -27,6 +30,20 @@ public enum DwarfProfession {
         for (DwarfProfession prof : values()) {
             if (prof.id.equals(id)) return prof;
         }
+        return NONE;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static DwarfProfession fromEntityType(EntityType<?> type) {
+        ResourceLocation id = type.builtInRegistryHolder().key().location();
+        String path = id.getPath();
+
+        if (path.equals("dwarf")) return NONE;
+
+        if (path.startsWith("dwarf_")) {
+            return byId(path.substring("dwarf_".length()));
+        }
+
         return NONE;
     }
 }
