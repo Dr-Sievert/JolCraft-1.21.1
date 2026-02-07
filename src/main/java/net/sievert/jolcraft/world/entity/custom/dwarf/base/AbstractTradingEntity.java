@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -220,7 +221,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     // ------------------------------------------------------------
 
     public boolean canTrade() {
-        return false;
+        return true;
     }
 
     @Nullable
@@ -310,7 +311,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     }
 
     @Override
-    public void die(DamageSource cause) {
+    public void die(net.minecraft.world.damagesource.DamageSource cause) {
         super.die(cause);
         this.stopTrading();
     }
@@ -491,36 +492,10 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         this.persistentPoolSelections.addAll(newPersistentPoolSelections);
 
         // =====================================================================
-        // 3) RESTOCK_POOL — LAST
+        // 3) RESTOCK_POOL — LAST (single canonical implementation)
         // =====================================================================
 
-        int addedRestock = 0;
-
-        for (int lvl = 1; lvl <= currentLevel; lvl++) {
-            int rolls = tradeSettings != null
-                    ? tradeSettings.rollsFor(
-                    DwarfProfessionSettings.TradeSettings.PoolType.RESTOCK_POOL,
-                    lvl
-            )
-                    : 0;
-
-            if (rolls <= 0) continue;
-
-            List<RecipeHolder<DwarfTradeRecipe>> picked =
-                    rollFromRemainingByUnlockLevel(
-                            remainingRestock,
-                            rolls,
-                            lvl,
-                            this.random
-                    );
-
-            for (RecipeHolder<DwarfTradeRecipe> holder : picked) {
-                addOfferFromRecipe(out, holder.value());
-                addedRestock++;
-            }
-        }
-
-        this.restockOfferCount = addedRestock;
+        this.restockOfferCount = appendRestockPoolOffers(serverLevel, out, profession, currentLevel, tradeSettings);
     }
 
     protected void addOfferFromRecipe(DwarfMerchantOffers out, DwarfTradeRecipe recipe) {
@@ -577,7 +552,8 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         int totalWeight = 0;
         for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
             if (h.value().merchantLevel() > unlockLevel) continue;
-            totalWeight += h.value().weight().orElse(1);
+            totalWeight += h.value().weight().orElseThrow(() ->
+                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
         }
         if (totalWeight <= 0) return null;
 
@@ -586,7 +562,8 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             RecipeHolder<DwarfTradeRecipe> h = remaining.get(i);
             if (h.value().merchantLevel() > unlockLevel) continue;
 
-            roll -= h.value().weight().orElse(1);
+            roll -= h.value().weight().orElseThrow(() ->
+                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
             if (roll < 0) {
                 remaining.remove(i);
                 return h;
@@ -636,8 +613,9 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
             DwarfTradeRecipe r = h.value();
             if (r.merchantLevel() != exactLevel) continue;
-            if (!r.exactLevel()) continue; // rename if needed
-            totalWeight += r.weight().orElse(1);
+            if (!r.exactLevel()) continue;
+            totalWeight += r.weight().orElseThrow(() ->
+                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
         }
         if (totalWeight <= 0) return null;
 
@@ -648,7 +626,8 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             if (r.merchantLevel() != exactLevel) continue;
             if (!r.exactLevel()) continue;
 
-            roll -= r.weight().orElse(1);
+            roll -= r.weight().orElseThrow(() ->
+                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
             if (roll < 0) {
                 remaining.remove(i);
                 return h;
@@ -748,8 +727,8 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             DwarfProfession profession = getTradeProfession();
             int currentLevel = this.getMerchantLevel();
 
-            DwarfProfessionSettings settings = DwarfProfessionConfigs.get(profession);
-            DwarfProfessionSettings.TradeSettings tradeSettings = settings != null ? settings.tradesOrNull() : null;
+            DwarfProfessionSettings settings = DwarfProfessionConfigs.getOrDefault(profession);
+            DwarfProfessionSettings.TradeSettings tradeSettings = settings.tradesOrNull();
 
             this.restockOfferCount = appendRestockPoolOffers(serverLevel, offers, profession, currentLevel, tradeSettings);
             didAnything = true;

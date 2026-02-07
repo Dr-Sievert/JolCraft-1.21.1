@@ -22,7 +22,8 @@ public final class DwarfAlchemistTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(4, 7),
                 Optional.empty(),
-                itemResult(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), 1),
+                Hooks.EMPTY,
                 6, 0, 0.05F,
                 buy(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
         );
@@ -32,7 +33,8 @@ public final class DwarfAlchemistTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(1, 4),
                 Optional.empty(),
-                itemResult(JolCraftItems.DEEPSLATE_PESTLE.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.DEEPSLATE_PESTLE.get(), 1),
+                Hooks.EMPTY,
                 6, 0, 0.05F,
                 buy(JolCraftItems.DEEPSLATE_PESTLE.get())
         );

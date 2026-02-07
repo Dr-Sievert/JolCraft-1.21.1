@@ -32,7 +32,7 @@ public final class DwarfScrapperTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(8, 15),
                 Optional.empty(),
-                itemResult(JolCraftItems.COPPER_SPANNER.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.COPPER_SPANNER.get(), 1),
                 3, 10, 0.05F,
                 buy(JolCraftItems.COPPER_SPANNER.get())
         );
@@ -52,7 +52,7 @@ public final class DwarfScrapperTrades extends AbstractDwarfTrades {
                 JOURNEYMAN,
                 coins(24, 32),
                 Optional.empty(),
-                itemResult(JolCraftItems.IRON_SPANNER.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.IRON_SPANNER.get(), 1),
                 3, 40, 0.05F,
                 buy(JolCraftItems.IRON_SPANNER.get())
         );
@@ -72,7 +72,7 @@ public final class DwarfScrapperTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(1, 15),
                 Optional.of(cost(JolCraftItems.SCRAP_HEAP.get(), 1)),
-                itemResult(JolCraftItems.RUSTAGATE.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.RUSTAGATE.get(), 1),
                 3, 0, 0.05F,
                 buyFor(JolCraftItems.SCRAP_HEAP.get(), JolCraftItems.RUSTAGATE.get())
         );
@@ -104,7 +104,6 @@ public final class DwarfScrapperTrades extends AbstractDwarfTrades {
         pooledSalvage(p, MASTER, JolCraftItems.MITHRIL_SALVAGE.get(), 5, 10, 5);
         pooledSalvage(p, MASTER, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), 5, 10, 5);
         pooledSalvage(p, MASTER, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), 5, 10, 5);
-
     }
 
     // ---------------------------------------------------------------------

@@ -39,7 +39,7 @@ public final class DwarfBrewmasterTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(1, 2),
                 Optional.empty(),
-                itemResult(Items.SUGAR, 1, 2, Hooks.EMPTY),
+                itemResult(Items.SUGAR, 1, 2),
                 10, 1, 0.05F,
                 buy(Items.SUGAR)
         );
@@ -50,7 +50,7 @@ public final class DwarfBrewmasterTrades extends AbstractDwarfTrades {
                 APPRENTICE,
                 coins(7, 12),
                 Optional.empty(),
-                itemResult(Items.CAULDRON, 1, Hooks.EMPTY),
+                itemResult(Items.CAULDRON, 1),
                 9, 10, 0.05F,
                 buy(Items.CAULDRON)
         );
@@ -87,7 +87,7 @@ public final class DwarfBrewmasterTrades extends AbstractDwarfTrades {
                 EXPERT,
                 coins(1, 2),
                 Optional.empty(),
-                itemResult(JolCraftItems.YEAST.get(), 3, 5, Hooks.EMPTY),
+                itemResult(JolCraftItems.YEAST.get(), 3, 5),
                 5, 10, 0.05F,
                 buy(JolCraftItems.YEAST.get())
         );
@@ -98,17 +98,14 @@ public final class DwarfBrewmasterTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(30),
                 Optional.of(cost(JolCraftItems.LEGENDARY_PAGE.get(), 20)),
-                itemResult(
-                        JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
-                        1,
-                        hooksWithPatch(
-                                DataComponentPatch.builder()
-                                        .set(
-                                                JolCraftDataComponents.LORE_KEY.get(),
-                                                LoreHelper.toLoreKeyString(DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)
-                                        )
-                                        .build()
-                        )
+                itemResult(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1),
+                hooksWithPatch(
+                        DataComponentPatch.builder()
+                                .set(
+                                        JolCraftDataComponents.LORE_KEY.get(),
+                                        LoreHelper.toLoreKeyString(DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)
+                                )
+                                .build()
                 ),
                 1, 0, 0.0F,
                 buyFor(JolCraftItems.LEGENDARY_PAGE.get(), JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get())
@@ -119,7 +116,7 @@ public final class DwarfBrewmasterTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(20, 40),
                 Optional.of(cost(JolCraftItems.EMBERGLASS_CUT.get(), 2)),
-                itemResult(JolCraftBlocks.HEARTH.get().asItem(), 1, Hooks.EMPTY),
+                itemResult(JolCraftBlocks.HEARTH.get().asItem(), 1),
                 1, 0, 0.0F,
                 buyFor(JolCraftItems.EMBERGLASS_CUT.get(), JolCraftBlocks.HEARTH.get().asItem())
         );

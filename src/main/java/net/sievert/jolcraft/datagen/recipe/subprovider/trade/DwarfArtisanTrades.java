@@ -104,7 +104,8 @@ public final class DwarfArtisanTrades extends AbstractDwarfTrades {
                 APPRENTICE,
                 coins(10, 20),
                 Optional.empty(),
-                itemResult(JolCraftBlocks.LAPIDARY_BENCH.get().asItem(), 1, Hooks.EMPTY),
+                itemResult(JolCraftBlocks.LAPIDARY_BENCH.get().asItem(), 1),
+                Hooks.EMPTY,
                 3, 10, 0.05F,
                 buy(JolCraftBlocks.LAPIDARY_BENCH.get().asItem())
         );
@@ -114,7 +115,8 @@ public final class DwarfArtisanTrades extends AbstractDwarfTrades {
                 JOURNEYMAN,
                 coins(2, 4),
                 Optional.empty(),
-                itemResult(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get(), 1),
+                Hooks.EMPTY,
                 3, 10, 0.05F,
                 buy(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get())
         );
@@ -124,7 +126,8 @@ public final class DwarfArtisanTrades extends AbstractDwarfTrades {
                 EXPERT,
                 coins(2, 4),
                 Optional.empty(),
-                itemResult(JolCraftItems.DEEPSLATE_CHISEL.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.DEEPSLATE_CHISEL.get(), 1),
+                Hooks.EMPTY,
                 3, 10, 0.05F,
                 buy(JolCraftItems.DEEPSLATE_CHISEL.get())
         );
@@ -134,16 +137,13 @@ public final class DwarfArtisanTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(30),
                 Optional.of(cost(JolCraftItems.LEGENDARY_PAGE.get(), 20)),
-                itemResult(
-                        JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
-                        1,
-                        hooksWithPatch(DataComponentPatch.builder()
-                                .set(
-                                        JolCraftDataComponents.LORE_KEY.get(),
-                                        LoreHelper.toLoreKeyString(DwarfLoreKey.ANCIENT_GEMCRAFT)
-                                )
-                                .build()
+                itemResult(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1),
+                hooksWithPatch(DataComponentPatch.builder()
+                        .set(
+                                JolCraftDataComponents.LORE_KEY.get(),
+                                LoreHelper.toLoreKeyString(DwarfLoreKey.ANCIENT_GEMCRAFT)
                         )
+                        .build()
                 ),
                 1, 0, 0.0F,
                 buyFor(JolCraftItems.LEGENDARY_PAGE.get(), JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get())

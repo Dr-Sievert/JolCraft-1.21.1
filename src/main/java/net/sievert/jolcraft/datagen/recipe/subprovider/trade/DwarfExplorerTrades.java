@@ -28,7 +28,7 @@ public final class DwarfExplorerTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(5, 10),
                 Optional.empty(),
-                itemResult(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(), 1),
                 3, 0, 0.0F,
                 buy(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
         );
@@ -45,15 +45,12 @@ public final class DwarfExplorerTrades extends AbstractDwarfTrades {
                 level,
                 coins(5),
                 Optional.of(cost(Items.REDSTONE, 1)),
-                itemResult(
-                        JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
-                        1,
-                        hooksWithPatch(
-                                DataComponentPatch.builder()
-                                        .set(JolCraftDataComponents.STRUCTURE_GROUP.get(), group.id())
-                                        .set(JolCraftDataComponents.DIAL_COLOR.get(), new DialItemColor(color))
-                                        .build()
-                        )
+                itemResult(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(), 1),
+                hooksWithPatch(
+                        DataComponentPatch.builder()
+                                .set(JolCraftDataComponents.STRUCTURE_GROUP.get(), group.id())
+                                .set(JolCraftDataComponents.DIAL_COLOR.get(), new DialItemColor(color))
+                                .build()
                 ),
                 3, 0, 0.0F,
                 buyFor(Items.REDSTONE, JolCraftItems.DEEPSLATE_COMPASS_DIAL.get())

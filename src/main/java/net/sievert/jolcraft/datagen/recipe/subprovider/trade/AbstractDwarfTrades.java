@@ -13,6 +13,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
@@ -115,10 +116,13 @@ public abstract class AbstractDwarfTrades {
 
     // =====================================================================
     // Hooks (single-result transforms)
+    //
+    // IMPORTANT: After the centralization refactor, hooks are RECIPE-LEVEL fields
+    // (not inside TradeResult). Datagen still wants a "bundle" so call sites stay clean.
     // =====================================================================
 
     protected record Hooks(
-            Optional<ResourceKey<net.minecraft.world.item.enchantment.providers.EnchantmentProvider>> enchantmentProvider,
+            Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider,
             Optional<String> stackModifierId,
             Optional<DataComponentPatch> resultPatch
     ) {
@@ -131,6 +135,10 @@ public abstract class AbstractDwarfTrades {
 
     protected static Hooks hooksWithModifier(String stackModifierId) {
         return new Hooks(Optional.empty(), Optional.of(stackModifierId), Optional.empty());
+    }
+
+    protected static Hooks hooksWithEnchant(ResourceKey<EnchantmentProvider> providerKey) {
+        return new Hooks(Optional.of(providerKey), Optional.empty(), Optional.empty());
     }
 
     // =====================================================================
@@ -148,6 +156,7 @@ public abstract class AbstractDwarfTrades {
             DwarfTradeRecipe.TradeCost costA,
             Optional<DwarfTradeRecipe.TradeCost> costB,
             DwarfTradeRecipe.TradeResult result,
+            Hooks hooks,
             int maxUses,
             int villagerXp,
             float priceMultiplier,
@@ -172,6 +181,9 @@ public abstract class AbstractDwarfTrades {
                 costA,
                 costB,
                 result,
+                hooks.enchantmentProvider(),
+                hooks.stackModifierId(),
+                hooks.resultPatch(),
                 Math.max(1, maxUses),
                 villagerXp,
                 priceMultiplier
@@ -235,10 +247,7 @@ public abstract class AbstractDwarfTrades {
     protected final DwarfTradeRecipe.TradeResult coinsResult(DwarfTradeRecipe.TradeAmount amount) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
                 coinItem().asItem(),
-                amount,
-                Hooks.EMPTY.enchantmentProvider(),
-                Hooks.EMPTY.stackModifierId(),
-                Hooks.EMPTY.resultPatch()
+                amount
         );
     }
 
@@ -250,41 +259,31 @@ public abstract class AbstractDwarfTrades {
     // Result helpers (RESULTS: ITEM or MAP only)
     // =====================================================================
 
-    protected static DwarfTradeRecipe.TradeResult itemResult(ItemLike item, int count, Hooks hooks) {
+    protected static DwarfTradeRecipe.TradeResult itemResult(ItemLike item, int count) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
                 item.asItem(),
-                amount(count),
-                hooks.enchantmentProvider(),
-                hooks.stackModifierId(),
-                hooks.resultPatch()
+                amount(count)
         );
     }
 
-    protected static DwarfTradeRecipe.TradeResult itemResult(ItemLike item, int min, int max, Hooks hooks) {
+    protected static DwarfTradeRecipe.TradeResult itemResult(ItemLike item, int min, int max) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
                 item.asItem(),
-                amount(min, max),
-                hooks.enchantmentProvider(),
-                hooks.stackModifierId(),
-                hooks.resultPatch()
+                amount(min, max)
         );
     }
 
-    protected static DwarfTradeRecipe.TradeResult itemResult(ItemStack stack, int count, Hooks hooks) {
+    protected static DwarfTradeRecipe.TradeResult itemResult(ItemStack stack, int count) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
                 stack.getItem(),
-                amount(count),
-                hooks.enchantmentProvider(),
-                hooks.stackModifierId(),
-                hooks.resultPatch()
+                amount(count)
         );
     }
 
     protected static DwarfTradeRecipe.TradeResult mapResult(
             TagKey<Structure> destinationStructureTag,
             String mapDisplayNameKey,
-            Holder<MapDecorationType> decorationType,
-            Hooks hooks
+            Holder<MapDecorationType> decorationType
     ) {
         ResourceLocation decoId = BuiltInRegistries.MAP_DECORATION_TYPE.getKey(decorationType.value());
         if (decoId == null) {
@@ -292,10 +291,7 @@ public abstract class AbstractDwarfTrades {
         }
 
         return new DwarfTradeRecipe.TradeResult.MapResult(
-                new DwarfTradeRecipe.MapTradeData(destinationStructureTag, mapDisplayNameKey, decoId),
-                hooks.enchantmentProvider(),
-                hooks.stackModifierId(),
-                hooks.resultPatch()
+                new DwarfTradeRecipe.MapTradeData(destinationStructureTag, mapDisplayNameKey, decoId)
         );
     }
 
@@ -309,6 +305,7 @@ public abstract class AbstractDwarfTrades {
             DwarfTradeRecipe.TradeCost costA,
             Optional<DwarfTradeRecipe.TradeCost> costB,
             DwarfTradeRecipe.TradeResult result,
+            Hooks hooks,
             int maxUses,
             int villagerXp,
             float priceMultiplier,
@@ -323,11 +320,37 @@ public abstract class AbstractDwarfTrades {
                 costA,
                 costB,
                 result,
+                hooks,
                 maxUses,
                 villagerXp,
                 priceMultiplier,
                 idPath,
                 Optional.empty()
+        );
+    }
+
+    protected final void mainTrade(
+            AbstractRecipeProvider p,
+            Level level,
+            DwarfTradeRecipe.TradeCost costA,
+            Optional<DwarfTradeRecipe.TradeCost> costB,
+            DwarfTradeRecipe.TradeResult result,
+            int maxUses,
+            int villagerXp,
+            float priceMultiplier,
+            String idPath
+    ) {
+        mainTrade(
+                p,
+                level,
+                costA,
+                costB,
+                result,
+                Hooks.EMPTY,
+                maxUses,
+                villagerXp,
+                priceMultiplier,
+                idPath
         );
     }
 
@@ -340,6 +363,7 @@ public abstract class AbstractDwarfTrades {
             DwarfTradeRecipe.TradeCost costA,
             Optional<DwarfTradeRecipe.TradeCost> costB,
             DwarfTradeRecipe.TradeResult result,
+            Hooks hooks,
             int maxUses,
             int villagerXp,
             float priceMultiplier,
@@ -359,6 +383,73 @@ public abstract class AbstractDwarfTrades {
                 costA,
                 costB,
                 result,
+                hooks,
+                maxUses,
+                villagerXp,
+                priceMultiplier,
+                idPath,
+                suffix
+        );
+    }
+
+    protected final void pooledTrade(
+            AbstractRecipeProvider p,
+            Level level,
+            DwarfTradeRecipe.TradePool pool,
+            int weight,
+            DwarfTradeRecipe.TradeCost costA,
+            Optional<DwarfTradeRecipe.TradeCost> costB,
+            DwarfTradeRecipe.TradeResult result,
+            Hooks hooks,
+            int maxUses,
+            int villagerXp,
+            float priceMultiplier,
+            String idPath,
+            Optional<String> suffix
+    ) {
+        pooledTrade(
+                p,
+                level,
+                pool,
+                weight,
+                false,
+                costA,
+                costB,
+                result,
+                hooks,
+                maxUses,
+                villagerXp,
+                priceMultiplier,
+                idPath,
+                suffix
+        );
+    }
+
+    protected final void pooledTrade(
+            AbstractRecipeProvider p,
+            Level level,
+            DwarfTradeRecipe.TradePool pool,
+            int weight,
+            boolean exactLevel,
+            DwarfTradeRecipe.TradeCost costA,
+            Optional<DwarfTradeRecipe.TradeCost> costB,
+            DwarfTradeRecipe.TradeResult result,
+            int maxUses,
+            int villagerXp,
+            float priceMultiplier,
+            String idPath,
+            Optional<String> suffix
+    ) {
+        pooledTrade(
+                p,
+                level,
+                pool,
+                weight,
+                exactLevel,
+                costA,
+                costB,
+                result,
+                Hooks.EMPTY,
                 maxUses,
                 villagerXp,
                 priceMultiplier,
@@ -390,6 +481,7 @@ public abstract class AbstractDwarfTrades {
                 costA,
                 costB,
                 result,
+                Hooks.EMPTY,
                 maxUses,
                 villagerXp,
                 priceMultiplier,
@@ -415,21 +507,18 @@ public abstract class AbstractDwarfTrades {
                 level,
                 cost(JolCraftItems.PARCHMENT.get(), 1),
                 Optional.empty(),
-                itemResult(
-                        JolCraftItems.BOUNTY.get(),
-                        1,
-                        hooksWithPatch(
-                                DataComponentPatch.builder()
-                                        .set(
-                                                JolCraftDataComponents.BOUNTY_TIER.get(),
-                                                BountyTier.valueOf(level.name()).getValue()
-                                        )
-                                        .set(
-                                                JolCraftDataComponents.BOUNTY_TYPE.get(),
-                                                bountyType().getId()
-                                        )
-                                        .build()
-                        )
+                itemResult(JolCraftItems.BOUNTY.get(), 1),
+                hooksWithPatch(
+                        DataComponentPatch.builder()
+                                .set(
+                                        JolCraftDataComponents.BOUNTY_TIER.get(),
+                                        BountyTier.valueOf(level.name()).getValue()
+                                )
+                                .set(
+                                        JolCraftDataComponents.BOUNTY_TYPE.get(),
+                                        bountyType().getId()
+                                )
+                                .build()
                 ),
                 1,
                 0,

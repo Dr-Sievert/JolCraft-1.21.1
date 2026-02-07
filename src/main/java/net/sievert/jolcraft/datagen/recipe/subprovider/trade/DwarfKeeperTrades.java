@@ -23,7 +23,7 @@ public final class DwarfKeeperTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(1, 2),
                 Optional.empty(),
-                itemResult(JolCraftItems.BARLEY_SEEDS.get(), 1, 3, Hooks.EMPTY),
+                itemResult(JolCraftItems.BARLEY_SEEDS.get(), 1, 3),
                 10, 1, 0.05F,
                 buy(JolCraftItems.BARLEY_SEEDS.get())
         );
@@ -73,7 +73,7 @@ public final class DwarfKeeperTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(2, 5),
                 Optional.empty(),
-                itemResult(Items.BONE_MEAL, 3, 5, Hooks.EMPTY),
+                itemResult(Items.BONE_MEAL, 3, 5),
                 5, 1, 0.05F,
                 buy(Items.BONE_MEAL)
         );
@@ -83,7 +83,7 @@ public final class DwarfKeeperTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(5, 9),
                 Optional.empty(),
-                itemResult(JolCraftItems.DEEPSLATE_BULBS.get(), 1, 5, Hooks.EMPTY),
+                itemResult(JolCraftItems.DEEPSLATE_BULBS.get(), 1, 5),
                 3, 0, 0.05F,
                 buy(JolCraftItems.DEEPSLATE_BULBS.get())
         );
@@ -93,7 +93,7 @@ public final class DwarfKeeperTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(5),
                 Optional.empty(),
-                itemResult(JolCraftItems.ASGARNIAN_SEEDS.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.ASGARNIAN_SEEDS.get(), 1),
                 3, 0, 0.05F,
                 buy(JolCraftItems.ASGARNIAN_SEEDS.get())
         );
@@ -103,7 +103,7 @@ public final class DwarfKeeperTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(5),
                 Optional.empty(),
-                itemResult(JolCraftItems.DUSKHOLD_SEEDS.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.DUSKHOLD_SEEDS.get(), 1),
                 3, 0, 0.05F,
                 buy(JolCraftItems.DUSKHOLD_SEEDS.get())
         );
@@ -113,7 +113,7 @@ public final class DwarfKeeperTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(5),
                 Optional.empty(),
-                itemResult(JolCraftItems.KRANDONIAN_SEEDS.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.KRANDONIAN_SEEDS.get(), 1),
                 3, 0, 0.05F,
                 buy(JolCraftItems.KRANDONIAN_SEEDS.get())
         );
@@ -123,7 +123,7 @@ public final class DwarfKeeperTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(5),
                 Optional.empty(),
-                itemResult(JolCraftItems.YANILLIAN_SEEDS.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.YANILLIAN_SEEDS.get(), 1),
                 3, 0, 0.05F,
                 buy(JolCraftItems.YANILLIAN_SEEDS.get())
         );

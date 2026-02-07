@@ -22,7 +22,7 @@ public final class DwarfGuildmasterTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(15),
                 Optional.empty(),
-                itemResult(JolCraftItems.REPUTATION_TABLET_0.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.REPUTATION_TABLET_0.get(), 1),
                 5, 0, 0.0F,
                 buy(JolCraftItems.REPUTATION_TABLET_0.get())
         );
@@ -54,7 +54,8 @@ public final class DwarfGuildmasterTrades extends AbstractDwarfTrades {
                 level,
                 coins(30),
                 Optional.of(cost(JolCraftItems.CONTRACT_SIGNED.get(), 1)),
-                itemResult(contract, 1, Hooks.EMPTY),
+                itemResult(contract, 1),
+                Hooks.EMPTY,
                 1, 0, 0.05F,
                 buyFor(JolCraftItems.CONTRACT_SIGNED.get(), contract)
         );

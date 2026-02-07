@@ -28,7 +28,15 @@ public final class DwarfHistorianTrades extends AbstractDwarfTrades {
         mainTrade(p, NOVICE, cost(JolCraftItems.DWARVEN_TOME_RARE.get(), 1), Optional.empty(), coinsResult(10), 10, 75, 0.05F, sell(JolCraftItems.DWARVEN_TOME_RARE.get()));
         mainTrade(p, NOVICE, cost(JolCraftItems.DWARVEN_TOME_EPIC.get(), 1), Optional.empty(), coinsResult(22), 10, 125, 0.05F, sell(JolCraftItems.DWARVEN_TOME_EPIC.get()));
 
-        mainTrade(p, NOVICE, coins(1, 2), Optional.empty(), itemResult(JolCraftItems.PARCHMENT.get(), 1, 3, Hooks.EMPTY), 6, 1, 0.05F, buy(JolCraftItems.PARCHMENT.get()));
+        mainTrade(
+                p,
+                NOVICE,
+                coins(1, 2),
+                Optional.empty(),
+                itemResult(JolCraftItems.PARCHMENT.get(), 1, 3),
+                6, 1, 0.05F,
+                buy(JolCraftItems.PARCHMENT.get())
+        );
 
         mainTrade(p, APPRENTICE, cost(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), 1), Optional.empty(), coinsResult(6), 10, 5, 0.05F, sell(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get()));
         mainTrade(p, APPRENTICE, cost(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), 1), Optional.empty(), coinsResult(8), 10, 35, 0.05F, sell(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get()));
@@ -36,13 +44,55 @@ public final class DwarfHistorianTrades extends AbstractDwarfTrades {
         mainTrade(p, APPRENTICE, cost(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), 1), Optional.empty(), coinsResult(28), 10, 125, 0.05F, sell(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get()));
         mainTrade(p, APPRENTICE, cost(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1), Optional.empty(), coinsResult(35), 10, 250, 0.05F, sell(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get()));
 
-        mainTrade(p, APPRENTICE, coins(2, 4), Optional.empty(), itemResult(JolCraftItems.CONTRACT_BLANK.get(), 1, 2, Hooks.EMPTY), 5, 1, 0.05F, buy(JolCraftItems.CONTRACT_BLANK.get()));
+        mainTrade(
+                p,
+                APPRENTICE,
+                coins(2, 4),
+                Optional.empty(),
+                itemResult(JolCraftItems.CONTRACT_BLANK.get(), 1, 2),
+                5, 1, 0.05F,
+                buy(JolCraftItems.CONTRACT_BLANK.get())
+        );
 
-        mainTrade(p, JOURNEYMAN, coins(8), Optional.empty(), itemResult(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get(), 1, Hooks.EMPTY), 3, 1, 0.05F, buy(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get()));
-        mainTrade(p, JOURNEYMAN, coins(1, 3), Optional.empty(), itemResult(JolCraftItems.QUILL_EMPTY.get(), 1, 2, Hooks.EMPTY), 6, 1, 0.05F, buy(JolCraftItems.QUILL_EMPTY.get()));
+        mainTrade(
+                p,
+                JOURNEYMAN,
+                coins(8),
+                Optional.empty(),
+                itemResult(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get(), 1),
+                3, 1, 0.05F,
+                buy(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get())
+        );
 
-        mainTrade(p, EXPERT, coins(13), Optional.empty(), itemResult(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 1, Hooks.EMPTY), 3, 1, 0.05F, buy(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get()));
-        mainTrade(p, EXPERT, coins(3, 6), Optional.empty(), itemResult(Items.INK_SAC, 1, 2, Hooks.EMPTY), 6, 1, 0.05F, buy(Items.INK_SAC));
+        mainTrade(
+                p,
+                JOURNEYMAN,
+                coins(1, 3),
+                Optional.empty(),
+                itemResult(JolCraftItems.QUILL_EMPTY.get(), 1, 2),
+                6, 1, 0.05F,
+                buy(JolCraftItems.QUILL_EMPTY.get())
+        );
+
+        mainTrade(
+                p,
+                EXPERT,
+                coins(13),
+                Optional.empty(),
+                itemResult(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 1),
+                3, 1, 0.05F,
+                buy(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get())
+        );
+
+        mainTrade(
+                p,
+                EXPERT,
+                coins(3, 6),
+                Optional.empty(),
+                itemResult(Items.INK_SAC, 1, 2),
+                6, 1, 0.05F,
+                buy(Items.INK_SAC)
+        );
 
         buyLegendaryPages(p, MASTER, JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), 1);
         buyLegendaryPages(p, MASTER, JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), 2);
@@ -55,7 +105,7 @@ public final class DwarfHistorianTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(15),
                 Optional.of(cost(JolCraftItems.LEGENDARY_PAGE.get(), 10)),
-                itemResult(JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 1),
                 10, 0, 0.05F,
                 buyFor(JolCraftItems.LEGENDARY_PAGE.get(), JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get())
         );
@@ -70,7 +120,7 @@ public final class DwarfHistorianTrades extends AbstractDwarfTrades {
                 level,
                 coins(pages),
                 Optional.of(cost(ancientTome, 1)),
-                itemResult(JolCraftItems.LEGENDARY_PAGE.get(), pages, Hooks.EMPTY),
+                itemResult(JolCraftItems.LEGENDARY_PAGE.get(), pages),
                 100, 0, 0.05F,
                 buyFor(ancientTome, JolCraftItems.LEGENDARY_PAGE.get())
         );
@@ -84,14 +134,11 @@ public final class DwarfHistorianTrades extends AbstractDwarfTrades {
                 level,
                 coins(coinCount),
                 Optional.of(cost(JolCraftItems.LEGENDARY_PAGE.get(), pageCount)),
-                itemResult(
-                        JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
-                        1,
-                        hooksWithPatch(
-                                DataComponentPatch.builder()
-                                        .set(JolCraftDataComponents.LORE_KEY.get(), lore)
-                                        .build()
-                        )
+                itemResult(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1),
+                hooksWithPatch(
+                        DataComponentPatch.builder()
+                                .set(JolCraftDataComponents.LORE_KEY.get(), lore)
+                                .build()
                 ),
                 1, 1, 0.0F,
                 levelId(level) + "_buy_" + lore + "_tome"

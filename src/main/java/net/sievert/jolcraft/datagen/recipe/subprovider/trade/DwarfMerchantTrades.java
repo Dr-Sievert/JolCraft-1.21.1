@@ -1,12 +1,9 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.trade;
 
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +76,8 @@ public final class DwarfMerchantTrades extends AbstractDwarfTrades {
                 1,
                 coins(minCoins, maxCoins),
                 Optional.empty(),
-                itemResult(result, count, Hooks.EMPTY),
+                itemResult(result, count),
+                Hooks.EMPTY,
                 3, 1, 0.05F,
                 buy(result),
                 Optional.empty()
@@ -99,7 +97,8 @@ public final class DwarfMerchantTrades extends AbstractDwarfTrades {
                 true,
                 coins(5, 15),
                 Optional.of(cost(JolCraftItems.SUNGLEAM_CUT.get(), 1)),
-                itemResult(crate, 1, Hooks.EMPTY),
+                itemResult(crate, 1),
+                Hooks.EMPTY,
                 3, 0, 0.0F,
                 buyFor(JolCraftItems.SUNGLEAM_CUT.get(), crate),
                 Optional.empty()

@@ -30,7 +30,6 @@ import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe.TradeResult.ItemResult;
 import net.sievert.jolcraft.data.recipe.custom.input.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.slf4j.Logger;
@@ -163,20 +162,18 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
     }
 
     /**
-     * Exactly one result definition. All transformations apply to that one base.
+     * Exactly one result definition. All transformations (enchant provider, stack modifier, patch)
+     * are applied OUTSIDE of this type (by the trade engine) to enforce clean ordering:
+     * base stack -> enchant -> stackModifier -> patch
      * Map trades are a distinct result variant with dedicated MapTradeData.
      * RESULTS ARE NEVER TAG-BASED.
      * (Tags are allowed for costs later; results must be deterministic.)
      */
-    public sealed interface TradeResult permits ItemResult, TradeResult.MapResult {
+    public sealed interface TradeResult permits TradeResult.ItemResult, TradeResult.MapResult {
 
         enum Type { ITEM, MAP }
 
         Type type();
-
-        Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider();
-        Optional<String> stackModifierId();
-        Optional<DataComponentPatch> resultPatch();
 
         ItemStack preview(HolderLookup.Provider registries);
 
@@ -192,10 +189,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
          */
         record ItemResult(
                 Item item,
-                TradeAmount amount,
-                Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider,
-                Optional<String> stackModifierId,
-                Optional<DataComponentPatch> resultPatch
+                TradeAmount amount
         ) implements TradeResult {
 
             @Override
@@ -205,40 +199,33 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
             @Override
             public ItemStack preview(HolderLookup.Provider registries) {
-                ItemStack out = new ItemStack(item, amount.min());
-                resultPatch.ifPresent(out::applyComponents);
-                return out;
+                return new ItemStack(item, amount.min());
             }
 
             @Override
             public ItemStack roll(HolderLookup.Provider registries, RandomSource random) {
-                ItemStack out = new ItemStack(item, amount.roll(random));
-                resultPatch.ifPresent(out::applyComponents);
-                return out;
+                return new ItemStack(item, amount.roll(random));
             }
         }
 
+        /**
+         * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
+         * Validation happens in Serializer.validate(...).
+         */
         record MapResult(
-                MapTradeData mapData,
-                Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider,
-                Optional<String> stackModifierId,
-                Optional<DataComponentPatch> resultPatch
+                MapTradeData mapData
         ) implements TradeResult {
 
             @Override public Type type() { return Type.MAP; }
 
             @Override
             public ItemStack preview(HolderLookup.Provider registries) {
-                ItemStack out = new ItemStack(Items.FILLED_MAP, 1);
-                resultPatch.ifPresent(out::applyComponents);
-                return out;
+                return new ItemStack(Items.FILLED_MAP, 1);
             }
 
             @Override
             public ItemStack roll(HolderLookup.Provider registries, RandomSource random) {
-                ItemStack out = new ItemStack(Items.FILLED_MAP, 1);
-                resultPatch.ifPresent(out::applyComponents);
-                return out;
+                return new ItemStack(Items.FILLED_MAP, 1);
             }
         }
     }
@@ -273,6 +260,14 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
     private final TradeResult result;
 
+    /**
+     * All result transformations live at recipe-level to enforce ordering:
+     * base stack -> enchant -> stackModifier -> patch
+     */
+    private final Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider;
+    private final Optional<String> stackModifierId;
+    private final Optional<DataComponentPatch> resultPatch;
+
     private final int maxUses;
     private final int villagerXp;
     private final float priceMultiplier;
@@ -291,6 +286,9 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             TradeCost costA,
             Optional<TradeCost> costB,
             TradeResult result,
+            Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider,
+            Optional<String> stackModifierId,
+            Optional<DataComponentPatch> resultPatch,
             int maxUses,
             int villagerXp,
             float priceMultiplier
@@ -304,6 +302,9 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         this.costA = costA;
         this.costB = costB;
         this.result = result;
+        this.enchantmentProvider = enchantmentProvider;
+        this.stackModifierId = stackModifierId;
+        this.resultPatch = resultPatch;
         this.maxUses = maxUses;
         this.villagerXp = villagerXp;
         this.priceMultiplier = priceMultiplier;
@@ -328,6 +329,10 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
     public TradeResult result() { return result; }
 
+    public Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider() { return enchantmentProvider; }
+    public Optional<String> stackModifierId() { return stackModifierId; }
+    public Optional<DataComponentPatch> resultPatch() { return resultPatch; }
+
     public int maxUses() { return maxUses; }
     public int villagerXp() { return villagerXp; }
     public float priceMultiplier() { return priceMultiplier; }
@@ -344,7 +349,12 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         return costB.map(c -> c.roll(random));
     }
 
-    public ItemStack rollResult(HolderLookup.Provider registries, RandomSource random) {
+    /**
+     * IMPORTANT: This returns the BASE result only (no enchant/mod/patch).
+     * The trade engine must apply transforms in order:
+     * base -> enchant -> stackModifier -> patch
+     */
+    public ItemStack rollResultBase(HolderLookup.Provider registries, RandomSource random) {
         return result.roll(registries, random);
     }
 
@@ -388,6 +398,10 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         return in.profession() == profession && in.merchantLevel() == merchantLevel;
     }
 
+    /**
+     * Recipe output is a preview only, so return BASE preview stack (no transforms).
+     * The trade engine controls transforms centrally.
+     */
     @Override
     public ItemStack assemble(DwarfTradeRecipeInput in, HolderLookup.Provider registries) {
         return result.preview(registries);
@@ -495,21 +509,15 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         t -> t.name().toLowerCase()
                 );
 
-        private static final MapCodec<ItemResult> ITEM_RESULT_CODEC =
+        private static final MapCodec<TradeResult.ItemResult> ITEM_RESULT_CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
                         BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(TradeResult.ItemResult::item),
-                        TradeAmount.CODEC.fieldOf("amount").forGetter(TradeResult.ItemResult::amount),
-                        ENCHANT_PROVIDER_CODEC.optionalFieldOf("enchantment_provider").forGetter(ItemResult::enchantmentProvider),
-                        Codec.STRING.optionalFieldOf("stack_modifier").forGetter(ItemResult::stackModifierId),
-                        DataComponentPatch.CODEC.optionalFieldOf("result_patch").forGetter(ItemResult::resultPatch)
-                ).apply(inst, ItemResult::new));
+                        TradeAmount.CODEC.fieldOf("amount").forGetter(TradeResult.ItemResult::amount)
+                ).apply(inst, TradeResult.ItemResult::new));
 
         private static final MapCodec<TradeResult.MapResult> MAP_RESULT_CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
-                        MapTradeData.CODEC.fieldOf("map").forGetter(TradeResult.MapResult::mapData),
-                        ENCHANT_PROVIDER_CODEC.optionalFieldOf("enchantment_provider").forGetter(TradeResult.MapResult::enchantmentProvider),
-                        Codec.STRING.optionalFieldOf("stack_modifier").forGetter(TradeResult.MapResult::stackModifierId),
-                        DataComponentPatch.CODEC.optionalFieldOf("result_patch").forGetter(TradeResult.MapResult::resultPatch)
+                        MapTradeData.CODEC.fieldOf("map").forGetter(TradeResult.MapResult::mapData)
                 ).apply(inst, TradeResult.MapResult::new));
 
         private static final MapCodec<TradeResult> TRADE_RESULT_CODEC =
@@ -517,7 +525,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         "type",
                         TradeResult::type,
                         type -> switch (type) {
-                            case ITEM -> ITEM_RESULT_CODEC.xmap(r -> (TradeResult) r, r -> (ItemResult) r);
+                            case ITEM -> ITEM_RESULT_CODEC.xmap(r -> (TradeResult) r, r -> (TradeResult.ItemResult) r);
                             case MAP  -> MAP_RESULT_CODEC.xmap(r -> (TradeResult) r, r -> (TradeResult.MapResult) r);
                         }
                 );
@@ -537,6 +545,10 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         TradeCost.CODEC.optionalFieldOf("cost_b").forGetter(DwarfTradeRecipe::costB),
 
                         TRADE_RESULT_CODEC.fieldOf("result").forGetter(DwarfTradeRecipe::result),
+
+                        ENCHANT_PROVIDER_CODEC.optionalFieldOf("enchantment_provider").forGetter(DwarfTradeRecipe::enchantmentProvider),
+                        Codec.STRING.optionalFieldOf("stack_modifier").forGetter(DwarfTradeRecipe::stackModifierId),
+                        DataComponentPatch.CODEC.optionalFieldOf("result_patch").forGetter(DwarfTradeRecipe::resultPatch),
 
                         Codec.INT.optionalFieldOf("max_uses", 12).forGetter(DwarfTradeRecipe::maxUses),
                         Codec.INT.optionalFieldOf("villager_xp", 1).forGetter(DwarfTradeRecipe::villagerXp),
@@ -667,6 +679,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
             writeTradeResult(buf, r.result);
 
+            writeHooks(buf, r.enchantmentProvider, r.stackModifierId, r.resultPatch);
+
             buf.writeVarInt(r.maxUses);
             buf.writeVarInt(r.villagerXp);
             buf.writeFloat(r.priceMultiplier);
@@ -688,6 +702,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
             TradeResult result = readTradeResult(buf);
 
+            Hooks hooks = readHooks(buf);
+
             int maxUses = buf.readVarInt();
             int villagerXp = buf.readVarInt();
             float priceMultiplier = buf.readFloat();
@@ -702,6 +718,9 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                     costA,
                     costB,
                     result,
+                    hooks.enchant,
+                    hooks.stackMod,
+                    hooks.patch,
                     maxUses,
                     villagerXp,
                     priceMultiplier
@@ -725,12 +744,10 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                     var item = (TradeResult.ItemResult) r;
                     buf.writeResourceLocation(BuiltInRegistries.ITEM.getKey(item.item()));
                     TradeAmount.STREAM_CODEC.encode(buf, item.amount());
-                    writeHooks(buf, item.enchantmentProvider(), item.stackModifierId(), item.resultPatch());
                 }
                 case MAP -> {
                     var map = (TradeResult.MapResult) r;
                     MapTradeData.STREAM_CODEC.encode(buf, map.mapData());
-                    writeHooks(buf, map.enchantmentProvider(), map.stackModifierId(), map.resultPatch());
                 }
             }
         }
@@ -744,13 +761,11 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                     Item item = BuiltInRegistries.ITEM.getValue(id);
 
                     TradeAmount amount = TradeAmount.STREAM_CODEC.decode(buf);
-                    Hooks hooks = readHooks(buf);
-                    yield new TradeResult.ItemResult(item, amount, hooks.enchant, hooks.stackMod, hooks.patch);
+                    yield new TradeResult.ItemResult(item, amount);
                 }
                 case MAP -> {
                     MapTradeData map = MapTradeData.STREAM_CODEC.decode(buf);
-                    Hooks hooks = readHooks(buf);
-                    yield new TradeResult.MapResult(map, hooks.enchant, hooks.stackMod, hooks.patch);
+                    yield new TradeResult.MapResult(map);
                 }
             };
         }

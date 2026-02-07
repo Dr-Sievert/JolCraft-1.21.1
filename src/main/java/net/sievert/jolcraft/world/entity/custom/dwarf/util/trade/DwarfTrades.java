@@ -2,7 +2,6 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.util.trade;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -16,7 +15,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -56,28 +54,26 @@ public final class DwarfTrades {
             ItemStack costAStack = recipe.rollCostA(random);
             Optional<ItemStack> costBStack = recipe.rollCostB(random);
 
-            ItemStack out = recipe.rollResult(trader.level().registryAccess(), random);
+            ItemStack out = recipe.rollResultBase(trader.level().registryAccess(), random);
             if (out.isEmpty()) return null;
 
-            var result = recipe.result();
-
             // Enchantments require a real Level + DifficultyInstance, so this is server-authoritative only.
-            if (result.enchantmentProvider().isPresent()) {
+            if (recipe.enchantmentProvider().isPresent()) {
                 Level level = trader.level();
                 EnchantmentHelper.enchantItemFromProvider(
                         out,
                         level.registryAccess(),
-                        result.enchantmentProvider().get(),
+                        recipe.enchantmentProvider().get(),
                         level.getCurrentDifficultyAt(trader.blockPosition()),
                         random
                 );
             }
 
-            result.stackModifierId().ifPresent(id ->
+            recipe.stackModifierId().ifPresent(id ->
                     DwarfTrades.StackModifiers.resolve(id).accept(out)
             );
 
-            result.resultPatch().ifPresent(out::applyComponents);
+            recipe.resultPatch().ifPresent(out::applyComponents);
 
             DwarfItemCost costA = new DwarfItemCost(costAStack.getItem(), costAStack.getCount());
             Optional<DwarfItemCost> costB = costBStack.map(s -> new DwarfItemCost(s.getItem(), s.getCount()));
@@ -98,10 +94,7 @@ public final class DwarfTrades {
             if (!(trader.level() instanceof ServerLevel serverLevel)) return null;
 
             if (!(recipe.result() instanceof DwarfTradeRecipe.TradeResult.MapResult(
-                    DwarfTradeRecipe.MapTradeData mapData,
-                    Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider,
-                    Optional<String> stackModifierId,
-                    Optional<DataComponentPatch> resultPatch
+                    DwarfTradeRecipe.MapTradeData mapData
             ))) return null;
 
             BlockPos targetPos;
@@ -131,9 +124,8 @@ public final class DwarfTrades {
             MapItemSavedData.addTargetDecoration(map, targetPos, "+", destinationType);
             map.set(DataComponents.ITEM_NAME, Component.translatable(mapData.mapDisplayNameKey()));
 
-            resultPatch.ifPresent(map::applyComponents);
-
-            enchantmentProvider.ifPresent(providerKey -> EnchantmentHelper.enchantItemFromProvider(
+            // Enchantments require a real Level + DifficultyInstance, so this is server-authoritative only.
+            recipe.enchantmentProvider().ifPresent(providerKey -> EnchantmentHelper.enchantItemFromProvider(
                     map,
                     serverLevel.registryAccess(),
                     providerKey,
@@ -141,9 +133,11 @@ public final class DwarfTrades {
                     random
             ));
 
-            stackModifierId.ifPresent(id ->
+            recipe.stackModifierId().ifPresent(id ->
                     DwarfTrades.StackModifiers.resolve(id).accept(map)
             );
+
+            recipe.resultPatch().ifPresent(map::applyComponents);
 
             ItemStack costAStack = recipe.rollCostA(random);
             Optional<ItemStack> costBStack = recipe.rollCostB(random);
@@ -254,28 +248,26 @@ public final class DwarfTrades {
     /**
      * JEI example output.
      * - MAP results: returns a filled map with the display name (no structure lookup in JEI).
-     * - Other results: rolls result using registry access only (no enchant provider here because it requires DifficultyInstance).
+     * - Other results: rolls base result using registry access only (no enchant provider here because it requires DifficultyInstance).
+     *   Applies stack modifier + patch for visual correctness. Enchant provider is intentionally skipped in JEI.
      */
     public static ItemStack getExampleOutput(DwarfTradeRecipe recipe, net.minecraft.core.RegistryAccess registryAccess) {
         if (recipe.result() instanceof DwarfTradeRecipe.TradeResult.MapResult(
-                DwarfTradeRecipe.MapTradeData mapData,
-                Optional<ResourceKey<EnchantmentProvider>> ignoredEnchant,
-                Optional<String> stackModifierId,
-                Optional<DataComponentPatch> resultPatch
+                DwarfTradeRecipe.MapTradeData mapData
         )) {
             ItemStack map = new ItemStack(Items.FILLED_MAP);
             map.set(DataComponents.ITEM_NAME, Component.translatable(mapData.mapDisplayNameKey()));
-            resultPatch.ifPresent(map::applyComponents);
-            stackModifierId.ifPresent(id -> DwarfTrades.StackModifiers.resolve(id).accept(map));
+            recipe.stackModifierId().ifPresent(id -> DwarfTrades.StackModifiers.resolve(id).accept(map));
+            recipe.resultPatch().ifPresent(map::applyComponents);
             return map;
         }
 
         RandomSource random = RandomSource.create(0xDEADBEEFL);
-        ItemStack out = recipe.rollResult(registryAccess, random);
+        ItemStack out = recipe.rollResultBase(registryAccess, random);
         if (out.isEmpty()) return ItemStack.EMPTY;
 
-        recipe.result().resultPatch().ifPresent(out::applyComponents);
-        recipe.result().stackModifierId().ifPresent(id -> DwarfTrades.StackModifiers.resolve(id).accept(out));
+        recipe.stackModifierId().ifPresent(id -> DwarfTrades.StackModifiers.resolve(id).accept(out));
+        recipe.resultPatch().ifPresent(out::applyComponents);
 
         return out;
     }

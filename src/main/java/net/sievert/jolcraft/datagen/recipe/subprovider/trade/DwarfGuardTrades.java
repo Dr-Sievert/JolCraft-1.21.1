@@ -32,7 +32,8 @@ public final class DwarfGuardTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(30),
                 Optional.of(cost(JolCraftItems.AEGISCORE.get(), 1)),
-                itemResult(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), 1),
+                Hooks.EMPTY,
                 1, 0, 0.05F,
                 buyFor(JolCraftItems.AEGISCORE.get(), JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get())
         );

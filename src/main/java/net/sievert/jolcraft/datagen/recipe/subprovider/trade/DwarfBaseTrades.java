@@ -23,7 +23,7 @@ public final class DwarfBaseTrades extends AbstractDwarfTrades {
                 NOVICE,
                 coins(1, 4),
                 Optional.empty(),
-                itemResult(Items.STICK, 2, 8, Hooks.EMPTY),
+                itemResult(Items.STICK, 2, 8),
                 6, 500, 0.05F,
                 buy(Items.STICK)
         );
@@ -33,7 +33,7 @@ public final class DwarfBaseTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(30),
                 Optional.of(cost(Items.PURPLE_DYE, 1)),
-                itemResult(JolCraftItems.GUILD_SIGIL.get(), 1, Hooks.EMPTY),
+                itemResult(JolCraftItems.GUILD_SIGIL.get(), 1),
                 1, 0, 0.05F,
                 buyFor(Items.PURPLE_DYE, JolCraftItems.GUILD_SIGIL.get())
         );
