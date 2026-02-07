@@ -27,10 +27,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import java.util.ArrayList;

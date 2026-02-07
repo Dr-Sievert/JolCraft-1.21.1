@@ -1,7 +1,5 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.profession;
 
-import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -41,11 +39,6 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
     @Override
     protected DwarfProfession getSpawnProfession() {
         return DwarfProfession.SCRAPPER;
-    }
-
-    @Override
-    public boolean canTrade() {
-        return true;
     }
 
     @Override
@@ -92,13 +85,5 @@ public class DwarfScrapperEntity extends AbstractDwarfEntity {
                 return level.getBlockState(pos).is(Blocks.COBBLED_DEEPSLATE);
             }
         });
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        InteractionResult result = super.mobInteract(player, hand);
-        if (result != InteractionResult.FAIL) return result;
-        PlaySound.dwarfNo(this);
-        return InteractionResult.FAIL;
     }
 }

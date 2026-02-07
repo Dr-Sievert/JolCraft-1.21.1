@@ -51,17 +51,12 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    public boolean canTrade() {
-        return true;
-    }
-
-    @Override
     public ItemStack getSignedContractItem() {
         return new ItemStack(JolCraftItems.CONTRACT_EXPLORER.get());
     }
 
     @Override
-    protected int getRequiredTier() {
+    public int getRequiredTier() {
         return 2;
     }
 
@@ -104,36 +99,6 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
                 return level.getBlockState(pos).is(Blocks.COBBLED_DEEPSLATE);
             }
         });
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!this.level().isClientSide) {
-            int playerScore = DiscoveredStructuresHelper.getDiscoveryScore(player);
-            int currentLevel = this.getMerchantLevel();
-            int targetLevel = getLevelForScore(playerScore);
-            if (targetLevel > currentLevel) {
-                this.setMerchantLevel(targetLevel);
-                this.updateTrades();
-                PlaySound.dwarfYes(this);
-            }
-        }
-        InteractionResult result = super.mobInteract(player, hand);
-        if (result != InteractionResult.FAIL) return result;
-        PlaySound.dwarfNo(this);
-        return InteractionResult.FAIL;
-    }
-
-
-    public static final int[] SCORE_THRESHOLDS = { 0, 10, 70, 150, 250 };
-
-    public static int getLevelForScore(int score) {
-        for (int i = SCORE_THRESHOLDS.length - 1; i >= 0; i--) {
-            if (score >= SCORE_THRESHOLDS[i]) {
-                return i + 1;
-            }
-        }
-        return 1;
     }
 }
 

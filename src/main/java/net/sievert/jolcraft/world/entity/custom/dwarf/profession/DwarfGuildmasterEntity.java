@@ -1,10 +1,7 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.profession;
 
-import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -21,13 +18,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -45,11 +38,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
     @Override
     protected DwarfProfession getSpawnProfession() {
         return DwarfProfession.GUILDMASTER;
-    }
-
-    @Override
-    public boolean canTrade() {
-        return true;
     }
 
     @Override
@@ -110,33 +98,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
                 return level.getBlockState(pos).is(Blocks.COBBLED_DEEPSLATE);
             }
         });
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack itemstack = player.getItemInHand(hand);
-        boolean client = this.level().isClientSide;
-
-        int tier = DwarvenReputationHelper.getTier(player);
-        int desiredLevel = Math.min(tier + 1, 5);
-        int currentLevel = this.getMerchantLevel();
-        if (currentLevel < desiredLevel && !client) {
-            if (this.getOffers().isEmpty()) {
-                this.updateTrades();
-            }
-            for (int i = currentLevel; i < desiredLevel; i++) {
-                this.increaseMerchantCareer();
-            }
-        }
-
-        InteractionResult result = super.mobInteract(player, hand);
-        if (result != InteractionResult.FAIL) return result;
-
-        InteractionResult reputationGain = DwarfInteractionHelper.reputationGain(this, player, hand, itemstack);
-        if (reputationGain != InteractionResult.FAIL) return reputationGain;
-
-        PlaySound.dwarfNo(this);
-        return InteractionResult.FAIL;
     }
 }
 

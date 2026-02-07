@@ -1,7 +1,5 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.profession;
 
-import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -13,8 +11,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
@@ -32,11 +28,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -69,7 +63,7 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    protected int getRequiredTier() {
+    public int getRequiredTier() {
         return 1;
     }
 
@@ -124,17 +118,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Zombie.class, false));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, AbstractPiglin.class, false));
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        InteractionResult result = super.mobInteract(player, hand);
-        if (result != InteractionResult.FAIL) return result;
-        ItemStack itemstack = player.getItemInHand(hand);
-        InteractionResult guardEquip = DwarfInteractionHelper.guardEquip(this, player, hand, itemstack);
-        if (guardEquip != InteractionResult.FAIL) return guardEquip;
-        PlaySound.dwarfNo(this);
-        return InteractionResult.FAIL;
     }
 
     @Override

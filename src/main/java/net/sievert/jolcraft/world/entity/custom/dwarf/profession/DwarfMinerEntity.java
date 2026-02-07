@@ -1,7 +1,5 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.profession;
 
-import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -18,14 +16,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -46,11 +41,6 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    public boolean canTrade() {
-        return true;
-    }
-
-    @Override
     public boolean canReroll() { return false; }
 
     @Override
@@ -59,7 +49,7 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    protected int getRequiredTier() {
+    public int getRequiredTier() {
         return 2;
     }
 
@@ -100,35 +90,6 @@ public class DwarfMinerEntity extends AbstractDwarfEntity {
                 return level.getBlockState(pos).is(Blocks.COBBLED_DEEPSLATE);
             }
         });
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        InteractionResult result = super.mobInteract(player, hand);
-        if (result != InteractionResult.FAIL) return result;
-        ItemStack itemstack = player.getItemInHand(hand);
-        InteractionResult bounty = DwarfInteractionHelper.bounty(this, player, hand, itemstack, BountyType.MINER);
-        if (bounty != InteractionResult.FAIL) return bounty;
-        InteractionResult bountyCrate = DwarfInteractionHelper.bountyCrate(this, player, hand, itemstack, BountyType.MINER);
-        if (bountyCrate != InteractionResult.FAIL) return bountyCrate;
-        PlaySound.dwarfNo(this);
-        return InteractionResult.FAIL;
-    }
-
-    @Override
-    public void aiStep() {
-        super.aiStep();
-
-        if (this.shouldIncreaseLevel() && this.updateMerchantTimer <= 0) {
-            if (this.shouldIncreaseLevel()) {
-                this.increaseMerchantCareer();
-                this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
-                PlaySound.dwarfYes(this);
-                this.updateMerchantTimer = 40;
-            }
-        } else if (this.updateMerchantTimer > 0) {
-            --this.updateMerchantTimer;
-        }
     }
 }
 

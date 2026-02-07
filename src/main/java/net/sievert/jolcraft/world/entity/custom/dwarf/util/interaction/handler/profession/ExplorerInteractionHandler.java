@@ -1,21 +1,24 @@
-package net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.behavior.profession;
+package net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.handler.profession;
 
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
-import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.behavior.DwarfProfessionBehavior;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
-public final class ExplorerBehavior implements DwarfProfessionBehavior {
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    public static final ExplorerBehavior INSTANCE = new ExplorerBehavior();
-
-    private ExplorerBehavior() {}
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public final class ExplorerInteractionHandler
+        implements DwarfInteractions.ProfessionInteraction, DwarfInteractions.DwarfInteractionHooks {
 
     @Override
-    public void onBeforeTradeScreen(AbstractDwarfEntity dwarf, Player player, InteractionHand hand) {
+    public void preCore(DwarfInteractions.DwarfInteractionContext ctx) {
+        var dwarf = ctx.dwarf();
+        var player = ctx.player();
+
         int score = DiscoveredStructuresHelper.getDiscoveryScore(player);
 
         int currentLevel = dwarf.getMerchantLevel();
@@ -26,6 +29,13 @@ public final class ExplorerBehavior implements DwarfProfessionBehavior {
             dwarf.updateTrades();
             PlaySound.dwarfYes(dwarf);
         }
+    }
+
+    @Override
+    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+        // Explorer has no unique right-click action besides pre-core syncing.
+        PlaySound.dwarfNo(ctx.dwarf());
+        return InteractionResult.FAIL;
     }
 
     private static int getLevelForScore(int score) {

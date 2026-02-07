@@ -1,24 +1,34 @@
-package net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.type.profession;
+package net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.handler.core;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
-import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.type.InspectInteraction;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
-public class SignInteraction extends InspectInteraction {
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public final class SignContractInteractionHandler implements DwarfInteractions.CoreInteraction {
 
     @Override
-    public InteractionResult handle(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
-        if (itemstack == null || !itemstack.is(JolCraftItems.CONTRACT_WRITTEN.get())) {
-            return InteractionResult.FAIL;
+    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+        if (ctx.isClient()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        var dwarf = ctx.dwarf();
+        var player = ctx.player();
+        var hand = ctx.hand();
+        var stack = ctx.stack();
+
+        if (!stack.is(JolCraftItems.CONTRACT_WRITTEN.get())) {
+            return InteractionResult.PASS;
         }
 
         if (!dwarf.canSign()) {
@@ -39,7 +49,7 @@ public class SignInteraction extends InspectInteraction {
             return InteractionResult.SUCCESS;
         }
 
-        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.CONTRACT_SIGNING, player, hand, itemstack);
+        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.CONTRACT_SIGNING, player, hand, stack);
         return InteractionResult.SUCCESS;
     }
 }

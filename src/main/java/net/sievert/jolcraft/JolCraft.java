@@ -14,6 +14,7 @@ import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.data.JolCraftAttributes;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.item.creative.JolCraftCreativeModeTabs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.armor.JolCraftEquipmentAssets;
@@ -67,6 +68,7 @@ public class JolCraft {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(JolCraftStats::initializeStats);
+        DwarfInteractions.registerAll();
     }
 
     // --- Utility for ResourceLocation under this modid ---

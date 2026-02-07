@@ -9,8 +9,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -31,8 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.behavior.DwarfProfessionBehavior;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.behavior.DwarfProfessionBehaviors;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
@@ -40,13 +37,11 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionTyp
 import net.sievert.jolcraft.world.entity.util.EntityData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfVariant;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -85,7 +80,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     public boolean neverEndorse() { return false; }
 
-    protected int getRequiredTier() {
+    public int getRequiredTier() {
         return 0;
     }
 
@@ -207,69 +202,16 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack itemstack = player.getItemInHand(hand);
-
-        InteractionResult blacklistFilter = DwarfInteractionHelper.blacklistCheck(this, player, itemstack);
-        if (blacklistFilter != InteractionResult.FAIL) return blacklistFilter;
-
-        InteractionResult langFilter = DwarfInteractionHelper.languageCheck(this, player);
-        if (langFilter != InteractionResult.FAIL) return langFilter;
-
-        InteractionResult repFilter = DwarfInteractionHelper.reputationCheck(this, player, getRequiredTier());
-        if (repFilter != InteractionResult.FAIL) return repFilter;
-
-        InteractionResult actionFilter = DwarfInteractionHelper.actionCheck(this, player);
-        if (actionFilter != InteractionResult.FAIL) return actionFilter;
-
-        InteractionResult breed = DwarfInteractionHelper.breed(this, player, hand, itemstack);
-        if (breed != InteractionResult.FAIL) return breed;
-
-        if(this.isBaby()) return InteractionResult.FAIL;
-
-        if (itemstack.is(JolCraftItems.GOLD_COIN.get()) && this.canBePaid()) {
-            this.setPaid(player);
-            JolCraftSoundHelper.entity(this, SoundEvents.EXPERIENCE_ORB_PICKUP, 1.0F, 1.4F);
-            this.usePlayerItem(player, hand, itemstack);
-            return InteractionResult.SUCCESS;
-        }
-
-        InteractionResult sign = DwarfInteractionHelper.sign(this, player, hand, itemstack);
-        if (sign != InteractionResult.FAIL) return sign;
-
-        InteractionResult promote = DwarfInteractionHelper.promote(this, player, hand, itemstack);
-        if (promote != InteractionResult.FAIL) return promote;
-
-        InteractionResult endorse = DwarfInteractionHelper.endorse(this, player, hand, itemstack);
-        if (endorse != InteractionResult.FAIL) return endorse;
-
-        InteractionResult crate = DwarfInteractionHelper.crate(this, player, hand, itemstack);
-        if (crate != InteractionResult.FAIL) return crate;
-
-        if (canTrade() && itemstack.isEmpty() && (!player.isCreative() || player.getInventory().getSelected().isEmpty())) {
-            if (hand == InteractionHand.MAIN_HAND) {
-                player.awardStat(Stats.TALKED_TO_VILLAGER);
-            }
-
-            if (!this.level().isClientSide) {
-
-                DwarfProfessionBehavior behavior = DwarfProfessionBehaviors.get(this.getProfession());
-                if (behavior != null) {
-                    behavior.onBeforeTradeScreen(this, player, hand);
-                }
-
-                if (this.getOffers().isEmpty()) {
-                    return InteractionResult.SUCCESS;
-                }
-
-                this.setTradingPlayer(player);
-                this.openTradingScreen(player, this.getDisplayName(), this.getMerchantLevel());
-            }
-
-            return InteractionResult.SUCCESS;
-        }
-
-
-        return InteractionResult.FAIL;
+        return DwarfInteractions.dispatch(
+                new DwarfInteractions.DwarfInteractionContext(
+                        this,
+                        player,
+                        hand,
+                        player.getItemInHand(hand),
+                        this.level(),
+                        this.level().isClientSide
+                )
+        );
     }
 
     //Tick

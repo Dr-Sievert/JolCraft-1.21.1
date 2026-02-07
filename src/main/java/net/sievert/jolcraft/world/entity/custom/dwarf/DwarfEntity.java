@@ -32,11 +32,6 @@ public class DwarfEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    public boolean canTrade() {
-        return true;
-    }
-
-    @Override
     public boolean neverEndorse() {
         return true;
     }
@@ -64,13 +59,5 @@ public class DwarfEntity extends AbstractDwarfEntity {
                 return level.getBlockState(pos).is(Blocks.COBBLED_DEEPSLATE);
             }
         });
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        InteractionResult result = super.mobInteract(player, hand);
-        if (result != InteractionResult.FAIL) return result;
-        PlaySound.dwarfNo(this);
-        return InteractionResult.FAIL;
     }
 }

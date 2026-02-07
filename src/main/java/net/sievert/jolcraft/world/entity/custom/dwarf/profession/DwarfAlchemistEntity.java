@@ -42,17 +42,12 @@ public class DwarfAlchemistEntity extends AbstractDwarfEntity {
     }
 
     @Override
-    public boolean canTrade() {
-        return true;
-    }
-
-    @Override
     public ItemStack getSignedContractItem() {
         return new ItemStack(JolCraftItems.CONTRACT_ALCHEMIST.get());
     }
 
     @Override
-    protected int getRequiredTier() {
+    public int getRequiredTier() {
         return 3;
     }
 
@@ -93,13 +88,5 @@ public class DwarfAlchemistEntity extends AbstractDwarfEntity {
                 return level.getBlockState(pos).is(Blocks.COBBLED_DEEPSLATE);
             }
         });
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        InteractionResult result = super.mobInteract(player, hand);
-        if (result != InteractionResult.FAIL) return result;
-        PlaySound.dwarfNo(this);
-        return InteractionResult.FAIL;
     }
 }

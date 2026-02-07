@@ -1,0 +1,42 @@
+package net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.handler.profession;
+
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public final class GuardInteractionHandler implements DwarfInteractions.ProfessionInteraction {
+
+    @Override
+    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+        var dwarf = ctx.dwarf();
+        var player = ctx.player();
+        var hand = ctx.hand();
+        var stack = ctx.stack();
+
+        EquipmentSlot slot = getSlotForArmor(stack);
+
+        if (!dwarf.getItemBySlot(slot).isEmpty()) {
+            PlaySound.dwarfNo(dwarf);
+            return InteractionResult.FAIL;
+        }
+
+        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.GUARD_EQUIP, player, hand, stack);
+        return InteractionResult.SUCCESS;
+    }
+
+    public static EquipmentSlot getSlotForArmor(net.minecraft.world.item.ItemStack stack) {
+        if (stack.is(JolCraftItems.DEEPSLATE_HELMET.get())) return EquipmentSlot.HEAD;
+        if (stack.is(JolCraftItems.DEEPSLATE_CHESTPLATE.get())) return EquipmentSlot.CHEST;
+        if (stack.is(JolCraftItems.DEEPSLATE_LEGGINGS.get())) return EquipmentSlot.LEGS;
+        if (stack.is(JolCraftItems.DEEPSLATE_BOOTS.get())) return EquipmentSlot.FEET;
+        return null;
+    }
+}
