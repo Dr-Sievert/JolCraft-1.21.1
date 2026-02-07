@@ -18,8 +18,8 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.Nullable;
@@ -34,8 +34,11 @@ public class DwarfPriestEntity extends AbstractDwarfEntity {
     public DwarfPriestEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.SUNGLEAM.get()));
-        this.instanceTrades = createRandomizedArcanistTrades();
-        this.setProfession(DwarfProfession.PRIEST);
+    }
+
+    @Override
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.PRIEST;
     }
 
     @Override
@@ -98,11 +101,5 @@ public class DwarfPriestEntity extends AbstractDwarfEntity {
         if (result != InteractionResult.FAIL) return result;
         PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
-    }
-
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedArcanistTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-
-        ));
     }
 }

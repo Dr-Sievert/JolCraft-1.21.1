@@ -15,6 +15,7 @@ import net.sievert.jolcraft.datagen.advancement.JolCraftAdvancementProvider;
 import net.sievert.jolcraft.datagen.biome.JolCraftBiomeTagProvider;
 import net.sievert.jolcraft.datagen.block.JolCraftBlockLootTableProvider;
 import net.sievert.jolcraft.datagen.block.JolCraftBlockTagProvider;
+import net.sievert.jolcraft.datagen.config.JolCraftConfigProvider;
 import net.sievert.jolcraft.datagen.item.JolCraftItemTagProvider;
 import net.sievert.jolcraft.datagen.language.JolCraftLanguageProvider;
 import net.sievert.jolcraft.datagen.loot.JolCraftEntityLootTableProvider;
@@ -83,6 +84,8 @@ public class JolCraftDataGenerator {
         ));
 
         generator.addProvider(true, new JolCraftDatapackProvider(packOutput, lookup));
+
+        generator.addProvider(true, new JolCraftConfigProvider(packOutput));
     }
 
     private static void addClientProviders(

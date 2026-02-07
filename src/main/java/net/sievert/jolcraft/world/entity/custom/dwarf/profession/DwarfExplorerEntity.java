@@ -20,15 +20,15 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -43,22 +43,11 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()));
         this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
         this.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.LEATHER_BOOTS));
-        this.instanceTrades = createRandomizedExplorerTrades();
-        this.setProfession(DwarfProfession.EXPLORER);
-    }
-
-    private int lastUnlockedLevel = 0;
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putInt("LastUnlockedLevel", lastUnlockedLevel);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.lastUnlockedLevel = tag.getInt("LastUnlockedLevel");
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.EXPLORER;
     }
 
     @Override
@@ -121,10 +110,10 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!this.level().isClientSide) {
             int playerScore = DiscoveredStructuresHelper.getDiscoveryScore(player);
-            int currentLevel = this.getVillagerData().getLevel();
+            int currentLevel = this.getMerchantLevel();
             int targetLevel = getLevelForScore(playerScore);
             if (targetLevel > currentLevel) {
-                this.setVillagerData(this.getVillagerData().setLevel(targetLevel));
+                this.setMerchantLevel(targetLevel);
                 this.updateTrades();
                 PlaySound.dwarfYes(this);
             }
@@ -145,87 +134,6 @@ public class DwarfExplorerEntity extends AbstractDwarfEntity {
             }
         }
         return 1;
-    }
-
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedExplorerTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-                // Novice
-                1, new DwarfTrades.ItemListing[] {
-                        new DwarfTrades.ItemsForGold(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(), 5, 10,  1, 3, 0),
-                        new DwarfTrades.ItemsAndGoldToItemsWithData(
-                                Items.REDSTONE, 1,
-                                5,
-                                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(), 1,
-                                3, 0, 0F,
-                                (stack) -> {
-                                    StructureGroup group = StructureGroup.DWARVEN;
-                                    stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group.id());
-                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
-                                }
-                        ),
-
-
-                },
-                // Apprentice
-                2, new DwarfTrades.ItemListing[] {
-                        new DwarfTrades.ItemsAndGoldToItemsWithData(
-                                Items.REDSTONE, 1,
-                                5,
-                                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(), 1,
-                                3, 0, 0F,
-                                (stack) -> {
-                                    StructureGroup group = StructureGroup.ANCIENT;
-                                    stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group.id());
-                                    stack.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
-                                }
-                        ),
-                },
-                // Journeyman
-                3, new DwarfTrades.ItemListing[] {
-                },
-                // Expert
-                4, new DwarfTrades.ItemListing[] {
-                },
-                // Master
-                5, new DwarfTrades.ItemListing[] {
-                }
-        ));
-    }
-
-    @Override
-    protected void updateTrades() {
-        int level = this.getVillagerData().getLevel();
-
-        if (instanceTrades == null) return;
-
-        if (lastUnlockedLevel == 0 || this.getOffers().isEmpty()) {
-            this.getOffers().clear();
-            for (int i = 1; i <= level; i++) {
-                DwarfTrades.ItemListing[] listings = instanceTrades.get(i);
-                if (listings != null) {
-                    for (DwarfTrades.ItemListing trade : listings) {
-                        DwarfMerchantOffer offer = trade.getOffer(this, this.random);
-                        if (offer != null) {
-                            this.getOffers().add(offer);
-                        }
-                    }
-                }
-            }
-        } else {
-            for (int i = lastUnlockedLevel + 1; i <= level; i++) {
-                DwarfTrades.ItemListing[] listings = instanceTrades.get(i);
-                if (listings != null) {
-                    for (DwarfTrades.ItemListing trade : listings) {
-                        DwarfMerchantOffer offer = trade.getOffer(this, this.random);
-                        if (offer != null) {
-                            this.getOffers().add(offer);
-                        }
-                    }
-                }
-            }
-        }
-
-        lastUnlockedLevel = level;
     }
 }
 

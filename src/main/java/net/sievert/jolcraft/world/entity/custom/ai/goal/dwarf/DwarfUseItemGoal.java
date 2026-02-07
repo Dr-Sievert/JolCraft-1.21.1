@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 public class DwarfUseItemGoal<T extends Mob> extends Goal {

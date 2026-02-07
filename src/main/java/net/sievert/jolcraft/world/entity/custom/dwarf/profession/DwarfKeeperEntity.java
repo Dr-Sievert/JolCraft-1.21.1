@@ -18,9 +18,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -33,8 +33,11 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
     public DwarfKeeperEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.BARLEY.get()));
-        this.instanceTrades = createRandomizedKeeperTrades();
-        this.setProfession(DwarfProfession.KEEPER);
+    }
+
+    @Override
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.KEEPER;
     }
 
     @Override
@@ -94,53 +97,6 @@ public class DwarfKeeperEntity extends AbstractDwarfEntity {
         if (result != InteractionResult.FAIL) return result;
         PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
-    }
-
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedKeeperTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-
-                        //Novice
-                        1,
-
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsForGold(JolCraftItems.BARLEY_SEEDS.get(), 1, 2, 1, 3, 10, 1),
-
-                        },
-
-                        //Apprentice
-                        2,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.GoldForItems(JolCraftItems.BARLEY.get(), 15, 22, 10, 25, 1, 2),
-
-                        },
-
-                        //Journeyman
-                        3,
-                        new DwarfTrades.ItemListing[]{
-
-                                new DwarfTrades.GoldForItems(JolCraftItems.MUFFHORN_FUR.get(), 1, 15, 5, 2, 4),
-                                new DwarfTrades.GoldForItems(JolCraftItems.MUFFHORN_MILK_BUCKET.get(), 1, 10, 30, 3, 5),
-                        },
-
-                        //Expert
-                        4,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.GoldForItems(JolCraftItems.DEEPSLATE_BULBS.get(), 1, 2, 10, 30, 3, 5),
-
-                        },
-
-                        //Master
-                        5,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsForGold(Items.BONE_MEAL, 2, 5, 3, 5, 5, 1),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.DEEPSLATE_BULBS.get(), 5, 9, 1, 5, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.ASGARNIAN_SEEDS.get(), 5, 1, 3, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.DUSKHOLD_SEEDS.get(), 5, 1, 3, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.KRANDONIAN_SEEDS.get(), 5, 1, 3, 0),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.YANILLIAN_SEEDS.get(), 5, 1, 3, 0),
-                        }
-                )
-        );
     }
 }
 

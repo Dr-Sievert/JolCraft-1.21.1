@@ -25,9 +25,9 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfVariant;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

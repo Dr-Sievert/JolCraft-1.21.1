@@ -30,10 +30,7 @@ public final class JolCraftStructures {
     private static <T extends Structure> RegisteredStructure<T> register(String path, MapCodec<T> codec) {
         ResourceLocation id = JolCraft.location(path);
         ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE, id);
-
-        DeferredHolder<StructureType<?>, StructureType<T>> type =
-                STRUCTURE_TYPES.register(path, () -> explicitStructureTypeTyping(codec));
-
+        DeferredHolder<StructureType<?>, StructureType<T>> type = STRUCTURE_TYPES.register(path, () -> explicitStructureTypeTyping(codec));
         return new RegisteredStructure<>(id, key, type);
     }
 

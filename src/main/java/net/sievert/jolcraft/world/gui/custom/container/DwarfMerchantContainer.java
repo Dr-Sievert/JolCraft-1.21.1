@@ -9,7 +9,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.*;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

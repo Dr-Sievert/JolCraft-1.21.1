@@ -27,10 +27,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class JolCraftEntityEvents {
     }
 
     @SubscribeEvent
-    public static void onCrateInteract(PlayerInteractEvent.EntityInteractSpecific event) {
+    public static void onVillagerCrateInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         Player player = event.getEntity();
         Entity target = event.getTarget();
         ItemStack stack = event.getItemStack();
@@ -86,122 +86,22 @@ public class JolCraftEntityEvents {
             return;
         }
 
-        // Dwarf logic
-        if (target instanceof AbstractDwarfEntity dwarf && !dwarf.isBaby() && dwarf.canTrade()) {
-
-            // --- Language Check (block event if player can't interact) ---
-            InteractionResult langFilter = DwarfInteractionHelper.languageCheck(dwarf, player);
-            if (langFilter != InteractionResult.SUCCESS) {
-                event.setCancellationResult(langFilter);
-                event.setCanceled(true);
-                return;
-            }
-
-            // Restock Crate
-            if (stack.is(JolCraftItems.RESTOCK_CRATE.get())) {
-
-                //Prevent clientside crash
-                if (player.level().isClientSide) {
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                    return;
-                }
-
-                //Needs to actually have offers
-                if (dwarf.getOffers().isEmpty()) {
-                    player.displayClientMessage(
-                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
-                            true
-                    );
-                    PlaySound.dwarfNo(dwarf);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                    return;
-                }
-
-                boolean needsRestock = dwarf.getOffers().stream().anyMatch(DwarfMerchantOffer::isOutOfStock);
-
-                if (!needsRestock && !dwarf.hasRandomTrades()) {
-                    player.displayClientMessage(
-                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.RED),
-                            true
-                    );
-                    PlaySound.dwarfNo(dwarf);
-                } else {
-                    player.displayClientMessage(
-                            Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
-                            true
-                    );
-                    dwarf.crateRestock();
-                    PlaySound.dwarfYes(dwarf);
-                    player.getCooldowns().addCooldown(cooldownStack, 60);
-                    if (!player.isCreative()) stack.shrink(1);
-                }
-                event.setCancellationResult(InteractionResult.SUCCESS);
-                event.setCanceled(true);
-                return;
-            }
-
-            // Reroll Crate
-            if (stack.is(JolCraftItems.REROLL_CRATE.get())) {
-
-                //Prevent clientside crash
-                if (player.level().isClientSide) {
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                    return;
-                }
-
-                //Needs to actually have offers
-                if (dwarf.getOffers().isEmpty()) {
-                    player.displayClientMessage(
-                            Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
-                            true
-                    );
-                    PlaySound.dwarfNo(dwarf);
-                    event.setCancellationResult(InteractionResult.SUCCESS);
-                    event.setCanceled(true);
-                    return;
-                }
-
-                if (!dwarf.canReroll()) {
-                    player.displayClientMessage(
-                            Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_FAIL).withStyle(ChatFormatting.RED),
-                            true
-                    );
-                    PlaySound.dwarfNo(dwarf);
-                } else {
-                    player.displayClientMessage(
-                            Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
-                            true
-                    );
-                    dwarf.rerollTrades();
-                    PlaySound.dwarfYes(dwarf);
-
-                    // Apply cooldown BEFORE shrinking (stack may become empty)
-                    player.getCooldowns().addCooldown(cooldownStack, 60);
-                    if (!player.isCreative()) stack.shrink(1);
-                }
-                event.setCancellationResult(InteractionResult.SUCCESS);
-                event.setCanceled(true);
-                return;
-            }
-        }
-
+        // -------------------------------------------------------------------------
         // Villager logic
+        // -------------------------------------------------------------------------
         if (target instanceof Villager villager) {
 
             // Restock Crate
             if (stack.is(JolCraftItems.RESTOCK_CRATE.get()) && !villager.isBaby() && villager.canRestock()) {
 
-                //Prevent clientside crash
+                // Prevent clientside crash
                 if (player.level().isClientSide) {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
                 }
 
-                //Needs to actually have offers
+                // Needs to actually have offers
                 if (villager.getOffers().isEmpty()) {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
@@ -237,6 +137,7 @@ public class JolCraftEntityEvents {
                     player.getCooldowns().addCooldown(cooldownStack, 60);
                     if (!player.isCreative()) stack.shrink(1);
                 }
+
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
                 return;
@@ -245,14 +146,14 @@ public class JolCraftEntityEvents {
             // Reroll Crate
             if (stack.is(JolCraftItems.REROLL_CRATE.get()) && !villager.isBaby()) {
 
-                //Prevent clientside crash
+                // Prevent clientside crash
                 if (player.level().isClientSide) {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
                 }
 
-                //Needs to actually have offers
+                // Needs to actually have offers
                 if (villager.getOffers().isEmpty()) {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
@@ -274,7 +175,6 @@ public class JolCraftEntityEvents {
                     //noinspection DataFlowIssue
                     villager.setOffers(null);
                     MerchantOffers thisLevelOffers = villager.getOffers();
-
                     accumulated.addAll(thisLevelOffers);
                 }
 
@@ -297,23 +197,26 @@ public class JolCraftEntityEvents {
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
+                return;
             }
         }
 
+        // -------------------------------------------------------------------------
         // Wandering Trader logic
+        // -------------------------------------------------------------------------
         if (target instanceof WanderingTrader trader) {
 
             // Restock Crate
             if (stack.is(JolCraftItems.RESTOCK_CRATE.get())) {
 
-                //Prevent clientside crash
+                // Prevent clientside crash
                 if (player.level().isClientSide) {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
                 }
 
-                //Needs to actually have offers
+                // Needs to actually have offers
                 if (trader.getOffers().isEmpty()) {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
@@ -351,6 +254,7 @@ public class JolCraftEntityEvents {
                     player.getCooldowns().addCooldown(cooldownStack, 60);
                     if (!player.isCreative()) stack.shrink(1);
                 }
+
                 event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
                 return;
@@ -359,14 +263,14 @@ public class JolCraftEntityEvents {
             // Reroll Crate
             if (stack.is(JolCraftItems.REROLL_CRATE.get())) {
 
-                //Prevent clientside crash
+                // Prevent clientside crash
                 if (player.level().isClientSide) {
                     event.setCancellationResult(InteractionResult.SUCCESS);
                     event.setCanceled(true);
                     return;
                 }
 
-                //Needs to actually have offers
+                // Needs to actually have offers
                 if (trader.getOffers().isEmpty()) {
                     player.displayClientMessage(
                             Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_VILLAGER).withStyle(ChatFormatting.RED),
@@ -377,6 +281,7 @@ public class JolCraftEntityEvents {
                     event.setCanceled(true);
                     return;
                 }
+
                 trader.getOffers().clear();
 
                 VillagerTrades.ItemListing[] pool1 = VillagerTrades.WANDERING_TRADER_TRADES.get(1);

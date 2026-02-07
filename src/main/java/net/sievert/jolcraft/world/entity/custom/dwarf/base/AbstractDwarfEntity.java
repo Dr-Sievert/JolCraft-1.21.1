@@ -28,21 +28,25 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.behavior.DwarfProfessionBehavior;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.behavior.DwarfProfessionBehaviors;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfArtisanEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.action.DwarfActionHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.EntityData;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfBeardColor;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfEyeColor;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfVariant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfVariant;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -76,7 +80,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     }
 
     public boolean canEndorse() {
-        return this.getVillagerData().getLevel() >= 1;
+        return this.getMerchantLevel() >= 1;
     }
 
     public boolean neverEndorse() { return false; }
@@ -89,12 +93,43 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         return new ItemStack(JolCraftItems.CONTRACT_SIGNED.get());
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private DwarfProfession clientRenderProfession = DwarfProfession.NONE;
+
+    @OnlyIn(Dist.CLIENT)
+    public DwarfProfession getClientRenderProfession() {
+        return this.clientRenderProfession;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void setProfessionClient(DwarfProfession profession) {
+        this.clientRenderProfession = profession;
+    }
+
     public DwarfProfession getProfession() {
         return DwarfProfession.byId(this.getData(PROFESSION));
     }
 
-    public void setProfession(DwarfProfession profession) {
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.NONE;
+    }
+
+    public void setProfession(@Nullable DwarfProfession profession) {
+        if (profession == null) profession = DwarfProfession.NONE;
+
+        DwarfProfession current = this.getProfession();
+        if (current == profession) {
+            if (!this.level().isClientSide) {
+                DwarfAttributes.applyTo(this, profession);
+            }
+            return;
+        }
+
         this.setData(PROFESSION, profession.getId());
+
+        if (!this.level().isClientSide) {
+            DwarfAttributes.applyTo(this, profession);
+        }
     }
 
     @Override
@@ -157,17 +192,15 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         }
         this.paidTicks = compound.getInt("PaidTicks");
         this.paidCause = compound.hasUUID("PaidCause") ? compound.getUUID("PaidCause") : null;
+        if (!this.level().isClientSide) {
+            DwarfAttributes.applyTo(this, this.getProfession());
+        }
     }
 
     //Attributes
 
     public static AttributeSupplier.Builder createAttributes() {
-        return DwarfArtisanEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
+        return DwarfAttributes.createBase();
     }
 
     //Interact
@@ -209,20 +242,32 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         InteractionResult endorse = DwarfInteractionHelper.endorse(this, player, hand, itemstack);
         if (endorse != InteractionResult.FAIL) return endorse;
 
-        if (canTrade() && itemstack.isEmpty() && (!player.getAbilities().instabuild || player.getInventory().getSelected().isEmpty()))
-        {
+        InteractionResult crate = DwarfInteractionHelper.crate(this, player, hand, itemstack);
+        if (crate != InteractionResult.FAIL) return crate;
+
+        if (canTrade() && itemstack.isEmpty() && (!player.isCreative() || player.getInventory().getSelected().isEmpty())) {
             if (hand == InteractionHand.MAIN_HAND) {
                 player.awardStat(Stats.TALKED_TO_VILLAGER);
             }
+
             if (!this.level().isClientSide) {
+
+                DwarfProfessionBehavior behavior = DwarfProfessionBehaviors.get(this.getProfession());
+                if (behavior != null) {
+                    behavior.onBeforeTradeScreen(this, player, hand);
+                }
+
                 if (this.getOffers().isEmpty()) {
                     return InteractionResult.SUCCESS;
                 }
+
                 this.setTradingPlayer(player);
-                this.openTradingScreen(player, this.getDisplayName(), this.getVillagerData().getLevel());
+                this.openTradingScreen(player, this.getDisplayName(), this.getMerchantLevel());
             }
+
             return InteractionResult.SUCCESS;
         }
+
 
         return InteractionResult.FAIL;
     }
@@ -288,9 +333,10 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
             this.updateMerchantTimer--;
             if (this.updateMerchantTimer <= 0) {
                 if (this.increaseProfessionLevelOnUpdate) {
-                    this.increaseMerchantCareer();
+                    while (this.shouldIncreaseLevel()) {
+                        this.increaseMerchantCareer();
+                    }
                     this.increaseProfessionLevelOnUpdate = false;
-
                 }
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
                 PlaySound.dwarfYes(this);
@@ -523,6 +569,11 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
+
+        if (!this.level().isClientSide) {
+            this.setProfession(this.getSpawnProfession());
+        }
+
         DwarfVariant variant = Util.getRandom(DwarfVariant.values(), this.random);
         DwarfBeardColor beard = Util.getRandom(DwarfBeardColor.values(), this.random);
         DwarfEyeColor eye = Util.getRandom(DwarfEyeColor.values(), this.random);
@@ -530,6 +581,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         this.setData(BEARD_COLOR, beard.getId());
         this.setData(EYE_COLOR, eye.getId());
         this.setLeftHanded(false);
+
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 }

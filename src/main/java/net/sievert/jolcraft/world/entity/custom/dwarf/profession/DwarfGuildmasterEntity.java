@@ -21,13 +21,13 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.DwarfInteractionHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -40,22 +40,11 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
     public DwarfGuildmasterEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()));
-        this.instanceTrades = createRandomizedGuildmasterTrades();
-        this.setProfession(DwarfProfession.GUILDMASTER);
-    }
-
-    private int lastUnlockedLevel = 0;
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putInt("LastUnlockedLevel", lastUnlockedLevel);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.lastUnlockedLevel = tag.getInt("LastUnlockedLevel");
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.GUILDMASTER;
     }
 
     @Override
@@ -130,7 +119,7 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
 
         int tier = DwarvenReputationHelper.getTier(player);
         int desiredLevel = Math.min(tier + 1, 5);
-        int currentLevel = this.getVillagerData().getLevel();
+        int currentLevel = this.getMerchantLevel();
         if (currentLevel < desiredLevel && !client) {
             if (this.getOffers().isEmpty()) {
                 this.updateTrades();
@@ -148,72 +137,6 @@ public class DwarfGuildmasterEntity extends AbstractDwarfEntity {
 
         PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
-    }
-
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedGuildmasterTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-
-                        //Novice
-                        1,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsForGold(JolCraftItems.REPUTATION_TABLET_0.get(), 15, 1, 5, 0),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_HISTORIAN.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_MERCHANT.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_SCRAPPER.get(), 1, 1, 0, 0.05F)
-
-                        },
-
-                        //Apprentice
-                        2,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_BREWMASTER.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_GUARD.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_KEEPER.get(), 1, 1, 0, 0.05F)
-                        },
-
-                        //Journeyman
-                        3,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ARTISAN.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_EXPLORER.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_MINER.get(), 1, 1, 0, 0.05F)
-                        },
-
-                        //Expert
-                        4,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ARCANIST.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_ALCHEMIST.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_PRIEST.get(), 1, 1, 0, 0.05F)
-                        },
-
-                        //Master
-                        5,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_BLACKSMITH.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_CHAMPION.get(), 1, 1, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.CONTRACT_SIGNED.get(), 1, 30, JolCraftItems.CONTRACT_SMELTER.get(), 1, 1, 0, 0.05F)
-                        }
-                )
-        );
-
-    }
-
-    @Override
-    protected void updateTrades() {
-        int level = this.getVillagerData().getLevel();
-        if (instanceTrades != null) {
-            DwarfTrades.ItemListing[] listings = instanceTrades.get(level);
-            if (listings != null) {
-                DwarfMerchantOffers offers = this.getOffers();
-                for (DwarfTrades.ItemListing listing : listings) {
-                    DwarfMerchantOffer offer = listing.getOffer(this, this.random);
-                    if (offer != null) {
-                        offers.add(offer);
-                    }
-                }
-            }
-        }
     }
 }
 

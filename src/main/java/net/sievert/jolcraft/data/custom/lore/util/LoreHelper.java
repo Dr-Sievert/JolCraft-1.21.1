@@ -87,4 +87,9 @@ public class LoreHelper {
     ) {
         return getRandomLoreEntry(rng, age, entries, Set.of(rarity));
     }
+
+    public static <K extends Enum<K>> String toLoreKeyString(K key) {
+        if (key == null) return null;
+        return key.name().toLowerCase(Locale.ROOT);
+    }
 }

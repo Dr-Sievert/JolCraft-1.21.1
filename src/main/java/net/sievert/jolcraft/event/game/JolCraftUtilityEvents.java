@@ -7,9 +7,12 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEnchantItemEvent;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.config.JolCraftConfigs;
+import net.sievert.jolcraft.config.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.JolCraftEnumParams;
 import net.sievert.jolcraft.event.util.JolCraftAnvilHelper;
@@ -38,8 +41,7 @@ public class JolCraftUtilityEvents {
                 result.remove(DataComponents.CUSTOM_NAME);
                 result.remove(DataComponents.ITEM_NAME);
 
-                result.set(DataComponents.ITEM_NAME,
-                        Component.literal(baseName).withStyle(JolCraftEnumParams.LEGENDARY_RARITY.getValue().getStyleModifier()));
+                result.set(DataComponents.ITEM_NAME, Component.literal(baseName).withStyle(JolCraftEnumParams.LEGENDARY_RARITY.getValue().getStyleModifier()));
             }
 
             event.setOutput(result);
@@ -47,7 +49,6 @@ public class JolCraftUtilityEvents {
             event.setMaterialCost(vanilla.materialCost());
         }
 
-        // Mithril: keep tag-based behavior
         if (!left.isEmpty() && left.is(JolCraftTags.Items.MITHRIL_ITEMS)) {
             var vanilla = JolCraftAnvilHelper.vanillaResult(left, right, rename, event.getPlayer());
             ItemStack result = vanilla.result();
@@ -63,8 +64,7 @@ public class JolCraftUtilityEvents {
                 result.remove(DataComponents.CUSTOM_NAME);
                 result.remove(DataComponents.ITEM_NAME);
 
-                result.set(DataComponents.ITEM_NAME,
-                        Component.literal(baseName).withStyle(ChatFormatting.AQUA));
+                result.set(DataComponents.ITEM_NAME, Component.literal(baseName).withStyle(ChatFormatting.AQUA));
             }
 
             event.setOutput(result);
@@ -86,7 +86,6 @@ public class JolCraftUtilityEvents {
                     Component.literal(baseName).withStyle(JolCraftEnumParams.LEGENDARY_RARITY.getValue().getStyleModifier()));
         }
 
-        // Mithril: keep tag-based behavior
         if (stack.is(JolCraftTags.Items.MITHRIL_ITEMS)) {
             String baseName = stack.getHoverName().getString();
             stack.remove(DataComponents.CUSTOM_NAME);

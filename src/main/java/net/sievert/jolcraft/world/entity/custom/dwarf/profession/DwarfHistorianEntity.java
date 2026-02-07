@@ -20,11 +20,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -37,8 +37,11 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
     public DwarfHistorianEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DWARVEN_TOME.get()));
-        this.instanceTrades = createRandomizedHistorianTrades();
-        this.setProfession(DwarfProfession.HISTORIAN);
+    }
+
+    @Override
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.HISTORIAN;
     }
 
     @Override
@@ -98,93 +101,5 @@ public class DwarfHistorianEntity extends AbstractDwarfEntity {
         if (result != InteractionResult.FAIL) return result;
         PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
-    }
-
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedHistorianTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-
-
-                        //Novice
-                        1,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.GoldForItems(JolCraftItems.DWARVEN_TOME_COMMON.get(), 1, 10, 5, 3),
-                                new DwarfTrades.GoldForItems(JolCraftItems.DWARVEN_TOME_UNCOMMON.get(), 1, 10, 35, 6),
-                                new DwarfTrades.GoldForItems(JolCraftItems.DWARVEN_TOME_RARE.get(), 1, 10, 75, 10),
-                                new DwarfTrades.GoldForItems(JolCraftItems.DWARVEN_TOME_EPIC.get(), 1, 10, 125, 22),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.PARCHMENT.get(), 1, 2, 1, 3, 6, 1),
-                        },
-
-                        //Apprentice
-                        2,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.GoldForItems(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), 1, 10, 5, 6),
-                                new DwarfTrades.GoldForItems(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), 1, 10, 35, 8),
-                                new DwarfTrades.GoldForItems(JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get(), 1, 10, 75, 14),
-                                new DwarfTrades.GoldForItems(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), 1, 10, 125, 28),
-                                new DwarfTrades.GoldForItems(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1, 10, 250, 35),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.CONTRACT_BLANK.get(), 2, 4, 1, 2, 5, 1),
-                        },
-
-                        //Journeyman
-                        3,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsForGold(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get(), 8, 1, 3, 1),
-                                new DwarfTrades.ItemsForGold(JolCraftItems.QUILL_EMPTY.get(), 1, 3, 1, 2, 6, 1)
-
-                        },
-
-                        //Expert
-                        4,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsForGold(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 13, 1, 3, 1),
-                                new DwarfTrades.ItemsForGold(Items.INK_SAC, 3, 6, 1, 2, 6, 1)
-                        },
-
-                        //Master
-                        5,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON, 1, 1, JolCraftItems.LEGENDARY_PAGE.get(), 1, 100, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON, 1, 2, JolCraftItems.LEGENDARY_PAGE.get(), 2, 100, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.ANCIENT_DWARVEN_TOME_RARE, 1, 3, JolCraftItems.LEGENDARY_PAGE.get(), 3, 100, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC, 1, 4, JolCraftItems.LEGENDARY_PAGE.get(), 4, 100, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY, 1, 5, JolCraftItems.LEGENDARY_PAGE.get(), 5, 100, 0, 0.05F),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.LEGENDARY_PAGE, 10, 15, JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 1, 10, 0, 0.05F),
-
-                                new DwarfTrades.ItemsAndGoldToItemsWithData(
-                                        JolCraftItems.LEGENDARY_PAGE.get(), 20,
-                                        30,
-                                        JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
-                                        1, 1, 0F,
-                                        (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "mithril_forge_technique")
-                                ),
-
-                                new DwarfTrades.ItemsAndGoldToItemsWithData(
-                                        JolCraftItems.LEGENDARY_PAGE.get(), 20,
-                                        30,
-                                        JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 1,
-                                        1, 1, 0F,
-                                        (stack) -> stack.set(JolCraftDataComponents.LORE_KEY, "coin_press_manual")
-                                )
-
-                        }
-                )
-        );
-    }
-
-    @Override
-    protected void updateTrades() {
-        int level = this.getVillagerData().getLevel();
-        if (instanceTrades != null) {
-            DwarfTrades.ItemListing[] listings = instanceTrades.get(level);
-            if (listings != null) {
-                DwarfMerchantOffers offers = this.getOffers();
-                for (DwarfTrades.ItemListing listing : listings) {
-                    DwarfMerchantOffer offer = listing.getOffer(this, this.random);
-                    if (offer != null) {
-                        offers.add(offer);
-                    }
-                }
-            }
-        }
     }
 }

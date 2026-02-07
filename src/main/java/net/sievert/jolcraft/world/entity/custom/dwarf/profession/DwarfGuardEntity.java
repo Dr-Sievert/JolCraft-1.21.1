@@ -32,11 +32,11 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.interaction.DwarfInteractionHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractionHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -48,22 +48,16 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
 
     public DwarfGuardEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
-        this.instanceTrades = createRandomizedGuardTrades();
-        this.setProfession(DwarfProfession.GUARD);
     }
 
-    public static AttributeSupplier.Builder createAttributes() {
-        return DwarfGuardEntity.createLivingAttributes()
-                .add(Attributes.MAX_HEALTH, 30D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D);
+    @Override
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.GUARD;
     }
 
     @Override
     public boolean canTrade() {
-        return this.getVillagerData().getLevel() == 5;
+        return this.getMerchantLevel() == 5;
     }
 
     @Override
@@ -153,18 +147,6 @@ public class DwarfGuardEntity extends AbstractDwarfEntity {
             }
         }
         super.aiStep();
-    }
-
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedGuardTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-                        //Master
-                        5,
-                        new DwarfTrades.ItemListing[]{
-                                new DwarfTrades.GoldForItems(JolCraftItems.AEGISCORE.get(), 1, 1, 0, 30),
-                                new DwarfTrades.ItemsAndGoldToItems(JolCraftItems.AEGISCORE.get(), 1, 30, JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), 1, 1, 0, 0.05F)
-                        }
-                )
-        );
     }
 
     @Override

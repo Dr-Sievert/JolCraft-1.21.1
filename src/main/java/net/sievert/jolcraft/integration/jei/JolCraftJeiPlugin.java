@@ -6,11 +6,11 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.integration.jei.custom.info.InfoPageCategory;
-import net.sievert.jolcraft.integration.jei.custom.info.InfoPageHelper;
-import net.sievert.jolcraft.integration.jei.custom.trade.DwarfTradeCategory;
-import net.sievert.jolcraft.integration.jei.custom.trade.DwarfTradeJeiHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
+import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
+import net.sievert.jolcraft.integration.jei.custom.trade.JeiDwarfTradeCategory;
+import net.sievert.jolcraft.integration.jei.custom.trade.JeiDwarfTradeHelper;
 import org.jetbrains.annotations.NotNull;
 
 @JeiPlugin
@@ -26,19 +26,19 @@ public class JolCraftJeiPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         var guiHelper = registration.getJeiHelpers().getGuiHelper();
         for (var prof : DwarfProfession.values()) {
-            registration.addRecipeCategories(new DwarfTradeCategory(guiHelper, prof));
+            registration.addRecipeCategories(new JeiDwarfTradeCategory(guiHelper, prof));
         }
-        registration.addRecipeCategories(new InfoPageCategory(guiHelper));
+        registration.addRecipeCategories(new JeiInfoPageCategory(guiHelper));
     }
 
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
         for (var prof : DwarfProfession.values()) {
-            var recipes = DwarfTradeJeiHelper.getAllDwarfJeiTrades(prof);
+            var recipes = JeiDwarfTradeHelper.getAllDwarfJeiTrades(prof);
             if (!recipes.isEmpty()) {
-                registration.addRecipes(DwarfTradeCategory.recipeTypeFor(prof), recipes);
+                registration.addRecipes(JeiDwarfTradeCategory.recipeTypeFor(prof), recipes);
             }
         }
-        registration.addRecipes(InfoPageCategory.RECIPE_TYPE, InfoPageHelper.getAllInfoPages());
+        registration.addRecipes(JeiInfoPageCategory.RECIPE_TYPE, JeiInfoPageHelper.getAllInfoPages());
     }
 }

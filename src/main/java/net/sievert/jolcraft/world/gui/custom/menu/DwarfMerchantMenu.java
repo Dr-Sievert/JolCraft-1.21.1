@@ -2,30 +2,33 @@ package net.sievert.jolcraft.world.gui.custom.menu;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfClientSideMerchant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfItemCost;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.world.gui.custom.container.DwarfMerchantContainer;
+import net.sievert.jolcraft.world.gui.custom.slot.DwarfMerchantResultSlot;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
-import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.world.gui.custom.slot.DwarfMerchantResultSlot;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.*;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DwarfMerchantMenu extends AbstractContainerMenu {
+
     private final DwarfMerchant trader;
     private final DwarfMerchantContainer tradeContainer;
+
     private int merchantLevel;
     private boolean showProgressBar;
     private boolean showLevel;
@@ -81,52 +84,49 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
 
-        if (slot.hasItem()) {
-            ItemStack in = slot.getItem();
-            result = in.copy();
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
 
-            if (index == 2) {
-                if (!this.moveItemStackTo(in, 3, 39, true)) return ItemStack.EMPTY;
-                slot.onQuickCraft(in, result);
-                playTradeSound();
-            } else if (index != 0 && index != 1) {
-                if (!this.moveItemStackTo(in, 3, 39, false)) return ItemStack.EMPTY;
-            } else if (!this.moveItemStackTo(in, 3, 39, false)) {
+        ItemStack in = slot.getItem();
+        result = in.copy();
+
+        if (index == 2) {
+            // Result slot -> player inventory
+            if (!this.moveItemStackTo(in, 3, 39, true)) {
                 return ItemStack.EMPTY;
             }
-
-            if (in.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
+            slot.onQuickCraft(in, result);
+        } else if (index != 0 && index != 1) {
+            // Player inventory -> (no special targets; same behavior as before)
+            if (!this.moveItemStackTo(in, 3, 39, false)) {
+                return ItemStack.EMPTY;
             }
-
-            if (in.getCount() == result.getCount()) return ItemStack.EMPTY;
-
-            slot.onTake(player, in);
+        } else {
+            // Payment slots -> player inventory
+            if (!this.moveItemStackTo(in, 3, 39, false)) {
+                return ItemStack.EMPTY;
+            }
         }
 
+        if (in.isEmpty()) {
+            slot.setByPlayer(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+
+        if (in.getCount() == result.getCount()) {
+            return ItemStack.EMPTY;
+        }
+
+        slot.onTake(player, in);
         return result;
     }
-
-    private void playTradeSound() {
-        if (!trader.isClientSide()) {
-            Entity e = (Entity) trader;
-            JolCraftSoundHelper.playLocal(
-                    Objects.requireNonNull(trader.getTradingPlayer()),
-                    trader.getNotifyTradeSound(),
-                    SoundSource.NEUTRAL,
-                    e.getX(), e.getY(), e.getZ(),
-                    1.0F,
-                    1.0F
-            );
-        }
-    }
-
 
     public void tryMoveItems(int selectedRecipe) {
         if (selectedRecipe < 0 || selectedRecipe >= getOffers().size()) return;
 
+        // Push current payment stacks back into inventory if possible
         for (int i = 0; i < 2; i++) {
             ItemStack in = tradeContainer.getItem(i);
             if (!in.isEmpty() && this.moveItemStackTo(in, 3, 39, true)) {
@@ -145,14 +145,18 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
         // Prioritize coin pouch
         if (cost.item().value() == JolCraftItems.GOLD_COIN.get()) {
             for (int i = 3; i < 39; i++) {
-                ItemStack stack = slots.get(i).getItem();
-                if (!stack.isEmpty() && stack.getItem() instanceof CoinPouchItem
+                ItemStack stack = this.slots.get(i).getItem();
+                if (!stack.isEmpty()
+                        && stack.getItem() instanceof CoinPouchItem
                         && CoinPouchHelper.getCoins(stack) >= cost.count()) {
+
                     ItemStack pouchCopy = stack.copy();
                     pouchCopy.setCount(1);
+
                     tradeContainer.setItem(slot, pouchCopy);
                     stack.shrink(1);
-                    slots.get(i).setChanged();
+
+                    this.slots.get(i).setChanged();
                     return;
                 }
             }
@@ -160,19 +164,23 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
 
         // Fallback: normal stack match
         for (int i = 3; i < 39; i++) {
-            ItemStack stack = slots.get(i).getItem();
-            if (!stack.isEmpty() && cost.test(stack)) {
-                ItemStack current = tradeContainer.getItem(slot);
-                if (current.isEmpty() || ItemStack.isSameItemSameComponents(stack, current)) {
-                    int max = stack.getMaxStackSize();
-                    int toMove = Math.min(max - current.getCount(), stack.getCount());
-                    ItemStack merged = stack.copyWithCount(current.getCount() + toMove);
-                    stack.shrink(toMove);
-                    tradeContainer.setItem(slot, merged);
-                    slots.get(i).setChanged();
-                    if (merged.getCount() >= max) break;
-                }
-            }
+            ItemStack stack = this.slots.get(i).getItem();
+            if (stack.isEmpty() || !cost.test(stack)) continue;
+
+            ItemStack current = tradeContainer.getItem(slot);
+            if (!current.isEmpty() && !ItemStack.isSameItemSameComponents(stack, current)) continue;
+
+            int max = stack.getMaxStackSize();
+            int toMove = Math.min(max - current.getCount(), stack.getCount());
+            if (toMove <= 0) break;
+
+            ItemStack merged = stack.copyWithCount(current.getCount() + toMove);
+            stack.shrink(toMove);
+
+            tradeContainer.setItem(slot, merged);
+            this.slots.get(i).setChanged();
+
+            if (merged.getCount() >= max) break;
         }
     }
 

@@ -13,9 +13,9 @@ import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelpe
 import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
 import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyHelper;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyTier;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.bounty.BountyType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyTier;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
@@ -39,7 +39,7 @@ public class BountyItem extends Item {
         BountyTier tier = BountyHelper.getBountyTier(stack);
 
         if (JolCraftProxy.access().isAltDown() && type != BountyType.UNKNOWN) {
-            tooltip.add(Component.translatable("tooltip.jolcraft.bounty." + type)
+            tooltip.add(Component.translatable("tooltip.jolcraft.bounty." + type.getId())
                     .withStyle(ChatFormatting.GRAY));
         } else {
             if (knowsLanguage) {

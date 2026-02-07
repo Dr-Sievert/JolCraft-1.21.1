@@ -40,6 +40,7 @@ public final class JolCraftRecipeProvider extends AbstractRecipeProvider {
     protected void buildRecipes() {
         runAll(List.of(
                 new CompassRecipesSubProvider(),
+                new DwarfTradeRecipesSubProvider(),
                 new EquipmentRecipesSubProvider(),
                 new FermentingCauldronRecipesSubProvider(),
                 new LapidaryRecipesSubProvider(),

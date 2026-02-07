@@ -10,7 +10,7 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.advancement.custom.*;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import java.util.Optional;
@@ -72,7 +72,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.DWARVEN_TOME.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_HISTORIAN.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.HISTORIAN)
         );
 
         AdvancementHolder endorse_historian = addChildAdvancement(
@@ -91,7 +91,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.RESTOCK_CRATE.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_MERCHANT.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.MERCHANT)
         );
 
         AdvancementHolder endorse_merchant = addChildAdvancement(
@@ -110,7 +110,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.SCRAP.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_SCRAPPER.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.SCRAPPER)
         );
 
         AdvancementHolder endorse_scrapper = addChildAdvancement(
@@ -143,7 +143,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.DWARVEN_BREW.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_BREWMASTER.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.BREWMASTER)
         );
 
         AdvancementHolder endorse_brewmaster = addChildAdvancement(
@@ -162,7 +162,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.DEEPSLATE_AXE.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_GUARD.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.GUARD)
         );
 
         AdvancementHolder endorse_guard = addChildAdvancement(
@@ -181,7 +181,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.BARLEY.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_KEEPER.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.KEEPER)
         );
 
         AdvancementHolder endorse_keeper = addChildAdvancement(
@@ -214,7 +214,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.DEEPSLATE_CHISEL.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_ARTISAN.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.ARTISAN)
         );
 
         AdvancementHolder endorse_artisan = addChildAdvancement(
@@ -233,7 +233,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_EXPLORER.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.EXPLORER)
         );
 
         AdvancementHolder endorse_explorer = addChildAdvancement(
@@ -252,7 +252,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.DEEPSLATE_PICKAXE.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_MINER.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.MINER)
         );
 
         AdvancementHolder endorse_miner = addChildAdvancement(
@@ -285,7 +285,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_ALCHEMIST.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.ALCHEMIST)
         );
 
         AdvancementHolder endorse_alchemist = addChildAdvancement(
@@ -304,7 +304,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.WOECRYSTAL.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_ARCANIST.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.ARCANIST)
         );
 
         AdvancementHolder endorse_arcanist = addChildAdvancement(
@@ -323,7 +323,7 @@ public class JolCraftAdvancementProvider implements AdvancementSubProvider {
                 JolCraftItems.LUMIERE.get(),
                 AdvancementType.TASK,
                 true, true, false,
-                DwarfTradeTrigger.tradedWithSpecificDwarf(JolCraftEntities.DWARF_PRIEST.get())
+                DwarfTradeTrigger.tradedWithProfession(DwarfProfession.PRIEST)
         );
 
         AdvancementHolder endorse_priest = addChildAdvancement(

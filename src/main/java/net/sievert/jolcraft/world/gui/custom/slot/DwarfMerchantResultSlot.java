@@ -6,8 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.gui.custom.container.DwarfMerchantContainer;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchant;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

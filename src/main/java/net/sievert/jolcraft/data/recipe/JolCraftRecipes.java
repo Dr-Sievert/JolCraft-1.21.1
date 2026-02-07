@@ -9,12 +9,15 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.JolCraftSmithingTrimRecipe;
 import net.sievert.jolcraft.data.recipe.custom.LapidaryBenchRecipe;
 
 public class JolCraftRecipes {
 
+    public static final String SMITHING_TRIM_ID = "jolcraft_smithing_trim";
+    public static final String DWARF_TRADE_ID = "dwarf_trade";
     public static final String LAPIDARY_BENCH_ID = "lapidary_bench";
     public static final String FERMENTING_CAULDRON_ID = "fermenting_cauldron";
 
@@ -25,7 +28,13 @@ public class JolCraftRecipes {
             DeferredRegister.create(Registries.RECIPE_TYPE, JolCraft.MOD_ID);
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> SMITHING_TRIM_SERIALIZER =
-            SERIALIZERS.register("jolcraft_smithing_trim", JolCraftSmithingTrimRecipe.Serializer::new);
+            SERIALIZERS.register(SMITHING_TRIM_ID, JolCraftSmithingTrimRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<DwarfTradeRecipe>> DWARF_TRADE_SERIALIZER =
+            SERIALIZERS.register(DWARF_TRADE_ID, DwarfTradeRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<DwarfTradeRecipe>> DWARF_TRADE_TYPE =
+            TYPES.register(DWARF_TRADE_ID, () -> simpleType(DWARF_TRADE_ID));
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LapidaryBenchRecipe>> LAPIDARY_BENCH_SERIALIZER =
             SERIALIZERS.register(LAPIDARY_BENCH_ID, LapidaryBenchRecipe.Serializer::new);

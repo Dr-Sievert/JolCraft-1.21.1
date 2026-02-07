@@ -16,7 +16,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.variation.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

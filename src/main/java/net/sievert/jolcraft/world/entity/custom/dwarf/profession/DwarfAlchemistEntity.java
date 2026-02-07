@@ -18,8 +18,8 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.Nullable;
@@ -34,8 +34,11 @@ public class DwarfAlchemistEntity extends AbstractDwarfEntity {
     public DwarfAlchemistEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
         this.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.GLASS_BOTTLE));
-        this.instanceTrades = createRandomizedAlchemistTrades();
-        this.setProfession(DwarfProfession.ALCHEMIST);
+    }
+
+    @Override
+    protected DwarfProfession getSpawnProfession() {
+        return DwarfProfession.ALCHEMIST;
     }
 
     @Override
@@ -98,14 +101,5 @@ public class DwarfAlchemistEntity extends AbstractDwarfEntity {
         if (result != InteractionResult.FAIL) return result;
         PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
-    }
-
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedAlchemistTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-                1, new DwarfTrades.ItemListing[] {
-                        new DwarfTrades.ItemsForGold(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), 4, 7, 1, 6, 0),
-                        new DwarfTrades.ItemsForGold(JolCraftItems.DEEPSLATE_PESTLE.get(), 1, 4, 1, 6, 0),
-                }
-        ));
     }
 }

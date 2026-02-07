@@ -15,8 +15,10 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.world.entity.custom.ai.goal.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.entity.custom.util.dwarf.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,7 +29,6 @@ public class DwarfEntity extends AbstractDwarfEntity {
 
     public DwarfEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
-        this.instanceTrades = createRandomizedDwarfTrades();
     }
 
     @Override
@@ -71,31 +72,5 @@ public class DwarfEntity extends AbstractDwarfEntity {
         if (result != InteractionResult.FAIL) return result;
         PlaySound.dwarfNo(this);
         return InteractionResult.FAIL;
-    }
-
-    //Trades
-    public static Int2ObjectMap<DwarfTrades.ItemListing[]> createRandomizedDwarfTrades() {
-        return AbstractDwarfEntity.toIntMap(ImmutableMap.of(
-                // Novice
-                1, new DwarfTrades.ItemListing[] {
-                        new DwarfTrades.ItemsForGold(Items.STICK, 1, 4, 2, 8, 6, 500),
-
-                },
-                // Apprentice
-                2, new DwarfTrades.ItemListing[] {
-
-                },
-                // Journeyman
-                3, new DwarfTrades.ItemListing[] {
-                },
-                // Expert
-                4, new DwarfTrades.ItemListing[] {
-
-                },
-                // Master
-                5, new DwarfTrades.ItemListing[] {
-                        new DwarfTrades.ItemsAndGoldToItems(Items.PURPLE_DYE, 1, 30, JolCraftItems.GUILD_SIGIL.get(), 1, 1, 0, 0.05F)
-                }
-        ));
     }
 }
