@@ -400,14 +400,6 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                         currentLevel
                 );
 
-        List<RecipeHolder<DwarfTradeRecipe>> remainingRestock =
-                DwarfTrades.getTradeRecipesUpToLevel(
-                        serverLevel,
-                        profession,
-                        DwarfTradeRecipe.TradePool.RESTOCK_POOL,
-                        currentLevel
-                );
-
         // POOL recipe id -> holder (datapacks can change)
         Map<ResourceLocation, RecipeHolder<DwarfTradeRecipe>> poolById = new HashMap<>();
         for (RecipeHolder<DwarfTradeRecipe> h : remainingPool) {
@@ -505,6 +497,11 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         }
     }
 
+    private static int requireWeight(RecipeHolder<DwarfTradeRecipe> h) {
+        return h.value().weight().orElseThrow(() ->
+                new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
+    }
+
     @Nullable
     private RecipeHolder<DwarfTradeRecipe> takeNextPersistedOrRollPool(
             int unlockLevel,
@@ -533,7 +530,8 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             return holder;
         }
 
-        RecipeHolder<DwarfTradeRecipe> rolled = rollOneFromRemainingByUnlockLevel(remainingPool, unlockLevel, this.random);
+        RecipeHolder<DwarfTradeRecipe> rolled =
+                rollOneFromRemainingByUnlockLevel(remainingPool, unlockLevel, this.random);
         if (rolled == null) return null;
 
         ResourceLocation id = rolled.id().location();
@@ -552,8 +550,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         int totalWeight = 0;
         for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
             if (h.value().merchantLevel() > unlockLevel) continue;
-            totalWeight += h.value().weight().orElseThrow(() ->
-                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
+            totalWeight += requireWeight(h);
         }
         if (totalWeight <= 0) return null;
 
@@ -562,8 +559,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             RecipeHolder<DwarfTradeRecipe> h = remaining.get(i);
             if (h.value().merchantLevel() > unlockLevel) continue;
 
-            roll -= h.value().weight().orElseThrow(() ->
-                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
+            roll -= requireWeight(h);
             if (roll < 0) {
                 remaining.remove(i);
                 return h;
@@ -614,8 +610,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             DwarfTradeRecipe r = h.value();
             if (r.merchantLevel() != exactLevel) continue;
             if (!r.exactLevel()) continue;
-            totalWeight += r.weight().orElseThrow(() ->
-                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
+            totalWeight += requireWeight(h);
         }
         if (totalWeight <= 0) return null;
 
@@ -626,8 +621,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             if (r.merchantLevel() != exactLevel) continue;
             if (!r.exactLevel()) continue;
 
-            roll -= r.weight().orElseThrow(() ->
-                    new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
+            roll -= requireWeight(h);
             if (roll < 0) {
                 remaining.remove(i);
                 return h;
