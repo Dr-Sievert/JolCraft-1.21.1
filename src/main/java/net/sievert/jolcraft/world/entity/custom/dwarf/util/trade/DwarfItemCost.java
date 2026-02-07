@@ -17,7 +17,6 @@ import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 
 public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate components, ItemStack itemStack) {
 

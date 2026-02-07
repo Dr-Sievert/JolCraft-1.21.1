@@ -10,11 +10,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.*;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class JolCraftModEvents {

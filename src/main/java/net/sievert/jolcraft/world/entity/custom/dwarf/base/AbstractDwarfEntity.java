@@ -30,6 +30,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.loadout.DwarfLoadouts;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
@@ -510,7 +511,10 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {return false;}
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level,
+                                        DifficultyInstance difficulty,
+                                        EntitySpawnReason spawnType,
+                                        @Nullable SpawnGroupData spawnGroupData) {
 
         if (!this.level().isClientSide) {
             this.setProfession(this.getSpawnProfession());
@@ -524,6 +528,12 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         this.setData(EYE_COLOR, eye.getId());
         this.setLeftHanded(false);
 
-        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+        SpawnGroupData out = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+
+        if (!this.level().isClientSide) {
+            DwarfLoadouts.applySpawnLoadout(this, level, difficulty, spawnType, out);
+        }
+
+        return out;
     }
 }
