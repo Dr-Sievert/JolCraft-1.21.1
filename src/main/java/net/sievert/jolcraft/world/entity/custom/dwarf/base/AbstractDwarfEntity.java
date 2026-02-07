@@ -26,15 +26,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.goal.DwarfGoals;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.loadout.DwarfLoadouts;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
-import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.EntityData;
@@ -91,19 +88,6 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     public ItemStack getSignedContractItem() {
         return DwarfProfessionTraits.of(this.getProfession()).contract().create();
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private DwarfProfession clientRenderProfession = DwarfProfession.NONE;
-
-    @OnlyIn(Dist.CLIENT)
-    public DwarfProfession getClientRenderProfession() {
-        return this.clientRenderProfession;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void setProfessionClient(DwarfProfession profession) {
-        this.clientRenderProfession = profession;
     }
 
     public DwarfProfession getProfession() {
@@ -334,12 +318,6 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     }
 
     //Animation
-
-    private static final Map<AbstractDwarfEntity, DwarfRenderState> CLIENT_RENDER_STATES = new WeakHashMap<>();
-
-    public static DwarfRenderState getOrCreate(AbstractDwarfEntity entity) {
-        return CLIENT_RENDER_STATES.computeIfAbsent(entity, e -> new DwarfRenderState());
-    }
 
     protected final DwarfActionHelper actionHelper = new DwarfActionHelper();
 

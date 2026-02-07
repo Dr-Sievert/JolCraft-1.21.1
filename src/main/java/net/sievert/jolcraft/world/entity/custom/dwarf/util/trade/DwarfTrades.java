@@ -22,17 +22,26 @@ import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public final class DwarfTrades {
 
-    private DwarfTrades() {}
+    // -------------------------------------------------------------------------
+    // Trade recipe cache
+    // -------------------------------------------------------------------------
+
+    private record TradeKey(
+            DwarfProfession profession,
+            DwarfTradeRecipe.TradePool pool,
+            int merchantLevel
+    ) {}
+
+    private static final Map<Object, Map<TradeKey, List<RecipeHolder<DwarfTradeRecipe>>>> TRADE_AT_LEVEL_CACHE =
+            new IdentityHashMap<>();
+
+    private static final Map<Object, Map<TradeKey, List<RecipeHolder<DwarfTradeRecipe>>>> TRADE_UP_TO_LEVEL_CACHE =
+            new IdentityHashMap<>();
 
     // -------------------------------------------------------------------------
     // Recipe -> Offer (ONLY source of truth)
@@ -168,6 +177,17 @@ public final class DwarfTrades {
             DwarfTradeRecipe.TradePool pool,
             int merchantLevel
     ) {
+        Object access = level.recipeAccess();
+
+        Map<TradeKey, List<RecipeHolder<DwarfTradeRecipe>>> byKey =
+                TRADE_AT_LEVEL_CACHE.computeIfAbsent(access, a -> new IdentityHashMap<>());
+
+        TradeKey key = new TradeKey(profession, pool, merchantLevel);
+        List<RecipeHolder<DwarfTradeRecipe>> cached = byKey.get(key);
+        if (cached != null) {
+            return cached;
+        }
+
         List<RecipeHolder<DwarfTradeRecipe>> out = new ArrayList<>();
 
         for (RecipeHolder<?> holder : level.recipeAccess().getRecipes()) {
@@ -180,7 +200,10 @@ public final class DwarfTrades {
         }
 
         out.sort(Comparator.comparing(h -> h.id().location()));
-        return out;
+        List<RecipeHolder<DwarfTradeRecipe>> frozen = List.copyOf(out);
+
+        byKey.put(key, frozen);
+        return frozen;
     }
 
     @SuppressWarnings("unchecked")
@@ -190,6 +213,17 @@ public final class DwarfTrades {
             DwarfTradeRecipe.TradePool pool,
             int maxMerchantLevel
     ) {
+        Object access = level.recipeAccess();
+
+        Map<TradeKey, List<RecipeHolder<DwarfTradeRecipe>>> byKey =
+                TRADE_UP_TO_LEVEL_CACHE.computeIfAbsent(access, a -> new IdentityHashMap<>());
+
+        TradeKey key = new TradeKey(profession, pool, maxMerchantLevel);
+        List<RecipeHolder<DwarfTradeRecipe>> cached = byKey.get(key);
+        if (cached != null) {
+            return cached;
+        }
+
         List<RecipeHolder<DwarfTradeRecipe>> out = new ArrayList<>();
 
         for (RecipeHolder<?> holder : level.recipeAccess().getRecipes()) {
@@ -202,7 +236,10 @@ public final class DwarfTrades {
         }
 
         out.sort(Comparator.comparing(h -> h.id().location()));
-        return out;
+        List<RecipeHolder<DwarfTradeRecipe>> frozen = List.copyOf(out);
+
+        byKey.put(key, frozen);
+        return frozen;
     }
 
     // -------------------------------------------------------------------------

@@ -185,7 +185,7 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
     public void extractRenderState(@NotNull T entity, @NotNull DwarfRenderState reused, float partialTick) {
         super.extractRenderState(entity, reused, partialTick);
 
-        DwarfRenderState persistent = AbstractDwarfEntity.getOrCreate(entity);
+        DwarfRenderState persistent = DwarfRenderState.getOrCreate(entity);
 
         persistent.currentActionType = DwarfActionHelper.getCurrentActionType(entity);
         persistent.currentActionSubtype = DwarfActionHelper.getCurrentActionSubType(entity);

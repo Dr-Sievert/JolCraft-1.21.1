@@ -165,20 +165,13 @@ public class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrade> {
         LivingEntity cached = DWARF_RENDER_CACHE.get(profession);
         if (cached != null) return cached;
 
-        // Single unified dwarf entity, profession set for rendering.
-        // If you have not merged yet, keep this switch temporarily.
-        AbstractDwarfEntity entity;
-        if (profession == DwarfProfession.NONE) {
-            entity = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
-        } else {
-            entity = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
-            AbstractDwarfEntity dwarf = entity;
-            dwarf.setProfessionClient(profession);
-        }
+        DwarfEntity dwarf = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
+        dwarf.getEntityData().set(AbstractDwarfEntity.PROFESSION, profession.getId());
 
-        DWARF_RENDER_CACHE.put(profession, entity);
-        return entity;
+        DWARF_RENDER_CACHE.put(profession, dwarf);
+        return dwarf;
     }
+
 
     @Override
     public IDrawable getIcon() {
