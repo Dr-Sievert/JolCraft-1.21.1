@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.world.sound;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -12,11 +11,11 @@ import java.util.function.Supplier;
 
 public class JolCraftSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
-            DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, JolCraft.MOD_ID);
+            DeferredRegister.create(Registries.SOUND_EVENT, JolCraft.MOD_ID);
 
     public static final DeferredHolder<SoundEvent, SoundEvent> ARMOR_EQUIP_DEEPSLATE =
-            SOUND_EVENTS.register("armor_equip_deepslate", () ->
-                    SoundEvent.createVariableRangeEvent(JolCraft.location("armor_equip_deepslate")));
+            registerSoundEventHolder("armor_equip_deepslate");
+
     //Random
     public static final Supplier<SoundEvent> LEVEL_UP = registerSoundEvent("level_up");
     public static final Supplier<SoundEvent> POOF = registerSoundEvent("poof");
@@ -28,6 +27,7 @@ public class JolCraftSounds {
     public static final Supplier<SoundEvent> STRONGBOX_LOCKPICK_BREAK = registerSoundEvent("strongbox_lockpick_break");
     public static final Supplier<SoundEvent> STRONGBOX_UNLOCK = registerSoundEvent("strongbox_unlock");
     public static final Supplier<SoundEvent> GEM_CUT = registerSoundEvent("gem_cut");
+
     //Items
     public static final Supplier<SoundEvent> COIN_STACK = registerSoundEvent("coin_stack");
     public static final Supplier<SoundEvent> COIN_SINGLE = registerSoundEvent("coin_single");
@@ -44,8 +44,11 @@ public class JolCraftSounds {
     public static final Supplier<SoundEvent> CURSE = registerSoundEvent("curse");
 
     private static Supplier<SoundEvent> registerSoundEvent(String name) {
-        ResourceLocation id = JolCraft.location(name);
-        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(JolCraft.location(name)));
+    }
+
+    private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEventHolder(String name) {
+        return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(JolCraft.location(name)));
     }
 
     public static void register(IEventBus eventBus) {

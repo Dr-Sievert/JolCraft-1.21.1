@@ -1,10 +1,10 @@
 package net.sievert.jolcraft.world.worldgen.processor;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.bus.api.IEventBus;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.worldgen.processor.custom.RandomReplaceWithLootProcessor;
 import net.sievert.jolcraft.world.worldgen.processor.custom.StructureVoidProcessor;
@@ -12,7 +12,7 @@ import net.sievert.jolcraft.world.worldgen.processor.custom.StructureVoidProcess
 public class JolCraftProcessors {
 
     public static final DeferredRegister<StructureProcessorType<?>> PROCESSOR_TYPES =
-            DeferredRegister.create(BuiltInRegistries.STRUCTURE_PROCESSOR, JolCraft.MOD_ID);
+            DeferredRegister.create(Registries.STRUCTURE_PROCESSOR, JolCraft.MOD_ID);
 
     public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<RandomReplaceWithLootProcessor>> RANDOM_REPLACE_WITH_LOOT_PROCESSOR =
             PROCESSOR_TYPES.register("random_replace_with_loot", () -> () -> RandomReplaceWithLootProcessor.CODEC);

@@ -258,7 +258,9 @@ public final class DwarfTrades {
 
         public static Consumer<ItemStack> resolve(String id) {
             if (id == null || id.isBlank()) return s -> {};
-            return REGISTRY.getOrDefault(ResourceLocation.parse(id), s -> {});
+            ResourceLocation rl = ResourceLocation.tryParse(id.trim());
+            if (rl == null) return s -> {};
+            return REGISTRY.getOrDefault(rl, s -> {});
         }
     }
 

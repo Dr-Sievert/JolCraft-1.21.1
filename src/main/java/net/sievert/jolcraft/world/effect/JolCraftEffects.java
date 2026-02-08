@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.world.effect;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -15,7 +15,7 @@ import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
 
 public class JolCraftEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS =
-            DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, JolCraft.MOD_ID);
+            DeferredRegister.create(Registries.MOB_EFFECT, JolCraft.MOD_ID);
 
     //Beneficial
 

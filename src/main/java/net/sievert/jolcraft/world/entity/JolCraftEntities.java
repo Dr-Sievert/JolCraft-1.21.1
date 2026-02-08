@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.world.entity;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
@@ -17,7 +16,7 @@ import java.util.function.Supplier;
 public class JolCraftEntities {
 
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
-            DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, JolCraft.MOD_ID);
+            DeferredRegister.create(Registries.ENTITY_TYPE, JolCraft.MOD_ID);
 
     //Dwarves
     public static final ResourceKey<EntityType<?>> DWARF_KEY             = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf"));

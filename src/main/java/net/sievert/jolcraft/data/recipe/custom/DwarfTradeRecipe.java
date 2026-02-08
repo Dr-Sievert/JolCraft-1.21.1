@@ -655,6 +655,17 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                 }
             }
 
+            // --- stack modifier id (datapack safety)
+            if (r.stackModifierId.isPresent()) {
+                String raw = r.stackModifierId.get().trim();
+                if (raw.isEmpty()) {
+                    return DataResult.error(() -> "stack_modifier must not be blank when present");
+                }
+                if (ResourceLocation.tryParse(raw) == null) {
+                    return DataResult.error(() -> "stack_modifier must be a valid resource location (got '" + raw + "')");
+                }
+            }
+
             return DataResult.success(r);
         }
 
