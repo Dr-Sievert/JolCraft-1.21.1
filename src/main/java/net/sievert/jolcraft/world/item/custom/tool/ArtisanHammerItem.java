@@ -8,8 +8,8 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
-import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.MiscLangSubProvider;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 

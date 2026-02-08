@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.datagen.language.subprovider.ReputationLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.ReputationLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;

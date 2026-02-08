@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

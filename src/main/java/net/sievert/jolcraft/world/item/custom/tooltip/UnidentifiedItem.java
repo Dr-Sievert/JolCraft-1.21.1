@@ -13,7 +13,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.MiscLangSubProvider;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 

@@ -10,8 +10,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
-import net.sievert.jolcraft.datagen.language.subprovider.MiscLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.MiscLangSubProvider;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 

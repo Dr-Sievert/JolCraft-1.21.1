@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.language.subprovider.JeiLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.JeiLangSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;

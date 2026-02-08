@@ -7,7 +7,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.minecraft.ChatFormatting;
-import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientItemBase;
 import org.jetbrains.annotations.NotNull;
 

@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;

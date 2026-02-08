@@ -8,8 +8,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.datagen.language.subprovider.CompassLangSubProvider;
-import net.sievert.jolcraft.datagen.language.util.JolCraftLanguageKeys;
+import net.sievert.jolcraft.datagen.client.language.subprovider.CompassLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageKeys;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;

@@ -13,7 +13,7 @@ import net.sievert.jolcraft.data.custom.lore.LoreAge;
 import net.sievert.jolcraft.data.custom.lore.LoreRarity;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntry;
-import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.tooltip.UnidentifiedItem;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;

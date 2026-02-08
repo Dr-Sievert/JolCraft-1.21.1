@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.language.subprovider.ItemLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.ItemLangSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;

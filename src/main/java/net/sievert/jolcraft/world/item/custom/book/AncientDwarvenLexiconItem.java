@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientItemBase;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;

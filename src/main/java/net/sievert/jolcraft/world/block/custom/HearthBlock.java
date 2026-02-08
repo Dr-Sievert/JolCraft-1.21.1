@@ -40,7 +40,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
-import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.Nullable;

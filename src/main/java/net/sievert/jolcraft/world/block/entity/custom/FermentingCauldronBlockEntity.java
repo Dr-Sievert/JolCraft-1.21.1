@@ -39,7 +39,7 @@ import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
-import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;

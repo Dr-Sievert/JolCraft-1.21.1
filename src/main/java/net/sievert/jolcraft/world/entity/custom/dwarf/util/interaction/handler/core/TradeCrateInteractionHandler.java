@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.BountyLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.item.JolCraftItems;

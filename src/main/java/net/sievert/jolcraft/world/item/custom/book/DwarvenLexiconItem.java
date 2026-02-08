@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;

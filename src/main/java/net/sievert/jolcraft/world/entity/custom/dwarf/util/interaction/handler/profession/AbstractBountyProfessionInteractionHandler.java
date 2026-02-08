@@ -5,7 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.datagen.language.subprovider.BountyLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.BountyLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;

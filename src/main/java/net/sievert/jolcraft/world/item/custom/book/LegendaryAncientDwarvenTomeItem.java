@@ -14,7 +14,7 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;

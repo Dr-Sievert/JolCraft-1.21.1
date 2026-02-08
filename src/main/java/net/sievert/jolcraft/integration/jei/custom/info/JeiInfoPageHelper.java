@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
-import net.sievert.jolcraft.datagen.language.subprovider.JeiLangSubProvider;
+import net.sievert.jolcraft.datagen.client.language.subprovider.JeiLangSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.data.JolCraftDataComponents;

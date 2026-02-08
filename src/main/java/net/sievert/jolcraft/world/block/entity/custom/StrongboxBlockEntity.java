@@ -21,7 +21,7 @@ package net.sievert.jolcraft.world.block.entity.custom;
     import net.minecraft.world.level.block.entity.LidBlockEntity;
     import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
     import net.minecraft.world.level.block.state.BlockState;
-    import net.sievert.jolcraft.datagen.language.subprovider.ContainerLangSubProvider;
+    import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
     import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
     import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
     import net.sievert.jolcraft.world.effect.JolCraftEffects;
