@@ -52,14 +52,8 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
             StructurePlaceSettings settings
     ) {
         if (current.state().is(inputBlock)) {
-            RandomSource random = RandomSource.create();
-            BlockPos pos = current.pos();
-            long seed = (((long) pos.getX() * 3129871L) ^ ((long) pos.getZ() * 116129781L) ^ (long) pos.getY());
-            seed = seed * seed * 42317861L + seed * 11L;
-            seed = seed >> 16;
-            random.setSeed(Long.remainderUnsigned(seed, Long.MAX_VALUE));
 
-            if (random.nextFloat() < probability) {
+            if (settings.getRandom(current.pos()).nextFloat() < probability) {
                 BlockState replacedState = outputBlock.defaultBlockState();
                 CompoundTag nbt = new CompoundTag();
                 nbt.putString("LootTable", lootTable.toString());
