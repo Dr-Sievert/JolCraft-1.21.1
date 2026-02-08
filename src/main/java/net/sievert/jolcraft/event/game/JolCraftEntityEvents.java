@@ -5,11 +5,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Creeper;
-import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -56,11 +54,11 @@ public class JolCraftEntityEvents {
     }
 
     @SubscribeEvent
-    public static void onMonsterTarget(FinalizeSpawnEvent event) {
-        LivingEntity entity = event.getEntity();
-        if (entity instanceof Monster mob && !(entity instanceof Creeper) && !(entity instanceof EnderMan)) {
-            mob.goalSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, AbstractDwarfEntity.class, true));
-        }
+    public static void onDwarfHostileMobSpawn(FinalizeSpawnEvent event) {
+        Mob entity = event.getEntity();
+        if (entity.level().isClientSide()) return;
+        if (!(entity instanceof Zombie || entity instanceof Pillager)) return;
+        entity.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(entity, AbstractDwarfEntity.class, true));
     }
 
     @SubscribeEvent
@@ -69,7 +67,6 @@ public class JolCraftEntityEvents {
         Entity target = event.getTarget();
         ItemStack stack = event.getItemStack();
 
-        // Cooldowns are stack-keyed in 1.21.x, so use a stable 1-count copy.
         ItemStack cooldownStack = stack.copyWithCount(1);
 
         if (player.getCooldowns().isOnCooldown(cooldownStack)) {
