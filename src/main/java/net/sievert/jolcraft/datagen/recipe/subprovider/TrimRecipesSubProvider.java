@@ -3,6 +3,7 @@ package net.sievert.jolcraft.datagen.recipe.subprovider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.SmithingTrimRecipeBuilder;
 import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.datagen.recipe.builder.JolSmithingTrimRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.AttributeSmithingTrimRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -78,27 +79,27 @@ public final class TrimRecipesSubProvider implements AbstractRecipeProvider.Reci
     private static void trimSmithing(AbstractRecipeProvider p, Item templateItem, ResourceKey<Recipe<?>> key) {
         ItemLike templateLike = () -> templateItem;
 
-        JolSmithingTrimRecipeBuilder.smithingTrim(
+        SmithingTrimRecipeBuilder.smithingTrim(
                         Ingredient.of(templateItem),
                         p.tagIngredient(ItemTags.TRIMMABLE_ARMOR),
                         p.tagIngredient(ItemTags.TRIM_MATERIALS),
                         RecipeCategory.MISC
                 )
-                .unlocks(p.hasName(templateLike), p.hasItem(templateLike))
+                .unlocks("has_smithing_trim_template", p.hasItem(templateLike))
                 .save(p.out(), key);
     }
 
     private static void bonusTrimSmithing(AbstractRecipeProvider p, Item templateItem, ResourceKey<Recipe<?>> key) {
         ItemLike templateLike = () -> templateItem;
 
-        JolSmithingTrimRecipeBuilder.smithingTrim(
+        AttributeSmithingTrimRecipeBuilder.smithingTrim(
                         Ingredient.of(templateItem),
                         p.tagIngredient(ItemTags.TRIMMABLE_ARMOR),
-                        p.tagIngredient(JolCraftTags.Items.BONUS_TRIM_MATERIALS),
+                        p.tagIngredient(JolCraftTags.Items.ATTRIBUTE_TRIM_MATERIALS),
                         RecipeCategory.MISC
                 )
                 .unlocks(p.hasName(templateLike), p.hasItem(templateLike))
-                .unlocks("has_bonus_trim_material", p.hasTag(JolCraftTags.Items.BONUS_TRIM_MATERIALS))
+                .unlocks("has_bonus_trim_material", p.hasTag(JolCraftTags.Items.ATTRIBUTE_TRIM_MATERIALS))
                 .save(p.out(), key);
     }
 

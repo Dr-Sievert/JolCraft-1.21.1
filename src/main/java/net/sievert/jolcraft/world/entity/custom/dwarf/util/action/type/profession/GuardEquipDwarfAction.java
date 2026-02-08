@@ -10,7 +10,8 @@ import net.sievert.jolcraft.datagen.language.subprovider.DwarfLangSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.handler.profession.GuardInteractionHandler;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -43,7 +44,15 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
 
     @Override
     public void stop() {
-        EquipmentSlot slot = GuardInteractionHandler.getSlotForArmor(itemstack);
+        EquipmentSlot slot = JolCraftEquipmentHelper.slotIfMatches(itemstack, JolCraftItems.DEEPSLATE_ARMOR_SET);
+        if (slot == null) {
+            if (dwarf.level().isClientSide()) {
+                dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
+                this.previousMainHandItem = ItemStack.EMPTY;
+            }
+            return;
+        }
+
         dwarf.setItemSlot(slot, itemstack);
         JolCraftSoundHelper.entity(dwarf, JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get());
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
@@ -62,15 +71,10 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
             Component rank = Component.translatable("merchant.level." + newLevel);
             player.displayClientMessage(
                     Component.translatable(DwarfLangSubProvider.TOOLTIP_GUARD_PROMOTION, rank)
-                            .withStyle(ChatFormatting.GRAY),
+                            .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
                     true
             );
-            if (!player.isCreative()) {
-                player.getItemInHand(hand).shrink(1);
-            }
         }
-
-        dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
-        this.previousMainHandItem = ItemStack.EMPTY;
     }
+
 }

@@ -16,7 +16,7 @@ public final class ContainerLangSubProvider implements AbstractLanguageProvider.
     public static final String TOOLTIP_GEODE = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "geode");
     public static final String TOOLTIP_UNCUT_GEM = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "uncut_gem");
     public static final String TOOLTIP_ARTISAN_HAMMER = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "artisan_hammer");
-    public static final String TOOLTIP_CUT_GEM = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "cut_gem");
+
     public static final String TOOLTIP_CHISEL = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "chisel");
     public static final String TOOLTIP_CUT_LOCKED = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "cut_locked");
 
@@ -65,7 +65,6 @@ public final class ContainerLangSubProvider implements AbstractLanguageProvider.
         p.putManual(TOOLTIP_GEODE, "Can be broken into dust using an artisan hammer at a lapidary bench.");
         p.putManual(TOOLTIP_UNCUT_GEM, "Can be broken into dust using an artisan hammer or cut using a chisel at a lapidary bench.");
         p.putManual(TOOLTIP_ARTISAN_HAMMER, "Can be used to break geodes and gems at a lapidary bench.");
-        p.putManual(TOOLTIP_CUT_GEM, "Can be used to trim armor for bonus stats. Applying additional cosmetic trims does not override given stats.");
         p.putManual(TOOLTIP_CHISEL, "Can be used to cut gems at a lapidary bench.");
         p.putManual(TOOLTIP_CUT_LOCKED, "You have not learned how to cut gems!");
 

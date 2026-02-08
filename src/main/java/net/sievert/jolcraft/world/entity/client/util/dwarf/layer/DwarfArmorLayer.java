@@ -29,8 +29,12 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight,
-                       DwarfRenderState state, float yRot, float xRot) {
+    public void render(@NotNull PoseStack poseStack,
+                       @NotNull MultiBufferSource buffer,
+                       int packedLight,
+                       DwarfRenderState state,
+                       float yRot,
+                       float xRot) {
         if (state.dwarf == null) return;
 
         DwarfModel model = this.getParentModel();
@@ -48,19 +52,9 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
             ResourceKey<EquipmentAsset> assetKey = equippable.assetId().orElse(null);
             if (assetKey == null) continue;
 
-            String material = assetKey.location().getPath()
-                    .replace("_layer_1", "")
-                    .replace("_layer_2", "");
+            ResourceLocation texture = armorTexture(assetKey);
 
-            ResourceLocation texture = JolCraft.location("textures/entity/dwarf/armor/dwarf_" + material + "_armor.png");
-
-            model.getHead().getChild("hat").visible = slot == EquipmentSlot.HEAD;
-            model.body.getChild("bodywear").visible = slot == EquipmentSlot.CHEST;
-            model.right_arm.getChild("right_armwear").visible = slot == EquipmentSlot.CHEST;
-            model.left_arm.getChild("left_armwear").visible = slot == EquipmentSlot.CHEST;
-            model.body.getChild("legwear").visible = slot == EquipmentSlot.LEGS;
-            model.right_leg.getChild("right_footwear").visible = slot == EquipmentSlot.FEET;
-            model.left_leg.getChild("left_footwear").visible = slot == EquipmentSlot.FEET;
+            setArmorPartsVisible(model, slot);
 
             VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
             model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
@@ -69,5 +63,25 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
         model.setAllVisible(true);
     }
 
+    private static @NotNull ResourceLocation armorTexture(@NotNull ResourceKey<EquipmentAsset> assetKey) {
+        String material = assetKey.location().getPath();
+        return JolCraft.location("textures/entity/dwarf/armor/dwarf_" + material + "_armor.png");
+    }
 
+    private static void setArmorPartsVisible(@NotNull DwarfModel model, @NotNull EquipmentSlot slot) {
+        model.setAllVisible(false);
+
+        model.getHead().getChild("hat").visible = slot == EquipmentSlot.HEAD;
+
+        boolean chest = slot == EquipmentSlot.CHEST;
+        model.body.getChild("bodywear").visible = chest;
+        model.right_arm.getChild("right_armwear").visible = chest;
+        model.left_arm.getChild("left_armwear").visible = chest;
+
+        model.body.getChild("legwear").visible = slot == EquipmentSlot.LEGS;
+
+        boolean feet = slot == EquipmentSlot.FEET;
+        model.right_leg.getChild("right_footwear").visible = feet;
+        model.left_leg.getChild("left_footwear").visible = feet;
+    }
 }

@@ -7,7 +7,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.item.trim.JolCraftTrimMaterials;
+import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
 import net.sievert.jolcraft.world.worldgen.biome.JolCraftBiomeModifiers;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftConfiguredFeatures;

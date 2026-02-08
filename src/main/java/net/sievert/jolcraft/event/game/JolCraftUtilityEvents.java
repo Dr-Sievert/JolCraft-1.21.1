@@ -11,7 +11,7 @@ import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEnchantItemEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.JolCraftEnumParams;
+import net.sievert.jolcraft.world.item.util.rarity.JolCraftEnumParams;
 import net.sievert.jolcraft.event.util.JolCraftAnvilHelper;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)

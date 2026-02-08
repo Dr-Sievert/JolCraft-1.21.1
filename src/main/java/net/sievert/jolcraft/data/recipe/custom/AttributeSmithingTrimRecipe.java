@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.data.recipe.custom;
 
-
 import com.mojang.serialization.MapCodec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
@@ -8,42 +7,53 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SmithingRecipeInput;
+import net.minecraft.world.item.crafting.SmithingTrimRecipe;
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.item.trim.JolCraftTrimBonuses;
+import net.sievert.jolcraft.world.item.trim.JolCraftTrimAttributes;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class JolCraftSmithingTrimRecipe extends SmithingTrimRecipe {
+public class AttributeSmithingTrimRecipe extends SmithingTrimRecipe {
 
-    public JolCraftSmithingTrimRecipe(Optional<Ingredient> template, Optional<Ingredient> base, Optional<Ingredient> addition) {
+    public AttributeSmithingTrimRecipe(
+            Optional<Ingredient> template,
+            Optional<Ingredient> base,
+            Optional<Ingredient> addition
+    ) {
         super(template, base, addition);
     }
 
     @Override
     public ItemStack assemble(SmithingRecipeInput input, HolderLookup.Provider registries) {
         ItemStack stack = super.assemble(input, registries);
+
         ArmorTrim trim = stack.get(DataComponents.TRIM);
         if (trim != null) {
-            JolCraftTrimBonuses.applyBonus(stack, trim);
+            JolCraftTrimAttributes.applyAttribute(stack, trim);
         }
+
         return stack;
     }
 
     @Override
     public RecipeSerializer<SmithingTrimRecipe> getSerializer() {
-        return JolCraftRecipes.SMITHING_TRIM_SERIALIZER.get();
+        return JolCraftRecipes.ATTRIBUTE_SMITHING_TRIM_SERIALIZER.get();
     }
 
     public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {
+
         @Override
         public MapCodec<SmithingTrimRecipe> codec() {
             return RecipeSerializer.SMITHING_TRIM.codec().xmap(
-                    vanilla -> new JolCraftSmithingTrimRecipe(
+                    vanilla -> new AttributeSmithingTrimRecipe(
                             vanilla.templateIngredient(),
                             vanilla.baseIngredient(),
                             vanilla.additionIngredient()
@@ -60,7 +70,7 @@ public class JolCraftSmithingTrimRecipe extends SmithingTrimRecipe {
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, SmithingTrimRecipe> streamCodec() {
             return RecipeSerializer.SMITHING_TRIM.streamCodec().map(
-                    vanilla -> new JolCraftSmithingTrimRecipe(
+                    vanilla -> new AttributeSmithingTrimRecipe(
                             vanilla.templateIngredient(),
                             vanilla.baseIngredient(),
                             vanilla.additionIngredient()
@@ -73,5 +83,4 @@ public class JolCraftSmithingTrimRecipe extends SmithingTrimRecipe {
             );
         }
     }
-
 }

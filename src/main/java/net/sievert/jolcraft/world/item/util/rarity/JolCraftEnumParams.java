@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data;
+package net.sievert.jolcraft.world.item.util.rarity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Style;

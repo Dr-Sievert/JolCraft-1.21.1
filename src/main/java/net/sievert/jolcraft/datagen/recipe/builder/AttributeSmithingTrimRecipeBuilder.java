@@ -13,27 +13,27 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.sievert.jolcraft.data.recipe.custom.JolCraftSmithingTrimRecipe;
+import net.sievert.jolcraft.data.recipe.custom.AttributeSmithingTrimRecipe;
 
-public class JolSmithingTrimRecipeBuilder {
+public class AttributeSmithingTrimRecipeBuilder {
     private final RecipeCategory category;
     private final Ingredient template;
     private final Ingredient base;
     private final Ingredient addition;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
-    public JolSmithingTrimRecipeBuilder(RecipeCategory category, Ingredient template, Ingredient base, Ingredient addition) {
+    public AttributeSmithingTrimRecipeBuilder(RecipeCategory category, Ingredient template, Ingredient base, Ingredient addition) {
         this.category = category;
         this.template = template;
         this.base = base;
         this.addition = addition;
     }
 
-    public static JolSmithingTrimRecipeBuilder smithingTrim(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category) {
-        return new JolSmithingTrimRecipeBuilder(category, template, base, addition);
+    public static AttributeSmithingTrimRecipeBuilder smithingTrim(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category) {
+        return new AttributeSmithingTrimRecipeBuilder(category, template, base, addition);
     }
 
-    public JolSmithingTrimRecipeBuilder unlocks(String key, Criterion<?> criterion) {
+    public AttributeSmithingTrimRecipeBuilder unlocks(String key, Criterion<?> criterion) {
         this.criteria.put(key, criterion);
         return this;
     }
@@ -48,7 +48,7 @@ public class JolSmithingTrimRecipeBuilder {
 
         output.accept(
                 resourceKey,
-                new JolCraftSmithingTrimRecipe(Optional.of(this.template), Optional.of(this.base), Optional.of(this.addition)),
+                new AttributeSmithingTrimRecipe(Optional.of(this.template), Optional.of(this.base), Optional.of(this.addition)),
                 advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getFolderName() + "/"))
         );
     }

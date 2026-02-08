@@ -1,9 +1,12 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 import org.jetbrains.annotations.NotNull;
 
 public final class EquipmentRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
@@ -16,10 +19,7 @@ public final class EquipmentRecipesSubProvider implements AbstractRecipeProvider
         armorSetSimple(
                 p,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
-                JolCraftItems.DEEPSLATE_HELMET.get(),
-                JolCraftItems.DEEPSLATE_CHESTPLATE.get(),
-                JolCraftItems.DEEPSLATE_LEGGINGS.get(),
-                JolCraftItems.DEEPSLATE_BOOTS.get(),
+                JolCraftItems.DEEPSLATE_ARMOR_SET,
                 p.itemName(JolCraftItems.DEEPSLATE_PLATE.get())
         );
 
@@ -27,24 +27,23 @@ public final class EquipmentRecipesSubProvider implements AbstractRecipeProvider
                 p,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.MITHRIL_CHAINWEAVE.get(),
-                JolCraftItems.MITHRIL_HELMET.get(),
-                JolCraftItems.MITHRIL_CHESTPLATE.get(),
-                JolCraftItems.MITHRIL_LEGGINGS.get(),
-                JolCraftItems.MITHRIL_BOOTS.get(),
+                JolCraftItems.MITHRIL_ARMOR_SET,
                 p.itemName(JolCraftItems.MITHRIL_INGOT.get())
         );
     }
 
     private static void armorSetSimple(
-            AbstractRecipeProvider p,
-            ItemLike material,
-            ItemLike helmet,
-            ItemLike chestplate,
-            ItemLike leggings,
-            ItemLike boots,
-            String unlockItemName
+            @NotNull AbstractRecipeProvider p,
+            @NotNull ItemLike material,
+            @NotNull JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
+            @NotNull String unlockItemName
     ) {
         String unlock = "has_" + unlockItemName;
+
+        ItemLike helmet = set.get(JolCraftEquipmentHelper.ArmorPiece.HELMET).get();
+        ItemLike chestplate = set.get(JolCraftEquipmentHelper.ArmorPiece.CHESTPLATE).get();
+        ItemLike leggings = set.get(JolCraftEquipmentHelper.ArmorPiece.LEGGINGS).get();
+        ItemLike boots = set.get(JolCraftEquipmentHelper.ArmorPiece.BOOTS).get();
 
         p.modShaped(RecipeCategory.COMBAT, helmet)
                 .pattern("BBB")
@@ -78,16 +77,18 @@ public final class EquipmentRecipesSubProvider implements AbstractRecipeProvider
     }
 
     private static void armorSetWithLining(
-            AbstractRecipeProvider p,
-            ItemLike ingot,
-            ItemLike lining,
-            ItemLike helmet,
-            ItemLike chestplate,
-            ItemLike leggings,
-            ItemLike boots,
-            String unlockItemName
+            @NotNull AbstractRecipeProvider p,
+            @NotNull ItemLike ingot,
+            @NotNull ItemLike lining,
+            @NotNull JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
+            @NotNull String unlockItemName
     ) {
         String unlock = "has_" + unlockItemName;
+
+        ItemLike helmet = set.get(JolCraftEquipmentHelper.ArmorPiece.HELMET).get();
+        ItemLike chestplate = set.get(JolCraftEquipmentHelper.ArmorPiece.CHESTPLATE).get();
+        ItemLike leggings = set.get(JolCraftEquipmentHelper.ArmorPiece.LEGGINGS).get();
+        ItemLike boots = set.get(JolCraftEquipmentHelper.ArmorPiece.BOOTS).get();
 
         p.modShaped(RecipeCategory.COMBAT, helmet)
                 .pattern("BBB")

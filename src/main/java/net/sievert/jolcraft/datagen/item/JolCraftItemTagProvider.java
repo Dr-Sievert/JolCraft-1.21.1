@@ -4,20 +4,25 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.material.trim.JolCraftAttributeTrimMaterials;
+import net.sievert.jolcraft.world.item.material.trim.JolCraftVanillaTrimMaterials;
+import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class JolCraftItemTagProvider extends ItemTagsProvider {
-    public JolCraftItemTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
-                                  CompletableFuture<TagLookup<Block>> blockTags) {
+    public JolCraftItemTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTags) {
         super(output, lookupProvider, blockTags, JolCraft.MOD_ID);
     }
 
@@ -84,45 +89,30 @@ public class JolCraftItemTagProvider extends ItemTagsProvider {
 
         //Armor
 
-        tag(ItemTags.HEAD_ARMOR)
-                .add(JolCraftItems.DEEPSLATE_HELMET.get())
-                .add(JolCraftItems.MITHRIL_HELMET.get());
+        // Slot tags
+        for (JolCraftEquipmentHelper.ArmorPiece piece : JolCraftEquipmentHelper.ArmorPiece.values()) {
 
-        tag(ItemTags.CHEST_ARMOR)
-                .add(JolCraftItems.DEEPSLATE_CHESTPLATE.get())
-                .add(JolCraftItems.MITHRIL_CHESTPLATE.get());
+            var slotTag = tag(switch (piece) {
+                case HELMET -> ItemTags.HEAD_ARMOR;
+                case CHESTPLATE -> ItemTags.CHEST_ARMOR;
+                case LEGGINGS -> ItemTags.LEG_ARMOR;
+                case BOOTS -> ItemTags.FOOT_ARMOR;
+            });
 
-        tag(ItemTags.LEG_ARMOR)
-                .add(JolCraftItems.DEEPSLATE_LEGGINGS.get())
-                .add(JolCraftItems.MITHRIL_LEGGINGS.get());
+            for (JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set : JolCraftItems.ARMOR_SETS) {
+                slotTag.add(set.get(piece).get());
+            }
+        }
 
-        tag(ItemTags.FOOT_ARMOR)
-                .add(JolCraftItems.DEEPSLATE_BOOTS.get())
-                .add(JolCraftItems.MITHRIL_BOOTS.get());
+        // Trimmable armor
+        var trimmable = tag(ItemTags.TRIMMABLE_ARMOR);
+        for (JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set : JolCraftItems.ARMOR_SETS) {
+            set.stream().forEach(item -> trimmable.add(item.get()));
+        }
 
-        tag(ItemTags.TRIMMABLE_ARMOR)
-                .add(JolCraftItems.DEEPSLATE_HELMET.get())
-                .add(JolCraftItems.DEEPSLATE_CHESTPLATE.get())
-                .add(JolCraftItems.DEEPSLATE_LEGGINGS.get())
-                .add(JolCraftItems.DEEPSLATE_BOOTS.get())
-                .add(JolCraftItems.MITHRIL_HELMET.get())
-                .add(JolCraftItems.MITHRIL_CHESTPLATE.get())
-                .add(JolCraftItems.MITHRIL_LEGGINGS.get())
-                .add(JolCraftItems.MITHRIL_BOOTS.get());
-
-        tag(ItemTags.TRIM_MATERIALS)
-                .add(JolCraftItems.DEEPSLATE_PLATE.get())
-                .add(JolCraftItems.MITHRIL_INGOT.get());
-
-        tag(JolCraftTags.Items.REPAIRS_DEEPSLATE)
-                .add(JolCraftItems.DEEPSLATE_PLATE.get());
-
-        tag(JolCraftTags.Items.REPAIRS_MITHRIL)
-                .add(JolCraftItems.MITHRIL_INGOT.get());
-
-        tag(JolCraftTags.Items.BONUS_TRIM_MATERIALS)
-                .addTag(JolCraftTags.Items.GEM_CUT);
-
+        // Trim materials
+        tag(ItemTags.TRIM_MATERIALS).add(JolCraftVanillaTrimMaterials.ingredients().stream().map(Supplier::get).toArray(Item[]::new));
+        tag(JolCraftTags.Items.ATTRIBUTE_TRIM_MATERIALS).add(JolCraftAttributeTrimMaterials.ingredients().stream().map(Supplier::get).toArray(Item[]::new));
 
         //Functional
 

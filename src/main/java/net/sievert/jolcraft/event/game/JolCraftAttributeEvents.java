@@ -326,7 +326,11 @@ public class JolCraftAttributeEvents {
 
         UUID uuid = player.getUUID();
 
+        // Existence is driven ONLY by ownership (radiant attribute > 0)
         double radiant = player.getAttributeValue(JolCraftAttributes.RADIANT);
+        boolean hasRadiant = radiant > 0.0D;
+
+        // Light level is a detail (marker brightness), not existence.
         int pieces = (int) Math.round(radiant * 4.0);
         int lightLevel = switch (pieces) {
             case 1 -> 9;
@@ -342,12 +346,12 @@ public class JolCraftAttributeEvents {
             existing = null;
         }
 
-        // No radiant -> discard entity
-        if (lightLevel == 0) {
+        // If player has no radiant, drop ownership. Entity self-discards when owner is missing.
+        if (!hasRadiant) {
             if (existing != null) {
-                existing.discard();
-                ACTIVE_RADIANT_ENTITIES.remove(uuid);
+                existing.setOwner(null);
             }
+            ACTIVE_RADIANT_ENTITIES.remove(uuid);
             return;
         }
 
@@ -371,7 +375,6 @@ public class JolCraftAttributeEvents {
                 created.setOwner(player);
                 created.setRadiantLightLevel(lightLevel);
 
-                // Only cache if spawn succeeded (prevents rapid spawn/remove loop)
                 if (!level.addFreshEntity(created)) return;
 
                 existing = created;
@@ -379,11 +382,10 @@ public class JolCraftAttributeEvents {
             }
         }
 
-        // Sync light level; entity itself handles follow/cooldown/teleport.
+        // Keep ownership + sync light level.
         existing.setOwner(player);
         existing.setRadiantLightLevel(lightLevel);
     }
-
     @SubscribeEvent
     public static void onLevelTickRadiantAura(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;

@@ -11,12 +11,12 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
-import net.sievert.jolcraft.data.recipe.custom.JolCraftSmithingTrimRecipe;
+import net.sievert.jolcraft.data.recipe.custom.AttributeSmithingTrimRecipe;
 import net.sievert.jolcraft.data.recipe.custom.LapidaryBenchRecipe;
 
 public class JolCraftRecipes {
 
-    public static final String SMITHING_TRIM_ID = "jolcraft_smithing_trim";
+    public static final String ATTRIBUTE_SMITHING_TRIM_ID = "attribute_smithing_trim";
     public static final String DWARF_TRADE_ID = "dwarf_trade";
     public static final String LAPIDARY_BENCH_ID = "lapidary_bench";
     public static final String FERMENTING_CAULDRON_ID = "fermenting_cauldron";
@@ -27,8 +27,8 @@ public class JolCraftRecipes {
     public static final DeferredRegister<RecipeType<?>> TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, JolCraft.MOD_ID);
 
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> SMITHING_TRIM_SERIALIZER =
-            SERIALIZERS.register(SMITHING_TRIM_ID, JolCraftSmithingTrimRecipe.Serializer::new);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> ATTRIBUTE_SMITHING_TRIM_SERIALIZER =
+            SERIALIZERS.register(ATTRIBUTE_SMITHING_TRIM_ID, AttributeSmithingTrimRecipe.Serializer::new);
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<DwarfTradeRecipe>> DWARF_TRADE_SERIALIZER =
             SERIALIZERS.register(DWARF_TRADE_ID, DwarfTradeRecipe.Serializer::new);

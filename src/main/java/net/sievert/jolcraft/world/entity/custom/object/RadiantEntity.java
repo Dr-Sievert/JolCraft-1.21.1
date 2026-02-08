@@ -6,7 +6,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -27,21 +31,25 @@ import java.util.UUID;
 @MethodsReturnNonnullByDefault
 public class RadiantEntity extends Entity implements TraceableEntity {
 
+    // -------------------------------------------------------------------------
+    // State
+    // -------------------------------------------------------------------------
+
     @Nullable
     private BlockPos currentLightPos = null;
 
-    // === Owner Tracking ===
+    // Owner tracking
     @Nullable private UUID ownerUUID;
     @Nullable private Entity cachedOwner;
 
-    // === Animation State ===
+    // Client animation
     public final AnimationState idleAnimationState = new AnimationState();
     private int idleAnimationTimeout = 0;
 
-    // --- Light Level ---
+    // Light level (server authoritative; synced by handler via setRadiantLightLevel)
     private int radiantLightLevel = 15;
 
-    // --- Follow state (server-only) ---
+    // Follow state (server-only)
     @Nullable private BlockPos lastOwnerPos = null;
     private int stationaryTicks = 0;
     private long lastFollowGameTick = Long.MIN_VALUE;
@@ -55,22 +63,37 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         super.tick();
 
         if (level().isClientSide()) {
-            if (idleAnimationTimeout <= 0) {
-                idleAnimationTimeout = 120;
-                idleAnimationState.start(this.tickCount);
-            } else {
-                --idleAnimationTimeout;
-            }
+            tickClientAnimation();
             return;
         }
 
-        Entity owner = getOwner();
-        if (owner instanceof Player player) {
-            // Follow logic lives here now (NOT in event handler)
-            serverFollowTick(player);
+        Player owner = getOwnerPlayer();
+        if (owner == null) {
+            // Invariant: RadiantEntity must not exist without an owner.
+            discard();
+            return;
         }
 
-        // Marker placement/maintenance (your existing behavior)
+        serverFollowTick(owner);
+        serverLightTick();
+    }
+
+    private void tickClientAnimation() {
+        if (idleAnimationTimeout <= 0) {
+            idleAnimationTimeout = 120;
+            idleAnimationState.start(this.tickCount);
+        } else {
+            --idleAnimationTimeout;
+        }
+    }
+
+    @Nullable
+    private Player getOwnerPlayer() {
+        Entity owner = getOwner();
+        return (owner instanceof Player p) ? p : null;
+    }
+
+    private void serverLightTick() {
         BlockPos newPos = this.blockPosition();
 
         if (currentLightPos == null || !currentLightPos.equals(newPos)) {
@@ -81,14 +104,15 @@ public class RadiantEntity extends Entity implements TraceableEntity {
             return;
         }
 
-        if (getRadiantLightLevel() > 0) {
+        if (radiantLightLevel > 0) {
             BlockState state = level().getBlockState(newPos);
+
             if (state.is(JolCraftBlocks.MANAGED_LIGHT.get())) {
                 int cur = state.getValue(ManagedLightBlock.LEVEL);
-                if (cur != getRadiantLightLevel()) {
+                if (cur != radiantLightLevel) {
                     boolean waterlogged = state.getValue(ManagedLightBlock.WATERLOGGED);
                     BlockState updated = state
-                            .setValue(ManagedLightBlock.LEVEL, getRadiantLightLevel())
+                            .setValue(ManagedLightBlock.LEVEL, radiantLightLevel)
                             .setValue(ManagedLightBlock.WATERLOGGED, waterlogged);
 
                     level().setBlock(newPos, updated, 3);
@@ -109,7 +133,7 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     private void serverFollowTick(Player player) {
         // Stationary tracking (blockpos-based)
         BlockPos current = player.blockPosition();
-        boolean stationary = (current.equals(lastOwnerPos));
+        boolean stationary = current.equals(lastOwnerPos);
         stationaryTicks = stationary ? (stationaryTicks + 1) : 0;
         lastOwnerPos = current;
 
@@ -127,27 +151,24 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         boolean withinY = dy >= 0 && dy <= 4;
         boolean withinRadius = horizontalDistSq <= (radius * radius) && withinY;
 
-        final long now = level().getGameTime();
-        final long COOLDOWN_TICKS = 20L * 5L; // 5 seconds
+        long now = level().getGameTime();
+        long cooldownTicks = 20L * 5L; // 5 seconds
 
         // fast follow only after 1 second stationary + onGround
         boolean allowFastFollow = (stationaryTicks >= 20) && player.onGround();
 
         if (!allowFastFollow) {
-            // 5s cooldown between "catch-up" teleports while moving
-            if (now - lastFollowGameTick < COOLDOWN_TICKS) return;
+            // cooldown between "catch-up" teleports while moving
+            if (now - lastFollowGameTick < cooldownTicks) return;
 
-            // Spatial rule unchanged: only catch up if outside radius
+            // only catch up if outside radius
             if (horizontalDistSq <= (radius * radius)) return;
 
-            // consume cooldown
             lastFollowGameTick = now;
         } else {
-            // Fast follow: same as before
             if (withinRadius) return;
         }
 
-        // Teleport close to player (only if target space is air/water)
         double px = player.getX();
         double py = player.getY() + player.getBbHeight() + 0.5;
         double pz = player.getZ();
@@ -169,7 +190,7 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     }
 
     private void tryPlaceOrUpdateMarkerAt(BlockPos pos) {
-        if (getRadiantLightLevel() <= 0) return;
+        if (radiantLightLevel <= 0) return;
 
         BlockState stateAt = level().getBlockState(pos);
         boolean isWater = stateAt.getFluidState().getType() == Fluids.WATER;
@@ -179,7 +200,7 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         }
 
         BlockState newState = JolCraftBlocks.MANAGED_LIGHT.get().defaultBlockState()
-                .setValue(ManagedLightBlock.LEVEL, getRadiantLightLevel())
+                .setValue(ManagedLightBlock.LEVEL, radiantLightLevel)
                 .setValue(ManagedLightBlock.WATERLOGGED, isWater);
 
         if (!stateAt.is(JolCraftBlocks.MANAGED_LIGHT.get()) || stateAt != newState) {
@@ -203,7 +224,8 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         if (owner == null || !owner.equals(this.getUUID())) return;
 
         boolean waterlogged = state.getValue(ManagedLightBlock.WATERLOGGED);
-        level().setBlock(pos,
+        level().setBlock(
+                pos,
                 waterlogged ? Fluids.WATER.defaultFluidState().createLegacyBlock() : Blocks.AIR.defaultBlockState(),
                 3
         );
@@ -223,10 +245,12 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         if (cachedOwner != null && !cachedOwner.isRemoved()) {
             return cachedOwner;
         }
+
         if (ownerUUID != null && level() instanceof ServerLevel serverLevel) {
             cachedOwner = serverLevel.getEntity(ownerUUID);
             return cachedOwner;
         }
+
         return null;
     }
 
@@ -270,7 +294,7 @@ public class RadiantEntity extends Entity implements TraceableEntity {
             this.radiantLightLevel = 15;
         }
 
-        // follow state is runtime-only (intentionally not saved)
+        // follow state is runtime-only
         this.lastOwnerPos = null;
         this.stationaryTicks = 0;
         this.lastFollowGameTick = Long.MIN_VALUE;
@@ -278,13 +302,13 @@ public class RadiantEntity extends Entity implements TraceableEntity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
-        if (this.ownerUUID != null) {
-            tag.putUUID("Owner", this.ownerUUID);
+        if (ownerUUID != null) {
+            tag.putUUID("Owner", ownerUUID);
         }
-        if (this.currentLightPos != null) {
-            tag.putLong("LightPos", this.currentLightPos.asLong());
+        if (currentLightPos != null) {
+            tag.putLong("LightPos", currentLightPos.asLong());
         }
-        tag.putInt("RadiantLightLevel", this.radiantLightLevel);
+        tag.putInt("RadiantLightLevel", radiantLightLevel);
     }
 
     @Override
@@ -292,6 +316,11 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         return false;
     }
 
-    @Override public boolean isNoGravity() { return true; }
-    @Override public void move(MoverType type, Vec3 vec) {}
+    @Override
+    public boolean isNoGravity() {
+        return true;
+    }
+
+    @Override
+    public void move(MoverType type, Vec3 vec) {}
 }
