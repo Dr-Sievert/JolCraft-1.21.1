@@ -329,6 +329,7 @@ public class JolCraftAttributeEvents {
 
         ServerLevel level = (ServerLevel) player.level();
         UUID uuid = player.getUUID();
+
         double radiant = player.getAttributeValue(JolCraftAttributes.RADIANT);
         int pieces = (int) Math.round(radiant * 4.0);
         int lightLevel = switch (pieces) {
@@ -340,17 +341,14 @@ public class JolCraftAttributeEvents {
         };
 
         RadiantEntity existing = ACTIVE_RADIANT_ENTITIES.get(uuid);
-
-        if (existing != null && existing.isRemoved()) {
+        if (existing != null && (existing.isRemoved() || existing.level() != level)) {
             ACTIVE_RADIANT_ENTITIES.remove(uuid);
             existing = null;
         }
 
+        // No radiant -> discard entity (marker cleanup is handled by ManagedLight BE validation).
         if (lightLevel == 0) {
             if (existing != null) {
-                if (existing.oldPos != null && existing.level().getBlockState(existing.oldPos).is(Blocks.LIGHT)) {
-                    existing.level().setBlock(existing.oldPos, Blocks.AIR.defaultBlockState(), 3);
-                }
                 existing.discard();
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
             }
@@ -359,60 +357,95 @@ public class JolCraftAttributeEvents {
             return;
         }
 
+        // Ensure we have a valid tracked radiant (recover if map desynced).
         if (existing == null) {
-            for (RadiantEntity e : level.getEntitiesOfClass(RadiantEntity.class, player.getBoundingBox().inflate(32))) {
-                if (uuid.equals(e.getOwnerUUID())) {
-                    e.discard();
+            RadiantEntity found = null;
+            for (RadiantEntity e : level.getEntitiesOfClass(RadiantEntity.class, player.getBoundingBox().inflate(64.0))) {
+                if (!e.isRemoved() && uuid.equals(e.getOwnerUUID()) && e.level() == level) {
+                    found = e;
+                    break;
                 }
             }
 
-            RadiantEntity entity = new RadiantEntity(JolCraftEntities.RADIANT.get(), level);
-            BlockPos spawnPos = player.blockPosition().above();
-            entity.moveTo(spawnPos.getX() + 0.5, spawnPos.getY() + 1, spawnPos.getZ() + 0.5);
-            entity.setOwner(player);
-            entity.setRadiantLightLevel(lightLevel);
-            level.addFreshEntity(entity);
+            if (found != null) {
+                existing = found;
+                ACTIVE_RADIANT_ENTITIES.put(uuid, existing);
+                LAST_PLAYER_POS.put(uuid, player.blockPosition());
+                STATIONARY_TICKS.put(uuid, 0);
+            } else {
+                RadiantEntity created = new RadiantEntity(JolCraftEntities.RADIANT.get(), level);
+                BlockPos spawnPos = player.blockPosition().above();
+                created.moveTo(spawnPos.getX() + 0.5, spawnPos.getY() + 1, spawnPos.getZ() + 0.5);
+                created.setOwner(player);
+                created.setRadiantLightLevel(lightLevel);
 
-            ACTIVE_RADIANT_ENTITIES.put(uuid, entity);
-            LAST_PLAYER_POS.put(uuid, player.blockPosition());
-            STATIONARY_TICKS.put(uuid, 0);
+                // Only cache if spawn succeeded (prevents rapid spawn/remove loop)
+                if (!level.addFreshEntity(created)) {
+                    return;
+                }
+
+                existing = created;
+                ACTIVE_RADIANT_ENTITIES.put(uuid, existing);
+                LAST_PLAYER_POS.put(uuid, player.blockPosition());
+                STATIONARY_TICKS.put(uuid, 0);
+            }
         }
-        else {
-            existing.setRadiantLightLevel(lightLevel);
 
-            BlockPos current = player.blockPosition();
-            BlockPos previous = LAST_PLAYER_POS.getOrDefault(uuid, current);
-            int ticks = STATIONARY_TICKS.getOrDefault(uuid, 0);
+        // Update light level
+        existing.setRadiantLightLevel(lightLevel);
 
-            ticks = current.equals(previous) ? ticks + 1 : 0;
-            STATIONARY_TICKS.put(uuid, ticks);
-            LAST_PLAYER_POS.put(uuid, current);
+        // Stationary tracking
+        BlockPos current = player.blockPosition();
+        BlockPos previous = LAST_PLAYER_POS.getOrDefault(uuid, current);
+        int ticks = STATIONARY_TICKS.getOrDefault(uuid, 0);
 
-            if (ticks >= 20 && player.onGround()) {
-                int percent = (int) (radiant * 100);
-                int nearest25 = (percent / 25) * 25;
-                int radius = 1 + (nearest25 / 25);
+        boolean stationary = current.equals(previous);
+        ticks = stationary ? (ticks + 1) : 0;
 
-                double dx = existing.getX() - player.getX();
-                double dz = existing.getZ() - player.getZ();
-                double dy = existing.getY() - player.getY();
-                double horizontalDistSq = dx * dx + dz * dz;
-                boolean withinY = dy >= 0 && dy <= 4;
+        STATIONARY_TICKS.put(uuid, ticks);
+        LAST_PLAYER_POS.put(uuid, current);
 
-                boolean withinRadius = horizontalDistSq <= radius * radius && withinY;
+        int percent = (int) (radiant * 100);
+        int nearest25 = (percent / 25) * 25;
+        int radius = 1 + (nearest25 / 25);
 
-                if (!withinRadius) {
-                    double px = player.getX();
-                    double py = player.getY() + player.getBbHeight() + 0.5;
-                    double pz = player.getZ();
-                    BlockPos targetPos = BlockPos.containing(px, py, pz);
-                    BlockState targetState = level.getBlockState(targetPos);
+        double dx = existing.getX() - player.getX();
+        double dz = existing.getZ() - player.getZ();
+        double dy = existing.getY() - player.getY();
+        double horizontalDistSq = dx * dx + dz * dz;
 
-                    if (targetState.isAir() || targetState.is(Blocks.WATER)) {
-                        existing.setPos(px, py, pz);
-                    }
-                }
+        boolean withinY = dy >= 0 && dy <= 4;
+        boolean withinRadius = horizontalDistSq <= (radius * radius) && withinY;
+
+        boolean allowFastFollow = (ticks >= 20 && player.onGround());
+
+        // While moving: only allow a catch-up every N ticks
+        final int MOVE_COOLDOWN_TICKS = 100; // 1 second (increase to slow it more)
+
+        if (!allowFastFollow) {
+            // Time-based cooldown
+            if ((ticks % MOVE_COOLDOWN_TICKS) != 0) {
+                return;
             }
+
+            // Spatial rule unchanged
+            if (horizontalDistSq <= (radius * radius)) {
+                return;
+            }
+        } else {
+            // Fast follow: same as before
+            if (withinRadius) return;
+        }
+
+        // Teleport close to player (only if target space is air/water)
+        double px = player.getX();
+        double py = player.getY() + player.getBbHeight() + 0.5;
+        double pz = player.getZ();
+        BlockPos targetPos = BlockPos.containing(px, py, pz);
+        BlockState targetState = level.getBlockState(targetPos);
+
+        if (targetState.isAir() || targetState.getFluidState().getType() == net.minecraft.world.level.material.Fluids.WATER) {
+            existing.setPos(px, py, pz);
         }
     }
 

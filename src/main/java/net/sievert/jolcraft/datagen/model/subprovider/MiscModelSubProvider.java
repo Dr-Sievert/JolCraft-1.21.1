@@ -14,6 +14,7 @@ import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @ParametersAreNonnullByDefault
@@ -71,6 +73,7 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
         /* ---------------------------- */
 
         createHearth(blocks, JolCraftBlocks.HEARTH.get());
+        createManagedLight(blocks, JolCraftBlocks.MANAGED_LIGHT.get());
     }
 
     public static void generateCoinPouchModel(ItemModelGenerators itemModels) {
@@ -155,6 +158,33 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
                                             }
                                         })
                         )
+        );
+    }
+
+    public static void createManagedLight(BlockModelGenerators blockModels, Block block) {
+        PropertyDispatch.C1<Integer> dispatch = PropertyDispatch.property(BlockStateProperties.LEVEL);
+
+        for (int i = 0; i <= 15; i++) {
+            String suffix = String.format(Locale.ROOT, "_%02d", i);
+
+            ResourceLocation particleTex = TextureMapping.getItemTexture(Items.LIGHT, suffix);
+
+            dispatch.select(
+                    i,
+                    Variant.variant().with(
+                            VariantProperties.MODEL,
+                            ModelTemplates.PARTICLE_ONLY.createWithSuffix(
+                                    block,
+                                    suffix,
+                                    TextureMapping.particle(particleTex),
+                                    blockModels.modelOutput
+                            )
+                    )
+            );
+        }
+
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(block).with(dispatch)
         );
     }
 }

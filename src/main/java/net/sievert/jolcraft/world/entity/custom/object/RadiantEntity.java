@@ -3,22 +3,21 @@ package net.sievert.jolcraft.world.entity.custom.object;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.TraceableEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LightBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.custom.ManagedLightBlock;
+import net.sievert.jolcraft.world.block.entity.custom.ManagedLightBlockEntity;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 
@@ -27,17 +26,14 @@ import java.util.UUID;
 public class RadiantEntity extends Entity implements TraceableEntity {
 
     @Nullable
-    private BlockState lastReplacedBlockState = null;
-    @Nullable
     private BlockPos currentLightPos = null;
-    public BlockPos oldPos = null;
 
     // === Owner Tracking ===
     @Nullable private UUID ownerUUID;
     @Nullable private Entity cachedOwner;
 
     // === Animation State ===
-    public final net.minecraft.world.entity.AnimationState idleAnimationState = new net.minecraft.world.entity.AnimationState();
+    public final AnimationState idleAnimationState = new AnimationState();
     private int idleAnimationTimeout = 0;
 
     // --- Light Level ---
@@ -64,41 +60,92 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         BlockPos newPos = this.blockPosition();
 
         if (currentLightPos == null || !currentLightPos.equals(newPos)) {
-            if (currentLightPos != null && lastReplacedBlockState != null &&
-                    level().getBlockState(currentLightPos).is(Blocks.LIGHT)) {
-                level().setBlock(currentLightPos, lastReplacedBlockState, 3);
+            // Best-effort cleanup of the previous marker (not required for correctness)
+            if (currentLightPos != null) {
+                cleanupOwnedMarkerAt(currentLightPos);
             }
 
-            BlockState stateAtNew = level().getBlockState(newPos);
-            if ((stateAtNew.isAir() || stateAtNew.is(Blocks.WATER) || stateAtNew.is(Blocks.LIGHT)) && getRadiantLightLevel() > 0) {
-                lastReplacedBlockState = stateAtNew.is(Blocks.LIGHT) ? Blocks.AIR.defaultBlockState() : stateAtNew;
+            tryPlaceOrUpdateMarkerAt(newPos);
+            currentLightPos = newPos.immutable();
+            return;
+        }
 
-                boolean isWater = stateAtNew.getFluidState().getType() == Fluids.WATER;
-                BlockState newLight = Blocks.LIGHT.defaultBlockState()
-                        .setValue(LightBlock.LEVEL, getRadiantLightLevel())
-                        .setValue(LightBlock.WATERLOGGED, isWater);
+        // Same blockpos: ensure light level matches our current configured level
+        if (getRadiantLightLevel() > 0) {
+            BlockState state = level().getBlockState(newPos);
+            if (state.is(JolCraftBlocks.MANAGED_LIGHT.get())) {
+                int cur = state.getValue(ManagedLightBlock.LEVEL);
+                if (cur != getRadiantLightLevel()) {
+                    boolean waterlogged = state.getValue(ManagedLightBlock.WATERLOGGED);
+                    BlockState updated = state
+                            .setValue(ManagedLightBlock.LEVEL, getRadiantLightLevel())
+                            .setValue(ManagedLightBlock.WATERLOGGED, waterlogged);
 
-                level().setBlock(newPos, newLight, 3);
-                currentLightPos = newPos.immutable();
+                    level().setBlock(newPos, updated, 3);
+                }
+
+                // Ensure BE ownership is set (covers edge cases / migrations)
+                BlockEntity be = level().getBlockEntity(newPos);
+                if (be instanceof ManagedLightBlockEntity marker) {
+                    marker.setOwner(this.getUUID());
+                }
+            } else {
+                // Our marker got replaced; re-place if possible
+                tryPlaceOrUpdateMarkerAt(newPos);
             }
         } else {
-            BlockState state = level().getBlockState(newPos);
-            if (state.is(Blocks.LIGHT) && state.getValue(LightBlock.LEVEL) != getRadiantLightLevel()) {
-                boolean waterlogged = state.getValue(LightBlock.WATERLOGGED);
-                BlockState updated = state.setValue(LightBlock.LEVEL, getRadiantLightLevel())
-                        .setValue(LightBlock.WATERLOGGED, waterlogged);
-                level().setBlock(newPos, updated, 3);
-            }
+            // Light level is zero: remove our marker if we're standing in one we own
+            cleanupOwnedMarkerAt(newPos);
         }
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        if (currentLightPos != null && lastReplacedBlockState != null &&
-                level().getBlockState(currentLightPos).is(Blocks.LIGHT)) {
-            level().setBlock(currentLightPos, lastReplacedBlockState, 3);
+        if (!level().isClientSide && currentLightPos != null) {
+            cleanupOwnedMarkerAt(currentLightPos);
         }
         super.remove(reason);
+    }
+
+    private void tryPlaceOrUpdateMarkerAt(BlockPos pos) {
+        if (getRadiantLightLevel() <= 0) return;
+
+        BlockState stateAt = level().getBlockState(pos);
+        boolean isWater = stateAt.getFluidState().getType() == Fluids.WATER;
+
+        if (!(stateAt.isAir() || isWater || stateAt.is(JolCraftBlocks.MANAGED_LIGHT.get()))) {
+            return;
+        }
+
+        BlockState newState = JolCraftBlocks.MANAGED_LIGHT.get().defaultBlockState()
+                .setValue(ManagedLightBlock.LEVEL, getRadiantLightLevel())
+                .setValue(ManagedLightBlock.WATERLOGGED, isWater);
+
+        if (!stateAt.is(JolCraftBlocks.MANAGED_LIGHT.get()) || stateAt != newState) {
+            level().setBlock(pos, newState, 3);
+        }
+
+        BlockEntity be = level().getBlockEntity(pos);
+        if (be instanceof ManagedLightBlockEntity marker) {
+            marker.setOwner(this.getUUID());
+        }
+    }
+
+    private void cleanupOwnedMarkerAt(BlockPos pos) {
+        BlockState state = level().getBlockState(pos);
+        if (!state.is(JolCraftBlocks.MANAGED_LIGHT.get())) return;
+
+        BlockEntity be = level().getBlockEntity(pos);
+        if (!(be instanceof ManagedLightBlockEntity marker)) return;
+
+        UUID owner = marker.owner();
+        if (owner == null || !owner.equals(this.getUUID())) return;
+
+        boolean waterlogged = state.getValue(ManagedLightBlock.WATERLOGGED);
+        level().setBlock(pos,
+                waterlogged ? Fluids.WATER.defaultFluidState().createLegacyBlock() : Blocks.AIR.defaultBlockState(),
+                3
+        );
     }
 
     /** Returns the current light level emitted (0-15). */
@@ -134,6 +181,9 @@ public class RadiantEntity extends Entity implements TraceableEntity {
         if (owner != null) {
             this.ownerUUID = owner.getUUID();
             this.cachedOwner = owner;
+        } else {
+            this.ownerUUID = null;
+            this.cachedOwner = null;
         }
     }
 
@@ -156,12 +206,6 @@ public class RadiantEntity extends Entity implements TraceableEntity {
             this.currentLightPos = null;
         }
 
-        if (tag.contains("ReplacedState")) {
-            this.lastReplacedBlockState = NbtUtils.readBlockState(level().holderLookup(net.minecraft.core.registries.Registries.BLOCK), tag.getCompound("ReplacedState"));
-        } else {
-            this.lastReplacedBlockState = null;
-        }
-
         if (tag.contains("RadiantLightLevel")) {
             this.radiantLightLevel = Math.max(0, Math.min(15, tag.getInt("RadiantLightLevel")));
         } else {
@@ -177,10 +221,6 @@ public class RadiantEntity extends Entity implements TraceableEntity {
 
         if (this.currentLightPos != null) {
             tag.putLong("LightPos", this.currentLightPos.asLong());
-        }
-
-        if (this.lastReplacedBlockState != null) {
-            tag.put("ReplacedState", NbtUtils.writeBlockState(this.lastReplacedBlockState));
         }
 
         tag.putInt("RadiantLightLevel", this.radiantLightLevel);

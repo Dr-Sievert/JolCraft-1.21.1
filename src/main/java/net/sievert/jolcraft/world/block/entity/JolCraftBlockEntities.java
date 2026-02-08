@@ -9,12 +9,15 @@ import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.LapidaryBenchBlockEntity;
+import net.sievert.jolcraft.world.block.entity.custom.ManagedLightBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class JolCraftBlockEntities {
+public final class JolCraftBlockEntities {
+
+    private JolCraftBlockEntities() {}
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, JolCraft.MOD_ID);
@@ -34,6 +37,10 @@ public class JolCraftBlockEntities {
     public static final Supplier<BlockEntityType<HearthBlockEntity>> HEARTH =
             BLOCK_ENTITIES.register("hearth", () ->
                     new BlockEntityType<>(HearthBlockEntity::new, Set.of(JolCraftBlocks.HEARTH.get())));
+
+    public static final Supplier<BlockEntityType<ManagedLightBlockEntity>> MANAGED_LIGHT =
+            BLOCK_ENTITIES.register("managed_light", () ->
+                    new BlockEntityType<>(ManagedLightBlockEntity::new, Set.of(JolCraftBlocks.MANAGED_LIGHT.get())));
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);

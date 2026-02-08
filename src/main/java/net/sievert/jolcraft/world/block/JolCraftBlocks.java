@@ -26,8 +26,22 @@ import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 public class JolCraftBlocks {
-    public static final DeferredRegister.Blocks BLOCKS =
-            DeferredRegister.createBlocks(JolCraft.MOD_ID);
+
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(JolCraft.MOD_ID);
+
+    public static final DeferredBlock<Block> MANAGED_LIGHT = registerBlock(
+            "managed_light",
+            (properties) -> new ManagedLightBlock(properties
+                    .replaceable()
+                    .strength(-1.0F, 3600000.8F)
+                    .mapColor(MapColor.NONE)
+                    .noLootTable()
+                    .noOcclusion()
+                    .lightLevel(ManagedLightBlock.LIGHT_EMISSION)
+            ),
+            BlockBehaviour.Properties.of(),
+            false
+    );
 
     public static final DeferredBlock<Block> DEEPSLATE_MORTAR = registerBlock("deepslate_mortar",
             (properties) -> new MortarBlock(properties
