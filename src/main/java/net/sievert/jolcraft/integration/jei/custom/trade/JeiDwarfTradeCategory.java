@@ -69,7 +69,7 @@ public class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrade> {
     @Override
     public Component getTitle() {
         return Component.literal(
-                Component.translatable(JeiLangSubProvider.JEI_CATEGORY_INFO_PAGE).getString()
+                Component.translatable(JeiLangSubProvider.JEI_CATEGORY_DWARF_TRADES).getString()
                         + " — "
                         + JeiDwarfTradeHelper.getDisplayName(profession)
         );
@@ -165,7 +165,25 @@ public class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrade> {
         LivingEntity cached = DWARF_RENDER_CACHE.get(profession);
         if (cached != null) return cached;
 
-        DwarfEntity dwarf = new DwarfEntity(JolCraftEntities.DWARF.get(), mc.level);
+        var type = switch (profession) {
+            case GUILDMASTER -> JolCraftEntities.DWARF_GUILDMASTER.get();
+            case HISTORIAN   -> JolCraftEntities.DWARF_HISTORIAN.get();
+            case MERCHANT    -> JolCraftEntities.DWARF_MERCHANT.get();
+            case SCRAPPER    -> JolCraftEntities.DWARF_SCRAPPER.get();
+            case BREWMASTER  -> JolCraftEntities.DWARF_BREWMASTER.get();
+            case GUARD       -> JolCraftEntities.DWARF_GUARD.get();
+            case KEEPER      -> JolCraftEntities.DWARF_KEEPER.get();
+            case ARTISAN     -> JolCraftEntities.DWARF_ARTISAN.get();
+            case EXPLORER    -> JolCraftEntities.DWARF_EXPLORER.get();
+            case MINER       -> JolCraftEntities.DWARF_MINER.get();
+            case ALCHEMIST   -> JolCraftEntities.DWARF_ALCHEMIST.get();
+            case ARCANIST    -> JolCraftEntities.DWARF_ARCANIST.get();
+            case PRIEST      -> JolCraftEntities.DWARF_PRIEST.get();
+            case NONE        -> JolCraftEntities.DWARF.get();
+        };
+
+        DwarfEntity dwarf = new DwarfEntity(type, mc.level);
+
         dwarf.getEntityData().set(AbstractDwarfEntity.PROFESSION, profession.getId());
 
         DWARF_RENDER_CACHE.put(profession, dwarf);

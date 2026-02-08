@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 
 /**
  * JEI wrapper for the real DwarfTradeRecipe (data-driven).
- *
  * NOTE:
  * - This is not a "second recipe type".
  * - It exists only to carry the recipe + spawn egg for JEI UI.
