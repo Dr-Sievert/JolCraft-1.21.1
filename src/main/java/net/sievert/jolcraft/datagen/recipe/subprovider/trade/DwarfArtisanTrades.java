@@ -2,6 +2,7 @@ package net.sievert.jolcraft.datagen.recipe.subprovider.trade;
 
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
@@ -150,7 +151,7 @@ public final class DwarfArtisanTrades extends AbstractDwarfTrades {
         );
     }
 
-    private void sellGem(AbstractRecipeProvider p, net.minecraft.world.level.ItemLike gem) {
+    private void sellGem(AbstractRecipeProvider p, ItemLike gem) {
         mainTrade(
                 p,
                 NOVICE,

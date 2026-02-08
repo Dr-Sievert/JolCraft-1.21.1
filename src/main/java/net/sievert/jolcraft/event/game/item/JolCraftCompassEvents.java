@@ -43,8 +43,8 @@ import java.util.UUID;
 public final class JolCraftCompassEvents {
 
     private static final Map<UUID, BlockPos> LAST_COMPASS_POS = new HashMap<>();
-    private static final Map<java.util.UUID, Integer> LAST_COMPASS_SLOT = new java.util.HashMap<>();
-    private static final Map<UUID, Integer> NEXT_FULL_SCAN_TICK = new java.util.HashMap<>();
+    private static final Map<UUID, Integer> LAST_COMPASS_SLOT = new HashMap<>();
+    private static final Map<UUID, Integer> NEXT_FULL_SCAN_TICK = new HashMap<>();
 
     @SubscribeEvent
     public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {

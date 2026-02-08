@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.util.TriState;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -55,7 +57,7 @@ public class JolCraftMushroomBlock extends BushBlock implements BonemealableBloc
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos blockpos = pos.below();
         BlockState blockstate = level.getBlockState(blockpos);
-        net.neoforged.neoforge.common.util.TriState soilDecision = blockstate.canSustainPlant(level, blockpos, net.minecraft.core.Direction.UP, state);
+        TriState soilDecision = blockstate.canSustainPlant(level, blockpos, Direction.UP, state);
         return blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK) || (soilDecision.isDefault() ? (level.getRawBrightness(pos, 0) < 8 && this.mayPlaceOn(blockstate, level, blockpos)) : soilDecision.isTrue());
     }
 

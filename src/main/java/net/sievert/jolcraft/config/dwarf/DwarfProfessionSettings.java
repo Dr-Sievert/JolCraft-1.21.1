@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -73,7 +74,7 @@ public final class DwarfProfessionSettings {
             ).apply(inst, LevelRoll::new));
         }
 
-        private static DataResult<Int2IntMap> decodeLevelRollList(java.util.List<LevelRoll> in) {
+        private static DataResult<Int2IntMap> decodeLevelRollList(List<LevelRoll> in) {
             Int2IntOpenHashMap out = emptyRollMap();
 
             for (LevelRoll e : in) {
@@ -93,9 +94,9 @@ public final class DwarfProfessionSettings {
             return DataResult.success(out);
         }
 
-        private static java.util.List<LevelRoll> encodeLevelRollList(Int2IntMap in) {
+        private static List<LevelRoll> encodeLevelRollList(Int2IntMap in) {
             // stable output order + omit zero rolls
-            java.util.List<LevelRoll> out = new ArrayList<>();
+            List<LevelRoll> out = new ArrayList<>();
 
             in.int2IntEntrySet().stream()
                     .filter(e -> e.getIntValue() > 0)

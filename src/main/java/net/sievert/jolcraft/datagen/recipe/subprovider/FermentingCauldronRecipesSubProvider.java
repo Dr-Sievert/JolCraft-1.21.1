@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,7 +69,7 @@ public final class FermentingCauldronRecipesSubProvider implements AbstractRecip
                 20,
                 5,
                 0x91706e,
-                net.minecraft.world.effect.MobEffects.HEALTH_BOOST,
+                MobEffects.HEALTH_BOOST,
                 6000,
                 0
         );
@@ -80,7 +81,7 @@ public final class FermentingCauldronRecipesSubProvider implements AbstractRecip
                 20,
                 5,
                 0x817788,
-                net.minecraft.world.effect.MobEffects.NIGHT_VISION,
+                MobEffects.NIGHT_VISION,
                 6000,
                 0
         );
@@ -92,7 +93,7 @@ public final class FermentingCauldronRecipesSubProvider implements AbstractRecip
                 20,
                 5,
                 0x6e918f,
-                net.minecraft.world.effect.MobEffects.DAMAGE_BOOST,
+                MobEffects.DAMAGE_BOOST,
                 6000,
                 0
         );
@@ -104,7 +105,7 @@ public final class FermentingCauldronRecipesSubProvider implements AbstractRecip
                 20,
                 5,
                 0x54832e,
-                net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
+                MobEffects.MOVEMENT_SPEED,
                 6000,
                 0
         );

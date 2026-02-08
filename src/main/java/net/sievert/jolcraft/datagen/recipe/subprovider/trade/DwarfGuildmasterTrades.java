@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.trade;
 
+import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -48,7 +49,7 @@ public final class DwarfGuildmasterTrades extends AbstractDwarfTrades {
         addContractTrade(p, MASTER, JolCraftItems.CONTRACT_SMELTER.get());
     }
 
-    private void addContractTrade(AbstractRecipeProvider p, Level level, net.minecraft.world.level.ItemLike contract) {
+    private void addContractTrade(AbstractRecipeProvider p, Level level, ItemLike contract) {
         mainTrade(
                 p,
                 level,

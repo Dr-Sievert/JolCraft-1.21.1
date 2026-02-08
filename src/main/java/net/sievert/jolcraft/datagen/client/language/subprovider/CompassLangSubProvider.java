@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.client.language.subprovider;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.neoforged.api.distmarker.Dist;
@@ -63,7 +64,7 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
         for (Field f : BuiltinStructures.class.getDeclaredFields()) {
             int m = f.getModifiers();
             if (!Modifier.isPublic(m) || !Modifier.isStatic(m)) continue;
-            if (f.getType() != net.minecraft.resources.ResourceKey.class) continue;
+            if (f.getType() != ResourceKey.class) continue;
 
             Object val;
             try {
@@ -71,7 +72,7 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
             } catch (IllegalAccessException ignored) {
                 continue;
             }
-            if (!(val instanceof net.minecraft.resources.ResourceKey<?> rk)) continue;
+            if (!(val instanceof ResourceKey<?> rk)) continue;
 
             ResourceLocation id = rk.location();
             if (!"minecraft".equals(id.getNamespace())) continue;
