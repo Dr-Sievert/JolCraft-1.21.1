@@ -184,7 +184,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
 
     public void spawnChildFromBreeding(ServerLevel level, AbstractBreedingEntity partner) {
         AgeableMob ageablemob = this.getBreedOffspring(level, partner);
-        final net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent event = new BabyEntitySpawnEvent(this, partner, ageablemob);
+        final BabyEntitySpawnEvent event = new BabyEntitySpawnEvent(this, partner, ageablemob);
         final boolean cancelled = NeoForge.EVENT_BUS.post(event).isCanceled();
         ageablemob = event.getChild();
         if (cancelled) {

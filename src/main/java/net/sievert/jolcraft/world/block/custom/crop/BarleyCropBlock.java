@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
@@ -86,9 +87,9 @@ public class BarleyCropBlock extends CropBlock {
             int age = this.getAge(state);
             if (age < this.getMaxAge()) {
                 float speed = getGrowthSpeed(state, level, pos);
-                if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt((int) (25.0F / speed) + 1) == 0)) {
+                if (CommonHooks.canCropGrow(level, pos, state, random.nextInt((int) (25.0F / speed) + 1) == 0)) {
                     level.setBlock(pos, this.getStateForAge(age + 1), 2);
-                    net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+                    CommonHooks.fireCropGrowPost(level, pos, state);
                 }
             }
             return;
@@ -98,9 +99,9 @@ public class BarleyCropBlock extends CropBlock {
             int age = this.getAge(state);
             if (age < this.getMaxAge()) {
                 float f = getGrowthSpeed(state, level, pos);
-                if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt((int) (25.0F / f) + 1) == 0)) {
+                if (CommonHooks.canCropGrow(level, pos, state, random.nextInt((int) (25.0F / f) + 1) == 0)) {
                     level.setBlock(pos, this.getStateForAge(age + 1), 2);
-                    net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+                    CommonHooks.fireCropGrowPost(level, pos, state);
                 }
             }
         }

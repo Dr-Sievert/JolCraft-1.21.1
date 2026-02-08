@@ -237,7 +237,7 @@ public class HearthBlock extends BaseEntityBlock {
 
         if (monstersNearby) {
             player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NOT_SAFE).withStyle(ChatFormatting.RED), true
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NOT_SAFE).withStyle(ChatFormatting.RED), true
             );
             return InteractionResult.SUCCESS;
         }
@@ -258,7 +258,7 @@ public class HearthBlock extends BaseEntityBlock {
 
         if (!bedNearby) {
             player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NO_BED_NEARBY).withStyle(ChatFormatting.GRAY), true
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NO_BED_NEARBY).withStyle(ChatFormatting.GRAY), true
             );
             return InteractionResult.SUCCESS;
         }

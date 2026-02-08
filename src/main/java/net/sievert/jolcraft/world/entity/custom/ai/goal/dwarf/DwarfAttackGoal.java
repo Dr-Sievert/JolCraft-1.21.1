@@ -5,6 +5,7 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
@@ -118,7 +119,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
                 if (this.canPenalize) {
                     this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
                     if (this.dwarf.getNavigation().getPath() != null) {
-                        net.minecraft.world.level.pathfinder.Node finalPathPoint = this.dwarf.getNavigation().getPath().getEndNode();
+                        Node finalPathPoint = this.dwarf.getNavigation().getPath().getEndNode();
                         if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
                             failedPathFindingPenalty = 0;
                         else

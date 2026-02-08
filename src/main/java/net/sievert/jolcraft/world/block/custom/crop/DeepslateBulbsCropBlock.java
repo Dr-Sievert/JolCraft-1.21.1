@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.TriState;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -102,7 +104,7 @@ public class DeepslateBulbsCropBlock extends CropBlock {
 
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.Entity entity) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         // No interaction — Players/Ravagers don't trample this crop
     }
 
@@ -128,9 +130,9 @@ public class DeepslateBulbsCropBlock extends CropBlock {
         if (age >= this.getMaxAge()) return;
 
         float growthSpeed = getGrowthSpeed(state, level, pos);
-        if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt((int)(25.0F / growthSpeed) + 1) == 0)) {
+        if (CommonHooks.canCropGrow(level, pos, state, random.nextInt((int)(25.0F / growthSpeed) + 1) == 0)) {
             level.setBlock(pos, this.getStateForAge(age + 1), 2);
-            net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+            CommonHooks.fireCropGrowPost(level, pos, state);
         }
     }
 

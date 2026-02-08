@@ -4,6 +4,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.level.block.Block;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 
@@ -19,7 +20,7 @@ public final class JolCraftToolMaterials {
     private record Entry(
             JolCraftMaterials.Material material,
             TagKey<Item> repairTag,
-            TagKey<net.minecraft.world.level.block.Block> incorrectForTag,
+            TagKey<Block> incorrectForTag,
             int durability,
             float speed,
             float attackDamageBonus,

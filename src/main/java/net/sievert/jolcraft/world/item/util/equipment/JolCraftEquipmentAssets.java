@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.world.item.util.equipment;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -46,7 +47,7 @@ public final class JolCraftEquipmentAssets {
     /**
      * Convenience for callers that only need the ResourceKey (e.g. trim override maps).
      */
-    public static net.minecraft.resources.ResourceKey<EquipmentAsset> key(JolCraftMaterials.Material material) {
+    public static ResourceKey<EquipmentAsset> key(JolCraftMaterials.Material material) {
         return material.equipmentAssetKey();
     }
 

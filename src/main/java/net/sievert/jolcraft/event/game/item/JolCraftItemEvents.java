@@ -4,6 +4,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -42,7 +43,7 @@ public final class JolCraftItemEvents {
             InteractionHand swingHand = mainIsSpanner ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 
             List<ItemStack> loot = SalvageLootHelper.generateSalvageLoot(scrap);
-            loot.forEach(stack -> level.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(
+            loot.forEach(stack -> level.addFreshEntity(new ItemEntity(
                     level,
                     player.getX(), player.getY() + 0.5, player.getZ(),
                     stack

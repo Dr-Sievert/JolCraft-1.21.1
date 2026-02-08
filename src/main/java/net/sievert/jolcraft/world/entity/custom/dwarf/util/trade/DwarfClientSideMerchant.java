@@ -40,7 +40,7 @@ public class DwarfClientSideMerchant implements DwarfMerchant {
     }
 
     /**
-     * Notifies the merchant of a possible merchant recipe being fulfilled or not. Usually, this is just a sound byte being played depending on whether the suggested {@link net.minecraft.world.item.ItemStack} is not empty.
+     * Notifies the merchant of a possible merchant recipe being fulfilled or not. Usually, this is just a sound byte being played depending on whether the suggested {@link ItemStack} is not empty.
      */
     @Override
     public void notifyTradeUpdated(ItemStack stack) {

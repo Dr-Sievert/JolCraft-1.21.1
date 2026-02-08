@@ -2,6 +2,7 @@ package net.sievert.jolcraft.datagen.recipe.subprovider;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -18,7 +19,7 @@ public final class MaterialRecipesSubProvider implements AbstractRecipeProvider.
 
         p.modShapeless(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PLATE.get())
                 .requires(JolCraftItems.DEEPSLATE_BULBS.get())
-                .requires(net.minecraft.world.item.Items.IRON_INGOT)
+                .requires(Items.IRON_INGOT)
                 .unlockedBy(p.hasName(JolCraftItems.DEEPSLATE_BULBS.get()), p.hasItem(JolCraftItems.DEEPSLATE_BULBS.get()))
                 .save(p.out(), p.itemName(JolCraftItems.DEEPSLATE_PLATE.get()) + "_from_bulbs");
 

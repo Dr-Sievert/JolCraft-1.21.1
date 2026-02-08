@@ -27,7 +27,7 @@ public interface DwarfMerchant {
     /**
      * Notifies the merchant of a possible merchant recipe being fulfilled or not.
      * Usually, this is just a sound byte being played depending on whether the
-     * suggested {@link net.minecraft.world.item.ItemStack} is not empty.
+     * suggested {@link ItemStack} is not empty.
      */
     void notifyTradeUpdated(ItemStack stack);
 

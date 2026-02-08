@@ -1,10 +1,12 @@
 package net.sievert.jolcraft.integration.jei.custom.trade;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
 
 import javax.annotation.Nullable;
 
@@ -27,15 +29,15 @@ public record JeiDwarfTrade(
     }
 
     public ItemStack inputAExample() {
-        return net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades.getExampleInputA(recipe);
+        return DwarfTrades.getExampleInputA(recipe);
     }
 
     public @Nullable ItemStack inputBExample() {
-        ItemStack b = net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades.getExampleInputB(recipe);
+        ItemStack b = DwarfTrades.getExampleInputB(recipe);
         return b.isEmpty() ? null : b;
     }
 
-    public ItemStack outputExample(net.minecraft.core.RegistryAccess registryAccess) {
-        return net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades.getExampleOutput(recipe, registryAccess);
+    public ItemStack outputExample(RegistryAccess registryAccess) {
+        return DwarfTrades.getExampleOutput(recipe, registryAccess);
     }
 }

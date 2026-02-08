@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -311,7 +312,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     }
 
     @Override
-    public void die(net.minecraft.world.damagesource.DamageSource cause) {
+    public void die(DamageSource cause) {
         super.die(cause);
         this.stopTrading();
     }

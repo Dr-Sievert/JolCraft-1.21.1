@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -594,7 +595,7 @@ public final class JolCraftAttributeEvents {
     private static boolean isFullyGrownCrop(BlockState state) {
         Block block = state.getBlock();
 
-        if (block instanceof net.minecraft.world.level.block.CropBlock crop) {
+        if (block instanceof CropBlock crop) {
             return crop.isMaxAge(state);
         }
 

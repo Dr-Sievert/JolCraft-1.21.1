@@ -2,6 +2,7 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.util.trade;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -290,7 +291,7 @@ public final class DwarfTrades {
      * - Other results: rolls base result using registry access only (no enchant provider here because it requires DifficultyInstance).
      *   Applies stack modifier + patch for visual correctness. Enchant provider is intentionally skipped in JEI.
      */
-    public static ItemStack getExampleOutput(DwarfTradeRecipe recipe, net.minecraft.core.RegistryAccess registryAccess) {
+    public static ItemStack getExampleOutput(DwarfTradeRecipe recipe, RegistryAccess registryAccess) {
         if (recipe.result() instanceof DwarfTradeRecipe.TradeResult.MapResult(
                 DwarfTradeRecipe.MapTradeData mapData
         )) {
