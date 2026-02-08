@@ -58,6 +58,7 @@ public class DwarfActionHelper {
             @Nullable ItemStack itemstack
     ) {
         if (activeAction.getType() != DwarfActionType.IDLE) return;
+
         DwarfAction newAction;
         if (subtype != null) {
             newAction = switch (subtype) {
@@ -68,10 +69,10 @@ public class DwarfActionHelper {
                 case BOUNTY -> new BountyDwarfAction(dwarf, player, hand, itemstack);
                 case BOUNTY_CRATE -> new BountyCrateDwarfAction(dwarf, player, hand, itemstack);
                 case GUARD_EQUIP -> new GuardEquipDwarfAction(dwarf, player, hand, itemstack);
-                case ATTACK_HEAVY ->  new AttackHeavyDwarfAction(dwarf);
+                case ATTACK_HEAVY -> new AttackHeavyDwarfAction(dwarf);
             };
         } else {
-            assert type != null;
+            if (type == null) return;
             newAction = switch (type) {
                 case INSPECT -> new InspectDwarfAction(dwarf, player, hand, itemstack);
                 case DRINK   -> new DrinkDwarfAction();
@@ -80,6 +81,7 @@ public class DwarfActionHelper {
                 case IDLE    -> IdleDwarfAction.INSTANCE;
             };
         }
+
         this.activeAction = newAction;
         this.activeAction.start();
         setCurrentAction(dwarf, newAction.getType(), newAction.getSubtype());

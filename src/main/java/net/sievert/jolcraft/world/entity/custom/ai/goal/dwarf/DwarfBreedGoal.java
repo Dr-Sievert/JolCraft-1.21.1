@@ -18,10 +18,6 @@ public class DwarfBreedGoal extends Goal {
     private int loveTime;
     private final double speedModifier;
 
-    public DwarfBreedGoal(AbstractDwarfEntity dwarf, double speedModifier) {
-        this(dwarf, speedModifier, dwarf.getClass());
-    }
-
     public DwarfBreedGoal(AbstractDwarfEntity dwarf, double speedModifier, Class<? extends AbstractDwarfEntity> partnerClass) {
         this.dwarf = dwarf;
         this.level = getServerLevel(dwarf);
@@ -39,25 +35,34 @@ public class DwarfBreedGoal extends Goal {
         }
     }
 
+    @Override
     public boolean canContinueToUse() {
-        assert this.partner != null;
-        return this.partner.isAlive() && this.partner.isInLove() && this.loveTime < 60 && !this.partner.isPanicking();
+        if (this.partner == null) return false;
+
+        return this.partner.isAlive()
+                && this.partner.isInLove()
+                && this.loveTime < 60
+                && !this.partner.isPanicking();
     }
 
+    @Override
     public void stop() {
         this.partner = null;
         this.loveTime = 0;
     }
 
+    @Override
     public void tick() {
-        assert this.partner != null;
-        this.dwarf.getLookControl().setLookAt(this.partner, 10.0F, (float)this.dwarf.getMaxHeadXRot());
+        if (this.partner == null) return;
+
+        this.dwarf.getLookControl().setLookAt(this.partner, 10.0F, (float) this.dwarf.getMaxHeadXRot());
         this.dwarf.getNavigation().moveTo(this.partner, this.speedModifier);
         ++this.loveTime;
-        if (this.loveTime >= this.adjustedTickDelay(60) && this.dwarf.distanceToSqr(this.partner) < (double)9.0F) {
+
+        if (this.loveTime >= this.adjustedTickDelay(60)
+                && this.dwarf.distanceToSqr(this.partner) < 9.0D) {
             this.breed();
         }
-
     }
 
     @Nullable
@@ -77,6 +82,7 @@ public class DwarfBreedGoal extends Goal {
     }
 
     protected void breed() {
+        if (this.level == null || this.partner == null) return;
         this.dwarf.spawnChildFromBreeding(this.level, this.partner);
     }
 }

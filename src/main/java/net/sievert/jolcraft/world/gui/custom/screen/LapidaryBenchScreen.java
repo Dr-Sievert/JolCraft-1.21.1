@@ -94,8 +94,7 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
 
             if (menu.isButtonActive() && isOverButton(mouseX, mouseY, x + TOOL_BTN_X, y + TOOL_BTN_Y)) {
                 int actionId = menu.getActionIdForTool();
-                if (actionId >= 0) {
-                    assert Objects.requireNonNull(this.minecraft).gameMode != null;
+                if (actionId >= 0 && this.minecraft != null && this.minecraft.gameMode != null) {
                     this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, actionId);
                     return true;
                 }

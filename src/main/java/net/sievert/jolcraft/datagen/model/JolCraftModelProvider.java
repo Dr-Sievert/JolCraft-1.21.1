@@ -51,25 +51,25 @@ public final class JolCraftModelProvider extends AbstractModelProvider {
     protected @NotNull Stream<? extends Holder<Block>> getKnownBlocks() {
         return BuiltInRegistries.BLOCK.listElements()
                 .filter(holder -> {
-                    assert holder.getKey() != null;
-                    return holder.getKey().location().getNamespace().equals(modId);
+                    var key = holder.getKey();
+                    return key != null && key.location().getNamespace().equals(modId);
                 })
-                .filter(holder -> !holder.value().equals(JolCraftBlocks.DEEPSLATE_MORTAR.get()))
-                .filter(holder -> !holder.value().equals(JolCraftBlocks.STRONGBOX.get()))
-                .filter(holder -> !holder.value().equals(JolCraftBlocks.STRONGBOX_DUMMY.get()));
+                .filter(holder -> holder.value() != JolCraftBlocks.DEEPSLATE_MORTAR.get())
+                .filter(holder -> holder.value() != JolCraftBlocks.STRONGBOX.get())
+                .filter(holder -> holder.value() != JolCraftBlocks.STRONGBOX_DUMMY.get());
     }
 
     @Override
     protected @NotNull Stream<? extends Holder<Item>> getKnownItems() {
         return BuiltInRegistries.ITEM.listElements()
                 .filter(holder -> {
-                    assert holder.getKey() != null;
-                    return holder.getKey().location().getNamespace().equals(modId);
+                    var key = holder.getKey();
+                    return key != null && key.location().getNamespace().equals(modId);
                 })
-                .filter(holder -> !holder.value().equals(JolCraftItems.STRONGBOX_ITEM.get()))
-                .filter(holder -> !holder.value().equals(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()))
-                .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS.get()))
-                .filter(holder -> !holder.value().equals(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get()))
-                .filter(holder -> !holder.value().equals(JolCraftItems.DWARVEN_BREW.get()));
+                .filter(holder -> holder.value() != JolCraftItems.STRONGBOX_ITEM.get())
+                .filter(holder -> holder.value() != JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
+                .filter(holder -> holder.value() != JolCraftItems.DEEPSLATE_COMPASS.get())
+                .filter(holder -> holder.value() != JolCraftItems.DEEPSLATE_COMPASS_DIAL.get())
+                .filter(holder -> holder.value() != JolCraftItems.DWARVEN_BREW.get());
     }
 }

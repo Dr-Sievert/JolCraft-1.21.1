@@ -134,15 +134,14 @@ public class JolCraftPlayerEvents {
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         Player player = event.getEntity();
 
-        if (player.hasEffect(JolCraftEffects.DWARVEN_HASTE)) {
-            MobEffectInstance effect = player.getEffect(JolCraftEffects.DWARVEN_HASTE);
-            assert effect != null;
-            int amplifier = effect.getAmplifier();
+        MobEffectInstance effect = player.getEffect(JolCraftEffects.DWARVEN_HASTE);
+        if (effect == null) return;
 
-            float originalSpeed = event.getOriginalSpeed();
-            float newSpeed = originalSpeed * (1.0F + 0.2F * (amplifier + 1));
-            event.setNewSpeed(newSpeed);
-        }
+        int amplifier = effect.getAmplifier();
+
+        float originalSpeed = event.getOriginalSpeed();
+        float newSpeed = originalSpeed * (1.0F + 0.2F * (amplifier + 1));
+        event.setNewSpeed(newSpeed);
     }
 
     @SubscribeEvent

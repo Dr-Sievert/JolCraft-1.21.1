@@ -82,8 +82,12 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
     private void postButtonClick() {
         this.menu.setSelectionHint(this.shopItem);
         this.menu.tryMoveItems(this.shopItem);
-        assert this.minecraft != null;
-        Objects.requireNonNull(this.minecraft.getConnection()).send(new ServerboundDwarfSelectTradePacket(this.shopItem));
+
+        if (this.minecraft == null) return;
+        var connection = this.minecraft.getConnection();
+        if (connection == null) return;
+
+        connection.send(new ServerboundDwarfSelectTradePacket(this.shopItem));
     }
 
     @Override

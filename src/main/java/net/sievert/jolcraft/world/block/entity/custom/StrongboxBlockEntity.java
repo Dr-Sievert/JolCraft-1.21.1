@@ -395,26 +395,32 @@ package net.sievert.jolcraft.world.block.entity.custom;
         @Override
         public void startOpen(Player player) {
             if (this.remove || player.isSpectator()) return;
-            assert this.getLevel() != null;
-            this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+
+            var level = this.getLevel();
+            if (level == null) return;
+
+            this.openersCounter.incrementOpeners(player, level, this.getBlockPos(), this.getBlockState());
         }
 
         @Override
         public void stopOpen(Player player) {
             if (this.remove || player.isSpectator()) return;
-            assert this.getLevel() != null;
-            this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+
+            var level = this.getLevel();
+            if (level == null) return;
+
+            this.openersCounter.decrementOpeners(player, level, this.getBlockPos(), this.getBlockState());
         }
+
 
         protected void signalOpenCount(Level level, BlockPos pos, BlockState state, int eventId, int eventParam) {
             level.blockEvent(pos, state.getBlock(), 1, eventParam);
         }
 
         public void recheckOpen() {
-            if (!this.remove && this.level != null && !this.level.isClientSide) {
-                assert this.getLevel() != null;
-                this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
-            }
+            if (this.remove || this.level == null || this.level.isClientSide) return;
+
+            this.openersCounter.recheckOpeners(this.level, this.getBlockPos(), this.getBlockState());
         }
 
         // ---------------------------------------------------------------------

@@ -217,10 +217,12 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         DwarfEntity baby = JolCraftEntities.DWARF.get().create(level, EntitySpawnReason.BREEDING);
+        if (baby == null) return null;
+
         DwarfVariant variant = Util.getRandom(DwarfVariant.values(), this.random);
         DwarfBeardColor beard = Util.getRandom(DwarfBeardColor.values(), this.random);
         DwarfEyeColor eye = Util.getRandom(DwarfEyeColor.values(), this.random);
-        assert baby != null;
+
         baby.setData(VARIANT, variant.getId());
         baby.setData(BEARD_COLOR, beard.getId());
         baby.setData(EYE_COLOR, eye.getId());

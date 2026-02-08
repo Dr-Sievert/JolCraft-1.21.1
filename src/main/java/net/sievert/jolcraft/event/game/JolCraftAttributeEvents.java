@@ -341,9 +341,15 @@ public class JolCraftAttributeEvents {
         };
 
         RadiantEntity existing = ACTIVE_RADIANT_ENTITIES.get(uuid);
-        if (existing != null && (existing.isRemoved() || existing.level() != level)) {
-            ACTIVE_RADIANT_ENTITIES.remove(uuid);
-            existing = null;
+        if (existing != null) {
+            if (existing.isRemoved()) {
+                ACTIVE_RADIANT_ENTITIES.remove(uuid);
+                existing = null;
+            } else if (existing.level() != level) {
+                ACTIVE_RADIANT_ENTITIES.remove(uuid);
+                existing.discard();
+                existing = null;
+            }
         }
 
         // If player has no radiant, drop ownership. Entity self-discards when owner is missing.
@@ -386,6 +392,7 @@ public class JolCraftAttributeEvents {
         existing.setOwner(player);
         existing.setRadiantLightLevel(lightLevel);
     }
+
     @SubscribeEvent
     public static void onLevelTickRadiantAura(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
@@ -396,18 +403,25 @@ public class JolCraftAttributeEvents {
             Map.Entry<UUID, RadiantEntity> entry = it.next();
             RadiantEntity radiant = entry.getValue();
 
-            if (radiant == null || radiant.isRemoved() || radiant.level() != level) {
+            if (radiant == null || radiant.isRemoved()) {
                 it.remove();
                 continue;
             }
 
+            if (radiant.level() != level) {
+                continue;
+            }
+
             Entity ownerEntity = radiant.getOwner();
-            if (!(ownerEntity instanceof Player owner)) continue;
+            if (!(ownerEntity instanceof Player owner) || owner.isRemoved() || owner.level() != level) {
+                it.remove();
+                continue;
+            }
 
             double radiantAttr = owner.getAttributeValue(JolCraftAttributes.RADIANT);
-            if (radiantAttr < 0.25) continue;
+            if (radiantAttr < 0.25D) continue;
 
-            int percent = (int) (radiantAttr * 100);
+            int percent = (int) (radiantAttr * 100.0D);
             int nearest25 = (percent / 25) * 25;
 
             int radius = 1 + (nearest25 / 25);
@@ -416,7 +430,7 @@ public class JolCraftAttributeEvents {
             var box = radiant.getBoundingBox().inflate(radius, 4.0D, radius);
             for (Player player : level.getEntitiesOfClass(Player.class, box)) {
                 double dy = radiant.getY() - player.getY();
-                if (dy < 0 || dy > 4) continue;
+                if (dy < 0.0D || dy > 4.0D) continue;
 
                 double dx = radiant.getX() - player.getX();
                 double dz = radiant.getZ() - player.getZ();
