@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.client.model;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.core.Holder;

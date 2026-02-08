@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.neoforged.api.distmarker.Dist;
@@ -8,8 +7,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 @OnlyIn(Dist.CLIENT)
 public final class ToolModelSubProvider implements AbstractModelProvider.ModelSubProvider {

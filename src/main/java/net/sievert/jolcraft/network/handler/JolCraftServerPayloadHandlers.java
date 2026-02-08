@@ -32,16 +32,18 @@ public final class JolCraftServerPayloadHandlers {
 
         private final Map<UUID, Counter> counters = new HashMap<>();
 
-        boolean tryConsume(ServerPlayer player, long currentTick, int maxPerTick) {
+        /** @return true if this player has exceeded the per-tick limit (i.e., action should be blocked). */
+        boolean isRateLimited(ServerPlayer player, long currentTick, int maxPerTick) {
             UUID id = player.getUUID();
             Counter c = counters.computeIfAbsent(id, k -> new Counter());
             if (c.tick != currentTick) {
                 c.tick = currentTick;
                 c.used = 0;
             }
-            if (c.used >= maxPerTick) return false;
+
+            if (c.used >= maxPerTick) return true; // BLOCK
             c.used++;
-            return true;
+            return false; // ALLOW
         }
     }
 
@@ -92,7 +94,7 @@ public final class JolCraftServerPayloadHandlers {
             var level = sp.serverLevel();
 
             long tick = level.getGameTime();
-            if (!SOUND_LIMITER.tryConsume(sp, tick, MAX_SOUND_PACKETS_PER_TICK)) return;
+            if (SOUND_LIMITER.isRateLimited(sp, tick, MAX_SOUND_PACKETS_PER_TICK)) return;
 
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;
@@ -128,7 +130,7 @@ public final class JolCraftServerPayloadHandlers {
             var level = sp.serverLevel();
 
             long tick = level.getGameTime();
-            if (!PARTICLE_LIMITER.tryConsume(sp, tick, MAX_PARTICLE_PACKETS_PER_TICK)) return;
+            if (PARTICLE_LIMITER.isRateLimited(sp, tick, MAX_PARTICLE_PACKETS_PER_TICK)) return;
 
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;

@@ -3,7 +3,6 @@ package net.sievert.jolcraft.datagen.client.model.subprovider;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.*;
@@ -25,8 +24,6 @@ import net.sievert.jolcraft.world.block.custom.crop.HopsCropBottomBlock;
 import net.sievert.jolcraft.world.block.custom.crop.HopsCropTopBlock;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 @OnlyIn(Dist.CLIENT)
 public final class CropModelSubProvider implements AbstractModelProvider.ModelSubProvider {

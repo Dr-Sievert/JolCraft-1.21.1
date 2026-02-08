@@ -24,7 +24,6 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOf
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

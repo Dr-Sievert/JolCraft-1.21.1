@@ -15,7 +15,6 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.color.item.Dye;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -28,7 +27,6 @@ import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
