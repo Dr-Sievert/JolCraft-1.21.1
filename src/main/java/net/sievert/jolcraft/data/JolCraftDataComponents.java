@@ -4,13 +4,19 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyData;
 import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.UnaryOperator;
 
@@ -121,16 +127,16 @@ public class JolCraftDataComponents {
     // Strongbox
     // -----------------
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> LOOT_TABLE =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceKey<LootTable>>> LOOT_TABLE =
             register("loot_table", builder -> builder
-                    .persistent(Codec.STRING)
-                    .networkSynchronized(ByteBufCodecs.STRING_UTF8)
+                    .persistent(ResourceKey.codec(Registries.LOOT_TABLE))
+                    .networkSynchronized(ResourceKey.streamCodec(Registries.LOOT_TABLE))
             );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> LOOT_SEED =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> LOOT_SEED =
             register("loot_seed", builder -> builder
-                    .persistent(Codec.STRING)
-                    .networkSynchronized(ByteBufCodecs.STRING_UTF8)
+                    .persistent(Codec.LONG)
+                    .networkSynchronized(ByteBufCodecs.VAR_LONG)
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> LOCKED =

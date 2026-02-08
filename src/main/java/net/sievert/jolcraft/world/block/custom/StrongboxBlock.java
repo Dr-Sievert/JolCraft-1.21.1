@@ -217,10 +217,10 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
         long seed = strongbox.getLootTableSeed();
 
         if (lootTable != null) {
-            drop.set(JolCraftDataComponents.LOOT_TABLE, lootTable.location().toString());
+            drop.set(JolCraftDataComponents.LOOT_TABLE, lootTable);
         }
         if (seed != 0L) {
-            drop.set(JolCraftDataComponents.LOOT_SEED, String.valueOf(seed));
+            drop.set(JolCraftDataComponents.LOOT_SEED, seed);
         }
         if (state.getValue(LOCKED)) {
             drop.set(JolCraftDataComponents.LOCKED, true);
@@ -267,22 +267,15 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
         }
 
         // Loot table id + seed
-        String lootTableString = stack.get(JolCraftDataComponents.LOOT_TABLE);
-        if (lootTableString != null) {
-            ResourceLocation rl = ResourceLocation.tryParse(lootTableString);
-            if (rl != null) {
-                ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE, rl);
-                strongbox.setLootTable(key, strongbox.getLootTableSeed());
-            }
+        // Loot table id + seed (typed components)
+        ResourceKey<LootTable> lootTable = stack.get(JolCraftDataComponents.LOOT_TABLE);
+        if (lootTable != null) {
+            strongbox.setLootTable(lootTable, strongbox.getLootTableSeed());
         }
 
-        String lootSeedString = stack.get(JolCraftDataComponents.LOOT_SEED);
-        if (lootSeedString != null) {
-            try {
-                strongbox.setLootTableSeed(Long.parseLong(lootSeedString));
-            } catch (NumberFormatException ignored) {
-                // ignore malformed seed
-            }
+        Long lootSeed = stack.get(JolCraftDataComponents.LOOT_SEED);
+        if (lootSeed != null) {
+            strongbox.setLootTableSeed(lootSeed);
         }
 
         level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
@@ -409,10 +402,10 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 ResourceKey<LootTable> lootTable = strongbox.getLootTable();
                 long seed = strongbox.getLootTableSeed();
 
-                if (lootTable != null) stack.set(JolCraftDataComponents.LOOT_TABLE, lootTable.location().toString());
+                if (lootTable != null) stack.set(JolCraftDataComponents.LOOT_TABLE, lootTable);
                 else stack.remove(JolCraftDataComponents.LOOT_TABLE);
 
-                if (seed != 0L) stack.set(JolCraftDataComponents.LOOT_SEED, String.valueOf(seed));
+                if (seed != 0L) stack.set(JolCraftDataComponents.LOOT_SEED, seed);
                 else stack.remove(JolCraftDataComponents.LOOT_SEED);
             }
         }
