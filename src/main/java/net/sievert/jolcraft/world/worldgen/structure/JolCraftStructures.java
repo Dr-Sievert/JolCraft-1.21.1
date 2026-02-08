@@ -14,6 +14,8 @@ import net.sievert.jolcraft.world.worldgen.structure.custom.ForgeStructure;
 
 public final class JolCraftStructures {
 
+    private JolCraftStructures(){}
+
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister.create(Registries.STRUCTURE_TYPE, JolCraft.MOD_ID);
 
     /** One entry == one structure ID (used in JSON/tags) + its STRUCTURE key + its STRUCTURE_TYPE registration. */
@@ -37,6 +39,4 @@ public final class JolCraftStructures {
     private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(MapCodec<T> structureCodec) {
         return () -> structureCodec;
     }
-
-    private JolCraftStructures() {}
 }

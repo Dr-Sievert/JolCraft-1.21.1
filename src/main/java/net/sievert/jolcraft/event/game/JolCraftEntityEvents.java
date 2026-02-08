@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftEntityEvents {
+public final class JolCraftEntityEvents {
 
     @SubscribeEvent
     public static void onInvulnerabilityCheck(EntityInvulnerabilityCheckEvent event) {

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class JeiInfoPageRecipe {
+public final class JeiInfoPageRecipe {
     private final ItemStack focusStack;
     private final TagKey<Item> focusTag;
     private final List<ItemStack> groupStacks;

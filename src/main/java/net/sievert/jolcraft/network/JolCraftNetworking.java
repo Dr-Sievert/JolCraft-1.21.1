@@ -15,7 +15,7 @@ import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 import net.sievert.jolcraft.network.packet.s2c.*;
 
-public class JolCraftNetworking {
+public final class JolCraftNetworking {
 
     public static void register(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar(JolCraft.MOD_ID).versioned("1.0");

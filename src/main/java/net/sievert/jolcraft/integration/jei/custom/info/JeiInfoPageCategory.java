@@ -29,7 +29,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRecipe> {
+public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRecipe> {
     public static final IRecipeType<JeiInfoPageRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, "info_page", JeiInfoPageRecipe.class);
 
     private final int textStartY = 32;

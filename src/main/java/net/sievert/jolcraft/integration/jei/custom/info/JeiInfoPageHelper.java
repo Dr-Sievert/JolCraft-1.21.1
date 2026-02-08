@@ -16,7 +16,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JeiInfoPageHelper {
+public final class JeiInfoPageHelper {
 
     public static List<JeiInfoPageRecipe> getAllInfoPages() {
 

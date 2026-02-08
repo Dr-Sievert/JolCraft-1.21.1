@@ -19,7 +19,7 @@ import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import java.util.List;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftItemEvents {
+public final class JolCraftItemEvents {
 
     @SubscribeEvent
     public static void onSpannerRightClickItem(PlayerInteractEvent.RightClickItem event) {

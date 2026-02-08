@@ -16,7 +16,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 /**
  * An exact copy of AnvilMenu#createResult, adapted as a helper.
  */
-public class JolCraftAnvilHelper {
+public final class JolCraftAnvilHelper {
     /**
      * Result holder.
      */

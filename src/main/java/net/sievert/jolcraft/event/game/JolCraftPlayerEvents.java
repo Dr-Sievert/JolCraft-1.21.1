@@ -43,7 +43,7 @@ import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import java.util.HashSet;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftPlayerEvents {
+public final class JolCraftPlayerEvents {
 
     @SubscribeEvent
     public static void onAdvancementEarned(AdvancementEvent.AdvancementEarnEvent event) {

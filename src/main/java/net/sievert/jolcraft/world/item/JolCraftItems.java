@@ -53,7 +53,9 @@ import net.sievert.jolcraft.world.item.food.JolCraftFoodProperties;
 import java.util.List;
 
 
-public class JolCraftItems {
+public final class JolCraftItems {
+
+    private JolCraftItems(){}
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(JolCraft.MOD_ID);
 

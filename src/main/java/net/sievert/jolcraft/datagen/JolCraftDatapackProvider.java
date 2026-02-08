@@ -16,7 +16,8 @@ import net.sievert.jolcraft.world.worldgen.feature.JolCraftPlacedFeatures;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class JolCraftDatapackProvider extends DatapackBuiltinEntriesProvider {
+public final class JolCraftDatapackProvider extends DatapackBuiltinEntriesProvider {
+
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.TRIM_MATERIAL, JolCraftTrimMaterials::bootstrap)
             .add(Registries.TRIM_PATTERN, JolCraftTrimPatterns::bootstrap)

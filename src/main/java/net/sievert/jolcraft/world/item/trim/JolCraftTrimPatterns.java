@@ -11,7 +11,8 @@ import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
-public class JolCraftTrimPatterns {
+public final class JolCraftTrimPatterns {
+
     public static final ResourceKey<TrimPattern> FORGE = ResourceKey.create(Registries.TRIM_PATTERN, JolCraft.location("forge"));
 
     public static void bootstrap(BootstrapContext<TrimPattern> context) {

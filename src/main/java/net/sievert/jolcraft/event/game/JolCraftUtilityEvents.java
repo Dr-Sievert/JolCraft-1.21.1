@@ -15,7 +15,7 @@ import net.sievert.jolcraft.world.item.util.rarity.JolCraftEnumParams;
 import net.sievert.jolcraft.event.util.JolCraftAnvilHelper;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftUtilityEvents {
+public final class JolCraftUtilityEvents {
 
     @SubscribeEvent
     public static void onAnvilUpdate(AnvilUpdateEvent event) {

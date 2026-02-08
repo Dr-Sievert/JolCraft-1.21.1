@@ -15,10 +15,11 @@ import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
 import net.sievert.jolcraft.world.gui.custom.menu.LockMenu;
 import net.sievert.jolcraft.world.gui.custom.menu.StrongboxMenu;
 
-public class JolCraftMenuTypes {
+public final class JolCraftMenuTypes {
 
-    public static final DeferredRegister<MenuType<?>> MENUS =
-            DeferredRegister.create(Registries.MENU, JolCraft.MOD_ID);
+    private JolCraftMenuTypes(){}
+
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, JolCraft.MOD_ID);
 
     public static final DeferredHolder<MenuType<?>, MenuType<StrongboxMenu>> STRONGBOX_MENU =
             registerExtended("strongbox_menu", StrongboxMenu::new);

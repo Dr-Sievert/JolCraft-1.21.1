@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class JolCraftBiomeTagProvider extends BiomeTagsProvider {
+public final class JolCraftBiomeTagProvider extends BiomeTagsProvider {
 
     public JolCraftBiomeTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
         super(output, lookup, JolCraft.MOD_ID);

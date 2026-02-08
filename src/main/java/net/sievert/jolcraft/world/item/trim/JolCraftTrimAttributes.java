@@ -24,8 +24,7 @@ import java.util.Map;
 
 public final class JolCraftTrimAttributes {
 
-    private JolCraftTrimAttributes() {
-    }
+    private JolCraftTrimAttributes(){}
 
     private static final Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> ATTRIBUTES =
             buildAttributes();

@@ -14,18 +14,18 @@ import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.AttributeSmithingTrimRecipe;
 import net.sievert.jolcraft.data.recipe.custom.LapidaryBenchRecipe;
 
-public class JolCraftRecipes {
+public final class JolCraftRecipes {
+
+    private JolCraftRecipes(){}
 
     public static final String ATTRIBUTE_SMITHING_TRIM_ID = "attribute_smithing_trim";
     public static final String DWARF_TRADE_ID = "dwarf_trade";
     public static final String LAPIDARY_BENCH_ID = "lapidary_bench";
     public static final String FERMENTING_CAULDRON_ID = "fermenting_cauldron";
 
-    public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
-            DeferredRegister.create(Registries.RECIPE_SERIALIZER, JolCraft.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, JolCraft.MOD_ID);
 
-    public static final DeferredRegister<RecipeType<?>> TYPES =
-            DeferredRegister.create(Registries.RECIPE_TYPE, JolCraft.MOD_ID);
+    public static final DeferredRegister<RecipeType<?>> TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, JolCraft.MOD_ID);
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> ATTRIBUTE_SMITHING_TRIM_SERIALIZER =
             SERIALIZERS.register(ATTRIBUTE_SMITHING_TRIM_ID, AttributeSmithingTrimRecipe.Serializer::new);

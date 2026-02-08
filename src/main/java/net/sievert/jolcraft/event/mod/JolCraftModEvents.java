@@ -13,7 +13,7 @@ import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
-public class JolCraftModEvents {
+public final class JolCraftModEvents {
 
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {

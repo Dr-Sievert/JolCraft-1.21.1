@@ -56,7 +56,7 @@ import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
 import java.util.*;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftAttributeEvents {
+public final class JolCraftAttributeEvents {
 
     private static final ResourceLocation ASHFANG_ID = JolCraft.location("ashfang_attack_damage_increase");
     private static final ResourceLocation IRONHEART_ID = JolCraft.location("ironheart_armor_increase");

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
-public class JolCraftDataGenerator {
+public final class JolCraftDataGenerator {
 
     @SubscribeEvent
     public static void gatherClientData(GatherDataEvent.Client event) {

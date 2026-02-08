@@ -11,13 +11,13 @@ import net.sievert.jolcraft.JolCraft;
 
 import java.util.function.Supplier;
 
-public class JolCraftStats {
+public final class JolCraftStats {
 
-    public static final DeferredRegister<ResourceLocation> CUSTOM_STATS =
-            DeferredRegister.create(Registries.CUSTOM_STAT, JolCraft.MOD_ID);
+    private JolCraftStats(){}
 
-    public static final Supplier<ResourceLocation> STRUCTURES_DISCOVERED_ID =
-            CUSTOM_STATS.register("structures_discovered", () -> JolCraft.location("structures_discovered"));
+    public static final DeferredRegister<ResourceLocation> CUSTOM_STATS = DeferredRegister.create(Registries.CUSTOM_STAT, JolCraft.MOD_ID);
+
+    public static final Supplier<ResourceLocation> STRUCTURES_DISCOVERED_ID = CUSTOM_STATS.register("structures_discovered", () -> JolCraft.location("structures_discovered"));
 
     public static Stat<ResourceLocation> STRUCTURES_DISCOVERED;
 

@@ -14,8 +14,10 @@ import net.sievert.jolcraft.world.effect.custom.curse.CursedWoundEffect;
 import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
 
 public class JolCraftEffects {
-    public static final DeferredRegister<MobEffect> MOB_EFFECTS =
-            DeferredRegister.create(Registries.MOB_EFFECT, JolCraft.MOD_ID);
+
+    private JolCraftEffects(){}
+
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, JolCraft.MOD_ID);
 
     //Beneficial
 

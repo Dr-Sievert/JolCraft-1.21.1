@@ -13,7 +13,8 @@ import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
 
 import java.util.concurrent.CompletableFuture;
 
-public class JolCraftGlobalLootModifierProvider extends GlobalLootModifierProvider {
+public final class JolCraftGlobalLootModifierProvider extends GlobalLootModifierProvider {
+
     public JolCraftGlobalLootModifierProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, JolCraft.MOD_ID);
     }

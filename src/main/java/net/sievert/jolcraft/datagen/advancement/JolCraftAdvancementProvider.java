@@ -21,7 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class JolCraftAdvancementProvider implements AdvancementSubProvider {
+public final class JolCraftAdvancementProvider implements AdvancementSubProvider {
+
     @Override
     public void generate(HolderLookup.@NotNull Provider registries, @NotNull Consumer<AdvancementHolder> consumer) {
 

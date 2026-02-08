@@ -9,7 +9,10 @@ import net.sievert.jolcraft.JolCraft;
 
 import java.util.function.Supplier;
 
-public class JolCraftSounds {
+public final class JolCraftSounds {
+
+    private JolCraftSounds(){}
+
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(Registries.SOUND_EVENT, JolCraft.MOD_ID);
 

@@ -9,7 +9,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 
-public class JolCraftPotions {
+public final class JolCraftPotions {
+
+    private JolCraftPotions(){}
 
     public static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, JolCraft.MOD_ID);
 

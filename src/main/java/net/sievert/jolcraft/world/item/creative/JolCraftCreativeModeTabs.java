@@ -19,9 +19,11 @@ import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 
 import java.util.function.Supplier;
 
-public class JolCraftCreativeModeTabs {
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
-            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, JolCraft.MOD_ID);
+public final class JolCraftCreativeModeTabs {
+
+    private JolCraftCreativeModeTabs(){}
+
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, JolCraft.MOD_ID);
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_ITEMS =
             CREATIVE_MODE_TABS.register(ItemLangSubProvider.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()

@@ -8,9 +8,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.JolCraft;
 
-public class JolCraftAttributes {
-    public static final DeferredRegister<Attribute> ATTRIBUTES =
-            DeferredRegister.create(Registries.ATTRIBUTE, JolCraft.MOD_ID);
+public final class JolCraftAttributes {
+
+    private JolCraftAttributes(){}
+
+    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, JolCraft.MOD_ID);
 
     public static final DeferredHolder<Attribute, Attribute> XP_BOOST =
             ATTRIBUTES.register("xp_boost", () ->

@@ -25,7 +25,9 @@ import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipBlockItem;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
-public class JolCraftBlocks {
+public final class JolCraftBlocks {
+
+    private JolCraftBlocks(){}
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(JolCraft.MOD_ID);
 

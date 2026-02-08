@@ -14,7 +14,8 @@ import net.sievert.jolcraft.integration.jei.custom.trade.JeiDwarfTradeHelper;
 import org.jetbrains.annotations.NotNull;
 
 @JeiPlugin
-public class JolCraftJeiPlugin implements IModPlugin {
+public final class JolCraftJeiPlugin implements IModPlugin {
+
     private static final ResourceLocation ID = JolCraft.location("jei_plugin");
 
     @Override

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class JolCraftItemTagProvider extends ItemTagsProvider {
+public final class JolCraftItemTagProvider extends ItemTagsProvider {
     public JolCraftItemTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTags) {
         super(output, lookupProvider, blockTags, JolCraft.MOD_ID);
     }

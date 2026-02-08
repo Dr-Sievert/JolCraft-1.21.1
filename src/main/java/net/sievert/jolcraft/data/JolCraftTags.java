@@ -14,7 +14,9 @@ import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
 import static net.sievert.jolcraft.JolCraft.location;
 
-public class JolCraftTags {
+public final class JolCraftTags {
+
+    private JolCraftTags(){}
 
     public static final class Items {
 

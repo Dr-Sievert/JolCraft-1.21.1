@@ -33,7 +33,7 @@ import java.util.Map;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrade> {
+public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrade> {
 
     private static final Map<DwarfProfession, IRecipeType<JeiDwarfTrade>> TYPES = new EnumMap<>(DwarfProfession.class);
 

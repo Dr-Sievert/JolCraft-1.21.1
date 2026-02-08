@@ -20,7 +20,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import java.util.*;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftRecipeEvents {
+public final class JolCraftRecipeEvents {
 
     @SubscribeEvent
     public static void onBrewingRecipeRegister(RegisterBrewingRecipesEvent event) {

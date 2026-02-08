@@ -27,7 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class JolCraftEntityLootTableProvider implements LootTableSubProvider {
+public final class JolCraftEntityLootTableProvider implements LootTableSubProvider {
+
     private final HolderLookup.Provider registries;
 
     public JolCraftEntityLootTableProvider(HolderLookup.Provider registries) {

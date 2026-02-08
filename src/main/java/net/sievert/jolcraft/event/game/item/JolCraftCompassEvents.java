@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftCompassEvents {
+public final class JolCraftCompassEvents {
 
     private static final Map<UUID, BlockPos> LAST_COMPASS_POS = new HashMap<>();
     private static final Map<java.util.UUID, Integer> LAST_COMPASS_SLOT = new java.util.HashMap<>();

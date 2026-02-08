@@ -38,7 +38,7 @@ import net.sievert.jolcraft.world.item.client.compass.DeepslateCompassAngle;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class JolCraftClientModEvents {
+public final class JolCraftClientModEvents {
 
     @SuppressWarnings("deprecation")
     @SubscribeEvent
