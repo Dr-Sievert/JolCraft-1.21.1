@@ -1,19 +1,15 @@
-package net.sievert.jolcraft.datagen.client.language.util;
+package net.sievert.jolcraft.data.language;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 
 /**
  * Translation key construction helpers.
  * No concrete names or shared constants live here.
+ * Extend this on key holder classes to get the helpers without duplication.
  */
-@OnlyIn(Dist.CLIENT)
-public final class JolCraftLanguageKeys {
+public abstract class AbstractLanguageKeys {
 
-    public static final String MODID = JolCraft.MOD_ID;
-
-    private JolCraftLanguageKeys() {}
+    protected static final String MODID = JolCraft.MOD_ID;
 
     /** "<category>.<modid>.<path>" */
     public static String category(String category, String path) {
@@ -34,5 +30,15 @@ public final class JolCraftLanguageKeys {
     // Specific categories
     // ---------------------------------------------------------------------
 
-    public static String tooltip(String category, String path) { return category(JolCraftLanguageCategory.TOOLTIP, category + "." + path); }
+    /** "tooltip.<modid>.<category>.<path>" */
+    public static String tooltip(String category, String path) {
+        return category(JolCraftLanguageCategory.TOOLTIP, category + "." + path);
+    }
+
+    /** "tooltip.<modid>.structure.<id>" */
+    public static String tooltipStructure(String structureId) {
+        return tooltip("structure", structureId);
+    }
+
+
 }

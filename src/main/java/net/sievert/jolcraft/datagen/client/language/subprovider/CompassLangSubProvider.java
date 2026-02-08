@@ -6,8 +6,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageCategory;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
@@ -19,53 +18,22 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public final class CompassLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
-    // ---------------------------------------------------------------------
-    // Structure tooltips
-    // ---------------------------------------------------------------------
-
-    public static final String UNKNOWN = "unknown";
-
-    public static final String TOOLTIP_STRUCTURE_UNKNOWN = tooltipStructure(UNKNOWN);
-    public static final String TOOLTIP_STRUCTURE_DISCOVERED = tooltipStructure("discovered");
-
-    // tooltip.<modid>.structure.<namespace:path>
-    public static String tooltipStructure(ResourceLocation structureId) {
-        return JolCraftLanguageKeys.tooltip("structure", structureId.toString());
-    }
-
-    public static String tooltipStructure(String structureId) {
-        return JolCraftLanguageKeys.tooltip("structure", structureId);
-    }
-
-    // ---------------------------------------------------------------------
-    // Deepslate Compass tooltips
-    // ---------------------------------------------------------------------
-
-    public static final String DEEPSLATE_COMPASS = "deepslate_compass";
-    public static final String DEEPSLATE_COMPASS_DIAL = "deepslate_compass_dial";
-
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_TRACKING = JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, DEEPSLATE_COMPASS);
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE = JolCraftLanguageKeys.tooltip(DEEPSLATE_COMPASS, "no_structure");
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_LOCATE = JolCraftLanguageKeys.tooltip(DEEPSLATE_COMPASS, "locate");
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_DIAL_UNKNOWN = JolCraftLanguageKeys.tooltip(DEEPSLATE_COMPASS_DIAL, UNKNOWN);
-
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
 
         // Structure fixed strings
-        p.putManual(TOOLTIP_STRUCTURE_UNKNOWN, "Unknown");
-        p.putManual(TOOLTIP_STRUCTURE_DISCOVERED, "Discovered: ");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_UNKNOWN, "Unknown");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_DISCOVERED, "Discovered: ");
 
         // Deepslate Compass fixed strings
-        p.putManual(TOOLTIP_DEEPSLATE_COMPASS_TRACKING, "Currently tracking: ");
-        p.putManual(TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE, "No structures found!");
-        p.putManual(TOOLTIP_DEEPSLATE_COMPASS_LOCATE, "The tracked %s is at %s (%s blocks away)");
-
-        p.putManual(TOOLTIP_DEEPSLATE_COMPASS_DIAL_UNKNOWN, "Unknown");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_TRACKING, "Currently tracking: ");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE, "No structures found!");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_LOCATE, "The tracked %s is at %s (%s blocks away)");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_DIAL_UNKNOWN, "Unknown");
 
         // Dial labels
         for (StructureGroup group : StructureGroup.values()) {
-            String key = JolCraftLanguageKeys.tooltip("deepslate_compass_dial", group.id());
+            String key = JolCraftLanguageKeys.tooltip(JolCraftLanguageKeys.DEEPSLATE_COMPASS_DIAL, group.id());
             if (p.hasKey(key)) continue;
             p.putManual(key, AbstractLanguageProvider.toTitleCase(group.id()));
         }
@@ -79,11 +47,10 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
         for (ResourceLocation id : reflectRegisteredStructureIds()) {
             putStructureNameIfMissing(p, id);
         }
-
     }
 
     private static void putStructureNameIfMissing(AbstractLanguageProvider p, ResourceLocation structureId) {
-        String key = tooltipStructure(structureId);
+        String key = JolCraftLanguageKeys.tooltip("structure", structureId.toString());
         if (p.hasKey(key)) return;
 
         String english = AbstractLanguageProvider.toTitleCase(structureId.getPath());
@@ -121,7 +88,6 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
         for (Field f : JolCraftStructures.class.getDeclaredFields()) {
             int m = f.getModifiers();
             if (!Modifier.isPublic(m) || !Modifier.isStatic(m)) continue;
-
             if (f.getType() != JolCraftStructures.RegisteredStructure.class) continue;
 
             Object val;
@@ -130,7 +96,6 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
             } catch (IllegalAccessException ignored) {
                 continue;
             }
-
             if (!(val instanceof JolCraftStructures.RegisteredStructure<?> rs)) continue;
 
             ResourceLocation id = rs.id();

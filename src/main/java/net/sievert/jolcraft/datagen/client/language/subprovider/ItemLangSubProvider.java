@@ -4,24 +4,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 @OnlyIn(Dist.CLIENT)
 public final class ItemLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
-    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB = "jolcraft_items_tab";
-    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB_KEY = itemGroup(JOLCRAFT_GENERAL_CREATIVE_TAB);
-    public static final String JOLCRAFT_EGG_CREATIVE_TAB = "jolcraft_egg_tab";
-    public static final String JOLCRAFT_EGG_CREATIVE_TAB_KEY = itemGroup(JOLCRAFT_EGG_CREATIVE_TAB);
-
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
 
         // Creative tabs
-        p.putManual(JOLCRAFT_GENERAL_CREATIVE_TAB_KEY, "JolCraft");
-        p.putManual(JOLCRAFT_EGG_CREATIVE_TAB_KEY, "JolCraft Spawn Eggs");
+        p.putManual(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB_KEY, "JolCraft");
+        p.putManual(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB_KEY, "JolCraft Spawn Eggs");
 
         // Structure maps
         p.putManual("filled_map.forge", "Map to a Dwarven Forge");
@@ -119,7 +114,4 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
             p.put(key, AbstractLanguageProvider.toTitleCase(id.getPath()));
         }
     }
-
-    public static String itemGroup(String path) { return "itemGroup." + JolCraft.MOD_ID + "." + path; }
-
 }

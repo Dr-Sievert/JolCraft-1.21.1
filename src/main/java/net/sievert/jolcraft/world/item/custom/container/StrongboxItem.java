@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -28,18 +28,18 @@ public class StrongboxItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
             if (stack.has(JolCraftDataComponents.LOCKED)) {
-                tooltip.add(Component.translatable(ContainerLangSubProvider.TOOLTIP_STRONGBOX_LOCKED)
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOCKED)
                         .withStyle(ChatFormatting.RED));
             }
 
             if (stack.has(JolCraftDataComponents.LOOT_TABLE)) {
-                tooltip.add(Component.translatable(ContainerLangSubProvider.TOOLTIP_STRONGBOX_LOOT)
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOOT)
                         .withStyle(ChatFormatting.GREEN));
             }
 
             ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
             if (contents != null && !Iterables.isEmpty(contents.nonEmptyItems())) {
-                tooltip.add(Component.translatable(ContainerLangSubProvider.TOOLTIP_STRONGBOX_NOT_EMPTY)
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_NOT_EMPTY)
                         .withStyle(ChatFormatting.GRAY));
             }
 

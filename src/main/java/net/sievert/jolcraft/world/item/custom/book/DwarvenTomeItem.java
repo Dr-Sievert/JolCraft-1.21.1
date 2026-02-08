@@ -12,8 +12,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
-import net.sievert.jolcraft.datagen.client.language.subprovider.MiscLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
@@ -38,24 +37,24 @@ public class DwarvenTomeItem extends Item {
 
             if (JolCraftProxy.access().isAltDown()) {
                 if (knowsLanguage) {
-                    tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_SHIFT)
+                    tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_SHIFT)
                             .withStyle(ChatFormatting.GRAY));
                 } else {
-                    tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_LOCKED)
+                    tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_LOCKED)
                             .withStyle(ChatFormatting.GRAY));
                 }
             } else {
                 if (knowsLanguage) {
                     String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
                     tooltip.add(Component.translatable(
-                                    translationKey != null ? translationKey : DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_UNLOCKED)
+                                    translationKey != null ? translationKey : JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCKED)
                             .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
                 } else {
-                    tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_LOCKED)
+                    tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_LOCKED)
                             .withStyle(ChatFormatting.GRAY));
                 }
 
-                tooltip.add(Component.translatable(MiscLangSubProvider.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
                         .withStyle(ChatFormatting.DARK_GRAY));
             }
         }

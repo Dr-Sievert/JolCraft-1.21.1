@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
@@ -27,7 +27,7 @@ public final class BusyGateInteractionHandler implements DwarfInteractions.CoreI
 
         if (!DwarfActionHelper.isActionType(dwarf, DwarfActionType.IDLE) || dwarf.isTrading()) {
             player.displayClientMessage(
-                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_BUSY).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_BUSY).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);

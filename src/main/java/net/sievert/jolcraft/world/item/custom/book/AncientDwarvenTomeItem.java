@@ -7,7 +7,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
 import net.minecraft.ChatFormatting;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientItemBase;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,17 +27,17 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
 
     @Override
     protected @NotNull List<Component> getFullyReadableTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_SHIFT).withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_SHIFT).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected @NotNull List<Component> getLockedTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_TOME_LOCKED).withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_LOCKED).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected @NotNull List<Component> getPartialUnderstandingTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
         String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
         return List.of((translationKey != null)
                         ? Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
-                        : Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_UNLOCKED).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                        : Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_UNLOCKED).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );
     }
 
@@ -54,7 +54,7 @@ public class AncientDwarvenTomeItem extends AncientItemBase {
         String translationKey = LoreHelper.getEntryTranslationKey(stack, DwarfLoreKey.class);
         return List.of((translationKey != null)
                         ? Component.translatable(translationKey).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
-                        : Component.translatable(DwarfLangSubProvider.TOOLTIP_ANCIENT_DWARVEN_TOME_UNLOCKED).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                        : Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_UNLOCKED).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         );
     }
 

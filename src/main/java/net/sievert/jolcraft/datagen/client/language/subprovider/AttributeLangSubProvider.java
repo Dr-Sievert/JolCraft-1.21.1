@@ -2,6 +2,7 @@ package net.sievert.jolcraft.datagen.client.language.subprovider;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -21,7 +22,7 @@ public final class AttributeLangSubProvider implements AbstractLanguageProvider.
 
         for (DeferredHolder<?, ?> holder : JolCraftAttributes.ATTRIBUTES.getEntries()) {
             Object value = holder.get();
-            if (!(value instanceof net.minecraft.world.entity.ai.attributes.Attribute attr)) continue;
+            if (!(value instanceof Attribute attr)) continue;
 
             ResourceLocation id = BuiltInRegistries.ATTRIBUTE.getKey(attr);
             if (id == null) continue;

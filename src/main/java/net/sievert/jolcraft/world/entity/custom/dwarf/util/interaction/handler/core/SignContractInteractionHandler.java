@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -33,7 +33,7 @@ public final class SignContractInteractionHandler implements DwarfInteractions.C
 
         if (!dwarf.canSign()) {
             player.displayClientMessage(
-                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_CANNOT_SIGN).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_SIGN).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);
@@ -42,7 +42,7 @@ public final class SignContractInteractionHandler implements DwarfInteractions.C
 
         if (dwarf.needsPay()) {
             player.displayClientMessage(
-                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);

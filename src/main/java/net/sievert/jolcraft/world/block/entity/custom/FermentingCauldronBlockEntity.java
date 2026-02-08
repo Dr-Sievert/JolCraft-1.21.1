@@ -36,10 +36,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
-import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
@@ -141,7 +141,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
 
         if (count >= 3) {
             player.displayClientMessage(
-                    Component.translatable(ContainerLangSubProvider.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX)
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX)
                             .withStyle(ChatFormatting.GRAY),
                     true
             );
@@ -151,7 +151,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         if (recipe.effect() != null && !ingredients.isEmpty() && !ingredients.containsKey(itemKey)) {
             if (!DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                 player.displayClientMessage(
-                        Component.translatable(ContainerLangSubProvider.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI)
                                 .withStyle(ChatFormatting.RED),
                         true
                 );

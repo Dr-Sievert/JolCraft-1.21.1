@@ -51,7 +51,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
@@ -309,8 +309,8 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             player.displayClientMessage(
                     Component.translatable(
                             newLocked
-                                    ? ContainerLangSubProvider.TOOLTIP_STRONGBOX_LOCKED
-                                    : ContainerLangSubProvider.TOOLTIP_STRONGBOX_SET_UNLOCKED
+                                    ? JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOCKED
+                                    : JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_UNLOCKED
                     ).withStyle(ChatFormatting.GRAY),
                     true
             );
@@ -328,7 +328,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 Player current = strongbox.getCurrentInteractingPlayer();
                 if (current != null && current != player) {
                     player.displayClientMessage(
-                            Component.translatable(ContainerLangSubProvider.TOOLTIP_STRONGBOX_BUSY)
+                            Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_BUSY)
                                     .withStyle(ChatFormatting.GRAY),
                             true
                     );

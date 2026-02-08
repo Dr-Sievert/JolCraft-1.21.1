@@ -40,7 +40,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
-import net.sievert.jolcraft.datagen.client.language.subprovider.ContainerLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.Nullable;
@@ -211,7 +211,7 @@ public class HearthBlock extends BaseEntityBlock {
             Hearth hearthAttachment = Hearth.get(player);
             if (hearthAttachment.hasLitThisDay()) {
                 player.displayClientMessage(
-                        Component.translatable(ContainerLangSubProvider.TOOLTIP_HEARTH_COOLDOWN).withStyle(ChatFormatting.GRAY), true
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_COOLDOWN).withStyle(ChatFormatting.GRAY), true
                 );
                 return InteractionResult.SUCCESS;
             }
@@ -221,7 +221,7 @@ public class HearthBlock extends BaseEntityBlock {
 
         if (!isCoal) {
             player.displayClientMessage(
-                    Component.translatable(ContainerLangSubProvider.TOOLTIP_HEARTH_NEED_COAL).withStyle(ChatFormatting.GRAY), true
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NEED_COAL).withStyle(ChatFormatting.GRAY), true
             );
             return InteractionResult.SUCCESS;
         }
@@ -237,7 +237,7 @@ public class HearthBlock extends BaseEntityBlock {
 
         if (monstersNearby) {
             player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(ContainerLangSubProvider.TOOLTIP_HEARTH_NOT_SAFE).withStyle(ChatFormatting.RED), true
+                    net.minecraft.network.chat.Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NOT_SAFE).withStyle(ChatFormatting.RED), true
             );
             return InteractionResult.SUCCESS;
         }
@@ -258,7 +258,7 @@ public class HearthBlock extends BaseEntityBlock {
 
         if (!bedNearby) {
             player.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable(ContainerLangSubProvider.TOOLTIP_HEARTH_NO_BED_NEARBY).withStyle(ChatFormatting.GRAY), true
+                    net.minecraft.network.chat.Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NO_BED_NEARBY).withStyle(ChatFormatting.GRAY), true
             );
             return InteractionResult.SUCCESS;
         }

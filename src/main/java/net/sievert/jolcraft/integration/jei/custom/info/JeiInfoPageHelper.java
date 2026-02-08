@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
-import net.sievert.jolcraft.datagen.client.language.subprovider.JeiLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
@@ -32,44 +32,44 @@ public final class JeiInfoPageHelper {
         return List.of(
                 new JeiInfoPageRecipe(
                         JolCraftTags.Items.REPUTATION_TABLETS,
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_REPUTATION_TABLET)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET)
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftItems.STRONGBOX_ITEM.get().getDefaultInstance(),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_STRONGBOX)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_STRONGBOX)
                 ),
                 new JeiInfoPageRecipe(
                         List.of(compassEmpty, compassDial, compassCombined),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_DEEPSLATE_COMPASS),
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_DEEPSLATE_COMPASS),
                         "compass"
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftItems.COIN_POUCH.get().getDefaultInstance(),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_COIN_POUCH)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_COIN_POUCH)
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftItems.DWARVEN_LEXICON.get().getDefaultInstance(),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_DWARVEN_LEXICON)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_DWARVEN_LEXICON)
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftItems.ANCIENT_DWARVEN_LEXICON.get().getDefaultInstance(),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_ANCIENT_DWARVEN_LEXICON)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_ANCIENT_DWARVEN_LEXICON)
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftBlocks.HEARTH.get().asItem().getDefaultInstance(),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_HEARTH)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_HEARTH)
                 ),
                 JeiInfoPageRecipe.fromBlockTag(
                         JolCraftTags.Blocks.VERDANT,
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_VERDANT)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_VERDANT)
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftBlocks.DUSKCAP.get().asItem().getDefaultInstance(),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_MUSHROOM)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_MUSHROOM)
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftBlocks.FESTERLING.get().asItem().getDefaultInstance(),
-                        Component.translatable(JeiLangSubProvider.JEI_INFO_FESTERLING)
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_FESTERLING)
                 )
         );
     }

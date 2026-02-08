@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.datagen.client.language.subprovider.TrimLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -25,7 +25,7 @@ public class CutGemItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         TooltipHelper.addAltTooltip(
                 tooltip,
-                Component.translatable(TrimLangSubProvider.TOOLTIP_ATTRIBUTE_TRIM_MATERIALS).withStyle(ChatFormatting.GRAY),
+                Component.translatable(JolCraftLanguageKeys.TOOLTIP_ATTRIBUTE_TRIM_MATERIALS).withStyle(ChatFormatting.GRAY),
                 List.of()
         );
         super.appendHoverText(stack, context, tooltip, flag);

@@ -5,7 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.datagen.client.language.subprovider.BountyLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
@@ -38,7 +38,7 @@ public abstract class AbstractBountyProfessionInteractionHandler implements Dwar
             if (requiredType != type) {
                 PlaySound.dwarfNo(dwarf);
                 player.displayClientMessage(
-                        Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_WRONG_TYPE)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_WRONG_TYPE)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );
@@ -56,7 +56,7 @@ public abstract class AbstractBountyProfessionInteractionHandler implements Dwar
             if (requiredType != type) {
                 PlaySound.dwarfNo(dwarf);
                 player.displayClientMessage(
-                        Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_WRONG_TYPE)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_WRONG_TYPE)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );
@@ -66,7 +66,7 @@ public abstract class AbstractBountyProfessionInteractionHandler implements Dwar
             if (complete == null || !complete) {
                 PlaySound.dwarfNo(dwarf);
                 player.displayClientMessage(
-                        Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_NOT_COMPLETE)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_NOT_COMPLETE)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );

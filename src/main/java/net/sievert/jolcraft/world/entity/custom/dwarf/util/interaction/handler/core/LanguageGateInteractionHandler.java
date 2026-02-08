@@ -5,7 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 
@@ -26,7 +26,7 @@ public final class LanguageGateInteractionHandler implements DwarfInteractions.C
 
         if (!DwarvenLanguageHelper.knowsDwarvish(player)) {
             player.displayClientMessage(
-                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_LOCKED).withStyle(ChatFormatting.RED),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_LOCKED).withStyle(ChatFormatting.RED),
                     true
             );
             PlaySound.dwarfNo(dwarf);

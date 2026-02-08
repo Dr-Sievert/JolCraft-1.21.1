@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.client.language.subprovider.JeiLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -69,7 +69,7 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
     @Override
     public Component getTitle() {
         return Component.literal(
-                Component.translatable(JeiLangSubProvider.JEI_CATEGORY_DWARF_TRADES).getString()
+                Component.translatable(JolCraftLanguageKeys.JEI_CATEGORY_DWARF_TRADES).getString()
                         + " — "
                         + JeiDwarfTradeHelper.getDisplayName(profession)
         );

@@ -24,8 +24,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.datagen.client.language.subprovider.BountyLangSubProvider;
-import net.sievert.jolcraft.datagen.client.language.subprovider.MiscLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyTier;
@@ -127,7 +126,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
         if (needed <= 0) {
             crate.set(JolCraftDataComponents.BOUNTY_COMPLETE.get(), true);
             player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_FILLED).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED).withStyle(ChatFormatting.GRAY),
                     true
             );
             return InteractionResult.SUCCESS;
@@ -174,13 +173,13 @@ public class BountyCrateItem extends Item implements IItemExtension {
             }
 
             player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_FILLED_SOME, collected).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED_SOME, collected).withStyle(ChatFormatting.GRAY),
                     true
             );
             JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
         } else {
             player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_NO_ITEMS).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_NO_ITEMS).withStyle(ChatFormatting.GRAY),
                     true
             );
         }
@@ -219,7 +218,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
 
         if (JolCraftProxy.access().isAltDown()) {
-            tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE)
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE)
                     .withStyle(ChatFormatting.GRAY));
         } else {
             if (knowsLanguage) {
@@ -241,37 +240,37 @@ public class BountyCrateItem extends Item implements IItemExtension {
                     BountyTier tier = BountyTier.fromValue(tierInt);
 
                     if (type == BountyType.UNKNOWN || tier == BountyTier.UNKNOWN) {
-                        tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_INVALID)
+                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_INVALID)
                                 .withStyle(ChatFormatting.RED));
                     } else{
-                        tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_TYPE)
+                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_TYPE)
                                 .append(Component.translatable("entity.jolcraft.dwarf_" + type.getId()))
                                 .withStyle(ChatFormatting.GRAY));
 
-                        tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_TIER, tier.getDisplayName())
+                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_TIER, tier.getDisplayName())
                                 .withStyle(ChatFormatting.GRAY));
                     }
 
-                    tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_TARGET)
+                    tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_TARGET)
                             .append(itemName)
                             .withStyle(ChatFormatting.GRAY));
-                    tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_COUNT, count)
+                    tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COUNT, count)
                             .withStyle(ChatFormatting.GRAY));
 
                     if (Boolean.TRUE.equals(stack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get()))) {
-                        tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_COMPLETE)
+                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COMPLETE)
                                 .withStyle(ChatFormatting.GREEN));
                     }
                 } else {
-                    tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_INVALID)
+                    tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_INVALID)
                             .withStyle(ChatFormatting.RED));
                 }
             } else {
-                tooltip.add(Component.translatable(BountyLangSubProvider.TOOLTIP_BOUNTY_CRATE_LOCKED)
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_LOCKED)
                         .withStyle(ChatFormatting.GRAY));
             }
 
-            tooltip.add(Component.translatable(MiscLangSubProvider.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 

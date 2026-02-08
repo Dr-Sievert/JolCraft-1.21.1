@@ -2,7 +2,7 @@ package net.sievert.jolcraft.world.item.util.tooltip;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.sievert.jolcraft.datagen.client.language.subprovider.MiscLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public final class TooltipHelper {
             tooltip.add(mainLine);
         } else {
             tooltip.addAll(fallbackLines);
-            tooltip.add(Component.translatable(MiscLangSubProvider.TOOLTIP_HOLD_KEY, altKey()).withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, altKey()).withStyle(ChatFormatting.DARK_GRAY));
         }
     }
 

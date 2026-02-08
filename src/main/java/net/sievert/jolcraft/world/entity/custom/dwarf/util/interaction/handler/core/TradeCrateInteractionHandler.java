@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.datagen.client.language.subprovider.BountyLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -37,7 +37,7 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
 
         if (player.getCooldowns().isOnCooldown(stack)) {
             player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_COOLDOWN).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_CRATE_COOLDOWN).withStyle(ChatFormatting.GRAY),
                     true
             );
             return InteractionResult.SUCCESS;
@@ -45,7 +45,7 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
 
         if (dwarf.getOffers().isEmpty()) {
             player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_CRATE_NO_OFFERS_DWARF).withStyle(ChatFormatting.RED),
                     true
             );
             PlaySound.dwarfNo(dwarf);
@@ -56,7 +56,7 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
             boolean anyOutOfStock = dwarf.getOffers().stream().anyMatch(DwarfMerchantOffer::isOutOfStock);
             if (!anyOutOfStock && !dwarf.hasRandomTrades()) {
                 player.displayClientMessage(
-                        Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.RED),
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.RED),
                         true
                 );
                 PlaySound.dwarfNo(dwarf);
@@ -65,14 +65,14 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
 
             dwarf.crateRestock();
             player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                     true
             );
             PlaySound.dwarfYes(dwarf);
         } else {
             if (!dwarf.canReroll()) {
                 player.displayClientMessage(
-                        Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_FAIL).withStyle(ChatFormatting.RED),
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_FAIL).withStyle(ChatFormatting.RED),
                         true
                 );
                 PlaySound.dwarfNo(dwarf);
@@ -81,7 +81,7 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
 
             dwarf.rerollTrades();
             player.displayClientMessage(
-                    Component.translatable(BountyLangSubProvider.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                     true
             );
             PlaySound.dwarfYes(dwarf);

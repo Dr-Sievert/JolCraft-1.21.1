@@ -6,8 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
-import net.sievert.jolcraft.datagen.client.language.subprovider.ReputationLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
@@ -41,7 +40,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
 
         if (dwarf.neverEndorse()) {
             player.displayClientMessage(
-                    Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_NEVER_ENDORSE).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_NEVER_ENDORSE).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);
@@ -50,7 +49,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
 
         if (DwarvenReputationHelper.hasEndorsementBypassCreative(player, dwarf.getProfession())) {
             player.displayClientMessage(
-                    Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_ALREADY_ENDORSED).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_ALREADY_ENDORSED).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);
@@ -59,7 +58,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
 
         if (!dwarf.canEndorse()) {
             player.displayClientMessage(
-                    Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_CANNOT_ENDORSE).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_CANNOT_ENDORSE).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);
@@ -68,7 +67,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
 
         if (dwarf.needsPay()) {
             player.displayClientMessage(
-                    Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);

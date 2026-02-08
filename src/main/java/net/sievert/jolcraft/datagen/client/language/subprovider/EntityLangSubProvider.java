@@ -6,9 +6,9 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageCategory;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.language.JolCraftLanguageCategory;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 
 @OnlyIn(Dist.CLIENT)

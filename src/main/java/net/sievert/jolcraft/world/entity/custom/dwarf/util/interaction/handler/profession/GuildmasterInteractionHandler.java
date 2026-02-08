@@ -7,8 +7,7 @@ import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
-import net.sievert.jolcraft.datagen.client.language.subprovider.ReputationLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
@@ -61,7 +60,7 @@ public final class GuildmasterInteractionHandler
 
             if (tier >= maxTier) {
                 player.displayClientMessage(
-                        Component.translatable(ReputationLangSubProvider.TOOLTIP_REPUTATION_MAX_TIER)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_MAX_TIER)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );
@@ -73,7 +72,7 @@ public final class GuildmasterInteractionHandler
                 int needed = DwarvenReputationImpl.getThresholdForTier(tier);
                 player.displayClientMessage(
                         Component.translatable(
-                                ReputationLangSubProvider.TOOLTIP_REPUTATION_NOT_ENOUGH_ENDORSEMENTS,
+                                JolCraftLanguageKeys.TOOLTIP_REPUTATION_NOT_ENOUGH_ENDORSEMENTS,
                                 needed,
                                 endorsementCount
                         ).withStyle(ChatFormatting.GRAY),
@@ -85,7 +84,7 @@ public final class GuildmasterInteractionHandler
 
             if (dwarf.needsPay()) {
                 player.displayClientMessage(
-                        Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARF_NOT_PAID)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );

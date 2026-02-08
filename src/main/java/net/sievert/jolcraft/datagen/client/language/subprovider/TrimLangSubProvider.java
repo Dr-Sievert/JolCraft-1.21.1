@@ -8,11 +8,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageCategory;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
-import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
+import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -22,17 +21,11 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public final class TrimLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
 
-    public static final String TOOLTIP_TRIM_MATERIALS =
-            JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "trim_material");
-
-    public static final String TOOLTIP_ATTRIBUTE_TRIM_MATERIALS =
-            JolCraftLanguageKeys.category(JolCraftLanguageCategory.TOOLTIP, "attribute_trim_material");
-
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
-        p.putManual(TOOLTIP_TRIM_MATERIALS, "Can be used to trim armor.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS, "Can be used to trim armor.");
         p.putManual(
-                TOOLTIP_ATTRIBUTE_TRIM_MATERIALS,
+                JolCraftLanguageKeys.TOOLTIP_ATTRIBUTE_TRIM_MATERIALS,
                 "Can be used to trim armor for bonus stats. Applying additional cosmetic trims does not override given stats."
         );
 

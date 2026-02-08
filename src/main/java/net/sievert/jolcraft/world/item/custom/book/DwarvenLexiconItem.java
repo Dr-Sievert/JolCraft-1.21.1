@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.datagen.client.language.subprovider.DwarfLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
@@ -38,9 +38,9 @@ public class DwarvenLexiconItem extends Item {
                 JolCraftCriteriaTriggers.KNOWS_DWARVEN_LANGUAGE.trigger(serverPlayer);
                 PlaySound.bookPageTurn(player);
                 PlaySound.levelUp(player);
-                serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_LEXICON_USE).withStyle(ChatFormatting.GREEN), true);
+                serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_USE).withStyle(ChatFormatting.GREEN), true);
             } else {
-                serverPlayer.displayClientMessage(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_LEXICON_KNOWS).withStyle(ChatFormatting.GRAY), true);
+                serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_KNOWS).withStyle(ChatFormatting.GRAY), true);
                 PlaySound.bookPut(player);
             }
         }
@@ -54,10 +54,10 @@ public class DwarvenLexiconItem extends Item {
         boolean knows = DwarvenLanguageHelper.knowsDwarvish(player);
 
         if (knows) {
-            tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_LEXICON_UNLOCKED)
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_UNLOCKED)
                     .withStyle(ChatFormatting.GRAY));
         } else {
-            tooltip.add(Component.translatable(DwarfLangSubProvider.TOOLTIP_DWARVEN_LEXICON_LOCKED)
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_LOCKED)
                     .withStyle(ChatFormatting.GRAY));
         }
 

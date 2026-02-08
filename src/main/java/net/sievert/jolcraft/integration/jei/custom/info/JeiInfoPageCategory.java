@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.client.language.subprovider.JeiLangSubProvider;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -54,7 +54,7 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
 
     @Override
     public Component getTitle() {
-        return Component.translatable(JeiLangSubProvider.JEI_CATEGORY_INFO_PAGE);
+        return Component.translatable(JolCraftLanguageKeys.JEI_CATEGORY_INFO_PAGE);
     }
 
     @Override

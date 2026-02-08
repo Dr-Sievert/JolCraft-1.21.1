@@ -3,8 +3,8 @@ package net.sievert.jolcraft.datagen.client.language.subprovider;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageCategory;
-import net.sievert.jolcraft.datagen.client.language.util.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.language.JolCraftLanguageCategory;
+import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
 
 @OnlyIn(Dist.CLIENT)
 public class StatLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
@@ -14,6 +14,6 @@ public class StatLangSubProvider implements AbstractLanguageProvider.LangSubProv
         p.putManual(stat("structures_discovered"), "Compass Structures Discovered");
     }
 
-    public static String stat(String path)      { return JolCraftLanguageKeys.category(JolCraftLanguageCategory.STAT, path); }
+    public static String stat(String path)      { return AbstractLanguageKeys.category(JolCraftLanguageCategory.STAT, path); }
 
 }

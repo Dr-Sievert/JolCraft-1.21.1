@@ -1,9 +1,5 @@
-package net.sievert.jolcraft.datagen.client.language.util;
+package net.sievert.jolcraft.data.language;
 
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public enum JolCraftLanguageCategory {
 
     BLOCK("block"),
