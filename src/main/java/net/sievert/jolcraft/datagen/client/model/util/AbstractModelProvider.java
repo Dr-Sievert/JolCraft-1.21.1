@@ -2,6 +2,7 @@ package net.sievert.jolcraft.datagen.client.model.util;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.ItemModelOutput;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.Variant;
@@ -12,6 +13,7 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -20,9 +22,16 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class AbstractModelProvider extends ModelProvider {
@@ -31,6 +40,9 @@ public abstract class AbstractModelProvider extends ModelProvider {
         super(output, modId);
     }
 
+    /**
+     * Subprovider contract.
+     */
     public interface ModelSubProvider {
         void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items);
     }
@@ -40,8 +52,144 @@ public abstract class AbstractModelProvider extends ModelProvider {
             @NotNull ItemModelGenerators items,
             @NotNull List<? extends ModelSubProvider> subs
     ) {
-        for (ModelSubProvider sub : subs) {
-            sub.addModels(blocks, items);
+        CountingHooks hooks = CountingHooks.install(blocks, items);
+
+        try {
+            long beforeTotal = hooks.total();
+
+            for (ModelSubProvider sub : subs) {
+                long before = hooks.total();
+
+                sub.addModels(blocks, items);
+
+                long added = hooks.total() - before;
+                String name = sub.getClass().getSimpleName();
+
+                JolCraftLogs.debug(
+                        JolCraftLogTags.DATAGEN,
+                        "Model subprovider {}: +{} outputs",
+                        name,
+                        added
+                );
+
+                if (added == 0) {
+                    JolCraftLogs.warn(
+                            JolCraftLogTags.DATAGEN,
+                            "Model subprovider {} added 0 outputs.",
+                            name
+                    );
+                }
+            }
+
+            long totalAdded = hooks.total() - beforeTotal;
+            JolCraftLogs.debug(
+                    JolCraftLogTags.DATAGEN,
+                    "Total models generated: {} ({} subproviders)",
+                    totalAdded,
+                    subs.size()
+            );
+        } finally {
+            hooks.restore();
+        }
+    }
+
+    private static final class CountingHooks {
+
+        private long count;
+
+        private final List<Restore> restores = new java.util.ArrayList<>();
+
+        static CountingHooks install(BlockModelGenerators blocks, ItemModelGenerators items) {
+            CountingHooks hooks = new CountingHooks();
+            hooks.wrap(blocks);
+            hooks.wrap(items);
+            return hooks;
+        }
+
+        long total() {
+            return count;
+        }
+
+        private void inc() {
+            count++;
+        }
+
+        void restore() {
+            for (int i = restores.size() - 1; i >= 0; i--) {
+                Restore r = restores.get(i);
+                try {
+                    setField(r.instance, r.field, r.original);
+                } catch (Throwable ignored) {
+                }
+            }
+            restores.clear();
+        }
+
+        private void wrap(Object generator) {
+            for (Class<?> c = generator.getClass(); c != null && c != Object.class; c = c.getSuperclass()) {
+                for (Field field : c.getDeclaredFields()) {
+                    wrapField(generator, field);
+                }
+            }
+        }
+
+        private void wrapField(Object target, Field field) {
+            try {
+                field.setAccessible(true);
+                Object original = field.get(target);
+                if (original == null || original instanceof CountingMarker) return;
+
+                Object wrapped = switch (original) {
+                    case Consumer<?> consumer -> new CountingConsumer<>(this, consumer);
+                    case BiConsumer<?, ?> biConsumer -> new CountingBiConsumer<>(this, biConsumer);
+                    case ItemModelOutput itemOut -> new CountingItemModelOutput(this, itemOut);
+                    default -> null;
+                };
+                if (wrapped == null) return;
+
+                restores.add(new Restore(target, field, original));
+                setField(target, field, wrapped);
+            } catch (Throwable ignored) {
+            }
+        }
+
+        private record Restore(Object instance, Field field, Object original) {}
+
+        private interface CountingMarker {}
+
+        private record CountingConsumer<T>(CountingHooks hooks, Consumer<T> delegate)
+                implements Consumer<T>, CountingMarker {
+            @Override public void accept(T t) { hooks.inc(); delegate.accept(t); }
+        }
+
+        private record CountingBiConsumer<A, B>(CountingHooks hooks, BiConsumer<A, B> delegate)
+                implements BiConsumer<A, B>, CountingMarker {
+            @Override public void accept(A a, B b) { hooks.inc(); delegate.accept(a, b); }
+        }
+
+        private record CountingItemModelOutput(CountingHooks hooks, ItemModelOutput delegate)
+                implements ItemModelOutput, CountingMarker {
+            @Override public void accept(@NotNull Item item, ItemModel.@NotNull Unbaked model) {
+                hooks.inc();
+                delegate.accept(item, model);
+            }
+            @Override public void copy(@NotNull Item from, @NotNull Item to) {
+                hooks.inc();
+                delegate.copy(from, to);
+            }
+        }
+
+        private static void setField(Object instance, Field field, Object value) throws Throwable {
+            try {
+                field.set(instance, value);
+                return;
+            } catch (IllegalAccessException ignored) {
+            }
+
+            Class<?> owner = field.getDeclaringClass();
+            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(owner, MethodHandles.lookup());
+            VarHandle handle = lookup.findVarHandle(owner, field.getName(), field.getType());
+            handle.set(instance, value);
         }
     }
 

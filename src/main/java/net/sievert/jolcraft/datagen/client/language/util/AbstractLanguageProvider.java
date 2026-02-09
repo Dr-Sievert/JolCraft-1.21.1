@@ -5,6 +5,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 import java.util.HashSet;
@@ -125,7 +126,7 @@ public abstract class AbstractLanguageProvider extends LanguageProvider {
             String name = sub.getClass().getSimpleName();
 
             JolCraftLogs.debug(
-                    "Datagen",
+                    JolCraftLogTags.DATAGEN,
                     "Lang subprovider {}: +{} keys",
                     name,
                     added
@@ -133,7 +134,7 @@ public abstract class AbstractLanguageProvider extends LanguageProvider {
 
             if (added == 0) {
                 JolCraftLogs.warn(
-                        "Datagen",
+                        JolCraftLogTags.DATAGEN,
                         "Lang subprovider {} added 0 keys.",
                         name
                 );
@@ -142,7 +143,7 @@ public abstract class AbstractLanguageProvider extends LanguageProvider {
 
         int totalAdded = addedKeys.size() - beforeTotal;
         JolCraftLogs.debug(
-                "Datagen",
+                JolCraftLogTags.DATAGEN,
                 "Total language keys generated: {} ({} subproviders)",
                 totalAdded,
                 subs.size()
