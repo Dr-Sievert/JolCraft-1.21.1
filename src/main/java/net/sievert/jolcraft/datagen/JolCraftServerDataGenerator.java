@@ -38,7 +38,7 @@ public final class JolCraftServerDataGenerator {
 
         JolCraftLogs.info(
                 JolCraftLogTags.DATAGEN,
-                "GatherDataEvent.Server: registering server providers."
+                "Registering server providers"
         );
 
         addServerProviders(event.getGenerator(), event.getLookupProvider());

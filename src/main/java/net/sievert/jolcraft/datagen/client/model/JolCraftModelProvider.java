@@ -75,4 +75,9 @@ public final class JolCraftModelProvider extends AbstractModelProvider {
                 .filter(item -> item != JolCraftItems.DWARVEN_BREW.get())
                 .map(Item::builtInRegistryHolder);
     }
+
+    @Override
+    public @NotNull String getName() {
+        return "JolCraft Models";
+    }
 }

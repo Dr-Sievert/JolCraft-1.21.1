@@ -12,6 +12,7 @@ import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -55,5 +56,10 @@ public final class JolCraftGlobalLootModifierProvider extends GlobalLootModifier
                         },
                         lexicon
                 ));
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return "JolCraft Global Loot";
     }
 }

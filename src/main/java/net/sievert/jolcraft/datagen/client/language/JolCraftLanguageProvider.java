@@ -6,6 +6,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.client.language.subprovider.*;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -42,5 +43,10 @@ public final class JolCraftLanguageProvider extends AbstractLanguageProvider {
     @Override
     protected void addTranslations() {
         runAll(subs);
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return "JolCraft Language";
     }
 }

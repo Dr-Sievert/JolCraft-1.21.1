@@ -97,4 +97,8 @@ public final class JolCraftBlockTagProvider extends BlockTagsProvider {
                 .add(JolCraftBlocks.VERDANT_FARMLAND.get());
     }
 
+    @Override
+    public @NotNull String getName() {
+        return "JolCraft Block Tags";
+    }
 }

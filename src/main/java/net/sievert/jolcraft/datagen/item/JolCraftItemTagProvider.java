@@ -409,4 +409,9 @@ public final class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.QUILL_SMALL.get());
 
     }
+
+    @Override
+    public @NotNull String getName() {
+        return "JolCraft Item Tags";
+    }
 }

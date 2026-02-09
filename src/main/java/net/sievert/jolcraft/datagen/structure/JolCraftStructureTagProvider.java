@@ -30,4 +30,9 @@ public final class JolCraftStructureTagProvider extends StructureTagsProvider {
                 .add(BuiltinStructures.ANCIENT_CITY)
                 .add(BuiltinStructures.TRAIL_RUINS);
     }
+
+    @Override
+    public @NotNull String getName() {
+        return "JolCraft Structure Tags";
+    }
 }

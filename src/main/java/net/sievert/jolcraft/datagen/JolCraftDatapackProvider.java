@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
@@ -52,8 +53,8 @@ public final class JolCraftDatapackProvider extends DatapackBuiltinEntriesProvid
 
     public JolCraftDatapackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER, Set.of(JolCraft.MOD_ID));
-        JolCraftLogs.debug(
-                "[Datagen] Registering builtin datapack entries for registries: {}",
+        JolCraftLogs.debug(JolCraftLogTags.DATAGEN,
+                "Registering builtin datapack entries for registries: {}",
                 SPEC.keyListString()
         );
     }

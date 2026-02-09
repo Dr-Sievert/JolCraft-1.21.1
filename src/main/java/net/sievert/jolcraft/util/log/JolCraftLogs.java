@@ -1,15 +1,15 @@
 package net.sievert.jolcraft.util.log;
 
-import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
-
-import java.util.Locale;
+import org.slf4j.LoggerFactory;
 
 public final class JolCraftLogs {
 
     private JolCraftLogs() {}
 
-    public static final Logger LOGGER = LogUtils.getLogger();
+    private static final String LOGGER_NAME = "JOLCRAFT";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LOGGER_NAME);
 
     /* ---------------------------------------------------------------------
      * Debug

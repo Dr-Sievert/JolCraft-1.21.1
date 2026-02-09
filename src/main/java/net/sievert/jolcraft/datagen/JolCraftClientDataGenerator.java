@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.client.atlas.JolCraftAtlasProvider;
-import net.sievert.jolcraft.datagen.client.equipment.JolCraftEquipmentProvider;
+import net.sievert.jolcraft.datagen.client.equipment.JolCraftEquipmentAssetProvider;
 import net.sievert.jolcraft.datagen.client.language.JolCraftLanguageProvider;
 import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -25,14 +25,14 @@ public final class JolCraftClientDataGenerator {
     @SubscribeEvent
     public static void gatherClientData(GatherDataEvent.Client event) {
 
-        JolCraftLogs.info(JolCraftLogTags.DATAGEN, "Client gather: registering client providers.");
+        JolCraftLogs.info(JolCraftLogTags.DATAGEN, "Registering client providers");
 
         addClientProviders(event.getGenerator(), event.getLookupProvider());
 
         JolCraftLogs.debug(JolCraftLogTags.DATAGEN, "Client providers: {}, {}, {}, {}",
                 JolCraftModelProvider.class.getSimpleName(),
                 JolCraftLanguageProvider.class.getSimpleName(),
-                JolCraftEquipmentProvider.class.getSimpleName(),
+                JolCraftEquipmentAssetProvider.class.getSimpleName(),
                 JolCraftAtlasProvider.class.getSimpleName()
         );
 
@@ -44,7 +44,7 @@ public final class JolCraftClientDataGenerator {
 
         generator.addProvider(true, new JolCraftModelProvider(packOutput, lookupProvider));
         generator.addProvider(true, new JolCraftLanguageProvider(packOutput));
-        generator.addProvider(true, new JolCraftEquipmentProvider(packOutput));
+        generator.addProvider(true, new JolCraftEquipmentAssetProvider(packOutput));
         generator.addProvider(true, new JolCraftAtlasProvider(packOutput));
     }
 }

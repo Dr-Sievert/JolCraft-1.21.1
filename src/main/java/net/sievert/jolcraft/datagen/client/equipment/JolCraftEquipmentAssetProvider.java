@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
  * These are required for ArmorMaterial.equipmentAssetKey() to resolve layers.
  */
 @OnlyIn(Dist.CLIENT)
-public final class JolCraftEquipmentProvider implements DataProvider {
+public final class JolCraftEquipmentAssetProvider implements DataProvider {
 
     // ---------------------------------------------------------------------
     // Constants
@@ -45,7 +45,7 @@ public final class JolCraftEquipmentProvider implements DataProvider {
 
     private final PackOutput.PathProvider pathProvider;
 
-    public JolCraftEquipmentProvider(PackOutput packOutput) {
+    public JolCraftEquipmentAssetProvider(PackOutput packOutput) {
         this.pathProvider = packOutput.createPathProvider(PackOutput.Target.RESOURCE_PACK, "equipment");
     }
 

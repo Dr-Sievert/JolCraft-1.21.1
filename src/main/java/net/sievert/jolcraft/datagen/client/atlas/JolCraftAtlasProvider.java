@@ -96,7 +96,7 @@ public final class JolCraftAtlasProvider implements DataProvider {
 
     @Override
     public @NotNull String getName() {
-        return "JolCraft Atlases (minecraft namespace, stable ordered JSON)";
+        return "JolCraft Atlases";
     }
 
     // -------------------------------------------------------------------------
