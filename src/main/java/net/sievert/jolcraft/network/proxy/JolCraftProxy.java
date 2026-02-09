@@ -2,6 +2,8 @@ package net.sievert.jolcraft.network.proxy;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -42,6 +44,12 @@ public final class JolCraftProxy {
         try {
             Class<?> raw = Class.forName(clientImplName, true, JolCraftProxy.class.getClassLoader());
             if (!apiType.isAssignableFrom(raw)) {
+                JolCraftLogs.warn(
+                        JolCraftLogTags.NETWORK,
+                        "Client proxy {} does not implement {}; using server proxy",
+                        clientImplName,
+                        apiType.getName()
+                );
                 return serverFactory.get();
             }
 
@@ -51,7 +59,22 @@ public final class JolCraftProxy {
             Constructor<? extends T> ctor = impl.getDeclaredConstructor();
             ctor.setAccessible(true);
             return ctor.newInstance();
+        } catch (ClassNotFoundException e) {
+            JolCraftLogs.debug(
+                    JolCraftLogTags.NETWORK,
+                    "Client proxy {} not present; using server proxy for {}",
+                    clientImplName,
+                    apiType.getName()
+            );
+            return serverFactory.get();
         } catch (ReflectiveOperationException | LinkageError e) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.NETWORK,
+                    "Failed to instantiate client proxy {}; using server proxy for {}",
+                    clientImplName,
+                    apiType.getName()
+            );
+            JolCraftLogs.error(JolCraftLogTags.NETWORK, "Proxy instantiation failure details", e);
             return serverFactory.get();
         }
     }

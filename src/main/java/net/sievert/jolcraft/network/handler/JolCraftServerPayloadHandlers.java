@@ -13,6 +13,8 @@ import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 
 import java.util.HashMap;
@@ -62,12 +64,28 @@ public final class JolCraftServerPayloadHandlers {
             var player = context.player();
             if (!(player instanceof ServerPlayer sp)) return;
 
-            if (!(sp.containerMenu instanceof DwarfMerchantMenu menu)) return;
+            if (!(sp.containerMenu instanceof DwarfMerchantMenu menu)){
+                JolCraftLogs.debug(
+                        JolCraftLogTags.NETWORK,
+                        "Ignored dwarf trade select (wrong menu: {} player={})",
+                        player.containerMenu.getClass().getSimpleName(),
+                        player.getGameProfile().getName()
+                );
+
+                return;
+            }
 
             int selected = packet.item();
 
             var offers = menu.getOffers();
-            if (selected < 0 || selected >= offers.size()) return;
+            if (selected < 0 || selected >= offers.size()){
+                JolCraftLogs.debug(
+                        JolCraftLogTags.NETWORK,
+                        "Rejected dwarf trade select (idx={} offers={} player={})",
+                        selected, offers.size(), player.getGameProfile().getName()
+                );
+                return;
+            }
 
             if (!menu.stillValid(sp)) return;
 
@@ -89,12 +107,29 @@ public final class JolCraftServerPayloadHandlers {
             if (!(player instanceof ServerPlayer sp)) return;
 
             ResourceLocation soundId = packet.soundId();
-            if (!JolCraft.MOD_ID.equals(soundId.getNamespace())) return;
+            if (!JolCraft.MOD_ID.equals(soundId.getNamespace())){
+                JolCraftLogs.warn(
+                        JolCraftLogTags.NETWORK,
+                        "Rejected sound packet (non-mod namespace: {}) from {}",
+                        soundId,
+                        player.getGameProfile().getName()
+                );
+
+                return;
+            }
 
             var level = sp.serverLevel();
 
             long tick = level.getGameTime();
-            if (SOUND_LIMITER.isRateLimited(sp, tick, MAX_SOUND_PACKETS_PER_TICK)) return;
+            if (SOUND_LIMITER.isRateLimited(sp, tick, MAX_SOUND_PACKETS_PER_TICK)){
+                JolCraftLogs.debug(
+                        JolCraftLogTags.NETWORK,
+                        "Rate-limited sound packet from {}",
+                        player.getGameProfile().getName()
+                );
+
+                return;
+            }
 
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;
@@ -130,13 +165,26 @@ public final class JolCraftServerPayloadHandlers {
             var level = sp.serverLevel();
 
             long tick = level.getGameTime();
-            if (PARTICLE_LIMITER.isRateLimited(sp, tick, MAX_PARTICLE_PACKETS_PER_TICK)) return;
+            if (PARTICLE_LIMITER.isRateLimited(sp, tick, MAX_PARTICLE_PACKETS_PER_TICK)){
+                JolCraftLogs.debug(
+                        JolCraftLogTags.NETWORK,
+                        "Rate-limited particle packet from {}",
+                        player.getGameProfile().getName()
+                );
+
+                return;
+            }
 
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;
 
             boolean overrideLimiter = packet.overrideLimiter();
             if (overrideLimiter && !sp.hasPermissions(2)) {
+                JolCraftLogs.warn(
+                        JolCraftLogTags.NETWORK,
+                        "Rejected particle overrideLimiter from {}",
+                        sp.getGameProfile().getName()
+                );
                 overrideLimiter = false;
             }
 

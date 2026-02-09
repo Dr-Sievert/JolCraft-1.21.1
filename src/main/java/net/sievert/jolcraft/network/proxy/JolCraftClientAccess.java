@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 public interface JolCraftClientAccess {
 
+    @SuppressWarnings("unused")
     <T> T getAttachment(AttachmentType<T> type, Player player);
 
     boolean isAltDown();

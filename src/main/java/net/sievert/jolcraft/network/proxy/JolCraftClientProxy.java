@@ -19,6 +19,8 @@ import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationI
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.network.data.client.ClientDeliriumData;
 import net.sievert.jolcraft.network.packet.s2c.*;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused"})
@@ -68,8 +71,19 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
             dwarfMenu.setShowProgressBar(packet.showProgress());
             dwarfMenu.setshowLevel(packet.showLevel());
             dwarfMenu.setCanRestock(packet.canRestock());
+            dwarfMenu.setCanRestock(packet.canRestock());
+            return;
         }
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.NETWORK,
+                "Ignored dwarf offers packet (packetContainerId={} currentContainerId={} menu={})",
+                packet.containerId(),
+                menu.containerId,
+                menu.getClass().getSimpleName()
+        );
     }
+
 
     @Override
     public void apply(ClientboundLoreUnlocksPacket packet) {
@@ -77,6 +91,8 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
         if (player == null) return;
 
         DwarfLoreUnlock unlock = player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
+
+        AtomicInteger invalid = new AtomicInteger();
 
         Set<DwarfLoreKey> snapshot =
                 (packet.unlocks() == null) ? Set.of() :
@@ -90,11 +106,23 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
                                         return null;
                                     }
                                 })
-                                .filter(java.util.Objects::nonNull)
-                                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+                                .filter(k -> {
+                                    if (k == null) invalid.getAndIncrement();
+                                    return k != null;
+                                })
+                                .collect(Collectors.toUnmodifiableSet());
+
+        if (invalid.get() > 0) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.NETWORK,
+                    "Lore unlock sync had {} invalid key(s) (ignored)",
+                    invalid
+            );
+        }
 
         unlock.setUnlocks(snapshot);
     }
+
 
     @Override
     public void apply(ClientboundDeliriumPacket packet) {

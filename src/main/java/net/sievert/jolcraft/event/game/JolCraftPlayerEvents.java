@@ -172,8 +172,8 @@ public final class JolCraftPlayerEvents {
             boolean canPlant = onLog || onSoil;
 
             if (canPlant && serverLevel.getBlockState(above).isAir()) {
-                JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                        "RightClickBlock: planting festerling player={} pos={} on={} face={} item={}",
+                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                        "Planting festerling. player={} pos={} on={} face={} item={}",
                         player.getUUID(),
                         above,
                         state.getBlock().builtInRegistryHolder().key().location(),
@@ -204,8 +204,8 @@ public final class JolCraftPlayerEvents {
 
             if (!hasRecipe) return;
 
-            JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                    "RightClickBlock: converting water_cauldron -> fermenting_cauldron player={} pos={} item={}",
+            JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                    "Converting water cauldron -> fermenting cauldron player={} pos={} item={}",
                     player.getUUID(),
                     pos,
                     used.getItem().builtInRegistryHolder().key().location());
@@ -219,8 +219,8 @@ public final class JolCraftPlayerEvents {
             if (serverLevel.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity be) {
                 InteractionResult result = be.handleInteraction(player, event.getHand(), used);
 
-                JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                        "RightClickBlock: fermenting_cauldron interaction handled player={} pos={} result={}",
+                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                        "Fermenting cauldron interaction handled player={} pos={} result={}",
                         player.getUUID(), pos, result);
 
                 event.setCancellationResult(result);
@@ -229,8 +229,8 @@ public final class JolCraftPlayerEvents {
             }
 
             // Should not happen: block set but BE missing -> revert and warn.
-            JolCraftLogs.warn(JolCraftLogTags.EVENT,
-                    "RightClickBlock: fermenting_cauldron conversion failed (missing BE) reverting player={} pos={}",
+            JolCraftLogs.warn(JolCraftLogTags.PLAYER,
+                    "Fermenting cauldron conversion failed (missing BE) reverting player={} pos={}",
                     player.getUUID(), pos);
 
             serverLevel.setBlock(pos, state, 3);

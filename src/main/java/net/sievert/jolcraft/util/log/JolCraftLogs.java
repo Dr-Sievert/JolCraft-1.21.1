@@ -72,4 +72,16 @@ public final class JolCraftLogs {
     private static String prefix(String tag, String message) {
         return "[" + tag + "] " + message;
     }
+
+    /* ---------------------------------------------------------------------
+     * Formatting helpers
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Formats a fractional value (e.g. 0.15) as a percentage with 1 decimal (e.g. 15.0).
+     * Intended for logging only.
+     */
+    public static double pct1(double value) {
+        return Math.round(value * 1000.0D) / 10.0D;
+    }
 }

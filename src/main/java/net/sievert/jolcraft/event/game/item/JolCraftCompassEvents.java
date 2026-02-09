@@ -30,6 +30,8 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructures;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -152,6 +154,16 @@ public final class JolCraftCompassEvents {
 
         result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET, targetPos);
 
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Dial combine success: player={}, group={}, structure={}, targetDim={}, targetPos={}",
+                player.getUUID(),
+                group,
+                foundStructureFullId,
+                targetPos.dimension().location(),
+                targetPos.pos()
+        );
+
         dial.shrink(1);
         empty.shrink(1);
 
@@ -256,6 +268,15 @@ public final class JolCraftCompassEvents {
                         .withStyle(ChatFormatting.GRAY)
                         .append(Component.translatable(JolCraftLanguageKeys.tooltipStructure(trackedStructureId)).withStyle(ChatFormatting.BLUE)),
                 true
+        );
+
+        JolCraftLogs.info(
+                JolCraftLogTags.PLAYER,
+                "Structure discovered: player={}, structure={}, entrance={}, dimension={}",
+                player.getUUID(),
+                trackedStructureKey,
+                entrancePos.pos(),
+                entrancePos.dimension().location()
         );
 
         JolCraftSoundHelper.player(player, SoundEvents.ITEM_BREAK, 1.0F, 1.5F);

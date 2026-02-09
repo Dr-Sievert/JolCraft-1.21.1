@@ -155,16 +155,26 @@ public final class JolCraftAttributeEvents {
     }
 
     private static void refreshAshfangAttribute(ServerPlayer player) {
-        AttributeInstance vanillaAttackDamage = player.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (vanillaAttackDamage == null) return;
-        vanillaAttackDamage.removeModifier(ASHFANG_ID);
+        AttributeInstance attackDamage = player.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (attackDamage == null) return;
+
+        attackDamage.removeModifier(ASHFANG_ID);
+
         double boost = player.getAttributeValue(JolCraftAttributes.ATTACK_DAMAGE_INCREASE);
         if (boost <= 0.0D) return;
-        vanillaAttackDamage.addTransientModifier(new AttributeModifier(
+
+        attackDamage.addTransientModifier(new AttributeModifier(
                 ASHFANG_ID,
                 boost,
                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
         ));
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Ashfang Attack Damage Increase applied: player={}, increase={}%",
+                player.getUUID(),
+                JolCraftLogs.pct1(boost)
+        );
     }
 
     private static void refreshIronheartAttribute(ServerPlayer player) {
@@ -189,6 +199,15 @@ public final class JolCraftAttributeEvents {
         armor.addTransientModifier(new AttributeModifier(
                 IRONHEART_ID, bonus, AttributeModifier.Operation.ADD_VALUE
         ));
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Ironheart Armor Increase applied: player={}, baseArmor={}, increase={}%, bonusArmor={}",
+                player.getUUID(),
+                baseArmor,
+                JolCraftLogs.pct1(percent),
+                bonus
+        );
     }
 
 
@@ -234,7 +253,7 @@ public final class JolCraftAttributeEvents {
     }
 
     private static void trackFrostvein(ServerPlayer player, AttributesAttachment attrs) {
-        double resist = player.getAttributeValue(JolCraftAttributes.SLOW_RESISTANCE);
+        double resist = Mth.clamp(player.getAttributeValue(JolCraftAttributes.SLOW_RESISTANCE), 0.0D, 1.0D);
         int amp = getSlownessAmp(player);
 
         if (resist <= 0.0D && amp < 0) {
@@ -245,6 +264,18 @@ public final class JolCraftAttributeEvents {
         Integer prev = LAST_SLOWNESS_AMP.put(player.getUUID(), amp);
         if (prev == null || prev != amp) {
             attrs.markDirty(AttributesAttachment.RefreshKey.FROSTVEIN);
+
+            double originalSlow = (amp >= 0) ? (0.15D * (amp + 1)) : 0.0D;
+            double actualSlow = originalSlow * (1.0D - resist);
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.PLAYER,
+                    "Slow Resist updated: player={}, originalSlow={}%, slowResist={}%, actualSlow={}%",
+                    player.getUUID(),
+                    JolCraftLogs.pct1(originalSlow),
+                    JolCraftLogs.pct1(resist),
+                    JolCraftLogs.pct1(actualSlow)
+            );
         }
     }
 
@@ -285,6 +316,14 @@ public final class JolCraftAttributeEvents {
                 boost,
                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
         ));
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Time-based speed applied: player={}, modifier={}, boost={}%",
+                player.getUUID(),
+                modifierId,
+                JolCraftLogs.pct1(boost)
+        );
     }
 
     private static final Map<ResourceKey<Level>, Boolean> LAST_IS_DAY = new HashMap<>();
@@ -310,13 +349,25 @@ public final class JolCraftAttributeEvents {
     public static void onXpChange(PlayerXpEvent.XpChange event) {
         Player player = event.getEntity();
         double boost = player.getAttributeValue(JolCraftAttributes.XP_BOOST);
-        if (boost > 0) {
-            int baseAmount = event.getAmount();
-            double raw = baseAmount * boost;
-            int bonus = (int) raw;
-            if (player.getRandom().nextDouble() < (raw - bonus)) bonus++;
-            event.setAmount(baseAmount + bonus);
-        }
+        if (boost <= 0.0) return;
+
+        int baseAmount = event.getAmount();
+        double raw = baseAmount * boost;
+        int bonus = (int) raw;
+        if (player.getRandom().nextDouble() < (raw - bonus)) bonus++;
+
+        if (bonus <= 0) return;
+
+        event.setAmount(baseAmount + bonus);
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "XP boosted: player={}, base={}, bonus={}, boost={}%",
+                player.getUUID(),
+                baseAmount,
+                bonus,
+                JolCraftLogs.pct1(boost)
+        );
     }
 
     public static final Map<UUID, RadiantEntity> ACTIVE_RADIANT_ENTITIES = new HashMap<>();
@@ -347,15 +398,15 @@ public final class JolCraftAttributeEvents {
 
         if (existing != null) {
             if (existing.isRemoved()) {
-                JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                        "PlayerTickEvent: clearing radiant (removed) for player {} in {}",
+                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                        "Clearing radiant (removed) for player {} in {}",
                         uuid, level.dimension().location());
 
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
                 existing = null;
             } else if (existing.level() != level) {
-                JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                        "PlayerTickEvent: clearing radiant (dimension change) for player {} old={} new={}",
+                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                        "Clearing radiant (dimension change) for player {} old={} new={}",
                         uuid, existing.level().dimension().location(), level.dimension().location());
 
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
@@ -367,8 +418,8 @@ public final class JolCraftAttributeEvents {
         // If player has no radiant, drop ownership. Entity self-discards when owner is missing.
         if (!hasRadiant) {
             if (existing != null) {
-                JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                        "PlayerTickEvent: dropping radiant ownership for player {} (radiant={})",
+                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                        "Dropping radiant ownership for player {} (radiant={})",
                         uuid, radiant);
 
                 existing.setOwner(null);
@@ -388,15 +439,15 @@ public final class JolCraftAttributeEvents {
             }
 
             if (found != null) {
-                JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                        "PlayerTickEvent: recovered untracked radiant for player {} in {}",
+                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                        "Recovered untracked radiant for player {} in {}",
                         uuid, level.dimension().location());
 
                 existing = found;
                 ACTIVE_RADIANT_ENTITIES.put(uuid, existing);
             } else {
-                JolCraftLogs.debug(JolCraftLogTags.EVENT,
-                        "PlayerTickEvent: creating radiant for player {} (lightLevel={}, pieces={}, dim={})",
+                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                        "Creating radiant for player {} (lightLevel={}, pieces={}, dim={})",
                         uuid, lightLevel, pieces, level.dimension().location());
 
                 RadiantEntity created = new RadiantEntity(JolCraftEntities.RADIANT.get(), level);
@@ -406,8 +457,8 @@ public final class JolCraftAttributeEvents {
                 created.setRadiantLightLevel(lightLevel);
 
                 if (!level.addFreshEntity(created)) {
-                    JolCraftLogs.warn(JolCraftLogTags.EVENT,
-                            "PlayerTickEvent: failed to add radiant entity for player {} in {}",
+                    JolCraftLogs.warn(JolCraftLogTags.PLAYER,
+                            "Failed to add radiant entity for player {} in {}",
                             uuid, level.dimension().location());
                     return;
                 }
@@ -488,22 +539,50 @@ public final class JolCraftAttributeEvents {
         if (!livingAttacker.getType().is(EntityTypeTags.UNDEAD)) return;
 
         MobEffectInstance effect = player.getEffect(JolCraftEffects.RADIANT);
-        int amplifier = effect != null ? effect.getAmplifier() : 0;
+        int level = effect != null ? effect.getAmplifier() + 1 : 1;
 
-        float reductionFactor = 1.0f - (0.05f * (amplifier + 1));
-        float newDamage = event.getOriginalDamage() * reductionFactor;
-        event.setNewDamage(newDamage);
+        float original = event.getOriginalDamage();
+
+        double reductionPct = 0.05D * level; // 5% per level
+        double reductionFactor = 1.0D - reductionPct;
+        float finalDamage = (float) (original * reductionFactor);
+
+        if (finalDamage >= original) return;
+
+        event.setNewDamage(finalDamage);
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Radiant vs Undead: player={}, originalDmg={}, effect=Radiant {}, reduction={}%, finalDmg={}",
+                player.getUUID(),
+                original,
+                level,
+                JolCraftLogs.pct1(reductionPct),
+                finalDamage
+        );
     }
 
     @SubscribeEvent
     public static void onArmorHurt(ArmorHurtEvent event) {
         LivingEntity entity = event.getEntity();
         if (!(entity instanceof Player player)) return;
-        double unbreakingChance = Mth.clamp(player.getAttributeValue(JolCraftAttributes.ARMOR_UNBREAKING), 0.0, 1.0);
+
+        double unbreakingChance = Mth.clamp(
+                player.getAttributeValue(JolCraftAttributes.ARMOR_UNBREAKING),
+                0.0,
+                1.0
+        );
         if (unbreakingChance <= 0.0) return;
 
         if (player.getRandom().nextDouble() < unbreakingChance) {
             event.setCanceled(true);
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.PLAYER,
+                    "Armor damage prevented: player={}, chance={}",
+                    player.getUUID(),
+                    JolCraftLogs.pct1(unbreakingChance)
+            );
         }
     }
 
@@ -535,7 +614,7 @@ public final class JolCraftAttributeEvents {
         Player player = event.getEntity();
         if (!(player.level() instanceof ServerLevel serverLevel)) return;
 
-        PendingChestLoot pending = CHEST_LOOT_TO_REROLL.remove(player.getUUID());
+        PendingChestLoot pending = CHEST_LOOT_TO_REROLL.get(player.getUUID());
         if (pending == null) return;
 
         if (pending.dim() != serverLevel.dimension()) {
@@ -553,11 +632,11 @@ public final class JolCraftAttributeEvents {
             if (!lootable.getBlockPos().equals(pending.pos())) continue;
 
             if (lootable.getLootTable() == null) {
-                CHEST_LOOT_TO_REROLL.remove(player.getUUID());
-
                 double chance = player.getAttributeValue(JolCraftAttributes.EXTRA_CHEST_LOOT);
                 MinecraftServer server = serverLevel.getServer();
                 LootTable table = server.reloadableRegistries().getLootTable(pending.table());
+
+                int addedCount = 0;
 
                 for (int i = 0; i < lootable.getContainerSize(); ++i) {
                     if (!lootable.getItem(i).isEmpty()) continue;
@@ -571,10 +650,22 @@ public final class JolCraftAttributeEvents {
                     for (ItemStack rolled : table.getRandomItems(params)) {
                         if (!rolled.isEmpty()) {
                             lootable.setItem(i, rolled.copy());
+                            addedCount++;
                             break;
                         }
                     }
                 }
+
+                JolCraftLogs.debug(
+                        JolCraftLogTags.PLAYER,
+                        "Chest loot added: player={}, chestPos={}, chance={}%, addedCount={}",
+                        player.getUUID(),
+                        pending.pos(),
+                        JolCraftLogs.pct1(chance),
+                        addedCount
+                );
+
+                CHEST_LOOT_TO_REROLL.remove(player.getUUID());
             }
 
             return;
@@ -588,6 +679,7 @@ public final class JolCraftAttributeEvents {
         CHEST_LOOT_TO_REROLL.remove(player.getUUID());
     }
 
+    @SuppressWarnings("deprecation")
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
@@ -603,12 +695,29 @@ public final class JolCraftAttributeEvents {
 
         List<ItemStack> drops = Block.getDrops(state, level, pos, null, player, player.getMainHandItem());
 
+        int extraCount = 0;
+        Set<ResourceLocation> extraItems = new HashSet<>();
+
         for (ItemStack stack : drops) {
             if (!isEligibleCropDrop(stack)) continue;
 
             if (level.random.nextDouble() < chance) {
                 Block.popResource(level, pos, stack.copyWithCount(1));
+                extraCount++;
+                stack.getItem().builtInRegistryHolder().unwrapKey().ifPresent(key -> extraItems.add(key.location()));
             }
+        }
+
+        if (extraCount > 0) {
+            JolCraftLogs.debug(
+                    JolCraftLogTags.PLAYER,
+                    "Extra crop drop: player={}, pos={}, chance={}%, count={}, items={}",
+                    player.getUUID(),
+                    pos,
+                    JolCraftLogs.pct1(chance),
+                    extraCount,
+                    extraItems
+            );
         }
     }
 
@@ -652,6 +761,17 @@ public final class JolCraftAttributeEvents {
 
         float original = event.getOriginalDamage();
         float reduced = (float) (original * (1.0 - resist));
+        if (reduced >= original) return;
+
         event.setNewDamage(reduced);
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Magic damage reduced: player={}, original={}, resist={}%, final={}",
+                player.getUUID(),
+                original,
+                JolCraftLogs.pct1(resist),
+                reduced
+        );
     }
 }

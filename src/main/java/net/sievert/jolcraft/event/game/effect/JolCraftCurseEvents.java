@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.event.game.effect;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -11,6 +12,8 @@ import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -60,6 +63,19 @@ public final class JolCraftCurseEvents {
 
         if (CURSE_EFFECTS.stream().anyMatch(curse -> event.getEffect().is(curse))) {
             PlaySound.curse(player);
+
+            ResourceLocation effectId = event.getEffect()
+                    .unwrapKey()
+                    .map(key -> key.location())
+                    .orElse(null);
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.PLAYER,
+                    "Blocked effect removal: entity={}, effect={}",
+                    player.getUUID(),
+                    effectId
+            );
+
             event.setCanceled(true);
         }
     }

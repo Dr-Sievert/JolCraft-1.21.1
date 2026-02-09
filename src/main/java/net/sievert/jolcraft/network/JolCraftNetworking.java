@@ -16,7 +16,6 @@ import net.sievert.jolcraft.network.packet.s2c.*;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.JolCraft;
-import org.slf4j.Logger;
 
 public final class JolCraftNetworking {
 
@@ -24,6 +23,8 @@ public final class JolCraftNetworking {
 
     public static void register(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar(JolCraft.MOD_ID).versioned(PROTOCOL);
+
+        JolCraftLogs.info(JolCraftLogTags.INIT, "Registering JolCraft networking payloads");
 
         registrar
                 .playToServer(ServerboundDwarfSelectTradePacket.TYPE, ServerboundDwarfSelectTradePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundDwarfSelectTrade)
@@ -39,7 +40,7 @@ public final class JolCraftNetworking {
                 .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)
                 .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers);
         JolCraftLogs.info(
-                JolCraftLogTags.NETWORK,
+                JolCraftLogTags.INIT,
                 "Registered networking payloads (protocol version {})",
                 PROTOCOL
         );

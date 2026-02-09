@@ -24,6 +24,8 @@ import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -110,6 +112,9 @@ public final class JolCraftEntityEvents {
 
                 boolean needsRestock = villager.getOffers().stream().anyMatch(MerchantOffer::isOutOfStock);
 
+                boolean applied = false;
+                boolean consumed = false;
+
                 if (!needsRestock) {
                     player.displayClientMessage(
                             Component.translatable(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.GRAY),
@@ -130,10 +135,28 @@ public final class JolCraftEntityEvents {
 
                     // Apply cooldown BEFORE shrinking (stack may become empty)
                     player.getCooldowns().addCooldown(cooldownStack, 60);
-                    if (!player.isCreative()) stack.shrink(1);
+                    if (!player.isCreative()) {
+                        stack.shrink(1);
+                        consumed = true;
+                    }
+
+                    applied = true;
                 }
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
+
+                if (applied) {
+                    JolCraftLogs.debug(
+                            JolCraftLogTags.ENTITY,
+                            "Crate applied: player={}, target={}, crate={}, creative={}, consumed={}",
+                            player.getUUID(),
+                            "Villager",
+                            "restock",
+                            player.isCreative(),
+                            consumed
+                    );
+                }
+
                 event.setCanceled(true);
                 return;
             }
@@ -186,11 +209,27 @@ public final class JolCraftEntityEvents {
                         true
                 );
 
+                boolean consumed = false;
+
                 // Apply cooldown BEFORE shrinking (stack may become empty)
                 player.getCooldowns().addCooldown(cooldownStack, 60);
-                if (!player.isCreative()) stack.shrink(1);
+                if (!player.isCreative()) {
+                    stack.shrink(1);
+                    consumed = true;
+                }
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
+
+                JolCraftLogs.debug(
+                        JolCraftLogTags.ENTITY,
+                        "Crate applied: player={}, target={}, crate={}, creative={}, consumed={}",
+                        player.getUUID(),
+                        "Villager",
+                        "reroll",
+                        player.isCreative(),
+                        consumed
+                );
+
                 event.setCanceled(true);
                 return;
             }
@@ -225,6 +264,9 @@ public final class JolCraftEntityEvents {
 
                 boolean needsRestock = trader.getOffers().stream().anyMatch(MerchantOffer::isOutOfStock);
 
+                boolean applied = false;
+                boolean consumed = false;
+
                 if (!needsRestock) {
                     player.displayClientMessage(
                             Component.translatable(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.GRAY),
@@ -247,10 +289,28 @@ public final class JolCraftEntityEvents {
 
                     // Apply cooldown BEFORE shrinking (stack may become empty)
                     player.getCooldowns().addCooldown(cooldownStack, 60);
-                    if (!player.isCreative()) stack.shrink(1);
+                    if (!player.isCreative()) {
+                        stack.shrink(1);
+                        consumed = true;
+                    }
+
+                    applied = true;
                 }
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
+
+                if (applied) {
+                    JolCraftLogs.debug(
+                            JolCraftLogTags.ENTITY,
+                            "Crate applied: player={}, target={}, crate={}, creative={}, consumed={}",
+                            player.getUUID(),
+                            "WanderingTrader",
+                            "restock",
+                            player.isCreative(),
+                            consumed
+                    );
+                }
+
                 event.setCanceled(true);
                 return;
             }
@@ -312,10 +372,26 @@ public final class JolCraftEntityEvents {
                         true
                 );
 
+                boolean consumed = false;
+
                 player.getCooldowns().addCooldown(cooldownStack, 60);
-                if (!player.isCreative()) stack.shrink(1);
+                if (!player.isCreative()) {
+                    stack.shrink(1);
+                    consumed = true;
+                }
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
+
+                JolCraftLogs.debug(
+                        JolCraftLogTags.ENTITY,
+                        "Crate applied: player={}, target={}, crate={}, creative={}, consumed={}",
+                        player.getUUID(),
+                        "WanderingTrader",
+                        "reroll",
+                        player.isCreative(),
+                        consumed
+                );
+
                 event.setCanceled(true);
             }
         }
