@@ -55,7 +55,6 @@ public final class DwarfLoreUnlockHelper {
         DwarfLoreUnlock unlock = serverPlayer.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
         if (!unlock.addUnlockIfAbsent(key)) return;
 
-        // Packet transports a snapshot only; attachment remains the single source of truth
         JolCraftNetworking.sendToClient(
                 serverPlayer,
                 new ClientboundLoreUnlocksPacket(

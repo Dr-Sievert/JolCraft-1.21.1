@@ -1,26 +1,23 @@
 package net.sievert.jolcraft.integration.jei.custom.info;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
+import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class JeiInfoPageHelper {
 
+    private JeiInfoPageHelper() {}
+
     public static List<JeiInfoPageRecipe> getAllInfoPages() {
 
-        //Compass group
+        // Compass group
         ItemStack compassEmpty = JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get().getDefaultInstance();
 
         ItemStack compassDial = JolCraftItems.DEEPSLATE_COMPASS_DIAL.get().getDefaultInstance();
@@ -73,13 +70,4 @@ public final class JeiInfoPageHelper {
                 )
         );
     }
-
-    public static List<ItemStack> getAllStacksForTag(TagKey<Item> tag) {
-        List<ItemStack> stacks = new ArrayList<>();
-        for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(tag)) {
-            stacks.add(new ItemStack(holder.value()));
-        }
-        return stacks;
-    }
-
 }

@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -160,6 +159,7 @@ public class BountyGenerator {
     }
 
     /** Main and only method for generating bounty data. */
+    @SuppressWarnings("deprecation")
     public static BountyData generate(ItemStack stack, RandomSource random) {
         BountyType type = BountyHelper.getBountyType(stack);
         BountyTier tier = BountyHelper.getBountyTier(stack);
@@ -173,7 +173,7 @@ public class BountyGenerator {
         int count = entry.count().applyAsInt(random);
 
         return new BountyData(
-                BuiltInRegistries.ITEM.getKey(entry.item()),
+                entry.item().builtInRegistryHolder().key().location(),
                 count,
                 tier.getValue(),
                 type.getId()

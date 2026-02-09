@@ -5,7 +5,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
@@ -28,17 +30,19 @@ import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.worldgen.predicate.JolCraftBlockPredicateTypes;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
-import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
 
 @Mod(JolCraft.MOD_ID)
 public class JolCraft {
 
     public static final String MOD_ID = "jolcraft";
 
-    public static final Logger LOGGER = LogUtils.getLogger();
-
     public JolCraft(IEventBus modEventBus, ModContainer modContainer) {
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Initializing JolCraft {}",
+                modContainer.getModInfo().getVersion()
+        );
 
         // --- Registry & system setup ---
         JolCraftBlocks.register(modEventBus);
@@ -61,6 +65,11 @@ public class JolCraft {
         JolCraftAttributes.register(modEventBus);
         JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);
 
+        JolCraftLogs.debug(
+                JolCraftLogTags.INIT,
+                "Registered content and listeners"
+        );
+
         // --- Events ---
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(JolCraftNetworking::register);
@@ -68,9 +77,16 @@ public class JolCraft {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(JolCraftStats::initializeStats);
-        DwarfInteractions.registerAll();
-        DwarfLoadouts.bootstrap();
+        event.enqueueWork(() -> {
+            JolCraftStats.initializeStats();
+            DwarfInteractions.registerAll();
+            DwarfLoadouts.bootstrap();
+
+            JolCraftLogs.info(
+                    JolCraftLogTags.INIT,
+                    "Common setup complete"
+            );
+        });
     }
 
     // --- Utility for ResourceLocation under this modid ---

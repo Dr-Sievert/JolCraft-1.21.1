@@ -2,7 +2,6 @@ package net.sievert.jolcraft.datagen.recipe.builder;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceKey;
@@ -86,13 +85,4 @@ public class JolCraftRecipeBuilder implements RecipeBuilder {
         ResourceKey<Recipe<?>> fixedKey = ResourceKey.create(Registries.RECIPE, fixedLoc);
         inner.save(output, fixedKey);
     }
-
-    @Override
-    public void save(RecipeOutput output) {
-        ResourceLocation defaultLoc = BuiltInRegistries.ITEM.getKey(inner.getResult());
-        ResourceLocation fixedLoc = JolCraft.location(defaultLoc.getPath());
-        ResourceKey<Recipe<?>> fixedKey = ResourceKey.create(Registries.RECIPE, fixedLoc);
-        inner.save(output, fixedKey);
-    }
-
 }

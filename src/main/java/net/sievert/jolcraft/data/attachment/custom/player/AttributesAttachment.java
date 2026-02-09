@@ -2,7 +2,7 @@ package net.sievert.jolcraft.data.attachment.custom.player;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -54,8 +54,11 @@ public final class AttributesAttachment {
         EnumSet<RefreshKey> out = EnumSet.noneOf(RefreshKey.class);
 
         mods.forEach(slot, (attrHolder, modifier) -> {
-            ResourceLocation key = BuiltInRegistries.ATTRIBUTE.getKey(attrHolder.value());
+            ResourceLocation key = attrHolder.unwrapKey()
+                    .map(ResourceKey::location)
+                    .orElse(null);
             if (key == null) return;
+
             if (!JolCraft.MOD_ID.equals(key.getNamespace())) return;
 
             EnumSet<RefreshKey> mapped = ATTRIBUTE_TO_REFRESH.get(key);

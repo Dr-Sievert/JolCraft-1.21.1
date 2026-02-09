@@ -1,12 +1,10 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.SmithingTrimRecipeBuilder;
 import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -21,8 +19,8 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
 
+@SuppressWarnings("deprecation")
 public final class TrimRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
 
     private static final String FOLDER = "trim";
@@ -63,7 +61,7 @@ public final class TrimRecipesSubProvider implements AbstractRecipeProvider.Reci
             ItemLike materialB
     ) {
         ItemLike templateLike = () -> template;
-        String idPath = BuiltInRegistries.ITEM.getKey(template).getPath();
+        String idPath = template.builtInRegistryHolder().key().location().getPath();
 
         p.modShaped(RecipeCategory.MISC, template, 2)
                 .pattern("BXB")
@@ -108,22 +106,25 @@ public final class TrimRecipesSubProvider implements AbstractRecipeProvider.Reci
     }
 
     private static ResourceKey<Recipe<?>> trimRecipeKey(AbstractRecipeProvider p, Item template) {
-        String templatePath = BuiltInRegistries.ITEM.getKey(template).getPath();
+        String templatePath = template.builtInRegistryHolder().key().location().getPath();
         return recipeKey(p, templatePath + "_smithing_trim");
     }
 
     private static ResourceKey<Recipe<?>> bonusTrimRecipeKey(AbstractRecipeProvider p, Item template) {
-        String templatePath = BuiltInRegistries.ITEM.getKey(template).getPath();
+        String templatePath = template.builtInRegistryHolder().key().location().getPath();
         return recipeKey(p, "bonus_" + templatePath + "_smithing_trim");
     }
 
     private static List<Item> jolcraftTrimTemplates() {
-        return StreamSupport.stream(BuiltInRegistries.ITEM.spliterator(), false)
-                .filter(item -> {
-                    ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
-                    return id.getNamespace().equals(JolCraft.MOD_ID)
-                            && id.getPath().endsWith(TRIM_TEMPLATE_SUFFIX);
-                })
+        return JolCraftItems.ITEMS.getEntries().stream()
+                .map(h -> (Item) h.get())
+                .filter(item ->
+                        item.builtInRegistryHolder()
+                                .key()
+                                .location()
+                                .getPath()
+                                .endsWith(TRIM_TEMPLATE_SUFFIX)
+                )
                 .toList();
     }
 }

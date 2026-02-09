@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.client.language.subprovider;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
@@ -19,9 +18,9 @@ public final class EntityLangSubProvider implements AbstractLanguageProvider.Lan
 
         for (DeferredHolder<?, ?> holder : JolCraftEntities.ENTITY_TYPES.getEntries()) {
             Object value = holder.get();
-            if (!(value instanceof EntityType<?> type)) continue;
+            if (!(value instanceof EntityType<?>)) continue;
 
-            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+            ResourceLocation id = holder.getId();
 
             String key = JolCraftLanguageKeys.category(JolCraftLanguageCategory.ENTITY, id.getPath());
             if (p.hasKey(key)) continue;

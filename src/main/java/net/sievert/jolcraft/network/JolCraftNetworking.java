@@ -7,18 +7,23 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.network.handler.JolCraftClientPayloadHandlers;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 import net.sievert.jolcraft.network.packet.s2c.*;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.JolCraft;
+import org.slf4j.Logger;
 
 public final class JolCraftNetworking {
 
+    public static final String PROTOCOL = "1.0";
+
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar(JolCraft.MOD_ID).versioned("1.0");
+        var registrar = event.registrar(JolCraft.MOD_ID).versioned(PROTOCOL);
 
         registrar
                 .playToServer(ServerboundDwarfSelectTradePacket.TYPE, ServerboundDwarfSelectTradePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundDwarfSelectTrade)
@@ -33,6 +38,11 @@ public final class JolCraftNetworking {
                 .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundEndorsements)
                 .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)
                 .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers);
+        JolCraftLogs.info(
+                JolCraftLogTags.NETWORK,
+                "Registered networking payloads (protocol v{})",
+                PROTOCOL
+        );
     }
 
     public static final double DEFAULT_RADIUS = 32.0D;
@@ -43,6 +53,12 @@ public final class JolCraftNetworking {
 
     public static void sendToClient(ServerPlayer player, CustomPacketPayload payload) {
         player.connection.send(payload);
+        JolCraftLogs.debug(
+                JolCraftLogTags.NETWORK,
+                "Sent {} to {}",
+                payload.type().id(),
+                player.getGameProfile().getName()
+        );
     }
 
     public static void sendToNearbyClients(Level world, BlockPos pos, CustomPacketPayload payload) {
@@ -53,10 +69,21 @@ public final class JolCraftNetworking {
         if (!(world instanceof ServerLevel serverLevel)) return;
 
         double radiusSq = radius * radius;
+        int sent = 0;
+
         for (ServerPlayer player : serverLevel.players()) {
             if (player.blockPosition().distSqr(pos) <= radiusSq) {
                 sendToClient(player, payload);
+                sent++;
             }
         }
+        JolCraftLogs.debug(
+                JolCraftLogTags.NETWORK,
+                "Sent {} to {} nearby client(s) at {} (r={})",
+                payload.type().id(),
+                sent,
+                pos,
+                radius
+        );
     }
 }

@@ -7,6 +7,7 @@ import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelpe
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.*;
@@ -40,5 +41,6 @@ public class AttachmentSyncHelper {
         Set<DwarfLoreKey> dwarfTomeUnlocks = DwarfLoreUnlockHelper.getAllUnlocks(player);
         JolCraftNetworking.sendToClient(player, ClientboundLoreUnlocksPacket.fromEnumSet(dwarfTomeUnlocks));
 
+        JolCraftLogs.debug("Synced attachments for {}", player.getGameProfile().getName());
     }
 }

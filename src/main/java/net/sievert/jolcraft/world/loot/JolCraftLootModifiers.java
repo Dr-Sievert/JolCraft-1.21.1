@@ -10,12 +10,15 @@ import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
 
 import java.util.function.Supplier;
 
-public class JolCraftLootModifiers {
+public final class JolCraftLootModifiers {
+
+    private JolCraftLootModifiers(){}
+
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> LOOT_MODIFIER_SERIALIZERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, JolCraft.MOD_ID);
 
-    public static final Supplier<MapCodec<? extends IGlobalLootModifier>> ADD_ITEM =
-            LOOT_MODIFIER_SERIALIZERS.register("add_item", () -> AddItemModifier.CODEC);
+    @SuppressWarnings("unused")
+    public static final Supplier<MapCodec<? extends IGlobalLootModifier>> ADD_ITEM = LOOT_MODIFIER_SERIALIZERS.register("add_item", () -> AddItemModifier.CODEC);
 
     public static void register(IEventBus eventBus) {
         LOOT_MODIFIER_SERIALIZERS.register(eventBus);

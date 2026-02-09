@@ -13,7 +13,6 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -57,6 +56,24 @@ public abstract class AbstractModelProvider extends ModelProvider {
         return sb.toString();
     }
 
+    // ---------------------------------------------------------------------
+    // ModelLocationUtils helpers
+    // ---------------------------------------------------------------------
+
+    private static @NotNull String idPathFromModelLocation(@NotNull ResourceLocation modelLoc, @NotNull String prefix) {
+        String path = modelLoc.getPath();
+        if (path.startsWith(prefix)) return path.substring(prefix.length());
+        return path;
+    }
+
+    private static @NotNull String itemIdPath(@NotNull Item item) {
+        return idPathFromModelLocation(ModelLocationUtils.getModelLocation(item), "item/");
+    }
+
+    private static @NotNull String blockIdPath(@NotNull Block block) {
+        return idPathFromModelLocation(ModelLocationUtils.getModelLocation(block), "block/");
+    }
+
     public static void generateFlatItem(
             @NotNull ItemModelGenerators itemModels,
             @NotNull Item item,
@@ -68,7 +85,7 @@ public abstract class AbstractModelProvider extends ModelProvider {
             throw new IllegalArgumentException("Subfolder must not be empty. Use vanilla generateFlatItem for root directory.");
         }
 
-        String layerZeroName = BuiltInRegistries.ITEM.getKey(layerZeroItem).getPath();
+        String layerZeroName = itemIdPath(layerZeroItem);
         ResourceLocation texture = JolCraft.location("item/" + subfolder + "/" + layerZeroName);
         ResourceLocation modelLoc = ModelLocationUtils.getModelLocation(item);
 
@@ -105,7 +122,7 @@ public abstract class AbstractModelProvider extends ModelProvider {
             throw new IllegalArgumentException("Subfolder must not be empty. Use vanilla handheld template for root directory.");
         }
 
-        String layerZeroName = BuiltInRegistries.ITEM.getKey(layerZeroItem).getPath();
+        String layerZeroName = itemIdPath(layerZeroItem);
         ResourceLocation texture = JolCraft.location("item/" + subfolder + "/" + layerZeroName);
         ResourceLocation modelLoc = ModelLocationUtils.getModelLocation(item);
 
@@ -170,7 +187,7 @@ public abstract class AbstractModelProvider extends ModelProvider {
             throw new IllegalArgumentException("Subfolder must not be empty. Use vanilla createTrivialCube for root directory.");
         }
 
-        String blockName = BuiltInRegistries.BLOCK.getKey(block).getPath();
+        String blockName = blockIdPath(block);
         ResourceLocation texture = JolCraft.location("block/" + subfolder + "/" + blockName);
 
         TextureMapping mapping = new TextureMapping()

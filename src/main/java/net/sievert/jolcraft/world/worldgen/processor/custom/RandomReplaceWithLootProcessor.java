@@ -1,16 +1,21 @@
 package net.sievert.jolcraft.world.worldgen.processor.custom;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.templatesystem.*;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,24 +26,59 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
 
     public static final MapCodec<RandomReplaceWithLootProcessor> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    BuiltInRegistries.BLOCK.byNameCodec().fieldOf("input_block").forGetter(p -> p.inputBlock),
-                    BuiltInRegistries.BLOCK.byNameCodec().fieldOf("output_block").forGetter(p -> p.outputBlock),
-                    com.mojang.serialization.Codec.floatRange(0f, 1f).fieldOf("probability").forGetter(p -> p.probability),
+                    ResourceLocation.CODEC.fieldOf("input_block").forGetter(p -> p.inputBlockId),
+                    ResourceLocation.CODEC.fieldOf("output_block").forGetter(p -> p.outputBlockId),
+                    Codec.floatRange(0f, 1f).fieldOf("probability").forGetter(p -> p.probability),
                     ResourceLocation.CODEC.fieldOf("loot_table").forGetter(p -> p.lootTable)
             ).apply(instance, RandomReplaceWithLootProcessor::new)
     );
 
-    private final Block inputBlock;
-    private final Block outputBlock;
+    private final ResourceLocation inputBlockId;
+    private final ResourceLocation outputBlockId;
     private final float probability;
     private final ResourceLocation lootTable;
 
-    public RandomReplaceWithLootProcessor(Block inputBlock, Block outputBlock, float probability, ResourceLocation lootTable) {
-        this.inputBlock = inputBlock;
-        this.outputBlock = outputBlock;
+    // Cached resolved blocks (avoid repeated registry lookups in hot path)
+    private transient Block cachedInputBlock;
+    private transient Block cachedOutputBlock;
+
+    public RandomReplaceWithLootProcessor(
+            ResourceLocation inputBlockId,
+            ResourceLocation outputBlockId,
+            float probability,
+            ResourceLocation lootTable
+    ) {
+        this.inputBlockId = inputBlockId;
+        this.outputBlockId = outputBlockId;
         this.probability = probability;
         this.lootTable = lootTable;
     }
+
+    private Block resolveInput(LevelReader level) {
+        if (cachedInputBlock != null) return cachedInputBlock;
+
+        cachedInputBlock = level.registryAccess()
+                .lookupOrThrow(Registries.BLOCK)
+                .get(inputBlockId)
+                .map(Holder::value)
+                .orElseThrow(() -> new IllegalStateException("Unknown input_block: " + inputBlockId));
+
+        return cachedInputBlock;
+    }
+
+    private Block resolveOutput(LevelReader level) {
+        if (cachedOutputBlock != null) return cachedOutputBlock;
+
+        cachedOutputBlock = level.registryAccess()
+                .lookupOrThrow(Registries.BLOCK)
+                .get(outputBlockId)
+                .map(Holder::value)
+                .orElseThrow(() -> new IllegalStateException("Unknown output_block: " + outputBlockId));
+
+        return cachedOutputBlock;
+    }
+
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -50,10 +90,13 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
             StructureTemplate.StructureBlockInfo current,
             StructurePlaceSettings settings
     ) {
-        if (current.state().is(inputBlock)) {
+        Block input = resolveInput(level);
 
+        if (current.state().is(input)) {
             if (settings.getRandom(current.pos()).nextFloat() < probability) {
-                BlockState replacedState = outputBlock.defaultBlockState();
+                Block output = resolveOutput(level);
+                BlockState replacedState = output.defaultBlockState();
+
                 CompoundTag nbt = new CompoundTag();
                 nbt.putString("LootTable", lootTable.toString());
 

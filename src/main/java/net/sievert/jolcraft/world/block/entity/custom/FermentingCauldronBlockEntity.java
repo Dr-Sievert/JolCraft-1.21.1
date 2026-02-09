@@ -3,10 +3,10 @@ package net.sievert.jolcraft.world.block.entity.custom;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class FermentingCauldronBlockEntity extends BlockEntity {
@@ -410,7 +411,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         tag.putInt(NBT_BUBBLE_DELAY, bubbleDelay);
 
         if (!lastIngredient.isEmpty()) {
-            ResourceLocation id = BuiltInRegistries.ITEM.getKey(lastIngredient.getItem());
+            ResourceLocation id = lastIngredient.getItem().builtInRegistryHolder().key().location();
             tag.putString(NBT_LAST_INGREDIENT_ID, id.toString());
         }
 
@@ -424,7 +425,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 int count = data.count();
                 if (count <= 0) continue;
 
-                ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+                ResourceLocation id = item.builtInRegistryHolder().key().location();
 
                 CompoundTag one = new CompoundTag();
                 one.putString(NBT_ITEM, id.toString());
@@ -466,10 +467,15 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         bubbleTicks = Math.max(0, tag.getInt(NBT_BUBBLE_TICKS));
         bubbleDelay = Math.max(0, tag.getInt(NBT_BUBBLE_DELAY));
 
+        HolderLookup.RegistryLookup<Item> items = registries.lookupOrThrow(Registries.ITEM);
+
         if (tag.contains(NBT_LAST_INGREDIENT_ID, Tag.TAG_STRING)) {
             ResourceLocation id = ResourceLocation.tryParse(tag.getString(NBT_LAST_INGREDIENT_ID));
             if (id != null) {
-                Item item = BuiltInRegistries.ITEM.getOptional(id).orElse(Items.AIR);
+                Item item = items.get(ResourceKey.create(Registries.ITEM, id))
+                        .map(Holder::value)
+                        .orElse(Items.AIR);
+
                 lastIngredient = (item != Items.AIR) ? new ItemStack(item) : ItemStack.EMPTY;
             } else {
                 lastIngredient = ItemStack.EMPTY;
@@ -488,7 +494,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 ResourceLocation id = ResourceLocation.tryParse(one.getString(NBT_ITEM));
                 if (id == null) continue;
 
-                Item item = BuiltInRegistries.ITEM.getOptional(id).orElse(Items.AIR);
+                Item item = items.get(ResourceKey.create(Registries.ITEM, id))
+                        .map(Holder::value)
+                        .orElse(Items.AIR);
                 if (item == Items.AIR) continue;
 
                 int count = one.contains(NBT_COUNT, Tag.TAG_INT) ? one.getInt(NBT_COUNT) : 1;

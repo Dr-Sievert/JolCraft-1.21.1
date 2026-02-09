@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.client.language.subprovider;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -17,10 +16,9 @@ public final class EffectLangSubProvider implements AbstractLanguageProvider.Lan
 
         for (DeferredHolder<?, ?> holder : JolCraftEffects.MOB_EFFECTS.getEntries()) {
             Object value = holder.get();
-            if (!(value instanceof MobEffect effect)) continue;
+            if (!(value instanceof MobEffect)) continue;
 
-            ResourceLocation id = BuiltInRegistries.MOB_EFFECT.getKey(effect);
-            if (id == null) continue;
+            ResourceLocation id = holder.getId();
 
             String key = "effect." + id.getNamespace() + "." + id.getPath();
             if (p.hasKey(key)) continue;

@@ -7,9 +7,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -121,11 +123,11 @@ public class DwarvenReputationImpl implements DwarvenReputation {
             String idString = endorsementList.getString(i);
             ResourceLocation profId = ResourceLocation.tryParse(idString);
             if (profId == null) {
-                JolCraft.LOGGER.warn("Failed to parse endorsement profession id: '{}'", idString);
+                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT , "Failed to parse endorsement profession id: '{}'", idString);
                 continue;
             }
             if (DwarfProfession.byId(profId.getPath()) == DwarfProfession.NONE) {
-                JolCraft.LOGGER.warn("Unknown endorsement profession id: '{}'", idString);
+                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT ,"Unknown endorsement profession id: '{}'", idString);
                 continue;
             }
             parsed.add(profId);

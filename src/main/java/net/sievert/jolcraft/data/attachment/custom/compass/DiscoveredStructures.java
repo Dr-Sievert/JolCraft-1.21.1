@@ -34,9 +34,8 @@ public interface DiscoveredStructures extends INBTSerializable<CompoundTag> {
 
     /**
      * Adds to the discovery score.
-     * @return true if any change was applied (amount != 0)
      */
-    boolean addScore(int amount);
+    void addScore(int amount);
 
     static DiscoveredStructures get(Player player) {
         return player.getData(JolCraftAttachments.DISCOVERED_STRUCTURES.get());

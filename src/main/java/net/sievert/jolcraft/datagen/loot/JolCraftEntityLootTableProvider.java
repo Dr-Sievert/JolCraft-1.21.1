@@ -3,7 +3,6 @@ package net.sievert.jolcraft.datagen.loot;
 import net.minecraft.advancements.critereon.EntityFlagsPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
@@ -80,15 +79,19 @@ public final class JolCraftEntityLootTableProvider implements LootTableSubProvid
                         )
         );
     }
-
+    @SuppressWarnings("deprecation")
     @Override
     public void generate(@NotNull BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
         for (var entry : ENTITY_LOOT.entrySet()) {
             EntityType<?> type = entry.getKey();
             BiConsumer<LootTable.Builder, HolderLookup.Provider> func = entry.getValue();
-            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-            ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entities/" + id.getPath());
+
+            ResourceLocation id = type.builtInRegistryHolder().key().location();
+
+            ResourceLocation lootTableId =
+                    ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entities/" + id.getPath());
             ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, lootTableId);
+
             LootTable.Builder builder = LootTable.lootTable();
             func.accept(builder, registries);
             output.accept(lootTableKey, builder);

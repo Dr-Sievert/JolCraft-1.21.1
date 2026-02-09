@@ -9,7 +9,9 @@ import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.client.renderer.item.properties.select.TrimMaterialProperty;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -31,10 +33,15 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public final class TrimModelSubProvider implements AbstractModelProvider.ModelSubProvider {
+
+    private final HolderLookup.Provider registries;
+
+    public TrimModelSubProvider(HolderLookup.Provider registries) {
+        this.registries = registries;
+    }
 
     // -------------------------------------------------------------------------
     // Types
@@ -96,7 +103,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
 
         // Vanilla armor (generated in minecraft namespace, only adding missing custom trim variants)
         for (VanillaArmorSpec spec : VANILLA_ARMOR_SETS) {
-            generateVanillaArmorSet(items, spec);
+            generateVanillaArmorSet(items, registries, spec);
         }
     }
 
@@ -184,6 +191,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
 
     private static void generateVanillaArmorSet(
             @NotNull ItemModelGenerators itemModels,
+            @NotNull HolderLookup.Provider registries,
             @NotNull VanillaArmorSpec spec
     ) {
         String baseName = spec.baseName();
@@ -230,7 +238,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
                     ? ItemModelUtils.tintedModel(vanillaBaseModelLoc, LEATHER_DYE_TINT)
                     : ItemModelUtils.plainModel(vanillaBaseModelLoc);
 
-            Item armorItem = vanillaArmorItem(baseName, piece);
+            Item armorItem = vanillaArmorItem(registries, baseName, piece);
             itemModels.itemModelOutput.accept(
                     armorItem,
                     ItemModelUtils.select(new TrimMaterialProperty(), defaultModel, cases)
@@ -252,14 +260,9 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
     // -------------------------------------------------------------------------
 
     private static @NotNull Map<JolCraftMaterials.Material, JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>>> buildArmorByMaterial() {
-        // If you want “no mapping here at all”, the only alternative is to store the material
-        // alongside the set in JolCraftItems. For now keep this tiny and explicit.
-        EnumMap<JolCraftMaterials.Material, JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>>> out =
-                new EnumMap<>(JolCraftMaterials.Material.class);
-
+        EnumMap<JolCraftMaterials.Material, JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>>> out = new EnumMap<>(JolCraftMaterials.Material.class);
         out.put(JolCraftMaterials.Material.DEEPSLATE, JolCraftItems.DEEPSLATE_ARMOR_SET);
         out.put(JolCraftMaterials.Material.MITHRIL, JolCraftItems.MITHRIL_ARMOR_SET);
-
         return Map.copyOf(out);
     }
 
@@ -296,10 +299,20 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
         return List.copyOf(out);
     }
 
-    private static @NotNull Item vanillaArmorItem(@NotNull String baseName, @NotNull JolCraftEquipmentHelper.ArmorPiece piece) {
+    private static @NotNull Item vanillaArmorItem(
+            @NotNull HolderLookup.Provider registries,
+            @NotNull String baseName,
+            @NotNull JolCraftEquipmentHelper.ArmorPiece piece
+    ) {
         String itemName = baseName + "_" + piece.suffix();
-        Optional<Item> item = BuiltInRegistries.ITEM.getOptional(ResourceLocation.withDefaultNamespace(itemName));
-        return item.orElseThrow(() -> new IllegalStateException("Vanilla armor item not found: " + itemName));
+        ResourceLocation id = ResourceLocation.withDefaultNamespace(itemName);
+
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
+
+        return registries.lookupOrThrow(Registries.ITEM)
+                .get(key)
+                .map(Holder::value)
+                .orElseThrow(() -> new IllegalStateException("Vanilla armor item not found: " + itemName));
     }
 
     private static @NotNull List<VanillaArmorSpec> buildVanillaArmorSets() {

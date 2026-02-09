@@ -2,7 +2,6 @@ package net.sievert.jolcraft.datagen.recipe.subprovider;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -158,6 +157,7 @@ public final class LapidaryRecipesSubProvider implements AbstractRecipeProvider.
         );
     }
 
+    @SuppressWarnings("deprecation")
     private static void register(
             AbstractRecipeProvider p,
             ItemLike input,
@@ -168,7 +168,7 @@ public final class LapidaryRecipesSubProvider implements AbstractRecipeProvider.
             Function<String, String> idPathFn,
             Supplier<LapidaryBenchRecipe> recipeFactory
     ) {
-        String inputName = BuiltInRegistries.ITEM.getKey(input.asItem()).getPath();
+        String inputName = input.asItem().builtInRegistryHolder().key().location().getPath();
         String idPath = idPathFn.apply(inputName);
 
         ResourceLocation id = JolCraft.location(p.inFolder(FOLDER, idPath));

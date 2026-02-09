@@ -6,7 +6,6 @@ import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -100,8 +99,13 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         return profession(context, type, 1.0f);
     }
 
-    public static <T extends AbstractDwarfEntity> DwarfRenderer<T> profession(EntityRendererProvider.Context context, @NotNull EntityType<?> type, float overrideScale) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+    @SuppressWarnings("deprecation")
+    public static <T extends AbstractDwarfEntity> DwarfRenderer<T> profession(
+            EntityRendererProvider.Context context,
+            @NotNull EntityType<?> type,
+            float overrideScale
+    ) {
+        ResourceLocation id = type.builtInRegistryHolder().key().location();
         String path = id.getPath();
 
         Profile profile = profileFor(type, overrideScale);

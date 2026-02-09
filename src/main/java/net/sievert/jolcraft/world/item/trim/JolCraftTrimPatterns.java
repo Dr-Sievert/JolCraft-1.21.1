@@ -1,7 +1,9 @@
 package net.sievert.jolcraft.world.item.trim;
 
 import net.minecraft.Util;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
@@ -19,14 +21,16 @@ public final class JolCraftTrimPatterns {
         register(context, JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(), FORGE);
     }
 
+    @SuppressWarnings("deprecation")
     private static void register(BootstrapContext<TrimPattern> context, Item item, ResourceKey<TrimPattern> key) {
+        HolderGetter<Item> items = context.lookup(Registries.ITEM);
+        Holder<Item> itemHolder = items.getOrThrow(item.builtInRegistryHolder().key());
         TrimPattern trimPattern = new TrimPattern(
                 key.location(),
-                BuiltInRegistries.ITEM.wrapAsHolder(item),
+                itemHolder,
                 Component.translatable(Util.makeDescriptionId("trim_pattern", key.location())),
                 false
         );
         context.register(key, trimPattern);
     }
-
 }

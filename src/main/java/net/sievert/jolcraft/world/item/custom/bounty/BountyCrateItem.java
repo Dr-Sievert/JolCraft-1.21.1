@@ -1,9 +1,8 @@
 package net.sievert.jolcraft.world.item.custom.bounty;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -32,14 +31,13 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 public class BountyCrateItem extends Item implements IItemExtension {
 
     private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.0F, 1.0F, 0.0F);  // Green (Completed)
@@ -57,28 +55,24 @@ public class BountyCrateItem extends Item implements IItemExtension {
             int currentFilled = stack.getOrDefault(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
 
             if (data != null && currentFilled > 0) {
-                Item targetItem = BuiltInRegistries.ITEM.get(data.targetItem())
-                        .map(Holder::value)
-                        .orElse(null);
+                Item targetItem = resolveItem(player.level(), data.targetItem());
+                if (targetItem == null) return false;
+                int toExtract = Math.min(64, currentFilled);
+                ItemStack out = new ItemStack(targetItem, toExtract);
+                access.set(out);
 
-                if (targetItem != null) {
-                    int toExtract = Math.min(64, currentFilled);
-                    ItemStack out = new ItemStack(targetItem, toExtract);
-                    access.set(out);
+                int remaining = currentFilled - toExtract;
+                stack.set(JolCraftDataComponents.BOUNTY_FILL.get(), remaining);
+                stack.set(JolCraftDataComponents.BOUNTY_COMPLETE.get(), remaining >= data.requiredCount());
 
-                    int remaining = currentFilled - toExtract;
-                    stack.set(JolCraftDataComponents.BOUNTY_FILL.get(), remaining);
-                    stack.set(JolCraftDataComponents.BOUNTY_COMPLETE.get(), remaining >= data.requiredCount());
-
-                    JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
-                    return true;
-                }
+                JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
+                return true;
             }
         }
 
         if (action == ClickAction.PRIMARY || action == ClickAction.SECONDARY) {
             int maxTransfer = action == ClickAction.PRIMARY ? Integer.MAX_VALUE : 1;
-            boolean filled = tryFillCrate(stack, access.get(), access, maxTransfer);
+            boolean filled = tryFillCrate(player.level(), stack, access.get(), access, maxTransfer);
             if (filled) {
                 JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
             }
@@ -87,14 +81,13 @@ public class BountyCrateItem extends Item implements IItemExtension {
         return false;
     }
 
-    private boolean tryFillCrate(ItemStack crate, ItemStack target, SlotAccess access, int maxTransfer) {
+    private boolean tryFillCrate(Level level, ItemStack crate, ItemStack target, SlotAccess access, int maxTransfer) {
         BountyData data = crate.get(JolCraftDataComponents.BOUNTY_DATA.get());
         if (data == null) return false;
 
-        Item targetItem = BuiltInRegistries.ITEM.get(data.targetItem())
-                .map(Holder::value)
-                .orElse(null);
-        if (targetItem == null || !target.is(targetItem)) return false;
+        Item targetItem = resolveItem(level, data.targetItem());
+        if (targetItem == null) return false;
+        if (!target.is(targetItem)) return false;
 
         int currentFilled = crate.getOrDefault(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
 
@@ -113,7 +106,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack crate = player.getItemInHand(hand);
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
@@ -132,10 +125,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
             return InteractionResult.SUCCESS;
         }
 
-        Item targetItem = BuiltInRegistries.ITEM.get(data.targetItem())
-                .map(Holder::value)
-                .orElse(null);
-        if (targetItem == null) return InteractionResult.PASS;
+        Item targetItem = resolveItem(level, data.targetItem());
 
         Inventory inv = player.getInventory();
 
@@ -230,9 +220,9 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
                     Component itemName = Component.translatable(targetItem.toLanguageKey("item"));
                     if (itemName.getString().equals(targetItem.toLanguageKey("item"))) {
-                        Optional<Item> itemOpt = BuiltInRegistries.ITEM.getOptional(targetItem);
-                        if (itemOpt.isPresent()) {
-                            itemName = itemOpt.get().getDefaultInstance().getHoverName();
+                        Item resolved = resolveItem(player.level(), targetItem);
+                        if (resolved != null) {
+                            itemName = resolved.getDefaultInstance().getHoverName();
                         }
                     }
 
@@ -275,5 +265,10 @@ public class BountyCrateItem extends Item implements IItemExtension {
         }
 
         super.appendHoverText(stack, context, tooltip, flag);
+    }
+
+    private static Item resolveItem(Level level, ResourceLocation id) {
+        Registry<Item> items = level.registryAccess().lookupOrThrow(Registries.ITEM);
+        return items.getValue(id);
     }
 }

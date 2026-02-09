@@ -21,6 +21,8 @@ import net.sievert.jolcraft.datagen.loot.JolCraftEntityLootTableProvider;
 import net.sievert.jolcraft.datagen.loot.JolCraftGlobalLootModifierProvider;
 import net.sievert.jolcraft.datagen.recipe.JolCraftRecipeProvider;
 import net.sievert.jolcraft.datagen.structure.JolCraftStructureTagProvider;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +35,27 @@ public final class JolCraftServerDataGenerator {
 
     @SubscribeEvent
     public static void gatherServerData(GatherDataEvent.Server event) {
+
+        JolCraftLogs.info(
+                JolCraftLogTags.DATAGEN,
+                "GatherDataEvent.Server: registering server providers."
+        );
+
         addServerProviders(event.getGenerator(), event.getLookupProvider());
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.DATAGEN,
+                "Server providers: {}, {}, {}, {}, {}, {}, {}, {}",
+                JolCraftBlockTagProvider.class.getSimpleName(),
+                JolCraftDataMapProvider.class.getSimpleName(),
+                JolCraftRecipeProvider.Runner.class.getSimpleName(),
+                JolCraftGlobalLootModifierProvider.class.getSimpleName(),
+                JolCraftItemTagProvider.class.getSimpleName(),
+                JolCraftBiomeTagProvider.class.getSimpleName(),
+                JolCraftStructureTagProvider.class.getSimpleName(),
+                JolCraftDatapackProvider.class.getSimpleName(),
+                JolCraftConfigProvider.class.getSimpleName()
+        );
     }
 
     public static void addServerProviders(

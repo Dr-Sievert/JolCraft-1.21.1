@@ -4,7 +4,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +27,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class FermentingCauldronRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
@@ -233,14 +233,14 @@ public final class FermentingCauldronRecipesSubProvider implements AbstractRecip
             boolean finalize,
             @Nullable ItemStack extract
     ) {
-        String ingredientName = BuiltInRegistries.ITEM.getKey(ingredient.asItem()).getPath();
+        String ingredientName = ingredient.asItem().builtInRegistryHolder().key().location().getPath();
         String statesName = statesPart(validStatesTag, validStatesItem);
 
         boolean isExtract = extract != null && !extract.isEmpty();
 
         String idPath;
         if (isExtract) {
-            String resultName = BuiltInRegistries.ITEM.getKey(extract.getItem()).getPath();
+            String resultName = Objects.requireNonNull(extract).getItem().builtInRegistryHolder().key().location().getPath();
             idPath = ingredientName + "_extract_" + resultName;
         } else {
             idPath = ingredientName
@@ -273,8 +273,8 @@ public final class FermentingCauldronRecipesSubProvider implements AbstractRecip
     }
 
     private static String statesPart(@Nullable TagKey<Item> tag, @Nullable ItemLike item) {
-        if (tag != null)  return tag.location().getPath();
-        if (item != null) return BuiltInRegistries.ITEM.getKey(item.asItem()).getPath();
+        if (tag != null) return tag.location().getPath();
+        if (item != null) return item.asItem().builtInRegistryHolder().key().location().getPath();
         return "water_cauldron";
     }
 }

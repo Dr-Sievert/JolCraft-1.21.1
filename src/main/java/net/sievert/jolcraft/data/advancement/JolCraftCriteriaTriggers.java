@@ -1,8 +1,8 @@
-package net.sievert.jolcraft.advancement;
+package net.sievert.jolcraft.data.advancement;
 
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.sievert.jolcraft.advancement.custom.*;
+import net.sievert.jolcraft.data.advancement.custom.*;
 
 public class JolCraftCriteriaTriggers {
 

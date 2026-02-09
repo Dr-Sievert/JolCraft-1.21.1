@@ -3,7 +3,6 @@ package net.sievert.jolcraft.datagen.recipe.util;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -58,6 +57,11 @@ public abstract class AbstractRecipeProvider extends RecipeProvider {
         return folder.endsWith("/") ? folder : folder + "/";
     }
 
+    @SuppressWarnings("deprecation")
+    private static String itemPath(ItemLike item) {
+        return item.asItem().builtInRegistryHolder().key().location().getPath();
+    }
+
     public final Criterion<?> hasItem(ItemLike item) {
         return this.has(item);
     }
@@ -109,7 +113,7 @@ public abstract class AbstractRecipeProvider extends RecipeProvider {
             SimpleCookingRecipeBuilder.smelting(Ingredient.of(ingredient), category, result, experience, cookingTime)
                     .group(name)
                     .unlockedBy(getHasName(ingredient), this.has(ingredient))
-                    .save(output, ResourceKey.create(Registries.RECIPE, JolCraft.location(idPath)));
+                    .save(out(), ResourceKey.create(Registries.RECIPE, JolCraft.location(idPath)));
         }
     }
 
@@ -124,10 +128,11 @@ public abstract class AbstractRecipeProvider extends RecipeProvider {
             SimpleCookingRecipeBuilder.blasting(Ingredient.of(ingredient), category, result, experience, cookingTime)
                     .group(name)
                     .unlockedBy(getHasName(ingredient), this.has(ingredient))
-                    .save(output, ResourceKey.create(Registries.RECIPE, JolCraft.location(idPath)));
+                    .save(out(), ResourceKey.create(Registries.RECIPE, JolCraft.location(idPath)));
         }
     }
 
+    @SuppressWarnings("deprecation")
     public final void nineBlockStorageRecipesAuto(
             RecipeCategory unpackedCategory,
             ItemLike unpacked,
@@ -136,8 +141,8 @@ public abstract class AbstractRecipeProvider extends RecipeProvider {
             @Nullable String packedGroup,
             @Nullable String unpackedGroup
     ) {
-        String unpackedName = BuiltInRegistries.ITEM.getKey(unpacked.asItem()).getPath();
-        String packedName = BuiltInRegistries.ITEM.getKey(packed.asItem()).getPath();
+        String unpackedName = unpacked.asItem().builtInRegistryHolder().key().location().getPath();
+        String packedName = packed.asItem().builtInRegistryHolder().key().location().getPath();
 
         String unpackedIdPath = unpackedName + "_from_" + packedName;
 

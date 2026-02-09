@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.advancement.custom;
+package net.sievert.jolcraft.data.advancement.custom;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,8 +8,11 @@ import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.Optional;
 
@@ -21,13 +24,30 @@ public class AdvancementTrigger extends SimpleCriterionTrigger<AdvancementTrigge
     public @NotNull Codec<TriggerInstance> codec() {
         return TriggerInstance.CODEC;
     }
+
     public void trigger(ServerPlayer player, ResourceLocation advancementId) {
         AdvancementHolder holder = player.server.getAdvancements().get(advancementId);
-        if (holder != null && player.getAdvancements().getOrStartProgress(holder).isDone()) {
-            this.trigger(player, instance -> instance.advancement().equals(advancementId));
+        if (holder == null) {
+            JolCraftLogs.debug(
+                    JolCraftLogTags.ADVANCEMENT,
+                    "has_advancement trigger: unknown advancement {}",
+                    advancementId
+            );
+            return;
         }
-    }
 
+        if (!player.getAdvancements().getOrStartProgress(holder).isDone()) {
+            JolCraftLogs.debug(
+                    JolCraftLogTags.ADVANCEMENT,
+                    "has_advancement trigger: {} does not have {}",
+                    player.getGameProfile().getName(),
+                    advancementId
+            );
+            return;
+        }
+
+        this.trigger(player, instance -> instance.advancement().equals(advancementId));
+    }
 
     public static Criterion<TriggerInstance> has(ResourceLocation advancementId) {
         return JolCraftCriteriaTriggers.HAS_ADVANCEMENT.createCriterion(new TriggerInstance(Optional.empty(), advancementId));

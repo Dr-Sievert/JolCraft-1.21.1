@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
 import javax.annotation.Nullable;
@@ -100,6 +101,15 @@ public class DiscoveredStructuresHelper {
         var structureManager = level.structureManager();
         var structureRegistry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
 
+        if (!structureRegistry.getTagOrEmpty(structureTag).iterator().hasNext()) {
+            JolCraftLogs.debug(
+                    "Attachment",
+                    "findNearestUndiscoveredStructure: empty structure tag {}",
+                    structureTag.location()
+            );
+            return null;
+        }
+
         Structure matchedStructure = null;
         for (Structure structure : structureManager.getAllStructuresAt(pos).keySet()) {
             for (Holder<Structure> holder : structureRegistry.getTagOrEmpty(structureTag)) {
@@ -128,6 +138,16 @@ public class DiscoveredStructuresHelper {
             }
         }
 
+        if (matchedStructure == null) {
+            JolCraftLogs.debug(
+                    "Attachment",
+                    "findNearestUndiscoveredStructure: nearest pos {} for tag {} but no matching structure found",
+                    pos,
+                    structureTag.location()
+            );
+            return null;
+        }
+
         int exclusionRadius = Math.max(96, spacing > 0 ? (spacing / 2 + 64) : 96);
         int exclusionRadiusSqr = exclusionRadius * exclusionRadius;
 
@@ -137,15 +157,13 @@ public class DiscoveredStructuresHelper {
         }
 
         BlockPos patchedPos = pos;
-        if (matchedStructure != null) {
-            StructureStart start = structureManager.getStructureAt(pos, matchedStructure);
-            if (start.isValid()) {
-                var box = start.getBoundingBox();
-                int centerY = box.getCenter().getY();
-                if (box.isInside(pos)) {
-                    if (pos.getY() == 0 || pos.getY() < box.minY() || pos.getY() > box.maxY()) {
-                        patchedPos = BlockPos.containing(pos.getX(), centerY, pos.getZ());
-                    }
+        StructureStart start = structureManager.getStructureAt(pos, matchedStructure);
+        if (start.isValid()) {
+            var box = start.getBoundingBox();
+            int centerY = box.getCenter().getY();
+            if (box.isInside(pos)) {
+                if (pos.getY() == 0 || pos.getY() < box.minY() || pos.getY() > box.maxY()) {
+                    patchedPos = BlockPos.containing(pos.getX(), centerY, pos.getZ());
                 }
             }
         }

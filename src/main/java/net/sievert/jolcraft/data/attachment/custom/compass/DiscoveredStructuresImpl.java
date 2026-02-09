@@ -10,6 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -46,10 +47,9 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
     }
 
     @Override
-    public boolean addScore(int amount) {
-        if (amount == 0) return false;
+    public void addScore(int amount) {
+        if (amount == 0) return;
         discoveryScore += amount;
-        return true;
     }
 
     @Override
@@ -78,8 +78,10 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
             CompoundTag t = list.getCompound(i);
 
             ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(TAG_DIM));
-            if (dimRL == null) continue;
-
+            if (dimRL == null) {
+                JolCraftLogs.debug("Invalid dimension id in discovered structure NBT: {}", t.getString(TAG_DIM));
+                continue;
+            }
             ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRL);
             BlockPos pos = BlockPos.of(t.getLong(TAG_POS));
 

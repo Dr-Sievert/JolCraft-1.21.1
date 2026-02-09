@@ -5,7 +5,6 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "deprecation"})
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public abstract class AbstractDwarfTrades {
@@ -216,8 +215,12 @@ public abstract class AbstractDwarfTrades {
         return cost(stack.getItem(), amount);
     }
 
+    /**
+     * IMPORTANT: Datagen must serialize registry-bound holders.
+     * Never use Holder.direct(...) here.
+     */
     protected static DwarfTradeRecipe.TradeCost cost(Item item, DwarfTradeRecipe.TradeAmount amount) {
-        return new DwarfTradeRecipe.TradeCost(item, amount);
+        return new DwarfTradeRecipe.TradeCost(item.builtInRegistryHolder(), amount);
     }
 
     // =====================================================================
@@ -246,7 +249,7 @@ public abstract class AbstractDwarfTrades {
 
     protected final DwarfTradeRecipe.TradeResult coinsResult(DwarfTradeRecipe.TradeAmount amount) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
-                coinItem().asItem(),
+                coinItem().asItem().builtInRegistryHolder(),
                 amount
         );
     }
@@ -261,21 +264,21 @@ public abstract class AbstractDwarfTrades {
 
     protected static DwarfTradeRecipe.TradeResult itemResult(ItemLike item, int count) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
-                item.asItem(),
+                item.asItem().builtInRegistryHolder(),
                 amount(count)
         );
     }
 
     protected static DwarfTradeRecipe.TradeResult itemResult(ItemLike item, int min, int max) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
-                item.asItem(),
+                item.asItem().builtInRegistryHolder(),
                 amount(min, max)
         );
     }
 
     protected static DwarfTradeRecipe.TradeResult itemResult(ItemStack stack, int count) {
         return new DwarfTradeRecipe.TradeResult.ItemResult(
-                stack.getItem(),
+                stack.getItem().builtInRegistryHolder(),
                 amount(count)
         );
     }
@@ -285,10 +288,11 @@ public abstract class AbstractDwarfTrades {
             String mapDisplayNameKey,
             Holder<MapDecorationType> decorationType
     ) {
-        ResourceLocation decoId = BuiltInRegistries.MAP_DECORATION_TYPE.getKey(decorationType.value());
-        if (decoId == null) {
-            throw new IllegalArgumentException("Map decoration type is not registered: " + decorationType);
-        }
+        ResourceLocation decoId = decorationType.unwrapKey()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Map decoration type is not registered: " + decorationType
+                ))
+                .location();
 
         return new DwarfTradeRecipe.TradeResult.MapResult(
                 new DwarfTradeRecipe.MapTradeData(destinationStructureTag, mapDisplayNameKey, decoId)
@@ -581,7 +585,10 @@ public abstract class AbstractDwarfTrades {
     }
 
     protected static String itemId(ItemLike item) {
-        ResourceLocation key = BuiltInRegistries.ITEM.getKey(item.asItem());
-        return key.getPath();
+        return item.asItem()
+                .builtInRegistryHolder()
+                .key()
+                .location()
+                .getPath();
     }
 }

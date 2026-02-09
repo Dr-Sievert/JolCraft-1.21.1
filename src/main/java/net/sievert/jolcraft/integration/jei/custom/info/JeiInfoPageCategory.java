@@ -17,15 +17,22 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -197,8 +204,11 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
         int slotX = (getWidth() - 18) / 2;
         int slotY = 8;
 
+        Minecraft mc = Minecraft.getInstance();
+        RegistryAccess registryAccess = mc.level != null ? mc.level.registryAccess() : null;
+
         if (recipe.isGroup()) {
-            List<ItemStack> group = recipe.getGroupStacks();
+            List<ItemStack> group = registryAccess != null ? recipe.getGroupStacks(registryAccess) : recipe.getGroupStacks();
             int groupSize = group.size();
             if (groupSize == 0) return;
 
@@ -214,29 +224,39 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
             return;
         }
 
+
         //Tags
         if (recipe.isTag()) {
-            List<ItemStack> stacks = JeiInfoPageHelper.getAllStacksForTag(recipe.getFocusTag());
+            if (registryAccess == null) return;
+
+            List<ItemStack> stacks = stacksForItemTag(registryAccess, recipe.getFocusTag());
             if (!stacks.isEmpty()) {
                 var slot = builder.addSlot(RecipeIngredientRole.INPUT, slotX - 10, slotY);
-                for (ItemStack stack : stacks) {
-                    slot.add(stack);
-                }
+                for (ItemStack stack : stacks) slot.add(stack);
+
                 var outSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, slotX + 10, slotY);
-                for (ItemStack stack : stacks) {
-                    outSlot.add(stack);
-                }
+                for (ItemStack stack : stacks) outSlot.add(stack);
             }
         }
 
         //Single items
         else {
             builder.addSlot(RecipeIngredientRole.INPUT, slotX, slotY)
-                    .add(recipe.getFocusStack());
+                    .add(Objects.requireNonNull(recipe.getFocusStack()));
             builder.addSlot(RecipeIngredientRole.OUTPUT, slotX, slotY)
                     .add(recipe.getFocusStack());
         }
 
+    }
+
+    private static List<ItemStack> stacksForItemTag(RegistryAccess registryAccess, TagKey<Item> tag) {
+        Registry<Item> items = registryAccess.lookupOrThrow(Registries.ITEM);
+
+        List<ItemStack> stacks = new ArrayList<>();
+        for (var holder : items.getTagOrEmpty(tag)) {
+            stacks.add(new ItemStack(holder.value()));
+        }
+        return stacks;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.advancement.custom;
+package net.sievert.jolcraft.data.advancement.custom;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,7 +7,8 @@ import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,12 @@ public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigge
      * Triggers the criterion for a specific player and profession.
      */
     public void trigger(ServerPlayer player, DwarfProfession profession) {
-        if (profession == null || profession == DwarfProfession.NONE) return;
+        if (profession == null) {
+            JolCraftLogs.debug("endorsement_gain trigger called with null profession for {}", player.getGameProfile().getName());
+            return;
+        }
+        if (profession == DwarfProfession.NONE) return;
+
         this.trigger(player, instance -> instance.profession().equals(profession));
     }
 
@@ -44,7 +50,7 @@ public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigge
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
                 Codec.STRING.xmap(DwarfProfession::byId, DwarfProfession::getId)
-                        .fieldOf("profession").forGetter(i -> i.profession)
+                        .fieldOf("profession").forGetter(TriggerInstance::profession)
         ).apply(instance, TriggerInstance::new));
     }
 }

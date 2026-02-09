@@ -3,7 +3,8 @@ package net.sievert.jolcraft.world.sound.util;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,9 +56,7 @@ public final class JolCraftSoundHelper {
             return;
         }
 
-        ResourceLocation soundId = BuiltInRegistries.SOUND_EVENT.getKey(sound);
-        if (soundId == null) return;
-
+        ResourceLocation soundId = sound.location();
         JolCraftNetworking.sendToServer(new ServerboundPlaySoundPacket(
                 soundId, x, y, z, source, volume, pitch
         ));
@@ -79,7 +78,8 @@ public final class JolCraftSoundHelper {
         }
 
         if (player instanceof ServerPlayer sp) {
-            Holder<SoundEvent> holder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
+            Registry<SoundEvent> sounds = level.registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
+            Holder<SoundEvent> holder = sounds.wrapAsHolder(sound);
             long seed = level.getRandom().nextLong();
             sp.connection.send(new ClientboundSoundPacket(holder, source, x, y, z, volume, pitch, seed));
         }

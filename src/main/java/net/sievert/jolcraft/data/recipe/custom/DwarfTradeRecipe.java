@@ -1,18 +1,19 @@
 package net.sievert.jolcraft.data.recipe.custom;
 
 import com.mojang.datafixers.util.Either;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -31,6 +32,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.DwarfTradeRecipeInput;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.slf4j.Logger;
 
@@ -44,8 +47,6 @@ import java.util.OptionalInt;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
-
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     // =====================================================================
     // Locked mental model names
@@ -103,29 +104,47 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
      * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
      * Validation happens in Serializer.validate(...).
      */
-    public record TradeCost(Item item, TradeAmount amount) {
+    public record TradeCost(Holder<Item> item, TradeAmount amount) {
 
         public ItemStack roll(RandomSource random) {
-            return new ItemStack(item, amount.roll(random));
+            return new ItemStack(item.value(), amount.roll(random));
         }
 
         public static final Codec<TradeCost> CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
-                        BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(TradeCost::item),
-                        TradeAmount.CODEC.fieldOf("amount").forGetter(TradeCost::amount)
+                        RegistryFixedCodec.create(Registries.ITEM)
+                                .fieldOf("item")
+                                .forGetter(TradeCost::item),
+                        TradeAmount.CODEC
+                                .fieldOf("amount")
+                                .forGetter(TradeCost::amount)
                 ).apply(inst, TradeCost::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, TradeCost> STREAM_CODEC =
                 StreamCodec.of(
                         (buf, c) -> {
-                            buf.writeResourceLocation(BuiltInRegistries.ITEM.getKey(c.item));
-                            TradeAmount.STREAM_CODEC.encode(buf, c.amount);
+                            Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
+
+                            Item value = c.item().value();
+                            ResourceLocation id = items.getKey(value);
+                            if (id == null) {
+                                throw new IllegalStateException("Unregistered item in TradeCost: " + value);
+                            }
+
+                            buf.writeResourceLocation(id);
+                            TradeAmount.STREAM_CODEC.encode(buf, c.amount());
                         },
                         buf -> {
+                            Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
+
                             ResourceLocation id = buf.readResourceLocation();
-                            Item item = BuiltInRegistries.ITEM.getValue(id);
+                            Item value = items.getValue(id);
+                            if (value == null) {
+                                throw new IllegalStateException("Unknown item id in TradeCost: " + id);
+                            }
+
                             TradeAmount amount = TradeAmount.STREAM_CODEC.decode(buf);
-                            return new TradeCost(item, amount);
+                            return new TradeCost(Holder.direct(value), amount);
                         }
                 );
     }
@@ -188,7 +207,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
          * Validation happens in Serializer.validate(...).
          */
         record ItemResult(
-                Item item,
+                Holder<Item> item,
                 TradeAmount amount
         ) implements TradeResult {
 
@@ -199,12 +218,12 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
             @Override
             public ItemStack preview(HolderLookup.Provider registries) {
-                return new ItemStack(item, amount.min());
+                return new ItemStack(item.value(), amount.min());
             }
 
             @Override
             public ItemStack roll(HolderLookup.Provider registries, RandomSource random) {
-                return new ItemStack(item, amount.roll(random));
+                return new ItemStack(item.value(), amount.roll(random));
             }
         }
 
@@ -380,7 +399,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             Key key = new Key(r.profession.getId(), r.merchantLevel, r.pool, r.order.getAsInt());
             ResourceLocation prev = seen.putIfAbsent(key, id);
             if (prev != null) {
-                LOGGER.warn(
+                JolCraftLogs.warn(
+                        JolCraftLogTags.RECIPE ,
                         "Duplicate dwarf trade order detected: profession={}, level={}, pool={}, order={} -> {} and {}",
                         key.professionId(), key.level(), key.pool().name().toLowerCase(), key.order(), prev, id
                 );
@@ -511,8 +531,12 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
         private static final MapCodec<TradeResult.ItemResult> ITEM_RESULT_CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
-                        BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter(TradeResult.ItemResult::item),
-                        TradeAmount.CODEC.fieldOf("amount").forGetter(TradeResult.ItemResult::amount)
+                        RegistryFixedCodec.create(Registries.ITEM)
+                                .fieldOf("item")
+                                .forGetter(TradeResult.ItemResult::item),
+                        TradeAmount.CODEC
+                                .fieldOf("amount")
+                                .forGetter(TradeResult.ItemResult::amount)
                 ).apply(inst, TradeResult.ItemResult::new));
 
         private static final MapCodec<TradeResult.MapResult> MAP_RESULT_CODEC =
@@ -614,7 +638,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             if (r.costA == null) {
                 return DataResult.error(() -> "cost_a is required");
             }
-            if (r.costA.item() == Items.AIR) {
+            if (r.costA.item().value() == Items.AIR) {
                 return DataResult.error(() -> "cost_a.item must not be air");
             }
             if (r.costA.amount().min() < 1 || r.costA.amount().max() < r.costA.amount().min()) {
@@ -623,7 +647,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
             if (r.costB.isPresent()) {
                 TradeCost b = r.costB.get();
-                if (b.item() == Items.AIR) {
+                if (b.item().value() == Items.AIR) {
                     return DataResult.error(() -> "cost_b.item must not be air");
                 }
                 if (b.amount().min() < 1 || b.amount().max() < b.amount().min()) {
@@ -639,7 +663,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             switch (r.result.type()) {
                 case ITEM -> {
                     var ir = (TradeResult.ItemResult) r.result;
-                    if (ir.item() == Items.AIR) {
+                    if (ir.item().value() == Items.AIR) {
                         return DataResult.error(() -> "result.item must not be air");
                     }
                     if (ir.amount().min() < 1 || ir.amount().max() < ir.amount().min()) {
@@ -752,13 +776,22 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
             switch (r.type()) {
                 case ITEM -> {
-                    var item = (TradeResult.ItemResult) r;
-                    buf.writeResourceLocation(BuiltInRegistries.ITEM.getKey(item.item()));
-                    TradeAmount.STREAM_CODEC.encode(buf, item.amount());
+                    var itemRes = (TradeResult.ItemResult) r;
+
+                    Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
+                    Item value = itemRes.item().value();
+
+                    ResourceLocation id = items.getKey(value);
+                    if (id == null) {
+                        throw new IllegalStateException("Unregistered item in TradeResult.ItemResult: " + value);
+                    }
+
+                    buf.writeResourceLocation(id);
+                    TradeAmount.STREAM_CODEC.encode(buf, itemRes.amount());
                 }
                 case MAP -> {
-                    var map = (TradeResult.MapResult) r;
-                    MapTradeData.STREAM_CODEC.encode(buf, map.mapData());
+                    var mapRes = (TradeResult.MapResult) r;
+                    MapTradeData.STREAM_CODEC.encode(buf, mapRes.mapData());
                 }
             }
         }
@@ -768,11 +801,16 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
             return switch (type) {
                 case ITEM -> {
+                    Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
+
                     ResourceLocation id = buf.readResourceLocation();
-                    Item item = BuiltInRegistries.ITEM.getValue(id);
+                    Item value = items.getValue(id);
+                    if (value == null) {
+                        throw new IllegalStateException("Unknown item id in TradeResult.ItemResult: " + id);
+                    }
 
                     TradeAmount amount = TradeAmount.STREAM_CODEC.decode(buf);
-                    yield new TradeResult.ItemResult(item, amount);
+                    yield new TradeResult.ItemResult(Holder.direct(value), amount);
                 }
                 case MAP -> {
                     MapTradeData map = MapTradeData.STREAM_CODEC.decode(buf);

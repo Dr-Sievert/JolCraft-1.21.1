@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.base;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -29,12 +28,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
-import net.sievert.jolcraft.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.config.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.config.dwarf.DwarfProfessionSettings;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
@@ -47,7 +48,6 @@ import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -67,6 +67,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     // ------------------------------------------------------------
     // Trade sound debounce (server-side)
     // ------------------------------------------------------------
+
     private long lastTradeSoundGameTime = Long.MIN_VALUE;
     private static final long TRADE_SOUND_COOLDOWN_TICKS = 8L;
 
@@ -83,8 +84,6 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     public int dwarfXp;
     public int updateMerchantTimer = 0;
-
-    public static final Logger LOGGER = LogUtils.getLogger();
 
     public boolean increaseProfessionLevelOnUpdate = false;
 
@@ -148,7 +147,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
         DwarfMerchantData.CODEC
                 .encodeStart(NbtOps.INSTANCE, new DwarfMerchantData(this.getMerchantLevel()))
-                .resultOrPartial(LOGGER::error)
+                .resultOrPartial(msg -> JolCraftLogs.error(JolCraftLogTags.ENTITY, "{}", msg))
                 .ifPresent(tag -> compound.put("MerchantData", tag));
 
         compound.putInt("Xp", this.dwarfXp);
@@ -182,7 +181,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         if (compound.contains("MerchantData", 10)) {
             DwarfMerchantData.CODEC
                     .parse(NbtOps.INSTANCE, compound.get("MerchantData"))
-                    .resultOrPartial(LOGGER::error)
+                    .resultOrPartial(msg -> JolCraftLogs.error(JolCraftLogTags.ENTITY, "{}", msg))
                     .ifPresent(data -> setMerchantLevel(data.level()));
         }
 
@@ -212,7 +211,10 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         if (compound.contains("Offers")) {
             DwarfMerchantOffers.CODEC
                     .parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get("Offers"))
-                    .resultOrPartial(Util.prefix("Failed to load offers: ", LOGGER::warn))
+                    .resultOrPartial(Util.prefix(
+                            "Failed to load offers: ",
+                            msg -> JolCraftLogs.warn(JolCraftLogTags.ENTITY, "{}", msg)
+                    ))
                     .ifPresent(loaded -> this.offers = loaded);
         }
     }

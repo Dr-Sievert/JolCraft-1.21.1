@@ -4,6 +4,8 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.config.ConfigManager;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 import javax.annotation.Nullable;
@@ -35,7 +37,7 @@ public final class DwarfProfessionConfigs extends ConfigManager<DwarfProfession,
         String professionId = id.getPath();
         DwarfProfession profession = DwarfProfession.byId(professionId);
         if (profession == DwarfProfession.NONE) {
-            JolCraft.LOGGER.warn("Ignoring dwarf profession config '{}' (no matching profession id)", id);
+            JolCraftLogs.warn(JolCraftLogTags.CONFIG, "Ignoring dwarf profession config '{}' (no matching profession id)", id);
             return null;
         }
         return profession;
