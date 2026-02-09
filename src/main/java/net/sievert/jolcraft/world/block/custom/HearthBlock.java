@@ -41,6 +41,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.Nullable;
@@ -179,6 +181,9 @@ public class HearthBlock extends BaseEntityBlock {
             pos = pos.below();
             state = level.getBlockState(pos);
             if (!state.is(this)) {
+                JolCraftLogs.warn(JolCraftLogTags.BLOCK,
+                        "Hearth upper-half used but lower-half missing at {}",
+                        pos);
                 return InteractionResult.FAIL;
             }
         }
@@ -203,6 +208,13 @@ public class HearthBlock extends BaseEntityBlock {
                             0.8F
                     );
                 }
+            } else {
+                JolCraftLogs.warn(
+                        JolCraftLogTags.BLOCK,
+                        "Hearth at {} has missing/wrong BlockEntity (found={})",
+                        pos,
+                        (be == null ? "null" : be.getClass().getName())
+                );
             }
             return InteractionResult.SUCCESS;
         }
@@ -280,7 +292,15 @@ public class HearthBlock extends BaseEntityBlock {
                     stack.shrink(1);
                 }
             }
+        } else {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK,
+                    "Hearth at {} has missing/wrong BlockEntity (found={})",
+                    pos,
+                    (be == null ? "null" : be.getClass().getName())
+            );
         }
+
         return InteractionResult.SUCCESS;
     }
 

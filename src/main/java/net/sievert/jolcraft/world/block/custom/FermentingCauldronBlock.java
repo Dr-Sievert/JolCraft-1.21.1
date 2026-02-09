@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
 import org.jetbrains.annotations.Nullable;
@@ -48,13 +50,17 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
             InteractionHand hand,
             BlockHitResult hit
     ) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (!level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof FermentingCauldronBlockEntity cauldron) {
+                return cauldron.handleInteraction(player, hand, stack);
+            }
 
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof FermentingCauldronBlockEntity cauldron) {
-            return cauldron.handleInteraction(player, hand, stack);
+            JolCraftLogs.warn(JolCraftLogTags.BLOCK,
+                    "FermentingCauldron at {} has missing/wrong BlockEntity (found={})",
+                    pos, (be == null ? "null" : be.getClass().getName()));
+            return InteractionResult.SUCCESS;
         }
-
         return InteractionResult.SUCCESS;
     }
 

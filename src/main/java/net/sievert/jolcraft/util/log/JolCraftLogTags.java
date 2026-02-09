@@ -6,6 +6,8 @@ public final class JolCraftLogTags {
 
     public static final String ADVANCEMENT = "Advancement";
     public static final String ATTACHMENT = "Attachment";
+    public static final String BLOCK = "Block";
+    public static final String BLOCK_ENTITY = "BlockEntity";
     public static final String CONFIG = "Config";
     public static final String DATAGEN = "Datagen";
     public static final String ENTITY = "Entity";

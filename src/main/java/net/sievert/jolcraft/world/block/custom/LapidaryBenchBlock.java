@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.custom.LapidaryBenchBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -41,6 +43,10 @@ public class LapidaryBenchBlock extends BaseEntityBlock {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof LapidaryBenchBlockEntity lapidary) {
                 player.openMenu(lapidary);
+            } else {
+                JolCraftLogs.warn(JolCraftLogTags.BLOCK,
+                        "LapidaryBench at {} has missing/wrong BlockEntity (found={})",
+                        pos, (be == null ? "null" : be.getClass().getName()));
             }
         }
         return InteractionResult.SUCCESS;

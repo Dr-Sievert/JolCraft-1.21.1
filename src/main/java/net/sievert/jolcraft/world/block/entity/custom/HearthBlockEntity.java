@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.custom.HearthBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
@@ -62,9 +64,16 @@ public class HearthBlockEntity extends BlockEntity {
 
         ListTag uuidList = tag.getList(NBT_ACTIVE_PLAYERS, 8); // 8 = String
         for (int i = 0; i < uuidList.size(); i++) {
+            String raw = tag.getString("player");
             try {
-                activePlayers.add(UUID.fromString(uuidList.getString(i)));
-            } catch (Exception ignored) {
+                activePlayers.add(UUID.fromString(raw));
+            } catch (IllegalArgumentException e) {
+                JolCraftLogs.warn(
+                        JolCraftLogTags.BLOCK_ENTITY,
+                        "Hearth at {} contains invalid player UUID '{}' (skipping)",
+                        worldPosition,
+                        raw
+                );
             }
         }
     }

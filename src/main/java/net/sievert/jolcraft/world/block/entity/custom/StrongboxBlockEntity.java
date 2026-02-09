@@ -22,6 +22,8 @@ package net.sievert.jolcraft.world.block.entity.custom;
     import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
     import net.minecraft.world.level.block.state.BlockState;
     import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+    import net.sievert.jolcraft.util.log.JolCraftLogTags;
+    import net.sievert.jolcraft.util.log.JolCraftLogs;
     import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
     import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
     import net.sievert.jolcraft.world.effect.JolCraftEffects;
@@ -86,7 +88,7 @@ package net.sievert.jolcraft.world.block.entity.custom;
             @Override
             public void decrementOpeners(Player player, Level level, BlockPos pos, BlockState state) {
                 super.decrementOpeners(player, level, pos, state);
-                if (currentInteractingPlayer == player) {
+                if (currentInteractingPlayer != null && currentInteractingPlayer.getUUID().equals(player.getUUID())) {
                     currentInteractingPlayer = null;
                 }
             }
@@ -299,11 +301,21 @@ package net.sievert.jolcraft.world.block.entity.custom;
         // ---------------------------------------------------------------------
 
         public boolean handleLockButtonPress(ServerPlayer player, int buttonId, ItemStack lockpickSlot) {
-            if (this.level == null || this.level.isClientSide) return true;
+            if (this.level == null || this.level.isClientSide) return false;
 
-            if (!this.isLocked()) return false;
-            if (this.currentInteractingPlayer != player) return false;
-            if (!this.hasLockpickInserted || lockpickSlot.isEmpty()) return false;
+            if (!this.isLocked()){
+                debugReject(player, "not_locked", buttonId);
+                return false;
+            }
+
+            if (this.currentInteractingPlayer != player){
+                debugReject(player, "wrong_player", buttonId);
+                return false;
+            }
+            if (!this.hasLockpickInserted || lockpickSlot.isEmpty()){
+                debugReject(player, "no_lockpick", buttonId);
+                return false;
+            }
 
             // --- Unlock mode ---
             boolean unlockMode = (this.correctButtonId == 3);
@@ -368,6 +380,26 @@ package net.sievert.jolcraft.world.block.entity.custom;
 
             forceImmediateReroll();
             return true;
+        }
+
+        private void debugReject(ServerPlayer player, String reason, int buttonId) {
+            String currentName = (currentInteractingPlayer != null) ? currentInteractingPlayer.getName().getString() : "null";
+            String currentUuid = (currentInteractingPlayer != null) ? currentInteractingPlayer.getUUID().toString() : "null";
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.BLOCK_ENTITY,
+                    "Strongbox lock press rejected ({}) pos={} dim={} player={}({}) buttonId={} locked={} hasLockpickInserted={} currentInteracting={}({})",
+                    reason,
+                    worldPosition,
+                    (level == null) ? "null" : level.dimension().location(),
+                    player.getName().getString(),
+                    player.getUUID(),
+                    buttonId,
+                    this.isLocked(),
+                    this.hasLockpickInserted,
+                    currentName,
+                    currentUuid
+            );
         }
 
         // ---------------------------------------------------------------------

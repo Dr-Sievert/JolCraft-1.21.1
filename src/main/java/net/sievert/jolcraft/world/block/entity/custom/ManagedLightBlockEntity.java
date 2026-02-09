@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.ManagedLightBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
@@ -55,7 +57,7 @@ public final class ManagedLightBlockEntity extends BlockEntity {
         tickCooldown = 20; // validate once per second
 
         if (owner == null) {
-            cleanupSelf(serverLevel);
+            cleanupSelf(serverLevel, "no_owner");
             return;
         }
 
@@ -68,13 +70,22 @@ public final class ManagedLightBlockEntity extends BlockEntity {
         ).isEmpty();
 
         if (!valid) {
-            cleanupSelf(serverLevel);
+            cleanupSelf(serverLevel, "missing_radiant");
         }
     }
 
-    private void cleanupSelf(ServerLevel level) {
+    private void cleanupSelf(ServerLevel level, String reason) {
         BlockState state = getBlockState();
         if (!state.is(JolCraftBlocks.MANAGED_LIGHT.get())) return;
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.BLOCK_ENTITY,
+                "ManagedLight cleanup ({}) owner={} pos={} dim={}",
+                reason,
+                owner,
+                worldPosition,
+                level.dimension().location()
+        );
 
         boolean waterlogged = state.getValue(ManagedLightBlock.WATERLOGGED);
         BlockState replacement = waterlogged

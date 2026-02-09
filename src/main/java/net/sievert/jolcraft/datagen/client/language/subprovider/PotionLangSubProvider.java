@@ -5,6 +5,8 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -68,7 +70,16 @@ public final class PotionLangSubProvider implements AbstractLanguageProvider.Lan
             if (actual != null && actual != potionHolder) {
                 return resolvePotionName(actual);
             }
-        } catch (Exception ignored) {}
+        } catch (ReflectiveOperationException | SecurityException e) {
+        JolCraftLogs.debug(
+                JolCraftLogTags.DATAGEN,
+                "PotionLangSubProvider: reflection resolve failed for type={} value={} err={}",
+                potionHolder.getClass().getName(),
+                potionHolder,
+                e.toString()
+        );
+    }
+
 
         if (potionHolder instanceof String str) return str;
 

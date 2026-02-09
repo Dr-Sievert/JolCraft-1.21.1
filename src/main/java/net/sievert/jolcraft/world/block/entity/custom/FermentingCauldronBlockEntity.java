@@ -40,6 +40,8 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
@@ -208,7 +210,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
     }
 
     // =====================================================================
-    // Brewing (no color math here)
+    // Brewing
     // =====================================================================
 
     public boolean isBrewing() {
@@ -461,28 +463,49 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
 
+        var itemLookup = registries.lookupOrThrow(Registries.ITEM);
+
         brewStartTime = tag.getLong(NBT_BREW_START_TIME);
         blendTotalTicks = Math.max(1, tag.getInt(NBT_BLEND_TOTAL_TICKS));
 
         bubbleTicks = Math.max(0, tag.getInt(NBT_BUBBLE_TICKS));
         bubbleDelay = Math.max(0, tag.getInt(NBT_BUBBLE_DELAY));
 
-        HolderLookup.RegistryLookup<Item> items = registries.lookupOrThrow(Registries.ITEM);
+        // ---------------------------------------------------------------------
+        // lastIngredient
+        // ---------------------------------------------------------------------
 
         if (tag.contains(NBT_LAST_INGREDIENT_ID, Tag.TAG_STRING)) {
-            ResourceLocation id = ResourceLocation.tryParse(tag.getString(NBT_LAST_INGREDIENT_ID));
-            if (id != null) {
-                Item item = items.get(ResourceKey.create(Registries.ITEM, id))
-                        .map(Holder::value)
+            String raw = tag.getString(NBT_LAST_INGREDIENT_ID);
+            ResourceLocation id = ResourceLocation.tryParse(raw);
+
+            if (id == null) {
+                JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
+                        "FermentingCauldron at {} has malformed lastIngredient id '{}' (clearing)",
+                        worldPosition, raw);
+                lastIngredient = ItemStack.EMPTY;
+            } else {
+                Item item = itemLookup
+                        .get(ResourceKey.create(Registries.ITEM, id))
+                        .map(Holder.Reference::value)
                         .orElse(Items.AIR);
 
-                lastIngredient = (item != Items.AIR) ? new ItemStack(item) : ItemStack.EMPTY;
-            } else {
-                lastIngredient = ItemStack.EMPTY;
+                if (item == Items.AIR) {
+                    JolCraftLogs.debug(JolCraftLogTags.BLOCK_ENTITY,
+                            "FermentingCauldron at {} missing lastIngredient item '{}' (clearing)",
+                            worldPosition, id);
+                    lastIngredient = ItemStack.EMPTY;
+                } else {
+                    lastIngredient = new ItemStack(item);
+                }
             }
         } else {
             lastIngredient = ItemStack.EMPTY;
         }
+
+        // ---------------------------------------------------------------------
+        // ingredients
+        // ---------------------------------------------------------------------
 
         ingredients.clear();
         if (tag.contains(NBT_INGREDIENTS, Tag.TAG_LIST)) {
@@ -491,17 +514,30 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 CompoundTag one = list.getCompound(i);
 
                 if (!one.contains(NBT_ITEM, Tag.TAG_STRING)) continue;
-                ResourceLocation id = ResourceLocation.tryParse(one.getString(NBT_ITEM));
-                if (id == null) continue;
+                String raw = one.getString(NBT_ITEM);
 
-                Item item = items.get(ResourceKey.create(Registries.ITEM, id))
-                        .map(Holder::value)
+                ResourceLocation id = ResourceLocation.tryParse(raw);
+                if (id == null) {
+                    JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
+                            "FermentingCauldron at {} has malformed ingredient id '{}' (skipping)",
+                            worldPosition, raw);
+                    continue;
+                }
+
+                Item item = itemLookup
+                        .get(ResourceKey.create(Registries.ITEM, id))
+                        .map(Holder.Reference::value)
                         .orElse(Items.AIR);
-                if (item == Items.AIR) continue;
+
+                if (item == Items.AIR) {
+                    JolCraftLogs.debug(JolCraftLogTags.BLOCK_ENTITY,
+                            "FermentingCauldron at {} missing ingredient item '{}' (skipping)",
+                            worldPosition, id);
+                    continue;
+                }
 
                 int count = one.contains(NBT_COUNT, Tag.TAG_INT) ? one.getInt(NBT_COUNT) : 1;
                 if (count <= 0) continue;
-
                 count = Math.min(3, count);
 
                 int color = one.contains(NBT_COLOR, Tag.TAG_INT) ? one.getInt(NBT_COLOR) : 0xFFFFFFFF;
@@ -509,12 +545,23 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             }
         }
 
+        // ---------------------------------------------------------------------
+        // flags/colors
+        // ---------------------------------------------------------------------
+
         finalize = tag.getBoolean(NBT_FINALIZE);
         extractable = tag.getBoolean(NBT_EXTRACTABLE);
 
-        currentColor = tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_CURRENT_COLOR) : FermentingCauldronColorHelper.UNSET_COLOR;
+        currentColor = tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT)
+                ? tag.getInt(NBT_CURRENT_COLOR)
+                : FermentingCauldronColorHelper.UNSET_COLOR;
+
         startColor = tag.contains(NBT_START_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_START_COLOR) : currentColor;
         targetColor = tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_TARGET_COLOR) : currentColor;
+
+        // ---------------------------------------------------------------------
+        // effects
+        // ---------------------------------------------------------------------
 
         effects.clear();
         if (tag.contains(NBT_EFFECTS, Tag.TAG_LIST)) {
@@ -523,8 +570,15 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 CompoundTag one = list.getCompound(i);
 
                 if (!one.contains(NBT_EFFECT_ID, Tag.TAG_STRING)) continue;
-                ResourceLocation idLoc = ResourceLocation.tryParse(one.getString(NBT_EFFECT_ID));
-                if (idLoc == null) continue;
+                String raw = one.getString(NBT_EFFECT_ID);
+
+                ResourceLocation idLoc = ResourceLocation.tryParse(raw);
+                if (idLoc == null) {
+                    JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
+                            "FermentingCauldron at {} has malformed effect id '{}' (skipping)",
+                            worldPosition, raw);
+                    continue;
+                }
 
                 ResourceKey<MobEffect> key = ResourceKey.create(Registries.MOB_EFFECT, idLoc);
 
@@ -579,7 +633,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
     }
 
     // =====================================================================
-    // Getters (renderer reads these; no color math here)
+    // Getters
     // =====================================================================
 
     public int getCurrentColor() { return currentColor; }

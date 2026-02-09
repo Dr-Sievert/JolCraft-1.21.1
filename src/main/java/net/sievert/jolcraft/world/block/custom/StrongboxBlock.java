@@ -52,6 +52,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
@@ -320,7 +322,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             return InteractionResult.SUCCESS;
         }
 
-
         // Gate lockpicking if someone else is in session
         if (state.getValue(LOCKED)) {
             BlockEntity be = level.getBlockEntity(pos);
@@ -334,12 +335,30 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                     );
                     return InteractionResult.SUCCESS;
                 }
+            } else {
+                JolCraftLogs.warn(
+                        JolCraftLogTags.BLOCK,
+                        "Strongbox at {} is locked but has missing/wrong BlockEntity (found={})",
+                        pos,
+                        (be == null ? "null" : be.getClass().getName())
+                );
+                // Still consume interaction like before.
+                return InteractionResult.SUCCESS;
             }
         }
 
         MenuProvider provider = this.getMenuProvider(state, level, pos);
         if (provider != null) {
             player.openMenu(provider, pos);
+        } else {
+            BlockEntity be = level.getBlockEntity(pos);
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK,
+                    "Strongbox at {} has no MenuProvider (locked={} be={})",
+                    pos,
+                    state.getValue(LOCKED),
+                    (be == null ? "null" : be.getClass().getName())
+            );
         }
         return InteractionResult.SUCCESS;
     }
