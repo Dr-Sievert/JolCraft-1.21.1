@@ -22,7 +22,7 @@ public final class JolCraftLogs {
 
     public static void debug(String tag, String message, Object... args) {
         if (!LOGGER.isDebugEnabled()) return;
-        LOGGER.debug("[{}] {}", tag, format(message, args));
+        LOGGER.debug(prefix(tag, message), args);
     }
 
     /* ---------------------------------------------------------------------
@@ -34,7 +34,7 @@ public final class JolCraftLogs {
     }
 
     public static void info(String tag, String message, Object... args) {
-        LOGGER.info("[{}] {}", tag, format(message, args));
+        LOGGER.info(prefix(tag, message), args);
     }
 
     /* ---------------------------------------------------------------------
@@ -46,7 +46,7 @@ public final class JolCraftLogs {
     }
 
     public static void warn(String tag, String message, Object... args) {
-        LOGGER.warn("[{}] {}", tag, format(message, args));
+        LOGGER.warn(prefix(tag, message), args);
     }
 
     /* ---------------------------------------------------------------------
@@ -58,19 +58,18 @@ public final class JolCraftLogs {
     }
 
     public static void error(String tag, String message, Object... args) {
-        LOGGER.error("[{}] {}", tag, format(message, args));
+        LOGGER.error(prefix(tag, message), args);
     }
 
     public static void error(String tag, String message, Throwable t, Object... args) {
-        LOGGER.error("[{}] {}", tag, format(message, args), t);
+        LOGGER.error(prefix(tag, message), args, t);
     }
 
     /* ---------------------------------------------------------------------
      * Internal
      * ------------------------------------------------------------------ */
 
-    private static String format(String message, Object... args) {
-        if (args == null || args.length == 0) return message;
-        return String.format(Locale.ROOT, message, args);
+    private static String prefix(String tag, String message) {
+        return "[" + tag + "] " + message;
     }
 }

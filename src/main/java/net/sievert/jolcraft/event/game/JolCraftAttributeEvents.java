@@ -50,6 +50,8 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.data.attachment.custom.player.AttributesAttachment;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
@@ -342,11 +344,20 @@ public final class JolCraftAttributeEvents {
         };
 
         RadiantEntity existing = ACTIVE_RADIANT_ENTITIES.get(uuid);
+
         if (existing != null) {
             if (existing.isRemoved()) {
+                JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                        "PlayerTickEvent: clearing radiant (removed) for player {} in {}",
+                        uuid, level.dimension().location());
+
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
                 existing = null;
             } else if (existing.level() != level) {
+                JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                        "PlayerTickEvent: clearing radiant (dimension change) for player {} old={} new={}",
+                        uuid, existing.level().dimension().location(), level.dimension().location());
+
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
                 existing.discard();
                 existing = null;
@@ -356,6 +367,10 @@ public final class JolCraftAttributeEvents {
         // If player has no radiant, drop ownership. Entity self-discards when owner is missing.
         if (!hasRadiant) {
             if (existing != null) {
+                JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                        "PlayerTickEvent: dropping radiant ownership for player {} (radiant={})",
+                        uuid, radiant);
+
                 existing.setOwner(null);
             }
             ACTIVE_RADIANT_ENTITIES.remove(uuid);
@@ -373,16 +388,29 @@ public final class JolCraftAttributeEvents {
             }
 
             if (found != null) {
+                JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                        "PlayerTickEvent: recovered untracked radiant for player {} in {}",
+                        uuid, level.dimension().location());
+
                 existing = found;
                 ACTIVE_RADIANT_ENTITIES.put(uuid, existing);
             } else {
+                JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                        "PlayerTickEvent: creating radiant for player {} (lightLevel={}, pieces={}, dim={})",
+                        uuid, lightLevel, pieces, level.dimension().location());
+
                 RadiantEntity created = new RadiantEntity(JolCraftEntities.RADIANT.get(), level);
                 BlockPos spawnPos = player.blockPosition().above();
                 created.moveTo(spawnPos.getX() + 0.5, spawnPos.getY() + 1, spawnPos.getZ() + 0.5);
                 created.setOwner(player);
                 created.setRadiantLightLevel(lightLevel);
 
-                if (!level.addFreshEntity(created)) return;
+                if (!level.addFreshEntity(created)) {
+                    JolCraftLogs.warn(JolCraftLogTags.EVENT,
+                            "PlayerTickEvent: failed to add radiant entity for player {} in {}",
+                            uuid, level.dimension().location());
+                    return;
+                }
 
                 existing = created;
                 ACTIVE_RADIANT_ENTITIES.put(uuid, existing);

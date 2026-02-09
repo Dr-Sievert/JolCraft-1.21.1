@@ -29,6 +29,8 @@ import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.FermentingCauldronBlock;
 import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
@@ -144,6 +146,7 @@ public final class JolCraftPlayerEvents {
         event.setNewSpeed(newSpeed);
     }
 
+    @SuppressWarnings("deprecation")
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getLevel() instanceof ServerLevel serverLevel)) {
@@ -153,8 +156,9 @@ public final class JolCraftPlayerEvents {
         var player = event.getEntity();
         var pos = event.getPos();
         var state = serverLevel.getBlockState(pos);
-        var used =  event.getItemStack();
+        var used = event.getItemStack();
 
+        // Rotten flesh -> festerling planting
         if (used.is(Items.ROTTEN_FLESH)) {
             BlockPos above = pos.above();
 
@@ -168,14 +172,16 @@ public final class JolCraftPlayerEvents {
             boolean canPlant = onLog || onSoil;
 
             if (canPlant && serverLevel.getBlockState(above).isAir()) {
-                serverLevel.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
-                JolCraftSoundHelper.block(
-                        serverLevel,
+                JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                        "RightClickBlock: planting festerling player={} pos={} on={} face={} item={}",
+                        player.getUUID(),
                         above,
-                        SoundEvents.CROP_PLANTED,
-                        1.0F,
-                        1.0F
-                );
+                        state.getBlock().builtInRegistryHolder().key().location(),
+                        event.getFace(),
+                        used.getItem().builtInRegistryHolder().key().location());
+
+                serverLevel.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
+                JolCraftSoundHelper.block(serverLevel, above, SoundEvents.CROP_PLANTED, 1.0F, 1.0F);
 
                 if (!player.isCreative()) used.shrink(1);
 
@@ -184,7 +190,11 @@ public final class JolCraftPlayerEvents {
             }
         }
 
-        if (!serverLevel.isClientSide() && state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
+        // Water cauldron -> fermenting cauldron bootstrap
+        if (!serverLevel.isClientSide()
+                && state.is(Blocks.WATER_CAULDRON)
+                && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
+
             var input = new FermentingCauldronRecipeInput(used.copyWithCount(1), ItemStack.EMPTY);
 
             boolean hasRecipe = serverLevel.getServer()
@@ -194,6 +204,12 @@ public final class JolCraftPlayerEvents {
 
             if (!hasRecipe) return;
 
+            JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                    "RightClickBlock: converting water_cauldron -> fermenting_cauldron player={} pos={} item={}",
+                    player.getUUID(),
+                    pos,
+                    used.getItem().builtInRegistryHolder().key().location());
+
             BlockState newState = JolCraftBlocks.FERMENTING_CAULDRON.get()
                     .defaultBlockState()
                     .setValue(FermentingCauldronBlock.LEVEL, 3);
@@ -202,10 +218,20 @@ public final class JolCraftPlayerEvents {
 
             if (serverLevel.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity be) {
                 InteractionResult result = be.handleInteraction(player, event.getHand(), used);
+
+                JolCraftLogs.debug(JolCraftLogTags.EVENT,
+                        "RightClickBlock: fermenting_cauldron interaction handled player={} pos={} result={}",
+                        player.getUUID(), pos, result);
+
                 event.setCancellationResult(result);
                 event.setCanceled(true);
                 return;
             }
+
+            // Should not happen: block set but BE missing -> revert and warn.
+            JolCraftLogs.warn(JolCraftLogTags.EVENT,
+                    "RightClickBlock: fermenting_cauldron conversion failed (missing BE) reverting player={} pos={}",
+                    player.getUUID(), pos);
 
             serverLevel.setBlock(pos, state, 3);
         }

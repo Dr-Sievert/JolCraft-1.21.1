@@ -40,7 +40,7 @@ public final class JolCraftNetworking {
                 .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers);
         JolCraftLogs.info(
                 JolCraftLogTags.NETWORK,
-                "Registered networking payloads (protocol v{})",
+                "Registered networking payloads (protocol version {})",
                 PROTOCOL
         );
     }

@@ -65,15 +65,16 @@ public class JolCraft {
         JolCraftAttributes.register(modEventBus);
         JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);
 
-        JolCraftLogs.debug(
-                JolCraftLogTags.INIT,
-                "Registered content and listeners"
-        );
 
         // --- Events ---
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(JolCraftNetworking::register);
         modEventBus.addListener(JolCraftCriteriaTriggers::register);
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.INIT,
+                "Registered content and listeners"
+        );
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
