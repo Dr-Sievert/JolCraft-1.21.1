@@ -404,13 +404,14 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         // Collect remaining pooled recipes (≤ current level)
         // ---------------------------------------------------------------------
 
-        List<RecipeHolder<DwarfTradeRecipe>> remainingPool =
+        List<RecipeHolder<DwarfTradeRecipe>> remainingPool = new ArrayList<>(
                 DwarfTrades.getTradeRecipesUpToLevel(
                         serverLevel,
                         profession,
                         DwarfTradeRecipe.TradePool.POOL,
                         currentLevel
-                );
+                )
+        );
 
         // POOL recipe getId -> holder (datapacks can change)
         Map<ResourceLocation, RecipeHolder<DwarfTradeRecipe>> poolById = new HashMap<>();
@@ -650,7 +651,14 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             int currentLevel,
             @Nullable DwarfProfessionSettings.TradeSettings tradeSettings
     ) {
-        List<RecipeHolder<DwarfTradeRecipe>> remainingRestock = DwarfTrades.getTradeRecipesUpToLevel(serverLevel, profession, DwarfTradeRecipe.TradePool.RESTOCK_POOL, currentLevel);
+        List<RecipeHolder<DwarfTradeRecipe>> remainingRestock = new ArrayList<>(
+                DwarfTrades.getTradeRecipesUpToLevel(
+                        serverLevel,
+                        profession,
+                        DwarfTradeRecipe.TradePool.RESTOCK_POOL,
+                        currentLevel
+                )
+        );
 
         int added = 0;
         for (int lvl = 1; lvl <= currentLevel; lvl++) {

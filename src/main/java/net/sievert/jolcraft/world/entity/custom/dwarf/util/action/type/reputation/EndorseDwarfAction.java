@@ -63,11 +63,13 @@ public class EndorseDwarfAction extends InspectDwarfAction {
 
         JolCraftLogs.info(
                 JolCraftLogTags.PLAYER,
-                "{} at {} endorsed {}, they now have {} endorsements",
+                "{} at {} in {} endorsed {}, they now have {} {}",
                 DwarfProfession.getDisplayName(dwarf).getString(),
                 JolCraftLogs.roundedPos(dwarf),
+                dwarf.level().dimension().location(),
                 player.getDisplayName().getString(),
-                total
+                total,
+                total <= 1 ? "endorsement" : "endorsements"
         );
 
         if (player instanceof ServerPlayer serverPlayer) {

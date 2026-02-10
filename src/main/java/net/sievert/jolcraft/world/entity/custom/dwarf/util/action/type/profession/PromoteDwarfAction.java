@@ -145,9 +145,10 @@ public class PromoteDwarfAction extends InspectDwarfAction {
 
                     JolCraftLogs.info(
                             JolCraftLogTags.ENTITY,
-                            "{} at {} promoted by {} to {}",
+                            "{} at {} in {} promoted by {} to {}",
                             DwarfProfession.getDisplayName(dwarf).getString(),
                             JolCraftLogs.roundedPos(dwarf),
+                            dwarf.level().dimension().location(),
                             player.getDisplayName().getString(),
                             newDwarf.getProfession()
                     );
