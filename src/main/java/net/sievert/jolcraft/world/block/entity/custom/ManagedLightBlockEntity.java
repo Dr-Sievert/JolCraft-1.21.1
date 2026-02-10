@@ -83,7 +83,7 @@ public final class ManagedLightBlockEntity extends BlockEntity {
                 "ManagedLight cleanup ({}) owner={} pos={} dim={}",
                 reason,
                 owner,
-                worldPosition,
+                JolCraftLogs.roundedPos(worldPosition),
                 level.dimension().location()
         );
 

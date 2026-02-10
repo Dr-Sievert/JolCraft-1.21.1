@@ -71,7 +71,7 @@ public class HearthBlockEntity extends BlockEntity {
                 JolCraftLogs.warn(
                         JolCraftLogTags.BLOCK_ENTITY,
                         "Hearth at {} contains invalid player UUID '{}' (skipping)",
-                        worldPosition,
+                        JolCraftLogs.roundedPos(worldPosition),
                         raw
                 );
             }

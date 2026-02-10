@@ -16,6 +16,7 @@ import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
@@ -66,9 +67,9 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
         if (!dwarf.level().isClientSide) {
             JolCraftLogs.info(
                     JolCraftLogTags.PLAYER,
-                    "Dwarf {} at {} promoted {} to {}",
-                    dwarf.getProfession(),
-                    dwarf.blockPosition(),
+                    "{} at {} promoted {} to {}",
+                    DwarfProfession.getDisplayName(dwarf).getString(),
+                    JolCraftLogs.roundedPos(dwarf),
                     player.getDisplayName().getString(),
                     DwarvenReputationHelper.getTierLangKey(newRep)
             );

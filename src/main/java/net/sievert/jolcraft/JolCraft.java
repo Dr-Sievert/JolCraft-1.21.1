@@ -1,10 +1,14 @@
 package net.sievert.jolcraft;
 
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
@@ -65,15 +69,21 @@ public class JolCraft {
         JolCraftAttributes.register(modEventBus);
         JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);
 
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued all registrations"
+        );
 
         // --- Events ---
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::loadComplete);
         modEventBus.addListener(JolCraftNetworking::register);
         modEventBus.addListener(JolCraftCriteriaTriggers::register);
 
         JolCraftLogs.debug(
                 JolCraftLogTags.INIT,
-                "Registered content and listeners"
+                "Registered listeners"
         );
     }
 
@@ -88,6 +98,21 @@ public class JolCraft {
                     "Common setup complete"
             );
         });
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void clientSetup(final FMLClientSetupEvent event) {
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Client setup complete"
+        );
+    }
+
+    private void loadComplete(final FMLLoadCompleteEvent event) {
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Load complete"
+        );
     }
 
     // --- Utility for ResourceLocation under this modid ---

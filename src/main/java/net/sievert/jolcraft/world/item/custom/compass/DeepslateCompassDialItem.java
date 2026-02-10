@@ -8,6 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.language.JolCraftKeyParts;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
 
@@ -26,7 +27,7 @@ public class DeepslateCompassDialItem extends Item {
         String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
         if (structureId != null && !structureId.isEmpty()) {
             tooltip.add(
-                    Component.translatable(AbstractLanguageKeys.tooltip(JolCraftLanguageKeys.DEEPSLATE_COMPASS_DIAL, structureId)).withStyle(ChatFormatting.BLUE));
+                    Component.translatable(AbstractLanguageKeys.tooltip(JolCraftKeyParts.DEEPSLATE_COMPASS_DIAL, structureId)).withStyle(ChatFormatting.BLUE));
         } else {
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_DIAL_UNKNOWN).withStyle(ChatFormatting.DARK_GRAY));
         }

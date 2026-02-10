@@ -143,14 +143,14 @@ public class DwarvenReputationImpl implements DwarvenReputation {
             ResourceLocation profId = ResourceLocation.tryParse(idString);
             if (profId == null) {
                 JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT,
-                        "Failed to parse endorsement profession getId: '{}'",
+                        "Failed to parse endorsement profession: '{}'",
                         idString
                 );
                 continue;
             }
             if (DwarfProfession.byId(profId.getPath()) == DwarfProfession.NONE) {
                 JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT,
-                        "Unknown endorsement profession getId: '{}'",
+                        "Unknown endorsement profession: '{}'",
                         idString
                 );
                 continue;

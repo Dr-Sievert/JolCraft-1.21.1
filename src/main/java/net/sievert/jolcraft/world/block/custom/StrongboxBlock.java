@@ -339,7 +339,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 JolCraftLogs.warn(
                         JolCraftLogTags.BLOCK,
                         "Strongbox at {} is locked but has missing/wrong BlockEntity (found={})",
-                        pos,
+                        JolCraftLogs.roundedPos(pos),
                         (be == null ? "null" : be.getClass().getName())
                 );
                 // Still consume interaction like before.
@@ -355,7 +355,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK,
                     "Strongbox at {} has no MenuProvider (locked={} be={})",
-                    pos,
+                    JolCraftLogs.roundedPos(pos),
                     state.getValue(LOCKED),
                     (be == null ? "null" : be.getClass().getName())
             );

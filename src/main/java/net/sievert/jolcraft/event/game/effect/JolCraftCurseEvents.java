@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.event.game.effect;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
@@ -66,14 +67,14 @@ public final class JolCraftCurseEvents {
 
             ResourceLocation effectId = event.getEffect()
                     .unwrapKey()
-                    .map(key -> key.location())
+                    .map(ResourceKey::location)
                     .orElse(null);
 
             JolCraftLogs.debug(
                     JolCraftLogTags.PLAYER,
-                    "Blocked effect removal: entity={}, effect={}",
-                    player.getUUID(),
-                    effectId
+                    "Blocked {} removal for {}",
+                    effectId,
+                    player.getDisplayName().getString()
             );
 
             event.setCanceled(true);

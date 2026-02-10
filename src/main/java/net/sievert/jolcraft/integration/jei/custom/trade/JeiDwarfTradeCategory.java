@@ -39,7 +39,7 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
 
     public static IRecipeType<JeiDwarfTrade> recipeTypeFor(DwarfProfession prof) {
         return TYPES.computeIfAbsent(prof, p ->
-                IRecipeType.create(JolCraft.MOD_ID, "dwarf_trades/" + p.getDisplayName(), JeiDwarfTrade.class)
+                IRecipeType.create(JolCraft.MOD_ID, "dwarf_trades/" + p.getId(), JeiDwarfTrade.class)
         );
     }
 

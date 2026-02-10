@@ -482,7 +482,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             if (id == null) {
                 JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
                         "FermentingCauldron at {} has malformed lastIngredient getId '{}' (clearing)",
-                        worldPosition, raw);
+                        JolCraftLogs.roundedPos(worldPosition), raw);
                 lastIngredient = ItemStack.EMPTY;
             } else {
                 Item item = itemLookup
@@ -493,7 +493,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 if (item == Items.AIR) {
                     JolCraftLogs.debug(JolCraftLogTags.BLOCK_ENTITY,
                             "FermentingCauldron at {} missing lastIngredient item '{}' (clearing)",
-                            worldPosition, id);
+                            JolCraftLogs.roundedPos(worldPosition), id);
                     lastIngredient = ItemStack.EMPTY;
                 } else {
                     lastIngredient = new ItemStack(item);
@@ -520,7 +520,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 if (id == null) {
                     JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
                             "FermentingCauldron at {} has malformed ingredient getId '{}' (skipping)",
-                            worldPosition, raw);
+                            JolCraftLogs.roundedPos(worldPosition), raw);
                     continue;
                 }
 
@@ -532,7 +532,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 if (item == Items.AIR) {
                     JolCraftLogs.debug(JolCraftLogTags.BLOCK_ENTITY,
                             "FermentingCauldron at {} missing ingredient item '{}' (skipping)",
-                            worldPosition, id);
+                            JolCraftLogs.roundedPos(worldPosition), id);
                     continue;
                 }
 
@@ -576,7 +576,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 if (idLoc == null) {
                     JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
                             "FermentingCauldron at {} has malformed effect getId '{}' (skipping)",
-                            worldPosition, raw);
+                            JolCraftLogs.roundedPos(worldPosition), raw);
                     continue;
                 }
 

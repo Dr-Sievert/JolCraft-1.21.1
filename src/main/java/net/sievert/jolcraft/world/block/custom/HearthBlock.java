@@ -183,7 +183,7 @@ public class HearthBlock extends BaseEntityBlock {
             if (!state.is(this)) {
                 JolCraftLogs.warn(JolCraftLogTags.BLOCK,
                         "Hearth upper-half used but lower-half missing at {}",
-                        pos);
+                        JolCraftLogs.roundedPos(pos));
                 return InteractionResult.FAIL;
             }
         }
@@ -212,7 +212,7 @@ public class HearthBlock extends BaseEntityBlock {
                 JolCraftLogs.warn(
                         JolCraftLogTags.BLOCK,
                         "Hearth at {} has missing/wrong BlockEntity (found={})",
-                        pos,
+                        JolCraftLogs.roundedPos(pos),
                         (be == null ? "null" : be.getClass().getName())
                 );
             }
@@ -296,7 +296,7 @@ public class HearthBlock extends BaseEntityBlock {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK,
                     "Hearth at {} has missing/wrong BlockEntity (found={})",
-                    pos,
+                    JolCraftLogs.roundedPos(pos),
                     (be == null ? "null" : be.getClass().getName())
             );
         }

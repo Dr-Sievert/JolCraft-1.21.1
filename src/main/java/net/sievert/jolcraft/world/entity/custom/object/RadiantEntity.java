@@ -69,12 +69,14 @@ public class RadiantEntity extends Entity implements TraceableEntity {
             return;
         }
 
+        if(currentLightPos == null) return;
+
         Player owner = getOwnerPlayer();
         if (owner == null) {
             JolCraftLogs.debug(
                     JolCraftLogTags.ENTITY,
                     "RadiantEntity {} discarded: missing owner ownerUUID={} lightPos={} dim={}",
-                    getUUID(), ownerUUID, currentLightPos, level().dimension().location()
+                    getUUID(), ownerUUID, JolCraftLogs.roundedPos(currentLightPos), level().dimension().location()
             );
             discard();
             return;

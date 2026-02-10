@@ -58,7 +58,7 @@ public class FermentingCauldronBlock extends LayeredCauldronBlock implements Ent
 
             JolCraftLogs.warn(JolCraftLogTags.BLOCK,
                     "FermentingCauldron at {} has missing/wrong BlockEntity (found={})",
-                    pos, (be == null ? "null" : be.getClass().getName()));
+                    JolCraftLogs.roundedPos(pos), (be == null ? "null" : be.getClass().getName()));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.SUCCESS;

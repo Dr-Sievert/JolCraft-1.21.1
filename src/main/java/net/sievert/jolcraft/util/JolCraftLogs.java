@@ -1,5 +1,11 @@
 package net.sievert.jolcraft.util;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.JolCraft;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +68,6 @@ public final class JolCraftLogs {
         LOGGER.error(prefix(tag, message), args);
     }
 
-    public static void error(String tag, String message, Throwable t, Object... args) {
-        LOGGER.error(prefix(tag, message), args, t);
-    }
-
     /* ---------------------------------------------------------------------
      * Internal
      * ------------------------------------------------------------------ */
@@ -84,5 +86,37 @@ public final class JolCraftLogs {
      */
     public static double pct1(double value) {
         return Math.round(value * 1000.0D) / 10.0D;
+    }
+
+
+    /** Returns "(x, y, z)" rounded to nearest integer. */
+    public static String roundedPos(Vec3 pos) {
+        return "("
+                + Math.round(pos.x) + ", "
+                + Math.round(pos.y) + ", "
+                + Math.round(pos.z) + ")";
+    }
+
+    /** Returns "(x, y, z)" from a BlockPos. */
+    public static String roundedPos(BlockPos pos) {
+        return "("
+                + pos.getX() + ", "
+                + pos.getY() + ", "
+                + pos.getZ() + ")";
+    }
+
+
+    /** Convenience overloads */
+
+    public static String roundedPos(BlockEntity be) {
+        return roundedPos(be.getBlockPos());
+    }
+
+    public static String roundedPos(Player player) {
+        return roundedPos(player.position());
+    }
+
+    public static String roundedPos(Entity entity) {
+        return roundedPos(entity.position());
     }
 }

@@ -3,25 +3,27 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.util.profession;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageCategory;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 
 public enum DwarfProfession {
 
-    NONE(JolCraftLanguageKeys.DWARF),
-    ALCHEMIST(JolCraftLanguageKeys.DWARF_ALCHEMIST),
-    ARCANIST(JolCraftLanguageKeys.DWARF_ARCANIST),
-    ARTISAN(JolCraftLanguageKeys.DWARF_ARTISAN),
-    BREWMASTER(JolCraftLanguageKeys.DWARF_BREWMASTER),
-    EXPLORER(JolCraftLanguageKeys.DWARF_EXPLORER),
-    GUARD(JolCraftLanguageKeys.DWARF_GUARD),
-    GUILDMASTER(JolCraftLanguageKeys.DWARF_GUILDMASTER),
-    HISTORIAN(JolCraftLanguageKeys.DWARF_HISTORIAN),
-    KEEPER(JolCraftLanguageKeys.DWARF_KEEPER),
-    MERCHANT(JolCraftLanguageKeys.DWARF_MERCHANT),
-    MINER(JolCraftLanguageKeys.DWARF_MINER),
-    PRIEST(JolCraftLanguageKeys.DWARF_PRIEST),
-    SCRAPPER(JolCraftLanguageKeys.DWARF_SCRAPPER);
+    NONE(JolCraftIds.DWARF),
+    ALCHEMIST(JolCraftIds.DWARF_ALCHEMIST),
+    ARCANIST(JolCraftIds.DWARF_ARCANIST),
+    ARTISAN(JolCraftIds.DWARF_ARTISAN),
+    BREWMASTER(JolCraftIds.DWARF_BREWMASTER),
+    EXPLORER(JolCraftIds.DWARF_EXPLORER),
+    GUARD(JolCraftIds.DWARF_GUARD),
+    GUILDMASTER(JolCraftIds.DWARF_GUILDMASTER),
+    HISTORIAN(JolCraftIds.DWARF_HISTORIAN),
+    KEEPER(JolCraftIds.DWARF_KEEPER),
+    MERCHANT(JolCraftIds.DWARF_MERCHANT),
+    MINER(JolCraftIds.DWARF_MINER),
+    PRIEST(JolCraftIds.DWARF_PRIEST),
+    SCRAPPER(JolCraftIds.DWARF_SCRAPPER);
 
     private final String id;
 
@@ -39,6 +41,10 @@ public enum DwarfProfession {
                 : Component.empty();
     }
 
+    public static Component getDisplayName(AbstractTradingEntity dwarf) {
+        return dwarf.getTradeProfession().getDisplayName();
+    }
+
     public static DwarfProfession byId(String id) {
         for (DwarfProfession prof : values()) {
             if (prof.id.equals(id)) return prof;
@@ -48,12 +54,13 @@ public enum DwarfProfession {
 
     @SuppressWarnings("deprecation")
     public static DwarfProfession fromEntityType(EntityType<?> type) {
-        ResourceLocation id = type.builtInRegistryHolder().key().location();
-        String path = id.getPath();
+        ResourceLocation rl = type.builtInRegistryHolder().key().location();
 
-        if (path.equals("dwarf")) return NONE;
+        String path = rl.getPath();
 
-        if (path.startsWith("dwarf_")) {
+        if (path.equals(JolCraftIds.DWARF)) return NONE;
+
+        if (path.startsWith(JolCraftIds.DWARF + "_")) {
             return byId(path);
         }
 

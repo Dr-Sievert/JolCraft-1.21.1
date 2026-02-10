@@ -399,14 +399,14 @@ public final class JolCraftAttributeEvents {
         if (existing != null) {
             if (existing.isRemoved()) {
                 JolCraftLogs.debug(JolCraftLogTags.PLAYER,
-                        "Clearing radiant (removed) for player {} in {}",
+                        "Clearing radiant (removed) for {} in {}",
                         uuid, level.dimension().location());
 
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
                 existing = null;
             } else if (existing.level() != level) {
                 JolCraftLogs.debug(JolCraftLogTags.PLAYER,
-                        "Clearing radiant (dimension change) for player {} old={} new={}",
+                        "Clearing radiant (dimension change) for {} old={} new={}",
                         uuid, existing.level().dimension().location(), level.dimension().location());
 
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
@@ -713,7 +713,7 @@ public final class JolCraftAttributeEvents {
                     JolCraftLogTags.PLAYER,
                     "Extra crop drop: player={}, pos={}, chance={}%, count={}, items={}",
                     player.getUUID(),
-                    pos,
+                    JolCraftLogs.roundedPos(pos),
                     JolCraftLogs.pct1(chance),
                     extraCount,
                     extraItems

@@ -37,7 +37,7 @@ public final class DwarfProfessionConfigs extends ConfigManager<DwarfProfession,
         String professionId = id.getPath();
         DwarfProfession profession = DwarfProfession.byId(professionId);
         if (profession == DwarfProfession.NONE) {
-            JolCraftLogs.warn(JolCraftLogTags.CONFIG, "Ignoring dwarf profession config '{}' (no matching profession getId)", id);
+            JolCraftLogs.warn(JolCraftLogTags.CONFIG, "Ignoring dwarf profession config '{}' (no matching profession)", id);
             return null;
         }
         return profession;

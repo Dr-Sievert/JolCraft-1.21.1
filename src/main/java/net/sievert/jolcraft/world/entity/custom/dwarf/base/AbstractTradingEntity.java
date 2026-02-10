@@ -318,9 +318,10 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         if (!this.level().isClientSide) {
             JolCraftLogs.info(
                     JolCraftLogTags.ENTITY,
-                    "Dwarf {} died: {}",
-                    this,
-                    this.getCombatTracker().getDeathMessage().getString()
+                    "{} at {} in {}",
+                    this.getCombatTracker().getDeathMessage().getString(),
+                    JolCraftLogs.roundedPos(this),
+                    this.level().dimension().location()
             );
         }
         super.die(cause);
@@ -352,7 +353,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     // Profession resolution for recipe trades
     // ------------------------------------------------------------
 
-    protected final DwarfProfession getTradeProfession() {
+    public final DwarfProfession getTradeProfession() {
         if (this instanceof AbstractDwarfEntity dwarf) {
             return dwarf.getProfession();
         }
@@ -810,8 +811,9 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
             JolCraftLogs.info(
                     JolCraftLogTags.ENTITY,
-                    "Dwarf {} leveled up to {}",
-                    this.getTradeProfession(),
+                    "{} at {} leveled up to {}",
+                    DwarfProfession.getDisplayName(this).getString(),
+                    JolCraftLogs.roundedPos(this),
                     DwarfMerchantData.Level.fromId(next)
             );
 

@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
@@ -26,7 +27,7 @@ public final class JolCraftCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, JolCraft.MOD_ID);
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_ITEMS =
-            CREATIVE_MODE_TABS.register(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()
+            CREATIVE_MODE_TABS.register(JolCraftIds.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()
                     .title(Component.translatable(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB_KEY))
                     .icon(() -> new ItemStack(JolCraftItems.GOLD_COIN.get()))
                     .displayItems((pParameters, pOutput) -> {
@@ -262,10 +263,10 @@ public final class JolCraftCreativeModeTabs {
                     }).build());
 
     public static final Supplier<CreativeModeTab> JOLCRAFT_EGGS =
-            CREATIVE_MODE_TABS.register(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, () -> CreativeModeTab.builder()
+            CREATIVE_MODE_TABS.register(JolCraftIds.JOLCRAFT_EGG_CREATIVE_TAB, () -> CreativeModeTab.builder()
                     .title(Component.translatable(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB_KEY))
                     .icon(() -> new ItemStack(JolCraftItems.DWARF_SPAWN_EGG.get()))
-                    .withTabsBefore(JolCraft.location(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB))
+                    .withTabsBefore(JolCraft.location(JolCraftIds.JOLCRAFT_GENERAL_CREATIVE_TAB))
                     .displayItems((pParameters, pOutput) -> {
 
                         pOutput.accept(JolCraftItems.DWARF_SPAWN_EGG);

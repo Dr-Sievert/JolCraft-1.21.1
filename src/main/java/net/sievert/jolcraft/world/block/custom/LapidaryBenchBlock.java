@@ -46,7 +46,7 @@ public class LapidaryBenchBlock extends BaseEntityBlock {
             } else {
                 JolCraftLogs.warn(JolCraftLogTags.BLOCK,
                         "LapidaryBench at {} has missing/wrong BlockEntity (found={})",
-                        pos, (be == null ? "null" : be.getClass().getName()));
+                        JolCraftLogs.roundedPos(pos), (be == null ? "null" : be.getClass().getName()));
             }
         }
         return InteractionResult.SUCCESS;

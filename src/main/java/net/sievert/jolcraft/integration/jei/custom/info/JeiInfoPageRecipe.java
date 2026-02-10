@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 public final class JeiInfoPageRecipe {
     private final ItemStack focusStack;
     private final TagKey<Item> focusTag;
-    private final TagKey<Block> focusBlockTag; // NEW: lazy block-tag focus
+    private final TagKey<Block> focusBlockTag;
     private final List<ItemStack> groupStacks;
     private final Component content;
     private final Consumer<ItemStack> stackCustomizer;

@@ -161,7 +161,7 @@ public final class JolCraftCompassEvents {
                 group,
                 foundStructureFullId,
                 targetPos.dimension().location(),
-                targetPos.pos()
+                JolCraftLogs.roundedPos(targetPos.pos())
         );
 
         dial.shrink(1);
@@ -272,10 +272,10 @@ public final class JolCraftCompassEvents {
 
         JolCraftLogs.info(
                 JolCraftLogTags.PLAYER,
-                "Structure discovered: player={}, structure={}, entrance={}, dimension={}",
+                "Structure discovered: player={}, structure={}, pos={}, dimension={}",
                 player.getUUID(),
                 trackedStructureKey,
-                entrancePos.pos(),
+                JolCraftLogs.roundedPos(entrancePos.pos()),
                 entrancePos.dimension().location()
         );
 

@@ -17,6 +17,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntit
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -144,8 +145,9 @@ public class PromoteDwarfAction extends InspectDwarfAction {
 
                     JolCraftLogs.info(
                             JolCraftLogTags.ENTITY,
-                            "Dwarf at {} promoted by {} to {}",
-                            dwarf.blockPosition(),
+                            "{} at {} promoted by {} to {}",
+                            DwarfProfession.getDisplayName(dwarf).getString(),
+                            JolCraftLogs.roundedPos(dwarf),
                             player.getDisplayName().getString(),
                             newDwarf.getProfession()
                     );
