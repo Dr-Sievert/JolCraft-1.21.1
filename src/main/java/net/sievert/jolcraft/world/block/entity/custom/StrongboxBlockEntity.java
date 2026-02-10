@@ -390,7 +390,7 @@ package net.sievert.jolcraft.world.block.entity.custom;
                     JolCraftLogTags.BLOCK_ENTITY,
                     "Strongbox lock press rejected ({}) pos={} dim={} player={}({}) buttonId={} locked={} hasLockpickInserted={} currentInteracting={}({})",
                     reason,
-                    JolCraftLogs.roundedPos(worldPosition),
+                    JolCraftLogs.roundedPos(this),
                     (level == null) ? "null" : level.dimension().location(),
                     player.getName().getString(),
                     player.getUUID(),

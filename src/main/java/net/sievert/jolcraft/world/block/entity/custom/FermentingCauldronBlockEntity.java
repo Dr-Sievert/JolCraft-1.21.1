@@ -482,7 +482,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             if (id == null) {
                 JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
                         "FermentingCauldron at {} has malformed lastIngredient getId '{}' (clearing)",
-                        JolCraftLogs.roundedPos(worldPosition), raw);
+                        JolCraftLogs.roundedPos(this), raw);
                 lastIngredient = ItemStack.EMPTY;
             } else {
                 Item item = itemLookup
@@ -493,7 +493,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 if (item == Items.AIR) {
                     JolCraftLogs.debug(JolCraftLogTags.BLOCK_ENTITY,
                             "FermentingCauldron at {} missing lastIngredient item '{}' (clearing)",
-                            JolCraftLogs.roundedPos(worldPosition), id);
+                            JolCraftLogs.roundedPos(this), id);
                     lastIngredient = ItemStack.EMPTY;
                 } else {
                     lastIngredient = new ItemStack(item);
@@ -520,7 +520,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 if (id == null) {
                     JolCraftLogs.warn(JolCraftLogTags.BLOCK_ENTITY,
                             "FermentingCauldron at {} has malformed ingredient getId '{}' (skipping)",
-                            JolCraftLogs.roundedPos(worldPosition), raw);
+                            JolCraftLogs.roundedPos(this), raw);
                     continue;
                 }
 
@@ -532,7 +532,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 if (item == Items.AIR) {
                     JolCraftLogs.debug(JolCraftLogTags.BLOCK_ENTITY,
                             "FermentingCauldron at {} missing ingredient item '{}' (skipping)",
-                            JolCraftLogs.roundedPos(worldPosition), id);
+                            JolCraftLogs.roundedPos(this), id);
                     continue;
                 }
 

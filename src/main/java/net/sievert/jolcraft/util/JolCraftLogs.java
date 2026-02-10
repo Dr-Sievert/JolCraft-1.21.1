@@ -89,22 +89,27 @@ public final class JolCraftLogs {
     }
 
 
+    private static String formatXYZ(long x, long y, long z) {
+        return "X=" + x + ", Y=" + y + ", Z=" + z;
+    }
+
     /** Returns "(x, y, z)" rounded to nearest integer. */
     public static String roundedPos(Vec3 pos) {
-        return "("
-                + Math.round(pos.x) + ", "
-                + Math.round(pos.y) + ", "
-                + Math.round(pos.z) + ")";
+        return formatXYZ(
+                Math.round(pos.x),
+                Math.round(pos.y),
+                Math.round(pos.z)
+        );
     }
 
     /** Returns "(x, y, z)" from a BlockPos. */
     public static String roundedPos(BlockPos pos) {
-        return "("
-                + pos.getX() + ", "
-                + pos.getY() + ", "
-                + pos.getZ() + ")";
+        return formatXYZ(
+                pos.getX(),
+                pos.getY(),
+                pos.getZ()
+        );
     }
-
 
     /** Convenience overloads */
 

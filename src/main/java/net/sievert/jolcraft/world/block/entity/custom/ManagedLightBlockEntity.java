@@ -54,7 +54,7 @@ public final class ManagedLightBlockEntity extends BlockEntity {
             tickCooldown--;
             return;
         }
-        tickCooldown = 20; // validate once per second
+        tickCooldown = 20;
 
         if (owner == null) {
             cleanupSelf(serverLevel, "no_owner");
@@ -83,7 +83,7 @@ public final class ManagedLightBlockEntity extends BlockEntity {
                 "ManagedLight cleanup ({}) owner={} pos={} dim={}",
                 reason,
                 owner,
-                JolCraftLogs.roundedPos(worldPosition),
+                JolCraftLogs.roundedPos(this),
                 level.dimension().location()
         );
 
