@@ -67,11 +67,11 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
         if (!dwarf.level().isClientSide) {
             JolCraftLogs.info(
                     JolCraftLogTags.PLAYER,
-                    "{} at {} promoted {} to {}",
+                    "{} at {} increased dwarven reputation for {} to {}",
                     DwarfProfession.getDisplayName(dwarf).getString(),
                     JolCraftLogs.roundedPos(dwarf),
                     player.getDisplayName().getString(),
-                    DwarvenReputationHelper.getTierLangKey(newRep)
+                    Component.translatable(DwarvenReputationHelper.getTierLangKey(newRep)).getString()
             );
         }
 

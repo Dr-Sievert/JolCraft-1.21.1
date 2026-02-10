@@ -107,17 +107,6 @@ public final class JolCraftServerPayloadHandlers {
             if (!(player instanceof ServerPlayer sp)) return;
 
             ResourceLocation soundId = packet.soundId();
-            if (!JolCraft.MOD_ID.equals(soundId.getNamespace())){
-                JolCraftLogs.warn(
-                        JolCraftLogTags.NETWORK,
-                        "Rejected sound packet (non-mod namespace: {}) from {}",
-                        soundId,
-                        player.getGameProfile().getName()
-                );
-
-                return;
-            }
-
             var level = sp.serverLevel();
 
             long tick = level.getGameTime();

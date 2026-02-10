@@ -100,10 +100,11 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
 
         JolCraftLogs.info(
                 JolCraftLogTags.PLAYER,
-                "Dwarf bounty completed by {}, type= {} tier= {}",
+                "{} completed a {} {} bounty at {}",
                 player.getDisplayName().getString(),
-                type.getId(),
-                tier.getDisplayName()
+                tier.getDisplayName().getString().toLowerCase(),
+                type.toString().toLowerCase(),
+                JolCraftLogs.roundedPos(player)
         );
 
         Vec3 start = dwarf.position().add(0.0, dwarf.getEyeHeight(), 0.0);

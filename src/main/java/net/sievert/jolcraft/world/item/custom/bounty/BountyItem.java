@@ -47,7 +47,7 @@ public class BountyItem extends Item {
                 } else {
                     tooltip.add(
                             Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_TYPE)
-                                    .append(Component.translatable("entity.jolcraft.dwarf_" + type.getId()))
+                                    .append(Component.translatable("entity.jolcraft." + type.getId()))
                                     .withStyle(ChatFormatting.GRAY)
                     );
                     tooltip.add(

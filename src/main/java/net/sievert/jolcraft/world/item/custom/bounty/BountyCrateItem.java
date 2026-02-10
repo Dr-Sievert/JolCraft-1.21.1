@@ -274,7 +274,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                                 .withStyle(ChatFormatting.RED));
                     } else{
                         tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_TYPE)
-                                .append(Component.translatable("entity.jolcraft.dwarf_" + type.getId()))
+                                .append(Component.translatable("entity.jolcraft." + type.getId()))
                                 .withStyle(ChatFormatting.GRAY));
 
                         tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_TIER, tier.getDisplayName())
