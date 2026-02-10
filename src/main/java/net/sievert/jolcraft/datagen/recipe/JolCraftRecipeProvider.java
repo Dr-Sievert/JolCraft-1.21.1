@@ -12,8 +12,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.sievert.jolcraft.datagen.recipe.subprovider.*;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

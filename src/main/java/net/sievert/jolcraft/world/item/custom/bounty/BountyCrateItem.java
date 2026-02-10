@@ -24,6 +24,8 @@ import net.neoforged.neoforge.common.extensions.IItemExtension;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyTier;
@@ -56,7 +58,16 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
             if (data != null && currentFilled > 0) {
                 Item targetItem = resolveItem(player.level(), data.targetItem());
-                if (targetItem == null) return false;
+                if (targetItem == null) {
+                    JolCraftLogs.warn(
+                            JolCraftLogTags.ITEM,
+                            "BountyCrate resolveItem failed (targetId={}, crate={})",
+                            data.targetItem(),
+                            stack.getItem()
+                    );
+                    return false;
+                }
+
                 int toExtract = Math.min(64, currentFilled);
                 ItemStack out = new ItemStack(targetItem, toExtract);
                 access.set(out);
@@ -86,10 +97,30 @@ public class BountyCrateItem extends Item implements IItemExtension {
         if (data == null) return false;
 
         Item targetItem = resolveItem(level, data.targetItem());
-        if (targetItem == null) return false;
+        if (targetItem == null) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ITEM,
+                    "BountyCrate resolveItem failed (targetId={}, crate={})",
+                    data.targetItem(),
+                    crate.getItem()
+            );
+            return false;
+        }
         if (!target.is(targetItem)) return false;
 
         int currentFilled = crate.getOrDefault(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
+
+        if (currentFilled > data.requiredCount()) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ITEM,
+                    "BountyCrate corrupt fill: currentFilled={} required={} (targetId={}, crate={})",
+                    currentFilled,
+                    data.requiredCount(),
+                    data.targetItem(),
+                    crate.getItem()
+            );
+            return false;
+        }
 
         int toTransfer = Math.min(data.requiredCount() - currentFilled, Math.min(maxTransfer, target.getCount()));
         if (toTransfer <= 0) return false;
@@ -126,6 +157,15 @@ public class BountyCrateItem extends Item implements IItemExtension {
         }
 
         Item targetItem = resolveItem(level, data.targetItem());
+        if (targetItem == null) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ITEM,
+                    "BountyCrate resolveItem failed on use (targetId={}, crate={})",
+                    data.targetItem(),
+                    crate.getItem()
+            );
+            return InteractionResult.PASS;
+        }
 
         Inventory inv = player.getInventory();
 

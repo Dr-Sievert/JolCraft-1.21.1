@@ -5,8 +5,8 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
 import net.neoforged.neoforge.registries.DeferredHolder;
 

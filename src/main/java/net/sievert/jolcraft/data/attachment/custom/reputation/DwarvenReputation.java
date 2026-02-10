@@ -12,8 +12,24 @@ import java.util.Set;
 
 public interface DwarvenReputation extends INBTSerializable<CompoundTag> {
 
-    int getTier();
-    void setTier(int tier);
+    // ---------------------------------------------------------------------
+    // Tier
+    // ---------------------------------------------------------------------
+
+    int getTierId();
+    void setTierId(int tierId);
+
+    default DwarvenReputationTier getTier() {
+        return DwarvenReputationTier.fromId(getTierId());
+    }
+
+    default void setTier(DwarvenReputationTier tier) {
+        setTierId(tier != null ? tier.id() : DwarvenReputationTier.STRANGER.id());
+    }
+
+    // ---------------------------------------------------------------------
+    // Endorsements
+    // ---------------------------------------------------------------------
 
     /**
      * Immutable snapshot. Never returns a mutable backing set.
@@ -29,17 +45,21 @@ public interface DwarvenReputation extends INBTSerializable<CompoundTag> {
 
     default boolean addEndorsement(DwarfProfession profession) {
         if (profession == null || profession == DwarfProfession.NONE) return false;
-        return addEndorsement(JolCraft.location(profession.id));
+        return addEndorsement(JolCraft.location(profession.getId()));
     }
 
     default boolean hasEndorsement(DwarfProfession profession) {
         if (profession == null || profession == DwarfProfession.NONE) return false;
-        return hasEndorsement(JolCraft.location(profession.id));
+        return hasEndorsement(JolCraft.location(profession.getId()));
     }
 
     default int getEndorsementCount() {
         return getEndorsements().size();
     }
+
+    // ---------------------------------------------------------------------
+    // Access helper
+    // ---------------------------------------------------------------------
 
     static DwarvenReputation get(Player player) {
         return player.getData(JolCraftAttachments.DWARVEN_REP.get());

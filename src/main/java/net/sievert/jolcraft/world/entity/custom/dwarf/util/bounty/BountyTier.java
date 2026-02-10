@@ -1,35 +1,44 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty;
 
+import net.minecraft.network.chat.Component;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+
 public enum BountyTier {
 
-    UNKNOWN(0, "Unknown"),
-    NOVICE(1, "Novice"),
-    APPRENTICE(2, "Apprentice"),
-    JOURNEYMAN(3, "Journeyman"),
-    EXPERT(4, "Expert"),
-    MASTER(5, "Master");
+    UNKNOWN(0, "unknown"),
+    NOVICE(1, JolCraftLanguageKeys.LEVEL_NOVICE),
+    APPRENTICE(2, JolCraftLanguageKeys.LEVEL_APPRENTICE),
+    JOURNEYMAN(3, JolCraftLanguageKeys.LEVEL_JOURNEYMAN),
+    EXPERT(4, JolCraftLanguageKeys.LEVEL_EXPERT),
+    MASTER(5, JolCraftLanguageKeys.LEVEL_MASTER);
 
     private final int value;
-    private final String displayName;
+    private final String langKey;
 
-    BountyTier(int value, String displayName) {
+    BountyTier(int value, String langKey) {
         this.value = value;
-        this.displayName = displayName;
+        this.langKey = langKey;
     }
 
-    /** For saving to DataComponent/NBT. */
+    public String getLangKey() {
+        return langKey;
+    }
+
+
+    /** For saving to DataComponent / NBT. */
     public int getValue() {
         return value;
     }
 
-    /** For tooltips/UI. */
-    public String getDisplayName() {
-        return displayName;
+    /** Convenience for UI. */
+    public Component getDisplayName() {
+        return Component.translatable(langKey);
     }
 
-    /** Get enum from int, or null if not found. */
     public static BountyTier fromValue(int value) {
-        for (BountyTier tier : values()) if (tier.value == value) return tier;
+        for (BountyTier tier : values()) {
+            if (tier.value == value) return tier;
+        }
         return UNKNOWN;
     }
 }

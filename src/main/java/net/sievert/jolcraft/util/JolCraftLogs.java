@@ -1,5 +1,6 @@
-package net.sievert.jolcraft.util.log;
+package net.sievert.jolcraft.util;
 
+import net.sievert.jolcraft.JolCraft;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,7 +8,7 @@ public final class JolCraftLogs {
 
     private JolCraftLogs() {}
 
-    private static final String LOGGER_NAME = "JOLCRAFT";
+    private static final String LOGGER_NAME = JolCraft.MOD_ID.toUpperCase();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LOGGER_NAME);
 

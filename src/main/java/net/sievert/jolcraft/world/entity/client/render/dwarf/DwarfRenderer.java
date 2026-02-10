@@ -94,7 +94,7 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         if (emissiveTexture != null)         this.addLayer(new EmissiveLayer<>(this, emissiveTexture));
     }
 
-    // === Profession entry point: decide layers + emissive + scale based on entity id path ===
+    // === Profession entry point: decide layers + emissive + scale based on entity getId path ===
     public static <T extends AbstractDwarfEntity> DwarfRenderer<T> profession(EntityRendererProvider.Context context, @NotNull EntityType<?> type) {
         return profession(context, type, 1.0f);
     }

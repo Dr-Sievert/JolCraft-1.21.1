@@ -1,7 +1,7 @@
-package net.sievert.jolcraft.data.custom.lore.dwarf;
+package net.sievert.jolcraft.data.lore.dwarf;
 
-import net.sievert.jolcraft.data.custom.lore.LoreAge;
-import net.sievert.jolcraft.data.custom.lore.LoreRarity;
+import net.sievert.jolcraft.data.lore.LoreAge;
+import net.sievert.jolcraft.data.lore.LoreRarity;
 
 import java.util.Map;
 

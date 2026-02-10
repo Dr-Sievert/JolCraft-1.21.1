@@ -35,7 +35,7 @@ public abstract class AbstractLanguageKeys {
         return category(JolCraftLanguageCategory.TOOLTIP, category + "." + path);
     }
 
-    /** "tooltip.<modid>.structure.<id>" */
+    /** "tooltip.<modid>.structure.<getId>" */
     public static String tooltipStructure(String structureId) {
         return tooltip("structure", structureId);
     }

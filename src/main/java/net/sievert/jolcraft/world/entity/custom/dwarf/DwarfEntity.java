@@ -14,9 +14,4 @@ public class DwarfEntity extends AbstractDwarfEntity {
     public DwarfEntity(EntityType<? extends AbstractDwarfEntity> entityType, Level level) {
         super(entityType, level);
     }
-
-    @Override
-    public boolean neverEndorse() {
-        return true;
-    }
 }

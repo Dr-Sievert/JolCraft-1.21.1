@@ -47,7 +47,7 @@ public final class DwarfProfessionTraits {
     private static final Map<DwarfProfession, Traits> TRAITS = new EnumMap<>(DwarfProfession.class);
 
     static {
-        // Defaults = current base behavior (AbstractDwarfEntity / AbstractTradingEntity)
+        // Defaults
         Traits defaults = new Traits(
                 () -> new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()),
                 0,
@@ -62,7 +62,7 @@ public final class DwarfProfessionTraits {
                 SoundEvents.VILLAGER_WORK_FISHERMAN
         );
 
-        // Start by applying defaults to all professions (including NONE).
+        // Start by applying defaults to all professions
         for (DwarfProfession profession : DwarfProfession.values()) {
             TRAITS.put(profession, defaults);
         }
@@ -70,6 +70,32 @@ public final class DwarfProfessionTraits {
         // -----------------------------------------------------------------
         // Profession overrides (mirrors current profession entity subclasses)
         // -----------------------------------------------------------------
+
+        // BASE
+        override(DwarfProfession.NONE,
+                () -> new ItemStack(ItemStack.EMPTY.getItem()),
+                defaults.requiredTier(),
+                defaults.canReroll(),
+                defaults.adultVoicePitch(),
+                defaults.showProgressBar(),
+                true,
+                defaults.canSign(),
+                defaults.canEndorse(),
+                defaults.canTrade(),
+                defaults.restockSound(),
+                defaults.rerollSound()
+        );
+
+        // GUILDMASTER
+        override(DwarfProfession.GUILDMASTER,
+                () -> new ItemStack(JolCraftItems.CONTRACT_GUILDMASTER.get()),
+                defaults.requiredTier(), false, 0.8F, false, true,
+                defaults.canSign(),
+                defaults.canEndorse(),
+                defaults.canTrade(),
+                SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
+                SoundEvents.VILLAGER_WORK_CARTOGRAPHER
+        );
 
         // ALCHEMIST
         override(DwarfProfession.ALCHEMIST,
@@ -115,7 +141,7 @@ public final class DwarfProfessionTraits {
                 SoundEvents.VILLAGER_WORK_CLERIC
         );
 
-        // EXPLORER (only overrides contract/tier/sounds + showProgressBar=false)
+        // EXPLORER
         override(DwarfProfession.EXPLORER,
                 () -> new ItemStack(JolCraftItems.CONTRACT_EXPLORER.get()),
                 2, true, defaults.adultVoicePitch(), false, false,
@@ -126,7 +152,7 @@ public final class DwarfProfessionTraits {
                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
         );
 
-        // GUARD (contract/tier/voice/sounds + canReroll=false + canTrade=level>=5)
+        // GUARD
         override(DwarfProfession.GUARD,
                 () -> new ItemStack(JolCraftItems.CONTRACT_GUARD.get()),
                 1, false, 0.7F, true, false,
@@ -137,18 +163,7 @@ public final class DwarfProfessionTraits {
                 SoundEvents.VILLAGER_WORK_WEAPONSMITH
         );
 
-        // GUILDMASTER (contract + canReroll=false + voice + sounds + showProgressBar=false + neverEndorse=true)
-        override(DwarfProfession.GUILDMASTER,
-                () -> new ItemStack(JolCraftItems.CONTRACT_GUILDMASTER.get()),
-                defaults.requiredTier(), false, 0.8F, false, true,
-                defaults.canSign(),
-                defaults.canEndorse(),
-                defaults.canTrade(),
-                SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
-                SoundEvents.VILLAGER_WORK_CARTOGRAPHER
-        );
-
-        // HISTORIAN (contract + voice + sounds)
+        // HISTORIAN
         override(DwarfProfession.HISTORIAN,
                 () -> new ItemStack(JolCraftItems.CONTRACT_HISTORIAN.get()),
                 defaults.requiredTier(), true, 1.1F, true, false,
@@ -159,7 +174,7 @@ public final class DwarfProfessionTraits {
                 SoundEvents.VILLAGER_WORK_LIBRARIAN
         );
 
-        // KEEPER (contract + tier + sounds)
+        // KEEPER
         override(DwarfProfession.KEEPER,
                 () -> new ItemStack(JolCraftItems.CONTRACT_KEEPER.get()),
                 1, true, defaults.adultVoicePitch(), true, false,
@@ -170,7 +185,7 @@ public final class DwarfProfessionTraits {
                 SoundEvents.VILLAGER_WORK_FARMER
         );
 
-        // MERCHANT (contract + canReroll=false) (sounds remain default)
+        // MERCHANT
         override(DwarfProfession.MERCHANT,
                 () -> new ItemStack(JolCraftItems.CONTRACT_MERCHANT.get()),
                 defaults.requiredTier(), false, defaults.adultVoicePitch(), true, false,
@@ -181,7 +196,7 @@ public final class DwarfProfessionTraits {
                 defaults.rerollSound()
         );
 
-        // MINER (contract/tier/voice/sounds + canReroll=false)
+        // MINER
         override(DwarfProfession.MINER,
                 () -> new ItemStack(JolCraftItems.CONTRACT_MINER.get()),
                 2, false, 1.1F, true, false,
@@ -203,7 +218,7 @@ public final class DwarfProfessionTraits {
                 SoundEvents.VILLAGER_WORK_LIBRARIAN
         );
 
-        // SCRAPPER (contract + voice + sounds)
+        // SCRAPPER
         override(DwarfProfession.SCRAPPER,
                 () -> new ItemStack(JolCraftItems.CONTRACT_SCRAPPER.get()),
                 defaults.requiredTier(), true, 1.4F, true, false,

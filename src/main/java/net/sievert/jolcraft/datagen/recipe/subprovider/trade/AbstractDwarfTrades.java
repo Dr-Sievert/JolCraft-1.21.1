@@ -556,7 +556,7 @@ public abstract class AbstractDwarfTrades {
     }
 
     // =====================================================================
-    // Stable id helpers (LEVEL-LESS)
+    // Stable getId helpers (LEVEL-LESS)
     // trade() prefixes: levelId(level) + "_" automatically.
     // =====================================================================
 

@@ -34,8 +34,8 @@ import net.sievert.jolcraft.config.dwarf.DwarfProfessionSettings;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
@@ -315,6 +315,14 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     @Override
     public void die(DamageSource cause) {
+        if (!this.level().isClientSide) {
+            JolCraftLogs.info(
+                    JolCraftLogTags.ENTITY,
+                    "Dwarf {} died: {}",
+                    this,
+                    this.getCombatTracker().getDeathMessage().getString()
+            );
+        }
         super.die(cause);
         this.stopTrading();
     }
@@ -371,7 +379,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
      *      - grouped by level ascending
      *      - ordered trades first (order present), ascending by order
      *      - unordered trades last
-     *      - stable tie-break by recipe id
+     *      - stable tie-break by recipe getId
      *  2) POOL trades rolled per level (1..current)
      *      - permanent additions until full reroll
      *  3) RESTOCK_POOL trades (rolled; rerolled on restock)
@@ -403,7 +411,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                         currentLevel
                 );
 
-        // POOL recipe id -> holder (datapacks can change)
+        // POOL recipe getId -> holder (datapacks can change)
         Map<ResourceLocation, RecipeHolder<DwarfTradeRecipe>> poolById = new HashMap<>();
         for (RecipeHolder<DwarfTradeRecipe> h : remainingPool) {
             poolById.put(h.id().location(), h);
@@ -799,6 +807,13 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         if (DwarfMerchantData.canLevelUp(current)) {
             int next = current + 1;
             this.setMerchantLevel(next);
+
+            JolCraftLogs.info(
+                    JolCraftLogTags.ENTITY,
+                    "Dwarf {} leveled up to {}",
+                    this.getTradeProfession(),
+                    DwarfMerchantData.Level.fromId(next)
+            );
 
             // Rebuild for the new level (POOL selections persist)
             this.updateTrades();

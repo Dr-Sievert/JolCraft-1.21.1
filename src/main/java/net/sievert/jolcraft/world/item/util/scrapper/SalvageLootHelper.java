@@ -55,7 +55,7 @@ public class SalvageLootHelper {
 
 
         // --- DEEPSLATE SALVAGE ---
-        if (salvageItem.is(JolCraftTags.Items.TEXTILE_SALVAGE)) {
+        if (salvageItem.is(JolCraftTags.Items.DEEPSLATE_SALVAGE)) {
             loot.add(new ItemStack(JolCraftItems.SCRAP.get(), 1 + RANDOM.nextInt(4)));
             if (RANDOM.nextFloat() < 0.15f)
                 loot.add(new ItemStack(JolCraftItems.DEEPSLATE_PLATE.get()));

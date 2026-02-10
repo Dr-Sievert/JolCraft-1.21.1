@@ -32,10 +32,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.DwarfTradeRecipeInput;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
-import org.slf4j.Logger;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
@@ -140,7 +139,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                             ResourceLocation id = buf.readResourceLocation();
                             Item value = items.getValue(id);
                             if (value == null) {
-                                throw new IllegalStateException("Unknown item id in TradeCost: " + id);
+                                throw new IllegalStateException("Unknown item getId in TradeCost: " + id);
                             }
 
                             TradeAmount amount = TradeAmount.STREAM_CODEC.decode(buf);
@@ -385,7 +384,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
      * Warns when two recipes share the same (profession + level + pool + order).
      * Call this once after you have the full set of dwarf trade recipes collected.
      *
-     * @param recipesById map of recipe id -> recipe
+     * @param recipesById map of recipe getId -> recipe
      */
     public static void warnDuplicateOrders(Map<ResourceLocation, DwarfTradeRecipe> recipesById) {
         record Key(String professionId, int level, TradePool pool, int order) {}
@@ -679,7 +678,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                 }
             }
 
-            // --- stack modifier id (datapack safety)
+            // --- stack modifier getId (datapack safety)
             if (r.stackModifierId.isPresent()) {
                 String raw = r.stackModifierId.get().trim();
                 if (raw.isEmpty()) {
@@ -806,7 +805,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                     ResourceLocation id = buf.readResourceLocation();
                     Item value = items.getValue(id);
                     if (value == null) {
-                        throw new IllegalStateException("Unknown item id in TradeResult.ItemResult: " + id);
+                        throw new IllegalStateException("Unknown item getId in TradeResult.ItemResult: " + id);
                     }
 
                     TradeAmount amount = TradeAmount.STREAM_CODEC.decode(buf);

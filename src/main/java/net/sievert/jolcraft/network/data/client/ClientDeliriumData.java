@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.network.data.client;
 
 import net.minecraft.client.Minecraft;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 
 public final class ClientDeliriumData {
 

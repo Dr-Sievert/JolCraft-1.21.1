@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
 
 import java.util.function.Supplier;
@@ -20,76 +21,51 @@ public final class JolCraftEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, JolCraft.MOD_ID);
 
     //Dwarves
-    public static final ResourceKey<EntityType<?>> DWARF_KEY             = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf"));
-    public static final ResourceKey<EntityType<?>> DWARF_GUILDMASTER_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_guildmaster"));
-    public static final ResourceKey<EntityType<?>> DWARF_HISTORIAN_KEY   = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_historian"));
-    public static final ResourceKey<EntityType<?>> DWARF_MERCHANT_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_merchant"));
-    public static final ResourceKey<EntityType<?>> DWARF_SCRAPPER_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_scrapper"));
-    public static final ResourceKey<EntityType<?>> DWARF_BREWMASTER_KEY  = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_brewmaster"));
-    public static final ResourceKey<EntityType<?>> DWARF_GUARD_KEY       = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_guard"));
-    public static final ResourceKey<EntityType<?>> DWARF_KEEPER_KEY      = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_keeper"));
-    public static final ResourceKey<EntityType<?>> DWARF_ARTISAN_KEY     = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_artisan"));
-    public static final ResourceKey<EntityType<?>> DWARF_EXPLORER_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_explorer"));
-    public static final ResourceKey<EntityType<?>> DWARF_MINER_KEY       = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_miner"));
-    public static final ResourceKey<EntityType<?>> DWARF_ALCHEMIST_KEY   = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_alchemist"));
-    public static final ResourceKey<EntityType<?>> DWARF_ARCANIST_KEY    = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_arcanist"));
-    public static final ResourceKey<EntityType<?>> DWARF_PRIEST_KEY      = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("dwarf_priest"));
+    public static final ResourceKey<EntityType<?>> DWARF_KEY = dwarfKey(DwarfProfession.NONE);
+    public static final ResourceKey<EntityType<?>> DWARF_ALCHEMIST_KEY = dwarfKey(DwarfProfession.ALCHEMIST);
+    public static final ResourceKey<EntityType<?>> DWARF_ARCANIST_KEY = dwarfKey(DwarfProfession.ARCANIST);
+    public static final ResourceKey<EntityType<?>> DWARF_ARTISAN_KEY = dwarfKey(DwarfProfession.ARTISAN);
+    public static final ResourceKey<EntityType<?>> DWARF_BREWMASTER_KEY = dwarfKey(DwarfProfession.BREWMASTER);
+    public static final ResourceKey<EntityType<?>> DWARF_EXPLORER_KEY = dwarfKey(DwarfProfession.EXPLORER);
+    public static final ResourceKey<EntityType<?>> DWARF_GUARD_KEY = dwarfKey(DwarfProfession.GUARD);
+    public static final ResourceKey<EntityType<?>> DWARF_GUILDMASTER_KEY = dwarfKey(DwarfProfession.GUILDMASTER);
+    public static final ResourceKey<EntityType<?>> DWARF_HISTORIAN_KEY = dwarfKey(DwarfProfession.HISTORIAN);
+    public static final ResourceKey<EntityType<?>> DWARF_KEEPER_KEY = dwarfKey(DwarfProfession.KEEPER);
+    public static final ResourceKey<EntityType<?>> DWARF_MERCHANT_KEY = dwarfKey(DwarfProfession.MERCHANT);
+    public static final ResourceKey<EntityType<?>> DWARF_MINER_KEY = dwarfKey(DwarfProfession.MINER);
+    public static final ResourceKey<EntityType<?>> DWARF_PRIEST_KEY = dwarfKey(DwarfProfession.PRIEST);
+    public static final ResourceKey<EntityType<?>> DWARF_SCRAPPER_KEY = dwarfKey(DwarfProfession.SCRAPPER);
 
-    public static final Supplier<EntityType<DwarfEntity>> DWARF =
-            ENTITY_TYPES.register("dwarf", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_KEY));
+    private static ResourceKey<EntityType<?>> dwarfKey(DwarfProfession prof) {
+        return ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location(prof.getId()));
+    }
 
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_GUILDMASTER =
-            ENTITY_TYPES.register("dwarf_guildmaster", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_GUILDMASTER_KEY));
+    public static final Supplier<EntityType<DwarfEntity>> DWARF = registerDwarf(DwarfProfession.NONE, DWARF_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_ALCHEMIST = registerDwarf(DwarfProfession.ALCHEMIST, DWARF_ALCHEMIST_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_ARCANIST = registerDwarf(DwarfProfession.ARCANIST, DWARF_ARCANIST_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_ARTISAN = registerDwarf(DwarfProfession.ARTISAN, DWARF_ARTISAN_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_BREWMASTER = registerDwarf(DwarfProfession.BREWMASTER, DWARF_BREWMASTER_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_EXPLORER = registerDwarf(DwarfProfession.EXPLORER, DWARF_EXPLORER_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_GUARD = registerDwarf(DwarfProfession.GUARD, DWARF_GUARD_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_GUILDMASTER = registerDwarf(DwarfProfession.GUILDMASTER, DWARF_GUILDMASTER_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_HISTORIAN = registerDwarf(DwarfProfession.HISTORIAN, DWARF_HISTORIAN_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_KEEPER = registerDwarf(DwarfProfession.KEEPER, DWARF_KEEPER_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_MERCHANT = registerDwarf(DwarfProfession.MERCHANT, DWARF_MERCHANT_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_MINER = registerDwarf(DwarfProfession.MINER, DWARF_MINER_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_PRIEST = registerDwarf(DwarfProfession.PRIEST, DWARF_PRIEST_KEY);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_SCRAPPER = registerDwarf(DwarfProfession.SCRAPPER, DWARF_SCRAPPER_KEY);
 
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_HISTORIAN =
-            ENTITY_TYPES.register("dwarf_historian", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_HISTORIAN_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_MERCHANT =
-            ENTITY_TYPES.register("dwarf_merchant", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_MERCHANT_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_SCRAPPER =
-            ENTITY_TYPES.register("dwarf_scrapper", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_SCRAPPER_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_BREWMASTER =
-            ENTITY_TYPES.register("dwarf_brewmaster", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_BREWMASTER_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_GUARD =
-            ENTITY_TYPES.register("dwarf_guard", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_GUARD_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_KEEPER =
-            ENTITY_TYPES.register("dwarf_keeper", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_KEEPER_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_ARTISAN =
-            ENTITY_TYPES.register("dwarf_artisan", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_ARTISAN_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_EXPLORER =
-            ENTITY_TYPES.register("dwarf_explorer", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_EXPLORER_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_MINER =
-            ENTITY_TYPES.register("dwarf_miner", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_MINER_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_ALCHEMIST =
-            ENTITY_TYPES.register("dwarf_alchemist", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_ALCHEMIST_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_ARCANIST =
-            ENTITY_TYPES.register("dwarf_arcanist", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_ARCANIST_KEY));
-
-    public static final Supplier<EntityType<DwarfEntity>> DWARF_PRIEST =
-            ENTITY_TYPES.register("dwarf_priest", () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
-                    .sized(0.5f, 1.6f).build(DWARF_PRIEST_KEY));
+    private static Supplier<EntityType<DwarfEntity>> registerDwarf(
+            DwarfProfession profession,
+            ResourceKey<EntityType<?>> key
+    ) {
+        return ENTITY_TYPES.register(
+                profession.getId(),
+                () -> EntityType.Builder.of(DwarfEntity::new, MobCategory.CREATURE)
+                        .sized(0.5f, 1.6f)
+                        .build(key)
+        );
+    }
 
     //Animals
     public static final ResourceKey<EntityType<?>> MUFFHORN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("muffhorn"));

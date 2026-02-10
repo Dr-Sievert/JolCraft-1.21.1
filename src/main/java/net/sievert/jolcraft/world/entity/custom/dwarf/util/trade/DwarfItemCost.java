@@ -70,6 +70,7 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
         return stack.is(this.item) && stack.getCount() >= requiredCount && this.components.test(stack);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean take(ItemStack stack, int requiredCount) {
         if (requiredCount <= 0) {
             return true;

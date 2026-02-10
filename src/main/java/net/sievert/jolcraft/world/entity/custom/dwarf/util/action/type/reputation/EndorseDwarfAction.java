@@ -10,6 +10,8 @@ import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputation;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;
@@ -51,17 +53,35 @@ public class EndorseDwarfAction extends InspectDwarfAction {
 
     @Override
     public void stop() {
+        if (dwarf.level().isClientSide) return;
+
         DwarfProfession profession = dwarf.getProfession();
-        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
+
         DwarvenReputationHelper.addEndorsement(player, profession);
+
+        int total = player.getData(JolCraftAttachments.DWARVEN_REP.get()).getEndorsementCount();
+
+        JolCraftLogs.info(
+                JolCraftLogTags.PLAYER,
+                "Dwarf {} at {} endorsed {}, they now have {} endorsements",
+                profession,
+                dwarf.blockPosition(),
+                player.getDisplayName().getString(),
+                total
+        );
+
         if (player instanceof ServerPlayer serverPlayer) {
             JolCraftCriteriaTriggers.ENDORSEMENT_GAIN.trigger(serverPlayer, profession);
         }
+
         ItemStack updatedTablet = tablet;
+        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
         updatedTablet.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), rep.getEndorsementCount());
-        updatedTablet.set(JolCraftDataComponents.REP_TIER.get(), rep.getTier());
+        updatedTablet.set(JolCraftDataComponents.REP_TIER.get(), rep.getTierId());
         updatedTablet.set(JolCraftDataComponents.REP_OWNER.get(), player.getName().getString());
+
         throwItem(dwarf, player, updatedTablet);
         tablet = ItemStack.EMPTY;
     }
+
 }

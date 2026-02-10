@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 
 import java.util.Set;
 

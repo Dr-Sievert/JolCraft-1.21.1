@@ -4,7 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;

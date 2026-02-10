@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.custom.lore.client;
+package net.sievert.jolcraft.data.lore.client;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

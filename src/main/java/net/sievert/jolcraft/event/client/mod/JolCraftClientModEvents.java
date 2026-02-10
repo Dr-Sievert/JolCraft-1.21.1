@@ -11,8 +11,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
@@ -35,7 +35,7 @@ import net.sievert.jolcraft.world.gui.custom.screen.LapidaryBenchScreen;
 import net.sievert.jolcraft.world.gui.custom.screen.LockScreen;
 import net.sievert.jolcraft.world.gui.custom.screen.StrongboxScreen;
 import net.sievert.jolcraft.world.item.client.coin.CoinPouchAmountProperty;
-import net.sievert.jolcraft.data.custom.lore.client.LoreKeyProperty;
+import net.sievert.jolcraft.data.lore.client.LoreKeyProperty;
 import net.sievert.jolcraft.world.item.client.compass.DeepslateCompassAngle;
 
 @OnlyIn(Dist.CLIENT)

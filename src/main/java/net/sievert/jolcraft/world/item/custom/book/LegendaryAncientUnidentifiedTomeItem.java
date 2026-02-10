@@ -3,12 +3,12 @@ package net.sievert.jolcraft.world.item.custom.book;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.custom.lore.LoreAge;
-import net.sievert.jolcraft.data.custom.lore.LoreRarity;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntries;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreEntry;
+import net.sievert.jolcraft.data.lore.LoreAge;
+import net.sievert.jolcraft.data.lore.LoreRarity;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreEntry;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.data.lore.util.LoreHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTomeItem{

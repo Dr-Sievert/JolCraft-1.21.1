@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Generates equipment asset definitions in:
- *   assets/<namespace>/equipment/<id>.json
+ *   assets/<namespace>/equipment/<getId>.json
  * These are required for ArmorMaterial.equipmentAssetKey() to resolve layers.
  */
 @OnlyIn(Dist.CLIENT)

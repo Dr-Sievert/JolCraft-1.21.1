@@ -22,7 +22,7 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;

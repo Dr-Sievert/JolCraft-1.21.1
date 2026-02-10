@@ -11,6 +11,8 @@ import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;
@@ -60,6 +62,17 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
         }
 
         int newRep = DwarvenReputationHelper.getTier(player);
+
+        if (!dwarf.level().isClientSide) {
+            JolCraftLogs.info(
+                    JolCraftLogTags.PLAYER,
+                    "Dwarf {} at {} promoted {} to {}",
+                    dwarf.getProfession(),
+                    dwarf.blockPosition(),
+                    player.getDisplayName().getString(),
+                    DwarvenReputationHelper.getTierLangKey(newRep)
+            );
+        }
 
         player.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_LEVEL_UP).withStyle(ChatFormatting.DARK_PURPLE), true);
 

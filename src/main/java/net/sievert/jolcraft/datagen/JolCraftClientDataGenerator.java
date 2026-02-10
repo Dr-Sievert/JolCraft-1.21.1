@@ -12,8 +12,8 @@ import net.sievert.jolcraft.datagen.client.atlas.JolCraftAtlasProvider;
 import net.sievert.jolcraft.datagen.client.equipment.JolCraftEquipmentAssetProvider;
 import net.sievert.jolcraft.datagen.client.language.JolCraftLanguageProvider;
 import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 
 import java.util.concurrent.CompletableFuture;
 

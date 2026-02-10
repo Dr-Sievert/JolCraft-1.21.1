@@ -10,6 +10,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -139,6 +141,14 @@ public class PromoteDwarfAction extends InspectDwarfAction {
                     newDwarf.setData(AbstractBreedingEntity.EYE_COLOR, dwarf.getData(AbstractBreedingEntity.EYE_COLOR));
                     serverLevel.addFreshEntity(newDwarf);
                     dwarf.discard();
+
+                    JolCraftLogs.info(
+                            JolCraftLogTags.ENTITY,
+                            "Dwarf at {} promoted by {} to {}",
+                            dwarf.blockPosition(),
+                            player.getDisplayName().getString(),
+                            newDwarf.getProfession()
+                    );
                 }
             }
         }

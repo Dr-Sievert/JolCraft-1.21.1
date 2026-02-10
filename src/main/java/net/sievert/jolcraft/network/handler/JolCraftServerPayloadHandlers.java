@@ -13,8 +13,8 @@ import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 
 import java.util.HashMap;

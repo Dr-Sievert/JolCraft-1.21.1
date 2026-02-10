@@ -16,11 +16,11 @@ import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguage;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguage;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlock;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.network.data.client.ClientDeliriumData;
 import net.sievert.jolcraft.network.packet.s2c.*;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import org.jetbrains.annotations.NotNull;
@@ -153,7 +153,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
         if (player == null) return;
 
         DwarvenReputationImpl rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
-        rep.setTier(packet.tier());
+        rep.setTierId(packet.tier());
     }
 
     @Override
@@ -165,7 +165,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
 
         Set<ResourceLocation> ids = EnumSet.copyOf(packet.endorsements()).stream()
                 .filter(p -> p != null && p != DwarfProfession.NONE)
-                .map(p -> JolCraft.location(p.id))
+                .map(p -> JolCraft.location(p.getId()))
                 .collect(Collectors.toUnmodifiableSet());
 
         rep.setEndorsements(ids);

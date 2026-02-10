@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundLoreUnlocksPacket;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 
 import java.util.Locale;
 import java.util.Set;

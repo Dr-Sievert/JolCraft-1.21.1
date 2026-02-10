@@ -9,6 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;
@@ -93,6 +95,16 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
         if (data == null) {
             return;
         }
+
+        BountyTier tier = BountyTier.fromValue(data.tier());
+
+        JolCraftLogs.info(
+                JolCraftLogTags.PLAYER,
+                "Dwarf bounty completed by {}, type= {} tier= {}",
+                player.getDisplayName().getString(),
+                type.getId(),
+                tier.getDisplayName()
+        );
 
         Vec3 start = dwarf.position().add(0.0, dwarf.getEyeHeight(), 0.0);
         Vec3 target = player.position().add(0.0, player.getBbHeight() * 0.5, 0.0);

@@ -24,7 +24,7 @@ public class ReputationTrigger extends SimpleCriterionTrigger<ReputationTrigger.
     }
 
     public void trigger(ServerPlayer player) {
-        int playerTier = DwarvenReputation.get(player).getTier();
+        int playerTier = DwarvenReputation.get(player).getTierId();
         this.trigger(player, instance -> playerTier == instance.requiredTier());
     }
 

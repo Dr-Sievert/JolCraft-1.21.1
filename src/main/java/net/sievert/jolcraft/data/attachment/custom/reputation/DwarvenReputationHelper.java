@@ -3,6 +3,7 @@ package net.sievert.jolcraft.data.attachment.custom.reputation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
@@ -33,7 +34,7 @@ public final class DwarvenReputationHelper {
      */
     public static boolean hasTierBypassCreative(Player player, int minTier) {
         DwarvenReputation rep = repOrNull(player);
-        return rep != null && rep.getTier() >= minTier;
+        return rep != null && rep.getTierId() >= minTier;
     }
 
     /**
@@ -94,7 +95,7 @@ public final class DwarvenReputationHelper {
      */
     public static int getTier(Player player) {
         DwarvenReputation rep = repOrNull(player);
-        return rep != null ? rep.getTier() : 0;
+        return rep != null ? rep.getTierId() : 0;
     }
 
     /**
@@ -107,11 +108,19 @@ public final class DwarvenReputationHelper {
         if (player.level().isClientSide()) return;
 
         DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
-        rep.setTier(tier);
+        rep.setTierId(tier);
 
         if (player instanceof ServerPlayer serverPlayer) {
             JolCraftNetworking.sendToClient(serverPlayer, new ClientboundReputationPacket(tier));
         }
+    }
+
+    /**
+     * Returns the language key representing the given reputation tier getId.
+     * Intended for logging and other server-side diagnostics.
+     */
+    public static String getTierLangKey(int tier) {
+        return DwarvenReputationTier.fromId(tier).langKey();
     }
 
     private static Set<DwarfProfession> toProfessions(DwarvenReputation rep) {

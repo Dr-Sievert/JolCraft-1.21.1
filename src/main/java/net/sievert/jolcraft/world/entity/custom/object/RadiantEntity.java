@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.JolCraftAttributes;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.ManagedLightBlock;
 import net.sievert.jolcraft.world.block.entity.custom.ManagedLightBlockEntity;
@@ -69,7 +71,11 @@ public class RadiantEntity extends Entity implements TraceableEntity {
 
         Player owner = getOwnerPlayer();
         if (owner == null) {
-            // Invariant: RadiantEntity must not exist without an owner.
+            JolCraftLogs.debug(
+                    JolCraftLogTags.ENTITY,
+                    "RadiantEntity {} discarded: missing owner ownerUUID={} lightPos={} dim={}",
+                    getUUID(), ownerUUID, currentLightPos, level().dimension().location()
+            );
             discard();
             return;
         }

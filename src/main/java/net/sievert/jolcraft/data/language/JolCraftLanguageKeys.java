@@ -1,5 +1,7 @@
 package net.sievert.jolcraft.data.language;
 
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+
 public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     private JolCraftLanguageKeys() {}
@@ -147,6 +149,42 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_GUILD_SIGIL = category(JolCraftLanguageCategory.TOOLTIP, "guild_sigil");
 
     public static final String DWARF = "dwarf";
+
+    public static final String NONE        = "none";
+    public static final String ALCHEMIST   = "alchemist";
+    public static final String ARCANIST    = "arcanist";
+    public static final String ARTISAN     = "artisan";
+    public static final String BREWMASTER  = "brewmaster";
+    public static final String EXPLORER    = "explorer";
+    public static final String GUARD       = "guard";
+    public static final String GUILDMASTER = "guildmaster";
+    public static final String HISTORIAN   = "historian";
+    public static final String KEEPER      = "keeper";
+    public static final String MERCHANT    = "merchant";
+    public static final String MINER       = "miner";
+    public static final String PRIEST      = "priest";
+    public static final String SCRAPPER    = "scrapper";
+
+    public static final String DWARF_ALCHEMIST   = DWARF + "_" + ALCHEMIST;
+    public static final String DWARF_ARCANIST    = DWARF + "_" + ARCANIST;
+    public static final String DWARF_ARTISAN     = DWARF + "_" + ARTISAN;
+    public static final String DWARF_BREWMASTER  = DWARF + "_" + BREWMASTER;
+    public static final String DWARF_EXPLORER    = DWARF + "_" + EXPLORER;
+    public static final String DWARF_GUARD       = DWARF + "_" + GUARD;
+    public static final String DWARF_GUILDMASTER = DWARF + "_" + GUILDMASTER;
+    public static final String DWARF_HISTORIAN   = DWARF + "_" + HISTORIAN;
+    public static final String DWARF_KEEPER      = DWARF + "_" + KEEPER;
+    public static final String DWARF_MERCHANT    = DWARF + "_" + MERCHANT;
+    public static final String DWARF_MINER       = DWARF + "_" + MINER;
+    public static final String DWARF_PRIEST      = DWARF + "_" + PRIEST;
+    public static final String DWARF_SCRAPPER    = DWARF + "_" + SCRAPPER;
+
+    public static final String LEVEL_NOVICE      = "merchant.level.1";
+    public static final String LEVEL_APPRENTICE  = "merchant.level.2";
+    public static final String LEVEL_JOURNEYMAN  = "merchant.level.3";
+    public static final String LEVEL_EXPERT      = "merchant.level.4";
+    public static final String LEVEL_MASTER      = "merchant.level.5";
+
     public static final String TOOLTIP_DWARF_LOCKED = tooltip(DWARF, LOCKED);
     public static final String TOOLTIP_DWARF_BUSY = tooltip(DWARF, "busy");
     public static final String TOOLTIP_DWARF_NOT_PAID = tooltip(DWARF, "not_paid");

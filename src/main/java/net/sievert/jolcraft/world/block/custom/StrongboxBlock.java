@@ -52,8 +52,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
@@ -267,8 +267,8 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             level.setBlock(pos, state.setValue(LOCKED, locked), Block.UPDATE_ALL);
         }
 
-        // Loot table id + seed
-        // Loot table id + seed (typed components)
+        // Loot table getId + seed
+        // Loot table getId + seed (typed components)
         ResourceKey<LootTable> lootTable = stack.get(JolCraftDataComponents.LOOT_TABLE);
         if (lootTable != null) {
             strongbox.setLootTable(lootTable, strongbox.getLootTableSeed());

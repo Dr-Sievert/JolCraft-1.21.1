@@ -21,8 +21,8 @@ import net.sievert.jolcraft.datagen.loot.JolCraftEntityLootTableProvider;
 import net.sievert.jolcraft.datagen.loot.JolCraftGlobalLootModifierProvider;
 import net.sievert.jolcraft.datagen.recipe.JolCraftRecipeProvider;
 import net.sievert.jolcraft.datagen.structure.JolCraftStructureTagProvider;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 
 import java.util.Collections;
 import java.util.List;

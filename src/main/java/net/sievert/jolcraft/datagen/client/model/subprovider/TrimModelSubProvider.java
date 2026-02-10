@@ -81,7 +81,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
 
     /**
      * JolCraft armor sets keyed by canonical material identity.
-     * This connects "material id + equipment asset key" to the actual registered items.
+     * This connects "material getId + equipment asset key" to the actual registered items.
      * NOTE: We deliberately source the items from JolCraftItems.ARMOR_SETS.
      * The only "mapping" here is which material corresponds to which entry in ARMOR_SETS.
      */
@@ -269,7 +269,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
     private static @NotNull List<ItemModelGenerators.TrimMaterialData> buildCustomTrims() {
         List<ItemModelGenerators.TrimMaterialData> out = new ArrayList<>();
 
-        // Base material trims (with per-armor override = "<id>_darker" for same-material armor)
+        // Base material trims (with per-armor override = "<getId>_darker" for same-material armor)
         for (JolCraftMaterials.Material material : JolCraftMaterials.Material.values()) {
             Map<ResourceKey<EquipmentAsset>, String> overrides =
                     Map.of(material.equipmentAssetKey(), material.darkerTrimName());
@@ -336,10 +336,10 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
     }
 
     /**
-     * Derive the item base name from the ArmorMaterial's canonical equipment asset id.
+     * Derive the item base name from the ArmorMaterial's canonical equipment asset getId.
      * NOTE:
-     * - Vanilla uses "golden_*" item ids for GOLD (asset id path = "gold").
-     * - Everything else matches the asset id path ("leather", "iron", "diamond", "netherite", "chainmail", etc).
+     * - Vanilla uses "golden_*" item ids for GOLD (asset getId path = "gold").
+     * - Everything else matches the asset getId path ("leather", "iron", "diamond", "netherite", "chainmail", etc).
      */
     private static @NotNull String vanillaArmorBaseName(@NotNull ArmorMaterial material) {
         String path = material.assetId().location().getPath();

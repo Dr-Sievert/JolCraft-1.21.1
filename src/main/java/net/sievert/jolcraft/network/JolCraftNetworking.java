@@ -13,8 +13,8 @@ import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket
 import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 import net.sievert.jolcraft.network.packet.s2c.*;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.JolCraft;
 
 public final class JolCraftNetworking {

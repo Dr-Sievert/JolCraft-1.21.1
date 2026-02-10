@@ -7,11 +7,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,20 +21,32 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     private static final String NBT_TIER = "tier";
     private static final String NBT_ENDORSEMENTS = "endorsements";
 
-    private int tier;
+    /**
+     * Stored as int for NBT/network friendliness. Always clamped via {@link DwarvenReputationTier}.
+     */
+    private int tierId = DwarvenReputationTier.STRANGER.id();
+
     private final Set<ResourceLocation> endorsements = new HashSet<>();
 
     public static final int[] ENDORSEMENT_THRESHOLDS = {1, 3, 6, 10};
 
+    // ---------------------------------------------------------------------
+    // Tier
+    // ---------------------------------------------------------------------
+
     @Override
-    public int getTier() {
-        return tier;
+    public int getTierId() {
+        return tierId;
     }
 
     @Override
-    public void setTier(int tier) {
-        this.tier = tier;
+    public void setTierId(int tierId) {
+        this.tierId = DwarvenReputationTier.fromId(tierId).id();
     }
+
+    // ---------------------------------------------------------------------
+    // Endorsements
+    // ---------------------------------------------------------------------
 
     /**
      * Immutable snapshot. Never exposes the backing set.
@@ -46,7 +57,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     }
 
     /**
-     * Adds a single endorsement id.
+     * Adds a single endorsement getId.
      * Returns true only if the set changed.
      * Rejects null and unknown profession ids.
      */
@@ -84,25 +95,33 @@ public class DwarvenReputationImpl implements DwarvenReputation {
         this.endorsements.addAll(normalized);
     }
 
+    // ---------------------------------------------------------------------
+    // Threshold helpers
+    // ---------------------------------------------------------------------
+
     public static int getThresholdCount() {
         return ENDORSEMENT_THRESHOLDS.length;
     }
 
-    public static int getThresholdForTier(int tier) {
-        return (tier >= 0 && tier < ENDORSEMENT_THRESHOLDS.length)
-                ? ENDORSEMENT_THRESHOLDS[tier]
+    public static int getThresholdForTier(int tierId) {
+        return (tierId >= 0 && tierId < ENDORSEMENT_THRESHOLDS.length)
+                ? ENDORSEMENT_THRESHOLDS[tierId]
                 : Integer.MAX_VALUE;
     }
 
-    public static boolean canAdvance(int currentTier, int endorsements) {
-        return currentTier < ENDORSEMENT_THRESHOLDS.length
-                && endorsements >= getThresholdForTier(currentTier);
+    public static boolean canAdvance(int currentTierId, int endorsementCount) {
+        return currentTierId < ENDORSEMENT_THRESHOLDS.length
+                && endorsementCount >= getThresholdForTier(currentTierId);
     }
+
+    // ---------------------------------------------------------------------
+    // NBT
+    // ---------------------------------------------------------------------
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(NBT_TIER, tier);
+        tag.putInt(NBT_TIER, this.tierId);
 
         ListTag endorsementList = new ListTag();
         for (ResourceLocation profId : endorsements) {
@@ -115,30 +134,40 @@ public class DwarvenReputationImpl implements DwarvenReputation {
 
     @Override
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
-        this.tier = tag.getInt(NBT_TIER);
+        this.setTierId(tag.getInt(NBT_TIER));
 
         Set<ResourceLocation> parsed = new HashSet<>();
-        ListTag endorsementList = tag.getList(NBT_ENDORSEMENTS, 8); // 8 = StringTag
+        ListTag endorsementList = tag.getList(NBT_ENDORSEMENTS, 8);
         for (int i = 0; i < endorsementList.size(); i++) {
             String idString = endorsementList.getString(i);
             ResourceLocation profId = ResourceLocation.tryParse(idString);
             if (profId == null) {
-                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT , "Failed to parse endorsement profession id: '{}'", idString);
+                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT,
+                        "Failed to parse endorsement profession getId: '{}'",
+                        idString
+                );
                 continue;
             }
             if (DwarfProfession.byId(profId.getPath()) == DwarfProfession.NONE) {
-                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT ,"Unknown endorsement profession id: '{}'", idString);
+                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT,
+                        "Unknown endorsement profession getId: '{}'",
+                        idString
+                );
                 continue;
             }
             parsed.add(profId);
         }
 
-        // Use the controlled setter so we keep one rule for normalization/change detection.
+        // Controlled setter keeps one rule for normalization/change detection.
         this.setEndorsements(parsed);
     }
 
+    // ---------------------------------------------------------------------
+    // Codec
+    // ---------------------------------------------------------------------
+
     public static final Codec<DwarvenReputationImpl> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf(NBT_TIER).forGetter(rep -> rep.tier),
+            Codec.INT.fieldOf(NBT_TIER).forGetter(rep -> rep.tierId),
             Codec.STRING.listOf()
                     .xmap(
                             list -> list.stream()
@@ -151,9 +180,9 @@ public class DwarvenReputationImpl implements DwarvenReputation {
                     )
                     .fieldOf(NBT_ENDORSEMENTS)
                     .forGetter(rep -> Set.copyOf(rep.endorsements))
-    ).apply(instance, (tier, endorsementSet) -> {
+    ).apply(instance, (tierId, endorsementSet) -> {
         DwarvenReputationImpl impl = new DwarvenReputationImpl();
-        impl.tier = tier;
+        impl.setTierId(tierId);
         impl.setEndorsements(endorsementSet);
         return impl;
     }));

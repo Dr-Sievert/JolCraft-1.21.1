@@ -2,8 +2,8 @@ package net.sievert.jolcraft.datagen.client.language.subprovider;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.custom.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.custom.lore.util.LoreHelper;
+import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.data.lore.util.LoreHelper;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 
 @OnlyIn(Dist.CLIENT)

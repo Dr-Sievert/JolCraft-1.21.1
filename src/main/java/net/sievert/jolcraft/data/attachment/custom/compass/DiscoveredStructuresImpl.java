@@ -10,7 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -79,7 +79,7 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
 
             ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(TAG_DIM));
             if (dimRL == null) {
-                JolCraftLogs.debug("Invalid dimension id in discovered structure NBT: {}", t.getString(TAG_DIM));
+                JolCraftLogs.debug("Invalid dimension getId in discovered structure NBT: {}", t.getString(TAG_DIM));
                 continue;
             }
             ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRL);
