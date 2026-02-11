@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.network.JolCraftNetworkIds;
 import org.jetbrains.annotations.NotNull;
 
 public record ServerboundPlaySoundPacket(
@@ -17,7 +18,7 @@ public record ServerboundPlaySoundPacket(
         float pitch
 ) implements CustomPacketPayload {
 
-    public static final Type<ServerboundPlaySoundPacket> TYPE = new Type<>(JolCraft.location("play_sound"));
+    public static final Type<ServerboundPlaySoundPacket> TYPE = new Type<>(JolCraft.location(JolCraftNetworkIds.PLAY_SOUND));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundPlaySoundPacket> CODEC =
             CustomPacketPayload.codec(ServerboundPlaySoundPacket::write, ServerboundPlaySoundPacket::read);

@@ -21,10 +21,10 @@ public final class JeiInfoPageHelper {
         ItemStack compassEmpty = JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get().getDefaultInstance();
 
         ItemStack compassDial = JolCraftItems.DEEPSLATE_COMPASS_DIAL.get().getDefaultInstance();
-        compassDial.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(0xFFFF0000));
+        compassDial.set(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR, new DialItemColor(0xFFFF0000));
 
         ItemStack compassCombined = JolCraftItems.DEEPSLATE_COMPASS.get().getDefaultInstance();
-        compassCombined.set(JolCraftDataComponents.DIAL_COLOR, new DialItemColor(0xFFFF0000));
+        compassCombined.set(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR, new DialItemColor(0xFFFF0000));
 
         return List.of(
                 new JeiInfoPageRecipe(

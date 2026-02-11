@@ -86,9 +86,9 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
             default -> ItemStack.EMPTY;
         };
 
-        nextTablet.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), DwarvenReputationHelper.getEndorsementCount(player));
-        nextTablet.set(JolCraftDataComponents.REP_TIER.get(), newRep);
-        nextTablet.set(JolCraftDataComponents.REP_OWNER.get(), player.getName().getString());
+        nextTablet.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), DwarvenReputationHelper.getEndorsementCount(player));
+        nextTablet.set(JolCraftDataComponents.REPUTATION_TIER.get(), newRep);
+        nextTablet.set(JolCraftDataComponents.REPUTATION_OWNER.get(), player.getName().getString());
         throwItem(dwarf, player, nextTablet);
         PlaySound.levelUp(player);
         dwarf.spawnColoredParticles(0.4F, 0.0F, 0.5F, 1.25F, 64, 2.5D);

@@ -7,8 +7,8 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.config.dwarf.DwarfProfessionConfigs;
-import net.sievert.jolcraft.config.dwarf.DwarfProfessionSettings;
+import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
+import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 

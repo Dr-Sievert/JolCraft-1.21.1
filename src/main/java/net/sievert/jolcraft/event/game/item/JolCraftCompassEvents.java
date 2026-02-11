@@ -147,9 +147,9 @@ public final class JolCraftCompassEvents {
 
         result.set(JolCraftDataComponents.STRUCTURE_GROUP, foundStructureFullId);
 
-        var dialColor = dial.get(JolCraftDataComponents.DIAL_COLOR.get());
+        var dialColor = dial.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get());
         if (dialColor != null) {
-            result.set(JolCraftDataComponents.DIAL_COLOR, dialColor);
+            result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR, dialColor);
         }
 
         result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET, targetPos);

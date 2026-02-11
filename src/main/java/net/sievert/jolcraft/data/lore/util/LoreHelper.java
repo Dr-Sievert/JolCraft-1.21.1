@@ -2,7 +2,10 @@ package net.sievert.jolcraft.data.lore.util;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
 import net.sievert.jolcraft.data.lore.LoreAge;
 import net.sievert.jolcraft.data.lore.LoreEntry;
 import net.sievert.jolcraft.data.lore.LoreRarity;
@@ -25,7 +28,11 @@ public class LoreHelper {
 
     public static <K extends Enum<K>> String getEntryTranslationKey(K key) {
         if (key == null) return null;
-        return "lore.jolcraft." + key.name().toLowerCase(Locale.ROOT);
+        return AbstractLanguageKeys.key(
+                JolCraftDataKeys.LORE,
+                JolCraft.MOD_ID,
+                key.name().toLowerCase(Locale.ROOT)
+        );
     }
 
     public static <K extends Enum<K>> String getEntryTranslationKey(ItemStack stack, Class<K> keyClass) {

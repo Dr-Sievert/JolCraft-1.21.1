@@ -579,18 +579,18 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> AEGISCORE_CUT  = registerCutGem("aegiscore",  Attributes.ARMOR_TOUGHNESS, 0.5,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> ASHFANG_CUT    = registerCutGem("ashfang",    JolCraftAttributes.ATTACK_DAMAGE_INCREASE, 0.05,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> DEEPMARROW_CUT = registerCutGem("deepmarrow", JolCraftAttributes.XP_BOOST, 0.125, AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> DEEPMARROW_CUT = registerCutGem("deepmarrow", JolCraftAttributes.XP_INCREASE, 0.125, AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> EARTHBLOOD_CUT = registerCutGem("earthblood", Attributes.MINING_EFFICIENCY, 0.05,  AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     public static final DeferredItem<Item> EMBERGLASS_CUT = registerCutGem("emberglass", Attributes.MAX_HEALTH, 2.0,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> FROSTVEIN_CUT  = registerCutGem("frostvein",  JolCraftAttributes.SLOW_RESISTANCE, 0.2,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> GRIMSTONE_CUT  = registerCutGem("grimstone",  Attributes.ATTACK_SPEED, 0.05,  AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     public static final DeferredItem<Item> IRONHEART_CUT  = registerCutGem("ironheart",  JolCraftAttributes.ARMOR_INCREASE, 0.05,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> LUMIERE_CUT    = registerCutGem("lumiere",    JolCraftAttributes.RADIANT, 0.25,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> MOONSHARD_CUT  = registerCutGem("moonshard",  JolCraftAttributes.MOVEMENT_SPEED_BOOST_NIGHT, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> MOONSHARD_CUT  = registerCutGem("moonshard",  JolCraftAttributes.MOVEMENT_SPEED_INCREASE_NIGHT, 0.05,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> RUSTAGATE_CUT  = registerCutGem("rustagate",  JolCraftAttributes.ARMOR_UNBREAKING, 0.075,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> SKYBURROW_CUT  = registerCutGem("skyburrow",  JolCraftAttributes.MOVEMENT_SPEED_BOOST_DAY, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> SKYBURROW_CUT  = registerCutGem("skyburrow",  JolCraftAttributes.MOVEMENT_SPEED_INCREASE_DAY, 0.05,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> SUNGLEAM_CUT   = registerCutGem("sungleam",   JolCraftAttributes.EXTRA_CHEST_LOOT, 0.1,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> VERDANITE_CUT  = registerCutGem("verdanite",  JolCraftAttributes.EXTRA_CROP, 0.25,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> VERDANITE_CUT  = registerCutGem("verdanite",  JolCraftAttributes.EXTRA_CROP_LOOT, 0.25,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> WOECRYSTAL_CUT = registerCutGem("woecrystal", JolCraftAttributes.MAGIC_RESISTANCE, 0.1,  AttributeModifier.Operation.ADD_VALUE);
 
     private static DeferredItem<Item> registerCutGem(

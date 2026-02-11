@@ -19,7 +19,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
+import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.client.JolCraftFonts;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -38,9 +41,7 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
     private static final Map<DwarfProfession, IRecipeType<JeiDwarfTrade>> TYPES = new EnumMap<>(DwarfProfession.class);
 
     public static IRecipeType<JeiDwarfTrade> recipeTypeFor(DwarfProfession prof) {
-        return TYPES.computeIfAbsent(prof, p ->
-                IRecipeType.create(JolCraft.MOD_ID, "dwarf_trades/" + p.getId(), JeiDwarfTrade.class)
-        );
+        return TYPES.computeIfAbsent(prof, p -> IRecipeType.create(JolCraft.MOD_ID,  JolCraftJeiIds.DWARF_TRADE + "_" + p.getId(), JeiDwarfTrade.class));
     }
 
     private static final Map<DwarfProfession, LivingEntity> DWARF_RENDER_CACHE = new EnumMap<>(DwarfProfession.class);
@@ -88,11 +89,11 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
         String levelStr = Component.translatable(levelKey).getString();
         String profText = JeiDwarfTradeHelper.getDisplayName(entry.profession());
 
-        int levelX = 50 - (Minecraft.getInstance().font.width(levelStr) / 2);
-        graphics.drawString(Minecraft.getInstance().font, levelStr, levelX, 2, 0x888888, false);
+        int levelX = 50 - (JolCraftFonts.defaultFont().width(levelStr) / 2);
+        graphics.drawString(JolCraftFonts.defaultFont(), levelStr, levelX, 2, 0x888888, false);
 
-        int profX = 50 - (Minecraft.getInstance().font.width(profText) / 2);
-        graphics.drawString(Minecraft.getInstance().font, profText, profX, 12, 0x888888, false);
+        int profX = 50 - (JolCraftFonts.defaultFont().width(profText) / 2);
+        graphics.drawString(JolCraftFonts.defaultFont(), profText, profX, 12, 0x888888, false);
 
         ItemStack inputB = entry.inputBExample();
         boolean hasB = inputB != null && !inputB.isEmpty();

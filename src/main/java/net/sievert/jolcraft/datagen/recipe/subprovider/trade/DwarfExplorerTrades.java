@@ -49,7 +49,7 @@ public final class DwarfExplorerTrades extends AbstractDwarfTrades {
                 hooksWithPatch(
                         DataComponentPatch.builder()
                                 .set(JolCraftDataComponents.STRUCTURE_GROUP.get(), group.id())
-                                .set(JolCraftDataComponents.DIAL_COLOR.get(), new DialItemColor(color))
+                                .set(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(), new DialItemColor(color))
                                 .build()
                 ),
                 3, 0, 0.0F,

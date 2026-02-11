@@ -3,7 +3,6 @@ package net.sievert.jolcraft.data.attachment.custom.reputation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
@@ -17,7 +16,7 @@ public final class DwarvenReputationHelper {
     private DwarvenReputationHelper() {}
 
     private static DwarvenReputation repOrNull(Player player) {
-        return player == null ? null : player.getData(JolCraftAttachments.DWARVEN_REP.get());
+        return player == null ? null : player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
     }
 
     /**
@@ -80,7 +79,7 @@ public final class DwarvenReputationHelper {
         if (player == null || profession == null || profession == DwarfProfession.NONE) return;
         if (player.level().isClientSide()) return;
 
-        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
+        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
 
         if (!rep.addEndorsement(profession)) return;
 
@@ -107,7 +106,7 @@ public final class DwarvenReputationHelper {
         if (player == null) return;
         if (player.level().isClientSide()) return;
 
-        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
+        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
         rep.setTierId(tier);
 
         if (player instanceof ServerPlayer serverPlayer) {

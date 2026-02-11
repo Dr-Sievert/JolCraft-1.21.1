@@ -47,17 +47,17 @@ public final class JolCraftModEvents {
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
         int added = 0;
 
-        event.add(EntityType.PLAYER, JolCraftAttributes.XP_BOOST); added++;
+        event.add(EntityType.PLAYER, JolCraftAttributes.XP_INCREASE); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.SLOW_RESISTANCE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.EXTRA_CROP); added++;
+        event.add(EntityType.PLAYER, JolCraftAttributes.EXTRA_CROP_LOOT); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.EXTRA_CHEST_LOOT); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.RADIANT); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.ARMOR_UNBREAKING); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.MAGIC_RESISTANCE); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.ARMOR_INCREASE); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.ATTACK_DAMAGE_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.MOVEMENT_SPEED_BOOST_DAY); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.MOVEMENT_SPEED_BOOST_NIGHT); added++;
+        event.add(EntityType.PLAYER, JolCraftAttributes.MOVEMENT_SPEED_INCREASE_DAY); added++;
+        event.add(EntityType.PLAYER, JolCraftAttributes.MOVEMENT_SPEED_INCREASE_NIGHT); added++;
 
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} new player attributes", added);
     }

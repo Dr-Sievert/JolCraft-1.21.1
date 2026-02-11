@@ -7,6 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.network.JolCraftNetworkIds;
 import org.jetbrains.annotations.NotNull;
 
 public record ServerboundSpawnParticlePacket(
@@ -17,7 +18,7 @@ public record ServerboundSpawnParticlePacket(
         double vx, double vy, double vz
 ) implements CustomPacketPayload {
 
-    public static final Type<ServerboundSpawnParticlePacket> TYPE = new Type<>(JolCraft.location("spawn_particle"));
+    public static final Type<ServerboundSpawnParticlePacket> TYPE = new Type<>(JolCraft.location(JolCraftNetworkIds.SPAWN_PARTICLE));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundSpawnParticlePacket> CODEC =
             CustomPacketPayload.codec(ServerboundSpawnParticlePacket::write, ServerboundSpawnParticlePacket::read);

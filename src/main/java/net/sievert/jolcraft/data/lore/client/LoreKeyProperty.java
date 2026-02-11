@@ -12,6 +12,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.id.lore.JolCraftLoreIds;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -22,15 +23,15 @@ import javax.annotation.Nullable;
  */
 @OnlyIn(Dist.CLIENT)
 public final class LoreKeyProperty implements SelectItemModelProperty<String> {
-    public static final ResourceLocation KEY = JolCraft.location("lore_key");
+
+    private LoreKeyProperty() {}
+
+    public static final ResourceLocation KEY = JolCraft.location(JolCraftLoreIds.LORE_KEY);
     public static final LoreKeyProperty INSTANCE = new LoreKeyProperty();
 
     public static final MapCodec<LoreKeyProperty> MAP_CODEC = MapCodec.unit(INSTANCE);
 
-    public static final Type<LoreKeyProperty, String> TYPE =
-            SelectItemModelProperty.Type.create(MAP_CODEC, Codec.STRING);
-
-    private LoreKeyProperty() {}
+    public static final Type<LoreKeyProperty, String> TYPE = SelectItemModelProperty.Type.create(MAP_CODEC, Codec.STRING);
 
     @Nullable
     @Override

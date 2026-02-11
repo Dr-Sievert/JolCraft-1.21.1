@@ -4,6 +4,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.network.JolCraftNetworkIds;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public record ClientboundDwarfMerchantOffersPacket(
         boolean canRestock
 ) implements CustomPacketPayload {
     public static final Type<ClientboundDwarfMerchantOffersPacket> TYPE =
-            new Type<>(JolCraft.location("dwarf_merchant_offers"));
+            new Type<>(JolCraft.location(JolCraftNetworkIds.DWARF_MERCHANT_OFFERS));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundDwarfMerchantOffersPacket> CODEC =
             CustomPacketPayload.codec(ClientboundDwarfMerchantOffersPacket::write, ClientboundDwarfMerchantOffersPacket::read);

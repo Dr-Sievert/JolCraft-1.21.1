@@ -10,6 +10,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,10 +20,7 @@ import java.util.Set;
 
 public final class DiscoveredStructuresImpl implements DiscoveredStructures {
 
-    private static final String TAG_DISCOVERED = "discovered";
-    private static final String TAG_SCORE = "score";
-    private static final String TAG_DIM = "dim";
-    private static final String TAG_POS = "pos";
+    private static final String NBT_DISCOVERED = "discovered";
 
     private final Set<GlobalPos> discovered = new HashSet<>();
     private int discoveryScore;
@@ -59,13 +58,13 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
 
         for (GlobalPos pos : discovered) {
             CompoundTag t = new CompoundTag();
-            t.putString(TAG_DIM, pos.dimension().location().toString());
-            t.putLong(TAG_POS, pos.pos().asLong());
+            t.putString(JolCraftDataKeys.DIMENSION, pos.dimension().location().toString());
+            t.putLong(JolCraftDataKeys.POSITION, pos.pos().asLong());
             list.add(t);
         }
 
-        tag.put(TAG_DISCOVERED, list);
-        tag.putInt(TAG_SCORE, discoveryScore);
+        tag.put(NBT_DISCOVERED, list);
+        tag.putInt(JolCraftDataKeys.SCORE, discoveryScore);
         return tag;
     }
 
@@ -73,21 +72,21 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
         discovered.clear();
 
-        ListTag list = tag.getList(TAG_DISCOVERED, Tag.TAG_COMPOUND);
+        ListTag list = tag.getList(NBT_DISCOVERED, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             CompoundTag t = list.getCompound(i);
 
-            ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(TAG_DIM));
+            ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(JolCraftDataKeys.DIMENSION));
             if (dimRL == null) {
-                JolCraftLogs.debug("Invalid dimension getId in discovered structure NBT: {}", t.getString(TAG_DIM));
+                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT, "Invalid dimension getId in discovered structure NBT: {}", t.getString(JolCraftDataKeys.DIMENSION));
                 continue;
             }
             ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRL);
-            BlockPos pos = BlockPos.of(t.getLong(TAG_POS));
+            BlockPos pos = BlockPos.of(t.getLong(JolCraftDataKeys.POSITION));
 
             discovered.add(GlobalPos.of(dimKey, pos));
         }
 
-        discoveryScore = tag.getInt(TAG_SCORE);
+        discoveryScore = tag.getInt(JolCraftDataKeys.SCORE);
     }
 }

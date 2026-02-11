@@ -33,13 +33,13 @@ public final class JolCraftServerProxy implements JolCraftClientAccess {
     public void apply(ClientboundDwarfMerchantOffersPacket packet) {}
 
     @Override
-    public void apply(ClientboundDeliriumPacket packet) {}
+    public void apply(ClientboundDeliriumCursePacket packet) {}
 
     @Override
-    public void apply(ClientboundLanguagePacket packet) {}
+    public void apply(ClientboundDwarvenLanguagePacket packet) {}
 
     @Override
-    public void apply(ClientboundAncientLanguagePacket packet) {}
+    public void apply(ClientboundAncientDwarvenLanguagePacket packet) {}
 
     @Override
     public void apply(ClientboundReputationPacket packet) {}

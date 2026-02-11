@@ -4,8 +4,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 @OnlyIn(Dist.CLIENT)
@@ -15,8 +17,8 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
     public void addTranslations(AbstractLanguageProvider p) {
 
         // Creative tabs
-        p.putManual(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB_KEY, "JolCraft");
-        p.putManual(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB_KEY, "JolCraft Spawn Eggs");
+        p.putManual(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, "JolCraft");
+        p.putManual(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, "JolCraft Spawn Eggs");
 
         // Structure maps
         p.putManual("filled_map.forge", "Map to a Dwarven Forge");
@@ -108,10 +110,10 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
         for (DeferredHolder<?, ?> holder : JolCraftItems.ITEMS.getEntries()) {
             ResourceLocation id = holder.getId();
 
-            String key = "item." + id.getNamespace() + "." + id.getPath();
+            String key = AbstractLanguageKeys.effect(id.getPath());
             if (p.hasKey(key)) continue;
 
-            p.put(key, AbstractLanguageProvider.toTitleCase(id.getPath()));
+            p.put(key, JolCraftStrings.toTitleCase(id.getPath()));
         }
     }
 }

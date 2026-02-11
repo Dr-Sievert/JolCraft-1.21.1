@@ -1,30 +1,39 @@
 package net.sievert.jolcraft.data.id;
 
-import net.sievert.jolcraft.data.language.JolCraftKeyParts;
+import net.minecraft.resources.ResourceLocation;
+import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
-public final class JolCraftIds {
+/**
+ * Base class for all JolCraft id holders.
+ *
+ * Subclasses store path strings only (e.g. "dwarven_lexicon").
+ * This class provides helper methods for converting them.
+ */
+public abstract class JolCraftIds {
 
-    private JolCraftIds(){}
+    protected JolCraftIds() {}
 
-    //Creative tabs
+    /** Convert a path into "jolcraft:<path>". */
+    public static String full(String path) {
+        return JolCraft.MOD_ID + ":" + path;
+    }
 
-    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB = "jolcraft_items_tab";
-    public static final String JOLCRAFT_EGG_CREATIVE_TAB = "jolcraft_egg_tab";
+    /** Create a vanilla (minecraft namespace) id. */
+    public static ResourceLocation vanilla(String path) {
+        return ResourceLocation.withDefaultNamespace(path);
+    }
 
-    //Entities
+    /** Join non-empty parts with '_' (no namespace). */
+    protected static String joined(String... parts) {
+        return JolCraftStrings.underscored(parts);
+    }
 
-    public static final String DWARF   = JolCraftKeyParts.DWARF;
-    public static final String DWARF_ALCHEMIST   = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.ALCHEMIST;
-    public static final String DWARF_ARCANIST    = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.ARCANIST;
-    public static final String DWARF_ARTISAN     = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.ARTISAN;
-    public static final String DWARF_BREWMASTER  = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.BREWMASTER;
-    public static final String DWARF_EXPLORER    = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.EXPLORER;
-    public static final String DWARF_GUARD       = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.GUARD;
-    public static final String DWARF_GUILDMASTER = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.GUILDMASTER;
-    public static final String DWARF_HISTORIAN   = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.HISTORIAN;
-    public static final String DWARF_KEEPER      = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.KEEPER;
-    public static final String DWARF_MERCHANT    = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.MERCHANT;
-    public static final String DWARF_MINER       = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.MINER;
-    public static final String DWARF_PRIEST      = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.PRIEST;
-    public static final String DWARF_SCRAPPER    = JolCraftKeyParts.DWARF + "_" + JolCraftKeyParts.SCRAPPER;
+    /** Convenience: "<modid>_<a>_<b>_...". */
+    protected static String modJoined(String... parts) {
+        String[] all = new String[parts.length + 1];
+        all[0] = JolCraft.MOD_ID;
+        System.arraycopy(parts, 0, all, 1, parts.length);
+        return JolCraftStrings.underscored(all);
+    }
 }

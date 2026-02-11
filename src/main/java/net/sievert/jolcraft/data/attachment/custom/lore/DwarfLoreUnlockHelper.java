@@ -32,7 +32,7 @@ public final class DwarfLoreUnlockHelper {
      */
     public static boolean hasUnlockBypassCreative(Player player, DwarfLoreKey key) {
         if (player == null || key == null) return false;
-        return player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get()).hasUnlock(key);
+        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get()).hasUnlock(key);
     }
 
     /**
@@ -42,7 +42,7 @@ public final class DwarfLoreUnlockHelper {
      */
     public static Set<DwarfLoreKey> getAllUnlocks(Player player) {
         if (player == null) return Set.of();
-        return player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get()).getUnlocks();
+        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get()).getUnlocks();
     }
 
     /**
@@ -52,7 +52,7 @@ public final class DwarfLoreUnlockHelper {
     public static void addUnlock(Player player, DwarfLoreKey key) {
         if (!(player instanceof ServerPlayer serverPlayer) || key == null) return;
 
-        DwarfLoreUnlock unlock = serverPlayer.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
+        DwarfLoreUnlock unlock = serverPlayer.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get());
         if (!unlock.addUnlockIfAbsent(key)) return;
 
         JolCraftNetworking.sendToClient(

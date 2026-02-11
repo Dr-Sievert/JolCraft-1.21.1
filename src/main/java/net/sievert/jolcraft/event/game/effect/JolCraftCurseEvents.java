@@ -72,7 +72,7 @@ public final class JolCraftCurseEvents {
 
             JolCraftLogs.debug(
                     JolCraftLogTags.PLAYER,
-                    "Blocked {} removal for {}",
+                    "Blocked effect removal of {} for {}",
                     effectId,
                     player.getDisplayName().getString()
             );

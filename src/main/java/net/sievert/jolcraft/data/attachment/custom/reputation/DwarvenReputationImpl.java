@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
@@ -18,8 +19,6 @@ import java.util.stream.Collectors;
 
 public class DwarvenReputationImpl implements DwarvenReputation {
 
-    private static final String NBT_TIER = "tier";
-    private static final String NBT_ENDORSEMENTS = "endorsements";
 
     /**
      * Stored as int for NBT/network friendliness. Always clamped via {@link DwarvenReputationTier}.
@@ -121,23 +120,23 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     @Override
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(NBT_TIER, this.tierId);
+        tag.putInt(JolCraftDataKeys.TIER, this.tierId);
 
         ListTag endorsementList = new ListTag();
         for (ResourceLocation profId : endorsements) {
             endorsementList.add(StringTag.valueOf(profId.toString()));
         }
-        tag.put(NBT_ENDORSEMENTS, endorsementList);
+        tag.put(JolCraftDataKeys.ENDORSEMENTS, endorsementList);
 
         return tag;
     }
 
     @Override
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag tag) {
-        this.setTierId(tag.getInt(NBT_TIER));
+        this.setTierId(tag.getInt(JolCraftDataKeys.TIER));
 
         Set<ResourceLocation> parsed = new HashSet<>();
-        ListTag endorsementList = tag.getList(NBT_ENDORSEMENTS, 8);
+        ListTag endorsementList = tag.getList(JolCraftDataKeys.ENDORSEMENTS, 8);
         for (int i = 0; i < endorsementList.size(); i++) {
             String idString = endorsementList.getString(i);
             ResourceLocation profId = ResourceLocation.tryParse(idString);
@@ -167,7 +166,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     // ---------------------------------------------------------------------
 
     public static final Codec<DwarvenReputationImpl> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf(NBT_TIER).forGetter(rep -> rep.tierId),
+            Codec.INT.fieldOf(JolCraftDataKeys.TIER).forGetter(rep -> rep.tierId),
             Codec.STRING.listOf()
                     .xmap(
                             list -> list.stream()
@@ -178,7 +177,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
                                     .map(ResourceLocation::toString)
                                     .collect(Collectors.toList())
                     )
-                    .fieldOf(NBT_ENDORSEMENTS)
+                    .fieldOf(JolCraftDataKeys.ENDORSEMENTS)
                     .forGetter(rep -> Set.copyOf(rep.endorsements))
     ).apply(instance, (tierId, endorsementSet) -> {
         DwarvenReputationImpl impl = new DwarvenReputationImpl();

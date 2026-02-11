@@ -79,9 +79,9 @@ public class ReputationTabletItem extends Item {
             int tier = DwarvenReputationHelper.getTier(serverPlayer);
             int endorsements = DwarvenReputationHelper.getEndorsementCount(serverPlayer);
 
-            stack.set(JolCraftDataComponents.REP_OWNER.get(), serverPlayer.getName().getString());
-            stack.set(JolCraftDataComponents.REP_TIER.get(), tier);
-            stack.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), endorsements);
+            stack.set(JolCraftDataComponents.REPUTATION_OWNER.get(), serverPlayer.getName().getString());
+            stack.set(JolCraftDataComponents.REPUTATION_TIER.get(), tier);
+            stack.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), endorsements);
 
             JolCraftNetworking.sendToClient(serverPlayer,
                     new ClientboundEndorsementsPacket(DwarvenReputationHelper.getAllEndorsements(serverPlayer))
@@ -98,9 +98,9 @@ public class ReputationTabletItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Player player = JolCraftProxy.access().getLocalPlayer();
         if (DwarvenLanguageHelper.knowsDwarvish(player)) {
-            String ownerName = stack.getOrDefault(JolCraftDataComponents.REP_OWNER.get(), "Unknown");
-            int statictier = stack.getOrDefault(JolCraftDataComponents.REP_TIER.get(), 0);
-            int staticendorsements = stack.getOrDefault(JolCraftDataComponents.REP_ENDORSEMENTS.get(), 0);
+            String ownerName = stack.getOrDefault(JolCraftDataComponents.REPUTATION_OWNER.get(), "Unknown");
+            int statictier = stack.getOrDefault(JolCraftDataComponents.REPUTATION_TIER.get(), 0);
+            int staticendorsements = stack.getOrDefault(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), 0);
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_OWNER, ownerName)
                         .withStyle(ChatFormatting.GRAY));
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_REPUTATION)

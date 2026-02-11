@@ -62,6 +62,6 @@ public interface DwarvenReputation extends INBTSerializable<CompoundTag> {
     // ---------------------------------------------------------------------
 
     static DwarvenReputation get(Player player) {
-        return player.getData(JolCraftAttachments.DWARVEN_REP.get());
+        return player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
     }
 }

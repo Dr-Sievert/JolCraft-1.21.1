@@ -5,11 +5,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.network.JolCraftNetworkIds;
 import org.jetbrains.annotations.NotNull;
 
 public record ClientboundReputationPacket(int tier) implements CustomPacketPayload {
     public static final Type<ClientboundReputationPacket> TYPE =
-            new Type<>(JolCraft.location("sync_reputation"));
+            new Type<>(JolCraft.location(JolCraftNetworkIds.SYNC_REPUTATION));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundReputationPacket> CODEC =
             CustomPacketPayload.codec(ClientboundReputationPacket::write, ClientboundReputationPacket::read);

@@ -4,13 +4,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
+import net.sievert.jolcraft.util.client.JolCraftFonts;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 
 public final class AncientEffectHelper {
 
     private AncientEffectHelper() {}
-
-    public static final ResourceLocation SGA_FONT = ResourceLocation.withDefaultNamespace("alt");
 
     /**
      * Returns readable text if the player has Ancient Memory (effect or permanent),
@@ -19,7 +18,7 @@ public final class AncientEffectHelper {
      */
     public static Component getAncientText(Player player, Component readable) {
         if (hasAncientMemory(player)) return readable;
-        return readable.copy().withStyle(style -> style.withFont(SGA_FONT));
+        return readable.copy().withStyle(style -> style.withFont(JolCraftFonts.SGA));
     }
 
     /**

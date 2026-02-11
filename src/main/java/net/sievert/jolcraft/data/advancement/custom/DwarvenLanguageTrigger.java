@@ -10,13 +10,15 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguage;
+import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class DwarvenLanguageTrigger extends SimpleCriterionTrigger<DwarvenLanguageTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = JolCraft.location("has_dwarven_language");
+    public static final ResourceLocation ID = JolCraft.location(JolCraftCriterionTriggerIds.HAS_DWARVEN_LANGUAGE);
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {
@@ -35,10 +37,9 @@ public class DwarvenLanguageTrigger extends SimpleCriterionTrigger<DwarvenLangua
     }
 
     public record TriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleCriterionTrigger.SimpleInstance {
-        public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
-                instance -> instance.group(
-                        EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player)
-                ).apply(instance, TriggerInstance::new)
+        public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                        EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDataKeys.PLAYER).forGetter(TriggerInstance::player))
+                .apply(instance, TriggerInstance::new)
         );
     }
 }

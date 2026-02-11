@@ -4,7 +4,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 
 @OnlyIn(Dist.CLIENT)
@@ -40,11 +42,10 @@ public final class BlockLangSubProvider implements AbstractLanguageProvider.Lang
 
         for (DeferredHolder<?, ?> holder : JolCraftBlocks.BLOCKS.getEntries()) {
             ResourceLocation id = holder.getId();
-
-            String key = "block." + id.getNamespace() + "." + id.getPath();
+            String key = AbstractLanguageKeys.block(id.getPath());
             if (p.hasKey(key)) continue;
 
-            p.put(key, AbstractLanguageProvider.toTitleCase(id.getPath()));
+            p.put(key, JolCraftStrings.toTitleCase(id.getPath()));
         }
     }
 }

@@ -107,6 +107,20 @@ public final class JolCraftServerPayloadHandlers {
             if (!(player instanceof ServerPlayer sp)) return;
 
             ResourceLocation soundId = packet.soundId();
+            String ns = soundId.getNamespace();
+
+            if (!ns.equals(JolCraft.MOD_ID) && !ns.equals(ResourceLocation.DEFAULT_NAMESPACE)) {
+
+                JolCraftLogs.debug(
+                        JolCraftLogTags.NETWORK,
+                        "Blocked sound with unknown namespace '{}' for {}",
+                        ns,
+                        player.getGameProfile().getName()
+                );
+
+                return;
+            }
+
             var level = sp.serverLevel();
 
             long tick = level.getGameTime();

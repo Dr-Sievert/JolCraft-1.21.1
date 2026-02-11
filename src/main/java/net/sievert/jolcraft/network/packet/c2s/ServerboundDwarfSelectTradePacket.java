@@ -4,10 +4,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.network.JolCraftNetworkIds;
 import org.jetbrains.annotations.NotNull;
 
 public record ServerboundDwarfSelectTradePacket(int item) implements CustomPacketPayload {
-    public static final Type<ServerboundDwarfSelectTradePacket> TYPE = new Type<>(JolCraft.location("select_dwarf_trade"));
+    public static final Type<ServerboundDwarfSelectTradePacket> TYPE = new Type<>(JolCraft.location(JolCraftNetworkIds.DWARF_SELECT_TRADE));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundDwarfSelectTradePacket> CODEC =
             CustomPacketPayload.codec(ServerboundDwarfSelectTradePacket::write, ServerboundDwarfSelectTradePacket::read);

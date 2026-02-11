@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,7 @@ import java.util.Optional;
 
 public class DwarfTradeTrigger extends SimpleCriterionTrigger<DwarfTradeTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = JolCraft.location( "trade_with_dwarf");
+    public static final ResourceLocation ID = JolCraft.location( JolCraftCriterionTriggerIds.TRADE_WITH_DWARF);
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {
@@ -63,8 +65,8 @@ public class DwarfTradeTrigger extends SimpleCriterionTrigger<DwarfTradeTrigger.
 
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
-                        EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
-                        Codec.STRING.optionalFieldOf("profession").forGetter(TriggerInstance::profession)
+                        EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDataKeys.PLAYER).forGetter(TriggerInstance::player),
+                        Codec.STRING.optionalFieldOf(JolCraftDataKeys.PROFESSION).forGetter(TriggerInstance::profession)
                 ).apply(instance, TriggerInstance::new)
         );
 

@@ -16,15 +16,15 @@ public final class JolCraftClientPayloadHandlers {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
-    public static void handleClientboundDelirium(ClientboundDeliriumPacket packet, IPayloadContext context) {
+    public static void handleClientboundDelirium(ClientboundDeliriumCursePacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
-    public static void handleClientboundLanguage(ClientboundLanguagePacket packet, IPayloadContext context) {
+    public static void handleClientboundLanguage(ClientboundDwarvenLanguagePacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
-    public static void handleClientboundAncientLanguage(ClientboundAncientLanguagePacket packet, IPayloadContext context) {
+    public static void handleClientboundAncientLanguage(ClientboundAncientDwarvenLanguagePacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 

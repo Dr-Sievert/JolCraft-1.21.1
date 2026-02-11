@@ -1,9 +1,10 @@
-package net.sievert.jolcraft.config.dwarf;
+package net.sievert.jolcraft.config.custom.dwarf;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.config.ConfigManager;
+import net.sievert.jolcraft.data.id.config.JolCraftConfigIds;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
@@ -16,7 +17,7 @@ import java.util.EnumMap;
 @MethodsReturnNonnullByDefault
 public final class DwarfProfessionConfigs extends ConfigManager<DwarfProfession, DwarfProfessionSettings> {
 
-    public static final String DIRECTORY = "dwarf_professions";
+    public static final String DIRECTORY = JolCraftConfigIds.DWARF_PROFESSIONS;
     public static final ResourceLocation RELOAD_LISTENER_ID = JolCraft.location(DIRECTORY);
 
     private static final EnumMap<DwarfProfession, DwarfProfessionSettings> CACHE = new EnumMap<>(DwarfProfession.class);

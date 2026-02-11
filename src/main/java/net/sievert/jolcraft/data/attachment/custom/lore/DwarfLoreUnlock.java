@@ -28,12 +28,6 @@ public interface DwarfLoreUnlock extends INBTSerializable<CompoundTag> {
      */
     void setUnlocks(Set<DwarfLoreKey> unlocks);
 
-    default boolean setUnlocksIfChanged(Set<DwarfLoreKey> unlocks) {
-        if (getUnlocks().equals(unlocks)) return false;
-        setUnlocks(unlocks);
-        return true;
-    }
-
     default boolean addUnlockIfAbsent(DwarfLoreKey id) {
         if (hasUnlock(id)) return false;
         addUnlock(id);
@@ -41,6 +35,6 @@ public interface DwarfLoreUnlock extends INBTSerializable<CompoundTag> {
     }
 
     static DwarfLoreUnlock get(Player player) {
-        return player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
+        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get());
     }
 }

@@ -59,7 +59,7 @@ public class EndorseDwarfAction extends InspectDwarfAction {
 
         DwarvenReputationHelper.addEndorsement(player, profession);
 
-        int total = player.getData(JolCraftAttachments.DWARVEN_REP.get()).getEndorsementCount();
+        int total = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get()).getEndorsementCount();
 
         JolCraftLogs.info(
                 JolCraftLogTags.PLAYER,
@@ -77,10 +77,10 @@ public class EndorseDwarfAction extends InspectDwarfAction {
         }
 
         ItemStack updatedTablet = tablet;
-        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
-        updatedTablet.set(JolCraftDataComponents.REP_ENDORSEMENTS.get(), rep.getEndorsementCount());
-        updatedTablet.set(JolCraftDataComponents.REP_TIER.get(), rep.getTierId());
-        updatedTablet.set(JolCraftDataComponents.REP_OWNER.get(), player.getName().getString());
+        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
+        updatedTablet.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), rep.getEndorsementCount());
+        updatedTablet.set(JolCraftDataComponents.REPUTATION_TIER.get(), rep.getTierId());
+        updatedTablet.set(JolCraftDataComponents.REPUTATION_OWNER.get(), player.getName().getString());
 
         throwItem(dwarf, player, updatedTablet);
         tablet = ItemStack.EMPTY;

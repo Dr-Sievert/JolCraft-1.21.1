@@ -24,11 +24,11 @@ public class AttachmentSyncHelper {
 
         // Dwarvish language
         boolean knowsLang = DwarvenLanguageHelper.knowsDwarvishBypassCreative(player);
-        JolCraftNetworking.sendToClient(player, new ClientboundLanguagePacket(knowsLang));
+        JolCraftNetworking.sendToClient(player, new ClientboundDwarvenLanguagePacket(knowsLang));
 
         // Ancient Dwarvish language
         boolean knowsAncient = AncientDwarvenLanguageHelper.knowsAncientDwarvishBypassCreative(player);
-        JolCraftNetworking.sendToClient(player, new ClientboundAncientLanguagePacket(knowsAncient));
+        JolCraftNetworking.sendToClient(player, new ClientboundAncientDwarvenLanguagePacket(knowsAncient));
 
         // Reputation tier
         int tier = DwarvenReputationHelper.getTier(player);

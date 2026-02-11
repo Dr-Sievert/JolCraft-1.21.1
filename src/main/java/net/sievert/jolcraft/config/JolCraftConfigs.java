@@ -6,7 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.config.dwarf.DwarfProfessionConfigs;
+import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
 
 import java.util.List;
 import java.util.function.Supplier;

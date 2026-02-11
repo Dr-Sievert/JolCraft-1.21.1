@@ -19,7 +19,7 @@ public record DialItemColor(int rgb) {
     public static final StreamCodec<ByteBuf, DialItemColor> STREAM_CODEC;
 
     public static int getOrDefault(ItemStack stack, int defaultValue) {
-        DialItemColor dialColor = stack.get(JolCraftDataComponents.DIAL_COLOR.get());
+        DialItemColor dialColor = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get());
         return dialColor != null ? ARGB.opaque(dialColor.rgb()) : defaultValue;
     }
 

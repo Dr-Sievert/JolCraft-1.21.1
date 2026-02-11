@@ -26,7 +26,9 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.client.JolCraftFonts;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -37,7 +39,7 @@ import java.util.Objects;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRecipe> {
-    public static final IRecipeType<JeiInfoPageRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, "info_page", JeiInfoPageRecipe.class);
+    public static final IRecipeType<JeiInfoPageRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, JolCraftJeiIds.INFO_PAGE, JeiInfoPageRecipe.class);
 
     private final int textStartY = 32;
     private final int textHeight = getHeight() - textStartY - 8;
@@ -81,14 +83,14 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
         int lineHeight = 10;
         int maxLines = Math.max(1, textHeight / lineHeight);
 
-        List<FormattedCharSequence> lines = Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16);
+        List<FormattedCharSequence> lines = JolCraftFonts.defaultFont().split(recipe.getContent(), getWidth() - 16);
         int totalLines = lines.size();
         int maxScroll = Math.max(0, totalLines - maxLines);
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
 
         for (int i = 0; i < Math.min(maxLines, totalLines - scrollOffset); ++i) {
             graphics.drawString(
-                    Minecraft.getInstance().font,
+                    JolCraftFonts.defaultFont(),
                     lines.get(i + scrollOffset),
                     8,
                     textStartY + i * lineHeight,
@@ -126,7 +128,7 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
             public boolean handleMouseScrolled(double mouseX, double mouseY, double scrollDeltaX, double scrollDeltaY) {
                 int sign = (int) Math.signum(scrollDeltaY);
                 int maxLines = textHeight / 10;
-                int lines = Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16).size();
+                int lines = JolCraftFonts.defaultFont().split(recipe.getContent(), getWidth() - 16).size();
                 int maxScroll = Math.max(0, lines - maxLines);
                 scrollOffset = Math.max(0, Math.min(scrollOffset - sign, maxScroll));
                 return true;
@@ -151,7 +153,7 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
                     int textHeight = getHeight() - textStartY - 8;
                     int lineHeight = 10;
                     int maxLines = Math.max(1, textHeight / lineHeight);
-                    int totalLines = Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16).size();
+                    int totalLines = JolCraftFonts.defaultFont().split(recipe.getContent(), getWidth() - 16).size();
                     int maxScroll = Math.max(0, totalLines - maxLines);
                     int thumbHeight = Math.max(12, Math.round(textHeight * (maxLines / (float) totalLines)));
                     int maxThumbMove = textHeight - thumbHeight;
@@ -179,7 +181,7 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
                     int textHeight = getHeight() - textStartY - 8;
                     int lineHeight = 10;
                     int maxLines = Math.max(1, textHeight / lineHeight);
-                    int totalLines = Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16).size();
+                    int totalLines = JolCraftFonts.defaultFont().split(recipe.getContent(), getWidth() - 16).size();
                     int maxScroll = Math.max(0, totalLines - maxLines);
 
                     int thumbHeight = Math.max(12, Math.round(textHeight * (maxLines / (float) totalLines)));

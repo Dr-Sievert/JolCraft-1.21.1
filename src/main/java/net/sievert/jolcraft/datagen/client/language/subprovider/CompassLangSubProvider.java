@@ -6,9 +6,10 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.language.JolCraftKeyParts;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
@@ -35,9 +36,9 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
 
         // Dial labels
         for (StructureGroup group : StructureGroup.values()) {
-            String key = JolCraftLanguageKeys.tooltip(JolCraftKeyParts.DEEPSLATE_COMPASS_DIAL, group.id());
+            String key = JolCraftLanguageKeys.tooltip(JolCraftDataKeys.DEEPSLATE_COMPASS_DIAL, group.id());
             if (p.hasKey(key)) continue;
-            p.putManual(key, AbstractLanguageProvider.toTitleCase(group.id()));
+            p.putManual(key, JolCraftStrings.toTitleCase(group.id()));
         }
 
         // Vanilla structures
@@ -52,10 +53,10 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
     }
 
     private static void putStructureNameIfMissing(AbstractLanguageProvider p, ResourceLocation structureId) {
-        String key = JolCraftLanguageKeys.tooltip("structure", structureId.toString());
+        String key = JolCraftLanguageKeys.tooltip(JolCraftDataKeys.STRUCTURE, structureId.toString());
         if (p.hasKey(key)) return;
 
-        String english = AbstractLanguageProvider.toTitleCase(structureId.getPath());
+        String english = JolCraftStrings.toTitleCase(structureId.getPath());
         p.putManual(key, english);
     }
 
@@ -76,7 +77,7 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
             if (!(val instanceof ResourceKey<?> rk)) continue;
 
             ResourceLocation id = rk.location();
-            if (!"minecraft".equals(id.getNamespace())) continue;
+            if (!ResourceLocation.DEFAULT_NAMESPACE.equals(id.getNamespace())) continue;
 
             ids.add(id);
         }

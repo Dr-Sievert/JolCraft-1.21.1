@@ -38,6 +38,7 @@ import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 @Mod(JolCraft.MOD_ID)
 public class JolCraft {
 
+    public static final String MOD_NAME = "JolCraft";
     public static final String MOD_ID = "jolcraft";
 
     public JolCraft(IEventBus modEventBus, ModContainer modContainer) {
@@ -89,7 +90,6 @@ public class JolCraft {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            JolCraftStats.initializeStats();
             DwarfInteractions.registerAll();
             DwarfLoadouts.bootstrap();
 

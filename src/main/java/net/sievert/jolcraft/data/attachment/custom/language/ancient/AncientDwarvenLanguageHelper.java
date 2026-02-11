@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientLanguagePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientDwarvenLanguagePacket;
 
 public final class AncientDwarvenLanguageHelper {
 
@@ -38,7 +38,7 @@ public final class AncientDwarvenLanguageHelper {
         if (!lang.setHasLanguageIfChanged(value)) return;
 
         if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundAncientLanguagePacket(value));
+            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundAncientDwarvenLanguagePacket(value));
         }
     }
 }

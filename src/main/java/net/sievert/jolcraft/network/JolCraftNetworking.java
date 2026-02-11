@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.sievert.jolcraft.data.id.network.JolCraftNetworkIds;
 import net.sievert.jolcraft.network.handler.JolCraftClientPayloadHandlers;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
@@ -19,7 +20,7 @@ import net.sievert.jolcraft.JolCraft;
 
 public final class JolCraftNetworking {
 
-    public static final String PROTOCOL = "1.0";
+    public static final String PROTOCOL = JolCraftNetworkIds.PROTOCOL;
 
     public static void register(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar(JolCraft.MOD_ID).versioned(PROTOCOL);
@@ -32,9 +33,9 @@ public final class JolCraftNetworking {
                 .playToServer(ServerboundSpawnParticlePacket.TYPE, ServerboundSpawnParticlePacket.CODEC, JolCraftServerPayloadHandlers::handleServerboundSpawnWorldParticle);
 
         registrar
-                .playToClient(ClientboundDeliriumPacket.TYPE, ClientboundDeliriumPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDelirium)
-                .playToClient(ClientboundLanguagePacket.TYPE, ClientboundLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLanguage)
-                .playToClient(ClientboundAncientLanguagePacket.TYPE, ClientboundAncientLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundAncientLanguage)
+                .playToClient(ClientboundDeliriumCursePacket.TYPE, ClientboundDeliriumCursePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDelirium)
+                .playToClient(ClientboundDwarvenLanguagePacket.TYPE, ClientboundDwarvenLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLanguage)
+                .playToClient(ClientboundAncientDwarvenLanguagePacket.TYPE, ClientboundAncientDwarvenLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundAncientLanguage)
                 .playToClient(ClientboundReputationPacket.TYPE, ClientboundReputationPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundReputation)
                 .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundEndorsements)
                 .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)

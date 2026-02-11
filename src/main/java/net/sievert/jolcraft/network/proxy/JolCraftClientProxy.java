@@ -90,7 +90,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        DwarfLoreUnlock unlock = player.getData(JolCraftAttachments.DWARF_LORE_UNLOCK.get());
+        DwarfLoreUnlock unlock = player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get());
 
         AtomicInteger invalid = new AtomicInteger();
 
@@ -125,12 +125,12 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
 
 
     @Override
-    public void apply(ClientboundDeliriumPacket packet) {
+    public void apply(ClientboundDeliriumCursePacket packet) {
         ClientDeliriumData.start(packet.durationTicks());
     }
 
     @Override
-    public void apply(ClientboundLanguagePacket packet) {
+    public void apply(ClientboundDwarvenLanguagePacket packet) {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 
@@ -139,7 +139,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     }
 
     @Override
-    public void apply(ClientboundAncientLanguagePacket packet) {
+    public void apply(ClientboundAncientDwarvenLanguagePacket packet) {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 
@@ -152,7 +152,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        DwarvenReputationImpl rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
+        DwarvenReputationImpl rep = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
         rep.setTierId(packet.tier());
     }
 
@@ -161,7 +161,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        DwarvenReputationImpl rep = player.getData(JolCraftAttachments.DWARVEN_REP.get());
+        DwarvenReputationImpl rep = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
 
         Set<ResourceLocation> ids = EnumSet.copyOf(packet.endorsements()).stream()
                 .filter(p -> p != null && p != DwarfProfession.NONE)

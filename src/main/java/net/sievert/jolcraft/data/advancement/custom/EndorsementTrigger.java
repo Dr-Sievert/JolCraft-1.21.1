@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +18,7 @@ import java.util.Optional;
 
 public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = JolCraft.location("endorsement_gain");
+    public static final ResourceLocation ID = JolCraft.location(JolCraftCriterionTriggerIds.ENDORSEMENT_GAIN);
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {
@@ -48,9 +50,9 @@ public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigge
     public record TriggerInstance(Optional<ContextAwarePredicate> player, DwarfProfession profession)
             implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player),
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDataKeys.PLAYER).forGetter(TriggerInstance::player),
                 Codec.STRING.xmap(DwarfProfession::byId, DwarfProfession::getId)
-                        .fieldOf("profession").forGetter(TriggerInstance::profession)
+                        .fieldOf(JolCraftDataKeys.PROFESSION).forGetter(TriggerInstance::profession)
         ).apply(instance, TriggerInstance::new));
     }
 }

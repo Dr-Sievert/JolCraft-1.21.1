@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.network.JolCraftNetworkIds;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 public record ClientboundLoreUnlocksPacket(Set<String> unlocks) implements CustomPacketPayload {
     public static final Type<ClientboundLoreUnlocksPacket> TYPE =
-            new Type<>(JolCraft.location("sync_tome_unlocks"));
+            new Type<>(JolCraft.location(JolCraftNetworkIds.SYNC_TOME_UNLOCKS));
 
     public static final StreamCodec<FriendlyByteBuf, ClientboundLoreUnlocksPacket> CODEC =
             CustomPacketPayload.codec(ClientboundLoreUnlocksPacket::write, ClientboundLoreUnlocksPacket::read);

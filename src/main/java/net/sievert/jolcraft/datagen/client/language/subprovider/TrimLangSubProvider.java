@@ -7,8 +7,11 @@ import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
@@ -54,7 +57,7 @@ public final class TrimLangSubProvider implements AbstractLanguageProvider.LangS
         String langKey = trimMaterial(id.getPath());
         if (p.hasKey(langKey)) return;
 
-        p.putManual(langKey, AbstractLanguageProvider.toTitleCase(id.getPath()) + " Material");
+        p.putManual(langKey, JolCraftStrings.toTitleCase(id.getPath()) + " Material");
     }
 
     // -------------------------------------------------------------------------
@@ -69,7 +72,7 @@ public final class TrimLangSubProvider implements AbstractLanguageProvider.LangS
             String langKey = trimPattern(id.getPath());
             if (p.hasKey(langKey)) continue;
 
-            p.putManual(langKey, AbstractLanguageProvider.toTitleCase(id.getPath()) + " Armor Trim");
+            p.putManual(langKey, JolCraftStrings.toTitleCase(id.getPath()) + " Armor Trim");
         }
     }
 
@@ -98,10 +101,10 @@ public final class TrimLangSubProvider implements AbstractLanguageProvider.LangS
     // -------------------------------------------------------------------------
 
     public static String trimMaterial(String path) {
-        return "trim_material." + JolCraft.MOD_ID + "." + path;
+        return AbstractLanguageKeys.category(JolCraftDataKeys.TRIM_MATERIAL, path);
     }
 
     public static String trimPattern(String path) {
-        return "trim_pattern." + JolCraft.MOD_ID + "." + path;
+        return AbstractLanguageKeys.category(JolCraftDataKeys.TRIM_PATTERN, path);
     }
 }

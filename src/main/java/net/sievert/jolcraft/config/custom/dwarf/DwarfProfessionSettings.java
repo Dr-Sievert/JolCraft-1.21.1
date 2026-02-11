@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.config.dwarf;
+package net.sievert.jolcraft.config.custom.dwarf;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;

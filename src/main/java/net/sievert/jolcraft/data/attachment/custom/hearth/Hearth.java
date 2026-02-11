@@ -13,12 +13,6 @@ public interface Hearth extends INBTSerializable<CompoundTag> {
     long lastResetDay();
     void setLastResetDay(long day);
 
-    default boolean setHasLitThisDayIfChanged(boolean value) {
-        if (hasLitThisDay() == value) return false;
-        setHasLitThisDay(value);
-        return true;
-    }
-
     static Hearth get(Player player) {
         return player.getData(JolCraftAttachments.HEARTH.get());
     }

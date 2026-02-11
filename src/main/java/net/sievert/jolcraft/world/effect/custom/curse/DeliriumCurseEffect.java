@@ -11,7 +11,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumCursePacket;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -69,7 +69,7 @@ public class DeliriumCurseEffect extends MobEffect {
 
             // Episode audio window for muffling (client-side mixing)
             if (player instanceof ServerPlayer serverPlayer) {
-                JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDeliriumPacket(BLINDNESS_TICKS));
+                JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDeliriumCursePacket(BLINDNESS_TICKS));
             }
 
             // Episode ambience: local-only to this player (server-triggered)

@@ -6,6 +6,7 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 @JeiPlugin
 public final class JolCraftJeiPlugin implements IModPlugin {
 
-    private static final ResourceLocation ID = JolCraft.location("jei_plugin");
+    private static final ResourceLocation ID = JolCraft.location(JolCraftJeiIds.JEI_PLUGIN);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {

@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
@@ -103,7 +104,7 @@ public class DiscoveredStructuresHelper {
 
         if (!structureRegistry.getTagOrEmpty(structureTag).iterator().hasNext()) {
             JolCraftLogs.debug(
-                    "Attachment",
+                    JolCraftLogTags.ATTACHMENT,
                     "findNearestUndiscoveredStructure: empty structure tag {}",
                     structureTag.location()
             );
@@ -140,7 +141,7 @@ public class DiscoveredStructuresHelper {
 
         if (matchedStructure == null) {
             JolCraftLogs.debug(
-                    "Attachment",
+                    JolCraftLogTags.ATTACHMENT,
                     "findNearestUndiscoveredStructure: nearest pos {} for tag {} but no matching structure found",
                     pos,
                     structureTag.location()
