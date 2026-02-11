@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 public class DeepslateCompassAngleState extends NeedleDirectionHelper {
 
     private static final String WOBBLE = "wobble";
-    private static final String TARGET = JolCraftDataKeys.TARGET;
+    private static final String TARGET = JolCraftDictionary.TARGET;
 
     public static final MapCodec<DeepslateCompassAngleState> MAP_CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
@@ -105,14 +105,14 @@ public class DeepslateCompassAngleState extends NeedleDirectionHelper {
 
     @OnlyIn(Dist.CLIENT)
     public enum CompassTarget implements StringRepresentable {
-        NONE(JolCraftDataKeys.NONE) {
+        NONE(JolCraftDictionary.NONE) {
             @Nullable
             @Override
             public GlobalPos get(ClientLevel level, ItemStack stack, Entity entity) {
                 return null;
             }
         },
-        STRUCTURE(JolCraftDataKeys.STRUCTURE) {
+        STRUCTURE(JolCraftDictionary.STRUCTURE) {
             @Override
             public @Nullable GlobalPos get(ClientLevel level, ItemStack stack, Entity entity) {
                 return stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET.get());

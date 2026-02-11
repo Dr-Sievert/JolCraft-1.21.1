@@ -17,8 +17,8 @@ public final class AttributeLangSubProvider implements AbstractLanguageProvider.
     public void addTranslations(AbstractLanguageProvider p) {
 
         p.putManual(JolCraftAttributes.XP_INCREASE, "Experience Boost");
-        p.putManual(JolCraftAttributes.MOVEMENT_SPEED_INCREASE_DAY, "Sunlight Speed Boost");
-        p.putManual(JolCraftAttributes.MOVEMENT_SPEED_INCREASE_NIGHT, "Moonlight Speed Boost");
+        p.putManual(JolCraftAttributes.MOVEMENT_SPEED_DAY_INCREASE, "Sunlight Speed Boost");
+        p.putManual(JolCraftAttributes.MOVEMENT_SPEED_NIGHT_INCREASE, "Moonlight Speed Boost");
 
         for (DeferredHolder<?, ?> holder : JolCraftAttributes.ATTRIBUTES.getEntries()) {
             Object value = holder.get();

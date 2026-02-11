@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.data.id.data_component;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 public final class JolCraftDataComponentIds extends JolCraftIds {
 
@@ -11,7 +11,7 @@ public final class JolCraftDataComponentIds extends JolCraftIds {
     // Lore
     // -----------------
 
-    public static final String LORE_KEY = joined(JolCraftDataKeys.LORE + JolCraftDataKeys.KEY);
+    public static final String LORE_KEY = join(JolCraftDictionary.LORE + JolCraftDictionary.KEY);
 
     // -----------------
     // Reputation

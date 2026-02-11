@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.Equippable;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,10 +29,10 @@ public final class JolCraftEquipmentHelper {
     // -------------------------------------------------------------------------
 
     public enum ArmorPiece {
-        HELMET(JolCraftDataKeys.HELMET, EquipmentSlot.HEAD, ArmorType.HELMET),
-        CHESTPLATE(JolCraftDataKeys.CHESTPLATE, EquipmentSlot.CHEST, ArmorType.CHESTPLATE),
-        LEGGINGS(JolCraftDataKeys.LEGGINGS, EquipmentSlot.LEGS, ArmorType.LEGGINGS),
-        BOOTS(JolCraftDataKeys.BOOTS, EquipmentSlot.FEET, ArmorType.BOOTS);
+        HELMET(JolCraftDictionary.HELMET, EquipmentSlot.HEAD, ArmorType.HELMET),
+        CHESTPLATE(JolCraftDictionary.CHESTPLATE, EquipmentSlot.CHEST, ArmorType.CHESTPLATE),
+        LEGGINGS(JolCraftDictionary.LEGGINGS, EquipmentSlot.LEGS, ArmorType.LEGGINGS),
+        BOOTS(JolCraftDictionary.BOOTS, EquipmentSlot.FEET, ArmorType.BOOTS);
 
         private final String suffix;
         private final EquipmentSlot slot;

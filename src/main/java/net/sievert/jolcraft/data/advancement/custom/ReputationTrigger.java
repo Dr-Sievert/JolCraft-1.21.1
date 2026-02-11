@@ -12,13 +12,13 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputation;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class ReputationTrigger extends SimpleCriterionTrigger<ReputationTrigger.TriggerInstance> {
-    public static final ResourceLocation ID = JolCraft.location(JolCraftCriterionTriggerIds.REPUTATION_TIER);
+    public static final ResourceLocation ID = JolCraft.location(JolCraftCriterionTriggerIds.DWARVEN_REPUTATION);
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {
@@ -39,8 +39,8 @@ public class ReputationTrigger extends SimpleCriterionTrigger<ReputationTrigger.
     public record TriggerInstance(Optional<ContextAwarePredicate> player, int requiredTier)
             implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDataKeys.PLAYER).forGetter(TriggerInstance::player),
-                Codec.INT.fieldOf(JolCraftDataKeys.TIER).forGetter(TriggerInstance::requiredTier)
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDictionary.PLAYER).forGetter(TriggerInstance::player),
+                Codec.INT.fieldOf(JolCraftDictionary.TIER).forGetter(TriggerInstance::requiredTier)
         ).apply(instance, TriggerInstance::new));
     }
 }

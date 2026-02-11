@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -40,7 +40,7 @@ public class FesterlingBlock extends JolCraftMushroomBlock{
 
     public static final MapCodec<FesterlingBlock> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf(JolCraftDataKeys.PROPERTIES).forGetter(block -> block.properties)
+                    BlockBehaviour.Properties.CODEC.fieldOf(JolCraftDictionary.PROPERTIES).forGetter(block -> block.properties)
             ).apply(builder, FesterlingBlock::new)
     );
 

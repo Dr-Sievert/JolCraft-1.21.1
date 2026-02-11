@@ -2,6 +2,7 @@ package net.sievert.jolcraft.data.id.item;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 public final class JolCraftItemIds extends JolCraftIds {
 
@@ -60,7 +61,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String MUFFHORN_MILK_BUCKET = "muffhorn_milk_bucket";
 
     // Alchemy
-    public static final String DEEPSLATE_MORTAR = "deepslate_mortar";
+    public static final String DEEPSLATE_MORTAR = JolCraftBlockIds.DEEPSLATE_MORTAR;
     public static final String DEEPSLATE_PESTLE = "deepslate_pestle";
     public static final String MITHRIL_PESTLE = "mithril_pestle";
 
@@ -146,9 +147,13 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String MITHRIL_CHISEL = "mithril_chisel";
 
     // Geodes
-    public static final String GEODE_SMALL = "geode_small";
-    public static final String GEODE_MEDIUM = "geode_medium";
-    public static final String GEODE_LARGE = "geode_large";
+    public static final String GEODE_SMALL = geode(JolCraftDictionary.SMALL);
+    public static final String GEODE_MEDIUM = geode(JolCraftDictionary.MEDIUM);
+    public static final String GEODE_LARGE = geode(JolCraftDictionary.LARGE);
+
+    private static String geode(String size){
+        return JolCraftDictionary.GEODE + size;
+    }
 
     // Uncut Gems
     public static final String AEGISCORE = "aegiscore";
@@ -246,7 +251,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String DEEPSLATE_MUG = "deepslate_mug";
     public static final String EXPIRED_POTION = "expired_potion";
     public static final String INGOT_MOULD = "ingot_mould";
-    public static final String MITHRIL_SALVAGE = "mithril_salvage";
+    public static final String MITHRIL_SCRAP = "mithril_scrap";
     public static final String OLD_FABRIC = "old_fabric";
     public static final String RUSTY_TONGS = "rusty_tongs";
     public static final String BROKEN_MITHRIL_SWORD = "broken_mithril_sword";

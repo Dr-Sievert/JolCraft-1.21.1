@@ -16,7 +16,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,10 +27,10 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
 
     public static final MapCodec<RandomReplaceWithLootProcessor> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    ResourceLocation.CODEC.fieldOf(JolCraftDataKeys.INPUT).forGetter(p -> p.inputBlockId),
-                    ResourceLocation.CODEC.fieldOf(JolCraftDataKeys.OUTPUT).forGetter(p -> p.outputBlockId),
-                    Codec.floatRange(0f, 1f).fieldOf(JolCraftDataKeys.CHANCE).forGetter(p -> p.probability),
-                    ResourceLocation.CODEC.fieldOf(JolCraftDataKeys.LOOT_TABLE).forGetter(p -> p.lootTable)
+                    ResourceLocation.CODEC.fieldOf(JolCraftDictionary.INPUT).forGetter(p -> p.inputBlockId),
+                    ResourceLocation.CODEC.fieldOf(JolCraftDictionary.OUTPUT).forGetter(p -> p.outputBlockId),
+                    Codec.floatRange(0f, 1f).fieldOf(JolCraftDictionary.CHANCE).forGetter(p -> p.probability),
+                    ResourceLocation.CODEC.fieldOf(JolCraftDictionary.LOOT_TABLE).forGetter(p -> p.lootTable)
             ).apply(instance, RandomReplaceWithLootProcessor::new)
     );
 
@@ -99,7 +99,7 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
                 BlockState replacedState = output.defaultBlockState();
 
                 CompoundTag nbt = new CompoundTag();
-                nbt.putString(JolCraftDataKeys.LOOT_TABLE, lootTable.toString());
+                nbt.putString(JolCraftDictionary.LOOT_TABLE, lootTable.toString());
 
                 return new StructureTemplate.StructureBlockInfo(current.pos(), replacedState, nbt);
             }

@@ -32,7 +32,7 @@ public final class ScrapperModelSubProvider implements AbstractModelProvider.Mod
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.OLD_FABRIC.get(), ModelTemplates.FLAT_ITEM, SUB_SALVAGE);
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.RUSTY_TONGS.get(), ModelTemplates.FLAT_ITEM, SUB_SALVAGE);
 
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.MITHRIL_SALVAGE.get(), ModelTemplates.FLAT_ITEM, SUB_SALVAGE);
+        AbstractModelProvider.generateFlatItem(items, JolCraftItems.MITHRIL_SCRAP.get(), ModelTemplates.FLAT_ITEM, SUB_SALVAGE);
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), ModelTemplates.FLAT_ITEM, SUB_SALVAGE);
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), ModelTemplates.FLAT_HANDHELD_ITEM, SUB_SALVAGE);
 

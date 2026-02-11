@@ -1,28 +1,28 @@
 package net.sievert.jolcraft.data.id.entity.dwarf;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 public final class JolCraftDwarfIds extends JolCraftIds {
 
     private JolCraftDwarfIds(){}
 
-    public static final String DWARF   = JolCraftDataKeys.DWARF;
-    public static final String DWARF_ALCHEMIST   = dwarfProfession(JolCraftDataKeys.ALCHEMIST);
-    public static final String DWARF_ARCANIST    = dwarfProfession(JolCraftDataKeys.ARCANIST);
-    public static final String DWARF_ARTISAN     = dwarfProfession(JolCraftDataKeys.ARTISAN);
-    public static final String DWARF_BREWMASTER  = dwarfProfession(JolCraftDataKeys.BREWMASTER);
-    public static final String DWARF_EXPLORER    = dwarfProfession(JolCraftDataKeys.EXPLORER);
-    public static final String DWARF_GUARD       = dwarfProfession(JolCraftDataKeys.GUARD);
-    public static final String DWARF_GUILDMASTER = dwarfProfession(JolCraftDataKeys.GUILDMASTER);
-    public static final String DWARF_HISTORIAN   = dwarfProfession(JolCraftDataKeys.HISTORIAN);
-    public static final String DWARF_KEEPER      = dwarfProfession(JolCraftDataKeys.KEEPER);
-    public static final String DWARF_MERCHANT    = dwarfProfession(JolCraftDataKeys.MERCHANT);
-    public static final String DWARF_MINER       = dwarfProfession(JolCraftDataKeys.MINER);
-    public static final String DWARF_PRIEST      = dwarfProfession(JolCraftDataKeys.PRIEST);
-    public static final String DWARF_SCRAPPER    = dwarfProfession(JolCraftDataKeys.SCRAPPER);
+    public static final String DWARF   = JolCraftDictionary.DWARF;
+    public static final String DWARF_ALCHEMIST   = dwarfProfession(JolCraftDictionary.ALCHEMIST);
+    public static final String DWARF_ARCANIST    = dwarfProfession(JolCraftDictionary.ARCANIST);
+    public static final String DWARF_ARTISAN     = dwarfProfession(JolCraftDictionary.ARTISAN);
+    public static final String DWARF_BREWMASTER  = dwarfProfession(JolCraftDictionary.BREWMASTER);
+    public static final String DWARF_EXPLORER    = dwarfProfession(JolCraftDictionary.EXPLORER);
+    public static final String DWARF_GUARD       = dwarfProfession(JolCraftDictionary.GUARD);
+    public static final String DWARF_GUILDMASTER = dwarfProfession(JolCraftDictionary.GUILDMASTER);
+    public static final String DWARF_HISTORIAN   = dwarfProfession(JolCraftDictionary.HISTORIAN);
+    public static final String DWARF_KEEPER      = dwarfProfession(JolCraftDictionary.KEEPER);
+    public static final String DWARF_MERCHANT    = dwarfProfession(JolCraftDictionary.MERCHANT);
+    public static final String DWARF_MINER       = dwarfProfession(JolCraftDictionary.MINER);
+    public static final String DWARF_PRIEST      = dwarfProfession(JolCraftDictionary.PRIEST);
+    public static final String DWARF_SCRAPPER    = dwarfProfession(JolCraftDictionary.SCRAPPER);
 
     private static String dwarfProfession(String profession) {
-        return joined(JolCraftDataKeys.DWARF, profession);
+        return join(JolCraftDictionary.DWARF, profession);
     }
 }

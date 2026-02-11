@@ -9,7 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.world.entity.client.util.object.RadiantRenderState;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class RadiantModel extends EntityModel<RadiantRenderState>  {
 
     /** Layer location for Radiant model (register in client init). */
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftEntityObjectIds.RADIANT), JolCraftDataKeys.MAIN);
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftEntityObjectIds.RADIANT), JolCraftDictionary.MAIN);
 
     public final ModelPart body;
 

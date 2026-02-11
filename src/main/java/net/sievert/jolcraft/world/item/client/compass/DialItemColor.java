@@ -8,11 +8,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 public record DialItemColor(int rgb) {
 
-    private static final String RGB = JolCraftDataKeys.RGB;
+    private static final String RGB = JolCraftDictionary.RGB;
 
     private static final Codec<DialItemColor> FULL_CODEC = RecordCodecBuilder.create(inst ->
             inst.group(

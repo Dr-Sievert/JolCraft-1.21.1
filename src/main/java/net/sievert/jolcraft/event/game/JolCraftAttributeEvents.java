@@ -51,7 +51,7 @@ import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.data.attachment.custom.player.AttributesAttachment;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
@@ -66,8 +66,8 @@ public final class JolCraftAttributeEvents {
     private static final ResourceLocation ASHFANG_ID = JolCraft.location(JolCraftAttributeIds.ATTACK_DAMAGE_INCREASE);
     private static final ResourceLocation IRONHEART_ID = JolCraft.location(JolCraftAttributeIds.ARMOR_INCREASE);
     private static final ResourceLocation FROSTVEIN_ID = JolCraft.location(JolCraftAttributeIds.SLOW_RESISTANCE);
-    private static final ResourceLocation SKYBURROW_ID = JolCraft.location(JolCraftAttributeIds.MOVEMENT_SPEED_INCREASE_DAY);
-    private static final ResourceLocation MOONSHARD_ID = JolCraft.location(JolCraftAttributeIds.MOVEMENT_SPEED_INCREASE_NIGHT);
+    private static final ResourceLocation SKYBURROW_ID = JolCraft.location(JolCraftAttributeIds.MOVEMENT_SPEED_DAY_INCREASE);
+    private static final ResourceLocation MOONSHARD_ID = JolCraft.location(JolCraftAttributeIds.MOVEMENT_SPEED_NIGHT_INCREASE);
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -285,7 +285,7 @@ public final class JolCraftAttributeEvents {
         refreshTimeBasedSpeedAttribute(
                 player,
                 SKYBURROW_ID,
-                player.getAttributeValue(JolCraftAttributes.MOVEMENT_SPEED_INCREASE_DAY),
+                player.getAttributeValue(JolCraftAttributes.MOVEMENT_SPEED_DAY_INCREASE),
                 player.level().isDay()
         );
     }
@@ -294,7 +294,7 @@ public final class JolCraftAttributeEvents {
         refreshTimeBasedSpeedAttribute(
                 player,
                 MOONSHARD_ID,
-                player.getAttributeValue(JolCraftAttributes.MOVEMENT_SPEED_INCREASE_NIGHT),
+                player.getAttributeValue(JolCraftAttributes.MOVEMENT_SPEED_NIGHT_INCREASE),
                 !player.level().isDay()
         );
     }
@@ -634,7 +634,7 @@ public final class JolCraftAttributeEvents {
             if (!lootable.getBlockPos().equals(pending.pos())) continue;
 
             if (lootable.getLootTable() == null) {
-                double chance = player.getAttributeValue(JolCraftAttributes.EXTRA_CHEST_LOOT);
+                double chance = player.getAttributeValue(JolCraftAttributes.CHEST_LOOT_INCREASE);
                 MinecraftServer server = serverLevel.getServer();
                 LootTable table = server.reloadableRegistries().getLootTable(pending.table());
 
@@ -690,7 +690,7 @@ public final class JolCraftAttributeEvents {
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
 
-        double chance = Mth.clamp(player.getAttributeValue(JolCraftAttributes.EXTRA_CROP_LOOT), 0.0D, 1.0D);
+        double chance = Mth.clamp(player.getAttributeValue(JolCraftAttributes.CROP_LOOT_INCREASE), 0.0D, 1.0D);
         if (chance <= 0.0D) return;
 
         if (!isEligibleHarvestBlock(state)) return;
@@ -740,7 +740,7 @@ public final class JolCraftAttributeEvents {
 
         IntegerProperty ageProp = null;
         for (Property<?> prop : state.getProperties()) {
-            if (prop instanceof IntegerProperty ip && prop.getName().equals(JolCraftDataKeys.AGE)) {
+            if (prop instanceof IntegerProperty ip && prop.getName().equals(JolCraftDictionary.AGE)) {
                 ageProp = ip;
                 break;
             }

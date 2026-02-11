@@ -14,14 +14,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class MuffhornModel extends QuadrupedModel<LivingEntityRenderState> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftCreatureIds.MUFFHORN), JolCraftDataKeys.MAIN);
-    public static final ModelLayerLocation BABY_LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftCreatureIds.MUFFHORN), JolCraftDataKeys.BABY);
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftCreatureIds.MUFFHORN), JolCraftDictionary.MAIN);
+    public static final ModelLayerLocation BABY_LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftCreatureIds.MUFFHORN), JolCraftDictionary.BABY);
 
     public static final MeshTransformer BABY_TRANSFORMER = new BabyModelTransform(false, 8.0F, 5.0F, Set.of());
 

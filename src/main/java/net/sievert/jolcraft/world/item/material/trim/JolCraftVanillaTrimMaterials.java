@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 
@@ -106,7 +106,7 @@ public final class JolCraftVanillaTrimMaterials {
         TrimMaterial trimMaterial = TrimMaterial.create(
                 trimKey.location().getPath(),
                 item,
-                Component.translatable(Util.makeDescriptionId(JolCraftDataKeys.TRIM_MATERIAL, trimKey.location())).withStyle(style),
+                Component.translatable(Util.makeDescriptionId(JolCraftDictionary.TRIM_MATERIAL, trimKey.location())).withStyle(style),
                 overrideArmorAssets
         );
         context.register(trimKey, trimMaterial);

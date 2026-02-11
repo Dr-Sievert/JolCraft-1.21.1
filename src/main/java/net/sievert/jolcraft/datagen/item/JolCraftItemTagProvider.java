@@ -347,7 +347,7 @@ public final class JolCraftItemTagProvider extends ItemTagsProvider {
         tag(JolCraftTags.Items.MITHRIL_SALVAGE)
                 .add(JolCraftItems.BROKEN_MITHRIL_PLATE.get())
                 .add(JolCraftItems.BROKEN_MITHRIL_SWORD.get())
-                .add(JolCraftItems.MITHRIL_SALVAGE.get());
+                .add(JolCraftItems.MITHRIL_SCRAP.get());
 
         tag(JolCraftTags.Items.GLOBAL_SALVAGE)
                 .addTag(JolCraftTags.Items.GENERAL_SALVAGE)

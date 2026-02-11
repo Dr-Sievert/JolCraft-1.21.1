@@ -16,7 +16,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class DwarfModel extends HumanoidModel<DwarfRenderState> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftDwarfIds.DWARF), JolCraftDataKeys.MAIN);
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftDwarfIds.DWARF), JolCraftDictionary.MAIN);
 
     public final ModelPart body;
     public final ModelPart right_arm;

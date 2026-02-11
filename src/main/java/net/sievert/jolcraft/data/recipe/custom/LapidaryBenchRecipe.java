@@ -22,7 +22,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.LapidaryRecipeInput;
 
@@ -192,13 +192,13 @@ public class LapidaryBenchRecipe implements Recipe<LapidaryRecipeInput> {
 
         public static final MapCodec<LapidaryBenchRecipe> CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
-                        Ingredient.CODEC.fieldOf(JolCraftDataKeys.INPUT).forGetter(r -> r.input),
-                        TOOL_TYPE_CODEC.fieldOf(JolCraftDataKeys.TOOL).forGetter(r -> r.toolType),
-                        ItemStack.CODEC.optionalFieldOf(JolCraftDataKeys.RESULT).forGetter(r -> Optional.ofNullable(r.result)),
-                        TagKey.codec(Registries.ITEM).optionalFieldOf(JolCraftDataKeys.RESULT_TAG).forGetter(r -> Optional.ofNullable(r.resultTag)),
-                        Codec.INT.optionalFieldOf(JolCraftDataKeys.MIN_COUNT).forGetter(r -> Optional.of(r.minCount)),
-                        Codec.INT.optionalFieldOf(JolCraftDataKeys.MAX_COUNT).forGetter(r -> Optional.of(r.maxCount)),
-                        Codec.INT.optionalFieldOf(JolCraftDataKeys.XP, 0).forGetter(r -> r.xp)
+                        Ingredient.CODEC.fieldOf(JolCraftDictionary.INPUT).forGetter(r -> r.input),
+                        TOOL_TYPE_CODEC.fieldOf(JolCraftDictionary.TOOL).forGetter(r -> r.toolType),
+                        ItemStack.CODEC.optionalFieldOf(JolCraftDictionary.RESULT).forGetter(r -> Optional.ofNullable(r.result)),
+                        TagKey.codec(Registries.ITEM).optionalFieldOf(JolCraftDictionary.RESULT_TAG).forGetter(r -> Optional.ofNullable(r.resultTag)),
+                        Codec.INT.optionalFieldOf(JolCraftDictionary.MIN_COUNT).forGetter(r -> Optional.of(r.minCount)),
+                        Codec.INT.optionalFieldOf(JolCraftDictionary.MAX_COUNT).forGetter(r -> Optional.of(r.maxCount)),
+                        Codec.INT.optionalFieldOf(JolCraftDictionary.XP, 0).forGetter(r -> r.xp)
                 ).apply(inst, (input, tool, resultOpt, tagOpt, minOpt, maxOpt, xp) -> {
                     if (resultOpt.isPresent() && tagOpt.isPresent()) {
                         throw new IllegalStateException("Lapidary recipe cannot define both 'result' and 'result_tag'");

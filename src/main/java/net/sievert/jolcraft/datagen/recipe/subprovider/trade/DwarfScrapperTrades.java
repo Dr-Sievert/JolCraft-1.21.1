@@ -101,7 +101,7 @@ public final class DwarfScrapperTrades extends AbstractDwarfTrades {
         pooledSalvage(p, JOURNEYMAN, JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), 3, 5, 3);
 
         // MASTER (mithril gate)
-        pooledSalvage(p, MASTER, JolCraftItems.MITHRIL_SALVAGE.get(), 5, 10, 5);
+        pooledSalvage(p, MASTER, JolCraftItems.MITHRIL_SCRAP.get(), 5, 10, 5);
         pooledSalvage(p, MASTER, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), 5, 10, 5);
         pooledSalvage(p, MASTER, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), 5, 10, 5);
     }

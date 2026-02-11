@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -285,15 +285,15 @@ public class RadiantEntity extends Entity implements TraceableEntity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
-        if (tag.hasUUID(JolCraftDataKeys.OWNER)) {
-            this.ownerUUID = tag.getUUID(JolCraftDataKeys.OWNER);
+        if (tag.hasUUID(JolCraftDictionary.OWNER)) {
+            this.ownerUUID = tag.getUUID(JolCraftDictionary.OWNER);
         } else {
             this.ownerUUID = null;
         }
         this.cachedOwner = null;
 
-        if (tag.contains(JolCraftDataKeys.POSITION)) {
-            this.currentLightPos = BlockPos.of(tag.getLong(JolCraftDataKeys.POSITION));
+        if (tag.contains(JolCraftDictionary.POSITION)) {
+            this.currentLightPos = BlockPos.of(tag.getLong(JolCraftDictionary.POSITION));
         } else {
             this.currentLightPos = null;
         }
@@ -312,10 +312,10 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         if (ownerUUID != null) {
-            tag.putUUID(JolCraftDataKeys.OWNER, ownerUUID);
+            tag.putUUID(JolCraftDictionary.OWNER, ownerUUID);
         }
         if (currentLightPos != null) {
-            tag.putLong(JolCraftDataKeys.POSITION, currentLightPos.asLong());
+            tag.putLong(JolCraftDictionary.POSITION, currentLightPos.asLong());
         }
         tag.putInt(LIGHT_LEVEL, radiantLightLevel);
     }

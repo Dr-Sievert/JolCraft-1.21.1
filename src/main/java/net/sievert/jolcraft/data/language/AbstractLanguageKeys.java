@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.data.language;
 
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 /**
@@ -42,41 +42,41 @@ public abstract class AbstractLanguageKeys {
 
     /** "tooltip.<modid>.<category>.<id>" */
     public static String tooltip(String category, String id) {
-        return category(JolCraftDataKeys.TOOLTIP, JolCraftStrings.dotted(category, id));
+        return category(JolCraftDictionary.TOOLTIP, JolCraftStrings.dotted(category, id));
     }
 
     /** "tooltip.<modid>.structure.<id>" */
     public static String tooltipStructure(String id) {
-        return tooltip(JolCraftDataKeys.STRUCTURE, id);
+        return tooltip(JolCraftDictionary.STRUCTURE, id);
     }
 
     /** "block.<modid>.<id>" */
     public static String block(String id) {
-        return category(JolCraftDataKeys.BLOCK, id);
+        return category(JolCraftDictionary.BLOCK, id);
     }
 
     /** "item.<modid>.<id>" */
     public static String item(String id) {
-        return category(JolCraftDataKeys.ITEM, id);
+        return category(JolCraftDictionary.ITEM, id);
     }
 
     /** "effect.<modid>.<id>" */
     public static String effect(String id) {
-        return category(JolCraftDataKeys.EFFECT, id);
+        return category(JolCraftDictionary.EFFECT, id);
     }
 
     /** "entity.<modid>.<id>" */
     public static String entity(String id) {
-        return category(JolCraftDataKeys.ENTITY, id);
+        return category(JolCraftDictionary.ENTITY, id);
     }
 
     /** "itemGroup.<modid>.<id>" */
     public static String itemGroup(String id) {
-        return category(JolCraftDataKeys.ITEM_GROUP, id);
+        return category(JolCraftDictionary.ITEM_GROUP, id);
     }
 
     /** "attribute.<modid>.<id>" */
     public static String attribute(String id) {
-        return category(JolCraftDataKeys.ATTRIBUTE, id);
+        return category(JolCraftDictionary.ATTRIBUTE, id);
     }
 }

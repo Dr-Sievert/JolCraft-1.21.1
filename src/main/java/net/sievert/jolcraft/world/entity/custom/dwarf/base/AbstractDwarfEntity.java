@@ -26,7 +26,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.goal.DwarfGoals;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
@@ -55,7 +55,7 @@ import java.util.*;
 @MethodsReturnNonnullByDefault
 public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, EntityData {
 
-    private static final String NBT_PROFESSION = JolCraftDataKeys.PROFESSION;
+    private static final String NBT_PROFESSION = JolCraftDictionary.PROFESSION;
     private static final String NBT_CURRENT_ACTION = "current_action";
     private static final String NBT_CURRENT_ACTION_SUBTYPE = "current_action_subtype";
     private static final String NBT_PAID_TICKS = "paid_ticks";

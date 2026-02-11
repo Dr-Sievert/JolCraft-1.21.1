@@ -6,7 +6,6 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 
 /**
  * Base class for all JolCraft id holders.
- *
  * Subclasses store path strings only (e.g. "dwarven_lexicon").
  * This class provides helper methods for converting them.
  */
@@ -25,15 +24,21 @@ public abstract class JolCraftIds {
     }
 
     /** Join non-empty parts with '_' (no namespace). */
-    protected static String joined(String... parts) {
+    protected static String join(String... parts) {
         return JolCraftStrings.underscored(parts);
     }
 
     /** Convenience: "<modid>_<a>_<b>_...". */
-    protected static String modJoined(String... parts) {
+    protected static String modJoin(String... parts) {
         String[] all = new String[parts.length + 1];
         all[0] = JolCraft.MOD_ID;
         System.arraycopy(parts, 0, all, 1, parts.length);
         return JolCraftStrings.underscored(all);
     }
+
+    /** Append a suffix to an id. */
+    protected static String suffixed(String base, String suffix) {
+        return join(base, suffix);
+    }
+
 }

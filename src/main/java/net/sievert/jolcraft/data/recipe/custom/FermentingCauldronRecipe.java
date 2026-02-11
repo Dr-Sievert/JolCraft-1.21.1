@@ -22,7 +22,7 @@ import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
 
@@ -153,15 +153,15 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
         public static final Codec<EffectData> CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
                         ResourceKey.codec(Registries.MOB_EFFECT)
-                                .fieldOf(JolCraftDataKeys.ID)
+                                .fieldOf(JolCraftDictionary.ID)
                                 .forGetter(EffectData::id),
 
                         Codec.INT
-                                .fieldOf(JolCraftDataKeys.DURATION)
+                                .fieldOf(JolCraftDictionary.DURATION)
                                 .forGetter(EffectData::duration),
 
                         Codec.INT
-                                .optionalFieldOf(JolCraftDataKeys.AMPLIFIER, 0)
+                                .optionalFieldOf(JolCraftDictionary.AMPLIFIER, 0)
                                 .forGetter(EffectData::amplifier)
                 ).apply(inst, EffectData::new));
 
@@ -193,20 +193,20 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
 
         public static final MapCodec<FermentingCauldronRecipe> CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
-                        Ingredient.CODEC.fieldOf(JolCraftDataKeys.INGREDIENT).forGetter(r -> r.ingredient),
+                        Ingredient.CODEC.fieldOf(JolCraftDictionary.INGREDIENT).forGetter(r -> r.ingredient),
 
-                        Ingredient.CODEC.optionalFieldOf(JolCraftDataKeys.VALID_STATES)
+                        Ingredient.CODEC.optionalFieldOf(JolCraftDictionary.VALID_STATES)
                                 .forGetter(r -> Optional.ofNullable(r.validStates)),
 
-                        Codec.INT.fieldOf(JolCraftDataKeys.BREW_TICKS).forGetter(r -> r.brewTicks),
-                        Codec.INT.fieldOf(JolCraftDataKeys.BUBBLE_TICKS).forGetter(r -> r.bubbleTicks),
+                        Codec.INT.fieldOf(JolCraftDictionary.BREW_TICKS).forGetter(r -> r.brewTicks),
+                        Codec.INT.fieldOf(JolCraftDictionary.BUBBLE_TICKS).forGetter(r -> r.bubbleTicks),
 
-                        COLOR_CODEC.fieldOf(JolCraftDataKeys.COLOR).forGetter(r -> r.color),
+                        COLOR_CODEC.fieldOf(JolCraftDictionary.COLOR).forGetter(r -> r.color),
 
-                        EffectData.CODEC.optionalFieldOf(JolCraftDataKeys.EFFECT).forGetter(r -> Optional.ofNullable(r.effect)),
-                        Codec.BOOL.optionalFieldOf(JolCraftDataKeys.FINALIZE, false).forGetter(r -> r.finalize),
+                        EffectData.CODEC.optionalFieldOf(JolCraftDictionary.EFFECT).forGetter(r -> Optional.ofNullable(r.effect)),
+                        Codec.BOOL.optionalFieldOf(JolCraftDictionary.FINALIZE, false).forGetter(r -> r.finalize),
 
-                        ItemStack.CODEC.optionalFieldOf(JolCraftDataKeys.EXTRACT)
+                        ItemStack.CODEC.optionalFieldOf(JolCraftDictionary.EXTRACT)
                                 .forGetter(r -> Optional.ofNullable(r.extract))
                 ).apply(inst, (ingredient, validStatesOpt, brewTicks, bubbleTicks, color, effectOpt, finalize, extractOpt) ->
                         new FermentingCauldronRecipe(

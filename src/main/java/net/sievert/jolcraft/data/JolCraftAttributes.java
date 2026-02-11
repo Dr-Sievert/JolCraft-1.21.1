@@ -8,7 +8,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
 
 public final class JolCraftAttributes {
@@ -31,11 +30,11 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> SLOW_RESISTANCE =
             registerPercent(JolCraftAttributeIds.SLOW_RESISTANCE, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> EXTRA_CROP_LOOT =
-            registerPercent(JolCraftAttributeIds.EXTRA_CROP_LOOT, 1.0D);
+    public static final DeferredHolder<Attribute, Attribute> CROP_LOOT_INCREASE =
+            registerPercent(JolCraftAttributeIds.CROP_LOOT_INCREASE, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> EXTRA_CHEST_LOOT =
-            registerPercent(JolCraftAttributeIds.EXTRA_CHEST_LOOT, 1.0D);
+    public static final DeferredHolder<Attribute, Attribute> CHEST_LOOT_INCREASE =
+            registerPercent(JolCraftAttributeIds.CHEST_LOOT_INCREASE, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> RADIANT =
             registerPercent(JolCraftAttributeIds.RADIANT, 1.0D);
@@ -52,11 +51,11 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> ATTACK_DAMAGE_INCREASE =
             registerPercent(JolCraftAttributeIds.ATTACK_DAMAGE_INCREASE, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> MOVEMENT_SPEED_INCREASE_DAY =
-            registerPercent(JolCraftAttributeIds.MOVEMENT_SPEED_INCREASE_DAY, 1.0D);
+    public static final DeferredHolder<Attribute, Attribute> MOVEMENT_SPEED_DAY_INCREASE =
+            registerPercent(JolCraftAttributeIds.MOVEMENT_SPEED_DAY_INCREASE, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> MOVEMENT_SPEED_INCREASE_NIGHT =
-            registerPercent(JolCraftAttributeIds.MOVEMENT_SPEED_INCREASE_NIGHT, 1.0D);
+    public static final DeferredHolder<Attribute, Attribute> MOVEMENT_SPEED_NIGHT_INCREASE =
+            registerPercent(JolCraftAttributeIds.MOVEMENT_SPEED_NIGHT_INCREASE, 1.0D);
 
     public static void register(IEventBus eventBus) {
         ATTRIBUTES.register(eventBus);

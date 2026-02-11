@@ -11,7 +11,7 @@ import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguage;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -38,7 +38,7 @@ public class DwarvenLanguageTrigger extends SimpleCriterionTrigger<DwarvenLangua
 
     public record TriggerInstance(Optional<ContextAwarePredicate> player) implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDataKeys.PLAYER).forGetter(TriggerInstance::player))
+                        EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDictionary.PLAYER).forGetter(TriggerInstance::player))
                 .apply(instance, TriggerInstance::new)
         );
     }

@@ -1,20 +1,22 @@
 package net.sievert.jolcraft.data.id.attribute;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 public final class JolCraftAttributeIds extends JolCraftIds {
 
     private JolCraftAttributeIds() {}
 
-    public static final String XP_INCREASE = "xp_increase";
-    public static final String SLOW_RESISTANCE = "slow_resistance";
-    public static final String EXTRA_CROP_LOOT = "extra_crop_loot";
-    public static final String EXTRA_CHEST_LOOT = "extra_chest_loot";
-    public static final String RADIANT = "radiant";
-    public static final String ARMOR_UNBREAKING = "armor_unbreaking";
-    public static final String MAGIC_RESISTANCE = "magic_resistance";
-    public static final String ARMOR_INCREASE = "armor_increase";
-    public static final String ATTACK_DAMAGE_INCREASE = "attack_damage_increase";
-    public static final String MOVEMENT_SPEED_INCREASE_DAY = "movement_speed_increase_day";
-    public static final String MOVEMENT_SPEED_INCREASE_NIGHT = "movement_speed_increase_night";
+    public static final String XP_INCREASE = join(JolCraftDictionary.XP, JolCraftDictionary.INCREASE);
+    public static final String SLOW_RESISTANCE = join(JolCraftDictionary.SLOW, JolCraftDictionary.RESISTANCE);
+    public static final String CROP_LOOT_INCREASE = join(JolCraftDictionary.CROP, JolCraftDictionary.LOOT, JolCraftDictionary.INCREASE);
+    public static final String CHEST_LOOT_INCREASE = join(JolCraftDictionary.CHEST, JolCraftDictionary.LOOT, JolCraftDictionary.INCREASE);
+    public static final String RADIANT = JolCraftEntityObjectIds.RADIANT;
+    public static final String ARMOR_UNBREAKING = join(JolCraftDictionary.ARMOR, JolCraftDictionary.UNBREAKING);
+    public static final String MAGIC_RESISTANCE = join(JolCraftDictionary.MAGIC, JolCraftDictionary.RESISTANCE);
+    public static final String ARMOR_INCREASE = join(JolCraftDictionary.ARMOR, JolCraftDictionary.INCREASE);
+    public static final String ATTACK_DAMAGE_INCREASE = join(JolCraftDictionary.ATTACK, JolCraftDictionary.DAMAGE, JolCraftDictionary.INCREASE);
+    public static final String MOVEMENT_SPEED_DAY_INCREASE = join(JolCraftDictionary.MOVEMENT, JolCraftDictionary.SPEED, JolCraftDictionary.DAY, JolCraftDictionary.INCREASE);
+    public static final String MOVEMENT_SPEED_NIGHT_INCREASE = join(JolCraftDictionary.MOVEMENT, JolCraftDictionary.SPEED, JolCraftDictionary.NIGHT, JolCraftDictionary.INCREASE);
 }

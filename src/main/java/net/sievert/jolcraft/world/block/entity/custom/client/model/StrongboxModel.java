@@ -10,12 +10,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 @OnlyIn(Dist.CLIENT)
 public class StrongboxModel extends Model {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftBlockIds.STRONGBOX), JolCraftDataKeys.MAIN);
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftBlockIds.STRONGBOX), JolCraftDictionary.MAIN);
 
     private final ModelPart lid;
     private final ModelPart lock;

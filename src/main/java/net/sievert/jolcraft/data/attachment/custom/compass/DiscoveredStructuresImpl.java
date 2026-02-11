@@ -10,7 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
@@ -58,13 +58,13 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
 
         for (GlobalPos pos : discovered) {
             CompoundTag t = new CompoundTag();
-            t.putString(JolCraftDataKeys.DIMENSION, pos.dimension().location().toString());
-            t.putLong(JolCraftDataKeys.POSITION, pos.pos().asLong());
+            t.putString(JolCraftDictionary.DIMENSION, pos.dimension().location().toString());
+            t.putLong(JolCraftDictionary.POSITION, pos.pos().asLong());
             list.add(t);
         }
 
         tag.put(NBT_DISCOVERED, list);
-        tag.putInt(JolCraftDataKeys.SCORE, discoveryScore);
+        tag.putInt(JolCraftDictionary.SCORE, discoveryScore);
         return tag;
     }
 
@@ -76,17 +76,17 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
         for (int i = 0; i < list.size(); i++) {
             CompoundTag t = list.getCompound(i);
 
-            ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(JolCraftDataKeys.DIMENSION));
+            ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(JolCraftDictionary.DIMENSION));
             if (dimRL == null) {
-                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT, "Invalid dimension getId in discovered structure NBT: {}", t.getString(JolCraftDataKeys.DIMENSION));
+                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT, "Invalid dimension getId in discovered structure NBT: {}", t.getString(JolCraftDictionary.DIMENSION));
                 continue;
             }
             ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRL);
-            BlockPos pos = BlockPos.of(t.getLong(JolCraftDataKeys.POSITION));
+            BlockPos pos = BlockPos.of(t.getLong(JolCraftDictionary.POSITION));
 
             discovered.add(GlobalPos.of(dimKey, pos));
         }
 
-        discoveryScore = tag.getInt(JolCraftDataKeys.SCORE);
+        discoveryScore = tag.getInt(JolCraftDictionary.SCORE);
     }
 }

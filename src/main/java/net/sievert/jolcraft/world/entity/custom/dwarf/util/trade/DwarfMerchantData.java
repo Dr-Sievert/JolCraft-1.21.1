@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 
 public record DwarfMerchantData(int level) {
@@ -51,7 +51,7 @@ public record DwarfMerchantData(int level) {
     private static final int[] NEXT_LEVEL_XP_THRESHOLDS = new int[]{0, 10, 70, 150, 250};
 
     public static final Codec<DwarfMerchantData> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(Codec.INT.fieldOf(JolCraftDataKeys.LEVEL).orElse(MIN_MERCHANT_LEVEL).forGetter(DwarfMerchantData::level)).apply(instance, DwarfMerchantData::new)
+            instance.group(Codec.INT.fieldOf(JolCraftDictionary.LEVEL).orElse(MIN_MERCHANT_LEVEL).forGetter(DwarfMerchantData::level)).apply(instance, DwarfMerchantData::new)
     );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DwarfMerchantData> STREAM_CODEC =

@@ -18,7 +18,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
@@ -116,7 +116,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> MITHRIL_INGOT = ITEMS.registerItem(
             JolCraftItemIds.MITHRIL_INGOT,
-            props -> new SimpleTooltipItem(props.fireResistant().rarity(Rarity.RARE), JolCraftDataKeys.TRIM_MATERIAL)
+            props -> new SimpleTooltipItem(props.fireResistant().rarity(Rarity.RARE), JolCraftDictionary.TRIM_MATERIAL)
     );
 
     public static final DeferredItem<Item> MITHRIL_NUGGET = ITEMS.registerItem(JolCraftItemIds.MITHRIL_NUGGET,
@@ -187,7 +187,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> DEEPSLATE_PLATE = ITEMS.registerItem(
             JolCraftItemIds.DEEPSLATE_PLATE,
-            props -> new SimpleTooltipItem(props, JolCraftDataKeys.TRIM_MATERIAL)
+            props -> new SimpleTooltipItem(props, JolCraftDictionary.TRIM_MATERIAL)
     );
 
     public static final DeferredItem<Item> DEEPSLATE_ROD = ITEMS.registerItem(JolCraftItemIds.DEEPSLATE_ROD,
@@ -584,11 +584,11 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> GRIMSTONE_CUT  = registerCutGem(JolCraftItemIds.GRIMSTONE,  Attributes.ATTACK_SPEED, 0.05,  AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
     public static final DeferredItem<Item> IRONHEART_CUT  = registerCutGem(JolCraftItemIds.IRONHEART,  JolCraftAttributes.ARMOR_INCREASE, 0.05,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> LUMIERE_CUT    = registerCutGem(JolCraftItemIds.LUMIERE,    JolCraftAttributes.RADIANT, 0.25,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> MOONSHARD_CUT  = registerCutGem(JolCraftItemIds.MOONSHARD,  JolCraftAttributes.MOVEMENT_SPEED_INCREASE_NIGHT, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> MOONSHARD_CUT  = registerCutGem(JolCraftItemIds.MOONSHARD,  JolCraftAttributes.MOVEMENT_SPEED_NIGHT_INCREASE, 0.05,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> RUSTAGATE_CUT  = registerCutGem(JolCraftItemIds.RUSTAGATE,  JolCraftAttributes.ARMOR_UNBREAKING, 0.075,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> SKYBURROW_CUT  = registerCutGem(JolCraftItemIds.SKYBURROW,  JolCraftAttributes.MOVEMENT_SPEED_INCREASE_DAY, 0.05,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> SUNGLEAM_CUT   = registerCutGem(JolCraftItemIds.SUNGLEAM,   JolCraftAttributes.EXTRA_CHEST_LOOT, 0.1,  AttributeModifier.Operation.ADD_VALUE);
-    public static final DeferredItem<Item> VERDANITE_CUT  = registerCutGem(JolCraftItemIds.VERDANITE,  JolCraftAttributes.EXTRA_CROP_LOOT, 0.25,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> SKYBURROW_CUT  = registerCutGem(JolCraftItemIds.SKYBURROW,  JolCraftAttributes.MOVEMENT_SPEED_DAY_INCREASE, 0.05,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> SUNGLEAM_CUT   = registerCutGem(JolCraftItemIds.SUNGLEAM,   JolCraftAttributes.CHEST_LOOT_INCREASE, 0.1,  AttributeModifier.Operation.ADD_VALUE);
+    public static final DeferredItem<Item> VERDANITE_CUT  = registerCutGem(JolCraftItemIds.VERDANITE,  JolCraftAttributes.CROP_LOOT_INCREASE, 0.25,  AttributeModifier.Operation.ADD_VALUE);
     public static final DeferredItem<Item> WOECRYSTAL_CUT = registerCutGem(JolCraftItemIds.WOECRYSTAL, JolCraftAttributes.MAGIC_RESISTANCE, 0.1,  AttributeModifier.Operation.ADD_VALUE);
 
     private static DeferredItem<Item> registerCutGem(
@@ -790,8 +790,8 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> INGOT_MOULD =
             ITEMS.registerItem(JolCraftItemIds.INGOT_MOULD, SalvageItem::new, new Item.Properties().stacksTo(16));
 
-    public static final DeferredItem<Item> MITHRIL_SALVAGE =
-            ITEMS.registerItem(JolCraftItemIds.MITHRIL_SALVAGE, SalvageItem::new, new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<Item> MITHRIL_SCRAP =
+            ITEMS.registerItem(JolCraftItemIds.MITHRIL_SCRAP, SalvageItem::new, new Item.Properties().rarity(Rarity.RARE));
 
     public static final DeferredItem<Item> OLD_FABRIC =
             ITEMS.registerItem(JolCraftItemIds.OLD_FABRIC, SalvageItem::new, new Item.Properties());

@@ -13,7 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.id.item.JolCraftItemPropertyIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ public record BrewColor(int defaultColor) implements ItemTintSource {
             RecordCodecBuilder.mapCodec(instance ->
                     instance.group(
                             ExtraCodecs.RGB_COLOR_CODEC
-                                    .fieldOf(JolCraftDataKeys.DEFAULT)
+                                    .fieldOf(JolCraftDictionary.DEFAULT)
                                     .forGetter(BrewColor::defaultColor)
                     ).apply(instance, BrewColor::new)
             );

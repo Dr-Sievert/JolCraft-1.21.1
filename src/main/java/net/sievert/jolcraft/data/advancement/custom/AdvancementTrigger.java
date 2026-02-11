@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
@@ -58,8 +58,8 @@ public class AdvancementTrigger extends SimpleCriterionTrigger<AdvancementTrigge
             implements SimpleCriterionTrigger.SimpleInstance {
 
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDataKeys.PLAYER).forGetter(TriggerInstance::player),
-                ResourceLocation.CODEC.fieldOf(JolCraftDataKeys.ADVANCEMENT).forGetter(TriggerInstance::advancement)
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf(JolCraftDictionary.PLAYER).forGetter(TriggerInstance::player),
+                ResourceLocation.CODEC.fieldOf(JolCraftDictionary.ADVANCEMENT).forGetter(TriggerInstance::advancement)
         ).apply(instance, TriggerInstance::new));
     }
 }

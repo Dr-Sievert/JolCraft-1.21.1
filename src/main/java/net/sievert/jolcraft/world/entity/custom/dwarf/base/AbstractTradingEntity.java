@@ -31,7 +31,7 @@ import net.minecraft.world.level.portal.TeleportTransition;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
@@ -65,8 +65,8 @@ import java.util.Set;
 @MethodsReturnNonnullByDefault
 public class AbstractTradingEntity extends AbstractBreedingEntity implements DwarfMerchant, EntityData {
 
-    private static final String NBT_XP = JolCraftDataKeys.XP;
-    private static final String NBT_OFFERS = JolCraftDataKeys.OFFERS;
+    private static final String NBT_XP = JolCraftDictionary.XP;
+    private static final String NBT_OFFERS = JolCraftDictionary.OFFERS;
     private static final String NBT_MERCHANT_DATA = "merchant_data";
     private static final String NBT_RESTOCK_OFFER_COUNT = "restock_offer_count";
     private static final String NBT_PERSISTENT_POOL_SELECTIONS = "persistent_pool_selections";

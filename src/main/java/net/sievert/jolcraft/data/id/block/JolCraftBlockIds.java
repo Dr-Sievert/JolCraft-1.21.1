@@ -1,6 +1,8 @@
 package net.sievert.jolcraft.data.id.block;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 
 public final class JolCraftBlockIds extends JolCraftIds {
 
@@ -8,14 +10,14 @@ public final class JolCraftBlockIds extends JolCraftIds {
 
     public static final String MANAGED_LIGHT = "managed_light";
     public static final String DEEPSLATE_MORTAR = "deepslate_mortar";
-    public static final String GEODE_BLOCK = "geode_block";
+    public static final String GEODE_BLOCK = block(JolCraftDictionary.GEODE);
     public static final String LAPIDARY_BENCH = "lapidary_bench";
 
     public static final String DEEPSLATE_MITHRIL_ORE = "deepslate_mithril_ore";
-    public static final String PURE_MITHRIL_BLOCK = "pure_mithril_block";
-    public static final String MITHRIL_BLOCK = "mithril_block";
+    public static final String PURE_MITHRIL_BLOCK = block(JolCraftItemIds.PURE_MITHRIL);
+    public static final String MITHRIL_BLOCK = block(JolCraftDictionary.MITHRIL);
 
-    public static final String DEEPSLATE_PLATE_BLOCK = "deepslate_plate_block";
+    public static final String DEEPSLATE_PLATE_BLOCK = block(JolCraftItemIds.DEEPSLATE_PLATE);
 
     public static final String STRONGBOX = "strongbox";
     public static final String STRONGBOX_DUMMY = "strongbox_dummy";
@@ -51,4 +53,8 @@ public final class JolCraftBlockIds extends JolCraftIds {
     public static final String YANILLIAN_CROP_BOTTOM = "yanillian_crop_bottom";
 
     public static final String FERMENTING_CAULDRON = "fermenting_cauldron";
+
+    private static String block(String id){
+        return suffixed(id, JolCraftDictionary.BLOCK);
+    }
 }

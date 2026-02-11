@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty;
 
 import net.minecraft.network.chat.Component;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 
 public enum BountyTier {

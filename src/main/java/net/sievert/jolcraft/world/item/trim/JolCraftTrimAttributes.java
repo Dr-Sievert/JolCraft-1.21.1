@@ -13,7 +13,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 
@@ -53,15 +53,15 @@ public final class JolCraftTrimAttributes {
         out.put(JolCraftTrimMaterials.Attribute.LUMIERE,
                 allSlots(JolCraftAttributes.RADIANT, 0.25, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.MOONSHARD,
-                allSlots(JolCraftAttributes.MOVEMENT_SPEED_INCREASE_NIGHT, 0.05, AttributeModifier.Operation.ADD_VALUE));
+                allSlots(JolCraftAttributes.MOVEMENT_SPEED_NIGHT_INCREASE, 0.05, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.RUSTAGATE,
                 allSlots(JolCraftAttributes.ARMOR_UNBREAKING, 0.075, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.SKYBURROW,
-                allSlots(JolCraftAttributes.MOVEMENT_SPEED_INCREASE_DAY, 0.05, AttributeModifier.Operation.ADD_VALUE));
+                allSlots(JolCraftAttributes.MOVEMENT_SPEED_DAY_INCREASE, 0.05, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.SUNGLEAM,
-                allSlots(JolCraftAttributes.EXTRA_CHEST_LOOT, 0.1, AttributeModifier.Operation.ADD_VALUE));
+                allSlots(JolCraftAttributes.CHEST_LOOT_INCREASE, 0.1, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.VERDANITE,
-                allSlots(JolCraftAttributes.EXTRA_CROP_LOOT, 0.25, AttributeModifier.Operation.ADD_VALUE));
+                allSlots(JolCraftAttributes.CROP_LOOT_INCREASE, 0.25, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.WOECRYSTAL,
                 allSlots(JolCraftAttributes.MAGIC_RESISTANCE, 0.1, AttributeModifier.Operation.ADD_VALUE));
 
@@ -147,7 +147,7 @@ public final class JolCraftTrimAttributes {
     private static String attributePath(Holder<Attribute> attribute) {
         return attribute.unwrapKey()
                 .map(k -> k.location().getPath())
-                .orElse(JolCraftDataKeys.UNKNOWN);
+                .orElse(JolCraftDictionary.UNKNOWN);
     }
 
     public record TrimAttribute(

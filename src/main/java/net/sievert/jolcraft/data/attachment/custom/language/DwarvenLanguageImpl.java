@@ -3,12 +3,12 @@ package net.sievert.jolcraft.data.attachment.custom.language;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.sievert.jolcraft.data.attachment.util.BooleanFlagAttachmentImpl;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
 import org.jetbrains.annotations.NotNull;
 
 public final class DwarvenLanguageImpl implements DwarvenLanguage {
 
-    private final BooleanFlagAttachmentImpl flag = new BooleanFlagAttachmentImpl(JolCraftDataKeys.HAS_LANGUAGE, false);
+    private final BooleanFlagAttachmentImpl flag = new BooleanFlagAttachmentImpl(JolCraftCriterionTriggerIds.HAS_DWARVEN_LANGUAGE, false);
 
     @Override
     public boolean hasLanguage() {

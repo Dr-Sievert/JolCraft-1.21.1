@@ -256,7 +256,7 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.BROKEN_DEEPSLATE_GEAR);
                         pOutput.accept(JolCraftItems.BROKEN_BELT);
                         pOutput.accept(JolCraftItems.BROKEN_COINS);
-                        pOutput.accept(JolCraftItems.MITHRIL_SALVAGE);
+                        pOutput.accept(JolCraftItems.MITHRIL_SCRAP);
                         pOutput.accept(JolCraftItems.BROKEN_MITHRIL_PLATE);
                         pOutput.accept(JolCraftItems.BROKEN_MITHRIL_SWORD);
 

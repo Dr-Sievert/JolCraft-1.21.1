@@ -30,7 +30,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.data.key.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.util.JolCraftLogTags;
@@ -78,8 +78,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
         private static final Codec<TradeAmount> OBJECT_CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
-                        Codec.INT.fieldOf(JolCraftDataKeys.MIN_COUNT).forGetter(TradeAmount::min),
-                        Codec.INT.fieldOf(JolCraftDataKeys.MAX_COUNT).forGetter(TradeAmount::max)
+                        Codec.INT.fieldOf(JolCraftDictionary.MIN_COUNT).forGetter(TradeAmount::min),
+                        Codec.INT.fieldOf(JolCraftDictionary.MAX_COUNT).forGetter(TradeAmount::max)
                 ).apply(inst, TradeAmount::new));
 
 
@@ -114,10 +114,10 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         public static final Codec<TradeCost> CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
                         RegistryFixedCodec.create(Registries.ITEM)
-                                .fieldOf(JolCraftDataKeys.ITEM)
+                                .fieldOf(JolCraftDictionary.ITEM)
                                 .forGetter(TradeCost::item),
                         TradeAmount.CODEC
-                                .fieldOf(JolCraftDataKeys.AMOUNT)
+                                .fieldOf(JolCraftDictionary.AMOUNT)
                                 .forGetter(TradeCost::amount)
                 ).apply(inst, TradeCost::new));
 
@@ -162,13 +162,13 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         public static final Codec<MapTradeData> CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
                         TagKey.codec(Registries.STRUCTURE)
-                                .fieldOf(JolCraftDataKeys.DESTINATION_STRUCTURE_TAG)
+                                .fieldOf(JolCraftDictionary.DESTINATION_STRUCTURE_TAG)
                                 .forGetter(MapTradeData::destinationStructureTag),
                         Codec.STRING
-                                .fieldOf(JolCraftDataKeys.MAP_DISPLAY_NAME)
+                                .fieldOf(JolCraftDictionary.MAP_DISPLAY_NAME)
                                 .forGetter(MapTradeData::mapDisplayNameKey),
                         ResourceLocation.CODEC
-                                .fieldOf(JolCraftDataKeys.MAP_DECORATION_TYPE)
+                                .fieldOf(JolCraftDictionary.MAP_DECORATION_TYPE)
                                 .forGetter(MapTradeData::mapDecorationTypeId)
                 ).apply(inst, MapTradeData::new));
 
@@ -507,18 +507,18 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                 );
 
         private static final MapCodec<OptionalInt> WEIGHT_FIELD =
-                Codec.INT.optionalFieldOf(JolCraftDataKeys.WEIGHT).xmap(
+                Codec.INT.optionalFieldOf(JolCraftDictionary.WEIGHT).xmap(
                         opt -> opt.map(OptionalInt::of).orElse(OptionalInt.empty()),
                         oi -> oi.isPresent() ? Optional.of(oi.getAsInt()) : Optional.empty()
                 );
 
         private static final MapCodec<OptionalInt> ORDER_FIELD =
-                Codec.INT.optionalFieldOf(JolCraftDataKeys.ORDER).xmap(
+                Codec.INT.optionalFieldOf(JolCraftDictionary.ORDER).xmap(
                         opt -> opt.map(OptionalInt::of).orElse(OptionalInt.empty()),
                         oi -> oi.isPresent() ? Optional.of(oi.getAsInt()) : Optional.empty()
                 );
 
-        private static final MapCodec<Boolean> EXACT_LEVEL_FIELD = Codec.BOOL.optionalFieldOf(JolCraftDataKeys.EXACT_LEVEL, false);
+        private static final MapCodec<Boolean> EXACT_LEVEL_FIELD = Codec.BOOL.optionalFieldOf(JolCraftDictionary.EXACT_LEVEL, false);
 
         // ---------------- TradeResult CODEC ----------------
 
@@ -538,21 +538,21 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         private static final MapCodec<TradeResult.ItemResult> ITEM_RESULT_CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
                         RegistryFixedCodec.create(Registries.ITEM)
-                                .fieldOf(JolCraftDataKeys.ITEM)
+                                .fieldOf(JolCraftDictionary.ITEM)
                                 .forGetter(TradeResult.ItemResult::item),
                         TradeAmount.CODEC
-                                .fieldOf(JolCraftDataKeys.AMOUNT)
+                                .fieldOf(JolCraftDictionary.AMOUNT)
                                 .forGetter(TradeResult.ItemResult::amount)
                 ).apply(inst, TradeResult.ItemResult::new));
 
         private static final MapCodec<TradeResult.MapResult> MAP_RESULT_CODEC =
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
-                        MapTradeData.CODEC.fieldOf(JolCraftDataKeys.MAP).forGetter(TradeResult.MapResult::mapData)
+                        MapTradeData.CODEC.fieldOf(JolCraftDictionary.MAP).forGetter(TradeResult.MapResult::mapData)
                 ).apply(inst, TradeResult.MapResult::new));
 
         private static final MapCodec<TradeResult> TRADE_RESULT_CODEC =
                 RESULT_TYPE_CODEC.dispatchMap(
-                        JolCraftDataKeys.TYPE,
+                        JolCraftDictionary.TYPE,
                         TradeResult::type,
                         type -> switch (type) {
                             case ITEM -> ITEM_RESULT_CODEC.xmap(r -> (TradeResult) r, r -> (TradeResult.ItemResult) r);
@@ -563,26 +563,26 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         // ---------------- Recipe CODEC ----------------
         public static final MapCodec<DwarfTradeRecipe> CODEC =
                 RecordCodecBuilder.mapCodec((RecordCodecBuilder.Instance<DwarfTradeRecipe> inst) -> inst.group(
-                        PROFESSION_CODEC.fieldOf(JolCraftDataKeys.PROFESSION).forGetter(DwarfTradeRecipe::profession),
-                        Codec.INT.fieldOf(JolCraftDataKeys.LEVEL).forGetter(DwarfTradeRecipe::merchantLevel),
+                        PROFESSION_CODEC.fieldOf(JolCraftDictionary.PROFESSION).forGetter(DwarfTradeRecipe::profession),
+                        Codec.INT.fieldOf(JolCraftDictionary.LEVEL).forGetter(DwarfTradeRecipe::merchantLevel),
 
-                        POOL_CODEC.optionalFieldOf(JolCraftDataKeys.POOL, TradePool.MAIN).forGetter(DwarfTradeRecipe::pool),
+                        POOL_CODEC.optionalFieldOf(JolCraftDictionary.POOL, TradePool.MAIN).forGetter(DwarfTradeRecipe::pool),
                         WEIGHT_FIELD.forGetter(DwarfTradeRecipe::weight),
                         ORDER_FIELD.forGetter(DwarfTradeRecipe::order),
                         EXACT_LEVEL_FIELD.forGetter(DwarfTradeRecipe::exactLevel),
 
-                        TradeCost.CODEC.fieldOf(JolCraftDataKeys.COST_A).forGetter(DwarfTradeRecipe::costA),
-                        TradeCost.CODEC.optionalFieldOf(JolCraftDataKeys.COST_B).forGetter(DwarfTradeRecipe::costB),
+                        TradeCost.CODEC.fieldOf(JolCraftDictionary.COST_A).forGetter(DwarfTradeRecipe::costA),
+                        TradeCost.CODEC.optionalFieldOf(JolCraftDictionary.COST_B).forGetter(DwarfTradeRecipe::costB),
 
-                        TRADE_RESULT_CODEC.fieldOf(JolCraftDataKeys.RESULT).forGetter(DwarfTradeRecipe::result),
+                        TRADE_RESULT_CODEC.fieldOf(JolCraftDictionary.RESULT).forGetter(DwarfTradeRecipe::result),
 
-                        ENCHANT_PROVIDER_CODEC.optionalFieldOf(JolCraftDataKeys.ENCHANTMENT_PROVIDER).forGetter(DwarfTradeRecipe::enchantmentProvider),
-                        Codec.STRING.optionalFieldOf(JolCraftDataKeys.STACK_MODIFIER).forGetter(DwarfTradeRecipe::stackModifierId),
-                        DataComponentPatch.CODEC.optionalFieldOf(JolCraftDataKeys.RESULT_PATCH).forGetter(DwarfTradeRecipe::resultPatch),
+                        ENCHANT_PROVIDER_CODEC.optionalFieldOf(JolCraftDictionary.ENCHANTMENT_PROVIDER).forGetter(DwarfTradeRecipe::enchantmentProvider),
+                        Codec.STRING.optionalFieldOf(JolCraftDictionary.STACK_MODIFIER).forGetter(DwarfTradeRecipe::stackModifierId),
+                        DataComponentPatch.CODEC.optionalFieldOf(JolCraftDictionary.RESULT_PATCH).forGetter(DwarfTradeRecipe::resultPatch),
 
-                        Codec.INT.optionalFieldOf(JolCraftDataKeys.MAX_USES, 12).forGetter(DwarfTradeRecipe::maxUses),
-                        Codec.INT.optionalFieldOf(JolCraftDataKeys.VILLAGER_XP, 1).forGetter(DwarfTradeRecipe::villagerXp),
-                        Codec.FLOAT.optionalFieldOf(JolCraftDataKeys.PRICE_MULTIPLIER, 0.05F).forGetter(DwarfTradeRecipe::priceMultiplier)
+                        Codec.INT.optionalFieldOf(JolCraftDictionary.MAX_USES, 12).forGetter(DwarfTradeRecipe::maxUses),
+                        Codec.INT.optionalFieldOf(JolCraftDictionary.VILLAGER_XP, 1).forGetter(DwarfTradeRecipe::villagerXp),
+                        Codec.FLOAT.optionalFieldOf(JolCraftDictionary.PRICE_MULTIPLIER, 0.05F).forGetter(DwarfTradeRecipe::priceMultiplier)
                 ).apply(inst, DwarfTradeRecipe::new)).flatXmap(
                         Serializer::validate,
                         DataResult::success
