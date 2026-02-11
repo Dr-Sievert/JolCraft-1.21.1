@@ -51,7 +51,7 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         return dwarfProfessionTexture(entityPath + EMISSIVE_SUFFIX);
     }
 
-    private static final ResourceLocation FALLBACK_TEXTURE = dwarfTexture("dwarf_grey");
+    private static final ResourceLocation FALLBACK_TEXTURE = dwarfTexture(DwarfVariant.GREY.getTextureName());
 
     private static final int LAYER_ARMOR = 1;
     private static final int LAYER_BEARD = 2;
@@ -142,13 +142,9 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
 
     private static final Map<DwarfVariant, ResourceLocation> LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(DwarfVariant.class), map -> {
-                map.put(DwarfVariant.GREY,   dwarfTexture("dwarf_grey"));
-                map.put(DwarfVariant.BLUE,   dwarfTexture("dwarf_blue"));
-                map.put(DwarfVariant.GREEN,  dwarfTexture("dwarf_green"));
-                map.put(DwarfVariant.RED,    dwarfTexture("dwarf_red"));
-                map.put(DwarfVariant.PURPLE, dwarfTexture("dwarf_purple"));
-                map.put(DwarfVariant.WHITE,  dwarfTexture("dwarf_white"));
-                map.put(DwarfVariant.YELLOW, dwarfTexture("dwarf_yellow"));
+                for (DwarfVariant variant : DwarfVariant.values()) {
+                    map.put(variant, dwarfTexture(variant.getTextureName()));
+                }
             });
 
     @Override

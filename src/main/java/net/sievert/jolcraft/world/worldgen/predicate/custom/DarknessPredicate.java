@@ -10,8 +10,11 @@ import net.sievert.jolcraft.world.worldgen.predicate.JolCraftBlockPredicateTypes
 import org.jetbrains.annotations.NotNull;
 
 public class DarknessPredicate implements BlockPredicate {
+
+    private static final String MAX_BRIGHTNESS = "max_brightness";
+
     public static final MapCodec<DarknessPredicate> CODEC =
-            Codec.INT.fieldOf("max_brightness")
+            Codec.INT.fieldOf(MAX_BRIGHTNESS)
                     .xmap(DarknessPredicate::new, p -> p.maxBrightness);
 
     private final int maxBrightness;

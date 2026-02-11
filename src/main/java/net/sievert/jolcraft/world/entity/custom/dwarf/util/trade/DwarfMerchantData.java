@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 
 public record DwarfMerchantData(int level) {
@@ -28,15 +29,19 @@ public record DwarfMerchantData(int level) {
             return level;
         }
 
-        public String getLangKey() {
-            return langKey;
-        }
-
         public static Level fromId(int level) {
             for (Level l : values()) {
                 if (l.level == level) return l;
             }
             return NOVICE;
+        }
+
+        public String getLangKey() {
+            return langKey;
+        }
+
+        public static String langKeyFromId(int level) {
+            return fromId(level).getLangKey();
         }
     }
 
@@ -46,7 +51,7 @@ public record DwarfMerchantData(int level) {
     private static final int[] NEXT_LEVEL_XP_THRESHOLDS = new int[]{0, 10, 70, 150, 250};
 
     public static final Codec<DwarfMerchantData> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(Codec.INT.fieldOf("level").orElse(MIN_MERCHANT_LEVEL).forGetter(DwarfMerchantData::level)).apply(instance, DwarfMerchantData::new)
+            instance.group(Codec.INT.fieldOf(JolCraftDataKeys.LEVEL).orElse(MIN_MERCHANT_LEVEL).forGetter(DwarfMerchantData::level)).apply(instance, DwarfMerchantData::new)
     );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DwarfMerchantData> STREAM_CODEC =

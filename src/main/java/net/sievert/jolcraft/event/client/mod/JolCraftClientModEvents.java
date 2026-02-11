@@ -21,11 +21,11 @@ import net.sievert.jolcraft.world.item.client.coin.CoinPouchTooltipRenderer;
 import net.sievert.jolcraft.world.item.client.compass.DialColor;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
-import net.sievert.jolcraft.world.entity.client.model.animal.MuffhornModel;
+import net.sievert.jolcraft.world.entity.client.model.creature.MuffhornModel;
 import net.sievert.jolcraft.world.block.entity.custom.client.model.StrongboxModel;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.*;
 import net.sievert.jolcraft.world.entity.client.model.object.RadiantModel;
-import net.sievert.jolcraft.world.entity.client.render.animal.MuffhornRenderer;
+import net.sievert.jolcraft.world.entity.client.render.creature.MuffhornRenderer;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.StrongboxRenderer;
 import net.sievert.jolcraft.world.entity.client.render.dwarf.*;
 import net.sievert.jolcraft.world.entity.client.render.object.RadiantRenderer;
@@ -35,7 +35,7 @@ import net.sievert.jolcraft.world.gui.custom.screen.LapidaryBenchScreen;
 import net.sievert.jolcraft.world.gui.custom.screen.LockScreen;
 import net.sievert.jolcraft.world.gui.custom.screen.StrongboxScreen;
 import net.sievert.jolcraft.world.item.client.coin.CoinPouchAmountProperty;
-import net.sievert.jolcraft.data.lore.client.LoreKeyProperty;
+import net.sievert.jolcraft.world.item.client.LoreKey;
 import net.sievert.jolcraft.world.item.client.compass.DeepslateCompassAngle;
 
 @OnlyIn(Dist.CLIENT)
@@ -147,7 +147,7 @@ public final class JolCraftClientModEvents {
     @SubscribeEvent
     public static void onRegisterSelectItemModelProperty(RegisterSelectItemModelPropertyEvent event) {
         int props = 0;
-        event.register(LoreKeyProperty.KEY, LoreKeyProperty.TYPE); props++;
+        event.register(LoreKey.KEY, LoreKey.TYPE); props++;
         event.register(CoinPouchAmountProperty.KEY, CoinPouchAmountProperty.TYPE); props++;
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} select item properties", props);
     }
@@ -155,15 +155,15 @@ public final class JolCraftClientModEvents {
     @SubscribeEvent
     public static void onRegisterRangeSelectItemModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
         int props = 0;
-        event.register(JolCraft.location("deepslate_compass_angle"), DeepslateCompassAngle.MAP_CODEC); props++;
+        event.register(DeepslateCompassAngle.KEY, DeepslateCompassAngle.MAP_CODEC); props++;
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} range select item properties", props);
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void onRegisterTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
         int tints = 0;
-        event.register(JolCraft.location("dial_color"), DialColor.MAP_CODEC); tints++;
-        event.register(JolCraft.location("brew_color"), BrewColor.MAP_CODEC); tints++;
+        event.register(DialColor.KEY, DialColor.MAP_CODEC); tints++;
+        event.register(BrewColor.KEY, BrewColor.MAP_CODEC); tints++;
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} item tint sources", tints);
     }
 }

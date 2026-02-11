@@ -27,10 +27,6 @@ public class RadiantRenderer extends EntityRenderer<RadiantEntity, RadiantRender
         this.model = new RadiantModel(context.bakeLayer(RadiantModel.LAYER_LOCATION));
     }
 
-    protected ResourceLocation getTextureLocation(RadiantEntity entity) {
-        return TEXTURE;
-    }
-
     @Override
     public @NotNull RadiantRenderState createRenderState() {
         return new RadiantRenderState();

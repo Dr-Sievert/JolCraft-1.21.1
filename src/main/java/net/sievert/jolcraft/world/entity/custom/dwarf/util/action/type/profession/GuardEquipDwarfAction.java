@@ -10,6 +10,8 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.InspectDwarfAction;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
@@ -68,7 +70,7 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
 
         if (player != null) {
             int newLevel = dwarf.getMerchantLevel();
-            Component rank = Component.translatable("merchant.level." + newLevel);
+            Component rank = Component.translatable(DwarfMerchantData.Level.langKeyFromId(newLevel));
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_GUARD_PROMOTION, rank)
                             .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),

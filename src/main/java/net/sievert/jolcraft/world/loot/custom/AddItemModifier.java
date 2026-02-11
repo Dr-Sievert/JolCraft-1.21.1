@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -24,7 +25,7 @@ public class AddItemModifier extends LootModifier {
             RecordCodecBuilder.mapCodec(inst ->
                     LootModifier.codecStart(inst).and(
                             RegistryFixedCodec.create(Registries.ITEM)
-                                    .fieldOf("item")
+                                    .fieldOf(JolCraftDataKeys.ITEM)
                                     .forGetter(e -> e.item)
                     ).apply(inst, AddItemModifier::new)
             );

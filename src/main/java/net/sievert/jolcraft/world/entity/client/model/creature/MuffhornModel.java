@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.client.model.animal;
+package net.sievert.jolcraft.world.entity.client.model.creature;
 
 import java.util.Set;
 
@@ -13,49 +13,42 @@ import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class MuffhornModel extends QuadrupedModel<LivingEntityRenderState> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("muffhorn"), "main");
-    public static final ModelLayerLocation BABY_LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("muffhorn"), "baby");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftCreatureIds.MUFFHORN), JolCraftDataKeys.MAIN);
+    public static final ModelLayerLocation BABY_LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftCreatureIds.MUFFHORN), JolCraftDataKeys.BABY);
 
-    public static final MeshTransformer BABY_TRANSFORMER =
-            new BabyModelTransform(false, 8.0F, 5.0F, Set.of());
+    public static final MeshTransformer BABY_TRANSFORMER = new BabyModelTransform(false, 8.0F, 5.0F, Set.of());
 
-
-    private final ModelPart body;
     private final ModelPart fur_body;
     private final ModelPart head;
     private final ModelPart fur_head;
-    private final ModelPart right_horn;
-    private final ModelPart left_horn;
-    private final ModelPart right_hind_leg;
     private final ModelPart fur_right_hind_leg;
-    private final ModelPart left_hind_leg;
     private final ModelPart fur_left_hind_leg;
-    private final ModelPart right_front_leg;
     private final ModelPart fur_right_front_leg;
-    private final ModelPart left_front_leg;
     private final ModelPart fur_left_front_leg;
 
     public MuffhornModel(ModelPart root) {
         super(root);
-        this.body = root.getChild("body");
-        this.fur_body = this.body.getChild("fur_body");
+        ModelPart body = root.getChild("body");
+        this.fur_body = body.getChild("fur_body");
         this.head = root.getChild("head");
         this.fur_head = this.head.getChild("fur_head");
-        this.right_horn = this.head.getChild("right_horn");
-        this.left_horn = this.head.getChild("left_horn");
-        this.right_hind_leg = root.getChild("right_hind_leg");
-        this.fur_right_hind_leg = this.right_hind_leg.getChild("fur_right_hind_leg");
-        this.left_hind_leg = root.getChild("left_hind_leg");
-        this.fur_left_hind_leg = this.left_hind_leg.getChild("fur_left_hind_leg");
-        this.right_front_leg = root.getChild("right_front_leg");
-        this.fur_right_front_leg = this.right_front_leg.getChild("fur_right_front_leg");
-        this.left_front_leg = root.getChild("left_front_leg");
-        this.fur_left_front_leg = this.left_front_leg.getChild("fur_left_front_leg");
+        this.head.getChild("right_horn");
+        this.head.getChild("left_horn");
+        ModelPart right_hind_leg = root.getChild("right_hind_leg");
+        this.fur_right_hind_leg = right_hind_leg.getChild("fur_right_hind_leg");
+        ModelPart left_hind_leg = root.getChild("left_hind_leg");
+        this.fur_left_hind_leg = left_hind_leg.getChild("fur_left_hind_leg");
+        ModelPart right_front_leg = root.getChild("right_front_leg");
+        this.fur_right_front_leg = right_front_leg.getChild("fur_right_front_leg");
+        ModelPart left_front_leg = root.getChild("left_front_leg");
+        this.fur_left_front_leg = left_front_leg.getChild("fur_left_front_leg");
     }
 
     public static LayerDefinition createBodyLayer() {

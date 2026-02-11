@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.custom.animal;
+package net.sievert.jolcraft.world.entity.custom.creature;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -48,6 +48,10 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class MuffhornEntity extends Animal implements IShearable {
+
+    private static final String NBT_SHEARED = "Sheared";
+    private static final String NBT_REGROW_TICKS = "RegrowTicks";
+    private static final String NBT_NEXT_MILK_TICK = "NextMilkTick";
 
     private long nextMilkTick = 0;
     private int regrowTicks = 0;
@@ -100,17 +104,17 @@ public class MuffhornEntity extends Animal implements IShearable {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putBoolean("Sheared", this.isSheared());
-        tag.putInt("RegrowTicks", this.regrowTicks);
-        tag.putLong("NextMilkTick", this.nextMilkTick);
+        tag.putBoolean(NBT_SHEARED, this.isSheared());
+        tag.putInt(NBT_REGROW_TICKS, this.regrowTicks);
+        tag.putLong(NBT_NEXT_MILK_TICK, this.nextMilkTick);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.setSheared(tag.getBoolean("Sheared"));
-        this.regrowTicks = tag.getInt("RegrowTicks");
-        this.nextMilkTick = tag.getLong("NextMilkTick");
+        this.setSheared(tag.getBoolean(NBT_SHEARED));
+        this.regrowTicks = tag.getInt(NBT_REGROW_TICKS);
+        this.nextMilkTick = tag.getLong(NBT_NEXT_MILK_TICK);
     }
 
     @Override

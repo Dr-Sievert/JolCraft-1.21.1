@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 
@@ -40,7 +41,7 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
     }
 
     public static final int MAX_AGE = 3;
-    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, MAX_AGE);
+    public static final IntegerProperty AGE = IntegerProperty.create(JolCraftDataKeys.AGE, 0, MAX_AGE);
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
             Block.box(2, 0, 2, 14, 3, 14), // age 0
             Block.box(2, 0, 2, 14, 4, 14), // age 1

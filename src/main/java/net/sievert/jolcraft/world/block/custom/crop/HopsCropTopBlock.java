@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -28,7 +29,7 @@ import java.util.function.Supplier;
 public class HopsCropTopBlock extends HopsCropBottomBlock {
 
     public static final int MAX_AGE = 4;
-    public static final IntegerProperty TOP_AGE = IntegerProperty.create("top_age", 0, MAX_AGE);
+    public static final IntegerProperty TOP_AGE = IntegerProperty.create("top_" + JolCraftDataKeys.AGE, 0, MAX_AGE);
 
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
             Block.box(0, 0, 0, 16, 2, 16),
@@ -149,6 +150,4 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
             level.setBlock(otherHalf, Blocks.AIR.defaultBlockState(), 35);
         }
     }
-
-
 }

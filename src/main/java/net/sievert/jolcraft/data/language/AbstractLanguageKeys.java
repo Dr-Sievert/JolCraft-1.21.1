@@ -42,8 +42,7 @@ public abstract class AbstractLanguageKeys {
 
     /** "tooltip.<modid>.<category>.<id>" */
     public static String tooltip(String category, String id) {
-        return category(JolCraftDataKeys.TOOLTIP,
-                JolCraftStrings.dotted(category, id));
+        return category(JolCraftDataKeys.TOOLTIP, JolCraftStrings.dotted(category, id));
     }
 
     /** "tooltip.<modid>.structure.<id>" */

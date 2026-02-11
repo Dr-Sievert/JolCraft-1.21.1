@@ -8,6 +8,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import java.util.List;
@@ -70,7 +71,7 @@ public final class JolCraftAttributeTrimMaterials {
         TrimMaterial trimMaterial = TrimMaterial.create(
                 trimKey.location().getPath(),
                 item,
-                Component.translatable(Util.makeDescriptionId("trim_material", trimKey.location())).withStyle(style),
+                Component.translatable(Util.makeDescriptionId(JolCraftDataKeys.TRIM_MATERIAL, trimKey.location())).withStyle(style),
                 Map.of()
         );
         context.register(trimKey, trimMaterial);

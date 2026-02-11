@@ -10,6 +10,7 @@ import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.menu.JolCraftMenuIds;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
 import net.sievert.jolcraft.world.gui.custom.menu.LockMenu;
@@ -22,16 +23,17 @@ public final class JolCraftMenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, JolCraft.MOD_ID);
 
     public static final DeferredHolder<MenuType<?>, MenuType<StrongboxMenu>> STRONGBOX_MENU =
-            registerExtended("strongbox_menu", StrongboxMenu::new);
+            registerExtended(JolCraftMenuIds.STRONGBOX, StrongboxMenu::new);
 
     public static final DeferredHolder<MenuType<?>, MenuType<LockMenu>> LOCK_MENU =
-            registerExtended("lock_menu", LockMenu::new);
+            registerExtended(JolCraftMenuIds.LOCKED_STRONGBOX, LockMenu::new);
 
     public static final DeferredHolder<MenuType<?>, MenuType<LapidaryBenchMenu>> LAPIDARY_BENCH_MENU =
-            registerSimple("lapidary_bench_menu", LapidaryBenchMenu::new);
+            registerSimple(JolCraftMenuIds.LAPIDARY_BENCH, LapidaryBenchMenu::new);
 
     public static final DeferredHolder<MenuType<?>, MenuType<DwarfMerchantMenu>> DWARF_MERCHANT_MENU =
-            registerExtended("dwarf_merchant_menu", DwarfMerchantMenu::new);
+            registerExtended(JolCraftMenuIds.DWARF_MERCHANT, DwarfMerchantMenu::new);
+
 
     /**
      * Register an "extended" menu type (NeoForge): factory gets (windowId, inv, buf).

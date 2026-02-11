@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.client.util.animal;
+package net.sievert.jolcraft.world.entity.client.util.creature;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.entity.client.model.animal.MuffhornModel;
+import net.sievert.jolcraft.world.entity.client.model.creature.MuffhornModel;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)

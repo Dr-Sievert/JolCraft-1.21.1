@@ -17,8 +17,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class QuillItem extends SimpleTooltipItem {
 
-    public QuillItem(Properties properties, String tooltipKey) {
-        super(properties, tooltipKey);
+    public QuillItem(Properties properties, String tooltipTranslationKey) {
+        super(properties, tooltipTranslationKey);
     }
 
     @Override

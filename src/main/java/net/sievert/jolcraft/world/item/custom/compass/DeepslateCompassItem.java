@@ -68,7 +68,7 @@ public class DeepslateCompassItem extends Item {
                 String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
                 Component name = (structureId != null && !structureId.isEmpty())
                         ? Component.translatable(tooltipStructure(structureId)).withStyle(ChatFormatting.BLUE)
-                        : Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_UNKNOWN).withStyle(ChatFormatting.BLUE);
+                        : Component.translatable(JolCraftLanguageKeys.UNKNOWN).withStyle(ChatFormatting.BLUE);
 
                 serverPlayer.sendSystemMessage(
                         Component.translatable(
@@ -119,7 +119,7 @@ public class DeepslateCompassItem extends Item {
                 }
             }
         } else {
-            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_UNKNOWN)
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.UNKNOWN)
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 

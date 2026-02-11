@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -26,7 +27,7 @@ public class RotatedPillarExperienceBlock extends DropExperienceBlock {
 
     public static final MapCodec<RotatedPillarExperienceBlock> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                    IntProvider.codec(0, 10).fieldOf("experience").forGetter(b -> b.myXpRange), // Use your own field!
+                    IntProvider.codec(0, 10).fieldOf(JolCraftDataKeys.EXPERIENCE).forGetter(b -> b.myXpRange), // Use your own field!
                     propertiesCodec()
             ).apply(builder, RotatedPillarExperienceBlock::new)
     );

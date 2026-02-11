@@ -7,6 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 import java.util.Locale;
 
@@ -35,7 +37,7 @@ public final class JolCraftMaterials {
         }
 
         public String darkerTrimName() {
-            return id() + "_darker";
+            return JolCraftStrings.underscored(id(), JolCraftDataKeys.DARKER);
         }
     }
 
@@ -44,6 +46,6 @@ public final class JolCraftMaterials {
      * without depending on other classes’ constants.
      */
     public static ResourceKey<Registry<EquipmentAsset>> equipmentAssetRegistryKey() {
-        return ResourceKey.createRegistryKey(ResourceLocation.withDefaultNamespace("equipment_asset"));
+        return ResourceKey.createRegistryKey(ResourceLocation.withDefaultNamespace(JolCraftDataKeys.EQUIPMENT_ASSET));
     }
 }

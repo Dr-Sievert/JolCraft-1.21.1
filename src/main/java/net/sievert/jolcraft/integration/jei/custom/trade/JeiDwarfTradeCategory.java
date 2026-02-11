@@ -20,13 +20,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
-import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.client.JolCraftFonts;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.Nullable;
@@ -41,7 +42,8 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
     private static final Map<DwarfProfession, IRecipeType<JeiDwarfTrade>> TYPES = new EnumMap<>(DwarfProfession.class);
 
     public static IRecipeType<JeiDwarfTrade> recipeTypeFor(DwarfProfession prof) {
-        return TYPES.computeIfAbsent(prof, p -> IRecipeType.create(JolCraft.MOD_ID,  JolCraftJeiIds.DWARF_TRADE + "_" + p.getId(), JeiDwarfTrade.class));
+        return TYPES.computeIfAbsent(prof, p ->
+                IRecipeType.create(JolCraft.MOD_ID, JolCraftStrings.underscored(JolCraftJeiIds.DWARF_TRADE, p.getId()), JeiDwarfTrade.class));
     }
 
     private static final Map<DwarfProfession, LivingEntity> DWARF_RENDER_CACHE = new EnumMap<>(DwarfProfession.class);
@@ -85,8 +87,7 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
 
         int level = entry.level();
 
-        String levelKey = "merchant.level." + level;
-        String levelStr = Component.translatable(levelKey).getString();
+        String levelStr = Component.translatable(DwarfMerchantData.Level.langKeyFromId(level)).getString();
         String profText = JeiDwarfTradeHelper.getDisplayName(entry.profession());
 
         int levelX = 50 - (JolCraftFonts.defaultFont().width(levelStr) / 2);

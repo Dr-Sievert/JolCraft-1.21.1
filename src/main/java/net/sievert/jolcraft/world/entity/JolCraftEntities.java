@@ -7,7 +7,9 @@ import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
+import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
+import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
+import net.sievert.jolcraft.world.entity.custom.creature.MuffhornEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
@@ -68,17 +70,17 @@ public final class JolCraftEntities {
     }
 
     //Animals
-    public static final ResourceKey<EntityType<?>> MUFFHORN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("muffhorn"));
+    public static final ResourceKey<EntityType<?>> MUFFHORN_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location(JolCraftCreatureIds.MUFFHORN));
 
     public static final Supplier<EntityType<MuffhornEntity>> MUFFHORN =
-            ENTITY_TYPES.register("muffhorn", () -> EntityType.Builder.of(MuffhornEntity::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register(JolCraftCreatureIds.MUFFHORN, () -> EntityType.Builder.of(MuffhornEntity::new, MobCategory.CREATURE)
                     .sized(1.2f, 2.2f).build(MUFFHORN_KEY));
 
     //Objects
-    public static final ResourceKey<EntityType<?>> RADIANT_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location("radiant"));
+    public static final ResourceKey<EntityType<?>> RADIANT_KEY = ResourceKey.create(Registries.ENTITY_TYPE, JolCraft.location(JolCraftEntityObjectIds.RADIANT));
 
     public static final Supplier<EntityType<RadiantEntity>> RADIANT =
-            ENTITY_TYPES.register("radiant", () -> EntityType.Builder.of(RadiantEntity::new, MobCategory.MISC)
+            ENTITY_TYPES.register(JolCraftEntityObjectIds.RADIANT, () -> EntityType.Builder.of(RadiantEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F).build(RADIANT_KEY));
 
     public static void register(IEventBus eventBus) {

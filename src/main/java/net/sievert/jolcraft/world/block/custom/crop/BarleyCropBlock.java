@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.CommonHooks;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
@@ -24,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class BarleyCropBlock extends CropBlock {
     public static final int MAX_AGE = 7;
-    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 7);
+    public static final IntegerProperty AGE = IntegerProperty.create(JolCraftDataKeys.AGE, 0, 7);
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
             Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
             Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),

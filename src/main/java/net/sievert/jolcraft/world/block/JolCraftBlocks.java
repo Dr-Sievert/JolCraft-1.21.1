@@ -12,11 +12,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.level.material.*;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.world.block.custom.*;
 import net.sievert.jolcraft.world.block.custom.crop.*;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -27,12 +29,12 @@ import java.util.function.ToIntFunction;
 
 public final class JolCraftBlocks {
 
-    private JolCraftBlocks(){}
+    private JolCraftBlocks() {}
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(JolCraft.MOD_ID);
 
     public static final DeferredBlock<Block> MANAGED_LIGHT = registerBlock(
-            "managed_light",
+            JolCraftBlockIds.MANAGED_LIGHT,
             (properties) -> new ManagedLightBlock(properties
                     .replaceable()
                     .strength(-1.0F, 3600000.8F)
@@ -45,17 +47,20 @@ public final class JolCraftBlocks {
             false
     );
 
-    public static final DeferredBlock<Block> DEEPSLATE_MORTAR = registerBlock("deepslate_mortar",
+    public static final DeferredBlock<Block> DEEPSLATE_MORTAR = registerBlock(
+            JolCraftBlockIds.DEEPSLATE_MORTAR,
             (properties) -> new MortarBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .sound(SoundType.POLISHED_DEEPSLATE)
                     .strength(2.5F, 6.0F)
                     .requiresCorrectToolForDrops()
             ),
-            BlockBehaviour.Properties.of(), false
+            BlockBehaviour.Properties.of(),
+            false
     );
 
-    public static final DeferredBlock<Block> GEODE_BLOCK = registerBlock("geode_block",
+    public static final DeferredBlock<Block> GEODE_BLOCK = registerBlock(
+            JolCraftBlockIds.GEODE_BLOCK,
             (properties) -> new Block(properties
                     .mapColor(MapColor.COLOR_BLACK)
                     .sound(SoundType.BASALT)
@@ -63,20 +68,24 @@ public final class JolCraftBlocks {
                     .strength(2F, 5.0F)
                     .requiresCorrectToolForDrops()
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
-    public static final DeferredBlock<Block> LAPIDARY_BENCH = registerBlock("lapidary_bench",
+    public static final DeferredBlock<Block> LAPIDARY_BENCH = registerBlock(
+            JolCraftBlockIds.LAPIDARY_BENCH,
             (properties) -> new LapidaryBenchBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .sound(SoundType.POLISHED_DEEPSLATE)
                     .strength(4.5F, 6.0F)
                     .requiresCorrectToolForDrops()
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
-    public static final DeferredBlock<Block> DEEPSLATE_MITHRIL_ORE = registerMithrilBlock("deepslate_mithril_ore",
+    public static final DeferredBlock<Block> DEEPSLATE_MITHRIL_ORE = registerMithrilBlock(
+            JolCraftBlockIds.DEEPSLATE_MITHRIL_ORE,
             (properties) -> new RotatedPillarExperienceBlock(UniformInt.of(5, 10), properties
                     .mapColor(MapColor.DEEPSLATE)
                     .strength(30.0F, 1200.0F)
@@ -88,7 +97,8 @@ public final class JolCraftBlocks {
             BlockBehaviour.Properties.of()
     );
 
-    public static final DeferredBlock<Block> PURE_MITHRIL_BLOCK = registerMithrilBlock("pure_mithril_block",
+    public static final DeferredBlock<Block> PURE_MITHRIL_BLOCK = registerMithrilBlock(
+            JolCraftBlockIds.PURE_MITHRIL_BLOCK,
             (properties) -> new Block(properties
                     .mapColor(MapColor.DIAMOND)
                     .strength(40.0F, 1200.0F)
@@ -99,7 +109,8 @@ public final class JolCraftBlocks {
             BlockBehaviour.Properties.of()
     );
 
-    public static final DeferredBlock<Block> MITHRIL_BLOCK = registerMithrilBlock("mithril_block",
+    public static final DeferredBlock<Block> MITHRIL_BLOCK = registerMithrilBlock(
+            JolCraftBlockIds.MITHRIL_BLOCK,
             (properties) -> new Block(properties
                     .mapColor(MapColor.DIAMOND)
                     .strength(50.0F, 1200.0F)
@@ -111,7 +122,8 @@ public final class JolCraftBlocks {
             BlockBehaviour.Properties.of()
     );
 
-    public static final DeferredBlock<Block> DEEPSLATE_PLATE_BLOCK = registerBlock("deepslate_plate_block",
+    public static final DeferredBlock<Block> DEEPSLATE_PLATE_BLOCK = registerBlock(
+            JolCraftBlockIds.DEEPSLATE_PLATE_BLOCK,
             (properties) -> new Block(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .sound(SoundType.DEEPSLATE)
@@ -119,11 +131,12 @@ public final class JolCraftBlocks {
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops()
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
     public static final DeferredBlock<Block> STRONGBOX = registerBlock(
-            "strongbox",
+            JolCraftBlockIds.STRONGBOX,
             (properties) -> new StrongboxBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .strength(5.0F, 1200.0F)
@@ -133,10 +146,12 @@ public final class JolCraftBlocks {
                     .noOcclusion()
                     .randomTicks()
             ),
-            BlockBehaviour.Properties.of(), false
+            BlockBehaviour.Properties.of(),
+            false
     );
 
-    public static final DeferredBlock<Block> STRONGBOX_DUMMY = BLOCKS.registerBlock("strongbox_dummy",
+    public static final DeferredBlock<Block> STRONGBOX_DUMMY = BLOCKS.registerBlock(
+            JolCraftBlockIds.STRONGBOX_DUMMY,
             (properties) -> new StrongboxBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .strength(5.0F, 1200.0F)
@@ -148,7 +163,7 @@ public final class JolCraftBlocks {
     );
 
     public static final DeferredBlock<Block> HEARTH = registerBlock(
-            "hearth",
+            JolCraftBlockIds.HEARTH,
             (properties) -> new HearthBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .strength(4.5F, 3.0F)
@@ -156,19 +171,23 @@ public final class JolCraftBlocks {
                     .sound(SoundType.DEEPSLATE_TILES)
                     .lightLevel(litBlockEmission(13))
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
-    public static final DeferredBlock<Block> VERDANT_SOIL = registerBlock("verdant_soil",
+    public static final DeferredBlock<Block> VERDANT_SOIL = registerBlock(
+            JolCraftBlockIds.VERDANT_SOIL,
             (properties) -> new VerdantSoilBlock(properties
                     .mapColor(MapColor.COLOR_LIGHT_GREEN)
                     .strength(0.5F)
                     .sound(SoundType.MUD)
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
-    public static final DeferredBlock<Block> VERDANT_FARMLAND = registerBlock("verdant_farmland",
+    public static final DeferredBlock<Block> VERDANT_FARMLAND = registerBlock(
+            JolCraftBlockIds.VERDANT_FARMLAND,
             (properties) -> new VerdantFarmBlock(properties
                     .mapColor(MapColor.COLOR_LIGHT_GREEN)
                     .randomTicks()
@@ -177,11 +196,12 @@ public final class JolCraftBlocks {
                     .isViewBlocking(JolCraftBlocks::always)
                     .isSuffocating(JolCraftBlocks::always)
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
     public static final DeferredBlock<DuskcapBlock> DUSKCAP = registerBlock(
-            "duskcap",
+            JolCraftBlockIds.DUSKCAP,
             (properties) -> new DuskcapBlock(
                     properties
                             .mapColor(MapColor.COLOR_MAGENTA)
@@ -191,17 +211,20 @@ public final class JolCraftBlocks {
                             .sound(SoundType.GRASS)
                             .pushReaction(PushReaction.DESTROY)
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
     @SuppressWarnings("deprecation")
     public static final DeferredBlock<FlowerPotBlock> POTTED_DUSKCAP = registerBlock(
-            "potted_duskcap",
+            JolCraftBlockIds.POTTED_DUSKCAP,
             (properties) -> new FlowerPotBlock(DUSKCAP.get(), properties),
-            flowerPotProperties(), false
+            flowerPotProperties(),
+            false
     );
 
-    public static final DeferredBlock<Block> FESTERLING_CROP = BLOCKS.registerBlock("festerling_crop",
+    public static final DeferredBlock<Block> FESTERLING_CROP = BLOCKS.registerBlock(
+            JolCraftBlockIds.FESTERLING_CROP,
             (properties) -> new FesterlingCropBlock(properties
                     .mapColor(MapColor.TERRACOTTA_LIGHT_GREEN)
                     .noCollission()
@@ -213,7 +236,7 @@ public final class JolCraftBlocks {
     );
 
     public static final DeferredBlock<FesterlingBlock> FESTERLING = registerBlock(
-            "festerling",
+            JolCraftBlockIds.FESTERLING,
             (properties) -> new FesterlingBlock(
                     properties
                             .mapColor(MapColor.TERRACOTTA_LIGHT_GREEN)
@@ -223,17 +246,20 @@ public final class JolCraftBlocks {
                             .sound(SoundType.GRASS)
                             .pushReaction(PushReaction.DESTROY)
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
     @SuppressWarnings("deprecation")
     public static final DeferredBlock<FlowerPotBlock> POTTED_FESTERLING = registerBlock(
-            "potted_festerling",
+            JolCraftBlockIds.POTTED_FESTERLING,
             (properties) -> new FlowerPotBlock(FESTERLING.get(), properties),
-            flowerPotProperties(), false
+            flowerPotProperties(),
+            false
     );
 
-    public static final DeferredBlock<HayBlock> BARLEY_BLOCK = registerBlock("barley_block",
+    public static final DeferredBlock<HayBlock> BARLEY_BLOCK = registerBlock(
+            JolCraftBlockIds.BARLEY_BLOCK,
             (properties) -> new HayBlock(properties
                     .mapColor(MapColor.COLOR_YELLOW)
                     .strength(0.5F)
@@ -241,10 +267,12 @@ public final class JolCraftBlocks {
                     .instrument(NoteBlockInstrument.BANJO)
                     .ignitedByLava()
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
-    public static final DeferredBlock<Block> MUFFHORN_FUR_BLOCK = registerBlock("muffhorn_fur_block",
+    public static final DeferredBlock<Block> MUFFHORN_FUR_BLOCK = registerBlock(
+            JolCraftBlockIds.MUFFHORN_FUR_BLOCK,
             (properties) -> new Block(properties
                     .mapColor(MapColor.COLOR_BROWN)
                     .strength(0.8F)
@@ -252,10 +280,12 @@ public final class JolCraftBlocks {
                     .instrument(NoteBlockInstrument.GUITAR)
                     .ignitedByLava()
             ),
-            BlockBehaviour.Properties.of(), true
+            BlockBehaviour.Properties.of(),
+            true
     );
 
-    public static final DeferredBlock<Block> BARLEY_CROP = BLOCKS.registerBlock("barley_crop",
+    public static final DeferredBlock<Block> BARLEY_CROP = BLOCKS.registerBlock(
+            JolCraftBlockIds.BARLEY_CROP,
             (properties) -> new BarleyCropBlock(properties
                     .mapColor(MapColor.PLANT)
                     .noCollission()
@@ -266,7 +296,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> DEEPSLATE_BULBS_CROP = BLOCKS.registerBlock("deepslate_bulbs_crop",
+    public static final DeferredBlock<Block> DEEPSLATE_BULBS_CROP = BLOCKS.registerBlock(
+            JolCraftBlockIds.DEEPSLATE_BULBS_CROP,
             (properties) -> new DeepslateBulbsCropBlock(properties
                     .mapColor(MapColor.DEEPSLATE)
                     .noCollission()
@@ -277,7 +308,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> ASGARNIAN_CROP_TOP = BLOCKS.registerBlock("asgarnian_crop_top",
+    public static final DeferredBlock<Block> ASGARNIAN_CROP_TOP = BLOCKS.registerBlock(
+            JolCraftBlockIds.ASGARNIAN_CROP_TOP,
             (properties) -> new HopsCropTopBlock(
                     properties
                             .mapColor(MapColor.TERRACOTTA_MAGENTA)
@@ -290,7 +322,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> ASGARNIAN_CROP_BOTTOM = BLOCKS.registerBlock("asgarnian_crop_bottom",
+    public static final DeferredBlock<Block> ASGARNIAN_CROP_BOTTOM = BLOCKS.registerBlock(
+            JolCraftBlockIds.ASGARNIAN_CROP_BOTTOM,
             (properties) -> new HopsCropBottomBlock(
                     properties
                             .mapColor(MapColor.TERRACOTTA_MAGENTA)
@@ -304,7 +337,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> DUSKHOLD_CROP_TOP = BLOCKS.registerBlock("duskhold_crop_top",
+    public static final DeferredBlock<Block> DUSKHOLD_CROP_TOP = BLOCKS.registerBlock(
+            JolCraftBlockIds.DUSKHOLD_CROP_TOP,
             (properties) -> new HopsCropTopBlock(
                     properties
                             .mapColor(MapColor.TERRACOTTA_LIGHT_BLUE)
@@ -317,7 +351,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> DUSKHOLD_CROP_BOTTOM = BLOCKS.registerBlock("duskhold_crop_bottom",
+    public static final DeferredBlock<Block> DUSKHOLD_CROP_BOTTOM = BLOCKS.registerBlock(
+            JolCraftBlockIds.DUSKHOLD_CROP_BOTTOM,
             (properties) -> new HopsCropBottomBlock(
                     properties
                             .mapColor(MapColor.TERRACOTTA_LIGHT_BLUE)
@@ -331,7 +366,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> KRANDONIAN_CROP_TOP = BLOCKS.registerBlock("krandonian_crop_top",
+    public static final DeferredBlock<Block> KRANDONIAN_CROP_TOP = BLOCKS.registerBlock(
+            JolCraftBlockIds.KRANDONIAN_CROP_TOP,
             (properties) -> new HopsCropTopBlock(
                     properties
                             .mapColor(MapColor.WARPED_STEM)
@@ -344,7 +380,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> KRANDONIAN_CROP_BOTTOM = BLOCKS.registerBlock("krandonian_crop_bottom",
+    public static final DeferredBlock<Block> KRANDONIAN_CROP_BOTTOM = BLOCKS.registerBlock(
+            JolCraftBlockIds.KRANDONIAN_CROP_BOTTOM,
             (properties) -> new HopsCropBottomBlock(
                     properties
                             .mapColor(MapColor.WARPED_STEM)
@@ -358,8 +395,8 @@ public final class JolCraftBlocks {
             )
     );
 
-
-    public static final DeferredBlock<Block> YANILLIAN_CROP_TOP = BLOCKS.registerBlock("yanillian_crop_top",
+    public static final DeferredBlock<Block> YANILLIAN_CROP_TOP = BLOCKS.registerBlock(
+            JolCraftBlockIds.YANILLIAN_CROP_TOP,
             (properties) -> new HopsCropTopBlock(
                     properties
                             .mapColor(MapColor.COLOR_GREEN)
@@ -372,7 +409,8 @@ public final class JolCraftBlocks {
             )
     );
 
-    public static final DeferredBlock<Block> YANILLIAN_CROP_BOTTOM = BLOCKS.registerBlock("yanillian_crop_bottom",
+    public static final DeferredBlock<Block> YANILLIAN_CROP_BOTTOM = BLOCKS.registerBlock(
+            JolCraftBlockIds.YANILLIAN_CROP_BOTTOM,
             (properties) -> new HopsCropBottomBlock(
                     properties
                             .mapColor(MapColor.COLOR_GREEN)
@@ -388,7 +426,7 @@ public final class JolCraftBlocks {
 
     @SuppressWarnings("deprecation")
     public static final DeferredBlock<FermentingCauldronBlock> FERMENTING_CAULDRON = BLOCKS.registerBlock(
-            "fermenting_cauldron",
+            JolCraftBlockIds.FERMENTING_CAULDRON,
             props -> new FermentingCauldronBlock(
                     Biome.Precipitation.NONE,
                     CauldronInteraction.EMPTY,

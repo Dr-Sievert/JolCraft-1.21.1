@@ -19,6 +19,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.TriState;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -39,7 +40,7 @@ public class JolCraftMushroomBlock extends BushBlock implements BonemealableBloc
 
     public static final MapCodec<JolCraftMushroomBlock> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(block -> block.properties)
+                    BlockBehaviour.Properties.CODEC.fieldOf(JolCraftDataKeys.PROPERTIES).forGetter(block -> block.properties)
             ).apply(builder, JolCraftMushroomBlock::new)
     );
 

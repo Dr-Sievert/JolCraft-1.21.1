@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.JolCraftAttributes;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -32,6 +33,8 @@ import java.util.UUID;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class RadiantEntity extends Entity implements TraceableEntity {
+
+    private static final String LIGHT_LEVEL = "RadiantLightLevel";
 
     // -------------------------------------------------------------------------
     // State
@@ -282,27 +285,25 @@ public class RadiantEntity extends Entity implements TraceableEntity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
-        if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
-            this.cachedOwner = null;
+        if (tag.hasUUID(JolCraftDataKeys.OWNER)) {
+            this.ownerUUID = tag.getUUID(JolCraftDataKeys.OWNER);
         } else {
             this.ownerUUID = null;
-            this.cachedOwner = null;
         }
+        this.cachedOwner = null;
 
-        if (tag.contains("LightPos")) {
-            this.currentLightPos = BlockPos.of(tag.getLong("LightPos"));
+        if (tag.contains(JolCraftDataKeys.POSITION)) {
+            this.currentLightPos = BlockPos.of(tag.getLong(JolCraftDataKeys.POSITION));
         } else {
             this.currentLightPos = null;
         }
 
-        if (tag.contains("RadiantLightLevel")) {
-            this.radiantLightLevel = Math.max(0, Math.min(15, tag.getInt("RadiantLightLevel")));
+        if (tag.contains(LIGHT_LEVEL)) {
+            this.radiantLightLevel = Math.max(0, Math.min(15, tag.getInt(LIGHT_LEVEL)));
         } else {
             this.radiantLightLevel = 15;
         }
 
-        // follow state is runtime-only
         this.lastOwnerPos = null;
         this.stationaryTicks = 0;
         this.lastFollowGameTick = Long.MIN_VALUE;
@@ -311,12 +312,12 @@ public class RadiantEntity extends Entity implements TraceableEntity {
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         if (ownerUUID != null) {
-            tag.putUUID("Owner", ownerUUID);
+            tag.putUUID(JolCraftDataKeys.OWNER, ownerUUID);
         }
         if (currentLightPos != null) {
-            tag.putLong("LightPos", currentLightPos.asLong());
+            tag.putLong(JolCraftDataKeys.POSITION, currentLightPos.asLong());
         }
-        tag.putInt("RadiantLightLevel", radiantLightLevel);
+        tag.putInt(LIGHT_LEVEL, radiantLightLevel);
     }
 
     @Override

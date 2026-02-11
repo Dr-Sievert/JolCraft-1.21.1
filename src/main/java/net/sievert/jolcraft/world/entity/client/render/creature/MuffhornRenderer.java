@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.client.render.animal;
+package net.sievert.jolcraft.world.entity.client.render.creature;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.entity.AgeableMobRenderer;
@@ -7,10 +7,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.entity.client.util.animal.MuffhornFurLayer;
-import net.sievert.jolcraft.world.entity.client.util.animal.MuffhornRenderState;
-import net.sievert.jolcraft.world.entity.client.model.animal.MuffhornModel;
-import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
+import net.sievert.jolcraft.world.entity.client.util.creature.MuffhornFurLayer;
+import net.sievert.jolcraft.world.entity.client.util.creature.MuffhornRenderState;
+import net.sievert.jolcraft.world.entity.client.model.creature.MuffhornModel;
+import net.sievert.jolcraft.world.entity.custom.creature.MuffhornEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -32,7 +32,7 @@ public class MuffhornRenderer extends AgeableMobRenderer<MuffhornEntity, Muffhor
 
     @Override
     public ResourceLocation getTextureLocation(MuffhornRenderState state) {
-        return JolCraft.location("textures/entity/animal/muffhorn.png");
+        return JolCraft.location("textures/entity/creature/muffhorn.png");
     }
 
     public MuffhornRenderState createRenderState() {

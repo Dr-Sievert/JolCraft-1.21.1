@@ -18,6 +18,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
 import net.sievert.jolcraft.world.block.entity.custom.client.model.StrongboxModel;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implements BlockEntityRenderer<T> {
@@ -59,7 +60,7 @@ public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implement
 
 
     @Override
-    public AABB getRenderBoundingBox(T blockEntity) {
+    public @NotNull AABB getRenderBoundingBox(T blockEntity) {
         return AABB.encapsulatingFullBlocks(blockEntity.getBlockPos().offset(-1, 0, -1), blockEntity.getBlockPos().offset(1, 1, 1));
     }
 }

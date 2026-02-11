@@ -14,7 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.lore.LoreRarity;
-import net.sievert.jolcraft.data.lore.client.LoreKeyProperty;
+import net.sievert.jolcraft.world.item.client.LoreKey;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
@@ -114,7 +114,7 @@ public final class DwarfModelSubProvider implements AbstractModelProvider.ModelS
         itemModels.itemModelOutput.accept(
                 tomeItem,
                 new SelectItemModel.Unbaked(
-                        new SelectItemModel.UnbakedSwitch<>(LoreKeyProperty.INSTANCE, switchCases),
+                        new SelectItemModel.UnbakedSwitch<>(LoreKey.INSTANCE, switchCases),
                         Optional.of(fallbackModel)
                 )
         );

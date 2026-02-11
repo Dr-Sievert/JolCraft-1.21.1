@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.TriState;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ import java.util.function.Supplier;
 @MethodsReturnNonnullByDefault
 public class HopsCropBottomBlock extends CropBlock {
     public static final int MAX_AGE = 9;
-    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 9);
+    public static final IntegerProperty AGE = IntegerProperty.create(JolCraftDataKeys.AGE, 0, 9);
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
             Block.box(0, 0, 0, 16, 2, 16),
             Block.box(0, 0, 0, 16, 4, 16),

@@ -11,7 +11,7 @@ import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
+import net.sievert.jolcraft.world.entity.custom.creature.MuffhornEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)

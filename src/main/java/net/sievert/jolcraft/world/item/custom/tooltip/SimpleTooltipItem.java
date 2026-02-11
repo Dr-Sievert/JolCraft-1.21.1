@@ -15,11 +15,12 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class SimpleTooltipItem extends Item {
 
-    protected final String tooltipKey;
+    /** Full translation key, e.g. "tooltip.jolcraft.dev_key" */
+    protected final String tooltipTranslationKey;
 
-    public SimpleTooltipItem(Properties properties, String tooltipKey) {
+    public SimpleTooltipItem(Properties properties, String tooltipTranslationKey) {
         super(properties);
-        this.tooltipKey = tooltipKey;
+        this.tooltipTranslationKey = tooltipTranslationKey;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -27,7 +28,8 @@ public class SimpleTooltipItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         TooltipHelper.addAltTooltip(
                 tooltip,
-                Component.translatable("tooltip.jolcraft." + tooltipKey).withStyle(ChatFormatting.GRAY),
+                Component.translatable(tooltipTranslationKey)
+                        .withStyle(ChatFormatting.GRAY),
                 List.of()
         );
         super.appendHoverText(stack, context, tooltip, flag);

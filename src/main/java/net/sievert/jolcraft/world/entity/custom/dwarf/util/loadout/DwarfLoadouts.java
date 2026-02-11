@@ -8,6 +8,7 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -60,8 +61,8 @@ public final class DwarfLoadouts {
     }
 
     public static void register(DwarfProfession profession, Provider provider) {
-        Objects.requireNonNull(profession, "profession");
-        Objects.requireNonNull(provider, "provider");
+        Objects.requireNonNull(profession, JolCraftDataKeys.PROFESSION);
+        Objects.requireNonNull(provider, JolCraftDataKeys.PROVIDER);
         PROVIDERS.put(profession, provider);
     }
 

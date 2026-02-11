@@ -25,14 +25,12 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
     public void addTranslations(AbstractLanguageProvider p) {
 
         // Structure fixed strings
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_UNKNOWN, "Unknown");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_DISCOVERED, "Discovered: ");
 
         // Deepslate Compass fixed strings
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_TRACKING, "Currently tracking: ");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE, "No structures found!");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_LOCATE, "The tracked %s is at %s (%s blocks away)");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_DIAL_UNKNOWN, "Unknown");
 
         // Dial labels
         for (StructureGroup group : StructureGroup.values()) {

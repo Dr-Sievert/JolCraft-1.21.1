@@ -51,6 +51,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
@@ -75,7 +76,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final BooleanProperty LOCKED = BooleanProperty.create("locked");
+    public static final BooleanProperty LOCKED = BooleanProperty.create(JolCraftDataKeys.LOCKED);
 
     private static final VoxelShape SHAPE_NS = Block.box(1, 0, 3, 15, 10, 13);
     private static final VoxelShape SHAPE_EW = Block.box(3, 0, 1, 13, 10, 15);

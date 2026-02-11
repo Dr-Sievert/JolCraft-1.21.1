@@ -9,15 +9,14 @@ import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 
 @OnlyIn(Dist.CLIENT)
 public class StrongboxModel extends Model {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location("strongbox"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftBlockIds.STRONGBOX), JolCraftDataKeys.MAIN);
 
-    private static final String BOTTOM = "bottom";
-    private static final String LID = "lid";
-    private static final String LOCK = "lock";
     private final ModelPart lid;
     private final ModelPart lock;
 

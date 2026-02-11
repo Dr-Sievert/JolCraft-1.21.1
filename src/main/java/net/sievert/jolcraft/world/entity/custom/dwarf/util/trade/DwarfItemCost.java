@@ -12,6 +12,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
@@ -22,9 +23,9 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
 
     public static final Codec<DwarfItemCost> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    Item.CODEC.fieldOf("id").forGetter(DwarfItemCost::item),
-                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(DwarfItemCost::count),
-                    DataComponentPredicate.CODEC.optionalFieldOf("components", DataComponentPredicate.EMPTY).forGetter(DwarfItemCost::components)
+                    Item.CODEC.fieldOf(JolCraftDataKeys.ID).forGetter(DwarfItemCost::item),
+                    ExtraCodecs.POSITIVE_INT.optionalFieldOf(JolCraftDataKeys.AMOUNT, 1).forGetter(DwarfItemCost::count),
+                    DataComponentPredicate.CODEC.optionalFieldOf(JolCraftDataKeys.COMPONENTS, DataComponentPredicate.EMPTY).forGetter(DwarfItemCost::components)
             ).apply(instance, DwarfItemCost::new)
     );
 

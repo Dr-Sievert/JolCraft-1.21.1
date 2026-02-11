@@ -23,6 +23,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
@@ -40,6 +41,14 @@ import java.util.UUID;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class AbstractBreedingEntity extends AgeableMob implements EntityData {
+
+    private static final String NBT_VARIANT = JolCraftDataKeys.VARIANT;
+    private static final String NBT_BEARD = JolCraftDataKeys.BEARD;
+    private static final String NBT_EYE = JolCraftDataKeys.EYE;
+    private static final String NBT_IN_LOVE = JolCraftDataKeys.IN_LOVE;
+    private static final String NBT_LOVE_CAUSE = JolCraftDataKeys.LOVE_CAUSE;
+    private static final String NBT_AGE = JolCraftDataKeys.AGE;
+    private static final String NBT_FORCED_AGE = JolCraftDataKeys.FORCED_AGE;
 
     protected int inLove;
 
@@ -70,27 +79,27 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getData(VARIANT));
-        compound.putInt("Beard", this.getData(BEARD_COLOR));
-        compound.putInt("Eye", this.getData(EYE_COLOR));
-        compound.putInt("InLove", this.inLove);
+        compound.putInt(NBT_VARIANT, this.getData(VARIANT));
+        compound.putInt(NBT_BEARD, this.getData(BEARD_COLOR));
+        compound.putInt(NBT_EYE, this.getData(EYE_COLOR));
+        compound.putInt(NBT_IN_LOVE, this.inLove);
         if (this.loveCause != null) {
-            compound.putUUID("LoveCause", this.loveCause);
+            compound.putUUID(NBT_LOVE_CAUSE, this.loveCause);
         }
-        compound.putInt("Age", this.getAge());
-        compound.putInt("ForcedAge", this.forcedAge);
+        compound.putInt(NBT_AGE, this.getAge());
+        compound.putInt(NBT_FORCED_AGE, this.forcedAge);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        setData(VARIANT, compound.getInt("Variant"));
-        setData(BEARD_COLOR, compound.getInt("Beard"));
-        setData(EYE_COLOR, compound.getInt("Eye"));
-        this.inLove = compound.getInt("InLove");
-        this.loveCause = compound.hasUUID("LoveCause") ? compound.getUUID("LoveCause") : null;
-        this.setAge(compound.getInt("Age"));
-        this.forcedAge = compound.getInt("ForcedAge");
+        setData(VARIANT, compound.getInt(NBT_VARIANT));
+        setData(BEARD_COLOR, compound.getInt(NBT_BEARD));
+        setData(EYE_COLOR, compound.getInt(NBT_EYE));
+        this.inLove = compound.getInt(NBT_IN_LOVE);
+        this.loveCause = compound.hasUUID(NBT_LOVE_CAUSE) ? compound.getUUID(NBT_LOVE_CAUSE) : null;
+        this.setAge(compound.getInt(NBT_AGE));
+        this.forcedAge = compound.getInt(NBT_FORCED_AGE);
     }
 
     @Override

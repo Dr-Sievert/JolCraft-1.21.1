@@ -1,11 +1,12 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty;
 
 import net.minecraft.network.chat.Component;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 
 public enum BountyTier {
 
-    UNKNOWN(0, "unknown"),
+    UNKNOWN(0, JolCraftLanguageKeys.UNKNOWN),
     NOVICE(1, JolCraftLanguageKeys.LEVEL_NOVICE),
     APPRENTICE(2, JolCraftLanguageKeys.LEVEL_APPRENTICE),
     JOURNEYMAN(3, JolCraftLanguageKeys.LEVEL_JOURNEYMAN),

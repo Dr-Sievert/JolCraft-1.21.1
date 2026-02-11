@@ -13,13 +13,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.id.item.JolCraftItemPropertyIds;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public final class CoinPouchAmountProperty implements SelectItemModelProperty<Integer> {
-    public static final ResourceLocation KEY = JolCraft.location("coin_pouch_amount");
+    public static final ResourceLocation KEY = JolCraft.location(JolCraftItemPropertyIds.COIN_POUCH_AMOUNT);
     public static final CoinPouchAmountProperty INSTANCE = new CoinPouchAmountProperty();
 
     public static final MapCodec<CoinPouchAmountProperty> MAP_CODEC = MapCodec.unit(INSTANCE);

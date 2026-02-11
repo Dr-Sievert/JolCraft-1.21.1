@@ -18,7 +18,9 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
@@ -61,8 +63,8 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
     private static final int SCROLL_BAR_HEIGHT = 139;
     private static final int SCROLL_BAR_TOP_POS_Y = 18;
     private static final int SCROLL_BAR_START_X = 94;
-    private static final Component TRADES_LABEL = Component.translatable("merchant.trades");
-    private static final Component DEPRECATED_TOOLTIP = Component.translatable("merchant.deprecated");
+    private static final Component TRADES_LABEL = Component.translatable(JolCraftLanguageKeys.MERCHANT_TRADES);
+    private static final Component DEPRECATED_TOOLTIP = Component.translatable(JolCraftLanguageKeys.MERCHANT_DEPRECATED);
 
     /**
      * The integer value corresponding to the currently selected merchant recipe.
@@ -114,8 +116,8 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
 
         Component displayTitle;
         if (showLvl && level > 0 && level <= 5) {
-            Component rank = Component.translatable("merchant.level." + level);
-            displayTitle = Component.translatable("merchant.title", this.title, rank);
+            Component rank = Component.translatable(DwarfMerchantData.Level.langKeyFromId(level));
+            displayTitle = Component.translatable(JolCraftLanguageKeys.MERCHANT_TITLE, this.title, rank);
         } else {
             displayTitle = this.title;
         }

@@ -46,13 +46,11 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // CompassLangSubProvider
     // ---------------------------------------------------------------------
 
-    public static final String TOOLTIP_STRUCTURE_UNKNOWN = tooltip(JolCraftDataKeys.STRUCTURE, JolCraftDataKeys.UNKNOWN);
     public static final String TOOLTIP_STRUCTURE_DISCOVERED = tooltip(JolCraftDataKeys.STRUCTURE, "discovered");
 
     public static final String TOOLTIP_DEEPSLATE_COMPASS_TRACKING = category(JolCraftDataKeys.TOOLTIP, JolCraftDataKeys.DEEPSLATE_COMPASS);
     public static final String TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE = tooltip(JolCraftDataKeys.DEEPSLATE_COMPASS, "no_structure");
     public static final String TOOLTIP_DEEPSLATE_COMPASS_LOCATE = tooltip(JolCraftDataKeys.DEEPSLATE_COMPASS, "locate");
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_DIAL_UNKNOWN = tooltip(JolCraftDataKeys.DEEPSLATE_COMPASS_DIAL, JolCraftDataKeys.UNKNOWN);
 
     // ---------------------------------------------------------------------
     // ContainerLangSubProvider
@@ -130,6 +128,10 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_PROFESSION_CONTRACT = tooltip("contract", "profession");
     public static final String TOOLTIP_GUILD_SIGIL = category(JolCraftDataKeys.TOOLTIP, "guild_sigil");
 
+    public static final String MERCHANT_TITLE = "merchant.title";
+    public static final String MERCHANT_TRADES = "merchant.trades";
+    public static final String MERCHANT_DEPRECATED = "merchant.deprecated";
+
     public static final String LEVEL_NOVICE      = "merchant.level.1";
     public static final String LEVEL_APPRENTICE  = "merchant.level.2";
     public static final String LEVEL_JOURNEYMAN  = "merchant.level.3";
@@ -174,6 +176,7 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String TOOLTIP_HOLD_KEY = category(JolCraftDataKeys.TOOLTIP, "hold_key");
     public static final String TOOLTIP_DEV_KEY = category(JolCraftDataKeys.TOOLTIP, "dev_key");
+    public static final String UNKNOWN = mod(JolCraftDataKeys.UNKNOWN);
 
     public static final String TOOLTIP_QUILL_EMPTY = category(JolCraftDataKeys.TOOLTIP, "quill_empty");
     public static final String TOOLTIP_QUILL = category(JolCraftDataKeys.TOOLTIP, "quill");

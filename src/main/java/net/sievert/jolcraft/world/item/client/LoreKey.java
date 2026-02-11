@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.lore.client;
+package net.sievert.jolcraft.world.item.client;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -12,7 +12,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.id.lore.JolCraftLoreIds;
+import net.sievert.jolcraft.data.id.item.JolCraftItemPropertyIds;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -22,16 +22,17 @@ import javax.annotation.Nullable;
  * This is a stateless, singleton property used only for SelectItemModel.
  */
 @OnlyIn(Dist.CLIENT)
-public final class LoreKeyProperty implements SelectItemModelProperty<String> {
+public final class LoreKey implements SelectItemModelProperty<String> {
 
-    private LoreKeyProperty() {}
+    private LoreKey() {}
 
-    public static final ResourceLocation KEY = JolCraft.location(JolCraftLoreIds.LORE_KEY);
-    public static final LoreKeyProperty INSTANCE = new LoreKeyProperty();
+    public static final ResourceLocation KEY = JolCraft.location(JolCraftItemPropertyIds.LORE_KEY);
 
-    public static final MapCodec<LoreKeyProperty> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final LoreKey INSTANCE = new LoreKey();
 
-    public static final Type<LoreKeyProperty, String> TYPE = SelectItemModelProperty.Type.create(MAP_CODEC, Codec.STRING);
+    public static final MapCodec<LoreKey> MAP_CODEC = MapCodec.unit(INSTANCE);
+
+    public static final Type<LoreKey, String> TYPE = SelectItemModelProperty.Type.create(MAP_CODEC, Codec.STRING);
 
     @Nullable
     @Override

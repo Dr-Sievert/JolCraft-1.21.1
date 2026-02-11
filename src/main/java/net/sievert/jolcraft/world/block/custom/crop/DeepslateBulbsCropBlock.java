@@ -19,6 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.TriState;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.data.JolCraftTags;
@@ -29,7 +30,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class DeepslateBulbsCropBlock extends CropBlock {
     public static final int MAX_AGE = 9;
-    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, MAX_AGE);
+    public static final IntegerProperty AGE = IntegerProperty.create(JolCraftDataKeys.AGE, 0, MAX_AGE);
 
     // Stage 0–6: height = 0–6
     // Stage 7–8: height = 10

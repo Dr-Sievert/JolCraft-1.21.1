@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty;
 
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public enum BountyType {
 
-    UNKNOWN("unknown"),
+    UNKNOWN(JolCraftLanguageKeys.UNKNOWN),
     MINER(DwarfProfession.MINER.getId()),
     MERCHANT(DwarfProfession.MERCHANT.getId());
 

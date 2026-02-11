@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 
@@ -146,7 +147,7 @@ public final class JolCraftTrimAttributes {
     private static String attributePath(Holder<Attribute> attribute) {
         return attribute.unwrapKey()
                 .map(k -> k.location().getPath())
-                .orElse("unknown");
+                .orElse(JolCraftDataKeys.UNKNOWN);
     }
 
     public record TrimAttribute(

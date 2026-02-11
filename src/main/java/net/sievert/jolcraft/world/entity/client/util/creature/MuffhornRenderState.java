@@ -1,9 +1,9 @@
-package net.sievert.jolcraft.world.entity.client.util.animal;
+package net.sievert.jolcraft.world.entity.client.util.creature;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.world.entity.custom.animal.MuffhornEntity;
+import net.sievert.jolcraft.world.entity.custom.creature.MuffhornEntity;
 
 @OnlyIn(Dist.CLIENT)
 public class MuffhornRenderState extends LivingEntityRenderState {

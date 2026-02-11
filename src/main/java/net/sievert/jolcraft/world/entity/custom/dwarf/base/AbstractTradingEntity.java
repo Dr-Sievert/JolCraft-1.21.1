@@ -31,6 +31,7 @@ import net.minecraft.world.level.portal.TeleportTransition;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
@@ -63,6 +64,12 @@ import java.util.Set;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class AbstractTradingEntity extends AbstractBreedingEntity implements DwarfMerchant, EntityData {
+
+    private static final String NBT_XP = JolCraftDataKeys.XP;
+    private static final String NBT_OFFERS = JolCraftDataKeys.OFFERS;
+    private static final String NBT_MERCHANT_DATA = "merchant_data";
+    private static final String NBT_RESTOCK_OFFER_COUNT = "restock_offer_count";
+    private static final String NBT_PERSISTENT_POOL_SELECTIONS = "persistent_pool_selections";
 
     // ------------------------------------------------------------
     // Trade sound debounce (server-side)
@@ -148,24 +155,24 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         DwarfMerchantData.CODEC
                 .encodeStart(NbtOps.INSTANCE, new DwarfMerchantData(this.getMerchantLevel()))
                 .resultOrPartial(msg -> JolCraftLogs.error(JolCraftLogTags.ENTITY, "{}", msg))
-                .ifPresent(tag -> compound.put("MerchantData", tag));
+                .ifPresent(tag -> compound.put(NBT_MERCHANT_DATA, tag));
 
-        compound.putInt("Xp", this.dwarfXp);
-        compound.putInt("RestockOfferCount", this.restockOfferCount);
+        compound.putInt(NBT_XP, this.dwarfXp);
+        compound.putInt(NBT_RESTOCK_OFFER_COUNT, this.restockOfferCount);
 
         if (!this.persistentPoolSelections.isEmpty()) {
             ListTag list = new ListTag();
             for (ResourceLocation id : this.persistentPoolSelections) {
                 list.add(StringTag.valueOf(id.toString()));
             }
-            compound.put("PersistentPoolSelections", list);
+            compound.put(NBT_PERSISTENT_POOL_SELECTIONS, list);
         }
 
         if (!this.level().isClientSide) {
             DwarfMerchantOffers merchantoffers = this.getOffers();
             if (!merchantoffers.isEmpty()) {
                 compound.put(
-                        "Offers",
+                        NBT_OFFERS,
                         DwarfMerchantOffers.CODEC
                                 .encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), merchantoffers)
                                 .getOrThrow()
@@ -178,26 +185,26 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
 
-        if (compound.contains("MerchantData", 10)) {
+        if (compound.contains(NBT_MERCHANT_DATA, 10)) {
             DwarfMerchantData.CODEC
-                    .parse(NbtOps.INSTANCE, compound.get("MerchantData"))
+                    .parse(NbtOps.INSTANCE, compound.get(NBT_MERCHANT_DATA))
                     .resultOrPartial(msg -> JolCraftLogs.error(JolCraftLogTags.ENTITY, "{}", msg))
                     .ifPresent(data -> setMerchantLevel(data.level()));
         }
 
-        if (compound.contains("Xp", 3)) {
-            this.dwarfXp = compound.getInt("Xp");
+        if (compound.contains(NBT_XP, 3)) {
+            this.dwarfXp = compound.getInt(NBT_XP);
         }
 
-        if (compound.contains("RestockOfferCount", 3)) {
-            this.restockOfferCount = Math.max(0, compound.getInt("RestockOfferCount"));
+        if (compound.contains(NBT_RESTOCK_OFFER_COUNT, 3)) {
+            this.restockOfferCount = Math.max(0, compound.getInt(NBT_RESTOCK_OFFER_COUNT));
         } else {
             this.restockOfferCount = 0;
         }
 
         this.persistentPoolSelections.clear();
-        if (compound.contains("PersistentPoolSelections", 9)) {
-            ListTag list = compound.getList("PersistentPoolSelections", 8);
+        if (compound.contains(NBT_PERSISTENT_POOL_SELECTIONS, 9)) {
+            ListTag list = compound.getList(NBT_PERSISTENT_POOL_SELECTIONS, 8);
             for (int i = 0; i < list.size(); i++) {
                 String s = list.getString(i);
                 try {
@@ -208,9 +215,9 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             }
         }
 
-        if (compound.contains("Offers")) {
+        if (compound.contains(NBT_OFFERS)) {
             DwarfMerchantOffers.CODEC
-                    .parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get("Offers"))
+                    .parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get(NBT_OFFERS))
                     .resultOrPartial(Util.prefix(
                             "Failed to load offers: ",
                             msg -> JolCraftLogs.warn(JolCraftLogTags.ENTITY, "{}", msg)

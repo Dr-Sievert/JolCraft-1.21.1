@@ -26,6 +26,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.goal.DwarfGoals;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
@@ -53,6 +54,12 @@ import java.util.*;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, EntityData {
+
+    private static final String NBT_PROFESSION = JolCraftDataKeys.PROFESSION;
+    private static final String NBT_CURRENT_ACTION = "current_action";
+    private static final String NBT_CURRENT_ACTION_SUBTYPE = "current_action_subtype";
+    private static final String NBT_PAID_TICKS = "paid_ticks";
+    private static final String NBT_PAID_CAUSE = "paid_cause";
 
     public AbstractDwarfEntity(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);
@@ -149,20 +156,21 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(PROFESSION, "none");
+        builder.define(PROFESSION, DwarfProfession.NONE.getId());
         builder.define(CURRENT_ACTION, DwarfActionType.IDLE.ordinal());
         builder.define(CURRENT_ACTION_SUBTYPE, -1);
     }
-
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putString("Profession", this.getData(PROFESSION));
-        compound.putInt("CurrentAction", this.getData(CURRENT_ACTION));
-        compound.putInt("CurrentActionSubtype", this.getData(CURRENT_ACTION_SUBTYPE));
-        compound.putInt("PaidTicks", this.paidTicks);
+
+        compound.putString(NBT_PROFESSION, this.getData(PROFESSION));
+        compound.putInt(NBT_CURRENT_ACTION, this.getData(CURRENT_ACTION));
+        compound.putInt(NBT_CURRENT_ACTION_SUBTYPE, this.getData(CURRENT_ACTION_SUBTYPE));
+        compound.putInt(NBT_PAID_TICKS, this.paidTicks);
+
         if (this.paidCause != null) {
-            compound.putUUID("PaidCause", this.paidCause);
+            compound.putUUID(NBT_PAID_CAUSE, this.paidCause);
         }
     }
 
@@ -170,21 +178,23 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
 
-        if (compound.contains("Profession", 8)) {
-            this.setProfession(DwarfProfession.byId(compound.getString("Profession")));
+        if (compound.contains(NBT_PROFESSION, 8)) {
+            this.setProfession(DwarfProfession.byId(compound.getString(NBT_PROFESSION)));
         }
 
-        if (compound.contains("CurrentAction", 3)) {
-            this.getEntityData().set(CURRENT_ACTION, compound.getInt("CurrentAction"));
-        }
-        if (compound.contains("CurrentActionSubtype", 3)) {
-            this.getEntityData().set(CURRENT_ACTION_SUBTYPE, compound.getInt("CurrentActionSubtype"));
+        if (compound.contains(NBT_CURRENT_ACTION, 3)) {
+            this.getEntityData().set(CURRENT_ACTION, compound.getInt(NBT_CURRENT_ACTION));
         }
 
-        this.paidTicks = compound.getInt("PaidTicks");
-        this.paidCause = compound.hasUUID("PaidCause") ? compound.getUUID("PaidCause") : null;
+        if (compound.contains(NBT_CURRENT_ACTION_SUBTYPE, 3)) {
+            this.getEntityData().set(CURRENT_ACTION_SUBTYPE, compound.getInt(NBT_CURRENT_ACTION_SUBTYPE));
+        }
+
+        this.paidTicks = compound.getInt(NBT_PAID_TICKS);
+        this.paidCause = compound.hasUUID(NBT_PAID_CAUSE)
+                ? compound.getUUID(NBT_PAID_CAUSE)
+                : null;
     }
-
 
     //Attributes
 

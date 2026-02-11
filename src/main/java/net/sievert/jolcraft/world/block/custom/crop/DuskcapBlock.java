@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -31,7 +32,7 @@ public class DuskcapBlock extends JolCraftMushroomBlock{
 
     public static final MapCodec<DuskcapBlock> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(block -> block.properties)
+                    BlockBehaviour.Properties.CODEC.fieldOf(JolCraftDataKeys.AGE).forGetter(block -> block.properties)
             ).apply(builder, DuskcapBlock::new)
     );
 

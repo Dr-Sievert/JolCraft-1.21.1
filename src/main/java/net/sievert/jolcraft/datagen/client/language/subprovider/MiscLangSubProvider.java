@@ -14,6 +14,7 @@ public final class MiscLangSubProvider implements AbstractLanguageProvider.LangS
         // General
         p.putManual(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, "Hold %s for more info");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DEV_KEY, "Used for playtesting.");
+        p.putManual(JolCraftLanguageKeys.UNKNOWN, "Unknown");
 
         // Items / blocks
         p.putManual(JolCraftLanguageKeys.TOOLTIP_QUILL_EMPTY, "Can be filled with ink sacs or by right-clicking a squid.");

@@ -16,16 +16,21 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.key.JolCraftDataKeys;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class DeepslateCompassAngleState extends NeedleDirectionHelper {
+
+    private static final String WOBBLE = "wobble";
+    private static final String TARGET = JolCraftDataKeys.TARGET;
+
     public static final MapCodec<DeepslateCompassAngleState> MAP_CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
-                            Codec.BOOL.optionalFieldOf("wobble", Boolean.TRUE).forGetter(NeedleDirectionHelper::wobble),
-                            DeepslateCompassAngleState.CompassTarget.CODEC.fieldOf("target").forGetter(DeepslateCompassAngleState::target)
+                            Codec.BOOL.optionalFieldOf(WOBBLE, Boolean.TRUE).forGetter(NeedleDirectionHelper::wobble),
+                            DeepslateCompassAngleState.CompassTarget.CODEC.fieldOf(TARGET).forGetter(DeepslateCompassAngleState::target)
                     )
                     .apply(instance, DeepslateCompassAngleState::new)
     );
@@ -100,14 +105,14 @@ public class DeepslateCompassAngleState extends NeedleDirectionHelper {
 
     @OnlyIn(Dist.CLIENT)
     public enum CompassTarget implements StringRepresentable {
-        NONE("none") {
+        NONE(JolCraftDataKeys.NONE) {
             @Nullable
             @Override
             public GlobalPos get(ClientLevel level, ItemStack stack, Entity entity) {
                 return null;
             }
         },
-        STRUCTURE("structure") {
+        STRUCTURE(JolCraftDataKeys.STRUCTURE) {
             @Override
             public @Nullable GlobalPos get(ClientLevel level, ItemStack stack, Entity entity) {
                 return stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET.get());
