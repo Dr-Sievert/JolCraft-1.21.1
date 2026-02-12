@@ -18,8 +18,8 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenEndorsementsPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenReputationPacket;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
@@ -84,10 +84,10 @@ public class ReputationTabletItem extends Item {
             stack.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), endorsements);
 
             JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundEndorsementsPacket(DwarvenReputationHelper.getAllEndorsements(serverPlayer))
+                    new ClientboundDwarvenEndorsementsPacket(DwarvenReputationHelper.getAllEndorsements(serverPlayer))
             );
             JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundReputationPacket(tier)
+                    new ClientboundDwarvenReputationPacket(tier)
             );
         }
         super.onCraftedBy(stack, level, player);

@@ -23,7 +23,8 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
@@ -45,10 +46,10 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     private static final String NBT_VARIANT = JolCraftDictionary.VARIANT;
     private static final String NBT_BEARD = JolCraftDictionary.BEARD;
     private static final String NBT_EYE = JolCraftDictionary.EYE;
-    private static final String NBT_IN_LOVE = JolCraftDictionary.IN_LOVE;
-    private static final String NBT_LOVE_CAUSE = JolCraftDictionary.LOVE_CAUSE;
+    private static final String NBT_IN_LOVE = JolCraftStrings.underscored(JolCraftDictionary.IN, JolCraftDictionary.LOVE);
+    private static final String NBT_LOVE_CAUSE = JolCraftStrings.underscored(JolCraftDictionary.LOVE, JolCraftDictionary.CAUSE);
     private static final String NBT_AGE = JolCraftDictionary.AGE;
-    private static final String NBT_FORCED_AGE = JolCraftDictionary.FORCED_AGE;
+    private static final String NBT_FORCED_AGE = JolCraftStrings.underscored(JolCraftDictionary.FORCED, JolCraftDictionary.AGE);
 
     protected int inLove;
 

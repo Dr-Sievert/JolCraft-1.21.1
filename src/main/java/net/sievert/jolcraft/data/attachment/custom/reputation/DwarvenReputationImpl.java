@@ -7,9 +7,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
@@ -126,7 +127,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
         for (ResourceLocation profId : endorsements) {
             endorsementList.add(StringTag.valueOf(profId.toString()));
         }
-        tag.put(JolCraftDictionary.ENDORSEMENTS, endorsementList);
+        tag.put(JolCraftStrings.plural(JolCraftDictionary.ENDORSEMENT), endorsementList);
 
         return tag;
     }
@@ -136,7 +137,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
         this.setTierId(tag.getInt(JolCraftDictionary.TIER));
 
         Set<ResourceLocation> parsed = new HashSet<>();
-        ListTag endorsementList = tag.getList(JolCraftDictionary.ENDORSEMENTS, 8);
+        ListTag endorsementList = tag.getList(JolCraftStrings.plural(JolCraftDictionary.ENDORSEMENT), 8);
         for (int i = 0; i < endorsementList.size(); i++) {
             String idString = endorsementList.getString(i);
             ResourceLocation profId = ResourceLocation.tryParse(idString);
@@ -177,7 +178,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
                                     .map(ResourceLocation::toString)
                                     .collect(Collectors.toList())
                     )
-                    .fieldOf(JolCraftDictionary.ENDORSEMENTS)
+                    .fieldOf(JolCraftStrings.plural(JolCraftDictionary.ENDORSEMENT))
                     .forGetter(rep -> Set.copyOf(rep.endorsements))
     ).apply(instance, (tierId, endorsementSet) -> {
         DwarvenReputationImpl impl = new DwarvenReputationImpl();

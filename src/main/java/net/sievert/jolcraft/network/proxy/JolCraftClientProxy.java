@@ -86,11 +86,11 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
 
 
     @Override
-    public void apply(ClientboundLoreUnlocksPacket packet) {
+    public void apply(ClientboundDwarfTomeUnlocksPacket packet) {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        DwarfLoreUnlock unlock = player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get());
+        DwarfLoreUnlock unlock = player.getData(JolCraftAttachments.DWARF_TOME_UNLOCKS.get());
 
         AtomicInteger invalid = new AtomicInteger();
 
@@ -148,7 +148,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     }
 
     @Override
-    public void apply(ClientboundReputationPacket packet) {
+    public void apply(ClientboundDwarvenReputationPacket packet) {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 
@@ -157,7 +157,7 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     }
 
     @Override
-    public void apply(ClientboundEndorsementsPacket packet) {
+    public void apply(ClientboundDwarvenEndorsementsPacket packet) {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
 

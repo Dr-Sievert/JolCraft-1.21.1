@@ -6,7 +6,8 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -34,7 +35,7 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
 
         // Dial labels
         for (StructureGroup group : StructureGroup.values()) {
-            String key = JolCraftLanguageKeys.tooltip(JolCraftDictionary.DEEPSLATE_COMPASS_DIAL, group.id());
+            String key = JolCraftLanguageKeys.tooltip(JolCraftItemIds.DEEPSLATE_COMPASS_DIAL, group.id());
             if (p.hasKey(key)) continue;
             p.putManual(key, JolCraftStrings.toTitleCase(group.id()));
         }

@@ -7,8 +7,9 @@ import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
-import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
+import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -101,10 +102,10 @@ public final class TrimLangSubProvider implements AbstractLanguageProvider.LangS
     // -------------------------------------------------------------------------
 
     public static String trimMaterial(String path) {
-        return AbstractLanguageKeys.category(JolCraftDictionary.TRIM_MATERIAL, path);
+        return AbstractLanguageKeys.category(JolCraftTrimIds.TRIM_MATERIAL, path);
     }
 
     public static String trimPattern(String path) {
-        return AbstractLanguageKeys.category(JolCraftDictionary.TRIM_PATTERN, path);
+        return AbstractLanguageKeys.category(JolCraftTrimIds.TRIM_PATTERN, path);
     }
 }

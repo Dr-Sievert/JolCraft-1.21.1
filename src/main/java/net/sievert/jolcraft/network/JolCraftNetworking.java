@@ -36,9 +36,9 @@ public final class JolCraftNetworking {
                 .playToClient(ClientboundDeliriumCursePacket.TYPE, ClientboundDeliriumCursePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDelirium)
                 .playToClient(ClientboundDwarvenLanguagePacket.TYPE, ClientboundDwarvenLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLanguage)
                 .playToClient(ClientboundAncientDwarvenLanguagePacket.TYPE, ClientboundAncientDwarvenLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundAncientLanguage)
-                .playToClient(ClientboundReputationPacket.TYPE, ClientboundReputationPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundReputation)
-                .playToClient(ClientboundEndorsementsPacket.TYPE, ClientboundEndorsementsPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundEndorsements)
-                .playToClient(ClientboundLoreUnlocksPacket.TYPE, ClientboundLoreUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)
+                .playToClient(ClientboundDwarvenReputationPacket.TYPE, ClientboundDwarvenReputationPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundReputation)
+                .playToClient(ClientboundDwarvenEndorsementsPacket.TYPE, ClientboundDwarvenEndorsementsPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundEndorsements)
+                .playToClient(ClientboundDwarfTomeUnlocksPacket.TYPE, ClientboundDwarfTomeUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)
                 .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers);
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,

@@ -14,7 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)

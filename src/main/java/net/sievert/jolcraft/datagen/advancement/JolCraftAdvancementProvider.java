@@ -81,7 +81,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_0.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.HISTORIAN)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.HISTORIAN)
         );
 
         // MERCHANT
@@ -100,7 +100,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_0.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.MERCHANT)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.MERCHANT)
         );
 
         // SCRAPPER
@@ -119,7 +119,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_0.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.SCRAPPER)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.SCRAPPER)
         );
 
         // KNOWN FACE
@@ -152,7 +152,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_1.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.BREWMASTER)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.BREWMASTER)
         );
 
         // GUARD
@@ -171,7 +171,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_1.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.GUARD)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.GUARD)
         );
 
         // KEEPER
@@ -190,7 +190,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_1.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.KEEPER)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.KEEPER)
         );
 
         // TRUSTED (REP TIER 2)
@@ -223,7 +223,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_2.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.ARTISAN)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.ARTISAN)
         );
 
         // EXPLORER
@@ -242,7 +242,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_2.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.EXPLORER)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.EXPLORER)
         );
 
         // MINER
@@ -261,7 +261,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_2.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.MINER)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.MINER)
         );
 
         // RESPECTED (REP TIER 3)
@@ -294,7 +294,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_3.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.ALCHEMIST)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.ALCHEMIST)
         );
 
         // ARCANIST
@@ -313,7 +313,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_3.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.ARCANIST)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.ARCANIST)
         );
 
         // PRIEST
@@ -332,7 +332,7 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
                 JolCraftItems.REPUTATION_TABLET_3.get(),
                 AdvancementType.GOAL,
                 true, true, false,
-                EndorsementTrigger.endorsedBy(DwarfProfession.PRIEST)
+                DwarfEndorsementTrigger.endorsedBy(DwarfProfession.PRIEST)
         );
 
         // BLOOD-KIN (REP TIER 4)

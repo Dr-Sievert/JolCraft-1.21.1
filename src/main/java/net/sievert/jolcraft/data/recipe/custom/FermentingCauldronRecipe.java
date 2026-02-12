@@ -22,9 +22,10 @@ import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -195,11 +196,11 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
                 RecordCodecBuilder.mapCodec(inst -> inst.group(
                         Ingredient.CODEC.fieldOf(JolCraftDictionary.INGREDIENT).forGetter(r -> r.ingredient),
 
-                        Ingredient.CODEC.optionalFieldOf(JolCraftDictionary.VALID_STATES)
+                        Ingredient.CODEC.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.VALID, JolCraftStrings.plural(JolCraftDictionary.STATE)))
                                 .forGetter(r -> Optional.ofNullable(r.validStates)),
 
-                        Codec.INT.fieldOf(JolCraftDictionary.BREW_TICKS).forGetter(r -> r.brewTicks),
-                        Codec.INT.fieldOf(JolCraftDictionary.BUBBLE_TICKS).forGetter(r -> r.bubbleTicks),
+                        Codec.INT.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.BREW, JolCraftStrings.plural(JolCraftDictionary.TICK))).forGetter(r -> r.brewTicks),
+                        Codec.INT.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.BUBBLE, JolCraftStrings.plural(JolCraftDictionary.TICK))).forGetter(r -> r.bubbleTicks),
 
                         COLOR_CODEC.fieldOf(JolCraftDictionary.COLOR).forGetter(r -> r.color),
 

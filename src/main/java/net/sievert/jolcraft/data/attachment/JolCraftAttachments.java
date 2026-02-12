@@ -47,8 +47,8 @@ public class JolCraftAttachments {
                             .build()
             );
 
-    public static final Supplier<AttachmentType<DwarfLoreUnlockImpl>> DWARF_TOME_UNLOCK =
-            ATTACHMENT_TYPES.register(JolCraftAttachmentIds.DWARF_TOME_UNLOCK, () ->
+    public static final Supplier<AttachmentType<DwarfLoreUnlockImpl>> DWARF_TOME_UNLOCKS =
+            ATTACHMENT_TYPES.register(JolCraftAttachmentIds.DWARF_TOME_UNLOCKS, () ->
                     AttachmentType.serializable(DwarfLoreUnlockImpl::new)
                             .copyOnDeath()
                             .build()

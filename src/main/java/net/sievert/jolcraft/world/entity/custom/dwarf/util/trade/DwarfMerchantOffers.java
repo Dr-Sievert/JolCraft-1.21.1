@@ -10,13 +10,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 public class DwarfMerchantOffers extends ArrayList<DwarfMerchantOffer> {
 
     public static final Codec<DwarfMerchantOffers> CODEC = DwarfMerchantOffer.CODEC
             .listOf()
-            .optionalFieldOf(JolCraftDictionary.RECIPES, List.of())
+            .optionalFieldOf(JolCraftStrings.plural(JolCraftDictionary.RECIPE), List.of())
             .xmap(DwarfMerchantOffers::new, Function.identity())
             .codec();
     public static final StreamCodec<RegistryFriendlyByteBuf, DwarfMerchantOffers> STREAM_CODEC = DwarfMerchantOffer.STREAM_CODEC

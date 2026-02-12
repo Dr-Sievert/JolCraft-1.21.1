@@ -12,7 +12,8 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
@@ -25,7 +26,7 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
             instance.group(
                     Item.CODEC.fieldOf(JolCraftDictionary.ID).forGetter(DwarfItemCost::item),
                     ExtraCodecs.POSITIVE_INT.optionalFieldOf(JolCraftDictionary.AMOUNT, 1).forGetter(DwarfItemCost::count),
-                    DataComponentPredicate.CODEC.optionalFieldOf(JolCraftDictionary.COMPONENTS, DataComponentPredicate.EMPTY).forGetter(DwarfItemCost::components)
+                    DataComponentPredicate.CODEC.optionalFieldOf(JolCraftStrings.plural(JolCraftDictionary.COMPONENT), DataComponentPredicate.EMPTY).forGetter(DwarfItemCost::components)
             ).apply(instance, DwarfItemCost::new)
     );
 

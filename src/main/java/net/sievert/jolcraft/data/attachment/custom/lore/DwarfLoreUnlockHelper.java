@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundLoreUnlocksPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfTomeUnlocksPacket;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 
 import java.util.Locale;
@@ -32,7 +32,7 @@ public final class DwarfLoreUnlockHelper {
      */
     public static boolean hasUnlockBypassCreative(Player player, DwarfLoreKey key) {
         if (player == null || key == null) return false;
-        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get()).hasUnlock(key);
+        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCKS.get()).hasUnlock(key);
     }
 
     /**
@@ -42,7 +42,7 @@ public final class DwarfLoreUnlockHelper {
      */
     public static Set<DwarfLoreKey> getAllUnlocks(Player player) {
         if (player == null) return Set.of();
-        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get()).getUnlocks();
+        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCKS.get()).getUnlocks();
     }
 
     /**
@@ -52,12 +52,12 @@ public final class DwarfLoreUnlockHelper {
     public static void addUnlock(Player player, DwarfLoreKey key) {
         if (!(player instanceof ServerPlayer serverPlayer) || key == null) return;
 
-        DwarfLoreUnlock unlock = serverPlayer.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get());
+        DwarfLoreUnlock unlock = serverPlayer.getData(JolCraftAttachments.DWARF_TOME_UNLOCKS.get());
         if (!unlock.addUnlockIfAbsent(key)) return;
 
         JolCraftNetworking.sendToClient(
                 serverPlayer,
-                new ClientboundLoreUnlocksPacket(
+                new ClientboundDwarfTomeUnlocksPacket(
                         unlock.getUnlocks().stream()
                                 .map(k -> k.name().toLowerCase(Locale.ROOT))
                                 .collect(Collectors.toUnmodifiableSet())

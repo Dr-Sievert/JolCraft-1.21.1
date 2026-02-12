@@ -20,8 +20,8 @@ public final class JolCraftStats {
 
     public static final Supplier<ResourceLocation> STRUCTURES_DISCOVERED =
             STATS.register(
-                    JolCraftStatIds.STRUCTURES_DISCOVERED,
-                    () -> JolCraft.location(JolCraftStatIds.STRUCTURES_DISCOVERED)
+                    JolCraftStatIds.DISCOVERED_STRUCTURES,
+                    () -> JolCraft.location(JolCraftStatIds.DISCOVERED_STRUCTURES)
             );
 
     public static void awardStructureDiscovery(Player player) {

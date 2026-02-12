@@ -35,6 +35,6 @@ public interface DwarfLoreUnlock extends INBTSerializable<CompoundTag> {
     }
 
     static DwarfLoreUnlock get(Player player) {
-        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCK.get());
+        return player.getData(JolCraftAttachments.DWARF_TOME_UNLOCKS.get());
     }
 }

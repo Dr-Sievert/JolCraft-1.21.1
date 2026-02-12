@@ -8,7 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
-import net.sievert.jolcraft.data.language.AbstractLanguageKeys;
+import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 
 public final class JolCraftAttributes {
 

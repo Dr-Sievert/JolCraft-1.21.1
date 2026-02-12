@@ -31,12 +31,13 @@ import net.minecraft.world.level.portal.TeleportTransition;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
@@ -66,10 +67,11 @@ import java.util.Set;
 public class AbstractTradingEntity extends AbstractBreedingEntity implements DwarfMerchant, EntityData {
 
     private static final String NBT_XP = JolCraftDictionary.XP;
-    private static final String NBT_OFFERS = JolCraftDictionary.OFFERS;
-    private static final String NBT_MERCHANT_DATA = "merchant_data";
-    private static final String NBT_RESTOCK_OFFER_COUNT = "restock_offer_count";
-    private static final String NBT_PERSISTENT_POOL_SELECTIONS = "persistent_pool_selections";
+    private static final String NBT_OFFERS = JolCraftStrings.plural(JolCraftDictionary.OFFER);
+    private static final String NBT_MERCHANT_DATA = JolCraftStrings.underscored(JolCraftDictionary.MERCHANT, JolCraftDictionary.DATA);
+    private static final String NBT_RESTOCK_OFFER_COUNT = JolCraftStrings.underscored(JolCraftDictionary.RESTOCK, JolCraftDictionary.OFFER, JolCraftDictionary.COUNT);
+    private static final String NBT_PERSISTENT_POOL_SELECTIONS =
+            JolCraftStrings.underscored(JolCraftDictionary.PERSISTENT, JolCraftDictionary.POOL, JolCraftStrings.plural(JolCraftDictionary.SELECTION));
 
     // ------------------------------------------------------------
     // Trade sound debounce (server-side)

@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.data.id.entity.dwarf;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftDwarfIds extends JolCraftIds {
 

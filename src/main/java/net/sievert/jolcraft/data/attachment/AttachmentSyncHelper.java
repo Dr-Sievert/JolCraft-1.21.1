@@ -32,15 +32,15 @@ public class AttachmentSyncHelper {
 
         // Reputation tier
         int tier = DwarvenReputationHelper.getTier(player);
-        JolCraftNetworking.sendToClient(player, new ClientboundReputationPacket(tier));
+        JolCraftNetworking.sendToClient(player, new ClientboundDwarvenReputationPacket(tier));
 
         // Endorsements
         Set<DwarfProfession> endorsements = DwarvenReputationHelper.getAllEndorsements(player);
-        JolCraftNetworking.sendToClient(player, new ClientboundEndorsementsPacket(endorsements));
+        JolCraftNetworking.sendToClient(player, new ClientboundDwarvenEndorsementsPacket(endorsements));
 
         // Tome Unlocks
         Set<DwarfLoreKey> dwarfTomeUnlocks = DwarfLoreUnlockHelper.getAllUnlocks(player);
-        JolCraftNetworking.sendToClient(player, ClientboundLoreUnlocksPacket.fromEnumSet(dwarfTomeUnlocks));
+        JolCraftNetworking.sendToClient(player, ClientboundDwarfTomeUnlocksPacket.fromEnumSet(dwarfTomeUnlocks));
 
         JolCraftLogs.debug(JolCraftLogTags.NETWORK, "Synced attachments for {}", player.getGameProfile().getName());
     }

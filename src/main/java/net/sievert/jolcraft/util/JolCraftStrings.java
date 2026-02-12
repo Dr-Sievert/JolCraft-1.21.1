@@ -7,6 +7,11 @@ public final class JolCraftStrings {
 
     private JolCraftStrings() {}
 
+    /** Pluralize by adding 's'. */
+    public static String plural(String singular) {
+        return singular.endsWith("s") ? singular : singular + "s";
+    }
+
     // ---------------------------------------------------------------------
     // Join helpers
     // ---------------------------------------------------------------------

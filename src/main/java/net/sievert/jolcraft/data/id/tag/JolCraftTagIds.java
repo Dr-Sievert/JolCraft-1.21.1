@@ -1,6 +1,8 @@
 package net.sievert.jolcraft.data.id.tag;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftTagIds extends JolCraftIds {
 
@@ -10,61 +12,80 @@ public final class JolCraftTagIds extends JolCraftIds {
     // Item tags
     // ---------------------------------------------------------------------
 
-    public static final String SPAWN_EGGS = "spawn_eggs";
-    public static final String DWARF_SPAWN_EGGS = "dwarf_spawn_eggs";
-    public static final String CREATURE_SPAWN_EGGS = "creature_spawn_eggs";
-    public static final String MONSTER_SPAWN_EGGS = "monster_spawn_eggs";
-    public static final String INK_AND_QUILLS = "ink_and_quills";
-    public static final String GEODES = "geodes";
-    public static final String DURABILITY_ENCHANTABLE = "durability_enchantable";
-    public static final String WARHAMMERS = "warhammers";
-    public static final String SPANNERS = "spanners";
-    public static final String ARTISAN_HAMMERS = "artisan_hammers";
-    public static final String CHISELS = "chisels";
-    public static final String PESTLES = "pestles";
-    public static final String GEMS_UNCUT = "gems_uncut";
-    public static final String GEM_CUT = "gem_cut";
-    public static final String GEM_DUST = "gem_dust";
-    public static final String ATTRIBUTE_TRIM_MATERIALS = "attribute_trim_materials";
-    public static final String PROFESSION_CONTRACTS = "profession_contracts";
-    public static final String REPUTATION_TABLETS = "reputation_tablets";
-    public static final String HOPS = "hops";
-    public static final String HOPS_BREW = "hops_brew";
-    public static final String REPAIRS_DEEPSLATE = "repairs_deepslate";
-    public static final String REPAIRS_MITHRIL = "repairs_mithril";
-    public static final String MITHRIL_ITEMS = "mithril_items";
+    public static final String SPAWN_EGGS = join(JolCraftDictionary.SPAWN, plural(JolCraftDictionary.EGG));
+    public static final String DWARF_SPAWN_EGGS = join(JolCraftDwarfIds.DWARF, SPAWN_EGGS);
+    public static final String CREATURE_SPAWN_EGGS = join(JolCraftDictionary.CREATURE, SPAWN_EGGS);
+    public static final String MONSTER_SPAWN_EGGS = join(JolCraftDictionary.MONSTER, SPAWN_EGGS);
+
+    public static final String INK_AND_QUILLS = join(JolCraftDictionary.INK, JolCraftDictionary.AND, plural(JolCraftDictionary.QUILL));
+    public static final String GEODES = plural(JolCraftDictionary.GEODE);
+
+    public static final String DURABILITY_ENCHANTABLE = join(JolCraftDictionary.DURABILITY, JolCraftDictionary.ENCHANTABLE);
+
+    public static final String WARHAMMERS = plural(JolCraftDictionary.WARHAMMER);
+    public static final String SPANNERS = plural(JolCraftDictionary.SPANNER);
+    public static final String ARTISAN_HAMMERS = join(JolCraftDictionary.ARTISAN, plural(JolCraftDictionary.HAMMER));
+    public static final String CHISELS = plural(JolCraftDictionary.CHISEL);
+    public static final String PESTLES = plural(JolCraftDictionary.PESTLE);
+
+    public static final String GEMS_UNCUT = join(plural(JolCraftDictionary.GEM), JolCraftDictionary.UNCUT);
+    public static final String GEM_CUT = join(JolCraftDictionary.GEM, JolCraftDictionary.CUT);
+    public static final String GEM_DUST = join(JolCraftDictionary.GEM, JolCraftDictionary.DUST);
+
+    public static final String ATTRIBUTE_TRIM_MATERIALS = join(JolCraftDictionary.ATTRIBUTE, JolCraftDictionary.TRIM, plural(JolCraftDictionary.MATERIAL));
+    public static final String PROFESSION_CONTRACTS = join(JolCraftDictionary.PROFESSION, plural(JolCraftDictionary.CONTRACT));
+    public static final String REPUTATION_TABLETS = join(JolCraftDictionary.REPUTATION, plural(JolCraftDictionary.TABLET));
+
+    public static final String HOPS = plural(JolCraftDictionary.HOP);
+    public static final String HOPS_BREW = join(HOPS, JolCraftDictionary.BREW);
+
+    public static final String REPAIRS_DEEPSLATE = join(plural(JolCraftDictionary.REPAIR), JolCraftDictionary.DEEPSLATE);
+    public static final String REPAIRS_MITHRIL = join(plural(JolCraftDictionary.REPAIR), JolCraftDictionary.MITHRIL);
+    public static final String MITHRIL_ITEMS = join(JolCraftDictionary.MITHRIL, plural(JolCraftDictionary.ITEM));
 
     // Salvage
-    public static final String GLOBAL_SALVAGE = "global_salvage";
-    public static final String GENERAL_SALVAGE = "general_salvage";
-    public static final String DEEPSLATE_SALVAGE = "deepslate_salvage"; // FIXED (was accidentally "general_salvage")
-    public static final String TEXTILE_SALVAGE = "textile_salvage";
-    public static final String REDSTONE_SALVAGE = "redstone_salvage";
-    public static final String IRON_SALVAGE = "iron_salvage";
-    public static final String GOLD_SALVAGE = "gold_salvage";
-    public static final String MITHRIL_SALVAGE = "mithril_salvage";
+    public static final String GLOBAL_SALVAGE = join(JolCraftDictionary.GLOBAL, JolCraftDictionary.SALVAGE);
+    public static final String GENERAL_SALVAGE = join(JolCraftDictionary.GENERAL, JolCraftDictionary.SALVAGE);
+    public static final String DEEPSLATE_SALVAGE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.SALVAGE);
+    public static final String TEXTILE_SALVAGE = join(JolCraftDictionary.TEXTILE, JolCraftDictionary.SALVAGE);
+    public static final String REDSTONE_SALVAGE = join(JolCraftDictionary.REDSTONE, JolCraftDictionary.SALVAGE);
+    public static final String IRON_SALVAGE = join(JolCraftDictionary.IRON, JolCraftDictionary.SALVAGE);
+    public static final String GOLD_SALVAGE = join(JolCraftDictionary.GOLD, JolCraftDictionary.SALVAGE);
+    public static final String MITHRIL_SALVAGE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.SALVAGE);
 
     // ---------------------------------------------------------------------
     // Block tags
     // ---------------------------------------------------------------------
 
-    public static final String DEEPSLATE_BULBS_PLANTABLE = "deepslate_bulbs_plantable";
-    public static final String VERDANT = "verdant";
-    public static final String HOPS_BOTTOM = "hops_bottom";
-    public static final String HOPS_TOP = "hops_top";
+    public static final String DEEPSLATE_BULBS_PLANTABLE = join(
+            JolCraftDictionary.DEEPSLATE,
+            plural(JolCraftDictionary.BULB),
+            JolCraftDictionary.PLANTABLE
+    );
+
+    public static final String VERDANT = JolCraftDictionary.VERDANT;
+
+    public static final String HOPS_TOP = join(plural(JolCraftDictionary.HOP), JolCraftDictionary.TOP);
+    public static final String HOPS_BOTTOM = join(plural(JolCraftDictionary.HOP), JolCraftDictionary.BOTTOM);
 
     // ---------------------------------------------------------------------
     // Structure tags
     // ---------------------------------------------------------------------
 
-    public static final String ON_FORGE_EXPLORER_MAPS = "on_forge_explorer_maps";
-    public static final String DWARVEN_STRUCTURES = "dwarven_structures";
-    public static final String ANCIENT_STRUCTURES = "ancient_structures";
+    public static final String ON_FORGE_EXPLORER_MAPS = join(
+            JolCraftDictionary.ON,
+            JolCraftDictionary.FORGE,
+            JolCraftDictionary.EXPLORER,
+            plural(JolCraftDictionary.MAP)
+    );
+
+    public static final String DWARVEN_STRUCTURES = join(JolCraftDictionary.DWARVEN, plural(JolCraftDictionary.STRUCTURE));
+    public static final String ANCIENT_STRUCTURES = join(JolCraftDictionary.ANCIENT, plural(JolCraftDictionary.STRUCTURE));
 
     // ---------------------------------------------------------------------
     // Biome tags
     // ---------------------------------------------------------------------
 
-    public static final String MOUNTAINS_AND_HILLS = "mountains_and_hills";
-    public static final String DWARVEN = "dwarven";
+    public static final String MOUNTAINS_HILLS = join(plural(JolCraftDictionary.MOUNTAIN), plural(JolCraftDictionary.HILL));
+    public static final String DWARVEN = JolCraftDictionary.DWARVEN;
 }

@@ -12,7 +12,7 @@ public final class JolCraftClientPayloadHandlers {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
-    public static void handleClientboundLoreUnlocks(ClientboundLoreUnlocksPacket packet, IPayloadContext context) {
+    public static void handleClientboundLoreUnlocks(ClientboundDwarfTomeUnlocksPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
@@ -28,11 +28,11 @@ public final class JolCraftClientPayloadHandlers {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
-    public static void handleClientboundReputation(ClientboundReputationPacket packet, IPayloadContext context) {
+    public static void handleClientboundReputation(ClientboundDwarvenReputationPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 
-    public static void handleClientboundEndorsements(ClientboundEndorsementsPacket packet, IPayloadContext context) {
+    public static void handleClientboundEndorsements(ClientboundDwarvenEndorsementsPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
 }

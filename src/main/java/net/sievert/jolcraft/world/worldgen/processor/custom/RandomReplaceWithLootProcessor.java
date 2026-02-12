@@ -16,7 +16,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -30,7 +31,7 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
                     ResourceLocation.CODEC.fieldOf(JolCraftDictionary.INPUT).forGetter(p -> p.inputBlockId),
                     ResourceLocation.CODEC.fieldOf(JolCraftDictionary.OUTPUT).forGetter(p -> p.outputBlockId),
                     Codec.floatRange(0f, 1f).fieldOf(JolCraftDictionary.CHANCE).forGetter(p -> p.probability),
-                    ResourceLocation.CODEC.fieldOf(JolCraftDictionary.LOOT_TABLE).forGetter(p -> p.lootTable)
+                    ResourceLocation.CODEC.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.LOOT, JolCraftDictionary.TABLE)).forGetter(p -> p.lootTable)
             ).apply(instance, RandomReplaceWithLootProcessor::new)
     );
 
@@ -99,7 +100,7 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
                 BlockState replacedState = output.defaultBlockState();
 
                 CompoundTag nbt = new CompoundTag();
-                nbt.putString(JolCraftDictionary.LOOT_TABLE, lootTable.toString());
+                nbt.putString(JolCraftStrings.underscored(JolCraftDictionary.LOOT, JolCraftDictionary.TABLE), lootTable.toString());
 
                 return new StructureTemplate.StructureBlockInfo(current.pos(), replacedState, nbt);
             }

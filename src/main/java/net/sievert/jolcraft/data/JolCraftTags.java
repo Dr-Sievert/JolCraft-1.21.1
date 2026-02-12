@@ -87,7 +87,7 @@ public final class JolCraftTags {
     public static final class Biomes {
 
         // General
-        public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_AND_HILLS);
+        public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_HILLS);
         public static final TagKey<Biome> DWARVEN = create(JolCraftTagIds.DWARVEN);
 
         // Has structure

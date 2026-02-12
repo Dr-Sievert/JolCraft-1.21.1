@@ -13,6 +13,11 @@ public abstract class JolCraftIds {
 
     protected JolCraftIds() {}
 
+    /** Pluralize by adding 's'. */
+    public static String plural(String singular) {
+        return JolCraftStrings.plural(singular);
+    }
+
     /** Convert a path into "jolcraft:<path>". */
     public static String full(String path) {
         return JolCraft.MOD_ID + ":" + path;
@@ -35,10 +40,4 @@ public abstract class JolCraftIds {
         System.arraycopy(parts, 0, all, 1, parts.length);
         return JolCraftStrings.underscored(all);
     }
-
-    /** Append a suffix to an id. */
-    protected static String suffixed(String base, String suffix) {
-        return join(base, suffix);
-    }
-
 }

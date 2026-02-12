@@ -5,16 +5,15 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 
 import java.util.EnumMap;
-import java.util.Locale;
 import java.util.Map;
 
 public final class JolCraftTrimMaterials {
 
-    private JolCraftTrimMaterials() {
-    }
+    private JolCraftTrimMaterials() {}
 
     // -------------------------------------------------------------------------
     // Vanilla/base trims
@@ -51,28 +50,34 @@ public final class JolCraftTrimMaterials {
     // -------------------------------------------------------------------------
 
     public enum Attribute {
-        AEGISCORE,
-        ASHFANG,
-        DEEPMARROW,
-        EARTHBLOOD,
-        EMBERGLASS,
-        FROSTVEIN,
-        GRIMSTONE,
-        IRONHEART,
-        LUMIERE,
-        MOONSHARD,
-        RUSTAGATE,
-        SKYBURROW,
-        SUNGLEAM,
-        VERDANITE,
-        WOECRYSTAL;
+        AEGISCORE(JolCraftTrimIds.AEGISCORE),
+        ASHFANG(JolCraftTrimIds.ASHFANG),
+        DEEPMARROW(JolCraftTrimIds.DEEPMARROW),
+        EARTHBLOOD(JolCraftTrimIds.EARTHBLOOD),
+        EMBERGLASS(JolCraftTrimIds.EMBERGLASS),
+        FROSTVEIN(JolCraftTrimIds.FROSTVEIN),
+        GRIMSTONE(JolCraftTrimIds.GRIMSTONE),
+        IRONHEART(JolCraftTrimIds.IRONHEART),
+        LUMIERE(JolCraftTrimIds.LUMIERE),
+        MOONSHARD(JolCraftTrimIds.MOONSHARD),
+        RUSTAGATE(JolCraftTrimIds.RUSTAGATE),
+        SKYBURROW(JolCraftTrimIds.SKYBURROW),
+        SUNGLEAM(JolCraftTrimIds.SUNGLEAM),
+        VERDANITE(JolCraftTrimIds.VERDANITE),
+        WOECRYSTAL(JolCraftTrimIds.WOECRYSTAL);
+
+        private final String id;
+
+        Attribute(String id) {
+            this.id = id;
+        }
 
         public String id() {
-            return name().toLowerCase(Locale.ROOT);
+            return id;
         }
 
         public ResourceKey<TrimMaterial> key() {
-            return ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location(id()));
+            return ResourceKey.create(Registries.TRIM_MATERIAL, JolCraft.location(id));
         }
     }
 

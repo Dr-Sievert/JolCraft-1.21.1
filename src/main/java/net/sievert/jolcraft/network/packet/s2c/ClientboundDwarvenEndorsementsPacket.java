@@ -14,17 +14,16 @@ import java.util.Set;
 
 /**
  * Sent from server to client to sync the player's full set of profession endorsements.
- * Now uses DwarfProfession enum for full type safety.
  */
-public record ClientboundEndorsementsPacket(Set<DwarfProfession> endorsements) implements CustomPacketPayload {
+public record ClientboundDwarvenEndorsementsPacket(Set<DwarfProfession> endorsements) implements CustomPacketPayload {
 
-    public static final Type<ClientboundEndorsementsPacket> TYPE =
-            new Type<>(JolCraft.location(JolCraftNetworkIds.SYNC_ENDORSEMENTS));
+    public static final Type<ClientboundDwarvenEndorsementsPacket> TYPE =
+            new Type<>(JolCraft.location(JolCraftNetworkIds.SYNC_DWARVEN_ENDORSEMENTS));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundEndorsementsPacket> CODEC =
-            CustomPacketPayload.codec(ClientboundEndorsementsPacket::write, ClientboundEndorsementsPacket::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundDwarvenEndorsementsPacket> CODEC =
+            CustomPacketPayload.codec(ClientboundDwarvenEndorsementsPacket::write, ClientboundDwarvenEndorsementsPacket::read);
 
-    public static ClientboundEndorsementsPacket read(FriendlyByteBuf buf) {
+    public static ClientboundDwarvenEndorsementsPacket read(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
         Set<DwarfProfession> endorsements = EnumSet.noneOf(DwarfProfession.class);
         for (int i = 0; i < size; i++) {
@@ -34,7 +33,7 @@ public record ClientboundEndorsementsPacket(Set<DwarfProfession> endorsements) i
                 endorsements.add(prof);
             }
         }
-        return new ClientboundEndorsementsPacket(endorsements);
+        return new ClientboundDwarvenEndorsementsPacket(endorsements);
     }
 
     public void write(FriendlyByteBuf buf) {

@@ -22,9 +22,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.LapidaryRecipeInput;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -195,9 +196,9 @@ public class LapidaryBenchRecipe implements Recipe<LapidaryRecipeInput> {
                         Ingredient.CODEC.fieldOf(JolCraftDictionary.INPUT).forGetter(r -> r.input),
                         TOOL_TYPE_CODEC.fieldOf(JolCraftDictionary.TOOL).forGetter(r -> r.toolType),
                         ItemStack.CODEC.optionalFieldOf(JolCraftDictionary.RESULT).forGetter(r -> Optional.ofNullable(r.result)),
-                        TagKey.codec(Registries.ITEM).optionalFieldOf(JolCraftDictionary.RESULT_TAG).forGetter(r -> Optional.ofNullable(r.resultTag)),
-                        Codec.INT.optionalFieldOf(JolCraftDictionary.MIN_COUNT).forGetter(r -> Optional.of(r.minCount)),
-                        Codec.INT.optionalFieldOf(JolCraftDictionary.MAX_COUNT).forGetter(r -> Optional.of(r.maxCount)),
+                        TagKey.codec(Registries.ITEM).optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.RESULT, JolCraftDictionary.TAG)).forGetter(r -> Optional.ofNullable(r.resultTag)),
+                        Codec.INT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.MIN, JolCraftDictionary.COUNT)).forGetter(r -> Optional.of(r.minCount)),
+                        Codec.INT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftDictionary.COUNT)).forGetter(r -> Optional.of(r.maxCount)),
                         Codec.INT.optionalFieldOf(JolCraftDictionary.XP, 0).forGetter(r -> r.xp)
                 ).apply(inst, (input, tool, resultOpt, tagOpt, minOpt, maxOpt, xp) -> {
                     if (resultOpt.isPresent() && tagOpt.isPresent()) {

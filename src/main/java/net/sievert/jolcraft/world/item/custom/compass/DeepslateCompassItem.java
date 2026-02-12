@@ -26,7 +26,7 @@ import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-import static net.sievert.jolcraft.data.language.AbstractLanguageKeys.tooltipStructure;
+import static net.sievert.jolcraft.data.language.util.AbstractLanguageKeys.tooltipStructure;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

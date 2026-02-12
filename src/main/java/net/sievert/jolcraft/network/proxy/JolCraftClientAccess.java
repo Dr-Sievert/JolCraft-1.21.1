@@ -22,7 +22,7 @@ public interface JolCraftClientAccess {
     void apply(ClientboundDeliriumCursePacket packet);
     void apply(ClientboundDwarvenLanguagePacket packet);
     void apply(ClientboundAncientDwarvenLanguagePacket packet);
-    void apply(ClientboundReputationPacket packet);
-    void apply(ClientboundEndorsementsPacket packet);
-    void apply(ClientboundLoreUnlocksPacket packet);
+    void apply(ClientboundDwarvenReputationPacket packet);
+    void apply(ClientboundDwarvenEndorsementsPacket packet);
+    void apply(ClientboundDwarfTomeUnlocksPacket packet);
 }

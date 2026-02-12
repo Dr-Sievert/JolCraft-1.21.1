@@ -1,7 +1,7 @@
-package net.sievert.jolcraft.data.language;
+package net.sievert.jolcraft.data.language.util;
 
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 /**
@@ -72,7 +72,7 @@ public abstract class AbstractLanguageKeys {
 
     /** "itemGroup.<modid>.<id>" */
     public static String itemGroup(String id) {
-        return category(JolCraftDictionary.ITEM_GROUP, id);
+        return category(JolCraftStrings.underscored(JolCraftDictionary.ITEM, JolCraftDictionary.GROUP), id);
     }
 
     /** "attribute.<modid>.<id>" */

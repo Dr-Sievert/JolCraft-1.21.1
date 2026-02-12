@@ -18,7 +18,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
@@ -116,7 +117,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> MITHRIL_INGOT = ITEMS.registerItem(
             JolCraftItemIds.MITHRIL_INGOT,
-            props -> new SimpleTooltipItem(props.fireResistant().rarity(Rarity.RARE), JolCraftDictionary.TRIM_MATERIAL)
+            props -> new SimpleTooltipItem(props.fireResistant().rarity(Rarity.RARE), JolCraftTrimIds.TRIM_MATERIAL)
     );
 
     public static final DeferredItem<Item> MITHRIL_NUGGET = ITEMS.registerItem(JolCraftItemIds.MITHRIL_NUGGET,
@@ -187,7 +188,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> DEEPSLATE_PLATE = ITEMS.registerItem(
             JolCraftItemIds.DEEPSLATE_PLATE,
-            props -> new SimpleTooltipItem(props, JolCraftDictionary.TRIM_MATERIAL)
+            props -> new SimpleTooltipItem(props, JolCraftTrimIds.TRIM_MATERIAL)
     );
 
     public static final DeferredItem<Item> DEEPSLATE_ROD = ITEMS.registerItem(JolCraftItemIds.DEEPSLATE_ROD,

@@ -11,7 +11,7 @@ import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguage;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

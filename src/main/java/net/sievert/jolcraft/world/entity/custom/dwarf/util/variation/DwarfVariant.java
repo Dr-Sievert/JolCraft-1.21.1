@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.variation;
 
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 import java.util.Arrays;

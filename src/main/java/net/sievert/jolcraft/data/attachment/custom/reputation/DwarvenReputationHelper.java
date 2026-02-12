@@ -4,8 +4,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundReputationPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenEndorsementsPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenReputationPacket;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 import java.util.Set;
@@ -84,7 +84,7 @@ public final class DwarvenReputationHelper {
         if (!rep.addEndorsement(profession)) return;
 
         if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundEndorsementsPacket(toProfessions(rep)));
+            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDwarvenEndorsementsPacket(toProfessions(rep)));
         }
     }
 
@@ -110,7 +110,7 @@ public final class DwarvenReputationHelper {
         rep.setTierId(tier);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundReputationPacket(tier));
+            JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDwarvenReputationPacket(tier));
         }
     }
 

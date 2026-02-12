@@ -10,7 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.effect.custom.*;
 import net.sievert.jolcraft.world.effect.custom.curse.CursedWoundEffect;
@@ -73,7 +73,7 @@ public final class JolCraftEffects {
                     )
                     .addAttributeModifier(
                             Attributes.ARMOR_TOUGHNESS,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.ARMOR_TOUGHNESS, JolCraftEffectIds.CORROSION)),
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftStrings.underscored(JolCraftDictionary.ARMOR, JolCraftDictionary.TOUGHNESS), JolCraftEffectIds.CORROSION)),
                             -0.2D,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
                     )

@@ -9,16 +9,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigger.TriggerInstance> {
+public class DwarfEndorsementTrigger extends SimpleCriterionTrigger<DwarfEndorsementTrigger.TriggerInstance> {
 
-    public static final ResourceLocation ID = JolCraft.location(JolCraftCriterionTriggerIds.ENDORSEMENT);
+    public static final ResourceLocation ID = JolCraft.location(JolCraftCriterionTriggerIds.DWARVEN_ENDORSEMENT);
 
     @Override
     public @NotNull Codec<TriggerInstance> codec() {
@@ -30,7 +30,7 @@ public class EndorsementTrigger extends SimpleCriterionTrigger<EndorsementTrigge
      */
     public void trigger(ServerPlayer player, DwarfProfession profession) {
         if (profession == null) {
-            JolCraftLogs.debug("Endorsement trigger called with null profession for {}", player.getGameProfile().getName());
+            JolCraftLogs.debug("Dwarf endorsement trigger called with null profession for {}", player.getGameProfile().getName());
             return;
         }
         if (profession == DwarfProfession.NONE) return;

@@ -1,7 +1,9 @@
 package net.sievert.jolcraft.data.language;
 
+import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.id.item.JolCraftCreativeTabIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 
 public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
@@ -19,24 +21,24 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_REROLL_CRATE_FAIL = category(JolCraftDictionary.TOOLTIP, "reroll_crate.fail");
     public static final String TOOLTIP_REROLL_CRATE_SUCCESS = category(JolCraftDictionary.TOOLTIP, "reroll_crate.success");
 
-    public static final String TOOLTIP_BOUNTY_TIER = tooltip(JolCraftDictionary.BOUNTY, "tier");
-    public static final String TOOLTIP_BOUNTY_TYPE = tooltip(JolCraftDictionary.BOUNTY, "type");
-    public static final String TOOLTIP_BOUNTY_WRONG_TYPE = tooltip(JolCraftDictionary.BOUNTY, "wrong_type");
-    public static final String TOOLTIP_BOUNTY_NO_TYPE = tooltip(JolCraftDictionary.BOUNTY, "no_type");
-    public static final String TOOLTIP_BOUNTY_MERCHANT = tooltip(JolCraftDictionary.BOUNTY, "merchant");
-    public static final String TOOLTIP_BOUNTY_MINER = tooltip(JolCraftDictionary.BOUNTY, "miner");
+    public static final String TOOLTIP_BOUNTY_TIER = tooltip(JolCraftItemIds.BOUNTY, "tier");
+    public static final String TOOLTIP_BOUNTY_TYPE = tooltip(JolCraftItemIds.BOUNTY, "type");
+    public static final String TOOLTIP_BOUNTY_WRONG_TYPE = tooltip(JolCraftItemIds.BOUNTY, "wrong_type");
+    public static final String TOOLTIP_BOUNTY_NO_TYPE = tooltip(JolCraftItemIds.BOUNTY, "no_type");
+    public static final String TOOLTIP_BOUNTY_MERCHANT = tooltip(JolCraftItemIds.BOUNTY, "merchant");
+    public static final String TOOLTIP_BOUNTY_MINER = tooltip(JolCraftItemIds.BOUNTY, "miner");
 
-    public static final String TOOLTIP_BOUNTY_CRATE_TARGET = tooltip(JolCraftDictionary.BOUNTY_CRATE, "target");
-    public static final String TOOLTIP_BOUNTY_CRATE_COUNT = tooltip(JolCraftDictionary.BOUNTY_CRATE, "count");
-    public static final String TOOLTIP_BOUNTY_CRATE_TIER = tooltip(JolCraftDictionary.BOUNTY_CRATE, "tier");
-    public static final String TOOLTIP_BOUNTY_INVALID = tooltip(JolCraftDictionary.BOUNTY_CRATE, "invalid");
-    public static final String TOOLTIP_BOUNTY_CRATE_LOCKED = tooltip(JolCraftDictionary.BOUNTY_CRATE, "locked");
-    public static final String TOOLTIP_BOUNTY_CRATE_FILLED = tooltip(JolCraftDictionary.BOUNTY_CRATE, "filled");
-    public static final String TOOLTIP_BOUNTY_CRATE_FILLED_SOME = tooltip(JolCraftDictionary.BOUNTY_CRATE, "filled_some");
-    public static final String TOOLTIP_BOUNTY_CRATE_NO_ITEMS = tooltip(JolCraftDictionary.BOUNTY_CRATE, "no_items");
-    public static final String TOOLTIP_BOUNTY_CRATE_COMPLETE = tooltip(JolCraftDictionary.BOUNTY_CRATE, "complete");
-    public static final String TOOLTIP_BOUNTY_CRATE_NOT_COMPLETE = tooltip(JolCraftDictionary.BOUNTY_CRATE, "not_complete");
-    public static final String TOOLTIP_BOUNTY_CRATE_WRONG_TYPE = tooltip(JolCraftDictionary.BOUNTY_CRATE, "wrong_type");
+    public static final String TOOLTIP_BOUNTY_CRATE_TARGET = tooltip(JolCraftItemIds.BOUNTY_CRATE, "target");
+    public static final String TOOLTIP_BOUNTY_CRATE_COUNT = tooltip(JolCraftItemIds.BOUNTY_CRATE, "count");
+    public static final String TOOLTIP_BOUNTY_CRATE_TIER = tooltip(JolCraftItemIds.BOUNTY_CRATE, "tier");
+    public static final String TOOLTIP_BOUNTY_INVALID = tooltip(JolCraftItemIds.BOUNTY_CRATE, "invalid");
+    public static final String TOOLTIP_BOUNTY_CRATE_LOCKED = tooltip(JolCraftItemIds.BOUNTY_CRATE, "locked");
+    public static final String TOOLTIP_BOUNTY_CRATE_FILLED = tooltip(JolCraftItemIds.BOUNTY_CRATE, "filled");
+    public static final String TOOLTIP_BOUNTY_CRATE_FILLED_SOME = tooltip(JolCraftItemIds.BOUNTY_CRATE, "filled_some");
+    public static final String TOOLTIP_BOUNTY_CRATE_NO_ITEMS = tooltip(JolCraftItemIds.BOUNTY_CRATE, "no_items");
+    public static final String TOOLTIP_BOUNTY_CRATE_COMPLETE = tooltip(JolCraftItemIds.BOUNTY_CRATE, "complete");
+    public static final String TOOLTIP_BOUNTY_CRATE_NOT_COMPLETE = tooltip(JolCraftItemIds.BOUNTY_CRATE, "not_complete");
+    public static final String TOOLTIP_BOUNTY_CRATE_WRONG_TYPE = tooltip(JolCraftItemIds.BOUNTY_CRATE, "wrong_type");
 
     public static final String TOOLTIP_CRATE_COOLDOWN = tooltip(JolCraftDictionary.CRATE, "cooldown");
     public static final String TOOLTIP_CRATE_NO_OFFERS_VILLAGER = tooltip(JolCraftDictionary.CRATE, "no_offers_villager");
@@ -48,25 +50,25 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String TOOLTIP_STRUCTURE_DISCOVERED = tooltip(JolCraftDictionary.STRUCTURE, "discovered");
 
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_TRACKING = category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.DEEPSLATE_COMPASS);
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE = tooltip(JolCraftDictionary.DEEPSLATE_COMPASS, "no_structure");
-    public static final String TOOLTIP_DEEPSLATE_COMPASS_LOCATE = tooltip(JolCraftDictionary.DEEPSLATE_COMPASS, "locate");
+    public static final String TOOLTIP_DEEPSLATE_COMPASS_TRACKING = category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.DEEPSLATE_COMPASS);
+    public static final String TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE = tooltip(JolCraftItemIds.DEEPSLATE_COMPASS, "no_structure");
+    public static final String TOOLTIP_DEEPSLATE_COMPASS_LOCATE = tooltip(JolCraftItemIds.DEEPSLATE_COMPASS, "locate");
 
     // ---------------------------------------------------------------------
     // ContainerLangSubProvider
     // ---------------------------------------------------------------------
 
-    public static final String CONTAINER_LAPIDARY_BENCH = category(JolCraftDictionary.CONTAINER, JolCraftDictionary.LAPIDARY_BENCH);
+    public static final String CONTAINER_LAPIDARY_BENCH = category(JolCraftDictionary.CONTAINER, JolCraftBlockIds.LAPIDARY_BENCH);
 
-    public static final String TOOLTIP_LAPIDARY_BENCH_LOCKED_CUT_GEMS = tooltip(JolCraftDictionary.LAPIDARY_BENCH, "locked_cut_gems");
+    public static final String TOOLTIP_LAPIDARY_BENCH_LOCKED_CUT_GEMS = tooltip(JolCraftBlockIds.LAPIDARY_BENCH, "locked_cut_gems");
     public static final String TOOLTIP_GEODE = category(JolCraftDictionary.TOOLTIP, "geode");
     public static final String TOOLTIP_UNCUT_GEM = category(JolCraftDictionary.TOOLTIP, "uncut_gem");
     public static final String TOOLTIP_ARTISAN_HAMMER = category(JolCraftDictionary.TOOLTIP, "artisan_hammer");
     public static final String TOOLTIP_CHISEL = category(JolCraftDictionary.TOOLTIP, "chisel");
     public static final String TOOLTIP_CUT_LOCKED = category(JolCraftDictionary.TOOLTIP, "cut_locked");
 
-    public static final String TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX = tooltip(JolCraftDictionary.FERMENTING_CAULDRON, "ingredient_max");
-    public static final String TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI = tooltip(JolCraftDictionary.FERMENTING_CAULDRON, "locked_multi");
+    public static final String TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX = tooltip(JolCraftBlockIds.FERMENTING_CAULDRON, "ingredient_max");
+    public static final String TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI = tooltip(JolCraftBlockIds.FERMENTING_CAULDRON, "locked_multi");
 
     public static final String CONTAINER_STRONGBOX = category(JolCraftDictionary.CONTAINER, JolCraftDictionary.STRONGBOX);
     public static final String CONTAINER_STRONGBOX_LOCKED = category(JolCraftDictionary.CONTAINER, "strongbox_locked");

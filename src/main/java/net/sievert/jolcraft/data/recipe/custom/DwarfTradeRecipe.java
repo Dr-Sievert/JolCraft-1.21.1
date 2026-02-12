@@ -30,11 +30,12 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -78,8 +79,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
         private static final Codec<TradeAmount> OBJECT_CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
-                        Codec.INT.fieldOf(JolCraftDictionary.MIN_COUNT).forGetter(TradeAmount::min),
-                        Codec.INT.fieldOf(JolCraftDictionary.MAX_COUNT).forGetter(TradeAmount::max)
+                        Codec.INT.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.MIN, JolCraftDictionary.COUNT)).forGetter(TradeAmount::min),
+                        Codec.INT.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftDictionary.COUNT)).forGetter(TradeAmount::max)
                 ).apply(inst, TradeAmount::new));
 
 
@@ -162,13 +163,13 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         public static final Codec<MapTradeData> CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
                         TagKey.codec(Registries.STRUCTURE)
-                                .fieldOf(JolCraftDictionary.DESTINATION_STRUCTURE_TAG)
+                                .fieldOf(JolCraftStrings.underscored(JolCraftDictionary.DESTINATION, JolCraftDictionary.STRUCTURE, JolCraftDictionary.TAG))
                                 .forGetter(MapTradeData::destinationStructureTag),
                         Codec.STRING
-                                .fieldOf(JolCraftDictionary.MAP_DISPLAY_NAME)
+                                .fieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAP, JolCraftDictionary.DISPLAY, JolCraftDictionary.NAME))
                                 .forGetter(MapTradeData::mapDisplayNameKey),
                         ResourceLocation.CODEC
-                                .fieldOf(JolCraftDictionary.MAP_DECORATION_TYPE)
+                                .fieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAP, JolCraftDictionary.DECORATION, JolCraftDictionary.TYPE))
                                 .forGetter(MapTradeData::mapDecorationTypeId)
                 ).apply(inst, MapTradeData::new));
 
@@ -518,7 +519,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         oi -> oi.isPresent() ? Optional.of(oi.getAsInt()) : Optional.empty()
                 );
 
-        private static final MapCodec<Boolean> EXACT_LEVEL_FIELD = Codec.BOOL.optionalFieldOf(JolCraftDictionary.EXACT_LEVEL, false);
+        private static final MapCodec<Boolean> EXACT_LEVEL_FIELD = Codec.BOOL.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.EXACT, JolCraftDictionary.LEVEL), false);
 
         // ---------------- TradeResult CODEC ----------------
 
@@ -571,18 +572,18 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         ORDER_FIELD.forGetter(DwarfTradeRecipe::order),
                         EXACT_LEVEL_FIELD.forGetter(DwarfTradeRecipe::exactLevel),
 
-                        TradeCost.CODEC.fieldOf(JolCraftDictionary.COST_A).forGetter(DwarfTradeRecipe::costA),
-                        TradeCost.CODEC.optionalFieldOf(JolCraftDictionary.COST_B).forGetter(DwarfTradeRecipe::costB),
+                        TradeCost.CODEC.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.COST, "a")).forGetter(DwarfTradeRecipe::costA),
+                        TradeCost.CODEC.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.COST, "b")).forGetter(DwarfTradeRecipe::costB),
 
                         TRADE_RESULT_CODEC.fieldOf(JolCraftDictionary.RESULT).forGetter(DwarfTradeRecipe::result),
 
-                        ENCHANT_PROVIDER_CODEC.optionalFieldOf(JolCraftDictionary.ENCHANTMENT_PROVIDER).forGetter(DwarfTradeRecipe::enchantmentProvider),
-                        Codec.STRING.optionalFieldOf(JolCraftDictionary.STACK_MODIFIER).forGetter(DwarfTradeRecipe::stackModifierId),
-                        DataComponentPatch.CODEC.optionalFieldOf(JolCraftDictionary.RESULT_PATCH).forGetter(DwarfTradeRecipe::resultPatch),
+                        ENCHANT_PROVIDER_CODEC.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.ENCHANTMENT, JolCraftDictionary.PROVIDER)).forGetter(DwarfTradeRecipe::enchantmentProvider),
+                        Codec.STRING.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.STACK, JolCraftDictionary.MODIFIER)).forGetter(DwarfTradeRecipe::stackModifierId),
+                        DataComponentPatch.CODEC.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.RESULT, JolCraftDictionary.PATCH)).forGetter(DwarfTradeRecipe::resultPatch),
 
-                        Codec.INT.optionalFieldOf(JolCraftDictionary.MAX_USES, 12).forGetter(DwarfTradeRecipe::maxUses),
-                        Codec.INT.optionalFieldOf(JolCraftDictionary.VILLAGER_XP, 1).forGetter(DwarfTradeRecipe::villagerXp),
-                        Codec.FLOAT.optionalFieldOf(JolCraftDictionary.PRICE_MULTIPLIER, 0.05F).forGetter(DwarfTradeRecipe::priceMultiplier)
+                        Codec.INT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftStrings.plural(JolCraftDictionary.USE)), 12).forGetter(DwarfTradeRecipe::maxUses),
+                        Codec.INT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.VILLAGER, JolCraftDictionary.XP), 1).forGetter(DwarfTradeRecipe::villagerXp),
+                        Codec.FLOAT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.PRICE, JolCraftDictionary.MULTIPLIER), 0.05F).forGetter(DwarfTradeRecipe::priceMultiplier)
                 ).apply(inst, DwarfTradeRecipe::new)).flatXmap(
                         Serializer::validate,
                         DataResult::success

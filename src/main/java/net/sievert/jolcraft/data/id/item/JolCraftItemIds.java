@@ -1,263 +1,335 @@
 package net.sievert.jolcraft.data.id.item;
 
+import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationTier;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftItemIds extends JolCraftIds {
 
     private JolCraftItemIds() {}
 
+    // ---------------------------------------------------------------------
     // Core Items
-    public static final String DEV_KEY = "dev_key";
-    public static final String GOLD_COIN = "gold_coin";
-    public static final String COIN_POUCH = "coin_pouch";
-    public static final String DWARVEN_LEXICON = "dwarven_lexicon";
-    public static final String ANCIENT_DWARVEN_LEXICON = "ancient_dwarven_lexicon";
+    // ---------------------------------------------------------------------
+
+    public static final String DEV_KEY = join(JolCraftDictionary.DEV, JolCraftDictionary.KEY);
+    public static final String GOLD_COIN = join(JolCraftDictionary.GOLD, JolCraftDictionary.COIN);
+    public static final String COIN_POUCH = join(JolCraftDictionary.COIN, JolCraftDictionary.POUCH);
+
+    public static final String DWARVEN_LEXICON = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.LEXICON);
+    public static final String ANCIENT_DWARVEN_LEXICON = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftDictionary.LEXICON);
+
     public static final String STRONGBOX = JolCraftBlockIds.STRONGBOX;
-    public static final String LOCKPICK = "lockpick";
-    public static final String EMPTY_DEEPSLATE_COMPASS = "empty_deepslate_compass";
-    public static final String DEEPSLATE_COMPASS = "deepslate_compass";
-    public static final String DEEPSLATE_COMPASS_DIAL = "deepslate_compass_dial";
 
+    public static final String LOCKPICK = JolCraftDictionary.LOCKPICK;
+
+    public static final String DEEPSLATE_COMPASS = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.COMPASS);
+    public static final String EMPTY_DEEPSLATE_COMPASS = join(JolCraftDictionary.EMPTY, DEEPSLATE_COMPASS);
+    public static final String DEEPSLATE_COMPASS_DIAL = join(DEEPSLATE_COMPASS, JolCraftDictionary.DIAL);
+
+    // ---------------------------------------------------------------------
     // Materials / Armors / Tools
-    public static final String IMPURE_MITHRIL = "impure_mithril";
-    public static final String PURE_MITHRIL = "pure_mithril";
-    public static final String MITHRIL_INGOT = "mithril_ingot";
-    public static final String MITHRIL_NUGGET = "mithril_nugget";
-    public static final String MITHRIL_CHAINWEAVE = "mithril_chainweave";
+    // ---------------------------------------------------------------------
 
-    public static final String MITHRIL_SWORD = "mithril_sword";
-    public static final String MITHRIL_WARHAMMER = "mithril_warhammer";
-    public static final String MITHRIL_PICKAXE = "mithril_pickaxe";
-    public static final String MITHRIL_SHOVEL = "mithril_shovel";
-    public static final String MITHRIL_AXE = "mithril_axe";
-    public static final String MITHRIL_HOE = "mithril_hoe";
+    public static final String IMPURE_MITHRIL = join(JolCraftDictionary.IMPURE, JolCraftDictionary.MITHRIL);
+    public static final String PURE_MITHRIL = join(JolCraftDictionary.PURE, JolCraftDictionary.MITHRIL);
+    public static final String MITHRIL_INGOT = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.INGOT);
+    public static final String MITHRIL_NUGGET = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.NUGGET);
+    public static final String MITHRIL_CHAINWEAVE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.CHAINWEAVE);
 
-    public static final String MITHRIL_HELMET = "mithril_helmet";
-    public static final String MITHRIL_CHESTPLATE = "mithril_chestplate";
-    public static final String MITHRIL_LEGGINGS = "mithril_leggings";
-    public static final String MITHRIL_BOOTS = "mithril_boots";
+    public static final String MITHRIL_SWORD = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.SWORD);
+    public static final String MITHRIL_WARHAMMER = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.WARHAMMER);
+    public static final String MITHRIL_PICKAXE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.PICKAXE);
+    public static final String MITHRIL_SHOVEL = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.SHOVEL);
+    public static final String MITHRIL_AXE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.AXE);
+    public static final String MITHRIL_HOE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.HOE);
 
-    public static final String DEEPSLATE_PLATE = "deepslate_plate";
-    public static final String DEEPSLATE_ROD = "deepslate_rod";
+    public static final String MITHRIL_HELMET = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.HELMET);
+    public static final String MITHRIL_CHESTPLATE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.CHESTPLATE);
+    public static final String MITHRIL_LEGGINGS = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.LEGGINGS);
+    public static final String MITHRIL_BOOTS = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.BOOTS);
 
-    public static final String DEEPSLATE_SWORD = "deepslate_sword";
-    public static final String DEEPSLATE_WARHAMMER = "deepslate_warhammer";
-    public static final String DEEPSLATE_PICKAXE = "deepslate_pickaxe";
-    public static final String DEEPSLATE_SHOVEL = "deepslate_shovel";
-    public static final String DEEPSLATE_AXE = "deepslate_axe";
-    public static final String DEEPSLATE_HOE = "deepslate_hoe";
+    public static final String DEEPSLATE_PLATE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.PLATE);
+    public static final String DEEPSLATE_ROD = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.ROD);
 
-    public static final String DEEPSLATE_HELMET = "deepslate_helmet";
-    public static final String DEEPSLATE_CHESTPLATE = "deepslate_chestplate";
-    public static final String DEEPSLATE_LEGGINGS = "deepslate_leggings";
-    public static final String DEEPSLATE_BOOTS = "deepslate_boots";
+    public static final String DEEPSLATE_SWORD = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.SWORD);
+    public static final String DEEPSLATE_WARHAMMER = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.WARHAMMER);
+    public static final String DEEPSLATE_PICKAXE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.PICKAXE);
+    public static final String DEEPSLATE_SHOVEL = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.SHOVEL);
+    public static final String DEEPSLATE_AXE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.AXE);
+    public static final String DEEPSLATE_HOE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.HOE);
 
-    public static final String FORGE_ARMOR_TRIM_SMITHING_TEMPLATE = "forge_armor_trim_smithing_template";
+    public static final String DEEPSLATE_HELMET = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.HELMET);
+    public static final String DEEPSLATE_CHESTPLATE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.CHESTPLATE);
+    public static final String DEEPSLATE_LEGGINGS = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.LEGGINGS);
+    public static final String DEEPSLATE_BOOTS = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.BOOTS);
 
+    public static final String FORGE_ARMOR_TRIM_SMITHING_TEMPLATE = join(
+            JolCraftStructureIds.FORGE,
+            JolCraftDictionary.ARMOR,
+            JolCraftDictionary.TRIM,
+            JolCraftDictionary.SMITHING,
+            JolCraftDictionary.TEMPLATE
+    );
+
+    // ---------------------------------------------------------------------
     // Animal-related
-    public static final String MUFFHORN_FUR = "muffhorn_fur";
-    public static final String MUFFHORN_MILK_BUCKET = "muffhorn_milk_bucket";
+    // ---------------------------------------------------------------------
 
+    public static final String MUFFHORN_FUR = join(JolCraftCreatureIds.MUFFHORN, JolCraftDictionary.FUR);
+    public static final String MUFFHORN_MILK_BUCKET = join(JolCraftCreatureIds.MUFFHORN, JolCraftDictionary.MILK, JolCraftDictionary.BUCKET);
+
+    // ---------------------------------------------------------------------
     // Alchemy
+    // ---------------------------------------------------------------------
+
     public static final String DEEPSLATE_MORTAR = JolCraftBlockIds.DEEPSLATE_MORTAR;
-    public static final String DEEPSLATE_PESTLE = "deepslate_pestle";
-    public static final String MITHRIL_PESTLE = "mithril_pestle";
+    public static final String DEEPSLATE_PESTLE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.PESTLE);
+    public static final String MITHRIL_PESTLE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.PESTLE);
 
     public static final String INVERIX = "inverix";
-    public static final String AEGISCORE_DUST = "aegiscore_dust";
-    public static final String ASHFANG_DUST = "ashfang_dust";
-    public static final String DEEPMARROW_DUST = "deepmarrow_dust";
-    public static final String EARTHBLOOD_DUST = "earthblood_dust";
-    public static final String EMBERGLASS_DUST = "emberglass_dust";
-    public static final String FROSTVEIN_DUST = "frostvein_dust";
-    public static final String GRIMSTONE_DUST = "grimstone_dust";
-    public static final String IRONHEART_DUST = "ironheart_dust";
-    public static final String LUMIERE_DUST = "lumiere_dust";
-    public static final String MOONSHARD_DUST = "moonshard_dust";
-    public static final String RUSTAGATE_DUST = "rustagate_dust";
-    public static final String SKYBURROW_DUST = "skyburrow_dust";
-    public static final String SUNGLEAM_DUST = "sungleam_dust";
-    public static final String VERDANITE_DUST = "verdanite_dust";
-    public static final String WOECRYSTAL_DUST = "woecrystal_dust";
 
+    // ---------------------------------------------------------------------
     // Bounty
-    public static final String PARCHMENT = "parchment";
-    public static final String BOUNTY = "bounty";
-    public static final String BOUNTY_CRATE = "bounty_crate";
-    public static final String RESTOCK_CRATE = "restock_crate";
-    public static final String REROLL_CRATE = "reroll_crate";
+    // ---------------------------------------------------------------------
 
+    public static final String PARCHMENT = JolCraftDictionary.PARCHMENT;
+    public static final String BOUNTY = JolCraftDictionary.BOUNTY;
+    public static final String BOUNTY_CRATE = join(BOUNTY, JolCraftDictionary.CRATE);
+    public static final String RESTOCK_CRATE = join(JolCraftDictionary.RESTOCK, JolCraftDictionary.CRATE);
+    public static final String REROLL_CRATE = join(JolCraftDictionary.REROLL, JolCraftDictionary.CRATE);
+
+    // ---------------------------------------------------------------------
     // Contracts
-    public static final String CONTRACT_BLANK = "contract_blank";
-    public static final String CONTRACT_WRITTEN = "contract_written";
-    public static final String CONTRACT_SIGNED = "contract_signed";
-    public static final String GUILD_SIGIL = "guild_sigil";
+    // ---------------------------------------------------------------------
 
-    public static final String CONTRACT_GUILDMASTER = "contract_guildmaster";
+    public static final String CONTRACT_BLANK = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.BLANK);
+    public static final String CONTRACT_WRITTEN = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.WRITTEN);
+    public static final String CONTRACT_SIGNED = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.SIGNED);
+    public static final String GUILD_SIGIL = join(JolCraftDictionary.GUILD, JolCraftDictionary.SIGIL);
 
-    public static final String CONTRACT_MERCHANT = "contract_merchant";
-    public static final String CONTRACT_HISTORIAN = "contract_historian";
-    public static final String CONTRACT_SCRAPPER = "contract_scrapper";
+    public static final String CONTRACT_GUILDMASTER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.GUILDMASTER);
 
-    public static final String CONTRACT_GUARD = "contract_guard";
-    public static final String CONTRACT_BREWMASTER = "contract_brewmaster";
-    public static final String CONTRACT_KEEPER = "contract_keeper";
+    public static final String CONTRACT_MERCHANT = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.MERCHANT);
+    public static final String CONTRACT_HISTORIAN = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.HISTORIAN);
+    public static final String CONTRACT_SCRAPPER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.SCRAPPER);
 
-    public static final String CONTRACT_MINER = "contract_miner";
-    public static final String CONTRACT_EXPLORER = "contract_explorer";
-    public static final String CONTRACT_ALCHEMIST = "contract_alchemist";
+    public static final String CONTRACT_GUARD = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.GUARD);
+    public static final String CONTRACT_BREWMASTER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.BREWMASTER);
+    public static final String CONTRACT_KEEPER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.KEEPER);
 
-    public static final String CONTRACT_ARCANIST = "contract_arcanist";
-    public static final String CONTRACT_PRIEST = "contract_priest";
-    public static final String CONTRACT_ARTISAN = "contract_artisan";
+    public static final String CONTRACT_MINER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.MINER);
+    public static final String CONTRACT_EXPLORER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.EXPLORER);
+    public static final String CONTRACT_ALCHEMIST = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.ALCHEMIST);
 
-    public static final String CONTRACT_CHAMPION = "contract_champion";
-    public static final String CONTRACT_BLACKSMITH = "contract_blacksmith";
-    public static final String CONTRACT_SMELTER = "contract_smelter";
+    public static final String CONTRACT_ARCANIST = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.ARCANIST);
+    public static final String CONTRACT_PRIEST = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.PRIEST);
+    public static final String CONTRACT_ARTISAN = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.ARTISAN);
 
-    public static final String QUILL_EMPTY = "quill_empty";
-    public static final String QUILL_SMALL = "quill_small";
-    public static final String QUILL_HALF = "quill_half";
-    public static final String QUILL_FULL = "quill_full";
+    public static final String CONTRACT_CHAMPION = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.CHAMPION);
+    public static final String CONTRACT_BLACKSMITH = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.BLACKSMITH);
+    public static final String CONTRACT_SMELTER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.SMELTER);
 
+    public static final String QUILL_EMPTY = join(JolCraftDictionary.QUILL, JolCraftDictionary.EMPTY);
+    public static final String QUILL_SMALL = join(JolCraftDictionary.QUILL, JolCraftDictionary.SMALL);
+    public static final String QUILL_HALF = join(JolCraftDictionary.QUILL, JolCraftDictionary.HALF);
+    public static final String QUILL_FULL = join(JolCraftDictionary.QUILL, JolCraftDictionary.FULL);
+
+    // ---------------------------------------------------------------------
     // Spawn Eggs
-    public static final String DWARF_SPAWN_EGG = "dwarf_spawn_egg";
-    public static final String DWARF_GUILDMASTER_SPAWN_EGG = "dwarf_guildmaster_spawn_egg";
-    public static final String DWARF_HISTORIAN_SPAWN_EGG = "dwarf_historian_spawn_egg";
-    public static final String DWARF_MERCHANT_SPAWN_EGG = "dwarf_merchant_spawn_egg";
-    public static final String DWARF_SCRAPPER_SPAWN_EGG = "dwarf_scrapper_spawn_egg";
-    public static final String DWARF_BREWMASTER_SPAWN_EGG = "dwarf_brewmaster_spawn_egg";
-    public static final String DWARF_GUARD_SPAWN_EGG = "dwarf_guard_spawn_egg";
-    public static final String DWARF_KEEPER_SPAWN_EGG = "dwarf_keeper_spawn_egg";
-    public static final String DWARF_ARTISAN_SPAWN_EGG = "dwarf_artisan_spawn_egg";
-    public static final String DWARF_EXPLORER_SPAWN_EGG = "dwarf_explorer_spawn_egg";
-    public static final String DWARF_MINER_SPAWN_EGG = "dwarf_miner_spawn_egg";
-    public static final String DWARF_ALCHEMIST_SPAWN_EGG = "dwarf_alchemist_spawn_egg";
-    public static final String DWARF_ARCANIST_SPAWN_EGG = "dwarf_arcanist_spawn_egg";
-    public static final String DWARF_PRIEST_SPAWN_EGG = "dwarf_priest_spawn_egg";
+    // ---------------------------------------------------------------------
 
-    public static final String MUFFHORN_SPAWN_EGG = "muffhorn_spawn_egg";
+    public static final String DWARF_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_GUILDMASTER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.GUILDMASTER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_HISTORIAN_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.HISTORIAN, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_MERCHANT_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.MERCHANT, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_SCRAPPER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.SCRAPPER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_BREWMASTER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.BREWMASTER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_GUARD_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.GUARD, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_KEEPER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.KEEPER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_ARTISAN_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.ARTISAN, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_EXPLORER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.EXPLORER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_MINER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.MINER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_ALCHEMIST_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.ALCHEMIST, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_ARCANIST_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.ARCANIST, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_PRIEST_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.PRIEST, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
 
+    public static final String MUFFHORN_SPAWN_EGG = join(JolCraftCreatureIds.MUFFHORN, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+
+    // ---------------------------------------------------------------------
     // Tools (Gems)
-    public static final String DEEPSLATE_ARTISAN_HAMMER = "deepslate_artisan_hammer";
-    public static final String MITHRIL_ARTISAN_HAMMER = "mithril_artisan_hammer";
-    public static final String DEEPSLATE_CHISEL = "deepslate_chisel";
-    public static final String MITHRIL_CHISEL = "mithril_chisel";
+    // ---------------------------------------------------------------------
 
+    public static final String DEEPSLATE_ARTISAN_HAMMER = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String MITHRIL_ARTISAN_HAMMER = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String DEEPSLATE_CHISEL = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.CHISEL);
+    public static final String MITHRIL_CHISEL = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.CHISEL);
+
+    // ---------------------------------------------------------------------
     // Geodes
-    public static final String GEODE_SMALL = geode(JolCraftDictionary.SMALL);
-    public static final String GEODE_MEDIUM = geode(JolCraftDictionary.MEDIUM);
-    public static final String GEODE_LARGE = geode(JolCraftDictionary.LARGE);
+    // ---------------------------------------------------------------------
 
-    private static String geode(String size){
-        return JolCraftDictionary.GEODE + size;
-    }
+    public static final String GEODE_SMALL = join(JolCraftDictionary.GEODE, JolCraftDictionary.SMALL);
+    public static final String GEODE_MEDIUM = join(JolCraftDictionary.GEODE, JolCraftDictionary.MEDIUM);
+    public static final String GEODE_LARGE = join(JolCraftDictionary.GEODE, JolCraftDictionary.LARGE);
 
-    // Uncut Gems
-    public static final String AEGISCORE = "aegiscore";
-    public static final String ASHFANG = "ashfang";
-    public static final String DEEPMARROW = "deepmarrow";
-    public static final String EARTHBLOOD = "earthblood";
-    public static final String EMBERGLASS = "emberglass";
-    public static final String FROSTVEIN = "frostvein";
-    public static final String GRIMSTONE = "grimstone";
-    public static final String IRONHEART = "ironheart";
-    public static final String LUMIERE = "lumiere";
-    public static final String MOONSHARD = "moonshard";
-    public static final String RUSTAGATE = "rustagate";
-    public static final String SKYBURROW = "skyburrow";
-    public static final String SUNGLEAM = "sungleam";
-    public static final String VERDANITE = "verdanite";
-    public static final String WOECRYSTAL = "woecrystal";
+    // ---------------------------------------------------------------------
+    // Gems
+    // ---------------------------------------------------------------------
 
-    // Cut Gems (registered as "<gem>_cut")
-    public static final String AEGISCORE_CUT = "aegiscore_cut";
-    public static final String ASHFANG_CUT = "ashfang_cut";
-    public static final String DEEPMARROW_CUT = "deepmarrow_cut";
-    public static final String EARTHBLOOD_CUT = "earthblood_cut";
-    public static final String EMBERGLASS_CUT = "emberglass_cut";
-    public static final String FROSTVEIN_CUT = "frostvein_cut";
-    public static final String GRIMSTONE_CUT = "grimstone_cut";
-    public static final String IRONHEART_CUT = "ironheart_cut";
-    public static final String LUMIERE_CUT = "lumiere_cut";
-    public static final String MOONSHARD_CUT = "moonshard_cut";
-    public static final String RUSTAGATE_CUT = "rustagate_cut";
-    public static final String SKYBURROW_CUT = "skyburrow_cut";
-    public static final String SUNGLEAM_CUT = "sungleam_cut";
-    public static final String VERDANITE_CUT = "verdanite_cut";
-    public static final String WOECRYSTAL_CUT = "woecrystal_cut";
+    // Uncut
+    public static final String AEGISCORE = JolCraftDictionary.AEGISCORE;
+    public static final String ASHFANG = JolCraftDictionary.ASHFANG;
+    public static final String DEEPMARROW = JolCraftDictionary.DEEPMARROW;
+    public static final String EARTHBLOOD = JolCraftDictionary.EARTHBLOOD;
+    public static final String EMBERGLASS = JolCraftDictionary.EMBERGLASS;
+    public static final String FROSTVEIN = JolCraftDictionary.FROSTVEIN;
+    public static final String GRIMSTONE = JolCraftDictionary.GRIMSTONE;
+    public static final String IRONHEART = JolCraftDictionary.IRONHEART;
+    public static final String LUMIERE = JolCraftDictionary.LUMIERE;
+    public static final String MOONSHARD = JolCraftDictionary.MOONSHARD;
+    public static final String RUSTAGATE = JolCraftDictionary.RUSTAGATE;
+    public static final String SKYBURROW = JolCraftDictionary.SKYBURROW;
+    public static final String SUNGLEAM = JolCraftDictionary.SUNGLEAM;
+    public static final String VERDANITE = JolCraftDictionary.VERDANITE;
+    public static final String WOECRYSTAL = JolCraftDictionary.WOECRYSTAL;
 
+    // Dust
+    public static final String AEGISCORE_DUST = join(AEGISCORE, JolCraftDictionary.DUST);
+    public static final String ASHFANG_DUST = join(ASHFANG, JolCraftDictionary.DUST);
+    public static final String DEEPMARROW_DUST = join(DEEPMARROW, JolCraftDictionary.DUST);
+    public static final String EARTHBLOOD_DUST = join(EARTHBLOOD, JolCraftDictionary.DUST);
+    public static final String EMBERGLASS_DUST = join(EMBERGLASS, JolCraftDictionary.DUST);
+    public static final String FROSTVEIN_DUST = join(FROSTVEIN, JolCraftDictionary.DUST);
+    public static final String GRIMSTONE_DUST = join(GRIMSTONE, JolCraftDictionary.DUST);
+    public static final String IRONHEART_DUST = join(IRONHEART, JolCraftDictionary.DUST);
+    public static final String LUMIERE_DUST = join(LUMIERE, JolCraftDictionary.DUST);
+    public static final String MOONSHARD_DUST = join(MOONSHARD, JolCraftDictionary.DUST);
+    public static final String RUSTAGATE_DUST = join(RUSTAGATE, JolCraftDictionary.DUST);
+    public static final String SKYBURROW_DUST = join(SKYBURROW, JolCraftDictionary.DUST);
+    public static final String SUNGLEAM_DUST = join(SUNGLEAM, JolCraftDictionary.DUST);
+    public static final String VERDANITE_DUST = join(VERDANITE, JolCraftDictionary.DUST);
+    public static final String WOECRYSTAL_DUST = join(WOECRYSTAL, JolCraftDictionary.DUST);
+
+    // Cut
+    public static final String AEGISCORE_CUT = join(AEGISCORE, JolCraftDictionary.CUT);
+    public static final String ASHFANG_CUT = join(ASHFANG, JolCraftDictionary.CUT);
+    public static final String DEEPMARROW_CUT = join(DEEPMARROW, JolCraftDictionary.CUT);
+    public static final String EARTHBLOOD_CUT = join(EARTHBLOOD, JolCraftDictionary.CUT);
+    public static final String EMBERGLASS_CUT = join(EMBERGLASS, JolCraftDictionary.CUT);
+    public static final String FROSTVEIN_CUT = join(FROSTVEIN, JolCraftDictionary.CUT);
+    public static final String GRIMSTONE_CUT = join(GRIMSTONE, JolCraftDictionary.CUT);
+    public static final String IRONHEART_CUT = join(IRONHEART, JolCraftDictionary.CUT);
+    public static final String LUMIERE_CUT = join(LUMIERE, JolCraftDictionary.CUT);
+    public static final String MOONSHARD_CUT = join(MOONSHARD, JolCraftDictionary.CUT);
+    public static final String RUSTAGATE_CUT = join(RUSTAGATE, JolCraftDictionary.CUT);
+    public static final String SKYBURROW_CUT = join(SKYBURROW, JolCraftDictionary.CUT);
+    public static final String SUNGLEAM_CUT = join(SUNGLEAM, JolCraftDictionary.CUT);
+    public static final String VERDANITE_CUT = join(VERDANITE, JolCraftDictionary.CUT);
+    public static final String WOECRYSTAL_CUT = join(WOECRYSTAL, JolCraftDictionary.CUT);
+
+    // ---------------------------------------------------------------------
     // Crops / Food / Brewing
-    public static final String BARLEY_SEEDS = "barley_seeds";
-    public static final String BARLEY = "barley";
-    public static final String BARLEY_MALT = "barley_malt";
+    // ---------------------------------------------------------------------
 
-    public static final String ASGARNIAN_SEEDS = "asgarnian_seeds";
-    public static final String ASGARNIAN_HOPS = "asgarnian_hops";
+    public static final String BARLEY_SEEDS = join(JolCraftDictionary.BARLEY, plural(JolCraftDictionary.SEED));
+    public static final String BARLEY = JolCraftDictionary.BARLEY;
+    public static final String BARLEY_MALT = join(JolCraftDictionary.BARLEY, JolCraftDictionary.MALT);
 
-    public static final String DUSKHOLD_SEEDS = "duskhold_seeds";
-    public static final String DUSKHOLD_HOPS = "duskhold_hops";
+    public static final String ASGARNIAN_SEEDS = join(JolCraftDictionary.ASGARNIAN, plural(JolCraftDictionary.SEED));
+    public static final String ASGARNIAN_HOPS = join(JolCraftDictionary.ASGARNIAN, plural(JolCraftDictionary.HOP));
 
-    public static final String KRANDONIAN_SEEDS = "krandonian_seeds";
-    public static final String KRANDONIAN_HOPS = "krandonian_hops";
+    public static final String DUSKHOLD_SEEDS = join(JolCraftDictionary.DUSKHOLD, plural(JolCraftDictionary.SEED));
+    public static final String DUSKHOLD_HOPS = join(JolCraftDictionary.DUSKHOLD, plural(JolCraftDictionary.HOP));
 
-    public static final String YANILLIAN_SEEDS = "yanillian_seeds";
-    public static final String YANILLIAN_HOPS = "yanillian_hops";
+    public static final String KRANDONIAN_SEEDS = join(JolCraftDictionary.KRANDONIAN, plural(JolCraftDictionary.SEED));
+    public static final String KRANDONIAN_HOPS = join(JolCraftDictionary.KRANDONIAN, plural(JolCraftDictionary.HOP));
 
-    public static final String YEAST = "yeast";
-    public static final String GLASS_MUG = "glass_mug";
-    public static final String DWARVEN_BREW = "dwarven_brew";
-    public static final String DEEPSLATE_BULBS = "deepslate_bulbs";
+    public static final String YANILLIAN_SEEDS = join(JolCraftDictionary.YANILLIAN, plural(JolCraftDictionary.SEED));
+    public static final String YANILLIAN_HOPS = join(JolCraftDictionary.YANILLIAN, plural(JolCraftDictionary.HOP));
 
+    public static final String YEAST = JolCraftDictionary.YEAST;
+    public static final String GLASS_MUG = join(JolCraftDictionary.GLASS, JolCraftDictionary.MUG);
+    public static final String DWARVEN_BREW = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.BREW);
+    public static final String DEEPSLATE_BULBS = join(JolCraftDictionary.DEEPSLATE, plural(JolCraftDictionary.BULB));
+
+    // ---------------------------------------------------------------------
     // Reputation
-    public static final String REPUTATION_TABLET_0 = "reputation_tablet_0";
-    public static final String REPUTATION_TABLET_1 = "reputation_tablet_1";
-    public static final String REPUTATION_TABLET_2 = "reputation_tablet_2";
-    public static final String REPUTATION_TABLET_3 = "reputation_tablet_3";
-    public static final String REPUTATION_TABLET_4 = "reputation_tablet_4";
+    // ---------------------------------------------------------------------
 
+    public static final String REPUTATION_TABLET_0 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.STRANGER.idToString());
+    public static final String REPUTATION_TABLET_1 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.KNOWN_FACE.idToString());
+    public static final String REPUTATION_TABLET_2 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.TRUSTED.idToString());
+    public static final String REPUTATION_TABLET_3 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.RESPECTED.idToString());
+    public static final String REPUTATION_TABLET_4 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.BLOOD_KIN.idToString());
+
+    // ---------------------------------------------------------------------
     // Tomes
-    public static final String DWARVEN_TOME = "dwarven_tome";
-    public static final String UNIDENTIFIED_DWARVEN_TOME = "unidentified_dwarven_tome";
-    public static final String DWARVEN_TOME_COMMON = "dwarven_tome_common";
-    public static final String DWARVEN_TOME_UNCOMMON = "dwarven_tome_uncommon";
-    public static final String DWARVEN_TOME_RARE = "dwarven_tome_rare";
-    public static final String DWARVEN_TOME_EPIC = "dwarven_tome_epic";
+    // ---------------------------------------------------------------------
 
-    public static final String ANCIENT_DWARVEN_TOME = "ancient_dwarven_tome";
-    public static final String ANCIENT_UNIDENTIFIED_DWARVEN_TOME = "unidentified_ancient_dwarven_tome";
-    public static final String ANCIENT_DWARVEN_TOME_COMMON = "ancient_dwarven_tome_common";
-    public static final String ANCIENT_DWARVEN_TOME_UNCOMMON = "ancient_dwarven_tome_uncommon";
-    public static final String ANCIENT_DWARVEN_TOME_RARE = "ancient_dwarven_tome_rare";
-    public static final String ANCIENT_DWARVEN_TOME_EPIC = "ancient_dwarven_tome_epic";
+    public static final String DWARVEN_TOME = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME);
+    public static final String UNIDENTIFIED_DWARVEN_TOME = join(JolCraftDictionary.UNIDENTIFIED, JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME);
+    public static final String DWARVEN_TOME_COMMON = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.COMMON);
+    public static final String DWARVEN_TOME_UNCOMMON = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.UNCOMMON);
+    public static final String DWARVEN_TOME_RARE = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.RARE);
+    public static final String DWARVEN_TOME_EPIC = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.EPIC);
 
-    public static final String LEGENDARY_PAGE = "legendary_page";
-    public static final String LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME  = "legendary_unidentified_ancient_dwarven_tome";
-    public static final String ANCIENT_DWARVEN_TOME_LEGENDARY = "ancient_dwarven_tome_legendary";
+    public static final String ANCIENT_DWARVEN_TOME = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME);
+    public static final String ANCIENT_UNIDENTIFIED_DWARVEN_TOME = join(JolCraftDictionary.UNIDENTIFIED, JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME);
+    public static final String ANCIENT_DWARVEN_TOME_COMMON = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.COMMON);
+    public static final String ANCIENT_DWARVEN_TOME_UNCOMMON = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.UNCOMMON);
+    public static final String ANCIENT_DWARVEN_TOME_RARE = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.RARE);
+    public static final String ANCIENT_DWARVEN_TOME_EPIC = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME, JolCraftDictionary.EPIC);
 
+    public static final String LEGENDARY_PAGE = join(JolCraftDictionary.LEGENDARY, JolCraftDictionary.PAGE);
+    public static final String LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME = join(
+            JolCraftDictionary.LEGENDARY,
+            JolCraftDictionary.UNIDENTIFIED,
+            JolCraftDictionary.ANCIENT,
+            JolCraftDictionary.DWARVEN,
+            JolCraftDictionary.TOME
+    );
+    public static final String ANCIENT_DWARVEN_TOME_LEGENDARY = join(
+            JolCraftDictionary.ANCIENT,
+            JolCraftDictionary.DWARVEN,
+            JolCraftDictionary.TOME,
+            JolCraftDictionary.LEGENDARY
+    );
+
+    // ---------------------------------------------------------------------
     // Tools
-    public static final String COPPER_SPANNER = "copper_spanner";
-    public static final String IRON_SPANNER = "iron_spanner";
+    // ---------------------------------------------------------------------
 
+    public static final String COPPER_SPANNER = join(JolCraftDictionary.COPPER, JolCraftDictionary.SPANNER);
+    public static final String IRON_SPANNER = join(JolCraftDictionary.IRON, JolCraftDictionary.SPANNER);
+
+    // ---------------------------------------------------------------------
     // Scrap
-    public static final String SCRAP = "scrap";
-    public static final String SCRAP_HEAP = "scrap_heap";
-    public static final String BROKEN_PICKAXE = "broken_pickaxe";
-    public static final String BROKEN_AMULET = "broken_amulet";
-    public static final String BROKEN_BELT = "broken_belt";
-    public static final String BROKEN_COINS = "broken_coins";
-    public static final String DEEPSLATE_MUG = "deepslate_mug";
-    public static final String EXPIRED_POTION = "expired_potion";
-    public static final String INGOT_MOULD = "ingot_mould";
-    public static final String MITHRIL_SCRAP = "mithril_scrap";
-    public static final String OLD_FABRIC = "old_fabric";
-    public static final String RUSTY_TONGS = "rusty_tongs";
-    public static final String BROKEN_MITHRIL_SWORD = "broken_mithril_sword";
-    public static final String BROKEN_TABLET = "broken_tablet";
-    public static final String BROKEN_DEEPSLATE_PLATES = "broken_deepslate_plates";
-    public static final String BROKEN_MITHRIL_PLATE = "broken_mithril_plate";
-    public static final String BROKEN_DEEPSLATE_GEAR = "broken_deepslate_gear";
-    public static final String BROKEN_DEEPSLATE_PICKAXE_HEAD = "broken_deepslate_pickaxe_head";
+    // ---------------------------------------------------------------------
+
+    public static final String SCRAP = JolCraftDictionary.SCRAP;
+    public static final String SCRAP_HEAP = join(JolCraftDictionary.SCRAP, JolCraftDictionary.HEAP);
+
+    public static final String BROKEN_PICKAXE = join(JolCraftDictionary.BROKEN, JolCraftDictionary.PICKAXE);
+    public static final String BROKEN_AMULET = join(JolCraftDictionary.BROKEN, JolCraftDictionary.AMULET);
+    public static final String BROKEN_BELT = join(JolCraftDictionary.BROKEN, JolCraftDictionary.BELT);
+    public static final String BROKEN_COINS = join(JolCraftDictionary.BROKEN, plural(JolCraftDictionary.COIN));
+
+    public static final String DEEPSLATE_MUG = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.MUG);
+    public static final String EXPIRED_POTION = join(JolCraftDictionary.EXPIRED, JolCraftDictionary.POTION);
+    public static final String INGOT_MOULD = join(JolCraftDictionary.INGOT, JolCraftDictionary.MOULD);
+    public static final String MITHRIL_SCRAP = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.SCRAP);
+    public static final String OLD_FABRIC = join(JolCraftDictionary.OLD, JolCraftDictionary.FABRIC);
+    public static final String RUSTY_TONGS = join(JolCraftDictionary.RUSTY, plural(JolCraftDictionary.TONG));
+    public static final String BROKEN_MITHRIL_SWORD = join(JolCraftDictionary.BROKEN, JolCraftDictionary.MITHRIL, JolCraftDictionary.SWORD);
+    public static final String BROKEN_TABLET = join(JolCraftDictionary.BROKEN, JolCraftDictionary.TABLET);
+
+    public static final String BROKEN_DEEPSLATE_PLATES = join(JolCraftDictionary.BROKEN, JolCraftDictionary.DEEPSLATE, plural(JolCraftDictionary.PLATE));
+    public static final String BROKEN_MITHRIL_PLATE = join(JolCraftDictionary.BROKEN, JolCraftDictionary.MITHRIL, JolCraftDictionary.PLATE);
+
+    public static final String BROKEN_DEEPSLATE_GEAR = join(JolCraftDictionary.BROKEN, JolCraftDictionary.DEEPSLATE, JolCraftDictionary.GEAR);
+    public static final String BROKEN_DEEPSLATE_PICKAXE_HEAD = join(JolCraftDictionary.BROKEN, JolCraftDictionary.DEEPSLATE, JolCraftDictionary.PICKAXE, JolCraftDictionary.HEAD);
 }

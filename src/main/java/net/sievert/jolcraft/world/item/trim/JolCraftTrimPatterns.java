@@ -11,7 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 public final class JolCraftTrimPatterns {
@@ -29,7 +29,7 @@ public final class JolCraftTrimPatterns {
         TrimPattern trimPattern = new TrimPattern(
                 key.location(),
                 itemHolder,
-                Component.translatable(Util.makeDescriptionId(JolCraftDictionary.TRIM_PATTERN, key.location())),
+                Component.translatable(Util.makeDescriptionId(JolCraftTrimIds.TRIM_PATTERN, key.location())),
                 false
         );
         context.register(key, trimPattern);

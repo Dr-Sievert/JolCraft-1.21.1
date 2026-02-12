@@ -22,6 +22,10 @@ public enum DwarvenReputationTier {
         return id;
     }
 
+    public String idToString() {
+        return String.valueOf(id);
+    }
+
     public String langKey() {
         return langKey;
     }

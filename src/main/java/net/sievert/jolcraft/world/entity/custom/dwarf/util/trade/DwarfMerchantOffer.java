@@ -6,7 +6,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.key.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
@@ -22,24 +23,21 @@ public class DwarfMerchantOffer {
 
     public static final Codec<DwarfMerchantOffer> CODEC = RecordCodecBuilder.create(
             inst -> inst.group(
-                            DwarfItemCost.CODEC.fieldOf(JolCraftDictionary.COST_A).forGetter(o -> o.baseCostA),
-                            DwarfItemCost.CODEC.lenientOptionalFieldOf(JolCraftDictionary.COST_B).forGetter(o -> o.costB),
+                            DwarfItemCost.CODEC.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.COST, "a")).forGetter(o -> o.baseCostA),
+                            DwarfItemCost.CODEC.lenientOptionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.COST, "b")).forGetter(o -> o.costB),
                             ItemStack.CODEC.fieldOf(JolCraftDictionary.RESULT).forGetter(o -> o.result),
 
                             Codec.INT.lenientOptionalFieldOf(USES, 0).forGetter(o -> o.uses),
-                            Codec.INT.lenientOptionalFieldOf(JolCraftDictionary.MAX_USES, 4).forGetter(o -> o.maxUses),
+                            Codec.INT.lenientOptionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftStrings.plural(JolCraftDictionary.USE)), 4).forGetter(o -> o.maxUses),
 
                             Codec.BOOL.lenientOptionalFieldOf(REWARD_XP, Boolean.TRUE).forGetter(o -> o.rewardExp),
                             Codec.INT.lenientOptionalFieldOf(SPECIAL_PRICE_DIFFERENCE, 0).forGetter(o -> o.specialPriceDiff),
 
                             Codec.INT.lenientOptionalFieldOf(DEMAND, 0).forGetter(o -> o.demand),
 
-                            Codec.FLOAT.lenientOptionalFieldOf(JolCraftDictionary.PRICE_MULTIPLIER, 0.0F).forGetter(o -> o.priceMultiplier),
+                            Codec.FLOAT.lenientOptionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.PRICE, JolCraftDictionary.MULTIPLIER), 0.0F).forGetter(o -> o.priceMultiplier),
                             Codec.INT.lenientOptionalFieldOf(JolCraftDictionary.XP, 1).forGetter(o -> o.xp)
-                    )
-                    .apply(inst, DwarfMerchantOffer::new)
-    );
-
+                    ).apply(inst, DwarfMerchantOffer::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DwarfMerchantOffer> STREAM_CODEC =
             StreamCodec.of(DwarfMerchantOffer::writeToStream, DwarfMerchantOffer::createFromStream);

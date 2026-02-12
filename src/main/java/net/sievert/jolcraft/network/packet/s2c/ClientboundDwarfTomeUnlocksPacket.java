@@ -12,27 +12,27 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record ClientboundLoreUnlocksPacket(Set<String> unlocks) implements CustomPacketPayload {
-    public static final Type<ClientboundLoreUnlocksPacket> TYPE =
-            new Type<>(JolCraft.location(JolCraftNetworkIds.SYNC_TOME_UNLOCKS));
+public record ClientboundDwarfTomeUnlocksPacket(Set<String> unlocks) implements CustomPacketPayload {
+    public static final Type<ClientboundDwarfTomeUnlocksPacket> TYPE =
+            new Type<>(JolCraft.location(JolCraftNetworkIds.SYNC_DWARF_TOME_UNLOCKS));
 
-    public static final StreamCodec<FriendlyByteBuf, ClientboundLoreUnlocksPacket> CODEC =
-            CustomPacketPayload.codec(ClientboundLoreUnlocksPacket::write, ClientboundLoreUnlocksPacket::read);
+    public static final StreamCodec<FriendlyByteBuf, ClientboundDwarfTomeUnlocksPacket> CODEC =
+            CustomPacketPayload.codec(ClientboundDwarfTomeUnlocksPacket::write, ClientboundDwarfTomeUnlocksPacket::read);
 
-    public static <K extends Enum<K>> ClientboundLoreUnlocksPacket fromEnumSet(Set<K> enumUnlocks) {
+    public static <K extends Enum<K>> ClientboundDwarfTomeUnlocksPacket fromEnumSet(Set<K> enumUnlocks) {
         Set<String> keys = enumUnlocks.stream()
                 .map(k -> k.name().toLowerCase(Locale.ROOT))
                 .collect(Collectors.toSet());
-        return new ClientboundLoreUnlocksPacket(keys);
+        return new ClientboundDwarfTomeUnlocksPacket(keys);
     }
 
-    public static ClientboundLoreUnlocksPacket read(FriendlyByteBuf buf) {
+    public static ClientboundDwarfTomeUnlocksPacket read(FriendlyByteBuf buf) {
         int size = buf.readVarInt();
         Set<String> unlocks = new HashSet<>(size);
         for (int i = 0; i < size; i++) {
             unlocks.add(buf.readUtf());
         }
-        return new ClientboundLoreUnlocksPacket(unlocks);
+        return new ClientboundDwarfTomeUnlocksPacket(unlocks);
     }
 
     public void write(FriendlyByteBuf buf) {
