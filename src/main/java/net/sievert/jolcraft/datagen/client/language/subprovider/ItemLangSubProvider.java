@@ -110,7 +110,7 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
         for (DeferredHolder<?, ?> holder : JolCraftItems.ITEMS.getEntries()) {
             ResourceLocation id = holder.getId();
 
-            String key = AbstractLanguageKeys.effect(id.getPath());
+            String key = AbstractLanguageKeys.item(id.getPath());
             if (p.hasKey(key)) continue;
 
             p.put(key, JolCraftStrings.toTitleCase(id.getPath()));

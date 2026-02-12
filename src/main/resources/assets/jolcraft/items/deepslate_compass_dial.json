@@ -8,7 +8,7 @@
         "value": -1
       },
       {
-        "type": "jolcraft:dial_color",
+        "type": "jolcraft:deepslate_compass_dial_color",
         "default": 13882323
       }
     ]

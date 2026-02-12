@@ -15,8 +15,8 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         // Language gating / effects
         // -----------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_NEED_LANG, "You need to understand dwarvish to use this.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_NEED_ANCIENT, "You need to understand ancient dwarvish to use this.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_NEED_DWARVEN_LANGUAGE, "You need to understand dwarvish to use this.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_NEED_ANCIENT_DWARVEN_LANGUAGE, "You need to understand ancient dwarvish to use this.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_MEMORY, "Ancient memory effect gives you temporary understanding of ancient dwarvish.");
 
         // -----------------------------------------------------------------
@@ -26,7 +26,7 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_LOCKED, "The pages are filled with unfamiliar symbols.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_UNLOCKED, "The key to dwarven speech lies within.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_USE, "You have learned to understand the dwarven language!");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_KNOWS, "You already understand the dwarven language.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_KNOWS_DWARVEN_LANGUAGE, "You already understand the dwarven language.");
 
         // -----------------------------------------------------------------
         // Ancient Dwarven Lexicon
@@ -37,7 +37,7 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_USE, "You have learned to understand the ancient dwarven language!");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_READ, "You have no idea how to decipher this.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_USE, "The text is clearly dwarvish, but you cannot decipher its secrets.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS, "You already understand the ancient dwarven language.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE, "You already understand the ancient dwarven language.");
 
         // -----------------------------------------------------------------
         // Tomes / Identification
@@ -46,7 +46,7 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         p.putManual(JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED, "Right-click to identify.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED_DWARVEN_TOME, "An unidentified dwarven tome.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_SHIFT, "Can be sold to Dwarven Historians.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_UNIDENTIFIED, "An unidentified dwarven tome, written in ancient dwarvish.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED_ANCIENT_DWARVEN_TOME, "An unidentified dwarven tome, written in ancient dwarvish.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING, "You recognize the language as Dwarvish, but cannot understand it.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_LEGENDARY_ANCIENT_DWARVEN_TOME_SHIFT, "Can be used to gain permanent knowledge.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_IDENTIFY_SUCCESS, "You identify the contents of the tome.");
@@ -60,9 +60,9 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         // Tome unlock messages
         // -----------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_TOME_UNLOCK_EMPTY, "This tome lacks knowledge that you find useful.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_TOME_UNLOCK_BREW, "You can now brew with multiple ingredients!");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_TOME_UNLOCK_GEMS, "You can now cut gems using a chisel!");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_EMPTY, "This tome lacks knowledge that you find useful.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_BREW, "You can now brew with multiple ingredients!");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS, "You can now cut gems using a chisel!");
 
         // -----------------------------------------------------------------
         // Locked item variants
@@ -97,6 +97,6 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID, "You have not paid this dwarf yet.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_PROMOTE, "This dwarf cannot be promoted.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_SIGN, "This dwarf cannot sign contracts.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_GUARD_PROMOTION, "Guard promoted to %s!");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARF_GUARD_PROMOTION, "Guard promoted to %s!");
     }
 }

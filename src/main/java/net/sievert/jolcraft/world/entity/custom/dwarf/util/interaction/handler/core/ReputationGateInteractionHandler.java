@@ -27,7 +27,7 @@ public final class ReputationGateInteractionHandler implements DwarfInteractions
         int requiredTier = dwarf.getRequiredTier();
         if (requiredTier > 0 && !DwarvenReputationHelper.hasTier(player, requiredTier)) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_LOCKED, requiredTier)
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LOCKED, requiredTier)
                             .withStyle(ChatFormatting.RED),
                     true
             );

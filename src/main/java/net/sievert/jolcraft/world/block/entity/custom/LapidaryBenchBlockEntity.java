@@ -69,7 +69,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
         if (toolType == LapidaryBenchRecipe.ToolType.CHISEL
                 && !DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_LOCKED_CUT_GEMS)
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED)
                             .withStyle(ChatFormatting.RED),
                     true
             );

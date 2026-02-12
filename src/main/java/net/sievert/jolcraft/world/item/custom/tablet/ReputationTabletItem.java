@@ -54,13 +54,13 @@ public class ReputationTabletItem extends Item {
 
             if (currentTier >= ENDORSEMENT_THRESHOLDS.length) {
                 serverPlayer.displayClientMessage(
-                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_MAX_TIER).withStyle(ChatFormatting.GRAY),
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_MAX_TIER).withStyle(ChatFormatting.GRAY),
                         true
                 );
             } else {
                 int needed = ENDORSEMENT_THRESHOLDS[currentTier];
                 serverPlayer.displayClientMessage(
-                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_PROGRESS, endorsements, needed)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_REPUTATION_PROGRESS, endorsements, needed)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );
@@ -103,10 +103,10 @@ public class ReputationTabletItem extends Item {
             int staticendorsements = stack.getOrDefault(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), 0);
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_OWNER, ownerName)
                         .withStyle(ChatFormatting.GRAY));
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_REPUTATION)
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_REPUTATION)
                         .append(Component.translatable("jolcraft.reputation_tier." + statictier))
                         .withStyle(ChatFormatting.GRAY));
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_ENDORSEMENTS, staticendorsements)
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS, staticendorsements)
                         .withStyle(ChatFormatting.GRAY));
         } else {
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_STONE_LOCKED)

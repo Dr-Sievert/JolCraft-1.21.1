@@ -33,7 +33,7 @@ public final class JolCraftLanguageProvider extends AbstractLanguageProvider {
                 new LoreLangSubProvider(),
                 new MiscLangSubProvider(),
                 new PotionLangSubProvider(),
-                new ReputationLangSubProvider(),
+                new DwarvenReputationLangSubProvider(),
                 new StatLangSubProvider(),
                 new SubtitleLangSubProvider(),
                 new TrimLangSubProvider()

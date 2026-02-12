@@ -6,27 +6,29 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 public record DwarfMerchantData(int level) {
 
     public enum Level {
-        NOVICE(1, JolCraftLanguageKeys.LEVEL_NOVICE),
-        APPRENTICE(2, JolCraftLanguageKeys.LEVEL_APPRENTICE),
-        JOURNEYMAN(3, JolCraftLanguageKeys.LEVEL_JOURNEYMAN),
-        EXPERT(4, JolCraftLanguageKeys.LEVEL_EXPERT),
-        MASTER(5, JolCraftLanguageKeys.LEVEL_MASTER);
+        NOVICE(1),
+        APPRENTICE(2),
+        JOURNEYMAN(3),
+        EXPERT(4),
+        MASTER(5);
 
         private final int level;
-        private final String langKey;
 
-        Level(int level, String langKey) {
+        Level(int level) {
             this.level = level;
-            this.langKey = langKey;
         }
 
         public int id() {
             return level;
+        }
+
+        public String idToString() {
+            return String.valueOf(id());
         }
 
         public static Level fromId(int level) {
@@ -36,12 +38,16 @@ public record DwarfMerchantData(int level) {
             return NOVICE;
         }
 
-        public String getLangKey() {
-            return langKey;
+        public String langKey() {
+            return JolCraftStrings.dotted(
+                    JolCraftDictionary.MERCHANT,
+                    JolCraftDictionary.LEVEL,
+                    idToString()
+            );
         }
 
         public static String langKeyFromId(int level) {
-            return fromId(level).getLangKey();
+            return fromId(level).langKey();
         }
     }
 

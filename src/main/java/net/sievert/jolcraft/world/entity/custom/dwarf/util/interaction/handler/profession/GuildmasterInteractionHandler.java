@@ -60,7 +60,7 @@ public final class GuildmasterInteractionHandler
 
             if (tier >= maxTier) {
                 player.displayClientMessage(
-                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_MAX_TIER)
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_MAX_TIER)
                                 .withStyle(ChatFormatting.GRAY),
                         true
                 );
@@ -72,7 +72,7 @@ public final class GuildmasterInteractionHandler
                 int needed = DwarvenReputationImpl.getThresholdForTier(tier);
                 player.displayClientMessage(
                         Component.translatable(
-                                JolCraftLanguageKeys.TOOLTIP_REPUTATION_NOT_ENOUGH_ENDORSEMENTS,
+                                JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_NOT_ENOUGH_ENDORSEMENTS,
                                 needed,
                                 endorsementCount
                         ).withStyle(ChatFormatting.GRAY),

@@ -1,21 +1,22 @@
 package net.sievert.jolcraft.data.attachment.custom.reputation;
 
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 public enum DwarvenReputationTier {
 
-    STRANGER(0, JolCraftLanguageKeys.REPUTATION_TIER_0),
-    KNOWN_FACE(1, JolCraftLanguageKeys.REPUTATION_TIER_1),
-    TRUSTED(2, JolCraftLanguageKeys.REPUTATION_TIER_2),
-    RESPECTED(3, JolCraftLanguageKeys.REPUTATION_TIER_3),
-    BLOOD_KIN(4, JolCraftLanguageKeys.REPUTATION_TIER_4);
+    STRANGER(0),
+    KNOWN_FACE(1),
+    TRUSTED(2),
+    RESPECTED(3),
+    BLOOD_KIN(4);
 
     private final int id;
-    private final String langKey;
 
-    DwarvenReputationTier(int id, String langKey) {
+    DwarvenReputationTier(int id) {
         this.id = id;
-        this.langKey = langKey;
     }
 
     public int id() {
@@ -27,7 +28,12 @@ public enum DwarvenReputationTier {
     }
 
     public String langKey() {
-        return langKey;
+        return AbstractLanguageKeys.mod(
+                JolCraftStrings.dotted(
+                        JolCraftStrings.underscored(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER),
+                        idToString()
+                )
+        );
     }
 
     public static DwarvenReputationTier fromId(int id) {
@@ -35,9 +41,5 @@ public enum DwarvenReputationTier {
             if (tier.id == id) return tier;
         }
         return STRANGER;
-    }
-
-    public DwarvenReputationTier next() {
-        return fromId(this.id + 1);
     }
 }

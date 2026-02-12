@@ -40,7 +40,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
 
         if (dwarf.neverEndorse()) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_NEVER_ENDORSE).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_NEVER_ENDORSE).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);
@@ -49,7 +49,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
 
         if (DwarvenReputationHelper.hasEndorsementBypassCreative(player, dwarf.getProfession())) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_ALREADY_ENDORSED).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_ALREADY_ENDORSED).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);
@@ -58,7 +58,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
 
         if (!dwarf.canEndorse()) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_CANNOT_ENDORSE).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_CANNOT_ENDORSE).withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.dwarfNo(dwarf);

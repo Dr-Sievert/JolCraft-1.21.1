@@ -54,11 +54,11 @@ public abstract class AncientItemBase extends Item {
                     }
 
                     if (!AncientEffectHelper.hasAncientMemory(player)) {
-                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_NEED_ANCIENT)
+                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_NEED_ANCIENT_DWARVEN_LANGUAGE)
                                 .withStyle(ChatFormatting.RED));
                     }
                     if (!DwarvenLanguageHelper.knowsDwarvish(player)) {
-                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_NEED_LANG)
+                        tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_NEED_DWARVEN_LANGUAGE)
                                 .withStyle(ChatFormatting.RED));
                         tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_MEMORY)
                                 .withStyle(ChatFormatting.GRAY));

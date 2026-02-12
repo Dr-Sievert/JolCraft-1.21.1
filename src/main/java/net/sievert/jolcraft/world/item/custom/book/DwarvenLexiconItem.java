@@ -40,7 +40,7 @@ public class DwarvenLexiconItem extends Item {
                 PlaySound.levelUp(player);
                 serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_USE).withStyle(ChatFormatting.GREEN), true);
             } else {
-                serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_KNOWS).withStyle(ChatFormatting.GRAY), true);
+                serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_LEXICON_KNOWS_DWARVEN_LANGUAGE).withStyle(ChatFormatting.GRAY), true);
                 PlaySound.bookPut(player);
             }
         }

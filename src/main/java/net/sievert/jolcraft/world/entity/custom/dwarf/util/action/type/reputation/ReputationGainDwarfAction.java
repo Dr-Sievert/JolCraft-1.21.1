@@ -76,7 +76,7 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
             );
         }
 
-        player.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_REPUTATION_LEVEL_UP).withStyle(ChatFormatting.DARK_PURPLE), true);
+        player.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LEVEL_UP).withStyle(ChatFormatting.DARK_PURPLE), true);
 
         ItemStack nextTablet = switch (newRep) {
             case 1 -> new ItemStack(JolCraftItems.REPUTATION_TABLET_1.get());

@@ -19,7 +19,6 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
@@ -65,7 +64,7 @@ public final class JolCraftItems {
     //Core Items
     public static final DeferredItem<Item> DEV_KEY = ITEMS.registerItem(
             JolCraftItemIds.DEV_KEY,
-            props -> new SimpleTooltipItem(props.rarity(Rarity.EPIC).stacksTo(1), JolCraftItemIds.DEV_KEY)
+            props -> new SimpleTooltipItem(props.rarity(Rarity.EPIC).stacksTo(1), JolCraftLanguageKeys.TOOLTIP_DEV_KEY)
     );
 
     public static final DeferredItem<Item> GOLD_COIN = ITEMS.registerItem(
@@ -96,7 +95,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> LOCKPICK = ITEMS.registerItem(
             JolCraftItemIds.LOCKPICK,
-            props -> new SimpleTooltipItem(props, JolCraftItemIds.LOCKPICK)
+            props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_LOCKPICK)
     );
 
     public static final DeferredItem<Item> EMPTY_DEEPSLATE_COMPASS = ITEMS.registerItem(JolCraftItemIds.EMPTY_DEEPSLATE_COMPASS,
@@ -117,7 +116,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> MITHRIL_INGOT = ITEMS.registerItem(
             JolCraftItemIds.MITHRIL_INGOT,
-            props -> new SimpleTooltipItem(props.fireResistant().rarity(Rarity.RARE), JolCraftTrimIds.TRIM_MATERIAL)
+            props -> new SimpleTooltipItem(props.fireResistant().rarity(Rarity.RARE), JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS)
     );
 
     public static final DeferredItem<Item> MITHRIL_NUGGET = ITEMS.registerItem(JolCraftItemIds.MITHRIL_NUGGET,
@@ -188,7 +187,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> DEEPSLATE_PLATE = ITEMS.registerItem(
             JolCraftItemIds.DEEPSLATE_PLATE,
-            props -> new SimpleTooltipItem(props, JolCraftTrimIds.TRIM_MATERIAL)
+            props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS)
     );
 
     public static final DeferredItem<Item> DEEPSLATE_ROD = ITEMS.registerItem(JolCraftItemIds.DEEPSLATE_ROD,
@@ -368,7 +367,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> GUILD_SIGIL = ITEMS.registerItem(
             JolCraftItemIds.GUILD_SIGIL,
-            props -> new SimpleTooltipItem(props, JolCraftItemIds.GUILD_SIGIL)
+            props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_GUILD_SIGIL)
     );
 
     public static final DeferredItem<Item> CONTRACT_GUILDMASTER = ITEMS.registerItem(JolCraftItemIds.CONTRACT_GUILDMASTER,
@@ -626,7 +625,7 @@ public final class JolCraftItems {
                     props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_MALT));
 
     public static final DeferredItem<Item> ASGARNIAN_SEEDS = ITEMS.registerItem(JolCraftItemIds.ASGARNIAN_SEEDS,
-            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEED));
+            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS));
 
     public static final DeferredItem<Item> ASGARNIAN_HOPS = ITEMS.registerItem(
             JolCraftItemIds.ASGARNIAN_HOPS,
@@ -634,7 +633,7 @@ public final class JolCraftItems {
     );
 
     public static final DeferredItem<Item> DUSKHOLD_SEEDS = ITEMS.registerItem(JolCraftItemIds.DUSKHOLD_SEEDS,
-            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEED));
+            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS));
 
     public static final DeferredItem<Item> DUSKHOLD_HOPS = ITEMS.registerItem(
             JolCraftItemIds.DUSKHOLD_HOPS,
@@ -642,7 +641,7 @@ public final class JolCraftItems {
     );
 
     public static final DeferredItem<Item> KRANDONIAN_SEEDS = ITEMS.registerItem(JolCraftItemIds.KRANDONIAN_SEEDS,
-            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEED));
+            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS));
 
     public static final DeferredItem<Item> KRANDONIAN_HOPS = ITEMS.registerItem(
             JolCraftItemIds.KRANDONIAN_HOPS,
@@ -650,7 +649,7 @@ public final class JolCraftItems {
     );
 
     public static final DeferredItem<Item> YANILLIAN_SEEDS = ITEMS.registerItem(JolCraftItemIds.YANILLIAN_SEEDS,
-            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEED));
+            properties -> new SimpleTooltipBlockItem(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), properties, JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS));
 
     public static final DeferredItem<Item> YANILLIAN_HOPS = ITEMS.registerItem(
             JolCraftItemIds.YANILLIAN_HOPS,

@@ -22,7 +22,7 @@ public final class MiscLangSubProvider implements AbstractLanguageProvider.LangS
         p.putManual(JolCraftLanguageKeys.TOOLTIP_QUILL_FULL, "Used for writing on paper.");
 
         p.putManual(JolCraftLanguageKeys.TOOLTIP_VANILLA_CROP, "Grows like vanilla crops.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_HOPS_SEED, "Needs two blocks height and a light level of 8 or less to grow.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS, "Needs two blocks height and a light level of 8 or less to grow.");
         p.putManual(
                 JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_BULBS,
                 "Needs a light level of 8 or less and a y-level of 0 or less to grow. Can only be planted on Deepslate, Tuff or Verdant Soil."

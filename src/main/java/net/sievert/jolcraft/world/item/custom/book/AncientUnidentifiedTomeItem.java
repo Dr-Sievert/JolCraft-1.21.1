@@ -86,12 +86,12 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
 
     @Override
     protected @NotNull List<Component> getUnreadableTooltipSGA(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_UNIDENTIFIED).withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED_ANCIENT_DWARVEN_TOME).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
     protected @NotNull List<Component> getNoAltTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_UNIDENTIFIED).withStyle(ChatFormatting.GRAY));
+        return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED_ANCIENT_DWARVEN_TOME).withStyle(ChatFormatting.GRAY));
     }
 
     @Override

@@ -16,7 +16,7 @@ public final class ContainerLangSubProvider implements AbstractLanguageProvider.
         // -----------------------------------------------------------------
 
         p.putManual(JolCraftLanguageKeys.CONTAINER_LAPIDARY_BENCH, "Lapidary Bench");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_LOCKED_CUT_GEMS, "You have no idea how to cut this gem without breaking it.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED, "You have no idea how to cut this gem without breaking it.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_GEODE, "Can be broken into dust using an artisan hammer at a lapidary bench.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_UNCUT_GEM, "Can be broken into dust using an artisan hammer or cut using a chisel at a lapidary bench.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ARTISAN_HAMMER, "Can be used to break geodes and gems at a lapidary bench.");

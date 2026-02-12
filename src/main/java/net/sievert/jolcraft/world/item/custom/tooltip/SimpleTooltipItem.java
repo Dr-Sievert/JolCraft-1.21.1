@@ -28,8 +28,7 @@ public class SimpleTooltipItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         TooltipHelper.addAltTooltip(
                 tooltip,
-                Component.translatable(tooltipTranslationKey)
-                        .withStyle(ChatFormatting.GRAY),
+                Component.translatable(tooltipTranslationKey).withStyle(ChatFormatting.GRAY),
                 List.of()
         );
         super.appendHoverText(stack, context, tooltip, flag);

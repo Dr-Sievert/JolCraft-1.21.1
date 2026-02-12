@@ -53,7 +53,7 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
                             .withStyle(ChatFormatting.RED), true);
                     PlaySound.bookPut(player);
                 } else {
-                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS)
+                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE)
                             .withStyle(ChatFormatting.GRAY), true);
                     PlaySound.bookPut(player);
                 }
