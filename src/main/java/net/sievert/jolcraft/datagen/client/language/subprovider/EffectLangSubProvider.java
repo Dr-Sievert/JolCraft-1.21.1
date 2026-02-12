@@ -20,7 +20,7 @@ public final class EffectLangSubProvider implements AbstractLanguageProvider.Lan
             Object value = holder.get();
             if (!(value instanceof MobEffect)) continue;
             ResourceLocation id = holder.getId();
-            String key = AbstractLanguageKeys.item(id.getPath());
+            String key = AbstractLanguageKeys.effect(id.getPath());
             if (p.hasKey(key)) continue;
 
             p.put(key, JolCraftStrings.toTitleCase(id.getPath()));
