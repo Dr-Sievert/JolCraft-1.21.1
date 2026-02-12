@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
@@ -215,11 +216,11 @@ public abstract class AbstractModelProvider extends ModelProvider {
     }
 
     private static @NotNull String itemIdPath(@NotNull Item item) {
-        return idPathFromModelLocation(ModelLocationUtils.getModelLocation(item), "item/");
+        return idPathFromModelLocation(ModelLocationUtils.getModelLocation(item), JolCraftDictionary.ITEM + "/");
     }
 
     private static @NotNull String blockIdPath(@NotNull Block block) {
-        return idPathFromModelLocation(ModelLocationUtils.getModelLocation(block), "block/");
+        return idPathFromModelLocation(ModelLocationUtils.getModelLocation(block), JolCraftDictionary.BLOCK + "/");
     }
 
     public static void generateFlatItem(
@@ -234,7 +235,7 @@ public abstract class AbstractModelProvider extends ModelProvider {
         }
 
         String layerZeroName = itemIdPath(layerZeroItem);
-        ResourceLocation texture = JolCraft.location("item/" + subfolder + "/" + layerZeroName);
+        ResourceLocation texture = JolCraft.location(JolCraftDictionary.ITEM + "/" + subfolder + "/" + layerZeroName);
         ResourceLocation modelLoc = ModelLocationUtils.getModelLocation(item);
 
         template.create(modelLoc, TextureMapping.layer0(texture), itemModels.modelOutput);
@@ -271,7 +272,7 @@ public abstract class AbstractModelProvider extends ModelProvider {
         }
 
         String layerZeroName = itemIdPath(layerZeroItem);
-        ResourceLocation texture = JolCraft.location("item/" + subfolder + "/" + layerZeroName);
+        ResourceLocation texture = JolCraft.location(JolCraftDictionary.ITEM + "/" + subfolder + "/" + layerZeroName);
         ResourceLocation modelLoc = ModelLocationUtils.getModelLocation(item);
 
         ModelTemplates.FLAT_HANDHELD_ITEM.create(modelLoc, TextureMapping.layer0(texture), itemModels.modelOutput);
@@ -321,8 +322,8 @@ public abstract class AbstractModelProvider extends ModelProvider {
         generateTwoLayerItem(
                 itemModels,
                 item,
-                JolCraft.location("item/" + layer0TexturePath),
-                JolCraft.location("item/" + layer1TexturePath)
+                JolCraft.location(JolCraftDictionary.ITEM + "/" + layer0TexturePath),
+                JolCraft.location(JolCraftDictionary.ITEM + "/" + layer1TexturePath)
         );
     }
 
@@ -336,7 +337,7 @@ public abstract class AbstractModelProvider extends ModelProvider {
         }
 
         String blockName = blockIdPath(block);
-        ResourceLocation texture = JolCraft.location("block/" + subfolder + "/" + blockName);
+        ResourceLocation texture = JolCraft.location(JolCraftDictionary.BLOCK + "/" + subfolder + "/" + blockName);
 
         TextureMapping mapping = new TextureMapping()
                 .put(TextureSlot.UP, texture)

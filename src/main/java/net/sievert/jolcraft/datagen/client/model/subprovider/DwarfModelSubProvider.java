@@ -13,7 +13,9 @@ import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.LoreRarity;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.client.LoreKey;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
@@ -27,10 +29,17 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public final class DwarfModelSubProvider implements AbstractModelProvider.ModelSubProvider {
 
-    private static final String SUB_BOOK = "book";
-    private static final String SUB_TOME = "book/tome";
-    private static final String SUB_TABLET = "tablet";
-    private static final String SUB_CONTRACT = "contract";
+    private static final String SUB_BOOK = JolCraftDictionary.BOOK;
+
+    private static final String SUB_TOME = JolCraftStrings.slashed(
+            JolCraftDictionary.BOOK,
+            JolCraftDictionary.TOME
+    );
+
+    private static final String SUB_TABLET = JolCraftDictionary.TABLET;
+
+    private static final String SUB_CONTRACT = JolCraftDictionary.CONTRACT;
+
 
     @Override
     public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {

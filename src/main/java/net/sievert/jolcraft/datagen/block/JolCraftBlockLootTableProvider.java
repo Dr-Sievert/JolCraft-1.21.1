@@ -159,7 +159,7 @@ public final class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
 
     }
 
-    protected LootTable.Builder createCropDrops(Block cropBlock, Item cropItem, Item seedItem, IntegerProperty ageProperty, int maxAge) {
+    private LootTable.Builder createCropDrops(Block cropBlock, Item cropItem, Item seedItem, IntegerProperty ageProperty, int maxAge) {
         LootItemCondition.Builder mature = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(cropBlock)
                 .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(ageProperty, maxAge));
@@ -224,7 +224,7 @@ public final class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
 
 
 
-    protected LootTable.Builder createSelfDropStoneCropDrops(Block cropBlock, Item item) {
+    private LootTable.Builder createSelfDropStoneCropDrops(Block cropBlock, Item item) {
         HolderLookup.RegistryLookup<Enchantment> registrylookup = registries.lookupOrThrow(Registries.ENCHANTMENT);
 
         LootItemCondition.Builder mature = LootItemBlockStatePropertyCondition
@@ -253,7 +253,7 @@ public final class JolCraftBlockLootTableProvider extends BlockLootSubProvider {
                 );
     }
 
-    protected LootTable.Builder createGeodeOreDrop(Block block, Item small, Item medium, Item large) {
+    private LootTable.Builder createGeodeOreDrop(Block block, Item small, Item medium, Item large) {
         HolderLookup.RegistryLookup<Enchantment> enchantments = registries.lookupOrThrow(Registries.ENCHANTMENT);
 
         LootPool.Builder silkTouchPool = LootPool.lootPool()

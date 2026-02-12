@@ -12,6 +12,7 @@ import net.sievert.jolcraft.datagen.client.atlas.JolCraftAtlasProvider;
 import net.sievert.jolcraft.datagen.client.equipment.JolCraftEquipmentAssetProvider;
 import net.sievert.jolcraft.datagen.client.language.JolCraftLanguageProvider;
 import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
+import net.sievert.jolcraft.datagen.client.sound.JolCraftSoundProvider;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 
@@ -29,11 +30,12 @@ public final class JolCraftClientDataGenerator {
 
         addClientProviders(event.getGenerator(), event.getLookupProvider());
 
-        JolCraftLogs.debug(JolCraftLogTags.DATAGEN, "Client providers: {}, {}, {}, {}",
+        JolCraftLogs.debug(JolCraftLogTags.DATAGEN, "Client providers: {}, {}, {}, {}, {}",
                 JolCraftModelProvider.class.getSimpleName(),
                 JolCraftLanguageProvider.class.getSimpleName(),
                 JolCraftEquipmentAssetProvider.class.getSimpleName(),
-                JolCraftAtlasProvider.class.getSimpleName()
+                JolCraftAtlasProvider.class.getSimpleName(),
+                JolCraftSoundProvider.class.getSimpleName()
         );
 
         JolCraftServerDataGenerator.addServerProviders(event.getGenerator(), event.getLookupProvider());
@@ -46,5 +48,6 @@ public final class JolCraftClientDataGenerator {
         generator.addProvider(true, new JolCraftLanguageProvider(packOutput));
         generator.addProvider(true, new JolCraftEquipmentAssetProvider(packOutput));
         generator.addProvider(true, new JolCraftAtlasProvider(packOutput));
+        generator.addProvider(true, new JolCraftSoundProvider(packOutput));
     }
 }

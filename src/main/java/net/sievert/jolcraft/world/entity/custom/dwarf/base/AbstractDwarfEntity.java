@@ -27,6 +27,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.goal.DwarfGoals;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
@@ -56,10 +57,19 @@ import java.util.*;
 public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, EntityData {
 
     private static final String NBT_PROFESSION = JolCraftDictionary.PROFESSION;
-    private static final String NBT_CURRENT_ACTION = "current_action";
-    private static final String NBT_CURRENT_ACTION_SUBTYPE = "current_action_subtype";
-    private static final String NBT_PAID_TICKS = "paid_ticks";
-    private static final String NBT_PAID_CAUSE = "paid_cause";
+
+    private static final String NBT_CURRENT_ACTION =
+            JolCraftStrings.underscored(JolCraftDictionary.CURRENT, JolCraftDictionary.ACTION);
+
+    private static final String NBT_CURRENT_ACTION_SUBTYPE =
+            JolCraftStrings.underscored(JolCraftDictionary.CURRENT, JolCraftDictionary.ACTION, JolCraftDictionary.SUBTYPE);
+
+    private static final String NBT_PAID_TICKS =
+            JolCraftStrings.underscored(JolCraftDictionary.PAID, JolCraftStrings.plural(JolCraftDictionary.TICK));
+
+    private static final String NBT_PAID_CAUSE =
+            JolCraftStrings.underscored(JolCraftDictionary.PAID, JolCraftDictionary.CAUSE);
+
 
     public AbstractDwarfEntity(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);

@@ -4,6 +4,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -38,7 +40,7 @@ public final class JeiInfoPageHelper {
                 new JeiInfoPageRecipe(
                         List.of(compassEmpty, compassDial, compassCombined),
                         Component.translatable(JolCraftLanguageKeys.JEI_INFO_DEEPSLATE_COMPASS),
-                        "compass"
+                        JolCraftItemIds.DEEPSLATE_COMPASS
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftItems.COIN_POUCH.get().getDefaultInstance(),

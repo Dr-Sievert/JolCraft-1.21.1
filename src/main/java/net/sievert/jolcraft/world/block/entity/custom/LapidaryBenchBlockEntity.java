@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
+import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -67,7 +67,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
         if (input.isEmpty() || tool.isEmpty() || !toolType.matchesTool(tool)) return;
 
         if (toolType == LapidaryBenchRecipe.ToolType.CHISEL
-                && !DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                && !DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED)
                             .withStyle(ChatFormatting.RED),
@@ -195,7 +195,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
         if (input.isEmpty() || tool.isEmpty()) return false;
 
         if (tool.is(JolCraftTags.Items.CHISELS)
-                && !DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                && !DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
             return false;
         }
 

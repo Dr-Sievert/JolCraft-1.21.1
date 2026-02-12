@@ -16,10 +16,10 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class DwarfMerchantOffer {
 
-    private static final String DEMAND = "demand";
-    private static final String USES = "uses";
-    private static final String REWARD_XP = "reward_xp";
-    private static final String SPECIAL_PRICE_DIFFERENCE = "special_price_difference";
+    private static final String DEMAND = JolCraftDictionary.DEMAND;
+    private static final String USES = JolCraftStrings.plural(JolCraftDictionary.USE);
+    private static final String REWARD_XP = JolCraftStrings.underscored(JolCraftDictionary.REWARD, JolCraftDictionary.XP);
+    private static final String SPECIAL_PRICE_DIFFERENCE = JolCraftStrings.underscored(JolCraftDictionary.SPECIAL, JolCraftDictionary.PRICE, JolCraftDictionary.DIFFERENCE);
 
     public static final Codec<DwarfMerchantOffer> CODEC = RecordCodecBuilder.create(
             inst -> inst.group(

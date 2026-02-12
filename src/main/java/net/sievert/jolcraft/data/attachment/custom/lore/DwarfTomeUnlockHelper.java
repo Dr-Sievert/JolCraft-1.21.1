@@ -11,9 +11,9 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class DwarfLoreUnlockHelper {
+public final class DwarfTomeUnlockHelper {
 
-    private DwarfLoreUnlockHelper() {}
+    private DwarfTomeUnlockHelper() {}
 
     /**
      * Read-only helper.

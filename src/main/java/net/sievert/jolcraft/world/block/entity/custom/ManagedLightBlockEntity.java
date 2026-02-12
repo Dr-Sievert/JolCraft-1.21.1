@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @MethodsReturnNonnullByDefault
 public final class ManagedLightBlockEntity extends BlockEntity {
 
-    private static final String TAG_OWNER = "owner";
+    private static final String TAG_OWNER = JolCraftDictionary.OWNER;
 
     @Nullable
     private UUID owner;

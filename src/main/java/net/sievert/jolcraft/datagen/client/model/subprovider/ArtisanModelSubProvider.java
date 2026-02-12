@@ -6,7 +6,9 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TexturedModel;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +18,24 @@ import static net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvid
 @OnlyIn(Dist.CLIENT)
 public final class ArtisanModelSubProvider implements AbstractModelProvider.ModelSubProvider {
 
-    private static final String SUB_GEM_UNCUT = "material/gem/uncut";
-    private static final String SUB_GEM_CUT = "material/gem/cut";
-    private static final String SUB_GEM_DUST = "material/gem/dust";
+    private static final String SUB_GEM_UNCUT = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.GEM,
+            JolCraftDictionary.UNCUT
+    );
+
+    private static final String SUB_GEM_CUT = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.GEM,
+            JolCraftDictionary.CUT
+    );
+
+    private static final String SUB_GEM_DUST = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.GEM,
+            JolCraftDictionary.DUST
+    );
+
 
     @Override
     public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {

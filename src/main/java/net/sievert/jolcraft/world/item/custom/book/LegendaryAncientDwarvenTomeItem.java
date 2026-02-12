@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
+import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
@@ -71,11 +71,11 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
         switch (key) {
             case FORGOTTEN_BREW_FORMULAS -> {
-                if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+                if (DwarfTomeUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                     showEmptyUnlockMessage(player);
                     playIdentifyFailSound(player);
                 } else {
-                    DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
+                    DwarfTomeUnlockHelper.addUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
                     player.displayClientMessage(
                             Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_BREW).withStyle(ChatFormatting.GREEN),
                             true
@@ -84,11 +84,11 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                 }
             }
             case ANCIENT_GEMCRAFT -> {
-                if (DwarfLoreUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                if (DwarfTomeUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                     showEmptyUnlockMessage(player);
                     playIdentifyFailSound(player);
                 } else {
-                    DwarfLoreUnlockHelper.addUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
+                    DwarfTomeUnlockHelper.addUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
                     player.displayClientMessage(
                             Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS).withStyle(ChatFormatting.GREEN),
                             true

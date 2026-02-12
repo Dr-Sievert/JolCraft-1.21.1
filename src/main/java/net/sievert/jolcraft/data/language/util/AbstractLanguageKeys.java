@@ -41,9 +41,7 @@ public abstract class AbstractLanguageKeys {
     // ---------------------------------------------------------------------
 
     /** "tooltip.<modid>.<category>.<id>" */
-    public static String tooltip(String category, String id) {
-        return category(JolCraftDictionary.TOOLTIP, JolCraftStrings.dotted(category, id));
-    }
+    public static String tooltip(String category, String id) { return category(JolCraftDictionary.TOOLTIP, JolCraftStrings.dotted(category, id)); }
 
     /** "tooltip.<modid>.structure.<id>" */
     public static String tooltipStructure(String id) {
@@ -71,12 +69,15 @@ public abstract class AbstractLanguageKeys {
     }
 
     /** "itemGroup.<modid>.<id>" */
-    public static String itemGroup(String id) {
-        return category(JolCraftStrings.underscored(JolCraftDictionary.ITEM, JolCraftDictionary.GROUP), id);
-    }
+    public static String itemGroup(String id) { return category(JolCraftStrings.underscored(JolCraftDictionary.ITEM, JolCraftDictionary.GROUP), id); }
 
     /** "attribute.<modid>.<id>" */
     public static String attribute(String id) {
         return category(JolCraftDictionary.ATTRIBUTE, id);
+    }
+
+    /** "subtitle.<modid>.<id>" */
+    public static String subtitle(String id) {
+        return category(JolCraftDictionary.SUBTITLE, id);
     }
 }

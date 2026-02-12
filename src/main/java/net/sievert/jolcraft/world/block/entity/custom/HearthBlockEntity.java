@@ -15,8 +15,10 @@ import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.custom.HearthBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
@@ -30,7 +32,7 @@ import java.util.UUID;
 
 public class HearthBlockEntity extends BlockEntity {
 
-    private static final String NBT_ACTIVE_PLAYERS = "ActivePlayers";
+    private static final String NBT_ACTIVE_PLAYERS = JolCraftStrings.underscored(JolCraftDictionary.ACTIVE, JolCraftStrings.plural(JolCraftDictionary.PLAYER));
 
     private static final int TICK_INTERVAL = 200;
 
@@ -64,7 +66,7 @@ public class HearthBlockEntity extends BlockEntity {
 
         ListTag uuidList = tag.getList(NBT_ACTIVE_PLAYERS, 8); // 8 = String
         for (int i = 0; i < uuidList.size(); i++) {
-            String raw = tag.getString("player");
+            String raw = tag.getString(JolCraftDictionary.PLAYER);
             try {
                 activePlayers.add(UUID.fromString(raw));
             } catch (IllegalArgumentException e) {

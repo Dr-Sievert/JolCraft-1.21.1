@@ -22,7 +22,9 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredItem;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
@@ -124,16 +126,16 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
 
             ResourceLocation baseModelLoc = ResourceLocation.fromNamespaceAndPath(
                     equipmentAssetKey.location().getNamespace(),
-                    "item/" + fileName
+                     JolCraftDictionary.ITEM + "/" + fileName
             );
             ResourceLocation baseTexture = ResourceLocation.fromNamespaceAndPath(
                     equipmentAssetKey.location().getNamespace(),
-                    "item/" + fileName
+                    JolCraftDictionary.ITEM + "/" + fileName
             );
 
             // Variant model JSONs (we generate for ALL trims, including vanilla trims)
             for (ItemModelGenerators.TrimMaterialData data : ALL_TRIMS) {
-                ResourceLocation variantModelLoc = baseModelLoc.withSuffix("_" + data.name() + "_trim");
+                ResourceLocation variantModelLoc = baseModelLoc.withSuffix("_" + data.name() + "_" + JolCraftDictionary.TRIM);
                 ResourceLocation trimTexture = trimTextureLocation(piece, data, equipmentAssetKey);
                 itemModels.generateLayeredItem(variantModelLoc, baseTexture, trimTexture);
             }
@@ -150,7 +152,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
 
             List<SelectItemModel.SwitchCase<ResourceKey<TrimMaterial>>> cases = new ArrayList<>(ALL_TRIMS.size());
             for (ItemModelGenerators.TrimMaterialData data : ALL_TRIMS) {
-                ResourceLocation variantModelLoc = baseModelLoc.withSuffix("_" + data.name() + "_trim");
+                ResourceLocation variantModelLoc = baseModelLoc.withSuffix("_" + data.name() + "_" + JolCraftDictionary.TRIM);
                 cases.add(ItemModelUtils.when(data.materialKey(), ItemModelUtils.plainModel(variantModelLoc)));
             }
 
@@ -181,7 +183,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
         }
 
         return ResourceLocation.withDefaultNamespace(
-                "trims/items/" + piece.suffix() + "_trim_" + trimTextureName
+                JolCraftStrings.slashed(JolCraftStrings.plural(JolCraftDictionary.TRIM), JolCraftStrings.plural(JolCraftDictionary.ITEM)) + "/" + piece.suffix() + "_" + JolCraftDictionary.TRIM + "_" + trimTextureName
         );
     }
 
@@ -200,14 +202,14 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
         for (JolCraftEquipmentHelper.ArmorPiece piece : JolCraftEquipmentHelper.ArmorPiece.values()) {
             String fileName = baseName + "_" + piece.suffix();
 
-            ResourceLocation vanillaBaseModelLoc = ResourceLocation.withDefaultNamespace("item/" + fileName);
-            ResourceLocation vanillaBaseTexture = ResourceLocation.withDefaultNamespace("item/" + fileName);
-            ResourceLocation vanillaOverlayTexture = ResourceLocation.withDefaultNamespace("item/" + fileName + "_overlay");
+            ResourceLocation vanillaBaseModelLoc = ResourceLocation.withDefaultNamespace(JolCraftDictionary.ITEM + "/" + fileName);
+            ResourceLocation vanillaBaseTexture = ResourceLocation.withDefaultNamespace(JolCraftDictionary.ITEM + "/" + fileName);
+            ResourceLocation vanillaOverlayTexture = ResourceLocation.withDefaultNamespace(JolCraftDictionary.ITEM + "/" + fileName + "_" + JolCraftDictionary.OVERLAY);
 
             // 1) Generate missing CUSTOM trim variant models in minecraft namespace (same place vanilla expects)
             for (ItemModelGenerators.TrimMaterialData data : CUSTOM_TRIMS) {
                 ResourceLocation variantModelLoc = ResourceLocation.withDefaultNamespace(
-                        "item/" + fileName + "_" + data.name() + "_trim"
+                        JolCraftDictionary.ITEM + "/" + fileName + "_" + data.name() + "_" + JolCraftDictionary.TRIM
                 );
 
                 ResourceLocation trimTexture = vanillaTrimTextureLocation(piece, data.name());
@@ -223,7 +225,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
             List<SelectItemModel.SwitchCase<ResourceKey<TrimMaterial>>> cases = new ArrayList<>(ALL_TRIMS.size());
             for (ItemModelGenerators.TrimMaterialData data : ALL_TRIMS) {
                 ResourceLocation variantModelLoc = ResourceLocation.withDefaultNamespace(
-                        "item/" + fileName + "_" + data.name() + "_trim"
+                        JolCraftDictionary.ITEM + "/" + fileName + "_" + data.name() + "_" + JolCraftDictionary.TRIM
                 );
 
                 ItemModel.Unbaked baked = dyeable
@@ -251,7 +253,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
             @NotNull String trimName
     ) {
         return ResourceLocation.withDefaultNamespace(
-                "trims/items/" + piece.suffix() + "_trim_" + trimName
+                JolCraftStrings.slashed(JolCraftStrings.plural(JolCraftDictionary.TRIM), JolCraftStrings.plural(JolCraftDictionary.ITEM)) + "/" + piece.suffix() + "_" + JolCraftDictionary.TRIM + "_" + trimName
         );
     }
 
@@ -343,7 +345,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
      */
     private static @NotNull String vanillaArmorBaseName(@NotNull ArmorMaterial material) {
         String path = material.assetId().location().getPath();
-        if (path.equals("gold")) return "golden";
+        if (path.equals(JolCraftDictionary.GOLD)) return JolCraftDictionary.GOLD + "en";
         return path;
     }
 }

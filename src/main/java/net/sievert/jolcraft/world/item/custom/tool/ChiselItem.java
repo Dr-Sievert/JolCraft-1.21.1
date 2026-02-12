@@ -9,7 +9,7 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
+import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
@@ -31,7 +31,7 @@ public class ChiselItem extends ToolItem {
         Player player = JolCraftProxy.access().getLocalPlayer();
 
         if (JolCraftProxy.access().isAltDown()) {
-            if (DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CHISEL)
                         .withStyle(ChatFormatting.GRAY));
             } else {

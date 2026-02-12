@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class DeepslateCompassAngleState extends NeedleDirectionHelper {
 
-    private static final String WOBBLE = "wobble";
+    private static final String WOBBLE = JolCraftDictionary.WOBBLE;
     private static final String TARGET = JolCraftDictionary.TARGET;
 
     public static final MapCodec<DeepslateCompassAngleState> MAP_CODEC = RecordCodecBuilder.mapCodec(

@@ -11,7 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +23,7 @@ import static net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvid
 @OnlyIn(Dist.CLIENT)
 public class BrewingModelSubProvider implements AbstractModelProvider.ModelSubProvider {
 
-    private static final String SUB_BREWING = "brewing";
+    private static final String SUB_BREWING = JolCraftDictionary.BREWING;
 
     @Override
     public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
@@ -33,7 +35,7 @@ public class BrewingModelSubProvider implements AbstractModelProvider.ModelSubPr
     }
 
     private static void fermentingCauldron(BlockModelGenerators blocks) {
-        var cauldronModel = ResourceLocation.withDefaultNamespace("block/cauldron");
+        var cauldronModel = ResourceLocation.withDefaultNamespace(JolCraftStrings.slashed(JolCraftDictionary.BLOCK, JolCraftDictionary.CAULDRON));
         blocks.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(JolCraftBlocks.FERMENTING_CAULDRON.get())
                         .with(PropertyDispatch.property(LayeredCauldronBlock.LEVEL)

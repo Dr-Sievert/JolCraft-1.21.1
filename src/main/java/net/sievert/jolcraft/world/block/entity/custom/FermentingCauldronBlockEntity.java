@@ -34,7 +34,8 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfLoreUnlockHelper;
+import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
@@ -42,6 +43,7 @@ import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
@@ -63,30 +65,75 @@ import java.util.Optional;
 public final class FermentingCauldronBlockEntity extends BlockEntity {
 
     // ===== NBT keys =====
-    private static final String NBT_BREW_START_TIME = "brewStartTime";
-    private static final String NBT_BLEND_TOTAL_TICKS = "blendTotalTicks";
 
-    private static final String NBT_BUBBLE_TICKS = "bubbleTicks";
-    private static final String NBT_BUBBLE_DELAY = "bubbleDelay";
+    private static final String NBT_BREW_START_TIME =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.BREW,
+                    JolCraftDictionary.START,
+                    JolCraftDictionary.TIME
+            );
 
-    private static final String NBT_LAST_INGREDIENT_ID = "lastIngredientId";
+    private static final String NBT_BLEND_TOTAL_TICKS =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.BLEND,
+                    JolCraftDictionary.TOTAL,
+                    JolCraftStrings.plural(JolCraftDictionary.TICK)
+            );
 
-    private static final String NBT_INGREDIENTS = "ingredients";
-    private static final String NBT_ITEM = "item";
-    private static final String NBT_COUNT = "count";
-    private static final String NBT_COLOR = "color";
+    private static final String NBT_BUBBLE_TICKS =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.BUBBLE,
+                    JolCraftStrings.plural(JolCraftDictionary.TICK)
+            );
 
-    private static final String NBT_CURRENT_COLOR = "currentColor";
-    private static final String NBT_START_COLOR = "startColor";
-    private static final String NBT_TARGET_COLOR = "targetColor";
+    private static final String NBT_BUBBLE_DELAY =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.BUBBLE,
+                    JolCraftDictionary.DELAY
+            );
 
-    private static final String NBT_FINALIZE = "finalize";
-    private static final String NBT_EXTRACTABLE = "extractable";
+    private static final String NBT_LAST_INGREDIENT_ID =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.LAST,
+                    JolCraftDictionary.INGREDIENT,
+                    JolCraftDictionary.ID
+            );
 
-    private static final String NBT_EFFECTS = "effects";
-    private static final String NBT_EFFECT_ID = "id";
-    private static final String NBT_EFFECT_DURATION = "duration";
-    private static final String NBT_EFFECT_AMPLIFIER = "amplifier";
+    private static final String NBT_INGREDIENTS =
+            JolCraftStrings.plural(JolCraftDictionary.INGREDIENT);
+
+    private static final String NBT_ITEM = JolCraftDictionary.ITEM;
+    private static final String NBT_COUNT = JolCraftDictionary.COUNT;
+    private static final String NBT_COLOR = JolCraftDictionary.COLOR;
+
+    private static final String NBT_CURRENT_COLOR =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.CURRENT,
+                    JolCraftDictionary.COLOR
+            );
+
+    private static final String NBT_START_COLOR =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.START,
+                    JolCraftDictionary.COLOR
+            );
+
+    private static final String NBT_TARGET_COLOR =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.TARGET,
+                    JolCraftDictionary.COLOR
+            );
+
+    private static final String NBT_FINALIZE = JolCraftDictionary.FINALIZE;
+    private static final String NBT_EXTRACTABLE = JolCraftDictionary.EXTRACTABLE;
+
+    private static final String NBT_EFFECTS =
+            JolCraftStrings.plural(JolCraftDictionary.EFFECT);
+
+    private static final String NBT_EFFECT_ID = JolCraftDictionary.ID;
+    private static final String NBT_EFFECT_DURATION = JolCraftDictionary.DURATION;
+    private static final String NBT_EFFECT_AMPLIFIER = JolCraftDictionary.AMPLIFIER;
+
 
     // ===== gameplay state =====
     private ItemStack lastIngredient = ItemStack.EMPTY;
@@ -152,7 +199,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         }
 
         if (recipe.effect() != null && !ingredients.isEmpty() && !ingredients.containsKey(itemKey)) {
-            if (!DwarfLoreUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+            if (!DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                 player.displayClientMessage(
                         Component.translatable(JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI)
                                 .withStyle(ChatFormatting.RED),

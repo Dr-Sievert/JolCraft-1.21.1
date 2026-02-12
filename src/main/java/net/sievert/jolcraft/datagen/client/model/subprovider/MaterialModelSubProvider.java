@@ -6,7 +6,9 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TexturedModel;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +17,31 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public final class MaterialModelSubProvider implements AbstractModelProvider.ModelSubProvider {
 
-    private static final String SUB_PAPER      = "material/paper";
-    private static final String SUB_ENTITY     = "material/entity";
-    private static final String SUB_GEODE      = "material/geode";
-    private static final String SUB_DEEPSLATE  = "material/deepslate";
-    private static final String SUB_MITHRIL    = "material/mithril";
+    private static final String SUB_PAPER = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.PAPER
+    );
+
+    private static final String SUB_ENTITY = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.ENTITY
+    );
+
+    private static final String SUB_GEODE = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.GEODE
+    );
+
+    private static final String SUB_DEEPSLATE = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.DEEPSLATE
+    );
+
+    private static final String SUB_MITHRIL = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.MITHRIL
+    );
+
 
     @Override
     public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {

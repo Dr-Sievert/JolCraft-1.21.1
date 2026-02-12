@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
@@ -17,8 +18,8 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
     public void addTranslations(AbstractLanguageProvider p) {
 
         // Creative tabs
-        p.putManual(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, "JolCraft");
-        p.putManual(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, "JolCraft Spawn Eggs");
+        p.putManual(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, JolCraft.MOD_NAME);
+        p.putManual(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, JolCraft.MOD_NAME + " Spawn Eggs");
 
         // Structure maps
         p.putManual("filled_map.forge", "Map to a Dwarven Forge");

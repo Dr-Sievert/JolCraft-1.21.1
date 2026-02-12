@@ -7,8 +7,8 @@ public final class JolCraftCreativeTabIds extends JolCraftIds {
 
     private JolCraftCreativeTabIds(){}
 
-    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB = tab("items");
-    public static final String JOLCRAFT_EGG_CREATIVE_TAB = tab("eggs");
+    public static final String JOLCRAFT_GENERAL_CREATIVE_TAB = tab(plural(JolCraftDictionary.ITEM));
+    public static final String JOLCRAFT_EGG_CREATIVE_TAB = tab(plural(JolCraftDictionary.EGG));
 
     private static String tab(String name) {
         return modJoin(name, JolCraftDictionary.TAB);

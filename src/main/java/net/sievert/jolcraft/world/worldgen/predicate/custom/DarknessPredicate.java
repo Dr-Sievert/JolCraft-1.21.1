@@ -6,12 +6,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.worldgen.predicate.JolCraftBlockPredicateTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class DarknessPredicate implements BlockPredicate {
 
-    private static final String MAX_BRIGHTNESS = "max_brightness";
+    private static final String MAX_BRIGHTNESS = JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftDictionary.BRIGHTNESS);
 
     public static final MapCodec<DarknessPredicate> CODEC =
             Codec.INT.fieldOf(MAX_BRIGHTNESS)

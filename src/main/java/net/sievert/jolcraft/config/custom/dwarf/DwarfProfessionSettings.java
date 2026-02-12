@@ -7,6 +7,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -69,8 +71,8 @@ public final class DwarfProfessionSettings {
         private record LevelRoll(int level, int rolls) {
 
             private static final Codec<LevelRoll> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                    Codec.INT.fieldOf("level").forGetter(LevelRoll::level),
-                    Codec.INT.fieldOf("rolls").forGetter(LevelRoll::rolls)
+                    Codec.INT.fieldOf(JolCraftDictionary.LEVEL).forGetter(LevelRoll::level),
+                    Codec.INT.fieldOf(JolCraftStrings.plural(JolCraftDictionary.ROLL)).forGetter(LevelRoll::rolls)
             ).apply(inst, LevelRoll::new));
         }
 
@@ -113,14 +115,17 @@ public final class DwarfProfessionSettings {
         // NOTE: mutable defaults must be created per-decode (no shared empty map instance).
         // Also: empty maps should not serialize (lets datagen produce "pool only" cleanly).
         private static final MapCodec<Int2IntMap> POOL_ROLLS_FIELD =
-                LEVEL_ROLLS_CODEC.optionalFieldOf("pool_rolls")
+                LEVEL_ROLLS_CODEC.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.POOL, JolCraftStrings.plural(JolCraftDictionary.ROLL)))
                         .xmap(
                                 opt -> opt.orElseGet(TradeSettings::emptyRollMap),
                                 map -> map.isEmpty() ? Optional.empty() : Optional.of(map)
                         );
 
         private static final MapCodec<Int2IntMap> RESTOCK_POOL_ROLLS_FIELD =
-                LEVEL_ROLLS_CODEC.optionalFieldOf("restock_pool_rolls")
+                LEVEL_ROLLS_CODEC.optionalFieldOf(JolCraftStrings.underscored(
+                                JolCraftDictionary.RESTOCK,
+                                JolCraftDictionary.POOL,
+                                JolCraftStrings.plural(JolCraftDictionary.ROLL)))
                         .xmap(
                                 opt -> opt.orElseGet(TradeSettings::emptyRollMap),
                                 map -> map.isEmpty() ? Optional.empty() : Optional.of(map)
@@ -137,7 +142,7 @@ public final class DwarfProfessionSettings {
     // -------------------------------------------------------------------------
 
     public static final Codec<DwarfProfessionSettings> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            TradeSettings.CODEC.optionalFieldOf("trades").forGetter(DwarfProfessionSettings::trades)
+            TradeSettings.CODEC.optionalFieldOf(JolCraftStrings.plural(JolCraftDictionary.TRADE)).forGetter(DwarfProfessionSettings::trades)
     ).apply(inst, DwarfProfessionSettings::new));
 
     // -------------------------------------------------------------------------

@@ -4,7 +4,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -13,7 +15,7 @@ import java.util.Set;
 
 public final class DwarfLoreUnlockImpl implements DwarfLoreUnlock {
 
-    private static final String TAG_UNLOCKS = "unlocks";
+    private static final String TAG_UNLOCKS = JolCraftStrings.plural(JolCraftDictionary.UNLOCK);
 
     private final EnumSet<DwarfLoreKey> unlocks = EnumSet.noneOf(DwarfLoreKey.class);
 

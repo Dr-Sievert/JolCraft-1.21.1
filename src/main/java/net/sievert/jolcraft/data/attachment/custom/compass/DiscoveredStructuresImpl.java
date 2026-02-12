@@ -20,7 +20,7 @@ import java.util.Set;
 
 public final class DiscoveredStructuresImpl implements DiscoveredStructures {
 
-    private static final String NBT_DISCOVERED = "discovered";
+    private static final String NBT_DISCOVERED = JolCraftDictionary.DISCOVERED;
 
     private final Set<GlobalPos> discovered = new HashSet<>();
     private int discoveryScore;

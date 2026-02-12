@@ -9,6 +9,7 @@ import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.id.item.JolCraftCreativeTabIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.id.item.JolCraftMaterialIds;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
@@ -341,6 +342,61 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
             tooltip(JolCraftDwarfIds.DWARF_GUARD, JolCraftDictionary.PROMOTION);
 
     // ---------------------------------------------------------------------
+    // DwarvenReputationLangSubProvider
+    // ---------------------------------------------------------------------
+
+    public static final String DWARVEN_REPUTATION_TIER_0 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.STRANGER.idToString()));
+    public static final String DWARVEN_REPUTATION_TIER_1 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.KNOWN_FACE.idToString()));
+    public static final String DWARVEN_REPUTATION_TIER_2 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.TRUSTED.idToString()));
+    public static final String DWARVEN_REPUTATION_TIER_3 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.RESPECTED.idToString()));
+    public static final String DWARVEN_REPUTATION_TIER_4 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.BLOOD_KIN.idToString()));
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_LOCKED =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.LOCKED);
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_MAX_TIER =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.MAX, JolCraftDictionary.TIER));
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_NOT_ENOUGH_ENDORSEMENTS =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.NOT, JolCraftDictionary.ENOUGH, pl(JolCraftDictionary.ENDORSEMENT)));
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_NEVER_ENDORSE =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.NEVER, JolCraftDictionary.ENDORSE));
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_CANNOT_ENDORSE =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.CANNOT, JolCraftDictionary.ENDORSE));
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_ALREADY_ENDORSED =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.ALREADY, JolCraftDictionary.ENDORSED));
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_WRONG_TABLET =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.WRONG, JolCraftDictionary.TABLET));
+
+    public static final String TOOLTIP_DWARVEN_REPUTATION_LEVEL_UP =
+            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.LEVEL, JolCraftDictionary.UP));
+
+    public static final String TOOLTIP_TABLET_OWNER =
+            tooltip(JolCraftDictionary.TABLET, JolCraftDictionary.OWNER);
+
+    public static final String TOOLTIP_TABLET_DWARVEN_REPUTATION =
+            tooltip(JolCraftDictionary.TABLET, us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER));
+
+    public static final String TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS =
+            tooltip(JolCraftDictionary.TABLET, pl(JolCraftCriterionTriggerIds.DWARVEN_ENDORSEMENT));
+
+    public static final String TOOLTIP_TABLET_PROGRESS_PREFIX =
+            tooltip(JolCraftDictionary.TABLET, dot(JolCraftDictionary.PROGRESS, JolCraftDictionary.PREFIX));
+
+    public static final String TOOLTIP_TABLET_DWARVEN_REPUTATION_PROGRESS =
+            tooltip(JolCraftDictionary.TABLET, us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.PROGRESS));
+
+    public static final String TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS_INFO =
+            tooltip(JolCraftDictionary.TABLET, us(pl(JolCraftCriterionTriggerIds.DWARVEN_ENDORSEMENT), JolCraftDictionary.INFO));
+
+    public static final String TOOLTIP_TABLET_ADVANCE_INFO =
+            tooltip(JolCraftDictionary.TABLET, us(JolCraftDictionary.ADVANCE, JolCraftDictionary.INFO));
+
+    // ---------------------------------------------------------------------
     // ItemLangSubProvider
     // ---------------------------------------------------------------------
 
@@ -442,59 +498,59 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
             category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.SALVAGE);
 
     // ---------------------------------------------------------------------
-    // DwarvenReputationLangSubProvider
+    // SubtitleLangSubProvider
     // ---------------------------------------------------------------------
 
-    public static final String DWARVEN_REPUTATION_TIER_0 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.STRANGER.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_1 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.KNOWN_FACE.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_2 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.TRUSTED.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_3 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.RESPECTED.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_4 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.BLOOD_KIN.idToString()));
+    public static final String SUBTITLE_DWARF_AMBIENT =
+            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.AMBIENT));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_LOCKED =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.LOCKED);
+    public static final String SUBTITLE_DWARF_HIT =
+            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.HIT));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_MAX_TIER =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.MAX, JolCraftDictionary.TIER));
+    public static final String SUBTITLE_DWARF_DEATH =
+            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.DEATH));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_NOT_ENOUGH_ENDORSEMENTS =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.NOT, JolCraftDictionary.ENOUGH, pl(JolCraftDictionary.ENDORSEMENT)));
+    public static final String SUBTITLE_DWARF_YES =
+            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.YES));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_NEVER_ENDORSE =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.NEVER, JolCraftDictionary.ENDORSE));
+    public static final String SUBTITLE_DWARF_NO =
+            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.NO));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_CANNOT_ENDORSE =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.CANNOT, JolCraftDictionary.ENDORSE));
+    public static final String SUBTITLE_DWARF_TRADE =
+            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.TRADE));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_ALREADY_ENDORSED =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.ALREADY, JolCraftDictionary.ENDORSED));
+    public static final String SUBTITLE_LEVEL_UP =
+            subtitle(key(JolCraftDictionary.LEVEL, JolCraftDictionary.UP));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_WRONG_TABLET =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.WRONG, JolCraftDictionary.TABLET));
+    public static final String SUBTITLE_ARMOR_EQUIP_DEEPSLATE =
+            subtitle(key(JolCraftDictionary.ARMOR, JolCraftDictionary.EQUIP, JolCraftMaterialIds.DEEPSLATE));
 
-    public static final String TOOLTIP_DWARVEN_REPUTATION_LEVEL_UP =
-            tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, us(JolCraftDictionary.LEVEL, JolCraftDictionary.UP));
+    public static final String SUBTITLE_STRONGBOX_OPEN =
+            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.OPEN));
 
-    public static final String TOOLTIP_TABLET_OWNER =
-            tooltip(JolCraftDictionary.TABLET, JolCraftDictionary.OWNER);
+    public static final String SUBTITLE_STRONGBOX_CLOSE =
+            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.CLOSE));
 
-    public static final String TOOLTIP_TABLET_DWARVEN_REPUTATION =
-            tooltip(JolCraftDictionary.TABLET, us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER));
+    public static final String SUBTITLE_STRONGBOX_LOCKPICK =
+            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.LOCKPICKING));
 
-    public static final String TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS =
-            tooltip(JolCraftDictionary.TABLET, pl(JolCraftCriterionTriggerIds.DWARVEN_ENDORSEMENT));
+    public static final String SUBTITLE_STRONGBOX_LOCKPICK_BREAK =
+            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.LOCKPICKING, JolCraftDictionary.BREAK));
 
-    public static final String TOOLTIP_TABLET_PROGRESS_PREFIX =
-            tooltip(JolCraftDictionary.TABLET, dot(JolCraftDictionary.PROGRESS, JolCraftDictionary.PREFIX));
+    public static final String SUBTITLE_STRONGBOX_UNLOCK =
+            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.UNLOCK));
 
-    public static final String TOOLTIP_TABLET_DWARVEN_REPUTATION_PROGRESS =
-            tooltip(JolCraftDictionary.TABLET, us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.PROGRESS));
+    public static final String SUBTITLE_COIN_STACK =
+            subtitle(key(JolCraftDictionary.COIN, JolCraftDictionary.STACK));
 
-    public static final String TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS_INFO =
-            tooltip(JolCraftDictionary.TABLET, us(pl(JolCraftCriterionTriggerIds.DWARVEN_ENDORSEMENT), JolCraftDictionary.INFO));
+    public static final String SUBTITLE_COIN_SINGLE =
+            subtitle(key(JolCraftDictionary.COIN, JolCraftDictionary.SINGLE));
 
-    public static final String TOOLTIP_TABLET_ADVANCE_INFO =
-            tooltip(JolCraftDictionary.TABLET, us(JolCraftDictionary.ADVANCE, JolCraftDictionary.INFO));
+    public static final String SUBTITLE_GEM_CUT =
+            subtitle(key(JolCraftDictionary.GEM, JolCraftDictionary.CUT));
+
+    public static final String SUBTITLE_CURSE =
+            subtitle(JolCraftDictionary.CURSE);
 
     // ---------------------------------------------------------------------
     // TrimLangSubProvider

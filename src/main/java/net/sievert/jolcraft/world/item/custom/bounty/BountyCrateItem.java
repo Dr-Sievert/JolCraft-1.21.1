@@ -21,11 +21,14 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyTier;
@@ -258,8 +261,8 @@ public class BountyCrateItem extends Item implements IItemExtension {
                     int count = data.requiredCount();
                     int tierInt = data.tier();
 
-                    Component itemName = Component.translatable(targetItem.toLanguageKey("item"));
-                    if (itemName.getString().equals(targetItem.toLanguageKey("item"))) {
+                    Component itemName = Component.translatable(targetItem.toLanguageKey(JolCraftDictionary.ITEM));
+                    if (itemName.getString().equals(targetItem.toLanguageKey(JolCraftDictionary.ITEM))) {
                         Item resolved = resolveItem(player.level(), targetItem);
                         if (resolved != null) {
                             itemName = resolved.getDefaultInstance().getHoverName();
@@ -274,7 +277,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                                 .withStyle(ChatFormatting.RED));
                     } else{
                         tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_TYPE)
-                                .append(Component.translatable("entity.jolcraft." + type.getId()))
+                                .append(Component.translatable(JolCraftStrings.dotted(JolCraftDictionary.ENTITY, JolCraft.MOD_ID, type.getId())))
                                 .withStyle(ChatFormatting.GRAY));
 
                         tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_TIER, tier.getDisplayName())

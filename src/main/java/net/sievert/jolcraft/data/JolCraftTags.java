@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
 import static net.sievert.jolcraft.JolCraft.location;
@@ -98,7 +100,7 @@ public final class JolCraftTags {
             return TagKey.create(Registries.BIOME, JolCraft.location(id));
         }
 
-        public static final String HAS_STRUCTURE_PREFIX = "has_structure/";
+        public static final String HAS_STRUCTURE_PREFIX = JolCraftStrings.underscored(JolCraftDictionary.HAS, JolCraftDictionary.STRUCTURE) + "/";
 
         private static TagKey<Biome> hasStructure(String structurePath) {
             return TagKey.create(Registries.BIOME, JolCraft.location(HAS_STRUCTURE_PREFIX + structurePath));

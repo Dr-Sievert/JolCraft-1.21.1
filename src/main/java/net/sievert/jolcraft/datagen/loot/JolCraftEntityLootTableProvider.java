@@ -18,6 +18,7 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -88,8 +89,7 @@ public final class JolCraftEntityLootTableProvider implements LootTableSubProvid
 
             ResourceLocation id = type.builtInRegistryHolder().key().location();
 
-            ResourceLocation lootTableId =
-                    ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entities/" + id.getPath());
+            ResourceLocation lootTableId = ResourceLocation.fromNamespaceAndPath(id.getNamespace(),  JolCraftDictionary.ENTITIES + "/" + id.getPath());
             ResourceKey<LootTable> lootTableKey = ResourceKey.create(Registries.LOOT_TABLE, lootTableId);
 
             LootTable.Builder builder = LootTable.lootTable();

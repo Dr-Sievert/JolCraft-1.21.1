@@ -3,12 +3,14 @@ package net.sievert.jolcraft.data.attachment.custom.hearth;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.sievert.jolcraft.data.attachment.util.BooleanFlagAttachmentImpl;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 public final class HearthImpl implements Hearth {
 
-    private static final String TAG_LIT_THIS_DAY = "LitThisDay";
-    private static final String TAG_LAST_RESET_DAY = "LastResetDay";
+    private static final String TAG_LIT_THIS_DAY = JolCraftStrings.underscored(JolCraftDictionary.LIGHT, JolCraftDictionary.THIS, JolCraftDictionary.DAY);
+    private static final String TAG_LAST_RESET_DAY = JolCraftStrings.underscored(JolCraftDictionary.LAST, JolCraftDictionary.RESET, JolCraftDictionary.DAY);
 
     private final BooleanFlagAttachmentImpl litThisDay =
             new BooleanFlagAttachmentImpl(TAG_LIT_THIS_DAY, false);
