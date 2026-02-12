@@ -18,6 +18,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String WITH = "with";
     public static final String UP = "up";
     public static final String THIS = "this";
+    public static final String END = "end";
 
     public static final String NO = "no";
     public static final String NOT = "not";

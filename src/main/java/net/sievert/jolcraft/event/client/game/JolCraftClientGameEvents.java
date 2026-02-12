@@ -26,8 +26,8 @@ public final class JolCraftClientGameEvents {
 
     private JolCraftClientGameEvents() {}
 
-    private static final float DELIRIUM_VOLUME = 0.15F;
-    private static final float DELIRIUM_PITCH = 0.85F;
+    private static final float DELIRIUM_VOLUME = 0.10F;
+    private static final float DELIRIUM_PITCH = 0.65F;
 
     @SubscribeEvent
     public static void onDeliriumMuffle(PlayLevelSoundEvent event) {

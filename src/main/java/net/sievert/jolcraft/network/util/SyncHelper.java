@@ -1,5 +1,4 @@
-package net.sievert.jolcraft.data.attachment;
-
+package net.sievert.jolcraft.network.util;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
@@ -7,18 +6,24 @@ import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelpe
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.network.JolCraftNetworking;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientDwarvenLanguagePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumCursePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfTomeUnlocksPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenEndorsementsPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenLanguagePacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenReputationPacket;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
-import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.*;
 
 import java.util.Set;
 
 /**
- * Handles initial sync of all JolCraft attachment data for a joining player.
+ * Handles initial sync of all JolCraft data for a joining player.
  */
-public class AttachmentSyncHelper {
+public class SyncHelper {
 
     public static void syncAll(ServerPlayer player) {
 
@@ -42,6 +47,12 @@ public class AttachmentSyncHelper {
         Set<DwarfLoreKey> dwarfTomeUnlocks = DwarfTomeUnlockHelper.getAllUnlocks(player);
         JolCraftNetworking.sendToClient(player, ClientboundDwarfTomeUnlocksPacket.fromEnumSet(dwarfTomeUnlocks));
 
-        JolCraftLogs.debug(JolCraftLogTags.NETWORK, "Synced attachments for {}", player.getGameProfile().getName());
+        // Delirium episode window (muffle) relog safety
+        int deliriumRemaining = DeliriumCurseEffect.getRemainingEpisodeTicks(player);
+        if (deliriumRemaining > 0) {
+            JolCraftNetworking.sendToClient(player, new ClientboundDeliriumCursePacket(deliriumRemaining));
+        }
+
+        JolCraftLogs.debug(JolCraftLogTags.NETWORK, "Synced data for {}", player.getGameProfile().getName());
     }
 }

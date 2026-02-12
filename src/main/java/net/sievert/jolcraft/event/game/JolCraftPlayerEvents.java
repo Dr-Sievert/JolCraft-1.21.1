@@ -37,7 +37,7 @@ import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEnt
 import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
-import net.sievert.jolcraft.data.attachment.AttachmentSyncHelper;
+import net.sievert.jolcraft.network.util.SyncHelper;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -56,7 +56,7 @@ public final class JolCraftPlayerEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
-        AttachmentSyncHelper.syncAll(serverPlayer);
+        SyncHelper.syncAll(serverPlayer);
     }
 
     @SubscribeEvent
