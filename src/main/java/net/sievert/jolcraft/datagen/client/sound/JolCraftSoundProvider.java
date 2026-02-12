@@ -110,8 +110,8 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
      * ====================================================================== */
 
     private void addDwarfVariants(Supplier<SoundEvent> event, String subtitleKey, int count) {
-        String id = idPath(event);                     // dwarf_ambient
-        String leaf = stripPrefix(id, dwarfPrefix());  // ambient
+        String id = idPath(event);
+        String leaf = stripPrefix(id, dwarfPrefix());
         addRange(event, subtitleKey, dwarfBase(leaf), 1, count);
     }
 
@@ -134,7 +134,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
     }
 
     private void addRandomSingle(Supplier<SoundEvent> event, String subtitleKey) {
-        // level_up -> levelup
         String leaf = removeChar(idPath(event), UNDERSCORE);
         addSingle(event, subtitleKey, randomSingle(leaf));
     }
@@ -222,7 +221,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         return mod(JolCraftStrings.slashed(JolCraftDictionary.RANDOM, leaf));
     }
 
-    // Vanilla: deepslate bricks place1..6
     private static ResourceLocation vanillaDeepslateBrickPlaceBase() {
         String bricks = JolCraftStrings.underscored(
                 JolCraftDictionary.DEEPSLATE,
@@ -231,7 +229,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         return vanilla(JolCraftStrings.slashed(JolCraftDictionary.BLOCK, bricks, JolCraftDictionary.PLACE));
     }
 
-    // Vanilla: smithing_table1 + smithing_table3
     private static List<ResourceLocation> vanillaSmithingTableList() {
         String smithingTable = JolCraftStrings.underscored(JolCraftDictionary.SMITHING, JolCraftDictionary.TABLE);
         String folder = JolCraftStrings.slashed(JolCraftDictionary.BLOCK, smithingTable);
@@ -255,7 +252,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
     @SuppressWarnings("unchecked")
     private static DeferredHolder<SoundEvent, SoundEvent> asDeferredHolder(Supplier<SoundEvent> event) {
         if (event instanceof DeferredHolder<?, ?> deferred) {
-            // JolCraftSounds should always be DeferredHolder<SoundEvent, SoundEvent>.
             return (DeferredHolder<SoundEvent, SoundEvent>) deferred;
         }
         throw new IllegalArgumentException(

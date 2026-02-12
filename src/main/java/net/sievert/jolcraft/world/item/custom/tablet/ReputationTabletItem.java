@@ -70,7 +70,7 @@ public class ReputationTabletItem extends Item {
                 );
             }
 
-            JolCraftSoundHelper.player(player, SoundEvents.STONE_HIT, 1.0F, 1.5F);
+            JolCraftSoundHelper.player(player, SoundEvents.CHISELED_BOOKSHELF_INSERT, 1.0F, 0.5F);
         }
 
         return InteractionResult.SUCCESS;
