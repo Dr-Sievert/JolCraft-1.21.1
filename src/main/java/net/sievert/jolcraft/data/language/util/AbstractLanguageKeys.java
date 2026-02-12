@@ -80,4 +80,9 @@ public abstract class AbstractLanguageKeys {
     public static String subtitle(String id) {
         return category(JolCraftDictionary.SUBTITLE, id);
     }
+
+    protected static String subtitleFromSoundId(String soundId) {
+        return subtitle(soundId.replace('_', '.'));
+    }
+
 }

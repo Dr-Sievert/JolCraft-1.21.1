@@ -12,6 +12,7 @@ import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.item.JolCraftMaterialIds;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -502,55 +503,55 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // ---------------------------------------------------------------------
 
     public static final String SUBTITLE_DWARF_AMBIENT =
-            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.AMBIENT));
+            subtitleFromSoundId(JolCraftSoundIds.DWARF_AMBIENT);
 
     public static final String SUBTITLE_DWARF_HIT =
-            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.HIT));
+            subtitleFromSoundId(JolCraftSoundIds.DWARF_HURT);
 
     public static final String SUBTITLE_DWARF_DEATH =
-            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.DEATH));
+            subtitleFromSoundId(JolCraftSoundIds.DWARF_DEATH);
 
     public static final String SUBTITLE_DWARF_YES =
-            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.YES));
+            subtitleFromSoundId(JolCraftSoundIds.DWARF_YES);
 
     public static final String SUBTITLE_DWARF_NO =
-            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.NO));
+            subtitleFromSoundId(JolCraftSoundIds.DWARF_NO);
 
     public static final String SUBTITLE_DWARF_TRADE =
-            subtitle(keyWith(entity(JolCraftDwarfIds.DWARF), JolCraftDictionary.TRADE));
+            subtitleFromSoundId(JolCraftSoundIds.DWARF_TRADE);
 
     public static final String SUBTITLE_LEVEL_UP =
-            subtitle(key(JolCraftDictionary.LEVEL, JolCraftDictionary.UP));
+            subtitleFromSoundId(JolCraftSoundIds.LEVEL_UP);
 
     public static final String SUBTITLE_ARMOR_EQUIP_DEEPSLATE =
-            subtitle(key(JolCraftDictionary.ARMOR, JolCraftDictionary.EQUIP, JolCraftMaterialIds.DEEPSLATE));
+            subtitleFromSoundId(JolCraftSoundIds.ARMOR_EQUIP_DEEPSLATE);
 
     public static final String SUBTITLE_STRONGBOX_OPEN =
-            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.OPEN));
+            subtitleFromSoundId(JolCraftSoundIds.STRONGBOX_OPEN);
 
     public static final String SUBTITLE_STRONGBOX_CLOSE =
-            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.CLOSE));
+            subtitleFromSoundId(JolCraftSoundIds.STRONGBOX_CLOSE);
 
     public static final String SUBTITLE_STRONGBOX_LOCKPICK =
-            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.LOCKPICKING));
+            subtitleFromSoundId(JolCraftSoundIds.STRONGBOX_LOCKPICK);
 
     public static final String SUBTITLE_STRONGBOX_LOCKPICK_BREAK =
-            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.LOCKPICKING, JolCraftDictionary.BREAK));
+            subtitleFromSoundId(JolCraftSoundIds.STRONGBOX_LOCKPICK_BREAK);
 
     public static final String SUBTITLE_STRONGBOX_UNLOCK =
-            subtitle(key(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.UNLOCK));
+            subtitleFromSoundId(JolCraftSoundIds.STRONGBOX_UNLOCK);
 
     public static final String SUBTITLE_COIN_STACK =
-            subtitle(key(JolCraftDictionary.COIN, JolCraftDictionary.STACK));
+            subtitleFromSoundId(JolCraftSoundIds.COIN_STACK);
 
     public static final String SUBTITLE_COIN_SINGLE =
-            subtitle(key(JolCraftDictionary.COIN, JolCraftDictionary.SINGLE));
+            subtitleFromSoundId(JolCraftSoundIds.COIN_SINGLE);
 
     public static final String SUBTITLE_GEM_CUT =
-            subtitle(key(JolCraftDictionary.GEM, JolCraftDictionary.CUT));
+            subtitleFromSoundId(JolCraftSoundIds.GEM_CUT);
 
     public static final String SUBTITLE_CURSE =
-            subtitle(JolCraftDictionary.CURSE);
+            subtitleFromSoundId(JolCraftSoundIds.CURSE);
 
     // ---------------------------------------------------------------------
     // TrimLangSubProvider
