@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.data;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -11,9 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 
 import static net.sievert.jolcraft.JolCraft.location;
 
@@ -92,22 +89,23 @@ public final class JolCraftTags {
         public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_HILLS);
         public static final TagKey<Biome> DWARVEN = create(JolCraftTagIds.DWARVEN);
 
-        // Has structure
-        public static final TagKey<Biome> HAS_FORGE = hasStructure(JolCraftStructures.FORGE.id());
-        public static final TagKey<Biome> HAS_DWARVEN_TRAIL_RUIN = hasStructure(JolCraftStructures.DWARVEN_TRAIL_RUIN.id());
+        public static final TagKey<Biome> HAS_FORGE = hasStructure(JolCraftStructureIds.FORGE);
+        public static final TagKey<Biome> HAS_DWARVEN_TRAIL_RUIN = hasStructure(JolCraftStructureIds.DWARVEN_TRAIL_RUIN);
 
         private static TagKey<Biome> create(String id) {
             return TagKey.create(Registries.BIOME, JolCraft.location(id));
         }
 
-        public static final String HAS_STRUCTURE_PREFIX = JolCraftStrings.underscored(JolCraftDictionary.HAS, JolCraftDictionary.STRUCTURE) + "/";
-
         private static TagKey<Biome> hasStructure(String structurePath) {
-            return TagKey.create(Registries.BIOME, JolCraft.location(HAS_STRUCTURE_PREFIX + structurePath));
-        }
+            if (structurePath == null || structurePath.isEmpty()) {
+                throw new IllegalArgumentException("Structure id path must not be null/empty for has_structure biome tag.");
+            }
 
-        private static TagKey<Biome> hasStructure(ResourceLocation structureId) {
-            return hasStructure(structureId.getPath());
+            int colon = structurePath.indexOf(':');
+            if (colon >= 0) structurePath = structurePath.substring(colon + 1);
+
+            String tagPath = JolCraftTagIds.HAS_STRUCTURE + "/" + structurePath;
+            return TagKey.create(Registries.BIOME, JolCraft.location(tagPath));
         }
     }
 }

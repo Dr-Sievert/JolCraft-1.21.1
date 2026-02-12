@@ -3,6 +3,7 @@ package net.sievert.jolcraft.data.id.tag;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 public final class JolCraftTagIds extends JolCraftIds {
 
@@ -85,6 +86,8 @@ public final class JolCraftTagIds extends JolCraftIds {
     // ---------------------------------------------------------------------
     // Biome tags
     // ---------------------------------------------------------------------
+
+    public static final String HAS_STRUCTURE = JolCraftStrings.underscored(JolCraftDictionary.HAS, JolCraftDictionary.STRUCTURE);
 
     public static final String MOUNTAINS_HILLS = join(plural(JolCraftDictionary.MOUNTAIN), plural(JolCraftDictionary.HILL));
     public static final String DWARVEN = JolCraftDictionary.DWARVEN;
