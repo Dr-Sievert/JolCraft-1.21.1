@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyData;
-import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
+import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
 
 import java.util.function.UnaryOperator;
 

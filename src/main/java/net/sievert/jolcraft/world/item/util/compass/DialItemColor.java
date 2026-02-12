@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.client.compass;
+package net.sievert.jolcraft.world.item.util.compass;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

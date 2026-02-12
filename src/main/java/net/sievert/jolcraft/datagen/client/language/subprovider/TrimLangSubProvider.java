@@ -8,7 +8,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;

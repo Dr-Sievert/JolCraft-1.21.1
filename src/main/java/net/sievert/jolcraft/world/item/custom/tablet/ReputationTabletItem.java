@@ -14,8 +14,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
+import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenEndorsementsPacket;
@@ -23,6 +26,7 @@ import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenReputationPacke
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -66,7 +70,7 @@ public class ReputationTabletItem extends Item {
                 );
             }
 
-            JolCraftSoundHelper.player(player, SoundEvents.CHISELED_BOOKSHELF_INSERT, 1.0F, 0.5F);
+            JolCraftSoundHelper.player(player, SoundEvents.STONE_HIT, 1.0F, 1.5F);
         }
 
         return InteractionResult.SUCCESS;
@@ -104,7 +108,9 @@ public class ReputationTabletItem extends Item {
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_OWNER, ownerName)
                         .withStyle(ChatFormatting.GRAY));
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_REPUTATION)
-                        .append(Component.translatable("jolcraft.reputation_tier." + statictier))
+                        .append(Component.translatable(JolCraftStrings.dotted(JolCraft.MOD_ID,
+                                JolCraftStrings.dotted(JolCraftStrings.underscored(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER),
+                                        String.valueOf(statictier)))))
                         .withStyle(ChatFormatting.GRAY));
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS, staticendorsements)
                         .withStyle(ChatFormatting.GRAY));

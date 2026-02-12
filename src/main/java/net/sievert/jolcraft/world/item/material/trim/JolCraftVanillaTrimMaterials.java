@@ -10,7 +10,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 

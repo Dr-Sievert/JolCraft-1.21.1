@@ -5,11 +5,10 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
+import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
 
 import java.util.List;
 

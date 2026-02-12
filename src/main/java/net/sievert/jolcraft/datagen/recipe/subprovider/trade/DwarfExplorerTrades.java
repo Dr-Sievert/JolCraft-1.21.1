@@ -6,7 +6,7 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.client.compass.DialItemColor;
+import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import org.jetbrains.annotations.NotNull;

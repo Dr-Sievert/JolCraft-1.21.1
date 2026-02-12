@@ -4,8 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 
 public enum DwarfProfession {
@@ -37,7 +36,7 @@ public enum DwarfProfession {
 
     public Component getDisplayName() {
         return id != null
-                ? Component.translatable(JolCraftLanguageKeys.category(JolCraftDictionary.ENTITY, id))
+                ? Component.translatable(AbstractLanguageKeys.entity(id))
                 : Component.empty();
     }
 

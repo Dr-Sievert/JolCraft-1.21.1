@@ -13,6 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftItemPropertyIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

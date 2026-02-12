@@ -9,7 +9,6 @@ import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.id.item.JolCraftCreativeTabIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.id.item.JolCraftMaterialIds;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;

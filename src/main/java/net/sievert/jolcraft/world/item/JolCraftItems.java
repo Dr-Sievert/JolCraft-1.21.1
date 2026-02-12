@@ -18,7 +18,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftAttributes;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;

@@ -29,15 +29,38 @@ public record JeiDwarfTrade(
     }
 
     public ItemStack inputAExample() {
-        return DwarfTrades.getExampleInputA(recipe);
+        return normalizeForJei(DwarfTrades.getExampleInputA(recipe));
     }
 
     public @Nullable ItemStack inputBExample() {
         ItemStack b = DwarfTrades.getExampleInputB(recipe);
-        return b.isEmpty() ? null : b;
+        if (b.isEmpty()) return null;
+        return normalizeForJei(b);
     }
 
     public ItemStack outputExample(RegistryAccess registryAccess) {
-        return DwarfTrades.getExampleOutput(recipe, registryAccess);
+        return normalizeForJei(DwarfTrades.getExampleOutput(recipe, registryAccess));
+    }
+
+    public DwarfTradeRecipe.TradeAmount inputAmountA() {
+        return recipe.costA().amount();
+    }
+
+    public @Nullable DwarfTradeRecipe.TradeAmount inputAmountB() {
+        return recipe.costB().map(DwarfTradeRecipe.TradeCost::amount).orElse(null);
+    }
+
+    public DwarfTradeRecipe.TradeAmount outputAmount() {
+        if (recipe.result() instanceof DwarfTradeRecipe.TradeResult.ItemResult ir) {
+            return ir.amount();
+        }
+        return DwarfTradeRecipe.TradeAmount.fixed(1);
+    }
+
+    private static ItemStack normalizeForJei(ItemStack stack) {
+        if (stack.isEmpty()) return stack;
+        ItemStack copy = stack.copy();
+        copy.setCount(1);
+        return copy;
     }
 }

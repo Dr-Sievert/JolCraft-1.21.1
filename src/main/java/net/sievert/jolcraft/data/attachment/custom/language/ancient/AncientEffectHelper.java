@@ -1,10 +1,9 @@
 package net.sievert.jolcraft.data.attachment.custom.language.ancient;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.util.client.JolCraftFonts;
+import net.sievert.jolcraft.data.id.font.JolCraftFontIds;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 
 public final class AncientEffectHelper {
@@ -18,7 +17,7 @@ public final class AncientEffectHelper {
      */
     public static Component getAncientText(Player player, Component readable) {
         if (hasAncientMemory(player)) return readable;
-        return readable.copy().withStyle(style -> style.withFont(JolCraftFonts.SGA));
+        return readable.copy().withStyle(style -> style.withFont(JolCraftFontIds.SGA));
     }
 
     /**

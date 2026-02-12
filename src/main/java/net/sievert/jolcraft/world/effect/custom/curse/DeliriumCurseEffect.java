@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @MethodsReturnNonnullByDefault
 public class DeliriumCurseEffect extends MobEffect {
 
-    public static final int BLINDNESS_TICKS = 200;
+    public static final int EPISODE_TICKS = 200;
 
     // Runtime-only episode timers (not persisted)
     private static final Map<UUID, Integer> EPISODE_TIMERS = new ConcurrentHashMap<>();
@@ -66,18 +66,23 @@ public class DeliriumCurseEffect extends MobEffect {
         );
 
         if (timer <= 0) {
-            // Episode fires: apply blindness
+
+            // Episode fires: apply effects
             player.addEffect(new MobEffectInstance(
-                    MobEffects.BLINDNESS, BLINDNESS_TICKS, 0, false, false, false
+                    MobEffects.BLINDNESS, EPISODE_TICKS, 0, false, false, false
+            ));
+
+            player.addEffect(new MobEffectInstance(
+                    MobEffects.CONFUSION, EPISODE_TICKS, 0, false, false, false
             ));
 
             // Persist the episode window end tick (relog-safe).
-            long endTick = level.getGameTime() + BLINDNESS_TICKS;
+            long endTick = level.getGameTime() + EPISODE_TICKS;
             setEpisodeEnd(player, endTick);
 
             // Tell this client to muffle for the full duration (client will handle mixing).
             if (player instanceof ServerPlayer serverPlayer) {
-                JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDeliriumCursePacket(BLINDNESS_TICKS));
+                JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDeliriumCursePacket(EPISODE_TICKS));
             }
 
             // Episode ambience: local-only to this player
