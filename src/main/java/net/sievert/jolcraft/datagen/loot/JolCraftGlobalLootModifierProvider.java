@@ -1,23 +1,15 @@
 package net.sievert.jolcraft.datagen.loot;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
-import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
+import net.sievert.jolcraft.datagen.loot.util.AbstractGlobalLootModifierProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("deprecation")
-public final class JolCraftGlobalLootModifierProvider extends GlobalLootModifierProvider {
+public final class JolCraftGlobalLootModifierProvider extends AbstractGlobalLootModifierProvider {
 
     public JolCraftGlobalLootModifierProvider(
             PackOutput output,
@@ -27,39 +19,33 @@ public final class JolCraftGlobalLootModifierProvider extends GlobalLootModifier
     }
 
     @Override
-    protected void start() {
-        Holder<Item> lexicon = JolCraftItems.DWARVEN_LEXICON.get().builtInRegistryHolder();
+    protected @NotNull List<? extends GlobalLootSubProvider> subProviders() {
+        return List.of(new LexiconGlobalLootSubProvider());
+    }
 
-        this.add("dwarven_lexicon_from_stronghold_library",
-                new AddItemModifier(
-                        new LootItemCondition[]{
-                                new LootTableIdCondition.Builder(ResourceLocation.withDefaultNamespace("chests/stronghold_library")).build(),
-                                LootItemRandomChanceCondition.randomChance(0.50f).build()
-                        },
-                        lexicon
-                ));
+    private static final class LexiconGlobalLootSubProvider implements GlobalLootSubProvider {
 
-        this.add("dwarven_lexicon_from_mineshaft",
-                new AddItemModifier(
-                        new LootItemCondition[]{
-                                new LootTableIdCondition.Builder(ResourceLocation.withDefaultNamespace("chests/abandoned_mineshaft")).build(),
-                                LootItemRandomChanceCondition.randomChance(0.20f).build()
-                        },
-                        lexicon
-                ));
+        @Override
+        public void addModifiers(@NotNull AbstractGlobalLootModifierProvider p) {
 
-        this.add("dwarven_lexicon_from_trail_ruins",
-                new AddItemModifier(
-                        new LootItemCondition[]{
-                                new LootTableIdCondition.Builder(ResourceLocation.withDefaultNamespace("archaeology/trail_ruins_rare")).build(),
-                                LootItemRandomChanceCondition.randomChance(0.50f).build()
-                        },
-                        lexicon
-                ));
+            /*
+
+            p.put(JolCraftLootTableIds.DWARVEN_LEXICON_IN_STRONGHOLD_LIBRARY,
+                    new AddTableLootModifier(
+                            new LootItemCondition[]{
+                                    new LootTableIdCondition.Builder(BuiltInLootTables.STRONGHOLD_LIBRARY.location()).build()
+                            },
+                            JolCraftLootTables.DWARVEN_LEXICON_IN_STRONGHOLD_LIBRARY
+                    )
+            );
+
+            */
+
+        }
     }
 
     @Override
     public @NotNull String getName() {
-        return "JolCraft Global Loot";
+        return "JolCraft Global Loot Modifiers";
     }
 }

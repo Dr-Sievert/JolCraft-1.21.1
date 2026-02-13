@@ -13,12 +13,14 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.advancement.JolCraftAdvancementProvider;
 import net.sievert.jolcraft.datagen.biome.JolCraftBiomeTagProvider;
-import net.sievert.jolcraft.datagen.block.JolCraftBlockLootTableProvider;
+import net.sievert.jolcraft.datagen.loot.subprovider.JolCraftBlockLootTableProvider;
 import net.sievert.jolcraft.datagen.block.JolCraftBlockTagProvider;
 import net.sievert.jolcraft.datagen.config.JolCraftConfigProvider;
 import net.sievert.jolcraft.datagen.item.JolCraftItemTagProvider;
-import net.sievert.jolcraft.datagen.loot.JolCraftEntityLootTableProvider;
+import net.sievert.jolcraft.datagen.loot.subprovider.JolCraftEntityLootTableProvider;
 import net.sievert.jolcraft.datagen.loot.JolCraftGlobalLootModifierProvider;
+import net.sievert.jolcraft.datagen.loot.JolCraftLootTableProvider;
+import net.sievert.jolcraft.datagen.loot.subprovider.JolCraftChestLootTableProvider;
 import net.sievert.jolcraft.datagen.recipe.JolCraftRecipeProvider;
 import net.sievert.jolcraft.datagen.structure.JolCraftStructureTagProvider;
 import net.sievert.jolcraft.util.JolCraftLogTags;
@@ -45,11 +47,12 @@ public final class JolCraftServerDataGenerator {
 
         JolCraftLogs.debug(
                 JolCraftLogTags.DATAGEN,
-                "Server providers: {}, {}, {}, {}, {}, {}, {}, {}",
+                "Server providers: {}, {}, {}, {}, {}, {}, {}, {}, {}",
                 JolCraftBlockTagProvider.class.getSimpleName(),
                 JolCraftDataMapProvider.class.getSimpleName(),
                 JolCraftRecipeProvider.Runner.class.getSimpleName(),
                 JolCraftGlobalLootModifierProvider.class.getSimpleName(),
+                JolCraftLootTableProvider.class.getSimpleName(),
                 JolCraftItemTagProvider.class.getSimpleName(),
                 JolCraftBiomeTagProvider.class.getSimpleName(),
                 JolCraftStructureTagProvider.class.getSimpleName(),
@@ -70,17 +73,9 @@ public final class JolCraftServerDataGenerator {
         generator.addProvider(true, new JolCraftDataMapProvider(packOutput, lookup));
         generator.addProvider(true, new JolCraftRecipeProvider.Runner(packOutput, lookup));
 
-        generator.addProvider(true, new LootTableProvider(
-                packOutput,
-                Collections.emptySet(),
-                List.of(
-                        new LootTableProvider.SubProviderEntry(JolCraftBlockLootTableProvider::new, LootContextParamSets.BLOCK),
-                        new LootTableProvider.SubProviderEntry(JolCraftEntityLootTableProvider::new, LootContextParamSets.ENTITY)
-                ),
-                lookup
-        ));
-
         generator.addProvider(true, new JolCraftGlobalLootModifierProvider(packOutput, lookup));
+        generator.addProvider(true, new JolCraftLootTableProvider(packOutput, lookup));
+
         generator.addProvider(true, new JolCraftItemTagProvider(packOutput, lookup, blockTagsProvider.contentsGetter()));
         generator.addProvider(true, new JolCraftBiomeTagProvider(packOutput, lookup));
         generator.addProvider(true, new JolCraftStructureTagProvider(packOutput, lookup));

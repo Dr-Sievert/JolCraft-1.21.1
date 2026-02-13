@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.datagen.loot;
+package net.sievert.jolcraft.datagen.loot.subprovider;
 
 import net.minecraft.advancements.critereon.EntityFlagsPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -80,6 +80,7 @@ public final class JolCraftEntityLootTableProvider implements LootTableSubProvid
                         )
         );
     }
+
     @SuppressWarnings("deprecation")
     @Override
     public void generate(@NotNull BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {

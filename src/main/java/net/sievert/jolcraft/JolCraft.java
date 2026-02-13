@@ -9,6 +9,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
@@ -77,7 +78,9 @@ public class JolCraft {
 
         // --- Events ---
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::clientSetup);
+        if (FMLEnvironment.dist.isClient()) {
+            modEventBus.addListener(this::clientSetup);
+        }
         modEventBus.addListener(this::loadComplete);
         modEventBus.addListener(JolCraftNetworking::register);
         modEventBus.addListener(JolCraftCriteriaTriggers::register);

@@ -33,9 +33,9 @@ public final class JolCraftTags {
         public static final TagKey<Item> ARTISAN_HAMMERS = createTag(JolCraftTagIds.ARTISAN_HAMMERS);
         public static final TagKey<Item> CHISELS = createTag(JolCraftTagIds.CHISELS);
         public static final TagKey<Item> PESTLES = createTag(JolCraftTagIds.PESTLES);
-        public static final TagKey<Item> GEMS_UNCUT = createTag(JolCraftTagIds.GEMS_UNCUT);
-        public static final TagKey<Item> GEM_CUT = createTag(JolCraftTagIds.GEM_CUT);
-        public static final TagKey<Item> GEM_DUST = createTag(JolCraftTagIds.GEM_DUST);
+        public static final TagKey<Item> GEMS_UNCUT = createTag(JolCraftTagIds.UNCUT_GEMS);
+        public static final TagKey<Item> GEM_CUT = createTag(JolCraftTagIds.CUT_GEMS);
+        public static final TagKey<Item> GEM_DUST = createTag(JolCraftTagIds.GEM_DUSTS);
         public static final TagKey<Item> ATTRIBUTE_TRIM_MATERIALS = createTag(JolCraftTagIds.ATTRIBUTE_TRIM_MATERIALS);
         public static final TagKey<Item> PROFESSION_CONTRACTS = createTag(JolCraftTagIds.PROFESSION_CONTRACTS);
         public static final TagKey<Item> REPUTATION_TABLETS = createTag(JolCraftTagIds.REPUTATION_TABLETS);
@@ -46,7 +46,7 @@ public final class JolCraftTags {
         public static final TagKey<Item> MITHRIL_ITEMS = createTag(JolCraftTagIds.MITHRIL_ITEMS);
 
         // Salvage
-        public static final TagKey<Item> GLOBAL_SALVAGE = createTag(JolCraftTagIds.GLOBAL_SALVAGE);
+        public static final TagKey<Item> GLOBAL_SALVAGE = createTag(JolCraftTagIds.SALVAGE);
         public static final TagKey<Item> GENERAL_SALVAGE = createTag(JolCraftTagIds.GENERAL_SALVAGE);
         public static final TagKey<Item> DEEPSLATE_SALVAGE = createTag(JolCraftTagIds.DEEPSLATE_SALVAGE);
         public static final TagKey<Item> TEXTILE_SALVAGE = createTag(JolCraftTagIds.TEXTILE_SALVAGE);

@@ -29,9 +29,9 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String CHISELS = plural(JolCraftDictionary.CHISEL);
     public static final String PESTLES = plural(JolCraftDictionary.PESTLE);
 
-    public static final String GEMS_UNCUT = join(plural(JolCraftDictionary.GEM), JolCraftDictionary.UNCUT);
-    public static final String GEM_CUT = join(JolCraftDictionary.GEM, JolCraftDictionary.CUT);
-    public static final String GEM_DUST = join(JolCraftDictionary.GEM, JolCraftDictionary.DUST);
+    public static final String UNCUT_GEMS = join(JolCraftDictionary.UNCUT, plural(JolCraftDictionary.GEM));
+    public static final String CUT_GEMS = join(JolCraftDictionary.CUT, plural(JolCraftDictionary.GEM));
+    public static final String GEM_DUSTS = join(JolCraftDictionary.GEM, plural(JolCraftDictionary.DUST));
 
     public static final String ATTRIBUTE_TRIM_MATERIALS = join(JolCraftDictionary.ATTRIBUTE, JolCraftDictionary.TRIM, plural(JolCraftDictionary.MATERIAL));
     public static final String PROFESSION_CONTRACTS = join(JolCraftDictionary.PROFESSION, plural(JolCraftDictionary.CONTRACT));
@@ -45,7 +45,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String MITHRIL_ITEMS = join(JolCraftDictionary.MITHRIL, plural(JolCraftDictionary.ITEM));
 
     // Salvage
-    public static final String GLOBAL_SALVAGE = join(JolCraftDictionary.GLOBAL, JolCraftDictionary.SALVAGE);
+    public static final String SALVAGE = join(JolCraftDictionary.SALVAGE);
     public static final String GENERAL_SALVAGE = join(JolCraftDictionary.GENERAL, JolCraftDictionary.SALVAGE);
     public static final String DEEPSLATE_SALVAGE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.SALVAGE);
     public static final String TEXTILE_SALVAGE = join(JolCraftDictionary.TEXTILE, JolCraftDictionary.SALVAGE);

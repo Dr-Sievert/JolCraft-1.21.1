@@ -1,0 +1,47 @@
+package net.sievert.jolcraft.data.id.loot;
+
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+
+public final class JolCraftLootTableIds extends JolCraftIds {
+
+    private JolCraftLootTableIds() {}
+
+    /* ---------------------------------------------------------------------
+     * Chests
+     * ------------------------------------------------------------------ */
+
+    public static final String DWARVEN_LEXICON_IN_STRONGHOLD_LIBRARY = JolCraftStrings.underscored(
+            JolCraftItemIds.DWARVEN_LEXICON,
+            JolCraftDictionary.IN,
+            lastPathSegment(BuiltInLootTables.STRONGHOLD_LIBRARY)
+    );
+
+    public static final String DWARVEN_LEXICON_IN_ABANDONED_MINESHAFT = JolCraftStrings.underscored(
+            JolCraftItemIds.DWARVEN_LEXICON,
+            JolCraftDictionary.IN,
+            lastPathSegment(BuiltInLootTables.ABANDONED_MINESHAFT)
+    );
+
+    public static final String UNCUT_GEMS = JolCraftTagIds.UNCUT_GEMS;
+    public static final String SALVAGE = JolCraftTagIds.SALVAGE;
+    public static final String DWARVEN_TOMES = plural(JolCraftItemIds.DWARVEN_TOME);
+
+    /* ---------------------------------------------------------------------
+     * Strongbox
+     * ------------------------------------------------------------------ */
+
+    public static final String DWARVEN_TRAIL_RUIN = JolCraftStructureIds.DWARVEN_TRAIL_RUIN;
+
+    /* ---------------------------------------------------------------------
+     * Archaeology
+     * ------------------------------------------------------------------ */
+
+    public static final String DWARVEN_TRAIL_RUIN_COMMON = join(DWARVEN_TRAIL_RUIN, JolCraftDictionary.COMMON);
+    public static final String DWARVEN_TRAIL_RUIN_RARE = join(DWARVEN_TRAIL_RUIN, JolCraftDictionary.RARE);
+}

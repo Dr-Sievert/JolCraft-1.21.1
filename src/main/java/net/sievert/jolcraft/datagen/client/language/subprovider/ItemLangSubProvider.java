@@ -59,8 +59,8 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
         );
 
         p.putSame("Ancient Unidentified Dwarven Tome",
-                JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME,
-                JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME
+                JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME,
+                JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME
         );
 
         p.putManual(JolCraftItems.SCRAP_HEAP, "Heap of Scrap");

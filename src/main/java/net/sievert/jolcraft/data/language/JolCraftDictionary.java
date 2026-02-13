@@ -148,6 +148,8 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PLACE = "place";
     public static final String BRICK = "brick";
     public static final String BASALT = "basalt";
+    public static final String ARCHAEOLOGY = "archaeology";
+    public static final String INJECT = "inject";
 
     /* =====================================================================
      * Outcomes / qualifiers

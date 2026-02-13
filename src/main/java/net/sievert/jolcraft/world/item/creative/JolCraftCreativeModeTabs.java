@@ -214,8 +214,8 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.REROLL_CRATE);
 
                         pOutput.accept(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME);
-                        pOutput.accept(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME);
-                        pOutput.accept(JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME);
+                        pOutput.accept(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME);
+                        pOutput.accept(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME);
                         pOutput.accept(JolCraftItems.LEGENDARY_PAGE);
 
                         ItemStack gemTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());

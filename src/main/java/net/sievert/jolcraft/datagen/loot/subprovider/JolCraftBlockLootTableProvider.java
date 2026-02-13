@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.datagen.block;
+package net.sievert.jolcraft.datagen.loot.subprovider;
 
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.Holder;

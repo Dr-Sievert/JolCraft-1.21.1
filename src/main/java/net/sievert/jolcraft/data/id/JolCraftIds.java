@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.id;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -39,5 +40,14 @@ public abstract class JolCraftIds {
         all[0] = JolCraft.MOD_ID;
         System.arraycopy(parts, 0, all, 1, parts.length);
         return JolCraftStrings.underscored(all);
+    }
+
+    /**
+     * Returns the last path segment of the key's ResourceLocation.
+     */
+    public static String lastPathSegment(ResourceKey<?> key) {
+        String path = key.location().getPath();
+        int idx = path.lastIndexOf('/');
+        return idx >= 0 ? path.substring(idx + 1) : path;
     }
 }

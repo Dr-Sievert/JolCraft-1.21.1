@@ -83,13 +83,13 @@ public final class DwarfModelSubProvider implements AbstractModelProvider.ModelS
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.DWARVEN_TOME_EPIC.get(), JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
 
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
+        AbstractModelProvider.generateFlatItem(items, JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
         AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
 
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
+        AbstractModelProvider.generateFlatItem(items, JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
         generateLegendaryTomeModels(items);
     }
 

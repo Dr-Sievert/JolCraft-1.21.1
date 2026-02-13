@@ -79,9 +79,9 @@ public final class DwarfHistorianTrades extends AbstractDwarfTrades {
                 EXPERT,
                 coins(13),
                 Optional.empty(),
-                itemResult(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 1),
+                itemResult(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get(), 1),
                 3, 1, 0.05F,
-                buy(JolCraftItems.ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get())
+                buy(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get())
         );
 
         mainTrade(
@@ -105,9 +105,9 @@ public final class DwarfHistorianTrades extends AbstractDwarfTrades {
                 MASTER,
                 coins(15),
                 Optional.of(cost(JolCraftItems.LEGENDARY_PAGE.get(), 10)),
-                itemResult(JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get(), 1),
+                itemResult(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get(), 1),
                 10, 0, 0.05F,
-                buyFor(JolCraftItems.LEGENDARY_PAGE.get(), JolCraftItems.LEGENDARY_ANCIENT_UNIDENTIFIED_DWARVEN_TOME.get())
+                buyFor(JolCraftItems.LEGENDARY_PAGE.get(), JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get())
         );
 
         buyLegendaryLoreTome(p, MASTER, 30, 20, DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE);
