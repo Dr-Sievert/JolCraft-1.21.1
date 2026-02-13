@@ -144,10 +144,10 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String YES = "yes";
     public static final String BRIGHTNESS = "brightness";
     public static final String SUBTITLE = "subtitle";
-    public static final String HIT = "hit";
     public static final String RANDOM = "random";
     public static final String PLACE = "place";
     public static final String BRICK = "brick";
+    public static final String BASALT = "basalt";
 
     /* =====================================================================
      * Outcomes / qualifiers
@@ -166,6 +166,7 @@ public final class JolCraftDictionary extends JolCraftIds {
 
     public static final String SOME = "some";
     public static final String ENDORSED = "endorsed";
+    public static final String PLACED = "placed";
 
 
     /* =====================================================================
@@ -658,7 +659,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String WOECRYSTAL = "woecrystal";
 
     /* =====================================================================
-     * Structure / worldgen field nouns (serialization keys)
+     * Structure / worldgen field nouns
      * ===================================================================== */
 
     public static final String START = "start";

@@ -11,23 +11,36 @@ import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftBiomeModifierIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftPlacedFeatures;
 
 public class JolCraftBiomeModifiers {
 
-    //Vegetation
-    public static final ResourceKey<BiomeModifier> ADD_DUSKCAP_PATCH = registerKey("add_duskcap_patch");
-    public static final ResourceKey<BiomeModifier> ADD_DEEPSLATE_BULBS_PATCH = registerKey("add_deepslate_bulbs_patch");
+    // Vegetation
+    public static final ResourceKey<BiomeModifier> ADD_DUSKCAP_PATCH =
+            registerKey(JolCraftBiomeModifierIds.ADD_DUSKCAP_PATCH);
 
-    //Ores
-    public static final ResourceKey<BiomeModifier> ADD_SMALL_MITHRIL_ORE = registerKey("add_small_mithril_ore");
-    public static final ResourceKey<BiomeModifier> ADD_MEDIUM_MITHRIL_ORE = registerKey("add_medium_mithril_ore");
-    public static final ResourceKey<BiomeModifier> ADD_LARGE_MITHRIL_ORE = registerKey("add_large_mithril_ore");
-    public static final ResourceKey<BiomeModifier> ADD_SPECIAL_MITHRIL_ORE = registerKey("add_special_mithril_ore");
+    public static final ResourceKey<BiomeModifier> ADD_DEEPSLATE_BULBS_PATCH =
+            registerKey(JolCraftBiomeModifierIds.ADD_DEEPSLATE_BULBS_PATCH);
 
-    //Geodes
-    public static final ResourceKey<BiomeModifier> ADD_BASALT_GEODE = registerKey("add_basalt_geode");
+    // Ores
+    public static final ResourceKey<BiomeModifier> ADD_SMALL_MITHRIL_ORE =
+            registerKey(JolCraftBiomeModifierIds.ADD_SMALL_MITHRIL_ORE);
 
+    public static final ResourceKey<BiomeModifier> ADD_MEDIUM_MITHRIL_ORE =
+            registerKey(JolCraftBiomeModifierIds.ADD_MEDIUM_MITHRIL_ORE);
+
+    public static final ResourceKey<BiomeModifier> ADD_LARGE_MITHRIL_ORE =
+            registerKey(JolCraftBiomeModifierIds.ADD_LARGE_MITHRIL_ORE);
+
+    public static final ResourceKey<BiomeModifier> ADD_SPECIAL_MITHRIL_ORE =
+            registerKey(JolCraftBiomeModifierIds.ADD_SPECIAL_MITHRIL_ORE);
+
+    // Geodes
+    public static final ResourceKey<BiomeModifier> ADD_BASALT_GEODE =
+            registerKey(JolCraftBiomeModifierIds.ADD_BASALT_GEODE);
 
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);

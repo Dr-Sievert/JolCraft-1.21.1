@@ -11,25 +11,36 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftPlacedFeatureIds;
 import net.sievert.jolcraft.world.worldgen.predicate.custom.DarknessPredicate;
 
 import java.util.List;
 
 public class JolCraftPlacedFeatures {
 
-    //Vegetation
-    public static final ResourceKey<PlacedFeature> DUSKCAP_PATCH_PLACED_KEY = registerKey("duskcap_patch_placed");
-    public static final ResourceKey<PlacedFeature> DEEPSLATE_BULBS_PLACED_KEY = registerKey("deepslate_bulbs_patch_placed");
+    // Vegetation
+    public static final ResourceKey<PlacedFeature> DUSKCAP_PATCH_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.DUSKCAP_PATCH_PLACED);
 
-    //Ores
-    public static final ResourceKey<PlacedFeature> SMALL_MITHRIL_ORE_PLACED_KEY = registerKey("small_mithril_ore_placed");
-    public static final ResourceKey<PlacedFeature> MEDIUM_MITHRIL_ORE_PLACED_KEY = registerKey("medium_mithril_ore_placed");
-    public static final ResourceKey<PlacedFeature> LARGE_MITHRIL_ORE_PLACED_KEY = registerKey("large_mithril_ore_placed");
-    public static final ResourceKey<PlacedFeature> SPECIAL_MITHRIL_ORE_PLACED_KEY = registerKey("special_mithril_ore_placed");
+    public static final ResourceKey<PlacedFeature> DEEPSLATE_BULBS_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.DEEPSLATE_BULBS_PATCH_PLACED);
 
-    //Geodes
-    public static final ResourceKey<PlacedFeature> BASALT_GEODE_PLACED_KEY = registerKey("basalt_geode_placed");
+    // Ores
+    public static final ResourceKey<PlacedFeature> SMALL_MITHRIL_ORE_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.SMALL_MITHRIL_ORE_PLACED);
 
+    public static final ResourceKey<PlacedFeature> MEDIUM_MITHRIL_ORE_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.MEDIUM_MITHRIL_ORE_PLACED);
+
+    public static final ResourceKey<PlacedFeature> LARGE_MITHRIL_ORE_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.LARGE_MITHRIL_ORE_PLACED);
+
+    public static final ResourceKey<PlacedFeature> SPECIAL_MITHRIL_ORE_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.SPECIAL_MITHRIL_ORE_PLACED);
+
+    // Geodes
+    public static final ResourceKey<PlacedFeature> BASALT_GEODE_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.BASALT_GEODE_PLACED);
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);

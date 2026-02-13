@@ -22,6 +22,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.neoforged.neoforge.common.Tags;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftConfiguredFeatureIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.crop.DeepslateBulbsCropBlock;
 
@@ -29,18 +30,30 @@ import java.util.List;
 
 public class JolCraftConfiguredFeatures {
 
-    //Vegetation
-    public static final ResourceKey<ConfiguredFeature<?, ?>> DUSKCAP_PATCH_KEY = registerKey("duskcap_patch");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> DEEPSLATE_BULBS_PATCH_KEY = registerKey("deepslate_bulbs_patch");
+    // Vegetation
+    public static final ResourceKey<ConfiguredFeature<?, ?>> DUSKCAP_PATCH_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.DUSKCAP_PATCH);
 
-    //Ores
-    public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_MITHRIL_ORE_KEY = registerKey("small_mithril_ore");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> MEDIUM_MITHRIL_ORE_KEY = registerKey("medium_mithril_ore");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> LARGE_MITHRIL_ORE_KEY = registerKey("large_mithril_ore");
-    public static final ResourceKey<ConfiguredFeature<?, ?>> SPECIAL_MITHRIL_ORE_KEY = registerKey("special_mithril_ore");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> DEEPSLATE_BULBS_PATCH_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.DEEPSLATE_BULBS_PATCH);
 
-    //Geodes
-    public static final ResourceKey<ConfiguredFeature<?, ?>> BASALT_GEODE_KEY = registerKey("basalt_geode");
+    // Ores
+    public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_MITHRIL_ORE_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.SMALL_MITHRIL_ORE);
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> MEDIUM_MITHRIL_ORE_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.MEDIUM_MITHRIL_ORE);
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> LARGE_MITHRIL_ORE_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.LARGE_MITHRIL_ORE);
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> SPECIAL_MITHRIL_ORE_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.SPECIAL_MITHRIL_ORE);
+
+    // Geodes
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BASALT_GEODE_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.BASALT_GEODE);
+
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 
