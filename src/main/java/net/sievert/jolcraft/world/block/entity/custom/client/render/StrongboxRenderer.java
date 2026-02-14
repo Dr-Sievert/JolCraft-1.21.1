@@ -15,7 +15,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
 import net.sievert.jolcraft.world.block.entity.custom.client.model.StrongboxModel;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,14 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implements BlockEntityRenderer<T> {
     private final BlockEntityRendererProvider.Context context;
-    private static final ResourceLocation TEXTURE = JolCraft.location("textures/entity/block/strongbox.png");
+    private static final ResourceLocation TEXTURE =
+            JolCraftTextures.mod(
+                    JolCraftTextures.entity(
+                            JolCraftDirectoryIds.BLOCK,
+                            JolCraftBlockIds.STRONGBOX
+                    )
+            );
+
     public final StrongboxModel model;
 
     public StrongboxRenderer(BlockEntityRendererProvider.Context context) {

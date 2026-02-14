@@ -13,7 +13,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
@@ -26,11 +29,17 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     private static final Map<DwarfEyeColor, ResourceLocation> LOCATION_BY_EYE =
             Util.make(Maps.newEnumMap(DwarfEyeColor.class), map -> {
-                map.put(DwarfEyeColor.BROWN, JolCraft.location("textures/entity/dwarf/eye/eye_brown.png"));
-                map.put(DwarfEyeColor.DARK_BROWN, JolCraft.location("textures/entity/dwarf/eye/eye_dark_brown.png"));
-                map.put(DwarfEyeColor.BLUE, JolCraft.location("textures/entity/dwarf/eye/eye_blue.png"));
-                map.put(DwarfEyeColor.GREEN, JolCraft.location("textures/entity/dwarf/eye/eye_green.png"));
-                map.put(DwarfEyeColor.GRAY, JolCraft.location("textures/entity/dwarf/eye/eye_gray.png"));
+                for (DwarfEyeColor color : DwarfEyeColor.values()) {
+                    map.put(color,
+                            JolCraftTextures.mod(
+                                    JolCraftTextures.entity(
+                                            JolCraftDirectoryIds.DWARF,
+                                            JolCraftDictionary.EYE,
+                                            color.getTextureName()
+                                    )
+                            )
+                    );
+                }
             });
 
     public DwarfEyeLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {
@@ -38,23 +47,37 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight,
-                       DwarfRenderState state, float yRot, float xRot) {
-
+    public void render(
+            @NotNull PoseStack poseStack,
+            @NotNull MultiBufferSource buffer,
+            int packedLight,
+            @NotNull DwarfRenderState state,
+            float yRot,
+            float xRot
+    ) {
         if (state.dwarf == null || state.eye == null) return;
 
+        ResourceLocation texture = LOCATION_BY_EYE.get(state.eye);
+        if (texture == null) return;
+
         DwarfModel model = this.getParentModel();
-        ModelPart right_eye = model.getHead().getChild("right_eye");
-        ModelPart left_eye = model.getHead().getChild("left_eye");
-        right_eye.visible = true;
-        left_eye.visible = true;
 
         model.setupAnim(state);
-        ResourceLocation texture = LOCATION_BY_EYE.get(state.eye);
+
+        ModelPart head = model.getHead();
+        ModelPart rightEye = head.getChild(JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYE);
+        ModelPart leftEye  = head.getChild(JolCraftModelPartIds.Creature.Humanoid.LEFT_EYE);
+
+        boolean prevRight = rightEye.visible;
+        boolean prevLeft = leftEye.visible;
+
+        rightEye.visible = true;
+        leftEye.visible = true;
+
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
         model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
 
-        right_eye.visible = false;
-        left_eye.visible = false;
+        rightEye.visible = prevRight;
+        leftEye.visible = prevLeft;
     }
 }

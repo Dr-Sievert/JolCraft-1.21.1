@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.gui.custom.screen;
+package net.sievert.jolcraft.world.gui.custom.client.screen;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
@@ -18,8 +18,12 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
@@ -31,38 +35,77 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMenu> {
-    private static final ResourceLocation OUT_OF_STOCK_SPRITE = JolCraft.location("trade/out_of_stock");
-    private static final ResourceLocation EXPERIENCE_BAR_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_background");
-    private static final ResourceLocation EXPERIENCE_BAR_CURRENT_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_current");
-    private static final ResourceLocation EXPERIENCE_BAR_RESULT_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/experience_bar_result");
-    private static final ResourceLocation SCROLLER_SPRITE = JolCraft.location("trade/scroller");
-    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = JolCraft.location("trade/scroller_disabled");
-    private static final ResourceLocation TRADE_ARROW_OUT_OF_STOCK_SPRITE = JolCraft.location("trade/trade_arrow_out_of_stock");
-    private static final ResourceLocation TRADE_ARROW_SPRITE = JolCraft.location("trade/trade_arrow");
-    private static final ResourceLocation DISCOUNT_STRIKETHRUOGH_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/discount_strikethrough");
+
+    private static ResourceLocation modTradeSprite(String sprite) {
+        return JolCraftTextures.modSprite(JolCraftDictionary.TRADE, sprite);
+    }
+
+    private static ResourceLocation vanillaTradeSprite(String sprite) {
+        return JolCraftTextures.vanillaSprite(JolCraftDictionary.CONTAINER, JolCraftDictionary.VILLAGER, sprite);
+    }
+
+    private static final ResourceLocation OUT_OF_STOCK_SPRITE =
+            modTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.OUT,
+                    JolCraftDictionary.OF,
+                    JolCraftDictionary.STOCK
+            ));
+
+    private static final ResourceLocation EXPERIENCE_BAR_BACKGROUND_SPRITE =
+            vanillaTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.EXPERIENCE,
+                    JolCraftDictionary.BAR,
+                    JolCraftDictionary.BACKGROUND
+            ));
+
+    private static final ResourceLocation EXPERIENCE_BAR_CURRENT_SPRITE =
+            vanillaTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.EXPERIENCE,
+                    JolCraftDictionary.BAR,
+                    JolCraftDictionary.CURRENT
+            ));
+
+    private static final ResourceLocation EXPERIENCE_BAR_RESULT_SPRITE =
+            vanillaTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.EXPERIENCE,
+                    JolCraftDictionary.BAR,
+                    JolCraftDictionary.RESULT
+            ));
+
+    private static final ResourceLocation SCROLLER_SPRITE =
+            modTradeSprite(JolCraftDictionary.SCROLLER);
+
+    private static final ResourceLocation SCROLLER_DISABLED_SPRITE =
+            modTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.SCROLLER,
+                    JolCraftDictionary.DISABLED
+            ));
+
+    private static final ResourceLocation TRADE_ARROW_OUT_OF_STOCK_SPRITE =
+            modTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.TRADE,
+                    JolCraftDictionary.ARROW,
+                    JolCraftDictionary.OUT,
+                    JolCraftDictionary.OF,
+                    JolCraftDictionary.STOCK
+            ));
+
+    private static final ResourceLocation TRADE_ARROW_SPRITE =
+            modTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.TRADE,
+                    JolCraftDictionary.ARROW
+            ));
+
+    private static final ResourceLocation DISCOUNT_STRIKETHROUGH_SPRITE =
+            vanillaTradeSprite(JolCraftStrings.underscored(
+                    JolCraftDictionary.DISCOUNT,
+                    JolCraftDictionary.STRIKETHROUGH
+            ));
 
     /**
      * The GUI texture for the dwarf trader GUI.
      */
-    private static final ResourceLocation TEXTURE_LOCATION = JolCraft.location("textures/gui/container/dwarf_trade.png");
-    private static final int TEXTURE_WIDTH = 512;
-    private static final int TEXTURE_HEIGHT = 256;
-    private static final int MERCHANT_MENU_PART_X = 99;
-    private static final int PROGRESS_BAR_X = 136;
-    private static final int PROGRESS_BAR_Y = 16;
-    private static final int SELL_ITEM_1_X = 5;
-    private static final int SELL_ITEM_2_X = 35;
-    private static final int BUY_ITEM_X = 68;
-    private static final int LABEL_Y = 6;
-    private static final int NUMBER_OF_OFFER_BUTTONS = 7;
-    private static final int TRADE_BUTTON_X = 5;
-    private static final int TRADE_BUTTON_HEIGHT = 20;
-    private static final int TRADE_BUTTON_WIDTH = 88;
-    private static final int SCROLLER_HEIGHT = 27;
-    private static final int SCROLLER_WIDTH = 6;
-    private static final int SCROLL_BAR_HEIGHT = 139;
-    private static final int SCROLL_BAR_TOP_POS_Y = 18;
-    private static final int SCROLL_BAR_START_X = 94;
+    private static final ResourceLocation TEXTURE_LOCATION = JolCraftTextures.mod(JolCraftTextures.container(JolCraftRecipeIds.DWARF_TRADE));
     private static final Component TRADES_LABEL = Component.translatable(JolCraftLanguageKeys.MERCHANT_TRADES);
     private static final Component DEPRECATED_TOOLTIP = Component.translatable(JolCraftLanguageKeys.MERCHANT_DEPRECATED);
 
@@ -267,7 +310,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
             guiGraphics.pose().popPose();
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0.0F, 0.0F, 300.0F);
-            guiGraphics.blitSprite(RenderType::guiTextured, DISCOUNT_STRIKETHRUOGH_SPRITE, x + 7, y + 12, 9, 2);
+            guiGraphics.blitSprite(RenderType::guiTextured, DISCOUNT_STRIKETHROUGH_SPRITE, x + 7, y + 12, 9, 2);
             guiGraphics.pose().popPose();
         }
     }

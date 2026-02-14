@@ -12,6 +12,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
+import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.object.RadiantModel;
 import net.sievert.jolcraft.world.entity.client.util.object.RadiantRenderState;
 import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
@@ -19,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class RadiantRenderer extends EntityRenderer<RadiantEntity, RadiantRenderState> {
-    private static final ResourceLocation TEXTURE = JolCraft.location("textures/entity/radiant/radiant.png");
+    private static final ResourceLocation TEXTURE = JolCraftTextures.mod(JolCraftTextures.object(JolCraftEntityObjectIds.RADIANT));
     private final RadiantModel model;
 
     public RadiantRenderer(EntityRendererProvider.Context context) {

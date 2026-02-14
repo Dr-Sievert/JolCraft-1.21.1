@@ -30,10 +30,10 @@ import net.sievert.jolcraft.world.block.entity.custom.client.render.StrongboxRen
 import net.sievert.jolcraft.world.entity.client.render.dwarf.*;
 import net.sievert.jolcraft.world.entity.client.render.object.RadiantRenderer;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.world.gui.custom.screen.DwarfMerchantScreen;
-import net.sievert.jolcraft.world.gui.custom.screen.LapidaryBenchScreen;
-import net.sievert.jolcraft.world.gui.custom.screen.LockScreen;
-import net.sievert.jolcraft.world.gui.custom.screen.StrongboxScreen;
+import net.sievert.jolcraft.world.gui.custom.client.screen.DwarfMerchantScreen;
+import net.sievert.jolcraft.world.gui.custom.client.screen.LapidaryBenchScreen;
+import net.sievert.jolcraft.world.gui.custom.client.screen.LockScreen;
+import net.sievert.jolcraft.world.gui.custom.client.screen.StrongboxScreen;
 import net.sievert.jolcraft.world.item.client.coin.CoinPouchAmountProperty;
 import net.sievert.jolcraft.world.item.client.LoreKey;
 import net.sievert.jolcraft.world.item.client.compass.DeepslateCompassAngle;

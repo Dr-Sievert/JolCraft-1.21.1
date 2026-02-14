@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.gui.custom.screen;
+package net.sievert.jolcraft.world.gui.custom.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -11,7 +11,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,8 +24,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @OnlyIn(Dist.CLIENT)
 public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMenu> {
 
-    private static final ResourceLocation TEXTURE   = JolCraft.location("textures/gui/container/lapidary_bench.png");
-    private static final ResourceLocation HIGHLIGHT = JolCraft.location("textures/gui/sprites/widget/slot_highlighted.png");
+    private static final ResourceLocation TEXTURE   = JolCraftTextures.mod(JolCraftTextures.container(JolCraftRecipeIds.LAPIDARY_BENCH));
+    private static final ResourceLocation HIGHLIGHT_SPRITE = JolCraftTextures.modWidget(JolCraftStrings.underscored(JolCraftDictionary.SLOT, JolCraftDictionary.HIGHLIGHTED));
 
     private static final int TOOL_BTN_X = 80;
     private static final int TOOL_BTN_Y = 32;
@@ -69,7 +72,14 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha);
 
         if (hovered) {
-            gg.blit(RenderType.GUI_TEXTURED, HIGHLIGHT, bx, by, 0, 0, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE);
+            gg.blitSprite(
+                    RenderType::guiTextured,
+                    HIGHLIGHT_SPRITE,
+                    bx,
+                    by,
+                    HIGHLIGHT_SIZE,
+                    HIGHLIGHT_SIZE
+            );
         }
 
         gg.renderItem(toolStack, bx, by);

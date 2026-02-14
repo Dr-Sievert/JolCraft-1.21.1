@@ -16,8 +16,11 @@ import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.Equippable;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
+import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfModelHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,23 +68,33 @@ public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     private static @NotNull ResourceLocation armorTexture(@NotNull ResourceKey<EquipmentAsset> assetKey) {
         String material = assetKey.location().getPath();
-        return JolCraft.location("textures/entity/dwarf/armor/dwarf_" + material + "_armor.png");
+
+        return JolCraftTextures.mod(
+                JolCraftTextures.dwarf(
+                        JolCraftDirectoryIds.ARMOR,
+                        JolCraftStrings.underscored(
+                                JolCraftDirectoryIds.DWARF,
+                                material,
+                                JolCraftDirectoryIds.ARMOR
+                        )
+                )
+        );
     }
 
     private static void setArmorPartsVisible(@NotNull DwarfModel model, @NotNull EquipmentSlot slot) {
         model.setAllVisible(false);
 
-        model.getHead().getChild("hat").visible = slot == EquipmentSlot.HEAD;
+        model.getHead().getChild(DwarfModelHelper.PART_HAT).visible = slot == EquipmentSlot.HEAD;
 
         boolean chest = slot == EquipmentSlot.CHEST;
-        model.body.getChild("bodywear").visible = chest;
-        model.right_arm.getChild("right_armwear").visible = chest;
-        model.left_arm.getChild("left_armwear").visible = chest;
+        model.body.getChild(DwarfModelHelper.PART_BODYWEAR).visible = chest;
+        model.right_arm.getChild(DwarfModelHelper.PART_RIGHT_ARMWEAR).visible = chest;
+        model.left_arm.getChild(DwarfModelHelper.PART_LEFT_ARMWEAR).visible = chest;
 
-        model.body.getChild("legwear").visible = slot == EquipmentSlot.LEGS;
+        model.body.getChild(DwarfModelHelper.PART_LEGWEAR).visible = slot == EquipmentSlot.LEGS;
 
         boolean feet = slot == EquipmentSlot.FEET;
-        model.right_leg.getChild("right_footwear").visible = feet;
-        model.left_leg.getChild("left_footwear").visible = feet;
+        model.right_leg.getChild(DwarfModelHelper.PART_RIGHT_FOOTWEAR).visible = feet;
+        model.left_leg.getChild(DwarfModelHelper.PART_LEFT_FOOTWEAR).visible = feet;
     }
 }

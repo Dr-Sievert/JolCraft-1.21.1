@@ -11,7 +11,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
@@ -34,17 +36,14 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRenderer<T, DwarfRenderState, DwarfModel> {
 
-    private static final String DWARF_TEXTURE_ROOT = "textures/entity/dwarf/";
-    private static final String DWARF_PROFESSION_TEXTURE_ROOT = DWARF_TEXTURE_ROOT + "profession/";
-    private static final String EMISSIVE_SUFFIX = "_emissive";
-    private static final String PNG = ".png";
+    private static final String EMISSIVE_SUFFIX = "_" + JolCraftDictionary.EMISSIVE;
 
     private static ResourceLocation dwarfTexture(@NotNull String name) {
-        return JolCraft.location(DWARF_TEXTURE_ROOT + name + PNG);
+        return JolCraftTextures.mod(JolCraftTextures.dwarf(name));
     }
 
     private static ResourceLocation dwarfProfessionTexture(@NotNull String name) {
-        return JolCraft.location(DWARF_PROFESSION_TEXTURE_ROOT + name + PNG);
+        return JolCraftTextures.mod(JolCraftTextures.dwarf(JolCraftDirectoryIds.PROFESSION, name));
     }
 
     private static ResourceLocation dwarfProfessionEmissiveTexture(@NotNull String entityPath) {
@@ -128,7 +127,7 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         if (type == JolCraftEntities.DWARF_ALCHEMIST.get()) {
             return new Profile(LAYER_BEARD, scale, false);
         }
-        if (type == JolCraftEntities.DWARF_PRIEST.get()|| type == JolCraftEntities.DWARF_ARCANIST.get()) {
+        if (type == JolCraftEntities.DWARF_PRIEST.get() || type == JolCraftEntities.DWARF_ARCANIST.get()) {
             return new Profile(LAYER_BEARD, scale, true);
         }
         if (type == JolCraftEntities.DWARF_EXPLORER.get()) {

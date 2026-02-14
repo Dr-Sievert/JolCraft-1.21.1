@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -19,7 +19,7 @@ public abstract class ConfigManager<K, V> extends SimpleJsonResourceReloadListen
 
     protected ConfigManager(Codec<V> codec, String directory) {
         super(codec, new FileToIdConverter(
-                directory, "." + JolCraftDictionary.JSON
+                directory, "." + JolCraftDirectoryIds.JSON
         ));
     }
 

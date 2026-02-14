@@ -7,6 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.util.creature.MuffhornFurLayer;
 import net.sievert.jolcraft.world.entity.client.util.creature.MuffhornRenderState;
 import net.sievert.jolcraft.world.entity.client.model.creature.MuffhornModel;
@@ -32,7 +34,7 @@ public class MuffhornRenderer extends AgeableMobRenderer<MuffhornEntity, Muffhor
 
     @Override
     public ResourceLocation getTextureLocation(MuffhornRenderState state) {
-        return JolCraft.location("textures/entity/creature/muffhorn.png");
+        return JolCraftTextures.mod(JolCraftTextures.creature(JolCraftCreatureIds.MUFFHORN));
     }
 
     public MuffhornRenderState createRenderState() {

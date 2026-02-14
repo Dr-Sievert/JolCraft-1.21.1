@@ -9,6 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
+import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.entity.client.util.object.RadiantRenderState;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public class RadiantModel extends EntityModel<RadiantRenderState>  {
 
     public RadiantModel(ModelPart root) {
         super(root);
-        this.body = root.getChild("body");
+        this.body = root.getChild(JolCraftModelPartIds.Creature.BODY);
     }
 
     /**
@@ -33,7 +34,7 @@ public class RadiantModel extends EntityModel<RadiantRenderState>  {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         root.addOrReplaceChild(
-                "body",
+                JolCraftModelPartIds.Creature.BODY,
                 CubeListBuilder.create()
                         .texOffs(2, 3)
                         .addBox(-1.0F, -1.0F, -1.0F, 2.0F, 2.0F, 2.0F),

@@ -13,7 +13,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
@@ -26,10 +28,41 @@ public class DwarfBeardLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     private static final Map<DwarfBeardColor, ResourceLocation> LOCATION_BY_BEARD =
             Util.make(Maps.newEnumMap(DwarfBeardColor.class), map -> {
-                map.put(DwarfBeardColor.BROWN, JolCraft.location("textures/entity/dwarf/beard/beard_brown.png"));
-                map.put(DwarfBeardColor.RED, JolCraft.location("textures/entity/dwarf/beard/beard_red.png"));
-                map.put(DwarfBeardColor.BLACK, JolCraft.location("textures/entity/dwarf/beard/beard_black.png"));
-                map.put(DwarfBeardColor.GRAY, JolCraft.location("textures/entity/dwarf/beard/beard_gray.png"));
+                map.put(DwarfBeardColor.BROWN,
+                        JolCraftTextures.mod(
+                                JolCraftTextures.entity(
+                                        JolCraftDirectoryIds.DWARF,
+                                        JolCraftDirectoryIds.BEARD,
+                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.BROWN.name().toLowerCase()
+                                )
+                        ));
+
+                map.put(DwarfBeardColor.RED,
+                        JolCraftTextures.mod(
+                                JolCraftTextures.entity(
+                                        JolCraftDirectoryIds.DWARF,
+                                        JolCraftDirectoryIds.BEARD,
+                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.RED.name().toLowerCase()
+                                )
+                        ));
+
+                map.put(DwarfBeardColor.BLACK,
+                        JolCraftTextures.mod(
+                                JolCraftTextures.entity(
+                                        JolCraftDirectoryIds.DWARF,
+                                        JolCraftDirectoryIds.BEARD,
+                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.BLACK.name().toLowerCase()
+                                )
+                        ));
+
+                map.put(DwarfBeardColor.GRAY,
+                        JolCraftTextures.mod(
+                                JolCraftTextures.entity(
+                                        JolCraftDirectoryIds.DWARF,
+                                        JolCraftDirectoryIds.BEARD,
+                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.GRAY.name().toLowerCase()
+                                )
+                        ));
             });
 
     public DwarfBeardLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {
@@ -43,9 +76,9 @@ public class DwarfBeardLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
         if (state.dwarf == null || state.beard == null) return;
 
         DwarfModel model = this.getParentModel();
-        ModelPart beard = model.getHead().getChild("beard");
-        ModelPart right_eyebrow = model.getHead().getChild("right_eyebrow");
-        ModelPart left_eyebrow = model.getHead().getChild("left_eyebrow");
+        ModelPart beard = model.getHead().getChild(JolCraftModelPartIds.Creature.Humanoid.Dwarf.BEARD);
+        ModelPart right_eyebrow = model.getHead().getChild(JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYEBROW);
+        ModelPart left_eyebrow = model.getHead().getChild(JolCraftModelPartIds.Creature.Humanoid.LEFT_EYEBROW);
         beard.visible = true;
         right_eyebrow.visible = true;
         left_eyebrow.visible = true;

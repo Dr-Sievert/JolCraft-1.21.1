@@ -6,6 +6,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 
 @OnlyIn(Dist.CLIENT)
@@ -13,33 +14,87 @@ public final class DwarfModelHelper {
 
     private DwarfModelHelper() {}
 
-    public static final String PART_BODY = "body";
-    public static final String PART_RIGHT_ARM = "right_arm";
-    public static final String PART_LEFT_ARM = "left_arm";
-    public static final String PART_RIGHT_LEG = "right_leg";
-    public static final String PART_LEFT_LEG = "left_leg";
-    public static final String PART_HEAD = "head";
+    // Core
+    public static final String PART_BODY =
+            JolCraftModelPartIds.Creature.BODY;
 
-    public static final String PART_BODYWEAR = "bodywear";
-    public static final String PART_LEGWEAR = "legwear";
-    public static final String PART_RIGHT_ARMWEAR = "right_armwear";
-    public static final String PART_LEFT_ARMWEAR = "left_armwear";
-    public static final String PART_RIGHT_FOOTWEAR = "right_footwear";
-    public static final String PART_LEFT_FOOTWEAR = "left_footwear";
-    public static final String PART_BEARD = "beard";
-    public static final String PART_RIGHT_EYEBROW = "right_eyebrow";
-    public static final String PART_LEFT_EYEBROW = "left_eyebrow";
-    public static final String PART_HAT = "hat";
-    public static final String PART_RIGHT_EYE = "right_eye";
-    public static final String PART_LEFT_EYE = "left_eye";
+    public static final String PART_HEAD =
+            JolCraftModelPartIds.Creature.HEAD;
 
-    public static final String PART_SHIELD = "shield";
-    public static final String PART_BACKPACK = "backpack";
-    public static final String PART_SACK = "sack";
-    public static final String PART_GLASSES_MERCHANT = "glasses_merchant";
-    public static final String PART_GLASSES_HISTORIAN = "glasses_historian";
-    public static final String PART_HAT_KEEPER = "hat_keeper";
-    public static final String PART_HAT_EXPLORER_EXTRA = "hat_explorer_extra";
+    public static final String PART_RIGHT_ARM =
+            JolCraftModelPartIds.Creature.Humanoid.RIGHT_ARM;
+
+    public static final String PART_LEFT_ARM =
+            JolCraftModelPartIds.Creature.Humanoid.LEFT_ARM;
+
+    public static final String PART_RIGHT_LEG =
+            JolCraftModelPartIds.Creature.Humanoid.RIGHT_LEG;
+
+    public static final String PART_LEFT_LEG =
+            JolCraftModelPartIds.Creature.Humanoid.LEFT_LEG;
+
+    // Wear
+    public static final String PART_BODYWEAR =
+            JolCraftModelPartIds.Creature.Humanoid.BODYWEAR;
+
+    public static final String PART_LEGWEAR =
+            JolCraftModelPartIds.Creature.Humanoid.LEGWEAR;
+
+    public static final String PART_RIGHT_ARMWEAR =
+            JolCraftModelPartIds.Creature.Humanoid.RIGHT_ARMWEAR;
+
+    public static final String PART_LEFT_ARMWEAR =
+            JolCraftModelPartIds.Creature.Humanoid.LEFT_ARMWEAR;
+
+    public static final String PART_RIGHT_FOOTWEAR =
+            JolCraftModelPartIds.Creature.Humanoid.RIGHT_FOOTWEAR;
+
+    public static final String PART_LEFT_FOOTWEAR =
+            JolCraftModelPartIds.Creature.Humanoid.LEFT_FOOTWEAR;
+
+
+    // Face
+    public static final String PART_BEARD =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.BEARD;
+
+    public static final String PART_RIGHT_EYEBROW =
+            JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYEBROW;
+
+    public static final String PART_LEFT_EYEBROW =
+            JolCraftModelPartIds.Creature.Humanoid.LEFT_EYEBROW;
+
+    public static final String PART_HAT =
+            JolCraftModelPartIds.Creature.Humanoid.HAT;
+
+    public static final String PART_RIGHT_EYE =
+            JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYE;
+
+    public static final String PART_LEFT_EYE =
+            JolCraftModelPartIds.Creature.Humanoid.LEFT_EYE;
+
+
+    // Profession extras (dwarf-only)
+    public static final String PART_SHIELD =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.SHIELD;
+
+    public static final String PART_BACKPACK =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.BACKPACK;
+
+    public static final String PART_SACK =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.SACK;
+
+    public static final String PART_GLASSES_MERCHANT =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.GLASSES_MERCHANT;
+
+    public static final String PART_GLASSES_HISTORIAN =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.GLASSES_HISTORIAN;
+
+    public static final String PART_HAT_KEEPER =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.HAT_KEEPER;
+
+    public static final String PART_HAT_EXPLORER_EXTRA =
+            JolCraftModelPartIds.Creature.Humanoid.Dwarf.HAT_EXPLORER_EXTRA;
+
 
     public static void baseDwarfModel(PartDefinition root) {
         PartDefinition body = root.addOrReplaceChild(PART_BODY,

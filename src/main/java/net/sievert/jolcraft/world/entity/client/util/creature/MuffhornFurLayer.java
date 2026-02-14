@@ -12,12 +12,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.creature.MuffhornModel;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class MuffhornFurLayer extends RenderLayer<MuffhornRenderState, MuffhornModel> {
-    private static final ResourceLocation FUR_TEXTURE = JolCraft.location("textures/entity/animal/muffhorn_fur.png");
+    private static final ResourceLocation FUR_TEXTURE = JolCraftTextures.mod(JolCraftTextures.creature(JolCraftItemIds.MUFFHORN_FUR));
 
     private final MuffhornModel adultModel;
     private final MuffhornModel babyModel;

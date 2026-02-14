@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.gui.custom.screen;
+package net.sievert.jolcraft.world.gui.custom.client.screen;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -7,52 +7,65 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.JolCraft;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.gui.custom.menu.LockMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Random;
 
+@OnlyIn(Dist.CLIENT)
 public class LockScreen extends AbstractContainerScreen<LockMenu> {
 
     // ---------------------------------------------------------------------
     // Textures
     // ---------------------------------------------------------------------
 
-    private static final ResourceLocation TEXTURE =
-            JolCraft.location("textures/gui/container/strongbox_lock.png");
+    private static ResourceLocation modTradeSprite(String sprite) {
+        return JolCraftTextures.modSprite(JolCraftItemIds.LOCKPICK, sprite);
+    }
 
-    private static final ResourceLocation HIGHLIGHT =
-            JolCraft.location("textures/gui/sprites/widget/slot_highlighted.png");
+    private static final ResourceLocation TEXTURE = JolCraftTextures.mod(JolCraftTextures.container(
+            JolCraftStrings.underscored(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.LOCK)));
 
-    private static final ResourceLocation LOCKPICK_TEXTURE =
-            JolCraft.location("textures/item/lockpick.png");
+    private static final ResourceLocation HIGHLIGHT_SPRITE =
+            JolCraftTextures.modWidget(JolCraftStrings.underscored(
+                    JolCraftDictionary.SLOT,
+                    JolCraftDictionary.HIGHLIGHTED
+            ));
 
-    private static final ResourceLocation UNLOCK_TEXTURE =
-            JolCraft.location("textures/gui/sprites/lockpick/unlock.png");
+    private static final ResourceLocation UNLOCK_SPRITE = modTradeSprite(JolCraftDictionary.UNLOCK);
 
-    private static final ResourceLocation[] PROGRESS_TEXTURES = {
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress1.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress2.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress3.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress4.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress5.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress6.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress7.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress8.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress9.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress10.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress11.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress12.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_progress13.png")
+    private static final String LOCKPICK_PROGRESS = JolCraftStrings.underscored(JolCraftDictionary.LOCKPICK, JolCraftDictionary.PROGRESS);
+    private static final String LOCKPICK_BROKEN = JolCraftStrings.underscored(JolCraftDictionary.LOCKPICK, JolCraftDictionary.BROKEN);
+
+    private static final ResourceLocation[] PROGRESS_SPRITES = {
+            modTradeSprite(LOCKPICK_PROGRESS + "1"),
+            modTradeSprite(LOCKPICK_PROGRESS + "2"),
+            modTradeSprite(LOCKPICK_PROGRESS + "3"),
+            modTradeSprite(LOCKPICK_PROGRESS + "4"),
+            modTradeSprite(LOCKPICK_PROGRESS + "5"),
+            modTradeSprite(LOCKPICK_PROGRESS + "6"),
+            modTradeSprite(LOCKPICK_PROGRESS + "7"),
+            modTradeSprite(LOCKPICK_PROGRESS + "8"),
+            modTradeSprite(LOCKPICK_PROGRESS + "9"),
+            modTradeSprite(LOCKPICK_PROGRESS + "10"),
+            modTradeSprite(LOCKPICK_PROGRESS + "11"),
+            modTradeSprite(LOCKPICK_PROGRESS + "12"),
+            modTradeSprite(LOCKPICK_PROGRESS + "13")
     };
 
-    private static final List<ResourceLocation> BROKEN_BUTTON_TEXTURES = List.of(
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken1.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken2.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken3.png"),
-            JolCraft.location("textures/gui/sprites/lockpick/lockpick_broken4.png")
+    private static final List<ResourceLocation> BROKEN_LOCKPICK_SPRITES = List.of(
+            modTradeSprite(LOCKPICK_BROKEN + "1"),
+            modTradeSprite(LOCKPICK_BROKEN + "2"),
+            modTradeSprite(LOCKPICK_BROKEN + "3"),
+            modTradeSprite(LOCKPICK_BROKEN + "4")
     );
 
     // ---------------------------------------------------------------------
@@ -84,8 +97,8 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
     private final Random guiRandom = new Random();
 
     private int lastSeenPulse = -1;
-    private ResourceLocation brokenTexA = BROKEN_BUTTON_TEXTURES.getFirst();
-    private ResourceLocation brokenTexB = BROKEN_BUTTON_TEXTURES.getFirst();
+    private ResourceLocation brokenTexA = BROKEN_LOCKPICK_SPRITES.getFirst();
+    private ResourceLocation brokenTexB = BROKEN_LOCKPICK_SPRITES.getFirst();
 
     public LockScreen(LockMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -138,14 +151,15 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
         int progress = menu.getLockpickProgress();
         if (progress <= 0) return;
 
-        int step = Math.max(1, Math.min(PROGRESS_TEXTURES.length, (int) Math.ceil(progress / 10.0)));
-        ResourceLocation texture = PROGRESS_TEXTURES[step - 1];
+        int step = Math.max(1, Math.min(PROGRESS_SPRITES.length, (int) Math.ceil(progress / 10.0)));
+        ResourceLocation texture = PROGRESS_SPRITES[step - 1];
 
-        gg.blit(RenderType.GUI_TEXTURED, texture,
-                x + PROGRESS_X, y + PROGRESS_Y,
-                0, 0,
-                PROGRESS_W, PROGRESS_H,
-                PROGRESS_W, PROGRESS_H);
+        gg.blitSprite(RenderType::guiTextured,
+                texture,
+                x + PROGRESS_X,
+                y + PROGRESS_Y,
+                PROGRESS_W,
+                PROGRESS_H);
     }
 
     private void renderButtons(GuiGraphics gg, int x, int y, int mouseX, int mouseY) {
@@ -162,17 +176,29 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
             int bx = x + BUTTON_START_X + idx * BUTTON_SPACING_X;
 
             if (isHovered(mouseX, mouseY, bx, by)) {
-                gg.blit(RenderType.GUI_TEXTURED, HIGHLIGHT, bx, by, 0, 0, HIGHLIGHT_W, HIGHLIGHT_H, HIGHLIGHT_W, HIGHLIGHT_H);
+                gg.blitSprite(RenderType::guiTextured, HIGHLIGHT_SPRITE, bx, by, HIGHLIGHT_W, HIGHLIGHT_H);
             }
 
-            ResourceLocation tex;
+            ResourceLocation sprite = null;
+            boolean drawItem = false;
+
             if (unlockMode) {
-                tex = (idx == unlockSlot) ? UNLOCK_TEXTURE : wrongs[wrongIdx++];
+                sprite = (idx == unlockSlot) ? UNLOCK_SPRITE : wrongs[wrongIdx++];
             } else {
-                tex = (idx == correctButtonId) ? LOCKPICK_TEXTURE : wrongs[wrongIdx++];
+                if (idx == correctButtonId) {
+                    drawItem = true;
+                } else {
+                    sprite = wrongs[wrongIdx++];
+                }
             }
 
-            gg.blit(RenderType.GUI_TEXTURED, tex, bx, by, 0, 0, BUTTON_W, BUTTON_H, BUTTON_W, BUTTON_H);
+            if (drawItem) {
+                ItemStack lockpick = menu.getLockpickSlotItem();
+                gg.renderFakeItem(lockpick, bx, by);
+                gg.renderItemDecorations(this.font, lockpick, bx, by);
+            } else {
+                gg.blitSprite(RenderType::guiTextured, sprite, bx, by, BUTTON_W, BUTTON_H);
+            }
         }
     }
 
@@ -219,8 +245,8 @@ public class LockScreen extends AbstractContainerScreen<LockMenu> {
     }
 
     private void rerollBrokenTextures() {
-        brokenTexA = BROKEN_BUTTON_TEXTURES.get(guiRandom.nextInt(BROKEN_BUTTON_TEXTURES.size()));
-        brokenTexB = BROKEN_BUTTON_TEXTURES.get(guiRandom.nextInt(BROKEN_BUTTON_TEXTURES.size()));
+        brokenTexA = BROKEN_LOCKPICK_SPRITES.get(guiRandom.nextInt(BROKEN_LOCKPICK_SPRITES.size()));
+        brokenTexB = BROKEN_LOCKPICK_SPRITES.get(guiRandom.nextInt(BROKEN_LOCKPICK_SPRITES.size()));
     }
 
     private static boolean isHovered(double mouseX, double mouseY, int x, int y) {
