@@ -29,14 +29,16 @@ public class DeliriumCurseEffect extends MobEffect {
 
     public static final int EPISODE_TICKS = 200;
 
-    // Runtime-only episode timers (not persisted)
     private static final Map<UUID, Integer> EPISODE_TIMERS = new ConcurrentHashMap<>();
 
-    // Persisted per-player end tick for the current/most-recent episode muffle window.
     private static final String NBT_EPISODE_END = JolCraftStrings.underscored(JolCraftDictionary.DELIRIUM, JolCraftDictionary.END);
 
     public DeliriumCurseEffect(MobEffectCategory category, int color) {
         super(category, color);
+    }
+
+    public static void cleanupRuntime(ServerPlayer player) {
+        EPISODE_TIMERS.remove(player.getUUID());
     }
 
     @Override
@@ -76,16 +78,13 @@ public class DeliriumCurseEffect extends MobEffect {
                     MobEffects.CONFUSION, EPISODE_TICKS, 0, false, false, false
             ));
 
-            // Persist the episode window end tick (relog-safe).
             long endTick = level.getGameTime() + EPISODE_TICKS;
             setEpisodeEnd(player, endTick);
 
-            // Tell this client to muffle for the full duration (client will handle mixing).
             if (player instanceof ServerPlayer serverPlayer) {
                 JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDeliriumCursePacket(EPISODE_TICKS));
             }
 
-            // Episode ambience: local-only to this player
             JolCraftSoundHelper.playLocal(
                     player,
                     SoundEvents.AMBIENT_CAVE.value(),

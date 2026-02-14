@@ -34,7 +34,6 @@ public final class JolCraftServerPayloadHandlers {
 
         private final Map<UUID, Counter> counters = new HashMap<>();
 
-        /** @return true if this player has exceeded the per-tick limit (i.e., action should be blocked). */
         boolean isRateLimited(ServerPlayer player, long currentTick, int maxPerTick) {
             UUID id = player.getUUID();
             Counter c = counters.computeIfAbsent(id, k -> new Counter());
@@ -43,9 +42,13 @@ public final class JolCraftServerPayloadHandlers {
                 c.used = 0;
             }
 
-            if (c.used >= maxPerTick) return true; // BLOCK
+            if (c.used >= maxPerTick) return true;
             c.used++;
-            return false; // ALLOW
+            return false;
+        }
+
+        void remove(UUID id) {
+            counters.remove(id);
         }
     }
 
@@ -55,6 +58,11 @@ public final class JolCraftServerPayloadHandlers {
     private static final int MAX_PARTICLE_PACKETS_PER_TICK = 6;
     private static final int MAX_SOUND_PACKETS_PER_TICK = 2;
 
+    public static void cleanupPlayer(ServerPlayer player) {
+        UUID id = player.getUUID();
+        PARTICLE_LIMITER.remove(id);
+        SOUND_LIMITER.remove(id);
+    }
 
     public static void handleServerboundDwarfSelectTrade(
             ServerboundDwarfSelectTradePacket packet,

@@ -29,6 +29,7 @@ import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -36,6 +37,7 @@ import net.sievert.jolcraft.world.block.custom.FermentingCauldronBlock;
 import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.data.attachment.custom.hearth.Hearth;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.util.SyncHelper;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
@@ -66,6 +68,9 @@ public final class JolCraftPlayerEvents {
         if (player.containerMenu instanceof DwarfMerchantMenu menu) {
             menu.getTrader().setTradingPlayer(null);
         }
+
+        DeliriumCurseEffect.cleanupRuntime(player);
+        JolCraftServerPayloadHandlers.cleanupPlayer(player);
     }
 
     @SubscribeEvent

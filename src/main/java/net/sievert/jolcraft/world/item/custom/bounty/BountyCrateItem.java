@@ -36,6 +36,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -79,7 +80,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 stack.set(JolCraftDataComponents.BOUNTY_FILL.get(), remaining);
                 stack.set(JolCraftDataComponents.BOUNTY_COMPLETE.get(), remaining >= data.requiredCount());
 
-                JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
+                pickupSound(player);
                 return true;
             }
         }
@@ -88,7 +89,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
             int maxTransfer = action == ClickAction.PRIMARY ? Integer.MAX_VALUE : 1;
             boolean filled = tryFillCrate(player.level(), stack, access.get(), access, maxTransfer);
             if (filled) {
-                JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
+                pickupSound(player);
             }
             return filled;
         }
@@ -214,11 +215,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
                 crate.set(JolCraftDataComponents.BOUNTY_COMPLETE.get(), true);
             }
 
-            player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED_PARTIAL, collected).withStyle(ChatFormatting.GRAY),
-                    true
-            );
-            JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
+            pickupSound(player);
         } else {
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_NO_ITEMS).withStyle(ChatFormatting.GRAY),
@@ -252,7 +249,8 @@ public class BountyCrateItem extends Item implements IItemExtension {
             player.drop(out, false);
         }
 
-        JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
+        pickupSound(player);
+
         return true;
     }
 
@@ -350,5 +348,9 @@ public class BountyCrateItem extends Item implements IItemExtension {
     private static Item resolveItem(Level level, ResourceLocation id) {
         Registry<Item> items = level.registryAccess().lookupOrThrow(Registries.ITEM);
         return items.getValue(id);
+    }
+
+    private static void pickupSound(Player player) {
+        PlaySound.itemPickup(player, 0.6F, 0.8F);
     }
 }

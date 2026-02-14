@@ -94,9 +94,6 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_BOUNTY_CRATE_FILLED =
             tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.FILLED);
 
-    public static final String TOOLTIP_BOUNTY_CRATE_FILLED_PARTIAL =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.FILLED, JolCraftDictionary.PARTIAL));
-
     public static final String TOOLTIP_BOUNTY_CRATE_NO_ITEMS =
             tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.ITEM)));
 

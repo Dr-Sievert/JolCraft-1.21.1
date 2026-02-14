@@ -29,6 +29,12 @@ public final class PlaySound {
         JolCraftSoundHelper.player(player, SoundEvents.BOTTLE_FILL, volume, pitch);
     }
 
+    // ---- Item Pickup ----
+
+    public static void itemPickup(Player player, Float volume, Float pitch) {
+        JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, volume, pitch);
+    }
+
     // ---- Tomes ----
 
     public static void bookPut(Player player) {

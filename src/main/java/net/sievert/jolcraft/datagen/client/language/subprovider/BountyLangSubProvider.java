@@ -50,7 +50,6 @@ public final class BountyLangSubProvider implements AbstractLanguageProvider.Lan
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_TIER, "Tier: %s");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_LOCKED, "The crate is marked with unfamiliar symbols.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED, "The crate is already full.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED_PARTIAL, "Added %s items to the crate.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_NO_ITEMS, "You don't have any items to fill the crate.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COMPLETE, "Ready to be turned in.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_NOT_COMPLETE, "This bounty has not been completed.");
