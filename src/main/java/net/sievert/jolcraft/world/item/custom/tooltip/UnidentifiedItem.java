@@ -34,42 +34,46 @@ public abstract class UnidentifiedItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            if (canIdentify(serverPlayer)) {
-                ItemStack stack = player.getItemInHand(hand);
-                ItemStack identified = getRandomIdentifiedItem(serverPlayer, stack);
+        if (level.isClientSide) {
+            return InteractionResult.PASS;
+        }
 
-                if (!identified.isEmpty()) {
-                    if (player.isCreative()) {
-                        boolean added = false;
-                        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-                            if (player.getInventory().getItem(i).isEmpty()) {
-                                added = player.addItem(identified.copy());
-                                break;
-                            }
-                        }
-                        if (!added) {
-                            player.drop(identified.copy(), false);
-                        }
-                    } else {
-                        if (stack.getCount() == 1) {
-                            player.setItemInHand(hand, identified);
-                        } else {
-                            stack.shrink(1);
-                            boolean added = player.addItem(identified);
-                            if (!added) {
-                                player.drop(identified, false);
-                            }
-                        }
-                    }
-                    playIdentifySuccessSound(level, player);
-                    serverPlayer.displayClientMessage(getIdentifySuccessMessage(serverPlayer, identified), true);
-                }
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.PASS;
+        }
+
+        if (!canIdentify(serverPlayer)) {
+            playIdentifyFailSound(level, player);
+            serverPlayer.displayClientMessage(getIdentifyFailMessage(serverPlayer), true);
+            return InteractionResult.FAIL;
+        }
+
+        ItemStack stack = player.getItemInHand(hand);
+        ItemStack identified = getRandomIdentifiedItem(serverPlayer, stack);
+        if (identified.isEmpty()) {
+            return InteractionResult.PASS;
+        }
+
+        if (player.isCreative()) {
+            boolean added = player.getInventory().add(identified.copy());
+            if (!added) {
+                player.drop(identified.copy(), false);
+            }
+        } else {
+            if (stack.getCount() == 1) {
+                player.setItemInHand(hand, identified);
             } else {
-                playIdentifyFailSound(level, player);
-                serverPlayer.displayClientMessage(getIdentifyFailMessage(serverPlayer), true);
+                stack.shrink(1);
+                boolean added = player.getInventory().add(identified);
+                if (!added) {
+                    player.drop(identified, false);
+                }
             }
         }
+
+        playIdentifySuccessSound(level, player);
+        serverPlayer.displayClientMessage(getIdentifySuccessMessage(serverPlayer, identified), true);
+
         return InteractionResult.SUCCESS;
     }
 

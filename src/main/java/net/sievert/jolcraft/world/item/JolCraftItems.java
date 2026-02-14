@@ -720,7 +720,7 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME = ITEMS.registerSimpleItem(JolCraftItemIds.ANCIENT_DWARVEN_TOME);
 
     public static final DeferredItem<Item> UNIDENTIFIED_ANCIENT_DWARVEN_TOME =
-            ITEMS.registerItem(JolCraftItemIds.UNIDENTIFIED_ANCIENT_DWARVEN_TOME, properties -> new AncientUnidentifiedTomeItem(properties) {
+            ITEMS.registerItem(JolCraftItemIds.UNIDENTIFIED_ANCIENT_DWARVEN_TOME, properties -> new UnidentifiedAncientTomeItem(properties) {
             }, new Item.Properties().stacksTo(16).rarity(Rarity.COMMON));
 
     public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME_COMMON =
@@ -743,7 +743,7 @@ public final class JolCraftItems {
             Item::new, new Item.Properties().rarity(JolCraftEnumParams.Rarity.LEGENDARY.getValue()));
 
     public static final DeferredItem<Item> UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME =
-            ITEMS.registerItem(JolCraftItemIds.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME, properties -> new LegendaryAncientUnidentifiedTomeItem(properties) {
+            ITEMS.registerItem(JolCraftItemIds.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME, properties -> new UnidentifiedLegendaryAncientTomeItem(properties) {
             }, new Item.Properties().stacksTo(16).rarity(JolCraftEnumParams.Rarity.LEGENDARY.getValue()));
 
     public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME_LEGENDARY =

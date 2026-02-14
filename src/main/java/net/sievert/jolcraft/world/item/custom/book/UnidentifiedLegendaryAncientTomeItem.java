@@ -11,8 +11,8 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
 import org.jetbrains.annotations.NotNull;
 
-public class LegendaryAncientUnidentifiedTomeItem extends AncientUnidentifiedTomeItem{
-    public LegendaryAncientUnidentifiedTomeItem(Properties properties) {
+public class UnidentifiedLegendaryAncientTomeItem extends UnidentifiedAncientTomeItem {
+    public UnidentifiedLegendaryAncientTomeItem(Properties properties) {
         super(properties);
     }
 

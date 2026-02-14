@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
+import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.JolCraftTags;
@@ -66,21 +67,30 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
 
         if (input.isEmpty() || tool.isEmpty() || !toolType.matchesTool(tool)) return;
 
-        if (toolType == LapidaryBenchRecipe.ToolType.CHISEL
-                && !DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
-            player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED)
-                            .withStyle(ChatFormatting.RED),
-                    true
-            );
-            player.closeContainer();
-            return;
-        }
-
         boolean isGeode = input.is(JolCraftTags.Items.GEODES);
+        boolean isUncutGem = input.is(JolCraftTags.Items.GEMS_UNCUT);
+
         boolean geodeSmall  = isGeode && input.is(JolCraftItems.GEODE_SMALL.get());
         boolean geodeMedium = isGeode && input.is(JolCraftItems.GEODE_MEDIUM.get());
         boolean geodeLarge  = isGeode && input.is(JolCraftItems.GEODE_LARGE.get());
+
+        if (toolType == LapidaryBenchRecipe.ToolType.HAMMER) {
+            if (!isGeode && !isUncutGem) return;
+        }
+
+        if (toolType == LapidaryBenchRecipe.ToolType.CHISEL) {
+            if (!isUncutGem) return;
+
+            if (!DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                player.displayClientMessage(
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED)
+                                .withStyle(ChatFormatting.RED),
+                        true
+                );
+                player.closeContainer();
+                return;
+            }
+        }
 
         var opt = player.serverLevel().recipeAccess().getRecipeFor(
                 JolCraftRecipes.LAPIDARY_BENCH_TYPE.get(),
@@ -122,12 +132,13 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
             input.shrink(1);
             this.items.set(SLOT_INPUT, input.isEmpty() ? ItemStack.EMPTY : input);
 
-            int damage = 1;
+            int damage;
             if (toolType == LapidaryBenchRecipe.ToolType.HAMMER) {
                 if (isGeode) {
                     if (geodeSmall) damage = 1 + level.random.nextInt(10);
                     else if (geodeMedium) damage = 1 + level.random.nextInt(20);
                     else if (geodeLarge) damage = 1 + level.random.nextInt(30);
+                    else damage = 1 + level.random.nextInt(10);
                 } else {
                     damage = 1 + level.random.nextInt(10);
                 }
@@ -140,6 +151,20 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
         }
 
         this.setChanged();
+
+        if (isGeode) {
+            player.awardStat(JolCraftStats.GEODES_CRACKED.get());
+        }
+
+        if (isUncutGem) {
+            if (toolType == LapidaryBenchRecipe.ToolType.HAMMER) {
+                player.awardStat(JolCraftStats.GEMS_CRUSHED.get());
+            }
+
+            if (toolType == LapidaryBenchRecipe.ToolType.CHISEL) {
+                player.awardStat(JolCraftStats.GEMS_CUT.get());
+            }
+        }
 
         if (recipe.xp() > 0) {
             player.giveExperiencePoints(recipe.xp());
@@ -158,14 +183,18 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
                     1.3F,
                     pitch
             );
-        } else if (toolType == LapidaryBenchRecipe.ToolType.HAMMER) {
+        }
+
+        if (toolType == LapidaryBenchRecipe.ToolType.HAMMER) {
             JolCraftSoundHelper.player(
                     player,
                     SoundEvents.AMETHYST_BLOCK_BREAK,
                     0.8F,
                     1.5F
             );
-        } else {
+        }
+
+        if (toolType == LapidaryBenchRecipe.ToolType.CHISEL) {
             JolCraftSoundHelper.player(
                     player,
                     JolCraftSounds.GEM_CUT.get(),
@@ -194,8 +223,21 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity  {
         ItemStack tool  = this.items.get(SLOT_TOOL);
         if (input.isEmpty() || tool.isEmpty()) return false;
 
-        if (tool.is(JolCraftTags.Items.CHISELS)
-                && !DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+        boolean isGeode = input.is(JolCraftTags.Items.GEODES);
+        boolean isUncutGem = input.is(JolCraftTags.Items.GEMS_UNCUT);
+
+        boolean isHammer = tool.is(JolCraftTags.Items.ARTISAN_HAMMERS);
+        boolean isChisel = tool.is(JolCraftTags.Items.CHISELS);
+
+        if (isHammer) {
+            if (!isGeode && !isUncutGem) return false;
+        } else if (isChisel) {
+            if (!isUncutGem) return false;
+
+            if (!DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                return false;
+            }
+        } else {
             return false;
         }
 

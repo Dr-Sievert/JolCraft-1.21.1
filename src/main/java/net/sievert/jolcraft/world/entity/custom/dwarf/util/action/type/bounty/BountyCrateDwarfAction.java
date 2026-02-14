@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -143,5 +144,9 @@ public class BountyCrateDwarfAction extends InspectDwarfAction {
         JolCraftSoundHelper.entity(dwarf, SoundEvents.SNOWBALL_THROW, 0.5F, 0.7F);
 
         dwarf.restockBountiesOnly();
+
+        if (!player.level().isClientSide){
+            player.awardStat(JolCraftStats.DWARVEN_BOUNTIES_COMPLETED.get());
+        }
     }
 }

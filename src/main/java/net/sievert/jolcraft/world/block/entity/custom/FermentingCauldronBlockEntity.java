@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
@@ -341,6 +342,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
 
         if (!player.getInventory().add(out)) {
             player.drop(out, false);
+        }
+
+        if (!player.level().isClientSide){
+            player.awardStat(JolCraftStats.DWARVEN_BREWS_CREATED.get());
         }
     }
 

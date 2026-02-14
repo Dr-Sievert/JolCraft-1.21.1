@@ -31,6 +31,27 @@ public final class JolCraftStats {
     public static final Supplier<ResourceLocation> TRADE_WITH_DWARF =
             stat(JolCraftStatIds.TRADE_WITH_DWARF);
 
+    public static final Supplier<ResourceLocation> COINS_SPENT =
+            stat(JolCraftStatIds.COINS_SPENT);
+
+    public static final Supplier<ResourceLocation> DWARVEN_TOMES_IDENTIFIED =
+            stat(JolCraftStatIds.DWARVEN_TOMES_IDENTIFIED);
+
+    public static final Supplier<ResourceLocation> DWARVEN_BOUNTIES_COMPLETED =
+            stat(JolCraftStatIds.DWARVEN_BOUNTIES_COMPLETED);
+
+    public static final Supplier<ResourceLocation> DWARVEN_BREWS_CREATED =
+            stat(JolCraftStatIds.DWARVEN_BREWS_CREATED);
+
+    public static final Supplier<ResourceLocation> GEODES_CRACKED =
+            stat(JolCraftStatIds.GEODES_CRACKED);
+
+    public static final Supplier<ResourceLocation> GEMS_CRUSHED =
+            stat(JolCraftStatIds.GEMS_CRUSHED);
+
+    public static final Supplier<ResourceLocation> GEMS_CUT =
+            stat(JolCraftStatIds.GEMS_CUT);
+
     public static void register(IEventBus bus) {
         STATS.register(bus);
     }

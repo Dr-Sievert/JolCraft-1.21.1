@@ -10,7 +10,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
+import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
@@ -39,7 +39,7 @@ public abstract class AncientItemBase extends Item {
                 boolean altDown = JolCraftProxy.access().isAltDown() && hasAlt();
 
                 if (altDown) {
-                    if (AncientEffectHelper.hasAncientMemory(player)) {
+                    if (AncientDwarvenLanguageHelper.knowsAncientDwarvish(player)) {
                         if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                             tooltip.addAll(getFullyReadableTooltip(stack, player, tooltip, flag));
                         } else {
@@ -49,11 +49,11 @@ public abstract class AncientItemBase extends Item {
                         tooltip.addAll(getPartialUnderstandingTooltip(stack, player, tooltip, flag));
                     } else {
                         for (Component line : getUnreadableTooltipSGA(stack, player, tooltip, flag)) {
-                            tooltip.add(AncientEffectHelper.getAncientText(player, line));
+                            tooltip.add(AncientDwarvenLanguageHelper.getAncientText(player, line));
                         }
                     }
 
-                    if (!AncientEffectHelper.hasAncientMemory(player)) {
+                    if (!AncientDwarvenLanguageHelper.knowsAncientDwarvish(player)) {
                         tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_NEED_ANCIENT_DWARVEN_LANGUAGE)
                                 .withStyle(ChatFormatting.RED));
                     }
@@ -64,7 +64,7 @@ public abstract class AncientItemBase extends Item {
                                 .withStyle(ChatFormatting.GRAY));
                     }
                 } else {
-                    if (AncientEffectHelper.hasAncientMemory(player)) {
+                    if (AncientDwarvenLanguageHelper.knowsAncientDwarvish(player)) {
                         if (DwarvenLanguageHelper.knowsDwarvish(player)) {
                             tooltip.addAll(getNoAltTooltip(stack, player, tooltip, flag));
                         } else {
@@ -74,7 +74,7 @@ public abstract class AncientItemBase extends Item {
                         tooltip.addAll(getPartialUnderstandingTooltip(stack, player, tooltip, flag));
                     } else {
                         for (Component line : getUnreadableTooltipSGA(stack, player, tooltip, flag)) {
-                            tooltip.add(AncientEffectHelper.getAncientText(player, line));
+                            tooltip.add(AncientDwarvenLanguageHelper.getAncientText(player, line));
                         }
                     }
 

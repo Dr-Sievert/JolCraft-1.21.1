@@ -11,11 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -40,7 +40,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
         }
 
         boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
-        boolean hasAncientMemory = AncientEffectHelper.hasAncientMemory(serverPlayer);
+        boolean knowsAncientLanguage = AncientDwarvenLanguageHelper.knowsAncientDwarvish(serverPlayer);
 
         if (!knowsLanguage) {
             playIdentifyFailSound(player);
@@ -51,7 +51,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
             return InteractionResult.SUCCESS;
         }
 
-        if (!hasAncientMemory) {
+        if (!knowsAncientLanguage) {
             playIdentifyFailSound(player);
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.RED),

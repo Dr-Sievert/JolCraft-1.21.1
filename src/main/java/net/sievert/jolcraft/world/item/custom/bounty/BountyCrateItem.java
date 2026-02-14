@@ -147,6 +147,15 @@ public class BountyCrateItem extends Item implements IItemExtension {
         BountyData data = crate.get(JolCraftDataComponents.BOUNTY_DATA.get());
         if (data == null) return InteractionResult.PASS;
 
+        if (player.isShiftKeyDown()) {
+            boolean ok = shiftExtractToInventoryOrDrop(player, crate, data);
+            if (ok) {
+                player.containerMenu.broadcastChanges();
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.PASS;
+        }
+
         int currentFilled = crate.getOrDefault(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
         int needed = data.requiredCount() - currentFilled;
 
@@ -219,6 +228,34 @@ public class BountyCrateItem extends Item implements IItemExtension {
 
         return InteractionResult.SUCCESS;
     }
+
+    private static boolean shiftExtractToInventoryOrDrop(Player player, ItemStack crate, BountyData data) {
+        Level level = player.level();
+        if (level.isClientSide) return false;
+
+        int currentFilled = crate.getOrDefault(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
+        if (currentFilled <= 0) return false;
+
+        Item targetItem = resolveItem(level, data.targetItem());
+        if (targetItem == null) return false;
+
+        int toGive = Math.min(64, currentFilled);
+        ItemStack out = new ItemStack(targetItem, toGive);
+
+        int remaining = currentFilled - toGive;
+        crate.set(JolCraftDataComponents.BOUNTY_FILL.get(), remaining);
+
+        crate.set(JolCraftDataComponents.BOUNTY_COMPLETE.get(), remaining >= data.requiredCount());
+
+        player.getInventory().add(out);
+        if (!out.isEmpty()) {
+            player.drop(out, false);
+        }
+
+        JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);
+        return true;
+    }
+
 
     @Override
     public boolean isBarVisible(ItemStack stack) {

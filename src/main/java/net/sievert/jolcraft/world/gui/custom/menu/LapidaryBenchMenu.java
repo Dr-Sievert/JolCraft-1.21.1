@@ -12,6 +12,7 @@ import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.custom.LapidaryBenchBlockEntity;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
+import net.sievert.jolcraft.world.gui.custom.slot.JolCraftResultSlot;
 import net.sievert.jolcraft.world.gui.custom.slot.JolCraftSlot;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -49,8 +50,7 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
                 stack.is(JolCraftTags.Items.ARTISAN_HAMMERS) || stack.is(JolCraftTags.Items.CHISELS)
         ));
 
-        this.addSlot(new JolCraftSlot(container, LapidaryBenchBlockEntity.SLOT_OUTPUT, 128, 32)
-                .mayPlaceRule(stack -> false));
+        this.addSlot(new JolCraftResultSlot(this.player, container, LapidaryBenchBlockEntity.SLOT_OUTPUT, 128, 32));
 
         this.addStandardInventorySlots(playerInventory, 8, 68);
 

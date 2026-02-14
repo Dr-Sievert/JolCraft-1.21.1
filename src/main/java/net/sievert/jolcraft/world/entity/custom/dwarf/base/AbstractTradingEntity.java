@@ -29,6 +29,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;

@@ -81,6 +81,9 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BLANK = "blank";
     public static final String BROKEN = "broken";
     public static final String CANNOT = "cannot";
+    public static final String COMPLETED = "completed";
+    public static final String CRACKED = "cracked";
+    public static final String CRUSHED = "crushed";
     public static final String CURRENT = "current";
     public static final String DARKER = "darker";
     public static final String DEPRECATED = "deprecated";
@@ -98,6 +101,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FULL = "full";
     public static final String HALF = "half";
     public static final String HIGHLIGHTED = "highlighted";
+    public static final String IDENTIFIED = "identified";
     public static final String IMPURE = "impure";
     public static final String INVALID = "invalid";
     public static final String LARGE = "large";
@@ -126,6 +130,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SINGLE = "single";
     public static final String SMALL = "small";
     public static final String SPECIAL = "special";
+    public static final String SPENT = "spent";
     public static final String STRONG = "strong";
     public static final String SUCCESS = "success";
     public static final String UNIDENTIFIED = "unidentified";
@@ -177,6 +182,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BOOK = "book";
     public static final String BOOTS = "boots";
     public static final String BOTTOM = "bottom";
+    public static final String BOUNTIES = "bounties";
     public static final String BOUNTY = "bounty";
     public static final String BREWING = "brewing";
     public static final String BREWMASTER = "brewmaster";
@@ -210,6 +216,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String COST = "cost";
     public static final String COUNT = "count";
     public static final String CRATE = "crate";
+    public static final String CREATED = "created";
     public static final String CREATURE = "creature";
     public static final String CROP = "crop";
     public static final String CURSE = "curse";

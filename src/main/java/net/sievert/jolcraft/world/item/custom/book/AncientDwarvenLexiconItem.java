@@ -15,7 +15,6 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientItemBase;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -32,33 +31,44 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            boolean knowsLang = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
-            boolean hasEffect = AncientEffectHelper.hasAncientMemory(serverPlayer);
-            boolean alreadyKnows = AncientDwarvenLanguageHelper.knowsAncientDwarvishBypassCreative(serverPlayer);
-
-            if (!alreadyKnows && knowsLang && hasEffect) {
-                AncientDwarvenLanguageHelper.setKnowsAncientDwarvish(serverPlayer, true);
-                JolCraftSoundHelper.player(player, SoundEvents.BOOK_PAGE_TURN, 2.0F, 0.7F);
-                PlaySound.levelUp(player);
-                serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_USE)
-                        .withStyle(ChatFormatting.GREEN), true);
-            } else {
-                if (!knowsLang) {
-                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_READ)
-                            .withStyle(ChatFormatting.RED), true);
-                    PlaySound.bookPut(player);
-                } else if (!hasEffect) {
-                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_USE)
-                            .withStyle(ChatFormatting.RED), true);
-                    PlaySound.bookPut(player);
-                } else {
-                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE)
-                            .withStyle(ChatFormatting.GRAY), true);
-                    PlaySound.bookPut(player);
-                }
-            }
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
         }
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.SUCCESS;
+        }
+
+        boolean knowsDwarvish = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
+        if (!knowsDwarvish) {
+            serverPlayer.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_READ)
+                            .withStyle(ChatFormatting.RED),
+                    true
+            );
+            PlaySound.bookPut(player);
+            return InteractionResult.SUCCESS;
+        }
+
+        if (AncientDwarvenLanguageHelper.knowsAncientDwarvish(serverPlayer)) {
+            serverPlayer.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE)
+                            .withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            PlaySound.bookPut(player);
+            return InteractionResult.SUCCESS;
+        }
+
+        AncientDwarvenLanguageHelper.setKnowsAncientDwarvish(serverPlayer, true);
+
+        JolCraftSoundHelper.player(player, SoundEvents.BOOK_PAGE_TURN, 2.0F, 0.7F);
+        PlaySound.levelUp(player);
+        serverPlayer.displayClientMessage(
+                Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_USE)
+                        .withStyle(ChatFormatting.GREEN),
+                true
+        );
+
         return InteractionResult.SUCCESS;
     }
 

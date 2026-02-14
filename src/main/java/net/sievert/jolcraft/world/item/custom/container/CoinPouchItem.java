@@ -92,6 +92,35 @@ public class CoinPouchItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack pouch = player.getItemInHand(hand);
+
+        if (player.isShiftKeyDown()) {
+            int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+            if (current > 0) {
+                int toGive = Math.min(64, current);
+
+                pouch.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), current - toGive);
+
+                ItemStack out = new ItemStack(JolCraftItems.GOLD_COIN.get(), toGive);
+
+                // Try insert; drop any leftover (full inv or partial insert)
+                player.getInventory().add(out);
+                if (!out.isEmpty()) {
+                    player.drop(out, false);
+                }
+
+                if (toGive == 1) playSingleSound(player);
+                else playStackSound(player);
+
+                broadcastChangesOnContainerMenu(player);
+                player.awardStat(Stats.ITEM_USED.get(this));
+
+                return InteractionResult.SUCCESS;
+            }
+
+            playInsertFailSound(player);
+            return InteractionResult.PASS;
+        }
+
         int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
         int canAdd = MAX_COINS - current;
         if (canAdd > 0) {
@@ -113,6 +142,7 @@ public class CoinPouchItem extends Item {
                 return InteractionResult.SUCCESS;
             }
         }
+
         playInsertFailSound(player);
         return InteractionResult.PASS;
     }

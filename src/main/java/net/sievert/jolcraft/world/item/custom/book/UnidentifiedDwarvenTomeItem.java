@@ -5,10 +5,13 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.lore.LoreAge;
 import net.sievert.jolcraft.data.lore.LoreRarity;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreEntries;
@@ -39,6 +42,17 @@ public class UnidentifiedDwarvenTomeItem extends UnidentifiedItem {
     @Override
     protected boolean canIdentify(ServerPlayer player) {
         return DwarvenLanguageHelper.knowsDwarvish(player);
+    }
+
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        InteractionResult result = super.use(level, player, hand);
+        if (result == InteractionResult.SUCCESS) {
+            if (!level.isClientSide) {
+                player.awardStat(JolCraftStats.DWARVEN_TOMES_IDENTIFIED.get());
+            }
+        }
+        return result;
     }
 
     @Override

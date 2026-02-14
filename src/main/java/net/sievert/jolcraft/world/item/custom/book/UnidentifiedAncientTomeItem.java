@@ -4,10 +4,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.lore.LoreAge;
 import net.sievert.jolcraft.data.lore.LoreRarity;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreEntries;
@@ -16,7 +20,6 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientUnidentifiedItem;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientEffectHelper;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +28,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
-    public AncientUnidentifiedTomeItem(Properties properties) {
+public class UnidentifiedAncientTomeItem extends AncientUnidentifiedItem {
+
+    public UnidentifiedAncientTomeItem(Properties properties) {
         super(properties);
     }
 
@@ -37,13 +41,23 @@ public class AncientUnidentifiedTomeItem extends AncientUnidentifiedItem {
 
     @Override
     protected boolean canIdentify(ServerPlayer player) {
-        return hasRequiredLanguage(player)
-                && AncientEffectHelper.hasAncientMemory(player);
+        return hasRequiredLanguage(player) && AncientDwarvenLanguageHelper.knowsAncientDwarvish(player);
     }
 
     @Override
     protected boolean hasRequiredLanguage(ServerPlayer player) {
         return DwarvenLanguageHelper.knowsDwarvish(player);
+    }
+
+    @Override
+    public @NotNull InteractionResult use(Level level, Player player, InteractionHand hand) {
+        InteractionResult result = super.use(level, player, hand);
+        if (result == InteractionResult.SUCCESS) {
+            if (!level.isClientSide) {
+                player.awardStat(JolCraftStats.DWARVEN_TOMES_IDENTIFIED.get());
+            }
+        }
+        return result;
     }
 
     @Override

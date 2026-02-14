@@ -1,10 +1,13 @@
 package net.sievert.jolcraft.data.attachment.custom.language.ancient;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
+import net.sievert.jolcraft.data.id.font.JolCraftFontIds;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundAncientDwarvenLanguagePacket;
+import net.sievert.jolcraft.world.effect.JolCraftEffects;
 
 public final class AncientDwarvenLanguageHelper {
 
@@ -24,6 +27,7 @@ public final class AncientDwarvenLanguageHelper {
      */
     public static boolean knowsAncientDwarvishBypassCreative(Player player) {
         if (player == null) return false;
+        if (player.hasEffect(JolCraftEffects.ANCIENT_MEMORY)) return true;
         return player.getData(JolCraftAttachments.ANCIENT_DWARVEN_LANGUAGE.get()).hasLanguage();
     }
 
@@ -40,5 +44,15 @@ public final class AncientDwarvenLanguageHelper {
         if (player instanceof ServerPlayer serverPlayer) {
             JolCraftNetworking.sendToClient(serverPlayer, new ClientboundAncientDwarvenLanguagePacket(value));
         }
+    }
+
+    /**
+     * Returns readable text if the player has Ancient Memory (effect or permanent),
+     * otherwise applies SGA rune font.
+     * Safe on both logical sides.
+     */
+    public static Component getAncientText(Player player, Component readable) {
+        if (knowsAncientDwarvish(player)) return readable;
+        return readable.copy().withStyle(style -> style.withFont(JolCraftFontIds.SGA));
     }
 }

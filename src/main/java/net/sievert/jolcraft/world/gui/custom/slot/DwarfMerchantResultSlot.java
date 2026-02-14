@@ -1,13 +1,18 @@
 package net.sievert.jolcraft.world.gui.custom.slot;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.gui.custom.container.DwarfMerchantContainer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
+import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -26,40 +31,25 @@ public class DwarfMerchantResultSlot extends Slot {
         this.slots = slots;
     }
 
-    /**
-     * Check if the stack is allowed to be placed in this slot, used for armor slots as well as furnace fuel.
-     */
     @Override
     public boolean mayPlace(ItemStack stack) {
         return false;
     }
 
-    /**
-     * Decrease the size of the stack in slot (first int arg) by the amount of the second int arg. Returns the new stack.
-     */
     @Override
     public ItemStack remove(int amount) {
         if (this.hasItem()) {
             this.removeCount = this.removeCount + Math.min(amount, this.getItem().getCount());
         }
-
         return super.remove(amount);
     }
 
-    /**
-     * Typically increases an internal count, then calls {@code onCrafting(item)}.
-     *
-     * @param stack the output.
-     */
     @Override
     protected void onQuickCraft(ItemStack stack, int amount) {
         this.removeCount += amount;
         this.checkTakeAchievements(stack);
     }
 
-    /**
-     * @param stack the output.
-     */
     @Override
     protected void checkTakeAchievements(ItemStack stack) {
         stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
@@ -67,21 +57,56 @@ public class DwarfMerchantResultSlot extends Slot {
     }
 
     @Override
-    public void onTake(Player p_150631_, ItemStack p_150632_) {
-        this.checkTakeAchievements(p_150632_);
-        DwarfMerchantOffer merchantoffer = this.slots.getActiveOffer();
-        if (merchantoffer != null) {
-            ItemStack itemstack = this.slots.getItem(0);
-            ItemStack itemstack1 = this.slots.getItem(1);
-            if (merchantoffer.take(itemstack, itemstack1) || merchantoffer.take(itemstack1, itemstack)) {
-                this.merchant.notifyTrade(merchantoffer);
-                this.slots.setItem(0, itemstack);
-                this.slots.setItem(1, itemstack1);
-            }
+    public void onTake(Player player, ItemStack stack) {
+        this.checkTakeAchievements(stack);
 
-            this.merchant.overrideXp(this.merchant.getDwarfXp() + merchantoffer.getXp());
+        DwarfMerchantOffer offer = this.slots.getActiveOffer();
+        if (offer == null) return;
+
+        ItemStack slotA = this.slots.getItem(0);
+        ItemStack slotB = this.slots.getItem(1);
+
+        int aCoinsBefore = (slotA.getItem() instanceof CoinPouchItem)
+                ? CoinPouchHelper.getCoins(slotA)
+                : 0;
+
+        int bCoinsBefore = (slotB.getItem() instanceof CoinPouchItem)
+                ? CoinPouchHelper.getCoins(slotB)
+                : 0;
+
+        int aCountBefore = slotA.getCount();
+        int bCountBefore = slotB.getCount();
+
+        boolean took = offer.take(slotA, slotB) || offer.take(slotB, slotA);
+        if (!took) {
+            this.merchant.overrideXp(this.merchant.getDwarfXp() + offer.getXp());
+            return;
         }
+
+        int coinsSpent = 0;
+
+        // Slot A
+        if (aCoinsBefore > 0) {
+            coinsSpent += Math.max(0, aCoinsBefore - CoinPouchHelper.getCoins(slotA));
+        } else if (slotA.is(JolCraftTags.Items.COINS)) {
+            coinsSpent += Math.max(0, aCountBefore - slotA.getCount());
+        }
+
+        // Slot B
+        if (bCoinsBefore > 0) {
+            coinsSpent += Math.max(0, bCoinsBefore - CoinPouchHelper.getCoins(slotB));
+        } else if (slotB.is(JolCraftTags.Items.COINS)) {
+            coinsSpent += Math.max(0, bCountBefore - slotB.getCount());
+        }
+
+        if (coinsSpent > 0 && player instanceof ServerPlayer) {
+            player.awardStat(JolCraftStats.COINS_SPENT.get(), coinsSpent);
+        }
+
+        this.merchant.notifyTrade(offer);
+        this.slots.setItem(0, slotA);
+        this.slots.setItem(1, slotB);
+
+        this.merchant.overrideXp(this.merchant.getDwarfXp() + offer.getXp());
     }
-
-
 }
