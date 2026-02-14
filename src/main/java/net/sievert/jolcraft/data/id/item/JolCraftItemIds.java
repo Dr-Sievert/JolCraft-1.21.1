@@ -1,13 +1,11 @@
 package net.sievert.jolcraft.data.id.item;
 
-import net.minecraft.world.item.Rarity;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationTier;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.item.util.rarity.JolCraftEnumParams;
 
 public final class JolCraftItemIds extends JolCraftIds {
 
