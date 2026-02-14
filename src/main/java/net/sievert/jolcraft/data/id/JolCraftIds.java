@@ -19,11 +19,6 @@ public abstract class JolCraftIds {
         return JolCraftStrings.plural(singular);
     }
 
-    /** Convert a path into "jolcraft:<path>". */
-    public static String full(String path) {
-        return JolCraft.MOD_ID + ":" + path;
-    }
-
     /** Create a vanilla (minecraft namespace) id. */
     public static ResourceLocation vanilla(String path) {
         return ResourceLocation.withDefaultNamespace(path);

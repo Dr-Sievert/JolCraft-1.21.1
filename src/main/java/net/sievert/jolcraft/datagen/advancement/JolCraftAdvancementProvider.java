@@ -9,6 +9,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.custom.*;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
@@ -26,13 +29,15 @@ public final class JolCraftAdvancementProvider implements AdvancementSubProvider
     @Override
     public void generate(HolderLookup.@NotNull Provider registries, @NotNull Consumer<AdvancementHolder> consumer) {
 
-        String idPathPrefix = "main/";
+        String idPathPrefix = JolCraftDictionary.MAIN + "/";
 
         // ROOT
         AdvancementHolder root = addAdvancement(
                 consumer, AdvancementKey.ROOT, idPathPrefix,
                 Items.CHISELED_DEEPSLATE,
-                ResourceLocation.withDefaultNamespace("textures/block/deepslate_bricks.png"),
+                JolCraftTextures.vanilla(
+                        JolCraftTextures.block(
+                                JolCraftStrings.underscored(JolCraftDictionary.DEEPSLATE, JolCraftStrings.plural(JolCraftDictionary.BRICK)))),
                 AdvancementType.TASK,
                 false, false, false,
                 CriteriaTriggers.TICK.createCriterion(
