@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.loot.custom;
+package net.sievert.jolcraft.data.loot.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

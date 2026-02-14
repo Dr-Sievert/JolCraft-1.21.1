@@ -64,6 +64,8 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SLOW = "slow";
     public static final String SPAWN = "spawn";
     public static final String SYNC = "sync";
+    public static final String TALK = "talk";
+    public static final String TRADE = "trade";
     public static final String UNLOCK = "unlock";
     public static final String USE = "use";
     public static final String WEAR = "wear";
@@ -454,7 +456,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TOP = "top";
     public static final String TOUGHNESS = "toughness";
     public static final String TOTAL = "total";
-    public static final String TRADE = "trade";
     public static final String TRAIL = "trail";
     public static final String TRIM = "trim";
     public static final String TYPE = "type";

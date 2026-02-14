@@ -12,9 +12,9 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
@@ -29,7 +29,6 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
                     DataComponentPredicate.CODEC.optionalFieldOf(JolCraftStrings.plural(JolCraftDictionary.COMPONENT), DataComponentPredicate.EMPTY).forGetter(DwarfItemCost::components)
             ).apply(instance, DwarfItemCost::new)
     );
-
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DwarfItemCost> STREAM_CODEC;
     public static final StreamCodec<RegistryFriendlyByteBuf, Optional<DwarfItemCost>> OPTIONAL_STREAM_CODEC;
@@ -50,8 +49,11 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
         return new ItemStack(item, count, predicate.asPatch());
     }
 
-    public boolean isGoldCoinCost() {
-        return this.item.value() == JolCraftItems.GOLD_COIN.get();
+    /**
+     * True if this cost is a "coin" cost (any item in the COINS tag).
+     */
+    public boolean isCoinCost() {
+        return this.item.is(JolCraftTags.Items.COINS);
     }
 
     // ---------------------------------------------------------------------
@@ -65,7 +67,8 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
     public boolean test(ItemStack stack, int requiredCount) {
         if (requiredCount <= 0) return true;
 
-        if (isGoldCoinCost() && stack.getItem() instanceof CoinPouchItem) {
+        // Coin pouch can pay for any COINS-tagged cost.
+        if (isCoinCost() && stack.getItem() instanceof CoinPouchItem) {
             return CoinPouchHelper.getCoins(stack) >= requiredCount;
         }
 
@@ -82,7 +85,8 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
             return false;
         }
 
-        if (isGoldCoinCost() && stack.getItem() instanceof CoinPouchItem) {
+        // Coin pouch can pay for any COINS-tagged cost.
+        if (isCoinCost() && stack.getItem() instanceof CoinPouchItem) {
             int coins = CoinPouchHelper.getCoins(stack);
             int remaining = Math.max(0, coins - requiredCount);
             CoinPouchHelper.setCoins(stack, remaining);
@@ -92,7 +96,6 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
         stack.shrink(requiredCount);
         return true;
     }
-
 
     static {
         STREAM_CODEC = StreamCodec.composite(

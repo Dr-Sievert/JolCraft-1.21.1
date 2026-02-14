@@ -64,8 +64,7 @@ public class DiscoveredStructuresHelper {
         DiscoveredStructures ds = DiscoveredStructures.get(player);
 
         if (ds.addDiscovered(pos)) {
-            JolCraftStats.awardStructureDiscovery(player);
-
+            player.awardStat(JolCraftStats.STRUCTURES_DISCOVERED.get());
             int score = STRUCTURE_SCORES.getOrDefault(structureId, 50);
             ds.addScore(score);
         }

@@ -31,7 +31,7 @@ public interface DwarfMerchant {
      */
     void notifyTradeUpdated(ItemStack stack);
 
-    int getVillagerXp();
+    int getDwarfXp();
 
     void overrideXp(int xp);
 
@@ -67,7 +67,7 @@ public interface DwarfMerchant {
                         optionalInt.getAsInt(),
                         merchantOffers,
                         level,
-                        this.getVillagerXp(),
+                        this.getDwarfXp(),
                         this.showProgressBar(),
                         this.showLevel(),
                         this.canRestock()

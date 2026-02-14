@@ -28,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
+import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;
@@ -283,7 +284,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     }
 
     @Override
-    public int getVillagerXp() {
+    public int getDwarfXp() {
         return this.dwarfXp;
     }
 
@@ -698,7 +699,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                             serverPlayer.containerMenu.containerId,
                             merchantOffers,
                             this.getMerchantLevel(),
-                            this.getVillagerXp(),
+                            this.getDwarfXp(),
                             this.showProgressBar(),
                             this.showLevel(),
                             this.canRestock()
@@ -860,7 +861,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                                 menuId.getAsInt(),
                                 offers,
                                 level,
-                                this.getVillagerXp(),
+                                this.getDwarfXp(),
                                 this.showProgressBar(),
                                 this.showLevel(),
                                 this.canRestock()
@@ -885,7 +886,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         this.rewardTradeXp(offer);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            player.awardStat(Stats.TRADED_WITH_VILLAGER);
+            player.awardStat(JolCraftStats.TRADE_WITH_DWARF.get());
             JolCraftCriteriaTriggers.TRADE_WITH_DWARF.trigger(serverPlayer, this.getTradeProfession());
         }
 

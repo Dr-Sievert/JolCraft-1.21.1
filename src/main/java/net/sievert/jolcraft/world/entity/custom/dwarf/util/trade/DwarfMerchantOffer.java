@@ -267,13 +267,13 @@ public class DwarfMerchantOffer {
         int aCoinsBefore = -1;
         int bCoinsBefore = -1;
 
-        if (this.baseCostA.isGoldCoinCost() && playerOfferA.getItem() instanceof CoinPouchItem) {
+        if (this.baseCostA.isCoinCost() && playerOfferA.getItem() instanceof CoinPouchItem) {
             aCoinsBefore = CoinPouchHelper.getCoins(playerOfferA);
         }
 
         if (costBOpt.isPresent()) {
             DwarfItemCost costB = costBOpt.get();
-            if (costB.isGoldCoinCost() && playerOfferB.getItem() instanceof CoinPouchItem) {
+            if (costB.isCoinCost() && playerOfferB.getItem() instanceof CoinPouchItem) {
                 bCoinsBefore = CoinPouchHelper.getCoins(playerOfferB);
             }
         }

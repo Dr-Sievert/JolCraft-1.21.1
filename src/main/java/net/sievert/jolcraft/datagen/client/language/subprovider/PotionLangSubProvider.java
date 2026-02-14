@@ -65,7 +65,7 @@ public final class PotionLangSubProvider implements AbstractLanguageProvider.Lan
         }
 
         try {
-            var getMethod = potionHolder.getClass().getMethod("get");
+            var getMethod = potionHolder.getClass().getMethod("getEntityType");
             Object actual = getMethod.invoke(potionHolder);
             if (actual != null && actual != potionHolder) {
                 return resolvePotionName(actual);

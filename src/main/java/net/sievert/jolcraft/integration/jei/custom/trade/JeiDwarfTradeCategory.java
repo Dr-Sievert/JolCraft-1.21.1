@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
@@ -29,7 +30,7 @@ import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionEntityTypes;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
@@ -94,7 +95,7 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
         this.background = guiHelper.createBlankDrawable(150, 60);
         this.icon = guiHelper.createDrawableIngredient(
                 VanillaTypes.ITEM_STACK,
-                new ItemStack(JeiDwarfTradeHelper.getSpawnEggForProfession(profession).get())
+                new ItemStack(DwarfProfessionHelper.getSpawnEgg(profession).get())
         );
     }
 
@@ -137,7 +138,7 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
         int profX = 50 - (font.width(profStr) / 2);
         graphics.drawString(font, profStr, profX, 12, 0x888888, false);
 
-        @Nullable ItemStack inputB = entry.inputBExample();
+        @Nullable ItemStack inputB = entry.inputBExample(JeiDwarfTrade.getClientRegistryAccess());
         boolean hasB = inputB != null && !inputB.isEmpty();
 
         int shift = hasB ? HAS_B_SHIFT : 0;
@@ -147,7 +148,6 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
 
         int outputX = hasB ? (68 + shift) : 45;
 
-        // PLUS: centered between slot A and slot B (after shifting B)
         if (hasB) {
             int aRight = slotAX + SLOT_SIZE;
             int gap = slotBX - aRight;
@@ -157,16 +157,14 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
                     plusX, 27, 0, 0, PLUS_W, PLUS_H, PLUS_W, PLUS_H);
         }
 
-        // ARROW: keep the same feel as before
         int arrowX = hasB
-                ? (slotBX + SLOT_SIZE - 1)     // 1px overlap feel like your old 45 vs B-right 46
+                ? (slotBX + SLOT_SIZE - 1)
                 : (slotAX + SLOT_SIZE + 1);
 
         graphics.blit(RenderType.GUI_TEXTURED, ARROW_TEXTURE,
                 arrowX, 25,
                 0, 0, ARROW_W, ARROW_H, ARROW_W, ARROW_H);
 
-        // Dwarf render + egg
         LivingEntity dwarf = getOrCreateDwarf(entry.profession());
         if (dwarf != null) {
             InventoryScreen.renderEntityInInventoryFollowsMouse(
@@ -179,9 +177,6 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
             );
         }
 
-        // -----------------------------------------------------------------
-        // Min/max count overlays (data-driven via TradeAmount)
-        // -----------------------------------------------------------------
         drawAmountOverlay(graphics, font, entry.inputAmountA(), slotAX);
 
         DwarfTradeRecipe.TradeAmount bAmt = entry.inputAmountB();
@@ -218,9 +213,9 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
     public void setRecipe(IRecipeLayoutBuilder builder, JeiDwarfTrade entry, IFocusGroup focuses) {
         int slotY = SLOT_Y;
 
-        ItemStack egg = new ItemStack(JeiDwarfTradeHelper.getSpawnEggForProfession(entry.profession()).get());
+        ItemStack egg = new ItemStack(DwarfProfessionHelper.getSpawnEgg(entry.profession()).get());
 
-        @Nullable ItemStack inputB = entry.inputBExample();
+        @Nullable ItemStack inputB = entry.inputBExample(JeiDwarfTrade.getClientRegistryAccess());
         boolean hasB = inputB != null && !inputB.isEmpty();
         int shift = hasB ? HAS_B_SHIFT : 0;
 
@@ -228,12 +223,13 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
         builder.addSlot(RecipeIngredientRole.INPUT, 95, 42).add(egg);
         builder.addSlot(RecipeIngredientRole.OUTPUT, 95, 42).add(egg);
 
-        ItemStack inputA = entry.inputAExample();
-        ItemStack output = entry.outputExample(JeiDwarfTradeHelper.getClientRegistryAccess());
+        ItemStack inputA = entry.inputAExample(JeiDwarfTrade.getClientRegistryAccess());
+        ItemStack output = entry.outputExample(JeiDwarfTrade.getClientRegistryAccess());
 
-        if (inputA.is(JolCraftItems.GOLD_COIN.get())) {
+        // Cost A slot (tag-driven currency substitution)
+        if (entry.costAItemIs(JolCraftTags.Items.COINS)) {
             builder.addSlot(RecipeIngredientRole.INPUT, SLOT_A_X, slotY)
-                    .add(new ItemStack(JolCraftItems.GOLD_COIN.get()))
+                    .add(inputA)
                     .add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
         } else {
             builder.addSlot(RecipeIngredientRole.INPUT, SLOT_A_X, slotY).add(inputA);
@@ -242,9 +238,9 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
         if (hasB) {
             int slotBX = SLOT_B_X + shift;
 
-            if (inputB.is(JolCraftItems.GOLD_COIN.get())) {
+            if (entry.costBItemIs(JolCraftTags.Items.COINS)) {
                 builder.addSlot(RecipeIngredientRole.INPUT, slotBX, slotY)
-                        .add(new ItemStack(JolCraftItems.GOLD_COIN.get()))
+                        .add(inputB)
                         .add(new ItemStack(JolCraftItems.COIN_POUCH.get()));
             } else {
                 builder.addSlot(RecipeIngredientRole.INPUT, slotBX, slotY).add(inputB);
@@ -263,7 +259,7 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
         LivingEntity cached = DWARF_RENDER_CACHE.get(profession);
         if (cached != null) return cached;
 
-        DwarfEntity dwarf = new DwarfEntity(DwarfProfessionEntityTypes.get(profession), mc.level);
+        DwarfEntity dwarf = new DwarfEntity(DwarfProfessionHelper.getEntityType(profession), mc.level);
         dwarf.getEntityData().set(AbstractDwarfEntity.PROFESSION, profession.getId());
 
         DWARF_RENDER_CACHE.put(profession, dwarf);

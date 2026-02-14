@@ -18,8 +18,11 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyTier;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
@@ -38,7 +41,7 @@ import java.util.OptionalInt;
 @MethodsReturnNonnullByDefault
 public abstract class AbstractDwarfTrades {
 
-    private static final String ROOT_FOLDER = "dwarf_trade";
+    private static final String ROOT_FOLDER = JolCraftRecipeIds.DWARF_TRADE;
 
     /**
      * Datagen-facing merchant levels.
@@ -67,10 +70,7 @@ public abstract class AbstractDwarfTrades {
     public abstract void addTrades(AbstractRecipeProvider p);
 
     protected final String fullFolder() {
-        if (profession() == DwarfProfession.NONE) {
-            return ROOT_FOLDER + "/base";
-        }
-        return ROOT_FOLDER + "/" + profession().getId();
+        return JolCraftStrings.slashed(ROOT_FOLDER, profession().getId());
     }
 
     // =====================================================================
@@ -215,12 +215,21 @@ public abstract class AbstractDwarfTrades {
         return cost(stack.getItem(), amount);
     }
 
+    protected static DwarfTradeRecipe.TradeCost cost(TagKey<Item> tag, DwarfTradeRecipe.TradeAmount amount) {
+        return new DwarfTradeRecipe.TradeCost(
+                new DwarfTradeRecipe.TradeCostIngredient.TagIngredient(tag),
+                amount
+        );
+    }
+
     /**
      * IMPORTANT: Datagen must serialize registry-bound holders.
-     * Never use Holder.direct(...) here.
      */
     protected static DwarfTradeRecipe.TradeCost cost(Item item, DwarfTradeRecipe.TradeAmount amount) {
-        return new DwarfTradeRecipe.TradeCost(item.builtInRegistryHolder(), amount);
+        return new DwarfTradeRecipe.TradeCost(
+                new DwarfTradeRecipe.TradeCostIngredient.ItemIngredient(item.builtInRegistryHolder()),
+                amount
+        );
     }
 
     // =====================================================================
@@ -236,7 +245,7 @@ public abstract class AbstractDwarfTrades {
     }
 
     protected final DwarfTradeRecipe.TradeCost coins(DwarfTradeRecipe.TradeAmount amount) {
-        return cost(coinItem().asItem(), amount);
+        return cost(JolCraftTags.Items.COINS, amount);
     }
 
     protected final DwarfTradeRecipe.TradeResult coinsResult(int count) {

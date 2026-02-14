@@ -36,9 +36,9 @@ public final class BountyLangSubProvider implements AbstractLanguageProvider.Lan
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_TIER, "Tier: %d");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_TYPE, "Type: ");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_WRONG_TYPE, "This is the wrong type of bounty to give to this dwarf.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_NO_TYPE, "Give this to a dwarf to get a bounty crate.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_MERCHANT, "Give this to a merchant to get a bounty crate.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_MINER, "Give this to a miner to get a bounty crate.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_NO_TYPE, "Give this to a dwarf to getEntityType a bounty crate.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_MERCHANT, "Give this to a merchant to getEntityType a bounty crate.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_MINER, "Give this to a miner to getEntityType a bounty crate.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_BOUNTY_INVALID, "No bounty data");
 
         // -----------------------------------------------------------------

@@ -11,7 +11,7 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.loot.JolCraftLootTables;
+import net.sievert.jolcraft.data.loot.JolCraftLootTables;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.BiConsumer;

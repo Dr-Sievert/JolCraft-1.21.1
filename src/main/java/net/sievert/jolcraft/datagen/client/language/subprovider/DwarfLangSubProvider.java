@@ -78,7 +78,7 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
 
         p.putManual(
                 JolCraftLanguageKeys.TOOLTIP_WRITTEN_CONTRACT,
-                "Given to dwarves without professions to get signed contracts. " +
+                "Given to dwarves without professions to getEntityType signed contracts. " +
                         "Signed contracts are used to buy profession contracts from a guildmaster. " +
                         "If given to a dwarf with a profession they will create a contract for their profession."
         );

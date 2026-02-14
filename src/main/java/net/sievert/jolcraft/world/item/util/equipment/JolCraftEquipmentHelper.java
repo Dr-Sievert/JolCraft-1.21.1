@@ -103,7 +103,7 @@ public final class JolCraftEquipmentHelper {
         }
 
         /**
-         * Maps this set to another set (e.g. DeferredItem<Item> -> Item by calling .get()).
+         * Maps this set to another set (e.g. DeferredItem<Item> -> Item by calling .getEntityType()).
          */
         public <U> @NotNull ArmorSet<U> map(@NotNull Function<T, U> mapper) {
             return new ArmorSet<>(

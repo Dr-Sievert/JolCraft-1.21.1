@@ -1,10 +1,10 @@
 package net.sievert.jolcraft.world.gui.custom.slot;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.world.gui.custom.container.DwarfMerchantContainer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
@@ -75,12 +75,11 @@ public class DwarfMerchantResultSlot extends Slot {
             ItemStack itemstack1 = this.slots.getItem(1);
             if (merchantoffer.take(itemstack, itemstack1) || merchantoffer.take(itemstack1, itemstack)) {
                 this.merchant.notifyTrade(merchantoffer);
-                p_150631_.awardStat(Stats.TRADED_WITH_VILLAGER);
                 this.slots.setItem(0, itemstack);
                 this.slots.setItem(1, itemstack1);
             }
 
-            this.merchant.overrideXp(this.merchant.getVillagerXp() + merchantoffer.getXp());
+            this.merchant.overrideXp(this.merchant.getDwarfXp() + merchantoffer.getXp());
         }
     }
 

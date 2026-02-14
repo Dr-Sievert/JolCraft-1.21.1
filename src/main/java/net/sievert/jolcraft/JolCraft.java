@@ -27,7 +27,7 @@ import net.sievert.jolcraft.world.item.creative.JolCraftCreativeModeTabs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
-import net.sievert.jolcraft.world.loot.JolCraftLootModifiers;
+import net.sievert.jolcraft.data.loot.JolCraftLootModifiers;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;

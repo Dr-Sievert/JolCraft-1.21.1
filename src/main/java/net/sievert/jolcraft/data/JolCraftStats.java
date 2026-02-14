@@ -18,15 +18,18 @@ public final class JolCraftStats {
     public static final DeferredRegister<ResourceLocation> STATS =
             DeferredRegister.create(Registries.CUSTOM_STAT, JolCraft.MOD_ID);
 
-    public static final Supplier<ResourceLocation> STRUCTURES_DISCOVERED =
-            STATS.register(
-                    JolCraftStatIds.DISCOVERED_STRUCTURES,
-                    () -> JolCraft.location(JolCraftStatIds.DISCOVERED_STRUCTURES)
-            );
-
-    public static void awardStructureDiscovery(Player player) {
-        player.awardStat(Stats.CUSTOM.get(STRUCTURES_DISCOVERED.get()));
+    private static Supplier<ResourceLocation> stat(String path) {
+        return STATS.register(path, () -> JolCraft.location(path));
     }
+
+    public static final Supplier<ResourceLocation> STRUCTURES_DISCOVERED =
+            stat(JolCraftStatIds.DISCOVERED_STRUCTURES);
+
+    public static final Supplier<ResourceLocation> TALK_TO_DWARF =
+            stat(JolCraftStatIds.TALK_TO_DWARF);
+
+    public static final Supplier<ResourceLocation> TRADE_WITH_DWARF =
+            stat(JolCraftStatIds.TRADE_WITH_DWARF);
 
     public static void register(IEventBus bus) {
         STATS.register(bus);

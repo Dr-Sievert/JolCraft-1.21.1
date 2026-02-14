@@ -197,7 +197,7 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
     }
 
     public int getTraderXp() {
-        return trader.getVillagerXp();
+        return trader.getDwarfXp();
     }
 
     public int getFutureTraderXp() {

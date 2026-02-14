@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.loot;
+package net.sievert.jolcraft.data.loot;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;

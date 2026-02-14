@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.loot;
+package net.sievert.jolcraft.data.loot;
 
 import com.mojang.serialization.MapCodec;
 import net.neoforged.bus.api.IEventBus;
@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.loot.JolCraftLootModifierIds;
-import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
+import net.sievert.jolcraft.data.loot.custom.AddItemModifier;
 
 import java.util.function.Supplier;
 

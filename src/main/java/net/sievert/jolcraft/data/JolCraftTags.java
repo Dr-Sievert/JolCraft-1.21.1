@@ -21,6 +21,7 @@ public final class JolCraftTags {
     public static final class Items {
 
         // Core
+        public static final TagKey<Item> COINS = createTag(JolCraftTagIds.COINS);
         public static final TagKey<Item> SPAWN_EGGS = createTag(JolCraftTagIds.SPAWN_EGGS);
         public static final TagKey<Item> DWARF_SPAWN_EGGS = createTag(JolCraftTagIds.DWARF_SPAWN_EGGS);
         public static final TagKey<Item> CREATURE_SPAWN_EGGS = createTag(JolCraftTagIds.CREATURE_SPAWN_EGGS);

@@ -1,9 +1,9 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.handler.core;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -36,7 +36,7 @@ public final class TradeInteractionHandler implements DwarfInteractions.CoreInte
         }
 
         if (hand == InteractionHand.MAIN_HAND) {
-            player.awardStat(Stats.TALKED_TO_VILLAGER);
+            player.awardStat(JolCraftStats.TALK_TO_DWARF.get());
         }
 
         if (dwarf.getOffers().isEmpty()) {

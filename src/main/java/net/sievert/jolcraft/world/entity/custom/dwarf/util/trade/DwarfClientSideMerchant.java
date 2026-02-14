@@ -57,7 +57,7 @@ public class DwarfClientSideMerchant implements DwarfMerchant {
     }
 
     @Override
-    public int getVillagerXp() {
+    public int getDwarfXp() {
         return this.xp;
     }
 

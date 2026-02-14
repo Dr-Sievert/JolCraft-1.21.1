@@ -384,6 +384,12 @@ public final class JolCraftItemTagProvider extends ItemTagsProvider {
                 .add(JolCraftItems.REPUTATION_TABLET_3.get())
                 .add(JolCraftItems.REPUTATION_TABLET_4.get());
 
+        //Coins
+
+        tag(JolCraftTags.Items.COINS)
+                .add(JolCraftItems.GOLD_COIN.get())
+                .add(JolCraftItems.COIN_POUCH.get());
+
         //Tooltip
 
         tag(JolCraftTags.Items.MITHRIL_ITEMS)

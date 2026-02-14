@@ -30,6 +30,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.input.DwarfTradeRecipeInput;
@@ -48,10 +49,6 @@ import java.util.OptionalInt;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
-
-    // =====================================================================
-    // Locked mental model names
-    // =====================================================================
 
     public enum TradePool {
         MAIN,
@@ -83,7 +80,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         Codec.INT.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftDictionary.COUNT)).forGetter(TradeAmount::max)
                 ).apply(inst, TradeAmount::new));
 
-
         public static final Codec<TradeAmount> CODEC =
                 Codec.either(Codec.INT, OBJECT_CODEC).xmap(
                         e -> e.map(TradeAmount::fixed, a -> a),
@@ -102,21 +98,148 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                 );
     }
 
+    // =====================================================================
+    // TradeCost (ITEM or TAG)
+    // =====================================================================
+
     /**
+     * Cost ingredient for a trade: either a single item or an item tag.
      * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
      * Validation happens in Serializer.validate(...).
      */
-    public record TradeCost(Holder<Item> item, TradeAmount amount) {
+    public sealed interface TradeCostIngredient permits TradeCostIngredient.ItemIngredient, TradeCostIngredient.TagIngredient {
 
-        public ItemStack roll(RandomSource random) {
-            return new ItemStack(item.value(), amount.roll(random));
+        record ItemIngredient(Holder<Item> item) implements TradeCostIngredient {}
+
+        record TagIngredient(TagKey<Item> tag) implements TradeCostIngredient {}
+
+        // Raw form for codec decoding.
+        record Raw(Optional<Holder<Item>> item, Optional<TagKey<Item>> tag) {}
+
+        MapCodec<Raw> RAW_CODEC =
+                RecordCodecBuilder.mapCodec(inst -> inst.group(
+                        RegistryFixedCodec.create(Registries.ITEM)
+                                .optionalFieldOf(JolCraftDictionary.ITEM)
+                                .forGetter(Raw::item),
+                        TagKey.codec(Registries.ITEM)
+                                .optionalFieldOf(JolCraftDictionary.TAG)
+                                .forGetter(Raw::tag)
+                ).apply(inst, Raw::new));
+
+
+        /**
+         * Accepts exactly one of { item, tag }.
+         */
+        Codec<TradeCostIngredient> CODEC =
+                RAW_CODEC.codec().flatXmap(
+                        raw -> {
+                            boolean hasItem = raw.item().isPresent();
+                            boolean hasTag = raw.tag().isPresent();
+
+                            if (hasItem == hasTag) {
+                                return DataResult.error(() -> "TradeCost ingredient must define exactly one of 'item' or 'tag'");
+                            }
+
+                            return hasItem
+                                    ? DataResult.success(new ItemIngredient(raw.item().get()))
+                                    : DataResult.success(new TagIngredient(raw.tag().get()));
+                        },
+                        ing -> {
+                            if (ing instanceof ItemIngredient(Holder<Item> item)) {
+                                return DataResult.success(new Raw(Optional.of(item), Optional.empty()));
+                            }
+                            if (ing instanceof TagIngredient(TagKey<Item> tag)) {
+                                return DataResult.success(new Raw(Optional.empty(), Optional.of(tag)));
+                            }
+                            return DataResult.error(() -> "Unknown TradeCostIngredient variant");
+                        }
+                );
+
+        /**
+         * Returns a representative item stack for display/preview.
+         * For tags: pick the first entry deterministically from tag contents.
+         */
+        default ItemStack preview(HolderLookup.Provider registries, int count) {
+            if (this instanceof ItemIngredient(Holder<Item> item)) {
+                return new ItemStack(item.value(), count);
+            }
+
+            TagIngredient ti = (TagIngredient) this;
+
+            var itemRegistry = registries.lookupOrThrow(Registries.ITEM);
+            var holdersOpt = itemRegistry.get(ti.tag());
+
+            if (holdersOpt.isEmpty()) return ItemStack.EMPTY;
+
+            Optional<Holder<Item>> first = holdersOpt.get().stream().findFirst();
+            return first.map(itemHolder -> new ItemStack(itemHolder.value(), count)).orElse(ItemStack.EMPTY);
+        }
+
+        // ---- STREAM ----
+        // boolean isTag
+        // if false: item ResourceLocation
+        // if true : tag ResourceLocation
+        StreamCodec<RegistryFriendlyByteBuf, TradeCostIngredient> STREAM_CODEC =
+                StreamCodec.of(
+                        (buf, ing) -> {
+                            if (ing instanceof TagIngredient(TagKey<Item> tag)) {
+                                buf.writeBoolean(true);
+                                buf.writeResourceLocation(tag.location());
+                                return;
+                            }
+
+                            buf.writeBoolean(false);
+
+                            ItemIngredient ii = (ItemIngredient) ing;
+
+                            Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
+
+                            Item value = ii.item().value();
+                            ResourceLocation id = items.getKey(value);
+                            if (id == null) {
+                                throw new IllegalStateException("Unregistered item in TradeCostIngredient: " + value);
+                            }
+
+                            buf.writeResourceLocation(id);
+                        },
+                        buf -> {
+                            boolean isTag = buf.readBoolean();
+                            if (isTag) {
+                                return new TagIngredient(TagKey.create(Registries.ITEM, buf.readResourceLocation()));
+                            }
+
+                            Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
+
+                            ResourceLocation id = buf.readResourceLocation();
+                            Item value = items.getValue(id);
+                            if (value == null) {
+                                throw new IllegalStateException("Unknown item id in TradeCostIngredient: " + id);
+                            }
+
+                            return new ItemIngredient(Holder.direct(value));
+                        }
+                );
+    }
+
+    /**
+     * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
+     * Validation happens in Serializer.validate(...).
+     * JSON supports:
+     *  { "ingredient": { "item": "namespace:id" }, "amount": 4 }
+     *  { "ingredient": { "tag":  "namespace:tag" }, "amount": 4 }
+     */
+    public record TradeCost(TradeCostIngredient ingredient, TradeAmount amount) {
+
+        public ItemStack roll(HolderLookup.Provider registries, RandomSource random) {
+            int count = amount.roll(random);
+            return ingredient.preview(registries, count);
         }
 
         public static final Codec<TradeCost> CODEC =
                 RecordCodecBuilder.create(inst -> inst.group(
-                        RegistryFixedCodec.create(Registries.ITEM)
-                                .fieldOf(JolCraftDictionary.ITEM)
-                                .forGetter(TradeCost::item),
+                        TradeCostIngredient.CODEC
+                                .fieldOf(JolCraftDictionary.INGREDIENT)
+                                .forGetter(TradeCost::ingredient),
                         TradeAmount.CODEC
                                 .fieldOf(JolCraftDictionary.AMOUNT)
                                 .forGetter(TradeCost::amount)
@@ -125,31 +248,20 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         public static final StreamCodec<RegistryFriendlyByteBuf, TradeCost> STREAM_CODEC =
                 StreamCodec.of(
                         (buf, c) -> {
-                            Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
-
-                            Item value = c.item().value();
-                            ResourceLocation id = items.getKey(value);
-                            if (id == null) {
-                                throw new IllegalStateException("Unregistered item in TradeCost: " + value);
-                            }
-
-                            buf.writeResourceLocation(id);
-                            TradeAmount.STREAM_CODEC.encode(buf, c.amount());
+                            TradeCostIngredient.STREAM_CODEC.encode(buf, c.ingredient);
+                            TradeAmount.STREAM_CODEC.encode(buf, c.amount);
                         },
                         buf -> {
-                            Registry<Item> items = buf.registryAccess().lookupOrThrow(Registries.ITEM);
-
-                            ResourceLocation id = buf.readResourceLocation();
-                            Item value = items.getValue(id);
-                            if (value == null) {
-                                throw new IllegalStateException("Unknown item getId in TradeCost: " + id);
-                            }
-
-                            TradeAmount amount = TradeAmount.STREAM_CODEC.decode(buf);
-                            return new TradeCost(Holder.direct(value), amount);
+                            TradeCostIngredient ing = TradeCostIngredient.STREAM_CODEC.decode(buf);
+                            TradeAmount amt = TradeAmount.STREAM_CODEC.decode(buf);
+                            return new TradeCost(ing, amt);
                         }
                 );
     }
+
+    // =====================================================================
+    // MapTradeData / TradeResult (unchanged)
+    // =====================================================================
 
     /**
      * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
@@ -188,14 +300,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                 );
     }
 
-    /**
-     * Exactly one result definition. All transformations (enchant provider, stack modifier, patch)
-     * are applied OUTSIDE of this type (by the trade engine) to enforce clean ordering:
-     * base stack -> enchant -> stackModifier -> patch
-     * Map trades are a distinct result variant with dedicated MapTradeData.
-     * RESULTS ARE NEVER TAG-BASED.
-     * (Tags are allowed for costs later; results must be deterministic.)
-     */
     public sealed interface TradeResult permits TradeResult.ItemResult, TradeResult.MapResult {
 
         enum Type { ITEM, MAP }
@@ -206,14 +310,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
         ItemStack roll(HolderLookup.Provider registries, RandomSource random);
 
-        // -----------------------------------------------------------------
-        // Variants
-        // -----------------------------------------------------------------
-
-        /**
-         * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
-         * Validation happens in Serializer.validate(...).
-         */
         record ItemResult(
                 Holder<Item> item,
                 TradeAmount amount
@@ -235,10 +331,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             }
         }
 
-        /**
-         * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
-         * Validation happens in Serializer.validate(...).
-         */
         record MapResult(
                 MapTradeData mapData
         ) implements TradeResult {
@@ -267,19 +359,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
     private final TradePool pool;
     private final OptionalInt weight; // relevant only for POOL/RESTOCK_POOL
 
-    /**
-     * Optional explicit ordering within (profession + level + pool).
-     * Resets per level because level is part of the key.
-     * Unset = "unordered", and should be placed after ordered entries when building offers.
-     */
     private final OptionalInt order;
 
-    /**
-     * Optional per-roll eligibility behavior:
-     * - false (default): eligible when recipe.level <= unlockLevel (current behavior)
-     * - true: eligible only when recipe.level == unlockLevel (exact-level rolls)
-     * This is intentionally NOT a new pool. It is a property that affects rolling eligibility.
-     */
     private final boolean exactLevel;
 
     private final TradeCost costA;
@@ -287,22 +368,14 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
 
     private final TradeResult result;
 
-    /**
-     * All result transformations live at recipe-level to enforce ordering:
-     * base stack -> enchant -> stackModifier -> patch
-     */
     private final Optional<ResourceKey<EnchantmentProvider>> enchantmentProvider;
     private final Optional<String> stackModifierId;
     private final Optional<DataComponentPatch> resultPatch;
 
     private final int maxUses;
-    private final int villagerXp;
+    private final int dwarfXp;
     private final float priceMultiplier;
 
-    /**
-     * IMPORTANT: no throwing invariants here (codec must not crash datapacks).
-     * Validation happens in Serializer.validate(...).
-     */
     public DwarfTradeRecipe(
             DwarfProfession profession,
             int merchantLevel,
@@ -317,7 +390,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             Optional<String> stackModifierId,
             Optional<DataComponentPatch> resultPatch,
             int maxUses,
-            int villagerXp,
+            int dwarfXp,
             float priceMultiplier
     ) {
         this.profession = profession;
@@ -333,7 +406,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         this.stackModifierId = stackModifierId;
         this.resultPatch = resultPatch;
         this.maxUses = maxUses;
-        this.villagerXp = villagerXp;
+        this.dwarfXp = dwarfXp;
         this.priceMultiplier = priceMultiplier;
     }
 
@@ -361,19 +434,19 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
     public Optional<DataComponentPatch> resultPatch() { return resultPatch; }
 
     public int maxUses() { return maxUses; }
-    public int villagerXp() { return villagerXp; }
+    public int dwarfXp() { return dwarfXp; }
     public float priceMultiplier() { return priceMultiplier; }
 
     // =====================================================================
     // Rolls / resolve helpers (used by your trade engine)
     // =====================================================================
 
-    public ItemStack rollCostA(RandomSource random) {
-        return costA.roll(random);
+    public ItemStack rollCostA(HolderLookup.Provider registries, RandomSource random) {
+        return costA.roll(registries, random);
     }
 
-    public Optional<ItemStack> rollCostB(RandomSource random) {
-        return costB.map(c -> c.roll(random));
+    public Optional<ItemStack> rollCostB(HolderLookup.Provider registries, RandomSource random) {
+        return costB.map(c -> c.roll(registries, random));
     }
 
     /**
@@ -389,12 +462,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
     // Duplicate-order warnings (call from your recipe gather/build code)
     // =====================================================================
 
-    /**
-     * Warns when two recipes share the same (profession + level + pool + order).
-     * Call this once after you have the full set of dwarf trade recipes collected.
-     *
-     * @param recipesById map of recipe getId -> recipe
-     */
     public static void warnDuplicateOrders(Map<ResourceLocation, DwarfTradeRecipe> recipesById) {
         record Key(String professionId, int level, TradePool pool, int order) {}
 
@@ -408,7 +475,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             ResourceLocation prev = seen.putIfAbsent(key, id);
             if (prev != null) {
                 JolCraftLogs.warn(
-                        JolCraftLogTags.RECIPE ,
+                        JolCraftLogTags.RECIPE,
                         "Duplicate dwarf trade order detected: profession={}, level={}, pool={}, order={} -> {} and {}",
                         key.professionId(), key.level(), key.pool().name().toLowerCase(), key.order(), prev, id
                 );
@@ -426,10 +493,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
         return in.profession() == profession && in.merchantLevel() == merchantLevel;
     }
 
-    /**
-     * Recipe output is a preview only, so return BASE preview stack (no transforms).
-     * The trade engine controls transforms centrally.
-     */
     @Override
     public ItemStack assemble(DwarfTradeRecipeInput in, HolderLookup.Provider registries) {
         return result.preview(registries);
@@ -471,7 +534,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         s -> {
                             String id = s.trim().toLowerCase();
 
-                            // allow base dwarf trades
                             if (id.equals(DwarfProfession.NONE.getId())) {
                                 return DataResult.success(DwarfProfession.NONE);
                             }
@@ -519,7 +581,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         oi -> oi.isPresent() ? Optional.of(oi.getAsInt()) : Optional.empty()
                 );
 
-        private static final MapCodec<Boolean> EXACT_LEVEL_FIELD = Codec.BOOL.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.EXACT, JolCraftDictionary.LEVEL), false);
+        private static final MapCodec<Boolean> EXACT_LEVEL_FIELD =
+                Codec.BOOL.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.EXACT, JolCraftDictionary.LEVEL), false);
 
         // ---------------- TradeResult CODEC ----------------
 
@@ -582,7 +645,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                         DataComponentPatch.CODEC.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.RESULT, JolCraftDictionary.PATCH)).forGetter(DwarfTradeRecipe::resultPatch),
 
                         Codec.INT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftStrings.plural(JolCraftDictionary.USE)), 12).forGetter(DwarfTradeRecipe::maxUses),
-                        Codec.INT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.VILLAGER, JolCraftDictionary.XP), 1).forGetter(DwarfTradeRecipe::villagerXp),
+                        Codec.INT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDwarfIds.DWARF, JolCraftDictionary.XP), 1).forGetter(DwarfTradeRecipe::dwarfXp),
                         Codec.FLOAT.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.PRICE, JolCraftDictionary.MULTIPLIER), 0.05F).forGetter(DwarfTradeRecipe::priceMultiplier)
                 ).apply(inst, DwarfTradeRecipe::new)).flatXmap(
                         Serializer::validate,
@@ -617,8 +680,8 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             if (r.maxUses < 1) {
                 return DataResult.error(() -> "max_uses must be >= 1 (got " + r.maxUses + ")");
             }
-            if (r.villagerXp < 0) {
-                return DataResult.error(() -> "villager_xp must be >= 0 (got " + r.villagerXp + ")");
+            if (r.dwarfXp < 0) {
+                return DataResult.error(() -> "dwarf_xp must be >= 0 (got " + r.dwarfXp + ")");
             }
             if (r.priceMultiplier < 0.0F) {
                 return DataResult.error(() -> "price_multiplier must be >= 0 (got " + r.priceMultiplier + ")");
@@ -645,18 +708,12 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             if (r.costA == null) {
                 return DataResult.error(() -> "cost_a is required");
             }
-            if (r.costA.item().value() == Items.AIR) {
-                return DataResult.error(() -> "cost_a.item must not be air");
-            }
             if (r.costA.amount().min() < 1 || r.costA.amount().max() < r.costA.amount().min()) {
                 return DataResult.error(() -> "cost_a.amount must be >= 1 and max>=min");
             }
 
             if (r.costB.isPresent()) {
                 TradeCost b = r.costB.get();
-                if (b.item().value() == Items.AIR) {
-                    return DataResult.error(() -> "cost_b.item must not be air");
-                }
                 if (b.amount().min() < 1 || b.amount().max() < b.amount().min()) {
                     return DataResult.error(() -> "cost_b.amount must be >= 1 and max>=min");
                 }
@@ -686,7 +743,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                 }
             }
 
-            // --- stack modifier getId (datapack safety)
+            // --- stack modifier id (datapack safety)
             if (r.stackModifierId.isPresent()) {
                 String raw = r.stackModifierId.get().trim();
                 if (raw.isEmpty()) {
@@ -724,7 +781,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             writeHooks(buf, r.enchantmentProvider, r.stackModifierId, r.resultPatch);
 
             buf.writeVarInt(r.maxUses);
-            buf.writeVarInt(r.villagerXp);
+            buf.writeVarInt(r.dwarfXp);
             buf.writeFloat(r.priceMultiplier);
         }
 
@@ -747,7 +804,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
             Hooks hooks = readHooks(buf);
 
             int maxUses = buf.readVarInt();
-            int villagerXp = buf.readVarInt();
+            int dwarfXp = buf.readVarInt();
             float priceMultiplier = buf.readFloat();
 
             return new DwarfTradeRecipe(
@@ -764,7 +821,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                     hooks.stackMod,
                     hooks.patch,
                     maxUses,
-                    villagerXp,
+                    dwarfXp,
                     priceMultiplier
             );
         }
@@ -813,7 +870,7 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
                     ResourceLocation id = buf.readResourceLocation();
                     Item value = items.getValue(id);
                     if (value == null) {
-                        throw new IllegalStateException("Unknown item getId in TradeResult.ItemResult: " + id);
+                        throw new IllegalStateException("Unknown item id in TradeResult.ItemResult: " + id);
                     }
 
                     TradeAmount amount = TradeAmount.STREAM_CODEC.decode(buf);

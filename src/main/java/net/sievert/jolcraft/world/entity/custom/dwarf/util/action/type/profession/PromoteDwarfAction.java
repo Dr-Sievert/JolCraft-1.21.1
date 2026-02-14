@@ -112,9 +112,9 @@ public class PromoteDwarfAction extends InspectDwarfAction {
             /*
 
             // Tier 5
-            Map.entry(JolCraftItems.CONTRACT_BLACKSMITH.get(), JolCraftEntities.DWARF_BLACKSMITH.get()),
-            Map.entry(JolCraftItems.CONTRACT_CHAMPION.get(), JolCraftEntities.DWARF_CHAMPION.get()),
-            Map.entry(JolCraftItems.CONTRACT_SMELTER.get(), JolCraftEntities.DWARF_SMELTER.get())
+            Map.entry(JolCraftItems.CONTRACT_BLACKSMITH.getEntityType(), JolCraftEntities.DWARF_BLACKSMITH.getEntityType()),
+            Map.entry(JolCraftItems.CONTRACT_CHAMPION.getEntityType(), JolCraftEntities.DWARF_CHAMPION.getEntityType()),
+            Map.entry(JolCraftItems.CONTRACT_SMELTER.getEntityType(), JolCraftEntities.DWARF_SMELTER.getEntityType())
 
             */
     );

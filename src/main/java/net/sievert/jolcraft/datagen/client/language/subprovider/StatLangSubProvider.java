@@ -13,6 +13,8 @@ public class StatLangSubProvider implements AbstractLanguageProvider.LangSubProv
     @Override
     public void addTranslations(AbstractLanguageProvider p) {
         p.putManual(stat(JolCraftStatIds.DISCOVERED_STRUCTURES), "Deepslate Compass Structures Discovered");
+        p.putManual(stat(JolCraftStatIds.TRADE_WITH_DWARF), "Traded with Dwarves");
+        p.putManual(stat(JolCraftStatIds.TALK_TO_DWARF), "Talked to Dwarves");
     }
 
     public static String stat(String path) { return AbstractLanguageKeys.category(JolCraftDictionary.STAT, path); }
