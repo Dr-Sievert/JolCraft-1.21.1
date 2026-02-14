@@ -23,7 +23,7 @@ public final class JolCraftUtilityEvents {
         ItemStack right = event.getRight();
         String rename = event.getName();
 
-        if (!left.isEmpty() && left.getRarity() == JolCraftEnumParams.LEGENDARY_RARITY.getValue()) {
+        if (!left.isEmpty() && left.getRarity() == JolCraftEnumParams.Rarity.LEGENDARY.getValue()) {
             var vanilla = JolCraftAnvilHelper.vanillaResult(left, right, rename, event.getPlayer());
             ItemStack result = vanilla.result();
 
@@ -38,7 +38,7 @@ public final class JolCraftUtilityEvents {
                 result.remove(DataComponents.CUSTOM_NAME);
                 result.remove(DataComponents.ITEM_NAME);
 
-                result.set(DataComponents.ITEM_NAME, Component.literal(baseName).withStyle(JolCraftEnumParams.LEGENDARY_RARITY.getValue().getStyleModifier()));
+                result.set(DataComponents.ITEM_NAME, Component.literal(baseName).withStyle(JolCraftEnumParams.Rarity.LEGENDARY.getValue().getStyleModifier()));
             }
 
             event.setOutput(result);
@@ -75,12 +75,12 @@ public final class JolCraftUtilityEvents {
         ItemStack stack = event.getEnchantedItem();
         if (stack.isEmpty()) return;
 
-        if (stack.getRarity() == JolCraftEnumParams.LEGENDARY_RARITY.getValue()) {
+        if (stack.getRarity() == JolCraftEnumParams.Rarity.LEGENDARY.getValue()) {
             String baseName = stack.getHoverName().getString();
             stack.remove(DataComponents.CUSTOM_NAME);
             stack.remove(DataComponents.ITEM_NAME);
             stack.set(DataComponents.ITEM_NAME,
-                    Component.literal(baseName).withStyle(JolCraftEnumParams.LEGENDARY_RARITY.getValue().getStyleModifier()));
+                    Component.literal(baseName).withStyle(JolCraftEnumParams.Rarity.LEGENDARY.getValue().getStyleModifier()));
         }
 
         if (stack.is(JolCraftTags.Items.MITHRIL_ITEMS)) {

@@ -4,15 +4,23 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
 import net.sievert.jolcraft.integration.jei.custom.trade.JeiDwarfTradeCategory;
 import net.sievert.jolcraft.integration.jei.custom.trade.JeiDwarfTradeHelper;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 @JeiPlugin
 public final class JolCraftJeiPlugin implements IModPlugin {
@@ -42,5 +50,34 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             }
         }
         registration.addRecipes(JeiInfoPageCategory.RECIPE_TYPE, JeiInfoPageHelper.getAllInfoPages());
+    }
+
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistration registration) {
+
+        registration.registerSubtypeInterpreter(
+                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
+                (stack, context) -> {
+                    String loreKey = stack.get(JolCraftDataComponents.LORE_KEY.get());
+                    return loreKey != null ? loreKey.toLowerCase(Locale.ROOT) : JolCraftDictionary.EMPTY;
+                }
+        );
+
+        registration.registerSubtypeInterpreter(
+                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
+                (stack, context) -> {
+                    String group = stack.get(JolCraftDataComponents.STRUCTURE_GROUP.get());
+                    if (group == null || group.isEmpty()) {
+                        group = JolCraftDictionary.UNKNOWN;
+                    } else {
+                        group = group.toLowerCase(Locale.ROOT);
+                    }
+
+                    DialItemColor color = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get());
+                    String rgb = color != null ? Integer.toString(color.rgb()) : JolCraftDictionary.DEFAULT;
+
+                    return JolCraftStrings.underscored(group, rgb);
+                }
+        );
     }
 }

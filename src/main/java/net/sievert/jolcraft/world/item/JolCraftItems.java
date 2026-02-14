@@ -692,7 +692,7 @@ public final class JolCraftItems {
 
     public static final DeferredItem<Item> REPUTATION_TABLET_4 =
             ITEMS.registerItem(JolCraftItemIds.REPUTATION_TABLET_4, ReputationTabletItem::new,
-                    new Item.Properties().stacksTo(1).rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
+                    new Item.Properties().stacksTo(1).rarity(JolCraftEnumParams.Rarity.LEGENDARY.getValue()));
 
     // Tomes
     public static final DeferredItem<Item> DWARVEN_TOME = ITEMS.registerSimpleItem(JolCraftItemIds.DWARVEN_TOME);
@@ -740,15 +740,15 @@ public final class JolCraftItems {
             }, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
 
     public static final DeferredItem<Item> LEGENDARY_PAGE = ITEMS.registerItem(JolCraftItemIds.LEGENDARY_PAGE,
-            Item::new, new Item.Properties().rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
+            Item::new, new Item.Properties().rarity(JolCraftEnumParams.Rarity.LEGENDARY.getValue()));
 
     public static final DeferredItem<Item> UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME =
             ITEMS.registerItem(JolCraftItemIds.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME, properties -> new LegendaryAncientUnidentifiedTomeItem(properties) {
-            }, new Item.Properties().stacksTo(16).rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
+            }, new Item.Properties().stacksTo(16).rarity(JolCraftEnumParams.Rarity.LEGENDARY.getValue()));
 
     public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME_LEGENDARY =
             ITEMS.registerItem(JolCraftItemIds.ANCIENT_DWARVEN_TOME_LEGENDARY, properties -> new LegendaryAncientDwarvenTomeItem(properties) {
-            }, new Item.Properties().stacksTo(1).rarity(JolCraftEnumParams.LEGENDARY_RARITY.getValue()));
+            }, new Item.Properties().stacksTo(1).rarity(JolCraftEnumParams.Rarity.LEGENDARY.getValue()));
 
     //Tools
     public static final DeferredItem<Item> COPPER_SPANNER =

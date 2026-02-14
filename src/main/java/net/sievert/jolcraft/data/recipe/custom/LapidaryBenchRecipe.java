@@ -181,7 +181,7 @@ public class LapidaryBenchRecipe implements Recipe<LapidaryRecipeInput> {
 
     @Override
     public PlacementInfo placementInfo() {
-        return PlacementInfo.NOT_PLACEABLE;
+        return PlacementInfo.create(this.input);
     }
 
     @Override

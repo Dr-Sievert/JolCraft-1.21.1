@@ -206,7 +206,7 @@ public class BountyCrateItem extends Item implements IItemExtension {
             }
 
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED_SOME, collected).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED_PARTIAL, collected).withStyle(ChatFormatting.GRAY),
                     true
             );
             JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP, 0.6F, 1.2F);

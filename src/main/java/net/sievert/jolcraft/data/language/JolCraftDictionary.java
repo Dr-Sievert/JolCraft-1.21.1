@@ -7,641 +7,121 @@ public final class JolCraftDictionary extends JolCraftIds {
     private JolCraftDictionary() {}
 
     /* =====================================================================
-     * Function words / grammar glue
+     * Function words (closed class)
      * ===================================================================== */
 
     public static final String AND = "and";
-    public static final String ON = "on";
-    public static final String IN = "in";
-    public static final String TO = "to";
     public static final String FROM = "from";
-    public static final String WITH = "with";
-    public static final String UP = "up";
-    public static final String THIS = "this";
-    public static final String END = "end";
-
+    public static final String IN = "in";
+    public static final String NEVER = "never";
     public static final String NO = "no";
     public static final String NOT = "not";
-    public static final String NEVER = "never";
+    public static final String ON = "on";
+    public static final String THIS = "this";
+    public static final String TO = "to";
+    public static final String UP = "up";
+    public static final String WITH = "with";
 
     /* =====================================================================
-     * Generic identifiers / metadata nouns
-     * ===================================================================== */
-
-    public static final String ID = "id";
-    public static final String KEY = "key";
-    public static final String DATA = "data";
-    public static final String TYPE = "type";
-
-    public static final String GROUP = "group";
-    public static final String TAG = "tag";
-
-    /* =====================================================================
-     * Quantifiers / ranges / measures
-     * ===================================================================== */
-
-    public static final String MIN = "min";
-    public static final String MAX = "max";
-    public static final String COUNT = "count";
-
-    public static final String LEVEL = "level";
-    public static final String TIER = "tier";
-    public static final String ORDER = "order";
-    public static final String WEIGHT = "weight";
-    public static final String AMOUNT = "amount";
-
-    public static final String SCORE = "score";
-    public static final String XP = "xp";
-    public static final String EXPERIENCE = "experience";
-
-    public static final String DURATION = "duration";
-    public static final String AMPLIFIER = "amplifier";
-    public static final String COOLDOWN = "cooldown";
-
-    public static final String RGB = "rgb";
-    public static final String COLOR = "color";
-
-    /* =====================================================================
-     * Polarity / defaulting / prominence / sizes
-     * ===================================================================== */
-
-    public static final String DEFAULT = "default";
-    public static final String MAIN = "main";
-    public static final String NONE = "none";
-    public static final String UNKNOWN = "unknown";
-
-    public static final String SMALL = "small";
-    public static final String MEDIUM = "medium";
-    public static final String LARGE = "large";
-
-    /* =====================================================================
-     * States / validation / persistence
-     * ===================================================================== */
-
-    public static final String VALID = "valid";
-    public static final String INVALID = "invalid";
-    public static final String LAST = "last";
-
-    public static final String STATE = "state";
-    public static final String PERSISTENT = "persistent";
-    public static final String SELECTION = "selection";
-
-    public static final String CURRENT = "current";
-    public static final String TARGET = "target";
-    public static final String EXTRACTABLE = "extractable";
-    public static final String ACTIVE = "active";
-
-    /* =====================================================================
-     * Verbs / actions
+     * Verbs (open class)
      * ===================================================================== */
 
     public static final String ADD = "add";
-    public static final String HAS = "has";
-    public static final String USE = "use";
-    public static final String RESET = "reset";
-
-    public static final String FILL = "fill";
-    public static final String COMPLETE = "complete";
-    public static final String SELECT = "select";
-    public static final String SYNC = "sync";
-
-    public static final String PLAY = "play";
-    public static final String SPAWN = "spawn";
-
-    public static final String INCREASE = "increase";
-    public static final String FINALIZE = "finalize";
-    public static final String EXTRACT = "extract";
-
-    public static final String RESTOCK = "restock";
-    public static final String REROLL = "reroll";
-
-    public static final String NEED = "need";
-    public static final String LOCATE = "locate";
-    public static final String IDENTIFY = "identify";
-    public static final String READ = "read";
-    public static final String HOLD = "hold";
-
-    public static final String ENDORSE = "endorse";
-    public static final String PROMOTE = "promote";
-    public static final String SIGN = "sign";
     public static final String ADVANCE = "advance";
-    public static final String ACTION = "action";
-    public static final String SUBTYPE = "subtype";
-    public static final String WOBBLE = "wobble";
-
-    public static final String DEMAND = "demand";
-    public static final String REWARD = "reward";
-    public static final String SPECIAL = "special";
-    public static final String DIFFERENCE = "difference";
-
-    public static final String OPEN = "open";
-    public static final String CLOSE = "close";
-    public static final String BREAK = "break";
-    public static final String SINGLE = "single";
-    public static final String AMBIENT = "ambient";
-    public static final String HURT = "hurt";
-    public static final String DEATH = "death";
-    public static final String YES = "yes";
-    public static final String BRIGHTNESS = "brightness";
-    public static final String SUBTITLE = "subtitle";
-    public static final String RANDOM = "random";
-    public static final String PLACE = "place";
-    public static final String BRICK = "brick";
-    public static final String BASALT = "basalt";
-    public static final String ARCHAEOLOGY = "archaeology";
-    public static final String INJECT = "inject";
-
-    /* =====================================================================
-     * Outcomes / qualifiers
-     * ===================================================================== */
-
-    public static final String SUCCESS = "success";
-    public static final String FAIL = "fail";
-
-    public static final String WRONG = "wrong";
-    public static final String ENOUGH = "enough";
-    public static final String ALREADY = "already";
-    public static final String DEPRECATED = "deprecated";
-
-    public static final String CANT = "cant";
-    public static final String CANNOT = "cannot";
-
-    public static final String SOME = "some";
-    public static final String ENDORSED = "endorsed";
-    public static final String PLACED = "placed";
-
-
-    /* =====================================================================
-     * Effects / properties / mechanics nouns
-     * ===================================================================== */
-
-    public static final String KNOWS = "knows";
-    public static final String FILLED = "filled";
-
-    public static final String RESISTANCE = "resistance";
-    public static final String UNBREAKING = "unbreaking";
-
-    public static final String DAY = "day";
-    public static final String NIGHT = "night";
-
-    public static final String ATTACK = "attack";
-    public static final String DAMAGE = "damage";
-    public static final String MOVEMENT = "movement";
-    public static final String SPEED = "speed";
-    public static final String SLOW = "slow";
-
-    public static final String CHEST = "chest";
-    public static final String MAGIC = "magic";
-
-    public static final String HOMESTEAD = "homestead";
-    public static final String MEMORY = "memory";
-    public static final String LOCKPICKING = "lockpicking";
-    public static final String HASTE = "haste";
-
-    public static final String CURSED = "cursed";
-    public static final String WOUND = "wound";
-    public static final String DELIRIUM = "delirium";
-    public static final String CURSE = "curse";
-    public static final String CORROSION = "corrosion";
-    public static final String RADIANT = "radiant";
-
-    public static final String DURABILITY = "durability";
-    public static final String ENCHANTABLE = "enchantable";
-    public static final String OVERLAY = "overlay";
-
-    /* =====================================================================
-     * Program / integration / UI nouns
-     * ===================================================================== */
-
-    public static final String JEI = "jei";
-    public static final String PLUGIN = "plugin";
-    public static final String INFO = "info";
-    public static final String PAGE = "page";
-    public static final String TITLE = "title";
-
-    public static final String PARTICLE = "particle";
-    public static final String SOUND = "sound";
-
-    public static final String LANGUAGE = "language";
-    public static final String TAB = "tab";
-    public static final String TOOLTIP = "tooltip";
-    public static final String MENU = "menu";
-    public static final String CONTAINER = "container";
-    public static final String EFFECT = "effect";
-
-    public static final String SHIFT = "shift";
-    public static final String PROGRESS = "progress";
-    public static final String PREFIX = "prefix";
-
-    /* =====================================================================
-     * World / space / coordinates
-     * ===================================================================== */
-
-    public static final String PLAYER = "player";
-    public static final String POSITION = "position";
-    public static final String DIMENSION = "dimension";
-
-    public static final String SAFE = "safe";
-    public static final String BED = "bed";
-    public static final String NEARBY = "nearby";
-
-    /* =====================================================================
-     * Loot / recipes / crafting nouns
-     * ===================================================================== */
-
-    public static final String LOOT = "loot";
-    public static final String SEED = "seed";
-    public static final String TABLE = "table";
-    public static final String PAPER = "paper";
-    public static final String STONE = "stone";
-    public static final String COAL = "coal";
-
-    public static final String RECIPE = "recipe";
-    public static final String ADVANCEMENT = "advancement";
-
-    public static final String INPUT = "input";
-    public static final String OUTPUT = "output";
-    public static final String TOOL = "tool";
-
-    public static final String RESULT = "result";
-    public static final String INGREDIENT = "ingredient";
-    public static final String COMPONENT = "component";
-
-    /* =====================================================================
-     * Map / structure / discovery nouns
-     * ===================================================================== */
-
-    public static final String MAP = "map";
-    public static final String DISPLAY = "display";
-    public static final String NAME = "name";
-    public static final String DECORATION = "decoration";
-
-    public static final String DESTINATION = "destination";
-    public static final String STRUCTURE = "structure";
-    public static final String DISCOVERED = "discovered";
-
-    /* =====================================================================
-     * Trades / economy nouns
-     * ===================================================================== */
-
-    public static final String TRADE = "trade";
-    public static final String POOL = "pool";
-    public static final String OFFER = "offer";
-    public static final String PROVIDER = "provider";
-    public static final String ROLL = "roll";
-
-    public static final String PRICE = "price";
-    public static final String MULTIPLIER = "multiplier";
-    public static final String VILLAGER = "villager";
-
-    public static final String ENCHANTMENT = "enchantment";
-    public static final String STACK = "stack";
-    public static final String MODIFIER = "modifier";
-    public static final String PATCH = "patch";
-
-    public static final String COST = "cost";
-
-    /* =====================================================================
-     * Brewing / processing nouns
-     * ===================================================================== */
-
-    public static final String BREW = "brew";
-    public static final String BUBBLE = "bubble";
-    public static final String TICK = "tick";
-
-    public static final String EXACT = "exact";
-
-    public static final String HOP = "hop";
-    public static final String MULTI = "multi";
-
-    public static final String BREWING = "brewing";
     public static final String BLEND = "blend";
-    public static final String TOTAL = "total";
-    public static final String TIME = "time";
-    public static final String DELAY = "delay";
-
-    /* =====================================================================
-     * Creatures / classification nouns
-     * ===================================================================== */
-
-    public static final String EGG = "egg";
-    public static final String CREATURE = "creature";
-    public static final String MONSTER = "monster";
-
-    /* =====================================================================
-     * Dwarves / social nouns
-     * ===================================================================== */
-
-    public static final String DWARF = "dwarf";
-    public static final String DWARVEN = "dwarven";
-
-    public static final String PROFESSION = "profession";
-    public static final String REPUTATION = "reputation";
-    public static final String ENDORSEMENT = "endorsement";
-
-    public static final String BUSY = "busy";
-    public static final String PAID = "paid";
-    public static final String PROMOTION = "promotion";
-
-    public static final String PARTIAL = "partial";
-    public static final String UNDERSTANDING = "understanding";
-
-    // Professions
-    public static final String ALCHEMIST = "alchemist";
-    public static final String ARCANIST = "arcanist";
-    public static final String ARTISAN = "artisan";
-    public static final String BREWMASTER = "brewmaster";
-    public static final String EXPLORER = "explorer";
-    public static final String GUARD = "guard";
-    public static final String GUILDMASTER = "guildmaster";
-    public static final String HISTORIAN = "historian";
-    public static final String KEEPER = "keeper";
-    public static final String MERCHANT = "merchant";
-    public static final String MINER = "miner";
-    public static final String PRIEST = "priest";
-    public static final String SCRAPPER = "scrapper";
-    public static final String CHAMPION = "champion";
-    public static final String BLACKSMITH = "blacksmith";
-    public static final String SMELTER = "smelter";
-
-    /* =====================================================================
-     * Locks / access nouns
-     * ===================================================================== */
-
-    public static final String LOCKED = "locked";
-    public static final String UNLOCK = "unlock";
-    public static final String UNLOCKED = "unlocked";
-
-    /* =====================================================================
-     * Bounties / crates nouns
-     * ===================================================================== */
-
-    public static final String BOUNTY = "bounty";
-    public static final String CRATE = "crate";
-    public static final String CHANCE = "chance";
-
-    /* =====================================================================
-     * Content domains / registry-ish nouns
-     * ===================================================================== */
-
-    public static final String ITEM = "item";
-    public static final String BLOCK = "block";
-    public static final String ENTITY = "entity";
-    public static final String ENTITIES = "entities";
-    public static final String STAT = "stat";
-    public static final String ATTRIBUTE = "attribute";
-    public static final String ATTACHMENT = "attachment";
-    public static final String CONFIG = "config";
-    public static final String DATAGEN = "datagen";
-    public static final String INIT = "init";
-    public static final String NETWORK = "network";
-
-    public static final String VANILLA = "vanilla";
-
-    /* =====================================================================
-     * Materials (broad)
-     * ===================================================================== */
-
-    public static final String DEEPSLATE = "deepslate";
-    public static final String GEODE = "geode";
-    public static final String MITHRIL = "mithril";
-    public static final String DARKER = "darker";
-
-    /* =====================================================================
-     * Armor / equipment / trims nouns
-     * ===================================================================== */
-
-    public static final String ARMOR = "armor";
-    public static final String TOUGHNESS = "toughness";
-
-    public static final String EQUIP = "equip";
-    public static final String EQUIPMENT = "equipment";
-    public static final String ASSET = "asset";
-
-    public static final String HELMET = "helmet";
-    public static final String CHESTPLATE = "chestplate";
-    public static final String LEGGINGS = "leggings";
-    public static final String BOOTS = "boots";
-
-    public static final String TRIM = "trim";
-    public static final String SMITHING = "smithing";
-    public static final String MATERIAL = "material";
-    public static final String TEMPLATE = "template";
-    public static final String PATTERN = "pattern";
-
-    /* =====================================================================
-     * Entity properties / variants nouns
-     * ===================================================================== */
-
-    public static final String PROPERTIES = "properties";
-
-    public static final String AGE = "age";
-    public static final String BABY = "baby";
-
-    public static final String VARIANT = "variant";
-    public static final String BEARD = "beard";
-    public static final String EYE = "eye";
-
-    public static final String LOVE = "love";
-    public static final String CAUSE = "cause";
-    public static final String FORCED = "forced";
-
-    public static final String OWNER = "owner";
-
-    /* =====================================================================
-     * Lore / tomes / ancient nouns
-     * ===================================================================== */
-
-    public static final String TABLET = "tablet";
-    public static final String LORE = "lore";
-    public static final String TOME = "tome";
-    public static final String ANCIENT = "ancient";
-    public static final String BOOK = "book";
-
-    /* =====================================================================
-     * Stations / blocks / place nouns
-     * ===================================================================== */
-
-    public static final String LAPIDARY = "lapidary";
-    public static final String BENCH = "bench";
-    public static final String FERMENTING = "fermenting";
-    public static final String CAULDRON = "cauldron";
-
-    public static final String STRONGBOX = "strongbox";
-    public static final String HEARTH = "hearth";
-
-    public static final String MANAGED = "managed";
-    public static final String LIGHT = "light";
-    public static final String DUMMY = "dummy";
-
-    public static final String VERDANT = "verdant";
-    public static final String SOIL = "soil";
-    public static final String FARMLAND = "farmland";
-
-    public static final String CROP = "crop";
-    public static final String ORE = "ore";
-
-    public static final String POTTED = "potted";
-    public static final String DUSKCAP = "duskcap";
-    public static final String FESTERLING = "festerling";
-
-    public static final String BARLEY = "barley";
-    public static final String MALT = "malt";
-
-    public static final String MUFFHORN = "muffhorn";
-    public static final String FUR = "fur";
-    public static final String MILK = "milk";
-    public static final String BUCKET = "bucket";
-
-    public static final String BULB = "bulb";
-    public static final String TOP = "top";
-    public static final String BOTTOM = "bottom";
-
-    public static final String ASGARNIAN = "asgarnian";
-    public static final String DUSKHOLD = "duskhold";
-    public static final String KRANDONIAN = "krandonian";
-    public static final String YANILLIAN = "yanillian";
-
-    public static final String COMPASS = "compass";
-    public static final String DIAL = "dial";
-    public static final String MORTAR = "mortar";
-
-    /* =====================================================================
-     * Tools / items / parts nouns
-     * ===================================================================== */
-
-    public static final String WARHAMMER = "warhammer";
-    public static final String SPANNER = "spanner";
-    public static final String HAMMER = "hammer";
-    public static final String CHISEL = "chisel";
-    public static final String PESTLE = "pestle";
-
+    public static final String BREAK = "break";
+    public static final String BREW = "brew";
+    public static final String CLOSE = "close";
+    public static final String COMPLETE = "complete";
     public static final String CUT = "cut";
-
-    public static final String GEM = "gem";
-    public static final String UNCUT = "uncut";
-    public static final String DUST = "dust";
-
-    public static final String CONTRACT = "contract";
+    public static final String DEMAND = "demand";
+    public static final String ENDORSE = "endorse";
+    public static final String EXTRACT = "extract";
+    public static final String FILL = "fill";
+    public static final String FINALIZE = "finalize";
+    public static final String HAS = "has";
+    public static final String HOLD = "hold";
+    public static final String IDENTIFY = "identify";
+    public static final String INCREASE = "increase";
+    public static final String INJECT = "inject";
+    public static final String LOCATE = "locate";
+    public static final String NEED = "need";
+    public static final String OPEN = "open";
+    public static final String PLACE = "place";
+    public static final String PLAY = "play";
+    public static final String PROMOTE = "promote";
+    public static final String READ = "read";
     public static final String REPAIR = "repair";
+    public static final String REROLL = "reroll";
+    public static final String RESET = "reset";
+    public static final String RESTOCK = "restock";
+    public static final String REWARD = "reward";
+    public static final String SELECT = "select";
+    public static final String SIGN = "sign";
+    public static final String SPAWN = "spawn";
+    public static final String SYNC = "sync";
+    public static final String UNLOCK = "unlock";
+    public static final String USE = "use";
 
     /* =====================================================================
-     * Categories / groupings (inventory-ish)
+     * Adjectives / qualifiers (open class)
      * ===================================================================== */
 
-    public static final String GLOBAL = "global";
-    public static final String GENERAL = "general";
-    public static final String TEXTILE = "textile";
-    public static final String REDSTONE = "redstone";
-    public static final String IRON = "iron";
-    public static final String GOLD = "gold";
-
-    /* =====================================================================
-     * World / tags / biomes nouns
-     * ===================================================================== */
-
-    public static final String PLANTABLE = "plantable";
-    public static final String MUSHROOM = "mushroom";
-
-    public static final String MOUNTAIN = "mountain";
-    public static final String HILL = "hill";
-
-    /* =====================================================================
-     * Core item words
-     * ===================================================================== */
-
-    public static final String DEV = "dev";
-    public static final String COIN = "coin";
-    public static final String POUCH = "pouch";
-    public static final String LEXICON = "lexicon";
-    public static final String LOCKPICK = "lockpick";
-    public static final String EMPTY = "empty";
-
-    /* =====================================================================
-     * Materials / crafting parts nouns
-     * (RESTORED from old dictionary — these were missing)
-     * ===================================================================== */
-
-    public static final String IMPURE = "impure";
-    public static final String PURE = "pure";
-    public static final String INGOT = "ingot";
-    public static final String NUGGET = "nugget";
-    public static final String CHAINWEAVE = "chainweave";
-
-    public static final String SWORD = "sword";
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL = "shovel";
-    public static final String AXE = "axe";
-    public static final String HOE = "hoe";
-
-    public static final String PLATE = "plate";
-    public static final String ROD = "rod";
-
-    /* =====================================================================
-     * Paper / writing / contract nouns
-     * ===================================================================== */
-
-    public static final String INK = "ink";
-    public static final String QUILL = "quill";
-
-    public static final String PARCHMENT = "parchment";
+    public static final String ACTIVE = "active";
+    public static final String ALREADY = "already";
+    public static final String AMBIENT = "ambient";
     public static final String BLANK = "blank";
-    public static final String WRITTEN = "written";
-    public static final String SIGNED = "signed";
-    public static final String GUILD = "guild";
-    public static final String SIGIL = "sigil";
-
-    public static final String HALF = "half";
-    public static final String FULL = "full";
-
-    /* =====================================================================
-     * Brewing / food nouns
-     * ===================================================================== */
-
-    public static final String YEAST = "yeast";
-    public static final String GLASS = "glass";
-    public static final String MUG = "mug";
-
-    /* =====================================================================
-     * Tome rarity / identification adjectives
-     * ===================================================================== */
-
-    public static final String UNIDENTIFIED = "unidentified";
-    public static final String COMMON = "common";
-    public static final String UNCOMMON = "uncommon";
-    public static final String RARE = "rare";
-    public static final String EPIC = "epic";
-    public static final String LEGENDARY = "legendary";
-
-    /* =====================================================================
-     * Metals/tools nouns
-     * ===================================================================== */
-
-    public static final String COPPER = "copper";
-
-    /* =====================================================================
-     * Scrap / broken junk nouns + adjectives
-     * ===================================================================== */
-
-    public static final String SCRAP = "scrap";
-    public static final String SALVAGE = "salvage";
-    public static final String SALVAGEABLE = "salvageable";
-    public static final String HEAP = "heap";
     public static final String BROKEN = "broken";
-    public static final String AMULET = "amulet";
-    public static final String BELT = "belt";
+    public static final String CANNOT = "cannot";
+    public static final String DARKER = "darker";
+    public static final String DEPRECATED = "deprecated";
+    public static final String EMPTY = "empty";
+    public static final String ENDORSED = "endorsed";
+    public static final String ENCHANTABLE = "enchantable";
+    public static final String ENOUGH = "enough";
+    public static final String EXACT = "exact";
     public static final String EXPIRED = "expired";
-    public static final String POTION = "potion";
-    public static final String MOULD = "mould";
+    public static final String EXTRACTABLE = "extractable";
+    public static final String FAIL = "fail";
+    public static final String FILLED = "filled";
+    public static final String FULL = "full";
+    public static final String HALF = "half";
+    public static final String IMPURE = "impure";
+    public static final String INVALID = "invalid";
+    public static final String LARGE = "large";
+    public static final String LEGENDARY = "legendary";
+    public static final String LOCKED = "locked";
+    public static final String LONG = "long";
+    public static final String MAIN = "main";
+    public static final String MANAGED = "managed";
+    public static final String MEDIUM = "medium";
+    public static final String NONE = "none";
     public static final String OLD = "old";
-    public static final String FABRIC = "fabric";
+    public static final String PARTIAL = "partial";
+    public static final String PERSISTENT = "persistent";
+    public static final String PLACED = "placed";
+    public static final String PLANTABLE = "plantable";
+    public static final String POTTED = "potted";
+    public static final String PURE = "pure";
+    public static final String RANDOM = "random";
     public static final String RUSTY = "rusty";
-    public static final String TONG = "tong";
-    public static final String GEAR = "gear";
-    public static final String HEAD = "head";
+    public static final String SAFE = "safe";
+    public static final String SALVAGEABLE = "salvageable";
+    public static final String SIGNED = "signed";
+    public static final String SINGLE = "single";
+    public static final String SMALL = "small";
+    public static final String SPECIAL = "special";
+    public static final String STRONG = "strong";
+    public static final String SUCCESS = "success";
+    public static final String UNIDENTIFIED = "unidentified";
+    public static final String UNLOCKED = "unlocked";
+    public static final String UNKNOWN = "unknown";
+    public static final String VALID = "valid";
+    public static final String WRONG = "wrong";
+    public static final String WRITTEN = "written";
 
     /* =====================================================================
-     * Proper names (Gems)
+     * Proper names (gems)
      * ===================================================================== */
 
     public static final String AEGISCORE = "aegiscore";
@@ -661,27 +141,317 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String WOECRYSTAL = "woecrystal";
 
     /* =====================================================================
-     * Structure / worldgen field nouns
+     * Demonyms / fixed culture names
      * ===================================================================== */
 
-    public static final String START = "start";
-    public static final String JIGSAW = "jigsaw";
-    public static final String SIZE = "size";
-    public static final String HEIGHT = "height";
-    public static final String PROJECT = "project";
-    public static final String HEIGHTMAP = "heightmap";
-    public static final String DISTANCE = "distance";
-    public static final String CENTER = "center";
-    public static final String PADDING = "padding";
-    public static final String LIQUID = "liquid";
-    public static final String SETTING = "setting";
-
-    public static final String TRAIL = "trail";
-    public static final String RUIN = "ruin";
+    public static final String ASGARNIAN = "asgarnian";
+    public static final String DUSKHOLD = "duskhold";
+    public static final String KRANDONIAN = "krandonian";
+    public static final String YANILLIAN = "yanillian";
 
     /* =====================================================================
-     * Misc singletons that are still legitimate lexemes
+     * Professions
      * ===================================================================== */
 
+    public static final String ALCHEMIST = "alchemist";
+    public static final String ARCANIST = "arcanist";
+    public static final String ARTISAN = "artisan";
+    public static final String BLACKSMITH = "blacksmith";
+    public static final String BREWMASTER = "brewmaster";
+    public static final String CHAMPION = "champion";
+    public static final String EXPLORER = "explorer";
+    public static final String GUARD = "guard";
+    public static final String GUILDMASTER = "guildmaster";
+    public static final String HISTORIAN = "historian";
+    public static final String KEEPER = "keeper";
+    public static final String MERCHANT = "merchant";
+    public static final String MINER = "miner";
+    public static final String PRIEST = "priest";
+    public static final String SCRAPPER = "scrapper";
+    public static final String SMELTER = "smelter";
+
+    /* =====================================================================
+     * Nouns (open class)
+     * ===================================================================== */
+
+    public static final String ACTION = "action";
+    public static final String ADVANCEMENT = "advancement";
+    public static final String AGE = "age";
+    public static final String AMOUNT = "amount";
+    public static final String AMPLIFIER = "amplifier";
+    public static final String AMULET = "amulet";
+    public static final String ANCIENT = "ancient";
+    public static final String ARCHAEOLOGY = "archaeology";
+    public static final String ARMOR = "armor";
+    public static final String ASSET = "asset";
+    public static final String ATTACHMENT = "attachment";
+    public static final String ATTACK = "attack";
+    public static final String ATTRIBUTE = "attribute";
+    public static final String AXE = "axe";
+    public static final String BABY = "baby";
+    public static final String BARLEY = "barley";
+    public static final String BASALT = "basalt";
+    public static final String BED = "bed";
+    public static final String BEARD = "beard";
+    public static final String BELT = "belt";
+    public static final String BENCH = "bench";
+    public static final String BLOCK = "block";
+    public static final String BOOK = "book";
+    public static final String BOOTS = "boots";
+    public static final String BOTTOM = "bottom";
+    public static final String BOUNTY = "bounty";
+    public static final String BREWING = "brewing";
+    public static final String BRICK = "brick";
+    public static final String BRIGHTNESS = "brightness";
+    public static final String BUBBLE = "bubble";
+    public static final String BUCKET = "bucket";
+    public static final String BULB = "bulb";
+    public static final String BUSY = "busy";
+    public static final String CAULDRON = "cauldron";
+    public static final String CAUSE = "cause";
+    public static final String CENTER = "center";
+    public static final String CHAINWEAVE = "chainweave";
+    public static final String CHANCE = "chance";
+    public static final String CHEST = "chest";
+    public static final String CHESTPLATE = "chestplate";
+    public static final String CHISEL = "chisel";
+    public static final String COAL = "coal";
+    public static final String COIN = "coin";
+    public static final String COLOR = "color";
+    public static final String COMPONENT = "component";
+    public static final String COMPASS = "compass";
+    public static final String CONFIG = "config";
+    public static final String CONTAINER = "container";
+    public static final String CONTRACT = "contract";
+    public static final String COOLDOWN = "cooldown";
+    public static final String COPPER = "copper";
+    public static final String CORROSION = "corrosion";
+    public static final String COST = "cost";
+    public static final String COUNT = "count";
+    public static final String CRATE = "crate";
+    public static final String CREATURE = "creature";
+    public static final String CROP = "crop";
+    public static final String CURRENT = "current";
+    public static final String CURSE = "curse";
+    public static final String CURSED = "cursed";
+    public static final String DAMAGE = "damage";
+    public static final String DATA = "data";
+    public static final String DATAGEN = "datagen";
+    public static final String DAY = "day";
+    public static final String DEATH = "death";
+    public static final String DEEPSLATE = "deepslate";
+    public static final String DEFAULT = "default";
+    public static final String DECORATION = "decoration";
+    public static final String DELAY = "delay";
+    public static final String DELIRIUM = "delirium";
+    public static final String DESTINATION = "destination";
+    public static final String DEV = "dev";
+    public static final String DIAL = "dial";
+    public static final String DIFFERENCE = "difference";
+    public static final String DIMENSION = "dimension";
+    public static final String DISCOVERED = "discovered";
+    public static final String DISTANCE = "distance";
+    public static final String DISPLAY = "display";
+    public static final String DUMMY = "dummy";
+    public static final String DURATION = "duration";
+    public static final String DURABILITY = "durability";
+    public static final String DUSKCAP = "duskcap";
+    public static final String DUST = "dust";
+    public static final String DWARF = "dwarf";
+    public static final String DWARVEN = "dwarven";
+    public static final String EGG = "egg";
+    public static final String EFFECT = "effect";
+    public static final String ENCHANTMENT = "enchantment";
+    public static final String END = "end";
+    public static final String ENDORSEMENT = "endorsement";
+    public static final String ENTITIES = "entities";
+    public static final String ENTITY = "entity";
+    public static final String EQUIP = "equip";
+    public static final String EQUIPMENT = "equipment";
+    public static final String EXPERIENCE = "experience";
+    public static final String EYE = "eye";
+    public static final String FABRIC = "fabric";
+    public static final String FARMLAND = "farmland";
+    public static final String FERMENTING = "fermenting";
+    public static final String FESTERLING = "festerling";
+    public static final String FORCED = "forced";
     public static final String FORGE = "forge";
+    public static final String FUR = "fur";
+    public static final String GEAR = "gear";
+    public static final String GENERAL = "general";
+    public static final String GEM = "gem";
+    public static final String GEODE = "geode";
+    public static final String GLASS = "glass";
+    public static final String GOLD = "gold";
+    public static final String GROUP = "group";
+    public static final String GUILD = "guild";
+    public static final String HAMMER = "hammer";
+    public static final String HASTE = "haste";
+    public static final String HEAD = "head";
+    public static final String HEAP = "heap";
+    public static final String HEARTH = "hearth";
+    public static final String HEIGHT = "height";
+    public static final String HEIGHTMAP = "heightmap";
+    public static final String HELMET = "helmet";
+    public static final String HILL = "hill";
+    public static final String HOE = "hoe";
+    public static final String HOMESTEAD = "homestead";
+    public static final String HOP = "hop";
+    public static final String HURT = "hurt";
+    public static final String ID = "id";
+    public static final String INK = "ink";
+    public static final String INGOT = "ingot";
+    public static final String INGREDIENT = "ingredient";
+    public static final String INFO = "info";
+    public static final String INIT = "init";
+    public static final String INPUT = "input";
+    public static final String IRON = "iron";
+    public static final String ITEM = "item";
+    public static final String JEI = "jei";
+    public static final String JIGSAW = "jigsaw";
+    public static final String KEY = "key";
+    public static final String KNOWS = "knows";
+    public static final String LANGUAGE = "language";
+    public static final String LAPIDARY = "lapidary";
+    public static final String LAST = "last";
+    public static final String LEGGINGS = "leggings";
+    public static final String LEVEL = "level";
+    public static final String LEXICON = "lexicon";
+    public static final String LIGHT = "light";
+    public static final String LIQUID = "liquid";
+    public static final String LOCKPICK = "lockpick";
+    public static final String LOCKPICKING = "lockpicking";
+    public static final String LOOT = "loot";
+    public static final String LORE = "lore";
+    public static final String LOVE = "love";
+    public static final String MAGIC = "magic";
+    public static final String MALT = "malt";
+    public static final String MAP = "map";
+    public static final String MATERIAL = "material";
+    public static final String MAX = "max";
+    public static final String MEMORY = "memory";
+    public static final String MENU = "menu";
+    public static final String MILK = "milk";
+    public static final String MIN = "min";
+    public static final String MITHRIL = "mithril";
+    public static final String MODIFIER = "modifier";
+    public static final String MONSTER = "monster";
+    public static final String MORTAR = "mortar";
+    public static final String MOULD = "mould";
+    public static final String MOUNTAIN = "mountain";
+    public static final String MOVEMENT = "movement";
+    public static final String MUG = "mug";
+    public static final String MULTI = "multi";
+    public static final String MULTIPLIER = "multiplier";
+    public static final String MUFFHORN = "muffhorn";
+    public static final String MUSHROOM = "mushroom";
+    public static final String NAME = "name";
+    public static final String NEARBY = "nearby";
+    public static final String NETWORK = "network";
+    public static final String NIGHT = "night";
+    public static final String NUGGET = "nugget";
+    public static final String OFFER = "offer";
+    public static final String ORE = "ore";
+    public static final String ORDER = "order";
+    public static final String OUTPUT = "output";
+    public static final String OVERLAY = "overlay";
+    public static final String OWNER = "owner";
+    public static final String PADDING = "padding";
+    public static final String PAGE = "page";
+    public static final String PAPER = "paper";
+    public static final String PARCHMENT = "parchment";
+    public static final String PARTICLE = "particle";
+    public static final String PATCH = "patch";
+    public static final String PATTERN = "pattern";
+    public static final String PAID = "paid";
+    public static final String PESTLE = "pestle";
+    public static final String PICKAXE = "pickaxe";
+    public static final String PLATE = "plate";
+    public static final String PLAYER = "player";
+    public static final String PLUGIN = "plugin";
+    public static final String POOL = "pool";
+    public static final String POSITION = "position";
+    public static final String POTION = "potion";
+    public static final String POUCH = "pouch";
+    public static final String PREFIX = "prefix";
+    public static final String PRICE = "price";
+    public static final String PROGRESS = "progress";
+    public static final String PROJECT = "project";
+    public static final String PROFESSION = "profession";
+    public static final String PROMOTION = "promotion";
+    public static final String PROPERTIES = "properties";
+    public static final String PROVIDER = "provider";
+    public static final String QUILL = "quill";
+    public static final String RADIANT = "radiant";
+    public static final String RECIPE = "recipe";
+    public static final String REDSTONE = "redstone";
+    public static final String REPUTATION = "reputation";
+    public static final String RESISTANCE = "resistance";
+    public static final String RESULT = "result";
+    public static final String RGB = "rgb";
+    public static final String ROD = "rod";
+    public static final String ROLL = "roll";
+    public static final String RUIN = "ruin";
+    public static final String SALVAGE = "salvage";
+    public static final String SCORE = "score";
+    public static final String SCRAP = "scrap";
+    public static final String SEED = "seed";
+    public static final String SELECTION = "selection";
+    public static final String SETTING = "setting";
+    public static final String SHIFT = "shift";
+    public static final String SHOVEL = "shovel";
+    public static final String SIGIL = "sigil";
+    public static final String SIZE = "size";
+    public static final String SLOW = "slow";
+    public static final String SMITHING = "smithing";
+    public static final String SOIL = "soil";
+    public static final String SOUND = "sound";
+    public static final String SPANNER = "spanner";
+    public static final String SPEED = "speed";
+    public static final String STACK = "stack";
+    public static final String START = "start";
+    public static final String STATE = "state";
+    public static final String STAT = "stat";
+    public static final String STONE = "stone";
+    public static final String STRONGBOX = "strongbox";
+    public static final String STRUCTURE = "structure";
+    public static final String SUBTITLE = "subtitle";
+    public static final String SUBTYPE = "subtype";
+    public static final String SWORD = "sword";
+    public static final String TAB = "tab";
+    public static final String TABLE = "table";
+    public static final String TABLET = "tablet";
+    public static final String TAG = "tag";
+    public static final String TARGET = "target";
+    public static final String TEMPLATE = "template";
+    public static final String TEXTILE = "textile";
+    public static final String TICK = "tick";
+    public static final String TIER = "tier";
+    public static final String TIME = "time";
+    public static final String TITLE = "title";
+    public static final String TOME = "tome";
+    public static final String TOOL = "tool";
+    public static final String TOOLTIP = "tooltip";
+    public static final String TOP = "top";
+    public static final String TOUGHNESS = "toughness";
+    public static final String TOTAL = "total";
+    public static final String TRADE = "trade";
+    public static final String TONG = "tong";
+    public static final String TRAIL = "trail";
+    public static final String TRIM = "trim";
+    public static final String TYPE = "type";
+    public static final String UNCUT = "uncut";
+    public static final String UNDERSTANDING = "understanding";
+    public static final String UNBREAKING = "unbreaking";
+    public static final String VANILLA = "vanilla";
+    public static final String VARIANT = "variant";
+    public static final String VERDANT = "verdant";
+    public static final String VILLAGER = "villager";
+    public static final String WEIGHT = "weight";
+    public static final String WOBBLE = "wobble";
+    public static final String WOUND = "wound";
+    public static final String WARHAMMER = "warhammer";
+    public static final String XP = "xp";
+    public static final String YEAST = "yeast";
+    public static final String YES = "yes";
 }

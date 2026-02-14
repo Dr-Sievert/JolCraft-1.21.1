@@ -33,7 +33,6 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -199,55 +198,74 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
 
     }
 
-
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, JeiInfoPageRecipe recipe, IFocusGroup focuses) {
         int slotX = (getWidth() - 18) / 2;
         int slotY = 8;
 
         Minecraft mc = Minecraft.getInstance();
-        RegistryAccess registryAccess = mc.level != null ? mc.level.registryAccess() : null;
+        RegistryAccess registryAccess = (mc.level != null) ? mc.level.registryAccess() : null;
 
-        if (recipe.isGroup()) {
-            List<ItemStack> group = registryAccess != null ? recipe.getGroupStacks(registryAccess) : recipe.getGroupStacks();
-            int groupSize = group.size();
-            if (groupSize == 0) return;
+        // ---------------------------------------------------------------------
+        // Group (explicit list OR block-tag-backed group)
+        // ---------------------------------------------------------------------
+        if (recipe.isGroup() || recipe.isBlockTag()) {
+            if (recipe.isBlockTag() && registryAccess == null) {
+                // Can't expand block tags without registries.
+                return;
+            }
+
+            List<ItemStack> group = (registryAccess != null)
+                    ? recipe.getGroupStacks(registryAccess)
+                    : recipe.getGroupStacks();
+
+            if (group.isEmpty()) return;
 
             int slotSpacing = 20;
-            int totalWidth = slotSpacing * (groupSize - 1);
+            int totalWidth = slotSpacing * (group.size() - 1);
             int startX = slotX - (totalWidth / 2);
 
-            for (int i = 0; i < groupSize; i++) {
+            for (int i = 0; i < group.size(); i++) {
                 ItemStack stack = group.get(i);
-                builder.addSlot(RecipeIngredientRole.INPUT, startX + i * slotSpacing, slotY).add(stack);
-                builder.addSlot(RecipeIngredientRole.OUTPUT, startX + i * slotSpacing, slotY).add(stack);
+                if (stack == null || stack.isEmpty()) continue;
+
+                int x = startX + i * slotSpacing;
+                builder.addSlot(RecipeIngredientRole.INPUT, x, slotY).add(stack);
+                builder.addSlot(RecipeIngredientRole.OUTPUT, x, slotY).add(stack);
             }
             return;
         }
 
-
-        //Tags
+        // ---------------------------------------------------------------------
+        // Item tag
+        // ---------------------------------------------------------------------
         if (recipe.isTag()) {
             if (registryAccess == null) return;
 
-            List<ItemStack> stacks = stacksForItemTag(registryAccess, recipe.getFocusTag());
-            if (!stacks.isEmpty()) {
-                var slot = builder.addSlot(RecipeIngredientRole.INPUT, slotX - 10, slotY);
-                for (ItemStack stack : stacks) slot.add(stack);
+            TagKey<Item> tag = recipe.getFocusTag();
+            if (tag == null) return;
 
-                var outSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, slotX + 10, slotY);
-                for (ItemStack stack : stacks) outSlot.add(stack);
+            List<ItemStack> stacks = stacksForItemTag(registryAccess, tag);
+            if (stacks.isEmpty()) return;
+
+            var in = builder.addSlot(RecipeIngredientRole.INPUT, slotX - 10, slotY);
+            var out = builder.addSlot(RecipeIngredientRole.OUTPUT, slotX + 10, slotY);
+            for (ItemStack stack : stacks) {
+                if (stack == null || stack.isEmpty()) continue;
+                in.add(stack);
+                out.add(stack);
             }
+            return;
         }
 
-        //Single items
-        else {
-            builder.addSlot(RecipeIngredientRole.INPUT, slotX, slotY)
-                    .add(Objects.requireNonNull(recipe.getFocusStack()));
-            builder.addSlot(RecipeIngredientRole.OUTPUT, slotX, slotY)
-                    .add(recipe.getFocusStack());
-        }
+        // ---------------------------------------------------------------------
+        // Single stack
+        // ---------------------------------------------------------------------
+        ItemStack focus = recipe.getFocusStack();
+        if (focus == null || focus.isEmpty()) return;
 
+        builder.addSlot(RecipeIngredientRole.INPUT, slotX, slotY).add(focus);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, slotX, slotY).add(focus);
     }
 
     private static List<ItemStack> stacksForItemTag(RegistryAccess registryAccess, TagKey<Item> tag) {

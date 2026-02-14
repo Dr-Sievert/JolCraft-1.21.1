@@ -5,8 +5,8 @@
       "name": "JOLCRAFT_LEGENDARY",
       "constructor": "(ILjava/lang/String;Ljava/util/function/UnaryOperator;)V",
       "parameters": {
-        "class": "net/sievert/jolcraft/world/item/util/rarity/JolCraftEnumParams",
-        "field": "LEGENDARY_RARITY"
+        "class": "net/sievert/jolcraft/world/item/util/rarity/JolCraftEnumParams$Rarity",
+        "field": "LEGENDARY"
       }
     }
   ]

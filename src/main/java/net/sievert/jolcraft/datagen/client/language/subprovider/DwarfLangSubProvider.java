@@ -35,8 +35,8 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_LOCKED, "The pages are filled with unfamiliar symbols.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_UNLOCKED, "What was once silent may now speak again.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_USE, "You have learned to understand the ancient dwarven language!");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_READ, "You have no idea how to decipher this.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_USE, "The text is clearly dwarvish, but you cannot decipher its secrets.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_READ, "You have no idea how to decipher this.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_USE, "The text is clearly dwarvish, but you cannot decipher its secrets.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE, "You already understand the ancient dwarven language.");
 
         // -----------------------------------------------------------------

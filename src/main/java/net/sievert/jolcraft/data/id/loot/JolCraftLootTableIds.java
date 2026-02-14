@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.id.loot;
 
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
@@ -42,6 +43,6 @@ public final class JolCraftLootTableIds extends JolCraftIds {
      * Archaeology
      * ------------------------------------------------------------------ */
 
-    public static final String DWARVEN_TRAIL_RUIN_COMMON = join(DWARVEN_TRAIL_RUIN, JolCraftDictionary.COMMON);
-    public static final String DWARVEN_TRAIL_RUIN_RARE = join(DWARVEN_TRAIL_RUIN, JolCraftDictionary.RARE);
+    public static final String DWARVEN_TRAIL_RUIN_COMMON = join(DWARVEN_TRAIL_RUIN, Rarity.COMMON.name());
+    public static final String DWARVEN_TRAIL_RUIN_RARE = join(DWARVEN_TRAIL_RUIN, Rarity.RARE.name());
 }

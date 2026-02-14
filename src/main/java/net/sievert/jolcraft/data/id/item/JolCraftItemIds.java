@@ -1,11 +1,13 @@
 package net.sievert.jolcraft.data.id.item;
 
+import net.minecraft.world.item.Rarity;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationTier;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.world.item.util.rarity.JolCraftEnumParams;
 
 public final class JolCraftItemIds extends JolCraftIds {
 
@@ -271,23 +273,23 @@ public final class JolCraftItemIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String DWARVEN_TOME = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.TOME);
-    public static final String DWARVEN_TOME_COMMON = join(DWARVEN_TOME, JolCraftDictionary.COMMON);
-    public static final String DWARVEN_TOME_UNCOMMON = join(DWARVEN_TOME, JolCraftDictionary.UNCOMMON);
-    public static final String DWARVEN_TOME_RARE = join(DWARVEN_TOME, JolCraftDictionary.RARE);
-    public static final String DWARVEN_TOME_EPIC = join(DWARVEN_TOME, JolCraftDictionary.EPIC);
+    public static final String DWARVEN_TOME_COMMON = join(DWARVEN_TOME, JolCraftRarityIds.COMMON);
+    public static final String DWARVEN_TOME_UNCOMMON = join(DWARVEN_TOME, JolCraftRarityIds.UNCOMMON);
+    public static final String DWARVEN_TOME_RARE = join(DWARVEN_TOME, JolCraftRarityIds.RARE);
+    public static final String DWARVEN_TOME_EPIC = join(DWARVEN_TOME, JolCraftRarityIds.EPIC);
 
     public static final String ANCIENT_DWARVEN_TOME = join(JolCraftDictionary.ANCIENT, DWARVEN_TOME);
-    public static final String ANCIENT_DWARVEN_TOME_COMMON = join(ANCIENT_DWARVEN_TOME, JolCraftDictionary.COMMON);
-    public static final String ANCIENT_DWARVEN_TOME_UNCOMMON = join(ANCIENT_DWARVEN_TOME, JolCraftDictionary.UNCOMMON);
-    public static final String ANCIENT_DWARVEN_TOME_RARE = join(ANCIENT_DWARVEN_TOME, JolCraftDictionary.RARE);
-    public static final String ANCIENT_DWARVEN_TOME_EPIC = join(ANCIENT_DWARVEN_TOME, JolCraftDictionary.EPIC);
-    public static final String ANCIENT_DWARVEN_TOME_LEGENDARY = join(ANCIENT_DWARVEN_TOME,JolCraftDictionary.LEGENDARY);
+    public static final String ANCIENT_DWARVEN_TOME_COMMON = join(ANCIENT_DWARVEN_TOME, JolCraftRarityIds.COMMON);
+    public static final String ANCIENT_DWARVEN_TOME_UNCOMMON = join(ANCIENT_DWARVEN_TOME, JolCraftRarityIds.UNCOMMON);
+    public static final String ANCIENT_DWARVEN_TOME_RARE = join(ANCIENT_DWARVEN_TOME, JolCraftRarityIds.RARE);
+    public static final String ANCIENT_DWARVEN_TOME_EPIC = join(ANCIENT_DWARVEN_TOME, JolCraftRarityIds.EPIC);
+    public static final String ANCIENT_DWARVEN_TOME_LEGENDARY = join(ANCIENT_DWARVEN_TOME, JolCraftRarityIds.LEGENDARY);
 
     public static final String UNIDENTIFIED_DWARVEN_TOME = join(JolCraftDictionary.UNIDENTIFIED, DWARVEN_TOME);
     public static final String UNIDENTIFIED_ANCIENT_DWARVEN_TOME = join(JolCraftDictionary.UNIDENTIFIED, ANCIENT_DWARVEN_TOME);
     public static final String UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME = join(JolCraftDictionary.UNIDENTIFIED, ANCIENT_DWARVEN_TOME_LEGENDARY);
 
-    public static final String LEGENDARY_PAGE = join(JolCraftDictionary.LEGENDARY, JolCraftDictionary.PAGE);
+    public static final String LEGENDARY_PAGE = join(JolCraftRarityIds.LEGENDARY, JolCraftDictionary.PAGE);
 
     // ---------------------------------------------------------------------
     // Tools

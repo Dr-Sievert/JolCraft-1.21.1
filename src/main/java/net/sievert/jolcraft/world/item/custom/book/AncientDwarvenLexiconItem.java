@@ -45,11 +45,11 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
                         .withStyle(ChatFormatting.GREEN), true);
             } else {
                 if (!knowsLang) {
-                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_READ)
+                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_READ)
                             .withStyle(ChatFormatting.RED), true);
                     PlaySound.bookPut(player);
                 } else if (!hasEffect) {
-                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_USE)
+                    serverPlayer.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_USE)
                             .withStyle(ChatFormatting.RED), true);
                     PlaySound.bookPut(player);
                 } else {

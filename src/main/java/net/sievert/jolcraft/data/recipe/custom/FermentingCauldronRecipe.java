@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -128,7 +129,7 @@ public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipe
 
     @Override
     public PlacementInfo placementInfo() {
-        return PlacementInfo.NOT_PLACEABLE;
+        return PlacementInfo.create(this.ingredient);
     }
 
     @Override

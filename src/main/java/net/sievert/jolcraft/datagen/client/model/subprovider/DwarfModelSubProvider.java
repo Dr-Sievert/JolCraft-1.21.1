@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.LoreRarity;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -111,7 +112,15 @@ public final class DwarfModelSubProvider implements AbstractModelProvider.ModelS
 
         for (DwarfLoreKey loreKey : legendaryLoreKeys) {
             String keyString = loreKey.name().toLowerCase(Locale.ROOT);
-            String modelName = "item/book/tome/ancient_dwarven_tome_legendary_" + keyString;
+            String modelName = JolCraftStrings.slashed(
+                    JolCraftDictionary.ITEM,
+                    JolCraftDictionary.BOOK,
+                    JolCraftDictionary.TOME,
+                    JolCraftStrings.underscored(
+                            JolCraftItemIds.ANCIENT_DWARVEN_TOME_LEGENDARY,
+                            keyString
+                    )
+            );
             ResourceLocation modelLoc = JolCraft.location(modelName);
 
             ModelTemplates.FLAT_ITEM.create(modelLoc, TextureMapping.layer0(modelLoc), itemModels.modelOutput);

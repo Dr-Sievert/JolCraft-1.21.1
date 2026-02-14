@@ -94,8 +94,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_BOUNTY_CRATE_FILLED =
             tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.FILLED);
 
-    public static final String TOOLTIP_BOUNTY_CRATE_FILLED_SOME =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.FILLED, JolCraftDictionary.SOME));
+    public static final String TOOLTIP_BOUNTY_CRATE_FILLED_PARTIAL =
+            tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.FILLED, JolCraftDictionary.PARTIAL));
 
     public static final String TOOLTIP_BOUNTY_CRATE_NO_ITEMS =
             tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.ITEM)));
@@ -283,11 +283,11 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_USE =
             tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, JolCraftDictionary.USE);
 
-    public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_READ =
-            tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.CANT, JolCraftDictionary.READ));
+    public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_READ =
+            tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.CANNOT, JolCraftDictionary.READ));
 
-    public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANT_USE =
-            tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.CANT, JolCraftDictionary.USE));
+    public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_USE =
+            tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.CANNOT, JolCraftDictionary.USE));
 
     public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE =
             tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.KNOWS, JolCraftAttachmentIds.ANCIENT_DWARVEN_LANGUAGE));

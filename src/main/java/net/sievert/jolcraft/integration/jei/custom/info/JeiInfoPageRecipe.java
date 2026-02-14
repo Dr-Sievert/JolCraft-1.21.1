@@ -9,29 +9,36 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 public final class JeiInfoPageRecipe {
-    private final ItemStack focusStack;
-    private final TagKey<Item> focusTag;
-    private final TagKey<Block> focusBlockTag;
-    private final List<ItemStack> groupStacks;
+
+    private final @Nullable ItemStack focusStack;
+    private final @Nullable TagKey<Item> focusTag;
+    private final @Nullable TagKey<Block> focusBlockTag;
+    private final @Nullable List<ItemStack> groupStacks;
+
     private final Component content;
-    private final Consumer<ItemStack> stackCustomizer;
-    private final String type;
+    private final @Nullable Consumer<ItemStack> stackCustomizer;
+    private final @Nullable String type;
+
+    /* ---------------------------------------------------------------------
+     * Constructors
+     * ------------------------------------------------------------------ */
 
     public JeiInfoPageRecipe(ItemStack focusStack, Component content) {
-        this(focusStack, content, null, null, null, null, null);
+        this(focusStack, content, null);
     }
 
-    public JeiInfoPageRecipe(ItemStack focusStack, Component content, Consumer<ItemStack> stackCustomizer) {
+    public JeiInfoPageRecipe(ItemStack focusStack, Component content, @Nullable Consumer<ItemStack> stackCustomizer) {
         this(focusStack, content, stackCustomizer, null, null, null, null);
     }
 
-    public JeiInfoPageRecipe(List<ItemStack> groupStacks, Component content, String type) {
+    public JeiInfoPageRecipe(List<ItemStack> groupStacks, Component content, @Nullable String type) {
         this(null, content, null, groupStacks, type, null, null);
     }
 
@@ -39,14 +46,18 @@ public final class JeiInfoPageRecipe {
         this(null, content, null, null, null, focusTag, null);
     }
 
+    public static JeiInfoPageRecipe fromBlockTag(TagKey<Block> focusBlockTag, Component content) {
+        return new JeiInfoPageRecipe(null, content, null, null, null, null, focusBlockTag);
+    }
+
     private JeiInfoPageRecipe(
-            ItemStack focusStack,
+            @Nullable ItemStack focusStack,
             Component content,
-            Consumer<ItemStack> stackCustomizer,
-            List<ItemStack> groupStacks,
-            String type,
-            TagKey<Item> focusTag,
-            TagKey<Block> focusBlockTag
+            @Nullable Consumer<ItemStack> stackCustomizer,
+            @Nullable List<ItemStack> groupStacks,
+            @Nullable String type,
+            @Nullable TagKey<Item> focusTag,
+            @Nullable TagKey<Block> focusBlockTag
     ) {
         this.focusStack = focusStack;
         this.content = content;
@@ -57,55 +68,73 @@ public final class JeiInfoPageRecipe {
         this.focusBlockTag = focusBlockTag;
     }
 
-    public boolean isTag() { return focusTag != null; }
-    public boolean isBlockTag() { return focusBlockTag != null; } // NEW
-    public boolean isGroup() { return groupStacks != null && !groupStacks.isEmpty(); }
+    /* ---------------------------------------------------------------------
+     * Kind
+     * ------------------------------------------------------------------ */
 
-    public TagKey<Item> getFocusTag() { return focusTag; }
-    public TagKey<Block> getFocusBlockTag() { return focusBlockTag; } // NEW
+    public boolean isTag() {
+        return focusTag != null;
+    }
 
-    public ItemStack getFocusStack() {
+    public boolean isBlockTag() {
+        return focusBlockTag != null;
+    }
+
+    public boolean isGroup() {
+        return groupStacks != null && !groupStacks.isEmpty();
+    }
+
+    /* ---------------------------------------------------------------------
+     * Access
+     * ------------------------------------------------------------------ */
+
+    public @Nullable TagKey<Item> getFocusTag() {
+        return focusTag;
+    }
+
+    public @Nullable TagKey<Block> getFocusBlockTag() {
+        return focusBlockTag;
+    }
+
+    public @Nullable ItemStack getFocusStack() {
         if (focusStack == null) return null;
+
         ItemStack copy = focusStack.copy();
-        if (stackCustomizer != null) stackCustomizer.accept(copy);
+        if (stackCustomizer != null) {
+            stackCustomizer.accept(copy);
+        }
         return copy;
+    }
+
+    public Component getContent() {
+        return content;
+    }
+
+    public @Nullable String getType() {
+        return type;
     }
 
     public List<ItemStack> getGroupStacks() {
         return groupStacks != null ? groupStacks : Collections.emptyList();
     }
 
-    /**
-     * Returns resolved group stacks. If this recipe is backed by a block tag,
-     * it will be expanded using the provided registry access.
-     */
     public List<ItemStack> getGroupStacks(RegistryAccess registryAccess) {
         if (groupStacks != null) return groupStacks;
         if (focusBlockTag == null) return Collections.emptyList();
         return blocksToItemStacks(registryAccess, focusBlockTag);
     }
 
-    public Component getContent() { return content; }
-    public String getType() { return type; }
-
-    public static JeiInfoPageRecipe fromBlockTag(TagKey<Block> focusBlockTag, Component content) {
-        return new JeiInfoPageRecipe(
-                null,
-                content,
-                null,
-                null,
-                null,
-                null,
-                focusBlockTag
-        );
-    }
+    /* ---------------------------------------------------------------------
+     * Helpers
+     * ------------------------------------------------------------------ */
 
     public static List<ItemStack> blocksToItemStacks(RegistryAccess registryAccess, TagKey<Block> blockTag) {
         Registry<Block> blocks = registryAccess.lookupOrThrow(Registries.BLOCK);
 
         List<ItemStack> stacks = new ArrayList<>();
         for (var holder : blocks.getTagOrEmpty(blockTag)) {
-            stacks.add(new ItemStack(holder.value().asItem()));
+            Item asItem = holder.value().asItem();
+            stacks.add(new ItemStack(asItem));
         }
         return stacks;
     }
