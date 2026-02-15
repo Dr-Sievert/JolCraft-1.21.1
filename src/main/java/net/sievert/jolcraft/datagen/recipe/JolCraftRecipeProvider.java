@@ -12,12 +12,16 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.sievert.jolcraft.datagen.recipe.subprovider.*;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.sievert.jolcraft.datagen.recipe.util.RecipeValidation;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @ParametersAreNonnullByDefault
@@ -25,11 +29,11 @@ import java.util.concurrent.CompletableFuture;
 public final class JolCraftRecipeProvider extends AbstractRecipeProvider {
 
     @Nullable
-    private final CountingRecipeOutput counting;
+    private final CountingCollectingRecipeOutput counting;
 
     public JolCraftRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
         super(provider, recipeOutput);
-        this.counting = (recipeOutput instanceof CountingRecipeOutput c) ? c : null;
+        this.counting = (recipeOutput instanceof CountingCollectingRecipeOutput c) ? c : null;
     }
 
     public static final class Runner extends RecipeProvider.Runner {
@@ -39,7 +43,7 @@ public final class JolCraftRecipeProvider extends AbstractRecipeProvider {
 
         @Override
         protected RecipeProvider createRecipeProvider(HolderLookup.Provider provider, RecipeOutput recipeOutput) {
-            return new JolCraftRecipeProvider(provider, new CountingRecipeOutput(recipeOutput));
+            return new JolCraftRecipeProvider(provider, new CountingCollectingRecipeOutput(recipeOutput));
         }
 
         @Override
@@ -93,16 +97,20 @@ public final class JolCraftRecipeProvider extends AbstractRecipeProvider {
             }
         }
 
+        RecipeValidation.validateRecipes(counting.allRecipes());
+
         int totalAdded = counting.count() - beforeTotal;
         JolCraftLogs.info(JolCraftLogTags.DATAGEN, "Total recipes generated: {} ({} subproviders)", totalAdded, subs.size());
     }
 
-    private static final class CountingRecipeOutput implements RecipeOutput {
+    private static final class CountingCollectingRecipeOutput implements RecipeOutput {
 
         private final RecipeOutput delegate;
         private int count;
 
-        private CountingRecipeOutput(RecipeOutput delegate) {
+        private final Map<ResourceKey<Recipe<?>>, Recipe<?>> recipes = new LinkedHashMap<>();
+
+        private CountingCollectingRecipeOutput(RecipeOutput delegate) {
             this.delegate = delegate;
         }
 
@@ -110,9 +118,30 @@ public final class JolCraftRecipeProvider extends AbstractRecipeProvider {
             return count;
         }
 
+        public Map<ResourceKey<Recipe<?>>, Recipe<?>> allRecipes() {
+            return Collections.unmodifiableMap(recipes);
+        }
+
+        public <T extends Recipe<?>> Map<ResourceKey<Recipe<?>>, T> recipesOfType(Class<T> type) {
+            Map<ResourceKey<Recipe<?>>, T> out = new LinkedHashMap<>();
+            for (var e : recipes.entrySet()) {
+                Recipe<?> r = e.getValue();
+                if (type.isInstance(r)) {
+                    out.put(e.getKey(), type.cast(r));
+                }
+            }
+            return Collections.unmodifiableMap(out);
+        }
+
         @Override
-        public void accept(ResourceKey<Recipe<?>> key, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+        public void accept(
+                ResourceKey<Recipe<?>> key,
+                Recipe<?> recipe,
+                @Nullable AdvancementHolder advancement,
+                ICondition... conditions
+        ) {
             count++;
+            recipes.put(key, recipe);
             delegate.accept(key, recipe, advancement, conditions);
         }
 

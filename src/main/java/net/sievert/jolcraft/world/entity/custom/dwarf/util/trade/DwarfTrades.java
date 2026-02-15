@@ -6,55 +6,30 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.data.recipe.util.RecipeStackModifiers;
+import net.sievert.jolcraft.data.recipe.util.RecipeStackTransformations;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.Consumer;
 
 public final class DwarfTrades {
 
     private DwarfTrades() {}
-
-    // -------------------------------------------------------------------------
-    // Trade recipe cache
-    // -------------------------------------------------------------------------
-
-    private record TradeKey(
-            DwarfProfession profession,
-            DwarfTradeRecipe.TradePool pool,
-            int merchantLevel
-    ) {}
-
-    private static final ConcurrentMap<TradeKey, List<RecipeHolder<DwarfTradeRecipe>>> TRADE_AT_LEVEL_CACHE =
-            new ConcurrentHashMap<>();
-
-    private static final ConcurrentMap<TradeKey, List<RecipeHolder<DwarfTradeRecipe>>> TRADE_UP_TO_LEVEL_CACHE =
-            new ConcurrentHashMap<>();
-
-    public static void clearTradeRecipeCaches() {
-        TRADE_AT_LEVEL_CACHE.clear();
-        TRADE_UP_TO_LEVEL_CACHE.clear();
-    }
 
     // -------------------------------------------------------------------------
     // Recipe -> Offer (ONLY source of truth)
@@ -82,22 +57,16 @@ public final class DwarfTrades {
             ItemStack out = recipe.rollResultBase(registries, random);
             if (out.isEmpty()) return null;
 
-            // Enchantments require a real Level + DifficultyInstance, so this is server-authoritative only.
-            if (recipe.enchantmentProvider().isPresent()) {
-                EnchantmentHelper.enchantItemFromProvider(
-                        out,
-                        registries,
-                        recipe.enchantmentProvider().get(),
-                        level.getCurrentDifficultyAt(trader.blockPosition()),
-                        random
-                );
-            }
-
-            recipe.stackModifierId().ifPresent(id ->
-                    DwarfTrades.StackModifiers.resolve(id).accept(out)
+            RecipeStackTransformations.applyWithResolver(
+                    out,
+                    level,
+                    trader,
+                    random,
+                    recipe.enchantmentProvider(),
+                    recipe.stackModifierId(),
+                    recipe.resultPatch(),
+                    RecipeStackModifiers::resolve
             );
-
-            recipe.resultPatch().ifPresent(out::applyComponents);
 
             DwarfItemCost costA = new DwarfItemCost(costAStack.getItem(), costAStack.getCount());
             Optional<DwarfItemCost> costB = costBStack.map(s -> new DwarfItemCost(s.getItem(), s.getCount()));
@@ -148,19 +117,16 @@ public final class DwarfTrades {
             MapItemSavedData.addTargetDecoration(map, targetPos, "+", destinationType);
             map.set(DataComponents.ITEM_NAME, Component.translatable(mapData.mapDisplayNameKey()));
 
-            recipe.enchantmentProvider().ifPresent(providerKey -> EnchantmentHelper.enchantItemFromProvider(
+            RecipeStackTransformations.applyWithResolver(
                     map,
-                    serverLevel.registryAccess(),
-                    providerKey,
-                    serverLevel.getCurrentDifficultyAt(trader.blockPosition()),
-                    random
-            ));
-
-            recipe.stackModifierId().ifPresent(id ->
-                    DwarfTrades.StackModifiers.resolve(id).accept(map)
+                    serverLevel,
+                    trader,
+                    random,
+                    recipe.enchantmentProvider(),
+                    recipe.stackModifierId(),
+                    recipe.resultPatch(),
+                    RecipeStackModifiers::resolve
             );
-
-            recipe.resultPatch().ifPresent(map::applyComponents);
 
             var registries = serverLevel.registryAccess();
 
@@ -183,7 +149,7 @@ public final class DwarfTrades {
     }
 
     // -------------------------------------------------------------------------
-    // Canonical recipe queries
+    // Canonical recipe queries (NO caching)
     // -------------------------------------------------------------------------
 
     public static List<RecipeHolder<DwarfTradeRecipe>> getTradeRecipesAtLevel(
@@ -192,11 +158,7 @@ public final class DwarfTrades {
             DwarfTradeRecipe.TradePool pool,
             int merchantLevel
     ) {
-        TradeKey key = new TradeKey(profession, pool, merchantLevel);
-        return TRADE_AT_LEVEL_CACHE.computeIfAbsent(
-                key,
-                k -> findTradeRecipesAtLevel(level, k.profession(), k.pool(), k.merchantLevel())
-        );
+        return findTradeRecipesAtLevel(level, profession, pool, merchantLevel);
     }
 
     public static List<RecipeHolder<DwarfTradeRecipe>> getTradeRecipesUpToLevel(
@@ -205,11 +167,7 @@ public final class DwarfTrades {
             DwarfTradeRecipe.TradePool pool,
             int merchantLevel
     ) {
-        TradeKey key = new TradeKey(profession, pool, merchantLevel);
-        return TRADE_UP_TO_LEVEL_CACHE.computeIfAbsent(
-                key,
-                k -> findTradeRecipesUpToLevel(level, k.profession(), k.pool(), k.merchantLevel())
-        );
+        return findTradeRecipesUpToLevel(level, profession, pool, merchantLevel);
     }
 
     // -------------------------------------------------------------------------
@@ -230,7 +188,6 @@ public final class DwarfTrades {
 
             if (r.profession() != profession) continue;
             if (r.pool() != pool) continue;
-
             if (r.merchantLevel() != merchantLevel) continue;
 
             filtered.add(holder);
@@ -254,7 +211,6 @@ public final class DwarfTrades {
 
             if (r.profession() != profession) continue;
             if (r.pool() != pool) continue;
-
             if (r.merchantLevel() > merchantLevel) continue;
 
             filtered.add(holder);
@@ -292,34 +248,12 @@ public final class DwarfTrades {
 
         for (RecipeHolder<?> holder : all) {
             if (!(holder.value() instanceof DwarfTradeRecipe trade)) continue;
-            if (trade.getType() != net.sievert.jolcraft.data.recipe.JolCraftRecipes.DWARF_TRADE_TYPE.get()) continue;
+            if (trade.getType() != JolCraftRecipes.DWARF_TRADE_TYPE.get()) continue;
 
             RecipeHolder<DwarfTradeRecipe> cast = (RecipeHolder<DwarfTradeRecipe>) holder;
             out.add(cast);
         }
 
         return List.copyOf(out);
-    }
-
-    // -------------------------------------------------------------------------
-    // Stack modifier registry
-    // -------------------------------------------------------------------------
-
-    public static final class StackModifiers {
-
-        private static final Map<ResourceLocation, Consumer<ItemStack>> REGISTRY = new HashMap<>();
-
-        private StackModifiers() {}
-
-        public static void register(ResourceLocation id, Consumer<ItemStack> modifier) {
-            REGISTRY.put(id, modifier);
-        }
-
-        public static Consumer<ItemStack> resolve(String id) {
-            if (id == null || id.isBlank()) return s -> {};
-            ResourceLocation rl = ResourceLocation.tryParse(id.trim());
-            if (rl == null) return s -> {};
-            return REGISTRY.getOrDefault(rl, s -> {});
-        }
     }
 }

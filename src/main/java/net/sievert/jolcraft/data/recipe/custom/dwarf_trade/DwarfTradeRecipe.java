@@ -33,14 +33,10 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -455,31 +451,6 @@ public final class DwarfTradeRecipe implements Recipe<DwarfTradeRecipeInput> {
      */
     public ItemStack rollResultBase(HolderLookup.Provider registries, RandomSource random) {
         return result.roll(registries, random);
-    }
-
-    // =====================================================================
-    // Duplicate-order warnings (call from your recipe gather/build code)
-    // =====================================================================
-
-    public static void warnDuplicateOrders(Map<ResourceLocation, DwarfTradeRecipe> recipesById) {
-        record Key(String professionId, int level, TradePool pool, int order) {}
-
-        Map<Key, ResourceLocation> seen = new HashMap<>();
-        for (var e : recipesById.entrySet()) {
-            ResourceLocation id = e.getKey();
-            DwarfTradeRecipe r = e.getValue();
-            if (r == null || r.order.isEmpty()) continue;
-
-            Key key = new Key(r.profession.getId(), r.merchantLevel, r.pool, r.order.getAsInt());
-            ResourceLocation prev = seen.putIfAbsent(key, id);
-            if (prev != null) {
-                JolCraftLogs.warn(
-                        JolCraftLogTags.RECIPE,
-                        "Duplicate dwarf trade order detected: profession={}, level={}, pool={}, order={} -> {} and {}",
-                        key.professionId(), key.level(), key.pool().name().toLowerCase(), key.order(), prev, id
-                );
-            }
-        }
     }
 
     // =====================================================================
