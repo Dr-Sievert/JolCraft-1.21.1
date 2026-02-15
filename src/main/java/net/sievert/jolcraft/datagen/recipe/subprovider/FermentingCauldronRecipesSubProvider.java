@@ -18,7 +18,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
+import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;

@@ -28,7 +28,7 @@ public enum DwarfActionType {
         ENDORSE(INSPECT),
         REPUTATION_GAIN(INSPECT),
         BOUNTY(INSPECT),
-        BOUNTY_CRATE(INSPECT),
+        BOUNTY_REWARD(INSPECT),
         GUARD_EQUIP(INSPECT),
 
         // ATTACK subtypes

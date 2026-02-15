@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.datagen.recipe.subprovider.trade;
+package net.sievert.jolcraft.datagen.recipe.subprovider.trade.util;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.AdvancementHolder;
@@ -20,11 +20,11 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
-import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
+import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyTier;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty.BountyType;
+import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
+import net.sievert.jolcraft.world.item.util.bounty.BountyType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;

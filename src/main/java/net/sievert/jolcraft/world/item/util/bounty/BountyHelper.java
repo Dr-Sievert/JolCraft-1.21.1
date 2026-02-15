@@ -1,10 +1,12 @@
-package net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty;
+package net.sievert.jolcraft.world.item.util.bounty;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponentType;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 
-public class BountyHelper {
+public final class BountyHelper {
+
+    private BountyHelper(){}
 
     /**
      * Gets the bounty tier as an enum. Returns NOVICE if missing or invalid.

@@ -10,10 +10,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
-import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
-import net.sievert.jolcraft.data.recipe.custom.FermentingCauldronRecipe;
-import net.sievert.jolcraft.data.recipe.custom.AttributeSmithingTrimRecipe;
-import net.sievert.jolcraft.data.recipe.custom.LapidaryBenchRecipe;
+import net.sievert.jolcraft.data.recipe.custom.*;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
+import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
+import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
 
 public final class JolCraftRecipes {
 
@@ -43,6 +45,18 @@ public final class JolCraftRecipes {
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<FermentingCauldronRecipe>> FERMENTING_CAULDRON_TYPE =
             TYPES.register(JolCraftRecipeIds.FERMENTING_CAULDRON, () -> simpleType(JolCraftRecipeIds.FERMENTING_CAULDRON));
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BountyTaskRecipe>> BOUNTY_TASK_SERIALIZER =
+            SERIALIZERS.register(JolCraftRecipeIds.BOUNTY_TASK, BountyTaskRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<BountyTaskRecipe>> BOUNTY_TASK_TYPE =
+            TYPES.register(JolCraftRecipeIds.BOUNTY_TASK, () -> simpleType(JolCraftRecipeIds.BOUNTY_TASK));
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<BountyRewardRecipe>> BOUNTY_REWARD_SERIALIZER =
+            SERIALIZERS.register(JolCraftRecipeIds.BOUNTY_REWARD, BountyRewardRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<BountyRewardRecipe>> BOUNTY_REWARD_TYPE =
+            TYPES.register(JolCraftRecipeIds.BOUNTY_REWARD, () -> simpleType(JolCraftRecipeIds.BOUNTY_REWARD));
 
     private static <T extends Recipe<?>> RecipeType<T> simpleType(String id) {
         return new RecipeType<>() {

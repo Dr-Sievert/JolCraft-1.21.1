@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.recipe.custom;
+package net.sievert.jolcraft.data.recipe.custom.lapidary_bench;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -24,7 +24,6 @@ import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.input.LapidaryRecipeInput;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 import javax.annotation.Nullable;

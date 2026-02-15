@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -38,24 +39,30 @@ public class InspectDwarfAction implements DwarfAction {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
     }
 
-    protected void throwItem(AbstractDwarfEntity dwarf, Player player, ItemStack thrownItem) {
-        dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-        Vec3 start = dwarf.position().add(0.0, dwarf.getEyeHeight(), 0.0);
-        Vec3 target = player.position().add(0.0, player.getBbHeight() * 0.5, 0.0);
-        Vec3 velocity = target.subtract(start).normalize().scale(0.4);
-        ItemEntity thrown = new ItemEntity(dwarf.level(), start.x, start.y, start.z, thrownItem);
-        thrown.setDeltaMovement(velocity);
-        thrown.setPickUpDelay(10);
-        dwarf.level().addFreshEntity(thrown);
-        JolCraftSoundHelper.entity(
-                dwarf,
-                SoundEvents.SNOWBALL_THROW,
-                0.5F,
-                0.8F
-        );
-        dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
-        previousMainHandItem = ItemStack.EMPTY;
+    protected static void throwStack(ServerLevel level, Vec3 start, Vec3 velocity, ItemStack stack) {
+        if (stack.isEmpty()) return;
+
+        ItemEntity entity = new ItemEntity(level, start.x, start.y, start.z, stack);
+        entity.setDeltaMovement(velocity);
+        entity.setPickUpDelay(10);
+        level.addFreshEntity(entity);
     }
 
 
+    protected void throwItem(AbstractDwarfEntity dwarf, Player player, ItemStack thrownItem) {
+        if (!(dwarf.level() instanceof ServerLevel level)) return;
+
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+
+        Vec3 start = dwarf.position().add(0.0, dwarf.getEyeHeight(), 0.0);
+        Vec3 target = player.position().add(0.0, player.getBbHeight() * 0.5, 0.0);
+        Vec3 velocity = target.subtract(start).normalize().scale(0.4);
+
+        throwStack(level, start, velocity, thrownItem);
+
+        JolCraftSoundHelper.entity(dwarf, SoundEvents.SNOWBALL_THROW, 0.5F, 0.8F);
+
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
+        previousMainHandItem = ItemStack.EMPTY;
+    }
 }

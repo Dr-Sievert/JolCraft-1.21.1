@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.recipe.custom;
+package net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -8,7 +8,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,7 +24,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 import javax.annotation.Nullable;

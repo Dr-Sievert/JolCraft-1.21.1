@@ -11,6 +11,7 @@ public final class JolCraftDictionary extends JolCraftIds {
      * ===================================================================== */
 
     public static final String AND = "and";
+    public static final String FOR = "for";
     public static final String FROM = "from";
     public static final String IN = "in";
     public static final String NEVER = "never";
@@ -34,6 +35,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BREAK = "break";
     public static final String BREW = "brew";
     public static final String CLOSE = "close";
+    public static final String COLLECT = "collect";
     public static final String COMPLETE = "complete";
     public static final String CUT = "cut";
     public static final String DEMAND = "demand";
@@ -41,6 +43,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String EXTRACT = "extract";
     public static final String FILL = "fill";
     public static final String FINALIZE = "finalize";
+    public static final String GIVE = "give";
     public static final String HAS = "has";
     public static final String HOLD = "hold";
     public static final String IDENTIFY = "identify";
@@ -61,6 +64,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String REWARD = "reward";
     public static final String SELECT = "select";
     public static final String SIGN = "sign";
+    public static final String SLAY = "slay";
     public static final String SLOW = "slow";
     public static final String SPAWN = "spawn";
     public static final String SYNC = "sync";
@@ -149,6 +153,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String AEGISCORE = "aegiscore";
     public static final String AGE = "age";
     public static final String ALCHEMIST = "alchemist";
+    public static final String ALT = "alt";
     public static final String AMOUNT = "amount";
     public static final String AMPLIFIER = "amplifier";
     public static final String AMULET = "amulet";
@@ -364,6 +369,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String NIGHT = "night";
     public static final String NUGGET = "nugget";
     public static final String OBJECT = "object";
+    public static final String OBJECTIVE = "objective";
     public static final String OFFER = "offer";
     public static final String ORE = "ore";
     public static final String ORDER = "order";
@@ -449,6 +455,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TABLET = "tablet";
     public static final String TAG = "tag";
     public static final String TARGET = "target";
+    public static final String TASK = "task";
     public static final String TEMPLATE = "template";
     public static final String TEXTILE = "textile";
     public static final String TEXTURE = "texture";

@@ -52,6 +52,7 @@ public final class JolCraftRecipeProvider extends AbstractRecipeProvider {
     protected void buildRecipes() {
         List<RecipeSubProvider> subs = List.of(
                 new CompassRecipesSubProvider(),
+                new DwarfBountyRecipesSubProvider(),
                 new DwarfTradeRecipesSubProvider(),
                 new EquipmentRecipesSubProvider(),
                 new FermentingCauldronRecipesSubProvider(),

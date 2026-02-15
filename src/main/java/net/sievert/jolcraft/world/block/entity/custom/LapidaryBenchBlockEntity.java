@@ -28,8 +28,8 @@ import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.LapidaryBenchRecipe;
-import net.sievert.jolcraft.data.recipe.custom.input.LapidaryRecipeInput;
+import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
+import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryRecipeInput;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 

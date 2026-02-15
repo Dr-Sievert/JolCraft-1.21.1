@@ -15,7 +15,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
@@ -29,12 +28,11 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.sievert.jolcraft.data.JolCraftStats;
-import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
+import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
 import net.sievert.jolcraft.util.JolCraftLogTags;
@@ -385,16 +383,39 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     // ------------------------------------------------------------
 
     /**
-     * Authoritative trade rebuild.
-     * Order:
-     *  1) ALL MAIN trades (for all levels ≤ current):
-     *      - grouped by level ascending
-     *      - ordered trades first (order present), ascending by order
-     *      - unordered trades last
-     *      - stable tie-break by recipe getId
-     *  2) POOL trades rolled per level (1..current)
-     *      - permanent additions until full reroll
-     *  3) RESTOCK_POOL trades (rolled; rerolled on restock)
+     * Authoritative server-side trade rebuild.
+     *
+     * Reconstructs the merchant offer list from scratch based on:
+     *  - the dwarf's current merchant level,
+     *  - recipe definitions (datapack-driven),
+     *  - profession trade settings (config-driven),
+     *  - and persistent POOL selections.
+     *
+     * Order of offers in the final list:
+     *
+     * 1) MAIN trades
+     *    - All MAIN recipes unlocked up to the current merchant level.
+     *    - Processed level-by-level (1 → currentLevel).
+     *    - Within each level:
+     *         • Recipes with an explicit order() come first (ascending).
+     *         • Recipes without order() follow.
+     *         • Stable tie-break by recipe id.
+     *    - MAIN trades persist across levels (cumulative unlock model).
+     *
+     * 2) POOL trades
+     *    - Rolled per level (1 → currentLevel) according to config rolls.
+     *    - Persist across rebuilds via persistentPoolSelections.
+     *    - Once selected, remain until a full rerollTrades() clears memory.
+     *
+     * 3) RESTOCK_POOL trades
+     *    - Appended last.
+     *    - Rolled per level (1 → currentLevel) according to config rolls.
+     *    - These offers form a suffix in the list and are rerolled on restock().
+     *
+     * This method:
+     *  - Always clears the existing offer list.
+     *  - Never appends to previous state.
+     *  - Is fully deterministic except for weighted roll logic in POOL/RESTOCK_POOL.
      */
     public void updateTrades() {
         if (!(this.level() instanceof ServerLevel serverLevel)) return;
@@ -412,7 +433,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         DwarfProfessionSettings.TradeSettings tradeSettings = settings.tradesOrNull();
 
         // ---------------------------------------------------------------------
-        // Collect remaining pooled recipes (≤ current level)
+        // Collect remaining POOL recipes (merchantLevel ≤ currentLevel)
         // ---------------------------------------------------------------------
 
         List<RecipeHolder<DwarfTradeRecipe>> remainingPool = new ArrayList<>(
@@ -424,7 +445,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                 )
         );
 
-        // POOL recipe getId -> holder (datapacks can change)
+        // Map recipe id -> holder for stable persistent selection resolution
         Map<ResourceLocation, RecipeHolder<DwarfTradeRecipe>> poolById = new HashMap<>();
         for (RecipeHolder<DwarfTradeRecipe> h : remainingPool) {
             poolById.put(h.id().location(), h);
@@ -434,7 +455,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         Set<ResourceLocation> usedPoolIds = new HashSet<>();
 
         // =====================================================================
-        // 1) MAIN TRADES — ALL LEVELS FIRST
+        // 1) MAIN TRADES — cumulative unlock model
         // =====================================================================
 
         for (int lvl = 1; lvl <= currentLevel; lvl++) {
@@ -447,6 +468,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                     )
             );
 
+            // Sort within level for deterministic ordering
             mainAtLevel.sort((a, b) -> {
                 DwarfTradeRecipe ra = a.value();
                 DwarfTradeRecipe rb = b.value();
@@ -466,7 +488,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                     if (cmp != 0) return cmp;
                 }
 
-                // stable tie-break
+                // Stable tie-break
                 return a.id().location().compareTo(b.id().location());
             });
 
@@ -476,7 +498,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         }
 
         // =====================================================================
-        // 2) POOL TRADES — AFTER ALL MAIN
+        // 2) POOL TRADES — persistent weighted selection
         // =====================================================================
 
         for (int lvl = 1; lvl <= currentLevel; lvl++) {
@@ -503,15 +525,21 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             }
         }
 
-        // Persist pool selections actually used
+        // Persist actual selections used this rebuild
         this.persistentPoolSelections.clear();
         this.persistentPoolSelections.addAll(newPersistentPoolSelections);
 
         // =====================================================================
-        // 3) RESTOCK_POOL — LAST (single canonical implementation)
+        // 3) RESTOCK_POOL — rerollable suffix
         // =====================================================================
 
-        this.restockOfferCount = appendRestockPoolOffers(serverLevel, out, profession, currentLevel, tradeSettings);
+        this.restockOfferCount = appendRestockPoolOffers(
+                serverLevel,
+                out,
+                profession,
+                currentLevel,
+                tradeSettings
+        );
     }
 
     protected void addOfferFromRecipe(DwarfMerchantOffers out, DwarfTradeRecipe recipe) {
@@ -800,19 +828,27 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     // ------------------------------------------------------------
 
     protected void rewardTradeXp(DwarfMerchantOffer offer) {
-        int i = 3 + this.random.nextInt(4);
-        this.dwarfXp = this.dwarfXp + offer.getXp();
+        int xpReward = 3 + this.random.nextInt(4);
+
+        this.dwarfXp += offer.getXp();
         this.lastTradedPlayer = this.getTradingPlayer();
 
-        if (this.shouldIncreaseLevel()) {
-            this.updateMerchantTimer = 40;
-            this.increaseProfessionLevelOnUpdate = true;
-            i += 5;
-        }
+        xpReward += triggerLevelUp(this);
 
         if (offer.shouldRewardExp()) {
-            this.level().addFreshEntity(new ExperienceOrb(this.level(), this.getX(), this.getY() + 0.5, this.getZ(), i));
+            this.level().addFreshEntity(
+                    new ExperienceOrb(this.level(), this.getX(), this.getY() + 0.5, this.getZ(), xpReward)
+            );
         }
+    }
+
+    public static int triggerLevelUp(AbstractTradingEntity dwarf) {
+        if (dwarf.shouldIncreaseLevel()) {
+            dwarf.updateMerchantTimer = 40;
+            dwarf.increaseProfessionLevelOnUpdate = true;
+            return 5;
+        }
+        return 0;
     }
 
     public boolean shouldIncreaseLevel() {

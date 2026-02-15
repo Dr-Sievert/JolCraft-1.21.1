@@ -1,182 +1,137 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.bounty;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipeInput;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
+import net.sievert.jolcraft.world.item.util.bounty.BountyData;
+import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
+import net.sievert.jolcraft.world.item.util.bounty.BountyType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.ToIntFunction;
 
-public class BountyGenerator {
+public final class BountyGenerator {
 
-    /** Holds all data for a given item in a bounty pool. */
-    public record BountyEntry(Item item, ToIntFunction<RandomSource> count) {}
+    private BountyGenerator() {}
 
-    /** Pool for a single tier: a list of entries. */
-    public record BountyPool(List<BountyEntry> entries) {}
+    // =====================================================================
+    // TASK ROLLING
+    // =====================================================================
 
-    // === Define pools per bounty type ===
+    public static final class Task {
 
-    private static final Map<BountyType, List<BountyPool>> POOLS = new EnumMap<>(BountyType.class);
+        private Task() {}
 
-    static {
-        // MERCHANT
-        POOLS.put(BountyType.MERCHANT, List.of(
-                new BountyPool(List.of(
-                        new BountyEntry(Items.COAL,          r -> 5 + r.nextInt(8)),
-                        new BountyEntry(Items.FLINT,         r -> 5 + r.nextInt(8)),
-                        new BountyEntry(Items.COPPER_INGOT,  r -> 5 + r.nextInt(8)),
-                        new BountyEntry(Items.COBBLED_DEEPSLATE, r -> 5 + r.nextInt(8)),
-                        new BountyEntry(Items.TORCH,         r -> 5 + r.nextInt(8)),
-                        new BountyEntry(Items.CLAY_BALL,     r -> 5 + r.nextInt(8)),
-                        new BountyEntry(Items.IRON_NUGGET,   r -> 5 + r.nextInt(8))
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.IRON_INGOT,    r -> 4 + r.nextInt(5)),
-                        new BountyEntry(Items.LAPIS_LAZULI,  r -> 4 + r.nextInt(5)),
-                        new BountyEntry(Items.REDSTONE,      r -> 4 + r.nextInt(5)),
-                        new BountyEntry(Items.GLOW_INK_SAC,  r -> 3 + r.nextInt(4)),
-                        new BountyEntry(Items.SPIDER_EYE,    r -> 3 + r.nextInt(4)),
-                        new BountyEntry(Items.GUNPOWDER,     r -> 3 + r.nextInt(4)),
-                        new BountyEntry(Items.BONE,          r -> 5 + r.nextInt(5))
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.GOLD_INGOT,    r -> 3 + r.nextInt(4)),
-                        new BountyEntry(Items.EMERALD,       r -> 2 + r.nextInt(4)),
-                        new BountyEntry(Items.AMETHYST_SHARD, r -> 3 + r.nextInt(4)),
-                        new BountyEntry(Items.BLAZE_POWDER,  r -> 3 + r.nextInt(4)),
-                        new BountyEntry(Items.INK_SAC,       r -> 3 + r.nextInt(4))
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.ANVIL,         r -> 1),
-                        new BountyEntry(Items.GOLDEN_APPLE,  r -> 1 + r.nextInt(2)),
-                        new BountyEntry(Items.BOOK,          r -> 1 + r.nextInt(2)),
-                        new BountyEntry(Items.CAULDRON,      r -> 1),
-                        new BountyEntry(Items.ITEM_FRAME,    r -> 1 + r.nextInt(3)),
-                        new BountyEntry(Items.ENDER_PEARL,   r -> 1)
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.NETHERITE_SCRAP, r -> 1 + r.nextInt(2)),
-                        new BountyEntry(Items.HEART_OF_THE_SEA, r -> 1),
-                        new BountyEntry(Items.DRAGON_BREATH, r -> 1 + r.nextInt(2))
-                ))
-        ));
+        /**
+         * Rolls a bounty task result (bounty OR bounty_crate) for the given redeem stack.
+         * The redeem stack is the "token" item the player hands to the dwarf (usually jolcraft:bounty).
+         */
+        public static ItemStack roll(
+                ServerLevel level,
+                ItemStack redeemStack
+        ) {
+            if (redeemStack.isEmpty()) return ItemStack.EMPTY;
 
-        // MINER
-        POOLS.put(BountyType.MINER, List.of(
-                new BountyPool(List.of(
-                        new BountyEntry(Items.STONE,     r -> 8 + r.nextInt(8)),
-                        new BountyEntry(Items.GRANITE,   r -> 8 + r.nextInt(8)),
-                        new BountyEntry(Items.DIORITE,   r -> 8 + r.nextInt(8)),
-                        new BountyEntry(Items.ANDESITE,  r -> 8 + r.nextInt(8)),
-                        new BountyEntry(Items.TUFF,      r -> 8 + r.nextInt(8))
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.IRON_ORE,            r -> 4 + r.nextInt(5)),
-                        new BountyEntry(Items.COPPER_ORE,          r -> 4 + r.nextInt(5)),
-                        new BountyEntry(Items.DEEPSLATE_IRON_ORE,  r -> 4 + r.nextInt(5))
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.GOLD_ORE,     r -> 3 + r.nextInt(4)),
-                        new BountyEntry(Items.EMERALD_ORE,  r -> 2 + r.nextInt(3))
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.DIAMOND_ORE,           r -> 1 + r.nextInt(2)),
-                        new BountyEntry(Items.DEEPSLATE_DIAMOND_ORE, r -> 1 + r.nextInt(2))
-                )),
-                new BountyPool(List.of(
-                        new BountyEntry(Items.ANCIENT_DEBRIS, r -> 1)
-                ))
-        ));
-    }
+            BountyType type = BountyRecipe.readType(redeemStack);
+            BountyTier tier = BountyRecipe.readTier(redeemStack);
+            if (type == BountyType.UNKNOWN || tier == BountyTier.UNKNOWN) return ItemStack.EMPTY;
 
-    public static List<ItemStack> getReward(BountyData data, RandomSource random) {
-        BountyType type = BountyType.fromString(data.type());
-        BountyTier tier = BountyTier.fromValue(data.tier());
+            BountyRecipeInput input = new BountyRecipeInput(redeemStack, type, tier);
 
-        List<ItemStack> rewards = new ArrayList<>();
-        switch (type) {
-            case null -> {}
-            case UNKNOWN -> {}
-            case MERCHANT -> {
-                int coins = switch (tier) {
-                    case NOVICE -> 4 + random.nextInt(3);
-                    case APPRENTICE -> 7 + random.nextInt(4);
-                    case JOURNEYMAN -> 12 + random.nextInt(5);
-                    case EXPERT -> 20 + random.nextInt(8);
-                    case MASTER -> 30 + random.nextInt(10);
-                    default -> 0;
-                };
-                if (coins > 0) rewards.add(new ItemStack(JolCraftItems.GOLD_COIN.get(), coins));
+            RecipeManager manager = level.getServer().getRecipeManager();
+            List<BountyTaskRecipe> candidates = manager.recipeMap()
+                    .getRecipesFor(JolCraftRecipes.BOUNTY_TASK_TYPE.get(), input, level)
+                    .map(RecipeHolder::value)
+                    .filter(r -> r.weight() > 0)
+                    .toList();
 
-                float crateChance = switch (tier) {
-                    case APPRENTICE -> 0.125f;
-                    case JOURNEYMAN -> 0.25f;
-                    case EXPERT -> 0.5f;
-                    case MASTER -> 0.7f;
-                    default -> 0f;
-                };
-                if (crateChance > 0 && random.nextFloat() < crateChance) {
-                    boolean restock = random.nextBoolean();
-                    rewards.add(new ItemStack(restock ? JolCraftItems.RESTOCK_CRATE.get() : JolCraftItems.REROLL_CRATE.get()));
-                }
-            }
-            case MINER -> {
-                int num = switch (tier) {
-                    case NOVICE -> 1;
-                    case APPRENTICE -> 1 + random.nextInt(2);
-                    case JOURNEYMAN -> 1 + random.nextInt(3);
-                    case EXPERT -> 1 + random.nextInt(4);
-                    case MASTER -> 1 + random.nextInt(5);
-                    default -> 0;
-                };
-                for (int i = 0; i < num; i++) {
-                    rewards.add(new ItemStack(getWeightedGeode(random, tier)));
-                }
-            }
+            if (candidates.isEmpty()) return ItemStack.EMPTY;
+
+            BountyTaskRecipe chosen = rollWeighted(level.getRandom(), candidates);
+            if (chosen == null) return ItemStack.EMPTY;
+
+            ItemStack out = chosen.assemble(input, level.registryAccess());
+
+            BountyData.BountyObjective rolled = chosen.objective().roll(level.getRandom());
+            out.set(JolCraftDataComponents.BOUNTY_DATA.get(), new BountyData(rolled));
+
+            return out;
         }
-        return rewards;
     }
 
-    private static Item getWeightedGeode(RandomSource random, BountyTier tier) {
-        int[] weights = switch (tier) {
-            case NOVICE, APPRENTICE -> new int[]{4, 2, 1};
-            case JOURNEYMAN -> new int[]{2, 2, 2};
-            case MASTER -> new int[]{1, 2, 4};
-            default -> new int[]{2, 2, 1};
-        };
-        int total = Arrays.stream(weights).sum();
+    // =====================================================================
+    // REWARD ROLLING
+    // =====================================================================
+
+    public static final class Reward {
+
+        private Reward() {}
+
+        public static ItemStack roll(
+                ServerLevel level,
+                ItemStack redeemStack,
+                BountyRewardRecipe.RewardPool pool
+        ) {
+            if (redeemStack.isEmpty()) return ItemStack.EMPTY;
+            if (!BountyRewardRecipe.isCompletedBountyStack(redeemStack)) return ItemStack.EMPTY;
+
+            BountyType type = BountyRecipe.readType(redeemStack);
+            BountyTier tier = BountyRecipe.readTier(redeemStack);
+            if (type == BountyType.UNKNOWN || tier == BountyTier.UNKNOWN) return ItemStack.EMPTY;
+
+            BountyRecipeInput input = new BountyRecipeInput(redeemStack, type, tier);
+
+            RecipeManager manager = level.getServer().getRecipeManager();
+            List<BountyRewardRecipe> candidates = manager.recipeMap()
+                    .getRecipesFor(JolCraftRecipes.BOUNTY_REWARD_TYPE.get(), input, level)
+                    .map(RecipeHolder::value)
+                    .filter(r -> r.pool() == pool)
+                    .filter(r -> r.weight() > 0)
+                    .toList();
+
+            if (candidates.isEmpty()) return ItemStack.EMPTY;
+
+            BountyRewardRecipe chosen = rollWeighted(level.getRandom(), candidates);
+            if (chosen == null) return ItemStack.EMPTY;
+
+            HolderLookup.Provider registries = level.registryAccess();
+            return chosen.rollResult(registries, level.getRandom());
+        }
+    }
+
+    // =====================================================================
+    // Shared helpers
+    // =====================================================================
+
+    private static <T> T rollWeighted(RandomSource random, List<T> list) {
+        int total = 0;
+        for (T t : list) {
+            total += weightOf(t);
+        }
+        if (total <= 0) return null;
+
         int roll = random.nextInt(total);
-        if (roll < weights[0]) return JolCraftItems.GEODE_SMALL.get();
-        else if (roll < weights[0] + weights[1]) return JolCraftItems.GEODE_MEDIUM.get();
-        else return JolCraftItems.GEODE_LARGE.get();
+        int acc = 0;
+
+        for (T t : list) {
+            acc += weightOf(t);
+            if (roll < acc) return t;
+        }
+
+        return list.getLast();
     }
 
-    /** Main and only method for generating bounty data. */
-    @SuppressWarnings("deprecation")
-    public static BountyData generate(ItemStack stack, RandomSource random) {
-        BountyType type = BountyHelper.getBountyType(stack);
-        BountyTier tier = BountyHelper.getBountyTier(stack);
-
-        List<BountyPool> pools = POOLS.getOrDefault(type, POOLS.get(BountyType.MERCHANT));
-        int tierIndex = Math.max(0, Math.min(tier.getValue() - 1, pools.size() - 1));
-        BountyPool pool = pools.get(tierIndex);
-
-        List<BountyEntry> entries = pool.entries();
-        BountyEntry entry = entries.get(random.nextInt(entries.size()));
-        int count = entry.count().applyAsInt(random);
-
-        return new BountyData(
-                entry.item().builtInRegistryHolder().key().location(),
-                count,
-                tier.getValue(),
-                type.getId()
-        );
+    private static int weightOf(Object o) {
+        if (o instanceof BountyTaskRecipe r) return r.weight();
+        if (o instanceof BountyRewardRecipe r) return r.weight();
+        return 0;
     }
 }

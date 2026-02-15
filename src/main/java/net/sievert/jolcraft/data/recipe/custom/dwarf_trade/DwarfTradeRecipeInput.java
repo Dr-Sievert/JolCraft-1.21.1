@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.recipe.custom.input;
+package net.sievert.jolcraft.data.recipe.custom.dwarf_trade;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;

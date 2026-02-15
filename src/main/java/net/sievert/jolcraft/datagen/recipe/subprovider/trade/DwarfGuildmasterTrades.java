@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.trade;
 
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.datagen.recipe.subprovider.trade.util.AbstractDwarfTrades;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;

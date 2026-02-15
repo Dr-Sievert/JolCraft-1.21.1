@@ -41,7 +41,7 @@ import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.util.SyncHelper;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.input.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import java.util.HashSet;

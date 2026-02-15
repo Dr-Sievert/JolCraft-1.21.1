@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.recipe.custom;
+package net.sievert.jolcraft.data.recipe.custom.dwarf_trade;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -33,7 +33,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.input.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.util.JolCraftStrings;

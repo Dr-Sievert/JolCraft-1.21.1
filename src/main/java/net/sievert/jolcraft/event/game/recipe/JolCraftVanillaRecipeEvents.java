@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game;
+package net.sievert.jolcraft.event.game.recipe;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -22,7 +22,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import java.util.*;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public final class JolCraftRecipeEvents {
+public final class JolCraftVanillaRecipeEvents {
 
     @SubscribeEvent
     public static void onBrewingRecipeRegister(RegisterBrewingRecipesEvent event) {

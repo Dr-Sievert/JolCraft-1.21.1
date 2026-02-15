@@ -37,26 +37,23 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // BountyLangSubProvider
     // ---------------------------------------------------------------------
 
-    public static final String TOOLTIP_BOUNTY_CRATE =
-            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.BOUNTY_CRATE);
+    public static final String TOOLTIP_BOUNTY_INVALID =
+            tooltip(JolCraftItemIds.BOUNTY, JolCraftDictionary.INVALID);
 
-    public static final String TOOLTIP_RESTOCK_CRATE =
-            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.RESTOCK_CRATE);
+    public static final String TOOLTIP_BOUNTY_NOT_COMPLETE =
+            tooltip(JolCraftItemIds.BOUNTY, us(JolCraftDictionary.NOT, JolCraftDictionary.COMPLETE));
 
-    public static final String TOOLTIP_RESTOCK_CRATE_NO_NEED =
-            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.RESTOCK_CRATE, us(JolCraftDictionary.NO, JolCraftDictionary.NEED)));
+    public static final String TOOLTIP_BOUNTY_COMPLETE =
+            tooltip(JolCraftItemIds.BOUNTY, JolCraftDictionary.COMPLETE);
 
-    public static final String TOOLTIP_RESTOCK_CRATE_SUCCESS =
-            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.RESTOCK_CRATE, JolCraftDictionary.SUCCESS));
+    public static final String TOOLTIP_BOUNTY_COMPLETED =
+            tooltip(JolCraftItemIds.BOUNTY, JolCraftDictionary.COMPLETED);
 
-    public static final String TOOLTIP_REROLL_CRATE =
-            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.REROLL_CRATE);
+    public static final String TOOLTIP_BOUNTY_SLAY =
+            tooltip(JolCraftItemIds.BOUNTY, JolCraftDictionary.SLAY);
 
-    public static final String TOOLTIP_REROLL_CRATE_FAIL =
-            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.REROLL_CRATE, JolCraftDictionary.FAIL));
-
-    public static final String TOOLTIP_REROLL_CRATE_SUCCESS =
-            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.REROLL_CRATE, JolCraftDictionary.SUCCESS));
+    public static final String TOOLTIP_BOUNTY_SLAY_ALT =
+            tooltip(JolCraftItemIds.BOUNTY, dot(JolCraftDictionary.SLAY, JolCraftDictionary.ALT));
 
     public static final String TOOLTIP_BOUNTY_TIER =
             tooltip(JolCraftItemIds.BOUNTY, JolCraftDictionary.TIER);
@@ -67,26 +64,14 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_BOUNTY_WRONG_TYPE =
             tooltip(JolCraftItemIds.BOUNTY, us(JolCraftDictionary.WRONG, JolCraftDictionary.TYPE));
 
-    public static final String TOOLTIP_BOUNTY_NO_TYPE =
-            tooltip(JolCraftItemIds.BOUNTY, us(JolCraftDictionary.NO, JolCraftDictionary.TYPE));
+    public static final String TOOLTIP_BOUNTY_DWARF_PROFESSION =
+            tooltip(JolCraftItemIds.BOUNTY, dot(JolCraftDwarfIds.DWARF, JolCraftDictionary.PROFESSION));
 
-    public static final String TOOLTIP_BOUNTY_MERCHANT =
-            tooltip(JolCraftItemIds.BOUNTY, JolCraftDictionary.MERCHANT);
+    public static final String TOOLTIP_BOUNTY_CRATE_COLLECT =
+            tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.COLLECT);
 
-    public static final String TOOLTIP_BOUNTY_MINER =
-            tooltip(JolCraftItemIds.BOUNTY, JolCraftDictionary.MINER);
-
-    public static final String TOOLTIP_BOUNTY_CRATE_TARGET =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.TARGET);
-
-    public static final String TOOLTIP_BOUNTY_CRATE_COUNT =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.COUNT);
-
-    public static final String TOOLTIP_BOUNTY_CRATE_TIER =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.TIER);
-
-    public static final String TOOLTIP_BOUNTY_INVALID =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.INVALID);
+    public static final String TOOLTIP_BOUNTY_CRATE_COLLECT_ALT =
+            tooltip(JolCraftItemIds.BOUNTY_CRATE, dot(JolCraftDictionary.COLLECT, JolCraftDictionary.ALT));
 
     public static final String TOOLTIP_BOUNTY_CRATE_LOCKED =
             tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.LOCKED);
@@ -97,23 +82,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_BOUNTY_CRATE_NO_ITEMS =
             tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.ITEM)));
 
-    public static final String TOOLTIP_BOUNTY_CRATE_COMPLETE =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, JolCraftDictionary.COMPLETE);
-
-    public static final String TOOLTIP_BOUNTY_CRATE_NOT_COMPLETE =
-            tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.NOT, JolCraftDictionary.COMPLETE));
-
     public static final String TOOLTIP_BOUNTY_CRATE_WRONG_TYPE =
             tooltip(JolCraftItemIds.BOUNTY_CRATE, us(JolCraftDictionary.WRONG, JolCraftDictionary.TYPE));
-
-    public static final String TOOLTIP_CRATE_COOLDOWN =
-            tooltip(JolCraftDictionary.CRATE, JolCraftDictionary.COOLDOWN);
-
-    public static final String TOOLTIP_CRATE_NO_OFFERS_VILLAGER =
-            tooltip(JolCraftDictionary.CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.OFFER), JolCraftDictionary.VILLAGER));
-
-    public static final String TOOLTIP_CRATE_NO_OFFERS_DWARF =
-            tooltip(JolCraftDictionary.CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.OFFER), JolCraftDictionary.DWARF));
 
     // ---------------------------------------------------------------------
     // CompassLangSubProvider
@@ -337,6 +307,33 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String TOOLTIP_DWARF_GUARD_PROMOTION =
             tooltip(JolCraftDwarfIds.DWARF_GUARD, JolCraftDictionary.PROMOTION);
+
+    public static final String TOOLTIP_RESTOCK_CRATE =
+            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.RESTOCK_CRATE);
+
+    public static final String TOOLTIP_RESTOCK_CRATE_NO_NEED =
+            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.RESTOCK_CRATE, us(JolCraftDictionary.NO, JolCraftDictionary.NEED)));
+
+    public static final String TOOLTIP_RESTOCK_CRATE_SUCCESS =
+            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.RESTOCK_CRATE, JolCraftDictionary.SUCCESS));
+
+    public static final String TOOLTIP_REROLL_CRATE =
+            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.REROLL_CRATE);
+
+    public static final String TOOLTIP_REROLL_CRATE_FAIL =
+            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.REROLL_CRATE, JolCraftDictionary.FAIL));
+
+    public static final String TOOLTIP_REROLL_CRATE_SUCCESS =
+            category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.REROLL_CRATE, JolCraftDictionary.SUCCESS));
+
+    public static final String TOOLTIP_CRATE_COOLDOWN =
+            tooltip(JolCraftDictionary.CRATE, JolCraftDictionary.COOLDOWN);
+
+    public static final String TOOLTIP_CRATE_NO_OFFERS_VILLAGER =
+            tooltip(JolCraftDictionary.CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.OFFER), JolCraftDictionary.VILLAGER));
+
+    public static final String TOOLTIP_CRATE_NO_OFFERS_DWARF =
+            tooltip(JolCraftDictionary.CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.OFFER), JolCraftDictionary.DWARF));
 
     // ---------------------------------------------------------------------
     // DwarvenReputationLangSubProvider

@@ -98,5 +98,21 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_PROMOTE, "This dwarf cannot be promoted.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_SIGN, "This dwarf cannot sign contracts.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_DWARF_GUARD_PROMOTION, "Guard promoted to %s!");
+
+        // -----------------------------------------------------------------
+        // Crates
+        // -----------------------------------------------------------------
+
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE, "Can be used to restock the inventory of a dwarf or villager trader.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_NO_NEED, "This trader doesn't need restocking.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_SUCCESS, "Trader inventory restocked!");
+
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE, "Can be used to reroll the inventory of a dwarf or villager trader.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_FAIL, "This trader inventory cannot be rerolled!");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_SUCCESS, "Trader inventory rerolled!");
+
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_CRATE_COOLDOWN, "You must wait before you can use another crate.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_CRATE_NO_OFFERS_VILLAGER, "This villager has no trades!");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_CRATE_NO_OFFERS_DWARF, "This dwarf has no trades!");
     }
 }

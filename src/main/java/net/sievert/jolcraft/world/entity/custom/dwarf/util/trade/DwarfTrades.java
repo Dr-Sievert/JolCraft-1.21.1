@@ -17,7 +17,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import net.sievert.jolcraft.data.recipe.custom.DwarfTradeRecipe;
+import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
 
 import javax.annotation.Nullable;
@@ -231,11 +231,7 @@ public final class DwarfTrades {
             if (r.profession() != profession) continue;
             if (r.pool() != pool) continue;
 
-            if (r.exactLevel()) {
-                if (r.merchantLevel() != merchantLevel) continue;
-            } else {
-                if (r.merchantLevel() > merchantLevel) continue;
-            }
+            if (r.merchantLevel() != merchantLevel) continue;
 
             filtered.add(holder);
         }

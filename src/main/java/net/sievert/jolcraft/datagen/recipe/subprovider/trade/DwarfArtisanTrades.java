@@ -6,6 +6,7 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
+import net.sievert.jolcraft.datagen.recipe.subprovider.trade.util.AbstractDwarfTrades;
 import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;

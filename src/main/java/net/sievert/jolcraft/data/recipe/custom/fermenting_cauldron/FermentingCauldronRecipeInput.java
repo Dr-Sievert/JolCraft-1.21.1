@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.recipe.custom.input;
+package net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.item.ItemStack;
