@@ -25,7 +25,7 @@ public final class JolCraftEquipmentAssets {
 
         for (JolCraftMaterials.Material material : JolCraftMaterials.Material.values()) {
             DeferredHolder<EquipmentAsset, EquipmentAsset> holder =
-                    EQUIPMENT_ASSETS.register(material.id(), EquipmentAsset::new);
+                    EQUIPMENT_ASSETS.register(material.getId(), EquipmentAsset::new);
             out.put(material, holder);
         }
 

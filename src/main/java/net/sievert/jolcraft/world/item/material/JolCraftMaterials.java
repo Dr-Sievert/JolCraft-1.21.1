@@ -9,13 +9,14 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftMaterialIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 public final class JolCraftMaterials {
 
     private JolCraftMaterials() {}
 
-    public enum Material {
+    public enum Material implements JolCraftEnumHelper.StringId {
         DEEPSLATE(JolCraftMaterialIds.DEEPSLATE),
         MITHRIL(JolCraftMaterialIds.MITHRIL);
 
@@ -25,7 +26,8 @@ public final class JolCraftMaterials {
             this.id = id;
         }
 
-        public String id() {
+        @Override
+        public String getId() {
             return id;
         }
 
@@ -44,7 +46,9 @@ public final class JolCraftMaterials {
 
     public static ResourceKey<Registry<EquipmentAsset>> equipmentAssetRegistryKey() {
         return ResourceKey.createRegistryKey(
-                ResourceLocation.withDefaultNamespace(JolCraftStrings.underscored(JolCraftDictionary.EQUIPMENT, JolCraftDictionary.ASSET))
+                ResourceLocation.withDefaultNamespace(
+                        JolCraftStrings.underscored(JolCraftDictionary.EQUIPMENT, JolCraftDictionary.ASSET)
+                )
         );
     }
 }

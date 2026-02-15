@@ -118,7 +118,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
             @NotNull JolCraftMaterials.Material material,
             @NotNull JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set
     ) {
-        String baseName = material.id();
+        String baseName = material.getId();
         ResourceKey<EquipmentAsset> equipmentAssetKey = material.equipmentAssetKey();
 
         for (JolCraftEquipmentHelper.ArmorPiece piece : JolCraftEquipmentHelper.ArmorPiece.values()) {
@@ -277,7 +277,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
                     Map.of(material.equipmentAssetKey(), material.darkerTrimName());
 
             out.add(new ItemModelGenerators.TrimMaterialData(
-                    material.id(),
+                    material.getId(),
                     JolCraftTrimMaterials.vanilla(material),
                     overrides
             ));
@@ -286,7 +286,7 @@ public final class TrimModelSubProvider implements AbstractModelProvider.ModelSu
         // Attribute trims (no overrides)
         for (JolCraftTrimMaterials.Attribute attribute : JolCraftTrimMaterials.Attribute.values()) {
             out.add(new ItemModelGenerators.TrimMaterialData(
-                    attribute.id(),
+                    attribute.getId(),
                     JolCraftTrimMaterials.attribute(attribute),
                     Map.of()
             ));

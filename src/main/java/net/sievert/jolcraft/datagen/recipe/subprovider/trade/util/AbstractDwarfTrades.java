@@ -515,7 +515,7 @@ public abstract class AbstractDwarfTrades {
     // =====================================================================
 
     protected final BountyType bountyType() {
-        return BountyType.valueOf(profession().name());
+        return BountyType.fromString(profession().getId());
     }
 
     private void bountyTrade(

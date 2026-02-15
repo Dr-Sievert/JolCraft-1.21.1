@@ -1,19 +1,24 @@
 package net.sievert.jolcraft.data.recipe.custom.dwarf_trade;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeInput;
+import net.sievert.jolcraft.data.recipe.util.EmptyRecipeInput;
 import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
-import org.jetbrains.annotations.NotNull;
 
-public record DwarfTradeRecipeInput(DwarfProfession profession, int merchantLevel) implements RecipeInput {
+public final class DwarfTradeRecipeInput extends EmptyRecipeInput {
 
-    @Override
-    public @NotNull ItemStack getItem(int index) {
-        return ItemStack.EMPTY;
+    private final DwarfProfession profession;
+    private final int merchantLevel;
+
+    public DwarfTradeRecipeInput(DwarfProfession profession, int merchantLevel) {
+        super();
+        this.profession = profession;
+        this.merchantLevel = merchantLevel;
     }
 
-    @Override
-    public int size() {
-        return 0;
+    public DwarfProfession profession() {
+        return profession;
+    }
+
+    public int merchantLevel() {
+        return merchantLevel;
     }
 }

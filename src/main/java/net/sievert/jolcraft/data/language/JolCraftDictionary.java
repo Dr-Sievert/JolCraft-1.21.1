@@ -58,6 +58,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PROMOTE = "promote";
     public static final String READ = "read";
     public static final String REPAIR = "repair";
+    public static final String REQUIRE = "require";
     public static final String REROLL = "reroll";
     public static final String RESET = "reset";
     public static final String RESTOCK = "restock";
@@ -66,6 +67,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SIGN = "sign";
     public static final String SLAY = "slay";
     public static final String SLOW = "slow";
+    public static final String SNEAK = "sneak";
     public static final String SPAWN = "spawn";
     public static final String SYNC = "sync";
     public static final String TALK = "talk";
@@ -292,6 +294,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String GUILD = "guild";
     public static final String GUILDMASTER = "guildmaster";
     public static final String HAMMER = "hammer";
+    public static final String HAND = "hand";
     public static final String HASTE = "haste";
     public static final String HAT = "hat";
     public static final String HEAD = "head";
@@ -314,6 +317,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String INFO = "info";
     public static final String INIT = "init";
     public static final String INPUT = "input";
+    public static final String INTERACTION = "interaction";
     public static final String IRON = "iron";
     public static final String IRONHEART = "ironheart";
     public static final String ITEM = "item";
@@ -386,6 +390,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PATTERN = "pattern";
     public static final String PESTLE = "pestle";
     public static final String PICKAXE = "pickaxe";
+    public static final String PITCH = "pitch";
     public static final String PLATE = "plate";
     public static final String PLAYER = "player";
     public static final String PLUGIN = "plugin";
@@ -481,6 +486,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String VERDANITE = "verdanite";
     public static final String VERDANT = "verdant";
     public static final String VILLAGER = "villager";
+    public static final String VOLUME = "volume";
     public static final String WARHAMMER = "warhammer";
     public static final String WEIGHT = "weight";
     public static final String WIDGET = "widget";

@@ -35,9 +35,9 @@ public final class CompassLangSubProvider implements AbstractLanguageProvider.La
 
         // Dial labels
         for (StructureGroup group : StructureGroup.values()) {
-            String key = JolCraftLanguageKeys.tooltip(JolCraftItemIds.DEEPSLATE_COMPASS_DIAL, group.id());
+            String key = JolCraftLanguageKeys.tooltip(JolCraftItemIds.DEEPSLATE_COMPASS_DIAL, group.getId());
             if (p.hasKey(key)) continue;
-            p.putManual(key, JolCraftStrings.toTitleCase(group.id()));
+            p.putManual(key, JolCraftStrings.toTitleCase(group.getId()));
         }
 
         // Vanilla structures

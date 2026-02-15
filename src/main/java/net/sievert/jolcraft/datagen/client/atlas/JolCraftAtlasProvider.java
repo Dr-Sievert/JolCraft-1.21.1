@@ -226,7 +226,7 @@ public final class JolCraftAtlasProvider implements DataProvider {
         // attributes in enum order, last one without trailing comma
         JolCraftTrimMaterials.Attribute[] attrs = JolCraftTrimMaterials.Attribute.values();
         for (int i = 0; i < attrs.length; i++) {
-            String id = attrs[i].id();
+            String id = attrs[i].getId();
             sb.append("        ")
                     .append("\"").append(id).append("\": ")
                     .append("\"jolcraft:trims/color_palettes/").append(id).append("\"");
@@ -236,8 +236,8 @@ public final class JolCraftAtlasProvider implements DataProvider {
 
     private static void appendJolCraftMaterial(StringBuilder sb, JolCraftMaterials.Material mat) {
         sb.append("        ")
-                .append("\"").append(mat.id()).append("\": ")
-                .append("\"jolcraft:trims/color_palettes/").append(mat.id()).append("\",\n");
+                .append("\"").append(mat.getId()).append("\": ")
+                .append("\"jolcraft:trims/color_palettes/").append(mat.getId()).append("\",\n");
 
         sb.append("        ")
                 .append("\"").append(mat.darkerTrimName()).append("\": ")

@@ -51,7 +51,7 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
 
                         for (StructureGroup group : StructureGroup.values()) {
-                            addCompassDialVariant(pOutput, group.id());
+                            addCompassDialVariant(pOutput, group.getId());
                         }
 
                         pOutput.accept(JolCraftBlocks.HEARTH);

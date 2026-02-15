@@ -15,6 +15,7 @@ import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
 import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
 
 public final class JolCraftRecipes {
@@ -27,6 +28,12 @@ public final class JolCraftRecipes {
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> ATTRIBUTE_SMITHING_TRIM_SERIALIZER =
             SERIALIZERS.register(JolCraftRecipeIds.ATTRIBUTE_SMITHING_TRIM, AttributeSmithingTrimRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<HandInteractionRecipe>> HAND_INTERACTION_SERIALIZER =
+            SERIALIZERS.register(JolCraftRecipeIds.HAND_INTERACTION, HandInteractionRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<HandInteractionRecipe>> HAND_INTERACTION_TYPE =
+            TYPES.register(JolCraftRecipeIds.HAND_INTERACTION, () -> simpleType(JolCraftRecipeIds.HAND_INTERACTION));
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<DwarfTradeRecipe>> DWARF_TRADE_SERIALIZER =
             SERIALIZERS.register(JolCraftRecipeIds.DWARF_TRADE, DwarfTradeRecipe.Serializer::new);

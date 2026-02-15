@@ -97,7 +97,7 @@ public final class JolCraftTrimAttributes {
 
             ResourceLocation modifierId = JolCraft.location(
                     "trim/%s/%s/%s".formatted(
-                            trimAttribute.id(),
+                            trimAttribute.getId(),
                             attributePath(attr.attribute()),
                             slot.getName()
                     )
