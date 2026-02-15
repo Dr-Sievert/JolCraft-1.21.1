@@ -13,7 +13,7 @@ public final class BountyHelper {
      */
     public static BountyTier getBountyTier(ItemStack stack) {
         DataComponentType<Integer> comp = JolCraftDataComponents.BOUNTY_TIER.get();
-        int value = stack.getOrDefault(comp, BountyTier.UNKNOWN.getValue());
+        int value = stack.getOrDefault(comp, BountyTier.UNKNOWN.getId());
         return BountyTier.fromValue(value);
     }
 
@@ -39,6 +39,6 @@ public final class BountyHelper {
      */
     public static void setBountyTier(ItemStack stack, BountyTier tier) {
         DataComponentType<Integer> bountyTierComponent = JolCraftDataComponents.BOUNTY_TIER.get();
-        stack.set(bountyTierComponent, tier.getValue());
+        stack.set(bountyTierComponent, tier.getId());
     }
 }

@@ -48,14 +48,21 @@ public abstract class AbstractDwarfTrades {
      * Subclasses can write: NOVICE, APPRENTICE, ...
      */
     protected enum Level {
-        NOVICE,
-        APPRENTICE,
-        JOURNEYMAN,
-        EXPERT,
-        MASTER;
 
-        public int id() {
-            return DwarfMerchantData.Level.valueOf(name()).id();
+        NOVICE(DwarfMerchantData.Level.NOVICE),
+        APPRENTICE(DwarfMerchantData.Level.APPRENTICE),
+        JOURNEYMAN(DwarfMerchantData.Level.JOURNEYMAN),
+        EXPERT(DwarfMerchantData.Level.EXPERT),
+        MASTER(DwarfMerchantData.Level.MASTER);
+
+        private final DwarfMerchantData.Level backing;
+
+        Level(DwarfMerchantData.Level backing) {
+            this.backing = backing;
+        }
+
+        public int getId() {
+            return backing.getId();
         }
     }
 
@@ -172,7 +179,7 @@ public abstract class AbstractDwarfTrades {
 
         DwarfTradeRecipe recipe = new DwarfTradeRecipe(
                 profession(),
-                level.id(),
+                level.getId(),
                 pool,
                 weight,
                 order,
@@ -525,7 +532,7 @@ public abstract class AbstractDwarfTrades {
                         DataComponentPatch.builder()
                                 .set(
                                         JolCraftDataComponents.BOUNTY_TIER.get(),
-                                        BountyTier.valueOf(level.name()).getValue()
+                                        level.getId()
                                 )
                                 .set(
                                         JolCraftDataComponents.BOUNTY_TYPE.get(),

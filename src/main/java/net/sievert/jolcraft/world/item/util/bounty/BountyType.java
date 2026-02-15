@@ -1,22 +1,17 @@
 package net.sievert.jolcraft.world.item.util.bounty;
 
+import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
-
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
 
 /**
  * Represents the different types of bounties assignable to dwarves and items.
  */
-public enum BountyType {
+public enum BountyType implements JolCraftEnumHelper.StringId {
 
     UNKNOWN(JolCraftDictionary.UNKNOWN),
-    MINER(DwarfProfession.MINER.getId()),
-    MERCHANT(DwarfProfession.MERCHANT.getId());
-
-    private static final Map<String, BountyType> BY_ID = Stream.of(values()).collect(Collectors.toUnmodifiableMap(BountyType::getId, t -> t));
+    MINER(JolCraftDwarfIds.DWARF_MINER),
+    MERCHANT(JolCraftDwarfIds.DWARF_MERCHANT);
 
     private final String id;
 
@@ -25,15 +20,13 @@ public enum BountyType {
     }
 
     /** The unique string ID used for saving/loading this type. */
+    @Override
     public String getId() {
         return id;
     }
 
     /** Looks up a BountyType by its string ID. Returns UNKNOWN if no match. */
     public static BountyType fromString(String id) {
-        if (id == null) return UNKNOWN;
-        String key = id.trim();
-        if (key.isEmpty()) return UNKNOWN;
-        return BY_ID.getOrDefault(key, UNKNOWN);
+        return JolCraftEnumHelper.byStringId(BountyType.class, id, UNKNOWN);
     }
 }

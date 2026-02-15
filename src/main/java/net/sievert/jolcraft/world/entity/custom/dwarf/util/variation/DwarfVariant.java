@@ -1,13 +1,13 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.variation;
 
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Locale;
 
-public enum DwarfVariant {
+public enum DwarfVariant implements JolCraftEnumHelper.IntId {
+
     GREY(0),
     BLUE(1),
     GREEN(2),
@@ -15,10 +15,6 @@ public enum DwarfVariant {
     PURPLE(4),
     WHITE(5),
     YELLOW(6);
-
-    private static final DwarfVariant[] BY_ID = Arrays.stream(values())
-            .sorted(Comparator.comparingInt(DwarfVariant::getId))
-            .toArray(DwarfVariant[]::new);
 
     private final int id;
     private final String key;
@@ -28,6 +24,7 @@ public enum DwarfVariant {
         this.key = name().toLowerCase(Locale.ROOT);
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -43,6 +40,6 @@ public enum DwarfVariant {
     }
 
     public static DwarfVariant byId(int id) {
-        return BY_ID[id % BY_ID.length];
+        return JolCraftEnumHelper.byIntIdModulo(DwarfVariant.class, id);
     }
 }

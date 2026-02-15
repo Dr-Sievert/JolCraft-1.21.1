@@ -93,7 +93,7 @@ public abstract class AbstractBountyRewards {
         BountyRewardRecipe recipe = new BountyRewardRecipe(
                 redeem,
                 bountyType(),
-                tier.getValue(),
+                tier.getId(),
                 pool,
                 weight,
                 result

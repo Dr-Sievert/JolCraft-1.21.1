@@ -283,7 +283,7 @@ public final class BountyTaskRecipe implements Recipe<BountyRecipeInput> {
 
         if (!base.is(JolCraftItems.BOUNTY.get())) return false;
 
-        return in.type() == bountyType && in.tier().getValue() == tier;
+        return in.type() == bountyType && in.tier().getId() == tier;
     }
 
     @Override

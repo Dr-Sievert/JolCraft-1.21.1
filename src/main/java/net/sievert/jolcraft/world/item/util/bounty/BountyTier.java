@@ -1,36 +1,35 @@
 package net.sievert.jolcraft.world.item.util.bounty;
 
 import net.minecraft.network.chat.Component;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+public enum BountyTier implements JolCraftEnumHelper.IntId {
 
-public enum BountyTier {
-
-    UNKNOWN(0, JolCraftLanguageKeys.UNKNOWN),
-    NOVICE(1, JolCraftLanguageKeys.LEVEL_NOVICE),
-    APPRENTICE(2, JolCraftLanguageKeys.LEVEL_APPRENTICE),
-    JOURNEYMAN(3, JolCraftLanguageKeys.LEVEL_JOURNEYMAN),
-    EXPERT(4, JolCraftLanguageKeys.LEVEL_EXPERT),
-    MASTER(5, JolCraftLanguageKeys.LEVEL_MASTER);
-
-    private static final Map<Integer, BountyTier> BY_VALUE =
-            Stream.of(values()).collect(Collectors.toUnmodifiableMap(BountyTier::getValue, t -> t));
+    UNKNOWN(0),
+    NOVICE(1),
+    APPRENTICE(2),
+    JOURNEYMAN(3),
+    EXPERT(4),
+    MASTER(5);
 
     private final int value;
     private final String langKey;
-    private final Component displayName;
 
-    BountyTier(int value, String langKey) {
+    BountyTier(int value) {
         this.value = value;
-        this.langKey = langKey;
-        this.displayName = Component.translatable(langKey);
+
+        this.langKey = (value == 0)
+                ? AbstractLanguageKeys.mod(JolCraftDictionary.UNKNOWN)
+                : AbstractLanguageKeys.mod(DwarfMerchantData.Level.langKeyFromId(value));
     }
 
     /** For saving to DataComponent / NBT. */
-    public int getValue() {
+    @Override
+    public int getId() {
         return value;
     }
 
@@ -40,10 +39,10 @@ public enum BountyTier {
 
     /** Convenience for UI. */
     public Component getDisplayName() {
-        return displayName;
+        return Component.translatable(langKey);
     }
 
     public static BountyTier fromValue(int value) {
-        return BY_VALUE.getOrDefault(value, UNKNOWN);
+        return JolCraftEnumHelper.byIntIdExact(BountyTier.class, value, UNKNOWN);
     }
 }

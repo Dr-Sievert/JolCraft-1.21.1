@@ -113,7 +113,7 @@ public final class BountyRewardAction extends InspectDwarfAction {
         ItemStack bonusReward = BountyGenerator.Reward.roll(serverLevel, redeemStack, BountyRewardRecipe.RewardPool.BONUS);
         throwStack(serverLevel, start, velocity, bonusReward);
 
-        int xp = switch (redeemTier.getValue()) {
+        int xp = switch (redeemTier.getId()) {
             case 1 -> 10;
             case 2 -> 35;
             case 3 -> 50;

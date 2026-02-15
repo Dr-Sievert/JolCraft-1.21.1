@@ -5,9 +5,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 
-public enum DwarfProfession {
+public enum DwarfProfession implements JolCraftEnumHelper.StringId {
 
     NONE(JolCraftDwarfIds.DWARF),
     ALCHEMIST(JolCraftDwarfIds.DWARF_ALCHEMIST),
@@ -30,14 +31,13 @@ public enum DwarfProfession {
         this.id = id;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
     public Component getDisplayName() {
-        return id != null
-                ? Component.translatable(AbstractLanguageKeys.entity(id))
-                : Component.empty();
+        return Component.translatable(AbstractLanguageKeys.entity(id));
     }
 
     public static Component getDisplayName(AbstractTradingEntity dwarf) {
@@ -45,24 +45,11 @@ public enum DwarfProfession {
     }
 
     public static DwarfProfession byId(String id) {
-        for (DwarfProfession prof : values()) {
-            if (prof.id.equals(id)) return prof;
-        }
-        return NONE;
+        return JolCraftEnumHelper.byStringId(DwarfProfession.class, id, NONE);
     }
 
     @SuppressWarnings("deprecation")
     public static DwarfProfession fromEntityType(EntityType<?> type) {
-        ResourceLocation rl = type.builtInRegistryHolder().key().location();
-
-        String path = rl.getPath();
-
-        if (path.equals(JolCraftDwarfIds.DWARF)) return NONE;
-
-        if (path.startsWith(JolCraftDwarfIds.DWARF + "_")) {
-            return byId(path);
-        }
-
-        return NONE;
+        return byId(type.builtInRegistryHolder().key().location().getPath());
     }
 }

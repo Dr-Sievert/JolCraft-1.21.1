@@ -24,7 +24,7 @@ public interface DwarvenReputation extends INBTSerializable<CompoundTag> {
     }
 
     default void setTier(DwarvenReputationTier tier) {
-        setTierId(tier != null ? tier.id() : DwarvenReputationTier.STRANGER.id());
+        setTierId((tier == null ? DwarvenReputationTier.STRANGER : tier).getId());
     }
 
     // ---------------------------------------------------------------------

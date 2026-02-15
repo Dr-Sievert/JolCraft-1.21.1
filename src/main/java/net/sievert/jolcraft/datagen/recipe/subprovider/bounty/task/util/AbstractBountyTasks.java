@@ -112,7 +112,7 @@ public abstract class AbstractBountyTasks {
         BountyTaskRecipe recipe = new BountyTaskRecipe(
                 result.builtInRegistryHolder(),
                 bountyType(),
-                tier.getValue(),
+                tier.getId(),
                 weight,
                 objective
         );

@@ -6,11 +6,13 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 public record DwarfMerchantData(int level) {
 
-    public enum Level {
+    public enum Level implements JolCraftEnumHelper.IntId {
+
         NOVICE(1),
         APPRENTICE(2),
         JOURNEYMAN(3),
@@ -23,19 +25,17 @@ public record DwarfMerchantData(int level) {
             this.level = level;
         }
 
-        public int id() {
+        @Override
+        public int getId() {
             return level;
         }
 
         public String idToString() {
-            return String.valueOf(id());
+            return String.valueOf(level);
         }
 
         public static Level fromId(int level) {
-            for (Level l : values()) {
-                if (l.level == level) return l;
-            }
-            return NOVICE;
+            return JolCraftEnumHelper.byIntIdExact(Level.class, level, NOVICE);
         }
 
         public String langKey() {

@@ -95,11 +95,10 @@ public final class DwarfProfessionConfigProvider implements DataProvider {
         Int2IntOpenHashMap m = new Int2IntOpenHashMap();
         m.defaultReturnValue(0);
 
-        // pairs: Level, int rolls, Level, int rolls...
         for (int i = 0; i < pairs.length; i += 2) {
             DwarfMerchantData.Level level = (DwarfMerchantData.Level) pairs[i];
             int rolls = (int) pairs[i + 1];
-            m.put(level.id(), rolls);
+            m.put(level.getId(), rolls);
         }
 
         return m;

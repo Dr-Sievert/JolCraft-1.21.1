@@ -30,7 +30,6 @@ import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
 import net.sievert.jolcraft.world.item.util.bounty.BountyType;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -436,8 +435,7 @@ public final class BountyRewardRecipe implements Recipe<BountyRecipeInput> {
         if (!ingredient.test(redeem)) return false;
         if (!isCompletedRewardBountyStack(redeem)) return false;
 
-        return in.type() == bountyType
-                && in.tier().getValue() == tier;
+        return in.type() == bountyType && in.tier().getId() == tier;
     }
 
     @Override

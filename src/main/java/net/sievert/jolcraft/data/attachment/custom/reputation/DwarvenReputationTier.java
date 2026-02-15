@@ -3,9 +3,10 @@ package net.sievert.jolcraft.data.attachment.custom.reputation;
 import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
-public enum DwarvenReputationTier {
+public enum DwarvenReputationTier implements JolCraftEnumHelper.IntId {
 
     STRANGER(0),
     KNOWN_FACE(1),
@@ -19,7 +20,8 @@ public enum DwarvenReputationTier {
         this.id = id;
     }
 
-    public int id() {
+    @Override
+    public int getId() {
         return id;
     }
 
@@ -30,16 +32,16 @@ public enum DwarvenReputationTier {
     public String langKey() {
         return AbstractLanguageKeys.mod(
                 JolCraftStrings.dotted(
-                        JolCraftStrings.underscored(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER),
+                        JolCraftStrings.underscored(
+                                JolCraftAttachmentIds.DWARVEN_REPUTATION,
+                                JolCraftDictionary.TIER
+                        ),
                         idToString()
                 )
         );
     }
 
     public static DwarvenReputationTier fromId(int id) {
-        for (DwarvenReputationTier tier : values()) {
-            if (tier.id == id) return tier;
-        }
-        return STRANGER;
+        return JolCraftEnumHelper.byIntIdExact(DwarvenReputationTier.class, id, STRANGER);
     }
 }

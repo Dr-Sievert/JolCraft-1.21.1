@@ -8,6 +8,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -24,7 +25,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
     /**
      * Stored as int for NBT/network friendliness. Always clamped via {@link DwarvenReputationTier}.
      */
-    private int tierId = DwarvenReputationTier.STRANGER.id();
+    private int tierId = DwarvenReputationTier.STRANGER.getId();
 
     private final Set<ResourceLocation> endorsements = new HashSet<>();
 
@@ -41,7 +42,7 @@ public class DwarvenReputationImpl implements DwarvenReputation {
 
     @Override
     public void setTierId(int tierId) {
-        this.tierId = DwarvenReputationTier.fromId(tierId).id();
+        this.tierId = DwarvenReputationTier.fromId(tierId).getId();
     }
 
     // ---------------------------------------------------------------------
