@@ -21,6 +21,8 @@ public final class DwarfProfessionTraits {
     // Traits
     // -------------------------------------------------------------------------
 
+    public record BountyRewardParticles(float r, float g, float b, float scale) {}
+
     public record Traits(
             ContractItem contract,
             int requiredTier,
@@ -31,8 +33,11 @@ public final class DwarfProfessionTraits {
             Predicate<AbstractDwarfEntity> canSign,
             Predicate<AbstractDwarfEntity> canEndorse,
             Predicate<AbstractDwarfEntity> canTrade,
+            boolean canBountyInteract,
             @Nullable SoundEvent restockSound,
-            @Nullable SoundEvent rerollSound
+            @Nullable SoundEvent rerollSound,
+            @Nullable SoundEvent bountyRewardSound,
+            @Nullable BountyRewardParticles bountyRewardParticles
     ) {}
 
     @FunctionalInterface
@@ -58,8 +63,11 @@ public final class DwarfProfessionTraits {
                 dwarf -> true,
                 dwarf -> dwarf.getMerchantLevel() >= 1,
                 dwarf -> true,
+                false,
                 SoundEvents.VILLAGER_WORK_FISHERMAN,
-                SoundEvents.VILLAGER_WORK_FISHERMAN
+                SoundEvents.VILLAGER_WORK_FISHERMAN,
+                null,
+                null
         );
 
         // Start by applying defaults to all professions
@@ -73,7 +81,7 @@ public final class DwarfProfessionTraits {
 
         // BASE
         override(DwarfProfession.NONE,
-                () -> new ItemStack(ItemStack.EMPTY.getItem()),
+                () -> ItemStack.EMPTY,
                 defaults.requiredTier(),
                 defaults.canReroll(),
                 defaults.adultVoicePitch(),
@@ -82,8 +90,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 defaults.restockSound(),
-                defaults.rerollSound()
+                defaults.rerollSound(),
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // GUILDMASTER
@@ -93,8 +104,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
-                SoundEvents.VILLAGER_WORK_CARTOGRAPHER
+                SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // ALCHEMIST
@@ -104,8 +118,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_CLERIC,
-                SoundEvents.VILLAGER_WORK_CLERIC
+                SoundEvents.VILLAGER_WORK_CLERIC,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // ARCANIST
@@ -115,8 +132,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_LIBRARIAN,
-                SoundEvents.VILLAGER_WORK_LIBRARIAN
+                SoundEvents.VILLAGER_WORK_LIBRARIAN,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // ARTISAN
@@ -126,8 +146,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_TOOLSMITH,
-                SoundEvents.VILLAGER_WORK_TOOLSMITH
+                SoundEvents.VILLAGER_WORK_TOOLSMITH,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // BREWMASTER
@@ -137,8 +160,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_CLERIC,
-                SoundEvents.VILLAGER_WORK_CLERIC
+                SoundEvents.VILLAGER_WORK_CLERIC,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // EXPLORER
@@ -148,8 +174,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
-                SoundEvents.VILLAGER_WORK_CARTOGRAPHER
+                SoundEvents.VILLAGER_WORK_CARTOGRAPHER,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // GUARD
@@ -159,8 +188,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 dwarf -> dwarf.getMerchantLevel() >= 5,
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_WEAPONSMITH,
-                SoundEvents.VILLAGER_WORK_WEAPONSMITH
+                SoundEvents.VILLAGER_WORK_WEAPONSMITH,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // HISTORIAN
@@ -170,8 +202,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_LIBRARIAN,
-                SoundEvents.VILLAGER_WORK_LIBRARIAN
+                SoundEvents.VILLAGER_WORK_LIBRARIAN,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // KEEPER
@@ -181,8 +216,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_FARMER,
-                SoundEvents.VILLAGER_WORK_FARMER
+                SoundEvents.VILLAGER_WORK_FARMER,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // MERCHANT
@@ -192,8 +230,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                true,
                 defaults.restockSound(),
-                defaults.rerollSound()
+                defaults.rerollSound(),
+                SoundEvents.VILLAGER_WORK_FISHERMAN,
+                new BountyRewardParticles(1.0F, 0.84F, 0.0F, 0.5F)
         );
 
         // MINER
@@ -203,8 +244,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                true,
                 SoundEvents.VILLAGER_WORK_MASON,
-                SoundEvents.VILLAGER_WORK_MASON
+                SoundEvents.VILLAGER_WORK_MASON,
+                SoundEvents.VILLAGER_WORK_MASON,
+                new BountyRewardParticles(0.25F, 0.25F, 0.30F, 0.7F)
         );
 
         // PRIEST
@@ -214,8 +258,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_LIBRARIAN,
-                SoundEvents.VILLAGER_WORK_LIBRARIAN
+                SoundEvents.VILLAGER_WORK_LIBRARIAN,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
 
         // SCRAPPER
@@ -225,8 +272,11 @@ public final class DwarfProfessionTraits {
                 defaults.canSign(),
                 defaults.canEndorse(),
                 defaults.canTrade(),
+                defaults.canBountyInteract(),
                 SoundEvents.VILLAGER_WORK_TOOLSMITH,
-                SoundEvents.VILLAGER_WORK_TOOLSMITH
+                SoundEvents.VILLAGER_WORK_TOOLSMITH,
+                defaults.bountyRewardSound(),
+                defaults.bountyRewardParticles()
         );
     }
 
@@ -251,8 +301,11 @@ public final class DwarfProfessionTraits {
             Predicate<AbstractDwarfEntity> canSign,
             Predicate<AbstractDwarfEntity> canEndorse,
             Predicate<AbstractDwarfEntity> canTrade,
+            boolean canBountyInteract,
             @Nullable SoundEvent restockSound,
-            @Nullable SoundEvent rerollSound
+            @Nullable SoundEvent rerollSound,
+            @Nullable SoundEvent bountyRewardSound,
+            @Nullable BountyRewardParticles bountyRewardParticles
     ) {
         TRAITS.put(profession, new Traits(
                 contract,
@@ -264,8 +317,11 @@ public final class DwarfProfessionTraits {
                 canSign,
                 canEndorse,
                 canTrade,
+                canBountyInteract,
                 restockSound,
-                rerollSound
+                rerollSound,
+                bountyRewardSound,
+                bountyRewardParticles
         ));
     }
 }

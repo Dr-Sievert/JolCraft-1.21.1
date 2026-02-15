@@ -81,7 +81,7 @@ public final class BountyGenerator {
                 BountyRewardRecipe.RewardPool pool
         ) {
             if (redeemStack.isEmpty()) return ItemStack.EMPTY;
-            if (!BountyRewardRecipe.isCompletedBountyStack(redeemStack)) return ItemStack.EMPTY;
+            if (!BountyRewardRecipe.isCompletedRewardBountyStack(redeemStack)) return ItemStack.EMPTY;
 
             BountyType type = BountyRecipe.readType(redeemStack);
             BountyTier tier = BountyRecipe.readTier(redeemStack);

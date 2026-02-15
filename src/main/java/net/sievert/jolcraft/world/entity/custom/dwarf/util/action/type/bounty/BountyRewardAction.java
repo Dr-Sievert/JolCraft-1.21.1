@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.util.action.type.bounty;
 
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -43,7 +44,6 @@ public final class BountyRewardAction extends InspectDwarfAction {
         this.ticksRemaining = 40;
         startInspect(dwarf, player, hand, itemstack);
     }
-
     @Override
     public void tick() {
         if (ticksRemaining > 0) ticksRemaining--;
@@ -51,32 +51,27 @@ public final class BountyRewardAction extends InspectDwarfAction {
         if (type == BountyType.UNKNOWN) return;
 
         if (ticksRemaining == 25) {
-            JolCraftSoundHelper.entity(dwarf, SoundEvents.VILLAGER_WORK_FISHERMAN);
+            SoundEvent rewardSound = dwarf.getBountyRewardSound();
+            if (rewardSound != null) {
+                JolCraftSoundHelper.entity(dwarf, rewardSound);
+            }
         }
+
         if (ticksRemaining == 15) {
             PlaySound.dwarfYes(dwarf);
         }
+
         if (ticksRemaining == 10) {
-            if (type == BountyType.MERCHANT) {
-                spawnBountyParticles(1.0F, 0.84F, 0.0F, 0.5F);
-            } else if (type == BountyType.MINER) {
-                spawnBountyParticles(0.25F, 0.25F, 0.30F, 0.7F);
+            var particles = dwarf.getBountyRewardParticles();
+            if (particles != null) {
+                spawnBountyParticles(
+                        particles.r(),
+                        particles.g(),
+                        particles.b(),
+                        particles.scale()
+                );
             }
         }
-    }
-
-    private void spawnBountyParticles(float r, float g, float b, float alpha) {
-        dwarf.spawnColoredParticles(r, g, b, alpha, 10, 1.0D);
-        JolCraftSoundHelper.play(
-                dwarf.level(),
-                SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
-                dwarf.getSoundSource(),
-                dwarf.getX(),
-                dwarf.getY() + 1.0D,
-                dwarf.getZ(),
-                1.0F,
-                1.2F
-        );
     }
 
     @Override
@@ -93,7 +88,7 @@ public final class BountyRewardAction extends InspectDwarfAction {
         ItemStack redeemStack = this.itemstack;
         if (redeemStack.isEmpty()) return;
 
-        if (!BountyRewardRecipe.isCompletedBountyStack(redeemStack)) return;
+        if (!BountyRewardRecipe.isCompletedRewardBountyStack(redeemStack)) return;
 
         BountyType redeemType = BountyRecipe.readType(redeemStack);
         BountyTier redeemTier = BountyRecipe.readTier(redeemStack);
@@ -145,5 +140,19 @@ public final class BountyRewardAction extends InspectDwarfAction {
 
         dwarf.restockBountiesOnly();
         player.awardStat(JolCraftStats.DWARVEN_BOUNTIES_COMPLETED.get());
+    }
+
+    private void spawnBountyParticles(float r, float g, float b, float alpha) {
+        dwarf.spawnColoredParticles(r, g, b, alpha, 10, 1.0D);
+        JolCraftSoundHelper.play(
+                dwarf.level(),
+                SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
+                dwarf.getSoundSource(),
+                dwarf.getX(),
+                dwarf.getY() + 1.0D,
+                dwarf.getZ(),
+                1.0F,
+                1.2F
+        );
     }
 }

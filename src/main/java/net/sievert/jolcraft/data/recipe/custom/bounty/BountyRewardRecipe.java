@@ -434,7 +434,7 @@ public final class BountyRewardRecipe implements Recipe<BountyRecipeInput> {
         if (redeem.isEmpty()) return false;
 
         if (!ingredient.test(redeem)) return false;
-        if (!isCompletedBountyStack(redeem)) return false;
+        if (!isCompletedRewardBountyStack(redeem)) return false;
 
         return in.type() == bountyType
                 && in.tier().getValue() == tier;
@@ -471,19 +471,17 @@ public final class BountyRewardRecipe implements Recipe<BountyRecipeInput> {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isCompletedBountyStack(ItemStack stack) {
-        if (stack.isEmpty()) return false;
-
-        if (!stack.has(JolCraftDataComponents.BOUNTY_TYPE.get())) return false;
-        if (!stack.has(JolCraftDataComponents.BOUNTY_TIER.get())) return false;
+    public static boolean isRewardBountyStack(ItemStack stack) {
+        if (!BountyRecipe.isValidBountyStack(stack)) return false;
+        if (BountyTaskRecipe.isTaskBountyStack(stack)) return false;
         if (!stack.has(JolCraftDataComponents.BOUNTY_DATA.get())) return false;
+        if (!stack.has(JolCraftDataComponents.BOUNTY_FILL.get())) return false;
+        return stack.has(JolCraftDataComponents.BOUNTY_COMPLETE.get());
+    }
 
-        BountyType type = BountyRecipe.readType(stack);
-        if (type == BountyType.UNKNOWN) return false;
-
-        BountyTier tier = BountyRecipe.readTier(stack);
-        if (tier == BountyTier.UNKNOWN) return false;
-
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean isCompletedRewardBountyStack(ItemStack stack) {
+        if (!isRewardBountyStack(stack)) return false;
         return Boolean.TRUE.equals(stack.get(JolCraftDataComponents.BOUNTY_COMPLETE.get()));
     }
 

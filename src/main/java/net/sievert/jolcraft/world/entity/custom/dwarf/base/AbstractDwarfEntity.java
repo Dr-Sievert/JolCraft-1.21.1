@@ -95,6 +95,10 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         return DwarfProfessionTraits.of(this.getProfession()).canEndorse().test(this);
     }
 
+    public boolean canBountyInteract() {
+        return DwarfProfessionTraits.of(this.getProfession()).canBountyInteract();
+    }
+
     public boolean neverEndorse() {
         return DwarfProfessionTraits.of(this.getProfession()).neverEndorse();
     }
@@ -513,6 +517,16 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     @Override
     public float getVoicePitch() {
         return this.isBaby() ? 1.5F : DwarfProfessionTraits.of(this.getProfession()).adultVoicePitch();
+    }
+
+    @Nullable
+    public SoundEvent getBountyRewardSound() {
+        return DwarfProfessionTraits.of(this.getProfession()).bountyRewardSound();
+    }
+
+    @Nullable
+    public DwarfProfessionTraits.BountyRewardParticles getBountyRewardParticles() {
+        return DwarfProfessionTraits.of(this.getProfession()).bountyRewardParticles();
     }
 
     //Spawn

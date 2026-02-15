@@ -18,7 +18,7 @@ public final class FermentingCauldronColorHelper {
 
     public interface IngredientView {
         int count();
-        /** ARGB; alpha is ignored for mixing output. */
+        /** ARGB; scale is ignored for mixing output. */
         int color();
     }
 
@@ -114,7 +114,7 @@ public final class FermentingCauldronColorHelper {
 
     /**
      * Weighted mixing: per ingredient count, weight steps 1, 1/2, 1/4 (max 3).
-     * Output is opaque (alpha=FF).
+     * Output is opaque (scale=FF).
      */
     public static int computeMixedIngredientColor(Iterable<? extends IngredientView> ingredients, int fallbackArgb) {
         double sumW = 0.0;

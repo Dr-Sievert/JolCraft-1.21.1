@@ -32,6 +32,7 @@ import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.bounty.BountyData;
+import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
 import net.sievert.jolcraft.world.item.util.bounty.BountyType;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -248,9 +249,9 @@ public final class BountyTaskRecipe implements Recipe<BountyRecipeInput> {
     // Recipe fields
     // =====================================================================
 
-    private final Holder<Item> result; // NEW: output item (count always 1)
+    private final Holder<Item> result;
     private final BountyType bountyType;
-    private final int tier; // 1..5
+    private final int tier;
     private final int weight;
     private final TaskObjective objective;
 
@@ -287,13 +288,11 @@ public final class BountyTaskRecipe implements Recipe<BountyRecipeInput> {
 
     @Override
     public ItemStack assemble(BountyRecipeInput in, HolderLookup.Provider registries) {
-        // NEW: output is declared result item (always count 1)
         ItemStack out = new ItemStack(result.value(), 1);
 
         out.set(JolCraftDataComponents.BOUNTY_TYPE.get(), bountyType.getId());
         out.set(JolCraftDataComponents.BOUNTY_TIER.get(), tier);
 
-        // assemble() has no RandomSource, so we store a deterministic preview objective (min).
         out.set(JolCraftDataComponents.BOUNTY_DATA.get(), new BountyData(objective.preview()));
 
         out.set(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
@@ -327,6 +326,14 @@ public final class BountyTaskRecipe implements Recipe<BountyRecipeInput> {
         return true;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean isTaskBountyStack(ItemStack stack) {
+        if (!BountyRecipe.isValidBountyStack(stack)) return false;
+        if (stack.has(JolCraftDataComponents.BOUNTY_DATA.get())) return false;
+        if (stack.has(JolCraftDataComponents.BOUNTY_FILL.get())) return false;
+        return !stack.has(JolCraftDataComponents.BOUNTY_COMPLETE.get());
+    }
+
     // =====================================================================
     // Serializer (CODEC + STREAM_CODEC)
     // =====================================================================
@@ -336,7 +343,6 @@ public final class BountyTaskRecipe implements Recipe<BountyRecipeInput> {
 
         public static final MapCodec<BountyTaskRecipe> CODEC =
                 RecordCodecBuilder.mapCodec((RecordCodecBuilder.Instance<BountyTaskRecipe> inst) -> inst.group(
-                        // NEW: result item (no count)
                         RegistryFixedCodec.create(Registries.ITEM)
                                 .fieldOf(JolCraftDictionary.RESULT)
                                 .forGetter(BountyTaskRecipe::result),
@@ -436,7 +442,6 @@ public final class BountyTaskRecipe implements Recipe<BountyRecipeInput> {
         }
 
         private static void toNetwork(RegistryFriendlyByteBuf buf, BountyTaskRecipe r) {
-            // NEW: result item id
             ResourceLocation resultId = r.result.unwrapKey()
                     .orElseThrow(() -> new IllegalStateException("Unkeyed item holder in BountyTaskRecipe.result"))
                     .location();
@@ -450,7 +455,6 @@ public final class BountyTaskRecipe implements Recipe<BountyRecipeInput> {
         }
 
         private static BountyTaskRecipe fromNetwork(RegistryFriendlyByteBuf buf) {
-            // NEW: read result item id
             ResourceLocation resultId = buf.readResourceLocation();
             Registry<Item> itemReg = buf.registryAccess().lookupOrThrow(Registries.ITEM);
             Item resultItem = itemReg.getValue(resultId);

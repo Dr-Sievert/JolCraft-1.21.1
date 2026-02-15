@@ -66,6 +66,7 @@ public final class DwarfInteractions {
         registerCore(new SignContractInteractionHandler());
         registerCore(new PromoteInteractionHandler());
         registerCore(new EndorseInteractionHandler());
+        registerCore(new BountyInteractionHandler());
         registerCore(new TradeCrateInteractionHandler());
         registerCore(new TradeInteractionHandler());
 
@@ -73,8 +74,6 @@ public final class DwarfInteractions {
         register(DwarfProfession.GUARD, new GuardInteractionHandler());
         register(DwarfProfession.EXPLORER, new ExplorerInteractionHandler());
         register(DwarfProfession.GUILDMASTER, new GuildmasterInteractionHandler());
-        register(DwarfProfession.MERCHANT, new MerchantInteractionHandler());
-        register(DwarfProfession.MINER, new MinerInteractionHandler());
 
         // No-op profession interactions
         final ProfessionInteraction DEFAULT = new DefaultProfessionInteractionHandler();

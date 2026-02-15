@@ -58,4 +58,17 @@ public final class BountyRecipe {
         if (raw == null) return BountyTier.UNKNOWN;
         return BountyTier.fromValue(raw);
     }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean isValidBountyStack(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+
+        if (!stack.has(JolCraftDataComponents.BOUNTY_TYPE.get())) return false;
+        if (!stack.has(JolCraftDataComponents.BOUNTY_TIER.get())) return false;
+
+        BountyType type = BountyRecipe.readType(stack);
+        BountyTier tier = BountyRecipe.readTier(stack);
+
+        return type != BountyType.UNKNOWN && tier != BountyTier.UNKNOWN;
+    }
 }
