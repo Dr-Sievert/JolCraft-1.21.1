@@ -7,15 +7,15 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
-import net.sievert.jolcraft.integration.jei.custom.trade.JeiDwarfTradeCategory;
-import net.sievert.jolcraft.integration.jei.custom.trade.JeiDwarfTradeHelper;
+import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
+import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +58,7 @@ public final class JolCraftJeiPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(
                 JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
                 (stack, context) -> {
-                    String loreKey = stack.get(JolCraftDataComponents.LORE_KEY.get());
+                    String loreKey = stack.get(JolCraftDataComponents.DWARF_LORE_KEY.get());
                     return loreKey != null ? loreKey.toLowerCase(Locale.ROOT) : JolCraftDictionary.EMPTY;
                 }
         );

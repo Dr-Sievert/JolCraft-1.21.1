@@ -1,7 +1,13 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTrimRecipeBuilder;
 import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceKey;
@@ -14,16 +20,18 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.datagen.recipe.builder.AttributeSmithingTrimRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.vanilla.AttributeSmithingTrimRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.build.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@SuppressWarnings("deprecation")
-public final class TrimRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
+@SuppressWarnings({"deprecation", "SameParameterValue"})
+public final class TrimRecipesSubProvider implements RecipeSubProvider {
 
     private static final String FOLDER = JolCraftDictionary.TRIM;
 
@@ -49,7 +57,6 @@ public final class TrimRecipesSubProvider implements AbstractRecipeProvider.Reci
                     JolCraftDictionary.TEMPLATE
             );
 
-
     private static final String ATTRIBUTE_PREFIX =
             JolCraftStrings.underscored(JolCraftDictionary.ATTRIBUTE) + "_";
 
@@ -62,92 +69,134 @@ public final class TrimRecipesSubProvider implements AbstractRecipeProvider.Reci
             );
 
     @Override
-    public void addRecipes(@NotNull AbstractRecipeProvider p) {
+    public @NotNull String folder() {
+        return FOLDER;
+    }
+
+    @Override
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
         templateDuplication(
-                p,
+                output,
+                items,
                 JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(),
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.DIAMOND
         );
 
         for (Item template : jolcraftTrimTemplates()) {
-            ResourceKey<Recipe<?>> normalKey = trimRecipeKey(p, template);
-            ResourceKey<Recipe<?>> attributeKey = attributeTrimRecipeKey(p, template);
+            ResourceKey<Recipe<?>> normalKey = trimRecipeKey(template);
+            ResourceKey<Recipe<?>> attributeKey = attributeTrimRecipeKey(template);
 
-            trimSmithing(p, template, normalKey);
-            attributeTrimSmithing(p, template, attributeKey);
+            trimSmithing(output, items, template, normalKey);
+            attributeTrimSmithing(output, items, template, attributeKey);
         }
 
         VanillaRecipeProvider.smithingTrims().forEach(vanillaTrim -> {
             String basePath = vanillaTrim.id().location().getPath();
             attributeTrimSmithing(
-                    p,
+                    output,
+                    items,
                     vanillaTrim.template(),
-                    recipeKey(p, ATTRIBUTE_PREFIX + basePath)
+                    recipeKey(ATTRIBUTE_PREFIX + basePath)
             );
         });
     }
 
     private static void templateDuplication(
-            AbstractRecipeProvider p,
+            RecipeOutput output,
+            HolderGetter<Item> items,
             Item template,
             ItemLike materialA,
             ItemLike materialB
     ) {
-        ItemLike templateLike = () -> template;
         String idPath = template.builtInRegistryHolder().key().location().getPath();
 
-        p.modShaped(RecipeCategory.MISC, template, 2)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.MISC, template, 2)
+                )
                 .pattern("BXB")
                 .pattern("BAB")
                 .pattern("BBB")
                 .define('B', materialB)
                 .define('X', template)
                 .define('A', materialA)
-                .unlockedBy(p.hasName(templateLike), p.hasItem(templateLike))
-                .save(p.out(), p.inFolder(FOLDER, idPath));
+                .unlockedBy(hasName(template), hasItem(template))
+                .save(output, recipeKey(idPath));
     }
 
-    private static void trimSmithing(AbstractRecipeProvider p, Item templateItem, ResourceKey<Recipe<?>> key) {
-        ItemLike templateLike = () -> templateItem;
-
+    private static void trimSmithing(
+            RecipeOutput output,
+            HolderGetter<Item> items,
+            Item templateItem,
+            ResourceKey<Recipe<?>> key
+    ) {
         SmithingTrimRecipeBuilder.smithingTrim(
                         Ingredient.of(templateItem),
-                        p.tagIngredient(ItemTags.TRIMMABLE_ARMOR),
-                        p.tagIngredient(ItemTags.TRIM_MATERIALS),
+                        Ingredient.of(items.getOrThrow(ItemTags.TRIMMABLE_ARMOR)),
+                        Ingredient.of(items.getOrThrow(ItemTags.TRIM_MATERIALS)),
                         RecipeCategory.MISC
                 )
-                .unlocks(HAS_SMITHING_TRIM_TEMPLATE, p.hasItem(templateLike))
-                .save(p.out(), key);
+                .unlocks(HAS_SMITHING_TRIM_TEMPLATE, hasItem(templateItem))
+                .save(output, key);
     }
 
-    private static void attributeTrimSmithing(AbstractRecipeProvider p, Item templateItem, ResourceKey<Recipe<?>> key) {
-        ItemLike templateLike = () -> templateItem;
-
+    private static void attributeTrimSmithing(
+            RecipeOutput output,
+            HolderGetter<Item> items,
+            Item templateItem,
+            ResourceKey<Recipe<?>> key
+    ) {
         AttributeSmithingTrimRecipeBuilder.smithingTrim(
                         Ingredient.of(templateItem),
-                        p.tagIngredient(ItemTags.TRIMMABLE_ARMOR),
-                        p.tagIngredient(JolCraftTags.Items.ATTRIBUTE_TRIM_MATERIALS),
+                        Ingredient.of(items.getOrThrow(ItemTags.TRIMMABLE_ARMOR)),
+                        Ingredient.of(items.getOrThrow(JolCraftTags.Items.ATTRIBUTE_TRIM_MATERIALS)),
                         RecipeCategory.MISC
                 )
-                .unlocks(p.hasName(templateLike), p.hasItem(templateLike))
-                .unlocks(HAS_ATTRIBUTE_TRIM_MATERIAL, p.hasTag(JolCraftTags.Items.ATTRIBUTE_TRIM_MATERIALS))
-                .save(p.out(), key);
+                .unlocks(hasName(templateItem), hasItem(templateItem))
+                .unlocks(
+                        HAS_ATTRIBUTE_TRIM_MATERIAL,
+                        hasTag(items)
+                )
+                .save(output, key);
     }
 
-    private static ResourceKey<Recipe<?>> recipeKey(AbstractRecipeProvider p, String path) {
-        return ResourceKey.create(Registries.RECIPE, JolCraft.location(p.inFolder(FOLDER, path)));
+    private static ResourceKey<Recipe<?>> recipeKey(String path) {
+        return ResourceKey.create(
+                Registries.RECIPE,
+                JolCraft.location(JolCraftStrings.slashed(FOLDER, path))
+        );
     }
 
-    private static ResourceKey<Recipe<?>> trimRecipeKey(AbstractRecipeProvider p, Item template) {
+    private static ResourceKey<Recipe<?>> trimRecipeKey(Item template) {
         String templatePath = template.builtInRegistryHolder().key().location().getPath();
-        return recipeKey(p, templatePath + SMITHING_TRIM_SUFFIX);
+        return recipeKey(templatePath + SMITHING_TRIM_SUFFIX);
     }
 
-    private static ResourceKey<Recipe<?>> attributeTrimRecipeKey(AbstractRecipeProvider p, Item template) {
+    private static ResourceKey<Recipe<?>> attributeTrimRecipeKey(Item template) {
         String templatePath = template.builtInRegistryHolder().key().location().getPath();
-        return recipeKey(p, ATTRIBUTE_PREFIX + templatePath + SMITHING_TRIM_SUFFIX);
+        return recipeKey(ATTRIBUTE_PREFIX + templatePath + SMITHING_TRIM_SUFFIX);
+    }
+
+    private static String hasName(ItemLike item) {
+        return JolCraftStrings.underscored(
+                JolCraftDictionary.HAS,
+                item.asItem().builtInRegistryHolder().key().location().getPath()
+        );
+    }
+
+    private static Criterion<?> hasItem(ItemLike item) {
+        return InventoryChangeTrigger.TriggerInstance.hasItems(item);
+    }
+
+    private static Criterion<?> hasTag(HolderGetter<Item> items) {
+        return InventoryChangeTrigger.TriggerInstance.hasItems(
+                ItemPredicate.Builder.item().of(items, JolCraftTags.Items.ATTRIBUTE_TRIM_MATERIALS)
+        );
     }
 
     private static List<Item> jolcraftTrimTemplates() {

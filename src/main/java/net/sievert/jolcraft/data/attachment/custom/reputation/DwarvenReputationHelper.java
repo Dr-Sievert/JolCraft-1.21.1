@@ -6,7 +6,7 @@ import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenEndorsementsPacket;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenReputationPacket;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 
 import java.util.Set;
 import java.util.stream.Collectors;

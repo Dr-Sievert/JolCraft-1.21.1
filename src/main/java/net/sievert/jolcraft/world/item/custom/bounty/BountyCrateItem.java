@@ -16,13 +16,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
-import net.sievert.jolcraft.world.item.util.bounty.BountyData;
-import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
-import net.sievert.jolcraft.world.item.util.bounty.BountyType;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,8 +61,8 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
     @Override
     protected void appendHeaderLines(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 
-        BountyType type = BountyRecipe.readType(stack);
-        BountyTier tier = BountyRecipe.readTier(stack);
+        BountyType type = BountyRecipe.getType(stack);
+        BountyTier tier = BountyRecipe.getTier(stack);
 
         if (type != BountyType.UNKNOWN) {
             tooltip.add(
@@ -89,8 +89,8 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     protected void appendInvalidLines(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        BountyType type = BountyRecipe.readType(stack);
-        BountyTier tier = BountyRecipe.readTier(stack);
+        BountyType type = BountyRecipe.getType(stack);
+        BountyTier tier = BountyRecipe.getTier(stack);
 
         if (type == BountyType.UNKNOWN && tier == BountyTier.UNKNOWN) {
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_INVALID)

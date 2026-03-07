@@ -1,62 +1,76 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.reward;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.reward.util.AbstractBountyRewards;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.Item;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
+import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.bounty.BountyRewardRecipeBuilder;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
-import net.sievert.jolcraft.world.item.util.bounty.BountyType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfMinerBountyRewards extends AbstractBountyRewards {
+public final class DwarfMinerBountyRewards implements RecipeSubProvider {
+
+    private static final SoundOutput SOUND = SoundOutput.of(SoundEvents.BASALT_BREAK);
 
     @Override
-    protected @NotNull BountyType bountyType() {
-        return BountyType.MINER;
+    public String folder() {
+        return DwarfProfession.MINER.professionName();
     }
 
     @Override
-    public void addRewards(@NotNull AbstractRecipeProvider p) {
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
-        geodes(p, BountyTier.NOVICE,
+        geodes(executor, BountyTier.NOVICE,
                 4, 2, 1,
                 a(),
                 a(),
                 a());
 
-        geodes(p, BountyTier.APPRENTICE,
+        geodes(executor, BountyTier.APPRENTICE,
                 4, 3, 1,
                 a(1, 2),
                 a(),
                 a());
 
-        geodes(p, BountyTier.JOURNEYMAN,
+        geodes(executor, BountyTier.JOURNEYMAN,
                 3, 2, 1,
                 a(1, 3),
                 a(1, 2),
                 a());
 
-        geodes(p, BountyTier.EXPERT,
+        geodes(executor, BountyTier.EXPERT,
                 2, 2, 1,
                 a(2, 3),
                 a(1, 3),
                 a());
 
-        geodes(p, BountyTier.MASTER,
+        geodes(executor, BountyTier.MASTER,
                 1, 2, 2,
                 a(3, 4),
                 a(2, 3),
                 a(1, 2));
     }
-
-    // ---------------------------------------------------------------------
-    // Internals: ergonomic amount specs (no Amount at call sites)
-    // ---------------------------------------------------------------------
 
     private record Amt(int min, int max) {}
 
@@ -68,12 +82,18 @@ public class DwarfMinerBountyRewards extends AbstractBountyRewards {
         return new Amt(min, max);
     }
 
-    private static BountyRewardRecipe.Amount toAmount(Amt a) {
-        return (a.min == a.max) ? amount(a.min) : amount(a.min, a.max);
+    private static ItemOutput give(Item item, Amt amt) {
+        return new ItemOutput(
+                new ItemSpec(
+                        ItemProducer.item(item),
+                        new IntRange(amt.min(), amt.max())
+                ),
+                ItemTransforms.EMPTY
+        );
     }
 
     private void geodes(
-            AbstractRecipeProvider p,
+            RecipeEmissionExecutor executor,
             BountyTier tier,
             int smallW,
             int medW,
@@ -82,22 +102,36 @@ public class DwarfMinerBountyRewards extends AbstractBountyRewards {
             Amt medAmt,
             Amt largeAmt
     ) {
-        reward(p, tier, BountyRewardRecipe.RewardPool.MAIN, smallW,
-                redeemItem(JolCraftItems.BOUNTY.get()),
-                resultItem(JolCraftItems.GEODE_SMALL.get()),
-                toAmount(smallAmt),
-                give(JolCraftItems.GEODE_SMALL.get()));
 
-        reward(p, tier, BountyRewardRecipe.RewardPool.MAIN, medW,
-                redeemItem(JolCraftItems.BOUNTY.get()),
-                resultItem(JolCraftItems.GEODE_MEDIUM.get()),
-                toAmount(medAmt),
-                give(JolCraftItems.GEODE_MEDIUM.get()));
+        emitTier(executor, tier, b -> {
+            for (int i = 0; i < smallW; i++) {
+                b.reward(give(JolCraftItems.GEODE_SMALL.get(), smallAmt));
+            }
 
-        reward(p, tier, BountyRewardRecipe.RewardPool.MAIN, largeW,
-                redeemItem(JolCraftItems.BOUNTY.get()),
-                resultItem(JolCraftItems.GEODE_LARGE.get()),
-                toAmount(largeAmt),
-                give(JolCraftItems.GEODE_LARGE.get()));
+            for (int i = 0; i < medW; i++) {
+                b.reward(give(JolCraftItems.GEODE_MEDIUM.get(), medAmt));
+            }
+
+            for (int i = 0; i < largeW; i++) {
+                b.reward(give(JolCraftItems.GEODE_LARGE.get(), largeAmt));
+            }
+        });
+    }
+
+    private void emitTier(
+            RecipeEmissionExecutor executor,
+            BountyTier tier,
+            Consumer<BountyRewardRecipeBuilder> rewards
+    ) {
+
+        BountyRewardRecipeBuilder b = BountyRewardRecipeBuilder.create();
+
+        b.bountyType(BountyType.MINER)
+                .tier(tier)
+                .sound(SOUND);
+
+        rewards.accept(b);
+
+        executor.emit(b.buildValidated());
     }
 }

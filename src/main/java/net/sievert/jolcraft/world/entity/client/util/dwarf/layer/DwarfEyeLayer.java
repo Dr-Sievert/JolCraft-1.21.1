@@ -13,13 +13,12 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -30,12 +29,13 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
     private static final Map<DwarfEyeColor, ResourceLocation> LOCATION_BY_EYE =
             Util.make(Maps.newEnumMap(DwarfEyeColor.class), map -> {
                 for (DwarfEyeColor color : DwarfEyeColor.values()) {
-                    map.put(color,
+                    map.put(
+                            color,
                             JolCraftTextures.mod(
                                     JolCraftTextures.entity(
                                             JolCraftDirectoryIds.DWARF,
-                                            JolCraftDictionary.EYE,
-                                            color.getTextureName()
+                                            JolCraftDirectoryIds.EYE,
+                                            color.getId()
                                     )
                             )
                     );
@@ -61,7 +61,6 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
         if (texture == null) return;
 
         DwarfModel model = this.getParentModel();
-
         model.setupAnim(state);
 
         ModelPart head = model.getHead();

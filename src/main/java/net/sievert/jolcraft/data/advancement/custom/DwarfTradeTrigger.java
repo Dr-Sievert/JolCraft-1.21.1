@@ -12,8 +12,9 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -29,7 +30,7 @@ public class DwarfTradeTrigger extends SimpleCriterionTrigger<DwarfTradeTrigger.
 
     public void trigger(ServerPlayer player, DwarfProfession profession) {
         if (profession == null) {
-            JolCraftLogs.debug("trade_with_dwarf trigger called with null profession for {}",
+            JolCraftLogs.debug(JolCraftLogTags.ADVANCEMENT, "trade_with_dwarf trigger called with null profession for {}",
                     player.getGameProfile().getName()
             );
             return;

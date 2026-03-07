@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
 import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;

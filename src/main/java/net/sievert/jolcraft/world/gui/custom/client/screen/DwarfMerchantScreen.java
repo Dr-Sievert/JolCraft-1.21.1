@@ -24,9 +24,9 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 
 import javax.annotation.ParametersAreNonnullByDefault;

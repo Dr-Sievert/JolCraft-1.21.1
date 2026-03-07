@@ -1,76 +1,95 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task.util.AbstractBountyTasks;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.minecraft.world.item.Item;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.bounty.BountyTaskRecipeBuilder;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
-import net.sievert.jolcraft.world.item.util.bounty.BountyType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@SuppressWarnings("SameParameterValue")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class DwarfMinerBountyTasks extends AbstractBountyTasks {
+public final class DwarfMinerBountyTasks implements RecipeSubProvider {
 
     @Override
-    protected @NotNull BountyType bountyType() {
-        return BountyType.MINER;
+    public String folder() {
+        return DwarfProfession.MINER.professionName();
     }
 
     @Override
-    public void addTasks(@NotNull AbstractRecipeProvider p) {
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
-        task(p,
-                JolCraftItems.BOUNTY.get(),
-                BountyTier.NOVICE,
-                1,
-                slay(EntityType.ZOMBIE, amount(1, 3)));
+        // --------------------------
+        // NOVICE
+        // --------------------------
+
+        emitTier(executor, BountyTier.NOVICE, b -> {
+            b.slay(EntityType.ZOMBIE, 1, 3);
+
+            /*
+            b.collect(Items.STONE, 8, 15);
+            b.collect(Items.GRANITE, 8, 15);
+            b.collect(Items.DIORITE, 8, 15);
+            b.collect(Items.ANDESITE, 8, 15);
+            b.collect(Items.TUFF, 8, 15);
+             */
+        });
 
         /*
+        // APPRENTICE
+        emitTier(executor, BountyTier.APPRENTICE, b -> {
+            b.collect(Items.IRON_ORE, 4, 8);
+            b.collect(Items.COPPER_ORE, 4, 8);
+            b.collect(Items.DEEPSLATE_IRON_ORE, 4, 8);
+        });
 
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.NOVICE, 1,
-                collect(Items.STONE, amount(8, 15)));
+        // JOURNEYMAN
+        emitTier(executor, BountyTier.JOURNEYMAN, b -> {
+            b.collect(Items.GOLD_ORE, 3, 6);
+            b.collect(Items.EMERALD_ORE, 2, 4);
+        });
 
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.NOVICE, 1,
-                collect(Items.GRANITE, amount(8, 15)));
+        // EXPERT
+        emitTier(executor, BountyTier.EXPERT, b -> {
+            b.collect(Items.DIAMOND_ORE, 1, 2);
+            b.collect(Items.DEEPSLATE_DIAMOND_ORE, 1, 2);
+        });
 
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.NOVICE, 1,
-                collect(Items.DIORITE, amount(8, 15)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.NOVICE, 1,
-                collect(Items.ANDESITE, amount(8, 15)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.NOVICE, 1,
-                collect(Items.TUFF, amount(8, 15)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.IRON_ORE, amount(4, 8)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.COPPER_ORE, amount(4, 8)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.DEEPSLATE_IRON_ORE, amount(4, 8)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.JOURNEYMAN, 1,
-                collect(Items.GOLD_ORE, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.JOURNEYMAN, 1,
-                collect(Items.EMERALD_ORE, amount(2, 4)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.EXPERT, 1,
-                collect(Items.DIAMOND_ORE, amount(1, 2)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.EXPERT, 1,
-                collect(Items.DEEPSLATE_DIAMOND_ORE, amount(1, 2)));
-
-        task(p, JolCraftItems.BOUNTY.get(), BountyTier.MASTER, 1,
-                collect(Items.ANCIENT_DEBRIS, amount(1)));
-
+        // MASTER
+        emitTier(executor, BountyTier.MASTER, b -> {
+            b.collect(Items.ANCIENT_DEBRIS, 1, 1);
+        });
          */
+    }
+
+    private void emitTier(
+            RecipeEmissionExecutor executor,
+            BountyTier tier,
+            java.util.function.Consumer<BountyTaskRecipeBuilder> objectives
+    ) {
+
+        BountyTaskRecipeBuilder b = BountyTaskRecipeBuilder.create();
+
+        b.bountyType(BountyType.MINER)
+                .tier(tier)
+                .result(JolCraftItems.BOUNTY_CRATE.get());
+
+        objectives.accept(b);
+
+        executor.emit(b.buildValidated());
     }
 }

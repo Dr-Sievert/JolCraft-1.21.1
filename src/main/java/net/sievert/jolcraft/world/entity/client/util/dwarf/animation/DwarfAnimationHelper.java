@@ -6,7 +6,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 
 import java.util.EnumMap;
 import java.util.Map;

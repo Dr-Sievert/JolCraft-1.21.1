@@ -18,7 +18,7 @@ public final class JeiLangSubProvider implements AbstractLanguageProvider.LangSu
         // JEI info pages
         p.putManual(
                 JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET,
-                "To gain endorsements, give your reputation tablet to a master-level dwarf with a profession. " +
+                "To gain endorsements, give your reputation tablet to a masterTask-level dwarf with a profession. " +
                         "Endorsements are unique per profession and can only be gained once. To advance in reputation level " +
                         "you need endorsements from dwarves with professions. When you have enough, hand over your tablet to a guildmaster to update it."
         );
@@ -44,7 +44,7 @@ public final class JeiLangSubProvider implements AbstractLanguageProvider.LangSu
 
         p.putManual(
                 JolCraftLanguageKeys.JEI_INFO_DWARVEN_LEXICON,
-                "Can be used to learn dwarvish. Found in mineshafts or stronghold libraries. Can be bought from master librarians."
+                "Can be used to learn dwarvish. Found in mineshafts or stronghold libraries. Can be bought from masterTask librarians."
         );
 
         p.putManual(

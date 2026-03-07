@@ -29,6 +29,7 @@ import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
@@ -202,20 +203,29 @@ public final class JolCraftPlayerEvents {
                 && state.is(Blocks.WATER_CAULDRON)
                 && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
 
-            var input = new FermentingCauldronRecipeInput(used.copyWithCount(1), ItemStack.EMPTY);
+            WorldContext ctx = new WorldContext(serverLevel, player, player);
+            var input = new FermentingCauldronRecipeInput(
+                    ctx,
+                    used.copyWithCount(1),
+                    ItemStack.EMPTY
+            );
 
             boolean hasRecipe = serverLevel.getServer()
                     .getRecipeManager()
                     .getRecipeFor(JolCraftRecipes.FERMENTING_CAULDRON_TYPE.get(), input, serverLevel)
                     .isPresent();
 
-            if (!hasRecipe) return;
+            if (!hasRecipe) {
+                return;
+            }
 
-            JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+            JolCraftLogs.debug(
+                    JolCraftLogTags.PLAYER,
                     "Converting water cauldron -> fermenting cauldron player={} pos={} item={}",
                     player.getUUID(),
                     JolCraftLogs.roundedPos(pos),
-                    used.getItem().builtInRegistryHolder().key().location());
+                    used.getItem().builtInRegistryHolder().key().location()
+            );
 
             BlockState newState = JolCraftBlocks.FERMENTING_CAULDRON.get()
                     .defaultBlockState()
@@ -226,19 +236,25 @@ public final class JolCraftPlayerEvents {
             if (serverLevel.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity be) {
                 InteractionResult result = be.handleInteraction(player, event.getHand(), used);
 
-                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
+                JolCraftLogs.debug(
+                        JolCraftLogTags.PLAYER,
                         "Fermenting cauldron interaction handled player={} pos={} result={}",
-                        player.getUUID(),  JolCraftLogs.roundedPos(pos), result);
+                        player.getUUID(),
+                        JolCraftLogs.roundedPos(pos),
+                        result
+                );
 
                 event.setCancellationResult(result);
                 event.setCanceled(true);
                 return;
             }
 
-            // Should not happen: block set but BE missing -> revert and warn.
-            JolCraftLogs.warn(JolCraftLogTags.PLAYER,
+            JolCraftLogs.warn(
+                    JolCraftLogTags.PLAYER,
                     "Fermenting cauldron conversion failed (missing BE) reverting player={} pos={}",
-                    player.getUUID(),  JolCraftLogs.roundedPos(pos));
+                    player.getUUID(),
+                    JolCraftLogs.roundedPos(pos)
+            );
 
             serverLevel.setBlock(pos, state, 3);
         }

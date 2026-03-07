@@ -12,8 +12,6 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftBiomeModifierIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftPlacedFeatures;
 
 public class JolCraftBiomeModifiers {

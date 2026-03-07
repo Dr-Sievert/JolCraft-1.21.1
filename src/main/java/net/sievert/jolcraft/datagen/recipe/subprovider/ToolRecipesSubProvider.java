@@ -1,26 +1,48 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.vanilla.VanillaRecipeBuilder;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@SuppressWarnings({"SameParameterValue", "deprecation"})
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class ToolRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
+public final class ToolRecipesSubProvider implements RecipeSubProvider {
 
-    private static final String FOLDER = "tool";
+    private static final String FOLDER = JolCraftDictionary.TOOL;
 
     @Override
-    public void addRecipes(@NotNull AbstractRecipeProvider p) {
+    public @NotNull String folder() {
+        return FOLDER;
+    }
+
+    @Override
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
         toolSet(
-                p,
+                items,
+                output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
                 JolCraftItems.DEEPSLATE_SWORD.get(),
@@ -31,14 +53,16 @@ public final class ToolRecipesSubProvider implements AbstractRecipeProvider.Reci
         );
 
         warhammer(
-                p,
+                items,
+                output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
                 JolCraftItems.DEEPSLATE_WARHAMMER.get()
         );
 
         toolSet(
-                p,
+                items,
+                output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
                 JolCraftItems.MITHRIL_SWORD.get(),
@@ -49,49 +73,56 @@ public final class ToolRecipesSubProvider implements AbstractRecipeProvider.Reci
         );
 
         warhammer(
-                p,
+                items,
+                output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
                 JolCraftItems.MITHRIL_WARHAMMER.get()
         );
 
         artisanHammer(
-                p,
+                items,
+                output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
                 JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get()
         );
 
         artisanHammer(
-                p,
+                items,
+                output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
                 JolCraftItems.MITHRIL_ARTISAN_HAMMER.get()
         );
 
         chisel(
-                p,
+                items,
+                output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
                 JolCraftItems.DEEPSLATE_CHISEL.get()
         );
 
         chisel(
-                p,
+                items,
+                output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
                 JolCraftItems.MITHRIL_CHISEL.get()
         );
 
         pestle(
-                p,
+                items,
+                output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
                 JolCraftItems.DEEPSLATE_PESTLE.get()
         );
 
         pestle(
-                p,
+                items,
+                output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
                 JolCraftItems.MITHRIL_PESTLE.get()
@@ -99,7 +130,8 @@ public final class ToolRecipesSubProvider implements AbstractRecipeProvider.Reci
     }
 
     private static void toolSet(
-            AbstractRecipeProvider p,
+            HolderGetter<Item> items,
+            RecipeOutput out,
             ItemLike head,
             ItemLike rod,
             ItemLike sword,
@@ -108,159 +140,258 @@ public final class ToolRecipesSubProvider implements AbstractRecipeProvider.Reci
             ItemLike shovel,
             ItemLike hoe
     ) {
-        sword(p, head, rod, sword);
-        pickaxe(p, head, rod, pickaxe);
-        axe(p, head, rod, axe);
-        shovel(p, head, rod, shovel);
-        hoe(p, head, rod, hoe);
+        sword(items, out, head, rod, sword);
+        pickaxe(items, out, head, rod, pickaxe);
+        axe(items, out, head, rod, axe);
+        shovel(items, out, head, rod, shovel);
+        hoe(items, out, head, rod, hoe);
     }
 
-    private static void sword(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        p.modShaped(RecipeCategory.COMBAT, out)
+    private static void sword(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, outItem)
+                )
                 .pattern("B")
                 .pattern("B")
                 .pattern("X")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, out));
+                .unlockedByHas(head)
+                .save(out, id(outItem));
     }
 
-    private static void pickaxe(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        p.modShaped(RecipeCategory.TOOLS, out)
+    private static void pickaxe(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("BBB")
                 .pattern(" X ")
                 .pattern(" X ")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, out));
+                .unlockedByHas(head)
+                .save(out, id(outItem));
     }
 
-    private static void shovel(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        p.modShaped(RecipeCategory.TOOLS, out)
+    private static void shovel(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("B")
                 .pattern("X")
                 .pattern("X")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, out));
+                .unlockedByHas(head)
+                .save(out, id(outItem));
     }
 
-    private static void axe(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        String baseId = p.itemName(out.asItem());
+    private static void axe(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        String baseId = itemName(outItem);
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("BB")
                 .pattern("BX")
                 .pattern(" X")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_left"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_left"));
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("BB")
                 .pattern("XB")
                 .pattern("X ")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_right"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_right"));
     }
 
-    private static void hoe(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        String baseId = p.itemName(out.asItem());
+    private static void hoe(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        String baseId = itemName(outItem);
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("BB")
                 .pattern(" X")
                 .pattern(" X")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_left"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_left"));
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("BB")
                 .pattern("X ")
                 .pattern("X ")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_right"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_right"));
     }
 
-    private static void warhammer(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        String baseId = p.itemName(out.asItem());
+    private static void warhammer(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        String baseId = itemName(outItem);
 
-        p.modShaped(RecipeCategory.COMBAT, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, outItem)
+                )
                 .pattern("BB")
                 .pattern("BB")
                 .pattern(" X")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_left"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_left"));
 
-        p.modShaped(RecipeCategory.COMBAT, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, outItem)
+                )
                 .pattern("BB")
                 .pattern("BB")
                 .pattern("X ")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_right"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_right"));
     }
 
-    private static void artisanHammer(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        p.modShaped(RecipeCategory.TOOLS, out)
+    private static void artisanHammer(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("B")
                 .pattern("X")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, out));
+                .unlockedByHas(head)
+                .save(out, id(outItem));
     }
 
-    private static void chisel(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        String baseId = p.itemName(out.asItem());
+    private static void chisel(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        String baseId = itemName(outItem);
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern(" B")
                 .pattern("X ")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_right"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_right"));
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("B ")
                 .pattern(" X")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_left"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_left"));
     }
 
-    private static void pestle(AbstractRecipeProvider p, ItemLike head, ItemLike rod, ItemLike out) {
-        String baseId = p.itemName(out.asItem());
+    private static void pestle(
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        String baseId = itemName(outItem);
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern("X ")
                 .pattern(" B")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_right"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_right"));
 
-        p.modShaped(RecipeCategory.TOOLS, out)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                )
                 .pattern(" X")
                 .pattern("B ")
                 .define('B', head)
                 .define('X', rod)
-                .unlockedBy(p.hasName(head), p.hasItem(head))
-                .save(p.out(), p.inFolder(FOLDER, baseId + "_left"));
+                .unlockedByHas(head)
+                .save(out, id(baseId + "_left"));
+    }
+
+    private static String itemName(ItemLike item) {
+        return item.asItem().builtInRegistryHolder().key().location().getPath();
+    }
+
+    private static ResourceKey<Recipe<?>> id(ItemLike item) {
+        return id(itemName(item));
+    }
+
+    private static ResourceKey<Recipe<?>> id(String path) {
+        return ResourceKey.create(
+                Registries.RECIPE,
+                net.sievert.jolcraft.JolCraft.location(
+                        JolCraftStrings.slashed(FOLDER, path)
+                )
+        );
     }
 }

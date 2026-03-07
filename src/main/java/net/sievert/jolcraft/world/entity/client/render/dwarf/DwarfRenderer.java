@@ -19,15 +19,15 @@ import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.animation.DwarfAnimationHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.layer.DwarfArmorLayer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfBeardColor;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.layer.DwarfBeardLayer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.layer.DwarfEyeLayer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfVariant;
 import net.sievert.jolcraft.world.entity.client.util.layer.EmissiveLayer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfVariant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +50,8 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         return dwarfProfessionTexture(entityPath + EMISSIVE_SUFFIX);
     }
 
-    private static final ResourceLocation FALLBACK_TEXTURE = dwarfTexture(DwarfVariant.GREY.getTextureName());
+    // With StringId enums: texture key is the lowercase enum name.
+    private static final ResourceLocation FALLBACK_TEXTURE = dwarfTexture(DwarfVariant.GREY.getId());
 
     private static final int LAYER_ARMOR = 1;
     private static final int LAYER_BEARD = 2;
@@ -142,7 +143,7 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
     private static final Map<DwarfVariant, ResourceLocation> LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(DwarfVariant.class), map -> {
                 for (DwarfVariant variant : DwarfVariant.values()) {
-                    map.put(variant, dwarfTexture(variant.getTextureName()));
+                    map.put(variant, dwarfTexture(variant.getId()));
                 }
             });
 
@@ -196,12 +197,15 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         reused.ageInTicks = persistent.ageInTicks;
 
         reused.dwarf = entity;
+
         reused.variant = DwarfVariant.byId(entity.getData(AbstractBreedingEntity.VARIANT));
         reused.beard = DwarfBeardColor.byId(entity.getData(AbstractBreedingEntity.BEARD_COLOR));
         reused.eye = DwarfEyeColor.byId(entity.getData(AbstractBreedingEntity.EYE_COLOR));
+
         reused.useItemHand = entity.getUsedItemHand();
         reused.ticksUsingItem = entity.getTicksUsingItem();
         reused.isUsingItem = entity.isUsingItem();
+
         reused.headEquipment = entity.getItemBySlot(EquipmentSlot.HEAD);
         reused.chestEquipment = entity.getItemBySlot(EquipmentSlot.CHEST);
         reused.legsEquipment = entity.getItemBySlot(EquipmentSlot.LEGS);

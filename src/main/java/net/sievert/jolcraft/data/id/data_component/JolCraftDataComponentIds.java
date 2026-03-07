@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.data.id.data_component;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -13,7 +14,7 @@ public final class JolCraftDataComponentIds extends JolCraftIds {
     // Lore
     // -----------------
 
-    public static final String LORE_KEY = join(JolCraftDictionary.LORE + JolCraftDictionary.KEY);
+    public static final String DWARF_LORE_KEY = join(JolCraftDwarfIds.DWARF, JolCraftDictionary.LORE + JolCraftDictionary.KEY);
 
     // -----------------
     // Reputation

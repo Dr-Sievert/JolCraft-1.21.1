@@ -1,104 +1,109 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.reward;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.reward.util.AbstractBountyRewards;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
-import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
-import net.sievert.jolcraft.world.item.util.bounty.BountyType;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.Item;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
+import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.bounty.BountyRewardRecipeBuilder;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DwarfMerchantBountyRewards extends AbstractBountyRewards {
+public final class DwarfMerchantBountyRewards implements RecipeSubProvider {
+
+    private static final SoundOutput SOUND = SoundOutput.of(SoundEvents.VILLAGER_WORK_FISHERMAN);
 
     @Override
-    protected @NotNull BountyType bountyType() {
-        return BountyType.MERCHANT;
+    public String folder() {
+        return DwarfProfession.MERCHANT.professionName();
     }
 
     @Override
-    public void addRewards(@NotNull AbstractRecipeProvider p) {
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
-        reward(p, BountyTier.NOVICE,     BountyRewardRecipe.RewardPool.MAIN, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.GOLD_COIN.get()),
-                amount(4, 6),
-                give(JolCraftItems.GOLD_COIN.get()));
+        emitTier(executor, BountyTier.NOVICE, b -> {
+            b.reward(coins(4, 6));
+        });
 
-        reward(p, BountyTier.APPRENTICE, BountyRewardRecipe.RewardPool.MAIN, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.GOLD_COIN.get()),
-                amount(7, 10),
-                give(JolCraftItems.GOLD_COIN.get()));
+        emitTier(executor, BountyTier.APPRENTICE, b -> {
+            b.reward(coins(7, 10));
+            b.reward(fixed(JolCraftItems.RESTOCK_CRATE.get()));
+            b.reward(fixed(JolCraftItems.REROLL_CRATE.get()));
+        });
 
-        reward(p, BountyTier.JOURNEYMAN, BountyRewardRecipe.RewardPool.MAIN, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.GOLD_COIN.get()),
-                amount(12, 16),
-                give(JolCraftItems.GOLD_COIN.get()));
+        emitTier(executor, BountyTier.JOURNEYMAN, b -> {
+            b.reward(coins(12, 16));
+            b.reward(fixed(JolCraftItems.RESTOCK_CRATE.get()));
+            b.reward(fixed(JolCraftItems.REROLL_CRATE.get()));
+        });
 
-        reward(p, BountyTier.EXPERT,     BountyRewardRecipe.RewardPool.MAIN, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.GOLD_COIN.get()),
-                amount(20, 27),
-                give(JolCraftItems.GOLD_COIN.get()));
+        emitTier(executor, BountyTier.EXPERT, b -> {
+            b.reward(coins(20, 27));
+            b.reward(fixed(JolCraftItems.RESTOCK_CRATE.get()));
+            b.reward(fixed(JolCraftItems.REROLL_CRATE.get()));
+        });
 
-        reward(p, BountyTier.MASTER,     BountyRewardRecipe.RewardPool.MAIN, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.GOLD_COIN.get()),
-                amount(30, 39),
-                give(JolCraftItems.GOLD_COIN.get()));
+        emitTier(executor, BountyTier.MASTER, b -> {
+            b.reward(coins(30, 39));
+            b.reward(fixed(JolCraftItems.RESTOCK_CRATE.get()));
+            b.reward(fixed(JolCraftItems.REROLL_CRATE.get()));
+        });
+    }
 
-        reward(p, BountyTier.APPRENTICE, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.RESTOCK_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.RESTOCK_CRATE.get()));
+    private void emitTier(
+            RecipeEmissionExecutor executor,
+            BountyTier tier,
+            Consumer<BountyRewardRecipeBuilder> rewards
+    ) {
 
-        reward(p, BountyTier.APPRENTICE, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.REROLL_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.REROLL_CRATE.get()));
+        BountyRewardRecipeBuilder b = BountyRewardRecipeBuilder.create();
 
-        reward(p, BountyTier.JOURNEYMAN, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.RESTOCK_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.RESTOCK_CRATE.get()));
+        b.bountyType(BountyType.MERCHANT)
+                .tier(tier)
+                .sound(SOUND);
 
-        reward(p, BountyTier.JOURNEYMAN, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.REROLL_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.REROLL_CRATE.get()));
+        rewards.accept(b);
 
-        reward(p, BountyTier.EXPERT, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.RESTOCK_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.RESTOCK_CRATE.get()));
+        executor.emit(b.buildValidated());
+    }
 
-        reward(p, BountyTier.EXPERT, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.REROLL_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.REROLL_CRATE.get()));
+    private static ItemOutput coins(int min, int max) {
+        return new ItemOutput(
+                new ItemSpec(
+                        ItemProducer.item(JolCraftItems.GOLD_COIN.get()),
+                        new IntRange(min, max)
+                ),
+                ItemTransforms.EMPTY
+        );
+    }
 
-        reward(p, BountyTier.MASTER, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.RESTOCK_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.RESTOCK_CRATE.get()));
-
-        reward(p, BountyTier.MASTER, BountyRewardRecipe.RewardPool.BONUS, 1,
-                redeemItem(JolCraftItems.BOUNTY_CRATE.get()),
-                resultItem(JolCraftItems.REROLL_CRATE.get()),
-                amount(1),
-                give(JolCraftItems.REROLL_CRATE.get()));
+    private static ItemOutput fixed(Item item) {
+        return new ItemOutput(
+                new ItemSpec(
+                        ItemProducer.item(item),
+                        IntRange.ONE
+                ),
+                ItemTransforms.EMPTY
+        );
     }
 }

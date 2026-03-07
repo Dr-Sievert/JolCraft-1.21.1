@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
-import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
+import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 
 import java.util.EnumMap;

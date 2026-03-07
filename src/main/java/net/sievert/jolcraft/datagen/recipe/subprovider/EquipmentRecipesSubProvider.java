@@ -1,126 +1,180 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.vanilla.VanillaRecipeBuilder;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
 import org.jetbrains.annotations.NotNull;
 
-public final class EquipmentRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    private static final String FOLDER = "equipment";
+@SuppressWarnings({"SameParameterValue", "deprecation"})
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
+
+    private static final String FOLDER = JolCraftDictionary.EQUIPMENT;
 
     @Override
-    public void addRecipes(@NotNull AbstractRecipeProvider p) {
+    public String folder() {
+        return FOLDER;
+    }
+
+    @Override
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
         armorSetSimple(
-                p,
+                items,
+                output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 JolCraftItems.DEEPSLATE_ARMOR_SET,
-                p.itemName(JolCraftItems.DEEPSLATE_PLATE.get())
+                JolCraftItems.DEEPSLATE_PLATE.get()
         );
 
         armorSetWithLining(
-                p,
+                items,
+                output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.MITHRIL_CHAINWEAVE.get(),
                 JolCraftItems.MITHRIL_ARMOR_SET,
-                p.itemName(JolCraftItems.MITHRIL_INGOT.get())
+                JolCraftItems.MITHRIL_INGOT.get()
         );
     }
 
     private static void armorSetSimple(
-            @NotNull AbstractRecipeProvider p,
-            @NotNull ItemLike material,
-            @NotNull JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
-            @NotNull String unlockItemName
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike material,
+            JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
+            ItemLike unlockItem
     ) {
-        String unlock = "has_" + unlockItemName;
 
         ItemLike helmet = set.get(JolCraftEquipmentHelper.ArmorPiece.HELMET).get();
         ItemLike chestplate = set.get(JolCraftEquipmentHelper.ArmorPiece.CHESTPLATE).get();
         ItemLike leggings = set.get(JolCraftEquipmentHelper.ArmorPiece.LEGGINGS).get();
         ItemLike boots = set.get(JolCraftEquipmentHelper.ArmorPiece.BOOTS).get();
 
-        p.modShaped(RecipeCategory.COMBAT, helmet)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, helmet)
+                )
                 .pattern("BBB")
                 .pattern("B B")
                 .define('B', material)
-                .unlockedBy(unlock, p.hasItem(material))
-                .save(p.out(), p.inFolder(FOLDER, helmet));
+                .unlockedByHas(unlockItem)
+                .save(out, id(helmet));
 
-        p.modShaped(RecipeCategory.COMBAT, chestplate)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, chestplate)
+                )
                 .pattern("B B")
                 .pattern("BBB")
                 .pattern("BBB")
                 .define('B', material)
-                .unlockedBy(unlock, p.hasItem(material))
-                .save(p.out(), p.inFolder(FOLDER, chestplate));
+                .unlockedByHas(unlockItem)
+                .save(out, id(chestplate));
 
-        p.modShaped(RecipeCategory.COMBAT, leggings)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, leggings)
+                )
                 .pattern("BBB")
                 .pattern("B B")
                 .pattern("B B")
                 .define('B', material)
-                .unlockedBy(unlock, p.hasItem(material))
-                .save(p.out(), p.inFolder(FOLDER, leggings));
+                .unlockedByHas(unlockItem)
+                .save(out, id(leggings));
 
-        p.modShaped(RecipeCategory.COMBAT, boots)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, boots)
+                )
                 .pattern("B B")
                 .pattern("B B")
                 .define('B', material)
-                .unlockedBy(unlock, p.hasItem(material))
-                .save(p.out(), p.inFolder(FOLDER, boots));
+                .unlockedByHas(unlockItem)
+                .save(out, id(boots));
     }
 
     private static void armorSetWithLining(
-            @NotNull AbstractRecipeProvider p,
-            @NotNull ItemLike ingot,
-            @NotNull ItemLike lining,
-            @NotNull JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
-            @NotNull String unlockItemName
+            HolderGetter<Item> items,
+            RecipeOutput out,
+            ItemLike ingot,
+            ItemLike lining,
+            JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
+            ItemLike unlockItem
     ) {
-        String unlock = "has_" + unlockItemName;
 
         ItemLike helmet = set.get(JolCraftEquipmentHelper.ArmorPiece.HELMET).get();
         ItemLike chestplate = set.get(JolCraftEquipmentHelper.ArmorPiece.CHESTPLATE).get();
         ItemLike leggings = set.get(JolCraftEquipmentHelper.ArmorPiece.LEGGINGS).get();
         ItemLike boots = set.get(JolCraftEquipmentHelper.ArmorPiece.BOOTS).get();
 
-        p.modShaped(RecipeCategory.COMBAT, helmet)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, helmet)
+                )
                 .pattern("BBB")
                 .pattern("X X")
                 .define('B', ingot)
                 .define('X', lining)
-                .unlockedBy(unlock, p.hasItem(ingot))
-                .save(p.out(), p.inFolder(FOLDER, helmet));
+                .unlockedByHas(unlockItem)
+                .save(out, id(helmet));
 
-        p.modShaped(RecipeCategory.COMBAT, chestplate)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, chestplate)
+                )
                 .pattern("B B")
                 .pattern("XXX")
                 .pattern("XXX")
                 .define('B', ingot)
                 .define('X', lining)
-                .unlockedBy(unlock, p.hasItem(ingot))
-                .save(p.out(), p.inFolder(FOLDER, chestplate));
+                .unlockedByHas(unlockItem)
+                .save(out, id(chestplate));
 
-        p.modShaped(RecipeCategory.COMBAT, leggings)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, leggings)
+                )
                 .pattern("BBB")
                 .pattern("X X")
                 .pattern("X X")
                 .define('B', ingot)
                 .define('X', lining)
-                .unlockedBy(unlock, p.hasItem(ingot))
-                .save(p.out(), p.inFolder(FOLDER, leggings));
+                .unlockedByHas(unlockItem)
+                .save(out, id(leggings));
 
-        p.modShaped(RecipeCategory.COMBAT, boots)
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, boots)
+                )
                 .pattern("B B")
                 .pattern("B B")
                 .define('B', ingot)
-                .unlockedBy(unlock, p.hasItem(ingot))
-                .save(p.out(), p.inFolder(FOLDER, boots));
+                .unlockedByHas(unlockItem)
+                .save(out, id(boots));
+    }
+
+    private static ResourceKey<Recipe<?>> id(ItemLike item) {
+        return ResourceKey.create(
+                net.minecraft.core.registries.Registries.RECIPE,
+                net.sievert.jolcraft.JolCraft.location(
+                        JolCraftStrings.slashed(
+                                FOLDER,
+                                item.asItem().builtInRegistryHolder().key().location().getPath()
+                        )
+                )
+        );
     }
 }

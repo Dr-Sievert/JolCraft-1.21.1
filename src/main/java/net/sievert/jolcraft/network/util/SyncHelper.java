@@ -16,7 +16,7 @@ import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenReputationPacke
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 
 import java.util.Set;
 

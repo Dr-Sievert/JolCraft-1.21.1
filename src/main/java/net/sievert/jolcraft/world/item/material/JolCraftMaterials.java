@@ -9,7 +9,7 @@ import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftMaterialIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
+import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 public final class JolCraftMaterials {

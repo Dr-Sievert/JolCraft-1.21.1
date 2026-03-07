@@ -15,16 +15,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Particle helper safe to call from common code.
- * Rules:
- * - World particles are SERVER-authoritative and must be spawned once.
- * - Client NEVER spawns world particles (prevents double-spawn).
- * - Local-only particles are seen only by the owning client.
+ *
+ * IMPORTANT:
+ * Vanilla packet semantics:
+ * - count == 0: xDist/yDist/zDist are treated as explicit motion for ONE particle; speed is mostly ignored.
+ * - count  > 0: spawns COUNT particles with random offsets in xDist/yDist/zDist and velocity scaled by speed.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class JolCraftParticleHelper {
 
-    private JolCraftParticleHelper() {}
+    private JolCraftParticleHelper() {
+    }
 
     // ------------------------------------------------------------
     // WORLD PARTICLES (server-authoritative, called once)
@@ -35,7 +37,15 @@ public final class JolCraftParticleHelper {
                              boolean overrideLimiter,
                              boolean alwaysShow,
                              double x, double y, double z,
-                             double vx, double vy, double vz) {
+                             int count,
+                             double xDist, double yDist, double zDist,
+                             double speed) {
+
+        if (count < 0) return;
+
+        if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z)) return;
+        if (!Double.isFinite(xDist) || !Double.isFinite(yDist) || !Double.isFinite(zDist)) return;
+        if (!Double.isFinite(speed)) return;
 
         if (!level.isClientSide) {
             if (!(level instanceof ServerLevel serverLevel)) return;
@@ -45,9 +55,9 @@ public final class JolCraftParticleHelper {
                     overrideLimiter,
                     alwaysShow,
                     x, y, z,
-                    0,
-                    vx, vy, vz,
-                    1.0D
+                    count,
+                    xDist, yDist, zDist,
+                    speed
             );
             return;
         }
@@ -58,7 +68,9 @@ public final class JolCraftParticleHelper {
                         overrideLimiter,
                         alwaysShow,
                         x, y, z,
-                        vx, vy, vz
+                        count,
+                        xDist, yDist, zDist,
+                        speed
                 )
         );
     }
@@ -66,8 +78,26 @@ public final class JolCraftParticleHelper {
     public static void spawn(Level level,
                              ParticleOptions particle,
                              double x, double y, double z,
+                             int count,
+                             double xDist, double yDist, double zDist,
+                             double speed) {
+        spawn(level, particle, particle.getType().getOverrideLimiter(), false, x, y, z, count, xDist, yDist, zDist, speed);
+    }
+
+    public static void spawn(Level level,
+                             ParticleOptions particle,
+                             boolean overrideLimiter,
+                             boolean alwaysShow,
+                             double x, double y, double z,
                              double vx, double vy, double vz) {
-        spawn(level, particle, particle.getType().getOverrideLimiter(), false, x, y, z, vx, vy, vz);
+        spawn(level, particle, overrideLimiter, alwaysShow, x, y, z, 0, vx, vy, vz, 1.0D);
+    }
+
+    public static void spawn(Level level,
+                             ParticleOptions particle,
+                             double x, double y, double z,
+                             double vx, double vy, double vz) {
+        spawn(level, particle, particle.getType().getOverrideLimiter(), false, x, y, z, 0, vx, vy, vz, 1.0D);
     }
 
     // ------------------------------------------------------------
@@ -79,9 +109,15 @@ public final class JolCraftParticleHelper {
                                   boolean overrideLimiter,
                                   boolean alwaysShow,
                                   double x, double y, double z,
-                                  double vx, double vy, double vz) {
+                                  int count,
+                                  double xDist, double yDist, double zDist,
+                                  double speed) {
 
-        if (!Double.isFinite(vx) || !Double.isFinite(vy) || !Double.isFinite(vz)) return;
+        if (count < 0) return;
+
+        if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z)) return;
+        if (!Double.isFinite(xDist) || !Double.isFinite(yDist) || !Double.isFinite(zDist)) return;
+        if (!Double.isFinite(speed)) return;
 
         Level level = player.level();
 
@@ -89,7 +125,13 @@ public final class JolCraftParticleHelper {
             Player local = JolCraftProxy.access().getLocalPlayer();
             if (local != player) return;
 
-            level.addParticle(particle, overrideLimiter, alwaysShow, x, y, z, vx, vy, vz);
+            if (count == 0) {
+                level.addParticle(particle, overrideLimiter, alwaysShow, x, y, z, xDist, yDist, zDist);
+            } else {
+                for (int i = 0; i < count; i++) {
+                    level.addParticle(particle, overrideLimiter, alwaysShow, x, y, z, xDist, yDist, zDist);
+                }
+            }
             return;
         }
 
@@ -99,11 +141,11 @@ public final class JolCraftParticleHelper {
                     overrideLimiter,
                     alwaysShow,
                     x, y, z,
-                    (float) vx,
-                    (float) vy,
-                    (float) vz,
-                    1.0F,
-                    0
+                    (float) xDist,
+                    (float) yDist,
+                    (float) zDist,
+                    (float) speed,
+                    count
             ));
         }
     }
@@ -111,7 +153,25 @@ public final class JolCraftParticleHelper {
     public static void spawnLocal(Player player,
                                   ParticleOptions particle,
                                   double x, double y, double z,
+                                  int count,
+                                  double xDist, double yDist, double zDist,
+                                  double speed) {
+        spawnLocal(player, particle, particle.getType().getOverrideLimiter(), false, x, y, z, count, xDist, yDist, zDist, speed);
+    }
+
+    public static void spawnLocal(Player player,
+                                  ParticleOptions particle,
+                                  boolean overrideLimiter,
+                                  boolean alwaysShow,
+                                  double x, double y, double z,
                                   double vx, double vy, double vz) {
-        spawnLocal(player, particle, particle.getType().getOverrideLimiter(), false, x, y, z, vx, vy, vz);
+        spawnLocal(player, particle, overrideLimiter, alwaysShow, x, y, z, 0, vx, vy, vz, 1.0D);
+    }
+
+    public static void spawnLocal(Player player,
+                                  ParticleOptions particle,
+                                  double x, double y, double z,
+                                  double vx, double vy, double vz) {
+        spawnLocal(player, particle, particle.getType().getOverrideLimiter(), false, x, y, z, 0, vx, vy, vz, 1.0D);
     }
 }

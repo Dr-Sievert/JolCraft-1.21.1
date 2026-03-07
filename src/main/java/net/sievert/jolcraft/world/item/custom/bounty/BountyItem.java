@@ -8,14 +8,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
-import net.sievert.jolcraft.world.item.util.bounty.BountyData;
-import net.sievert.jolcraft.world.item.util.bounty.BountyHelper;
-import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
-import net.sievert.jolcraft.world.item.util.bounty.BountyType;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -61,8 +60,8 @@ public class BountyItem extends AbstractBountyTaskItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     protected void appendHeaderLines(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        BountyType type = BountyHelper.getBountyType(stack);
-        BountyTier tier = BountyHelper.getBountyTier(stack);
+        BountyType type = BountyRecipe.getType(stack);
+        BountyTier tier = BountyRecipe.getTier(stack);
 
         if (type != BountyType.UNKNOWN) {
             tooltip.add(
@@ -104,7 +103,7 @@ public class BountyItem extends AbstractBountyTaskItem {
                 return;
             }
 
-            BountyType type = BountyHelper.getBountyType(stack);
+            BountyType type = BountyRecipe.getType(stack);
             if (type != BountyType.UNKNOWN) {
                 tooltip.add(Component.translatable(
                         JolCraftLanguageKeys.TOOLTIP_BOUNTY_DWARF_PROFESSION,
@@ -122,7 +121,7 @@ public class BountyItem extends AbstractBountyTaskItem {
     @Override
     protected void appendInvalidLines(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 
-        if (BountyHelper.getBountyType(stack) == BountyType.UNKNOWN && BountyHelper.getBountyTier(stack) == BountyTier.UNKNOWN) {
+        if (BountyRecipe.getType(stack) == BountyType.UNKNOWN && BountyRecipe.getTier(stack) == BountyTier.UNKNOWN) {
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_INVALID)
                     .withStyle(ChatFormatting.RED));
         }

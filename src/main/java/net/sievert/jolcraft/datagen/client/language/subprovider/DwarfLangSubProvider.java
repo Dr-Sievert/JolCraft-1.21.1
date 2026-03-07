@@ -86,7 +86,7 @@ public final class DwarfLangSubProvider implements AbstractLanguageProvider.Lang
         p.putManual(JolCraftLanguageKeys.TOOLTIP_SIGNED_CONTRACT, "Signed contracts are used to buy profession contracts from a guildmaster.");
         p.putManual(JolCraftLanguageKeys.TOOLTIP_PROFESSION_CONTRACT, "Profession contracts can be given to dwarves without professions to set their profession.");
 
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_GUILD_SIGIL, "Can be bought from a master dwarf without a profession.");
+        p.putManual(JolCraftLanguageKeys.TOOLTIP_GUILD_SIGIL, "Can be bought from a masterTask dwarf without a profession.");
 
         // -----------------------------------------------------------------
         // Dwarf

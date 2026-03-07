@@ -3,7 +3,7 @@ package net.sievert.jolcraft.world.item.util.compass;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
+import net.sievert.jolcraft.util.JolCraftEnumHelper;
 
 import javax.annotation.Nullable;
 
@@ -30,6 +30,6 @@ public enum StructureGroup implements JolCraftEnumHelper.StringId {
     }
 
     public static @Nullable StructureGroup fromId(String id) {
-        return JolCraftEnumHelper.byStringId(StructureGroup.class, id, null);
+        return JolCraftEnumHelper.byStringIdNullable(StructureGroup.class, id, null);
     }
 }

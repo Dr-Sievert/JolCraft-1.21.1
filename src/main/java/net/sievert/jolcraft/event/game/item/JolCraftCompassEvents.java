@@ -3,37 +3,29 @@ package net.sievert.jolcraft.event.game.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructures;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -55,124 +47,6 @@ public final class JolCraftCompassEvents {
         LAST_COMPASS_POS.remove(id);
         LAST_COMPASS_SLOT.remove(id);
         NEXT_FULL_SCAN_TICK.remove(id);
-    }
-
-    @SubscribeEvent
-    public static void onCompassCrafted(PlayerEvent.ItemCraftedEvent event) {
-        ItemStack output = event.getCrafting();
-        if (output.is(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())) {
-            ItemStack input = ItemStack.EMPTY;
-            for (int i = 0; i < event.getInventory().getContainerSize(); i++) {
-                ItemStack stack = event.getInventory().getItem(i);
-                if (stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) {
-                    input = stack;
-                    break;
-                }
-            }
-            if (!input.isEmpty()) {
-                var dye = input.get(DataComponents.DYED_COLOR);
-                if (dye != null) {
-                    output.set(DataComponents.DYED_COLOR, dye);
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onDialCombine(PlayerInteractEvent.RightClickItem event) {
-        Player player = event.getEntity();
-        Level level = event.getLevel();
-
-        ItemStack main = event.getItemStack();
-        ItemStack offhand = player.getOffhandItem();
-
-        boolean mainIsDial = main.is(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get());
-        boolean offIsDial = offhand.is(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get());
-        boolean mainIsEmpty = main.is(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
-        boolean offIsEmpty = offhand.is(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
-
-        if (!((mainIsDial && offIsEmpty) || (offIsDial && mainIsEmpty))) return;
-
-        event.setCancellationResult(InteractionResult.SUCCESS);
-        event.setCanceled(true);
-
-        if (level.isClientSide) return;
-        if (!(player.level() instanceof ServerLevel serverLevel)) return;
-
-        ItemStack dial = mainIsDial ? main : offhand;
-        ItemStack empty = mainIsEmpty ? main : offhand;
-
-        InteractionHand swingHand = mainIsDial
-                ? event.getHand()
-                : (event.getHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
-
-        String group = dial.get(JolCraftDataComponents.STRUCTURE_GROUP);
-        if (group == null || group.isBlank()) return;
-
-        TagKey<Structure> structureTag = DeepslateCompassHelper.getStructureTagForGroup(group);
-        if (structureTag == null) return;
-
-        GlobalPos targetPos = DiscoveredStructuresHelper.findNearestUndiscoveredStructure(
-                serverLevel,
-                structureTag,
-                player.blockPosition(),
-                100,
-                player
-        );
-        if (targetPos == null) return;
-
-        String foundStructureFullId = group;
-        var registry = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE);
-        var allRefs = serverLevel.structureManager().getAllStructuresAt(targetPos.pos());
-
-        outer:
-        for (Structure structure : allRefs.keySet()) {
-            for (Holder<Structure> holder : registry.getTagOrEmpty(structureTag)) {
-                if (holder.value() == structure) {
-                    ResourceLocation id = registry.getKey(structure);
-                    if (id != null) {
-                        foundStructureFullId = id.toString();
-                    }
-                    break outer;
-                }
-            }
-        }
-
-        ItemStack result = new ItemStack(JolCraftItems.DEEPSLATE_COMPASS.get());
-
-        var dyeColor = empty.get(DataComponents.DYED_COLOR);
-        if (dyeColor != null) {
-            result.set(DataComponents.DYED_COLOR, dyeColor);
-        }
-
-        result.set(JolCraftDataComponents.STRUCTURE_GROUP, foundStructureFullId);
-
-        var dialColor = dial.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get());
-        if (dialColor != null) {
-            result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR, dialColor);
-        }
-
-        result.set(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET, targetPos);
-
-        JolCraftLogs.debug(
-                JolCraftLogTags.PLAYER,
-                "Dial combine success: player={}, group={}, structure={}, targetDim={}, targetPos={}",
-                player.getUUID(),
-                group,
-                foundStructureFullId,
-                targetPos.dimension().location(),
-                JolCraftLogs.roundedPos(targetPos.pos())
-        );
-
-        dial.shrink(1);
-        empty.shrink(1);
-
-        if (!player.addItem(result)) {
-            player.drop(result, false);
-        }
-
-        player.swing(swingHand, true);
-        JolCraftSoundHelper.player(player, SoundEvents.METAL_HIT, 1.0F, 1.4F);
     }
 
     @SubscribeEvent

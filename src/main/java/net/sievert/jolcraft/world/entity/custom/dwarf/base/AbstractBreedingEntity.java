@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.base;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -26,17 +27,15 @@ import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfVariant;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfVariant;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.sievert.jolcraft.world.entity.util.EntityData;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 
 @ParametersAreNonnullByDefault
@@ -60,29 +59,37 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
         super(entityType, level);
     }
 
-    public static final EntityDataAccessor<Integer> VARIANT =
-            SynchedEntityData.defineId(AbstractBreedingEntity.class, EntityDataSerializers.INT);
+    // ---------------------------------------------------------------------
+    // Synced data (String ids)
+    // ---------------------------------------------------------------------
 
-    public static final EntityDataAccessor<Integer> BEARD_COLOR =
-            SynchedEntityData.defineId(AbstractBreedingEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<String> VARIANT =
+            SynchedEntityData.defineId(AbstractBreedingEntity.class, EntityDataSerializers.STRING);
 
-    public static final EntityDataAccessor<Integer> EYE_COLOR =
-            SynchedEntityData.defineId(AbstractBreedingEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<String> BEARD_COLOR =
+            SynchedEntityData.defineId(AbstractBreedingEntity.class, EntityDataSerializers.STRING);
+
+    public static final EntityDataAccessor<String> EYE_COLOR =
+            SynchedEntityData.defineId(AbstractBreedingEntity.class, EntityDataSerializers.STRING);
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(VARIANT, 0);
-        builder.define(BEARD_COLOR, 0);
-        builder.define(EYE_COLOR, 0);
+        builder.define(VARIANT, DwarfVariant.GREY.getId());
+        builder.define(BEARD_COLOR, DwarfBeardColor.BROWN.getId());
+        builder.define(EYE_COLOR, DwarfEyeColor.BROWN.getId());
     }
+
+    // ---------------------------------------------------------------------
+    // NBT (String ids only)
+    // ---------------------------------------------------------------------
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putInt(NBT_VARIANT, this.getData(VARIANT));
-        compound.putInt(NBT_BEARD, this.getData(BEARD_COLOR));
-        compound.putInt(NBT_EYE, this.getData(EYE_COLOR));
+        compound.putString(NBT_VARIANT, this.getData(VARIANT));
+        compound.putString(NBT_BEARD, this.getData(BEARD_COLOR));
+        compound.putString(NBT_EYE, this.getData(EYE_COLOR));
         compound.putInt(NBT_IN_LOVE, this.inLove);
         if (this.loveCause != null) {
             compound.putUUID(NBT_LOVE_CAUSE, this.loveCause);
@@ -94,14 +101,21 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        setData(VARIANT, compound.getInt(NBT_VARIANT));
-        setData(BEARD_COLOR, compound.getInt(NBT_BEARD));
-        setData(EYE_COLOR, compound.getInt(NBT_EYE));
+
+        // Fail-closed-ish: missing tag falls back to deterministic default.
+        setData(VARIANT, compound.contains(NBT_VARIANT) ? compound.getString(NBT_VARIANT) : DwarfVariant.GREY.getId());
+        setData(BEARD_COLOR, compound.contains(NBT_BEARD) ? compound.getString(NBT_BEARD) : DwarfBeardColor.BROWN.getId());
+        setData(EYE_COLOR, compound.contains(NBT_EYE) ? compound.getString(NBT_EYE) : DwarfEyeColor.BROWN.getId());
+
         this.inLove = compound.getInt(NBT_IN_LOVE);
         this.loveCause = compound.hasUUID(NBT_LOVE_CAUSE) ? compound.getUUID(NBT_LOVE_CAUSE) : null;
         this.setAge(compound.getInt(NBT_AGE));
         this.forcedAge = compound.getInt(NBT_FORCED_AGE);
     }
+
+    // ---------------------------------------------------------------------
+    // EntityData
+    // ---------------------------------------------------------------------
 
     @Override
     public <T> void setData(EntityDataAccessor<T> accessor, T value) {
@@ -112,6 +126,10 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     public <T> T getData(EntityDataAccessor<T> accessor) {
         return this.entityData.get(accessor);
     }
+
+    // ---------------------------------------------------------------------
+    // Breeding logic (unchanged)
+    // ---------------------------------------------------------------------
 
     public boolean isFood(ItemStack itemStack) {
         return itemStack.is(Items.BREAD);
@@ -145,9 +163,12 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
         if (player.level().isClientSide) return;
         if (player.isCreative()) return;
         if (stack.isEmpty() || stack.getCount() == 0) return;
+
         int initialCount = stack.getCount();
         UseRemainder useRemainder = stack.get(DataComponents.USE_REMAINDER);
+
         stack.consume(1, player);
+
         if (useRemainder != null) {
             ItemStack remainderStack = useRemainder.convertIntoRemainder(
                     stack,
@@ -164,8 +185,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
         if (player != null) {
             this.loveCause = player.getUUID();
         }
-
-        this.level().broadcastEntityEvent(this, (byte)18);
+        this.level().broadcastEntityEvent(this, (byte) 18);
     }
 
     @Nullable
@@ -174,7 +194,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
             return null;
         } else {
             Player player = this.level().getPlayerByUUID(this.loveCause);
-            return player instanceof ServerPlayer ? (ServerPlayer)player : null;
+            return player instanceof ServerPlayer ? (ServerPlayer) player : null;
         }
     }
 
@@ -197,6 +217,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
         final BabyEntitySpawnEvent event = new BabyEntitySpawnEvent(this, partner, ageablemob);
         final boolean cancelled = NeoForge.EVENT_BUS.post(event).isCanceled();
         ageablemob = event.getChild();
+
         if (cancelled) {
             this.setAge(6000);
             partner.setAge(6000);
@@ -204,6 +225,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
             partner.resetLove();
             return;
         }
+
         if (ageablemob != null) {
             ageablemob.setBaby(true);
             ageablemob.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
@@ -217,7 +239,8 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
         dwarf.setAge(6000);
         this.resetLove();
         dwarf.resetLove();
-        level.broadcastEntityEvent(this, (byte)18);
+        level.broadcastEntityEvent(this, (byte) 18);
+
         if (level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
             level.addFreshEntity(new ExperienceOrb(level, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
         }

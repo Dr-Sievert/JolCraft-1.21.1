@@ -9,7 +9,7 @@ public final class JolCraftItemPropertyIds extends JolCraftIds {
 
     // Select item model properties
     public static final String COIN_POUCH_AMOUNT = JolCraftDataComponentIds.COIN_POUCH_AMOUNT;
-    public static final String LORE_KEY = JolCraftDataComponentIds.LORE_KEY;
+    public static final String LORE_KEY = JolCraftDataComponentIds.DWARF_LORE_KEY;
 
     // Range select item model properties
     public static final String DEEPSLATE_COMPASS_ANGLE = "deepslate_compass_angle";

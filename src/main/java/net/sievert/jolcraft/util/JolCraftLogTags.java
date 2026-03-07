@@ -2,20 +2,43 @@ package net.sievert.jolcraft.util;
 
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
-public final class JolCraftLogTags {
+/**
+ * Centralized log tags for JolCraft.
+ *
+ * - Backed by JolCraftDictionary constants
+ * - Uppercase enforced once
+ * - Implements StringId for enum consistency
+ * - Type-safe (no raw strings drifting)
+ */
+public enum JolCraftLogTags implements JolCraftEnumHelper.StringId {
 
-    private JolCraftLogTags() {}
+    ADVANCEMENT(JolCraftDictionary.ADVANCEMENT),
+    ATTACHMENT(JolCraftDictionary.ATTACHMENT),
+    BLOCK(JolCraftDictionary.BLOCK),
+    BLOCK_ENTITY(JolCraftDictionary.BLOCK + JolCraftDictionary.ENTITY),
+    CONFIG(JolCraftDictionary.CONFIG),
+    DATA(JolCraftDictionary.DATA),
+    DATAGEN(JolCraftDictionary.DATAGEN),
+    ENTITY(JolCraftDictionary.ENTITY),
+    INIT(JolCraftDictionary.INIT),
+    ITEM(JolCraftDictionary.ITEM),
+    NETWORK(JolCraftDictionary.NETWORK),
+    PLAYER(JolCraftDictionary.PLAYER),
+    RECIPE(JolCraftDictionary.RECIPE);
 
-    public static final String ADVANCEMENT = JolCraftDictionary.ADVANCEMENT.toUpperCase();
-    public static final String ATTACHMENT = JolCraftDictionary.ATTACHMENT.toUpperCase();
-    public static final String BLOCK = JolCraftDictionary.BLOCK.toUpperCase();
-    public static final String BLOCK_ENTITY = (JolCraftDictionary.BLOCK + JolCraftDictionary.ENTITY).toUpperCase();
-    public static final String CONFIG = JolCraftDictionary.CONFIG.toUpperCase();
-    public static final String DATAGEN = JolCraftDictionary.DATAGEN.toUpperCase();
-    public static final String ENTITY = JolCraftDictionary.ENTITY.toUpperCase();
-    public static final String INIT = JolCraftDictionary.INIT.toUpperCase();
-    public static final String ITEM = JolCraftDictionary.ITEM.toUpperCase();
-    public static final String NETWORK = JolCraftDictionary.NETWORK.toUpperCase();
-    public static final String PLAYER = JolCraftDictionary.PLAYER.toUpperCase();
-    public static final String RECIPE = JolCraftDictionary.RECIPE.toUpperCase();
+    private final String id;
+
+    JolCraftLogTags(String base) {
+        this.id = base.toUpperCase();
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return id;
+    }
 }

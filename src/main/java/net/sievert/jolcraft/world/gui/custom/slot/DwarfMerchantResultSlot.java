@@ -8,9 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.gui.custom.container.DwarfMerchantContainer;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 

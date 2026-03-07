@@ -104,9 +104,8 @@ public final class JolCraftItems {
             DeepslateCompassItem::new, new Item.Properties().stacksTo(1));
 
     public static final DeferredItem<Item> DEEPSLATE_COMPASS_DIAL = ITEMS.registerItem(JolCraftItemIds.DEEPSLATE_COMPASS_DIAL,
-            DeepslateCompassDialItem::new, new Item.Properties().stacksTo(1));
+            DeepslateCompassDialItem::new, new Item.Properties().stacksTo(16));
 
-    //Materials, Armors, Trims, Tools and Weapons
     public static final DeferredItem<Item> IMPURE_MITHRIL = ITEMS.registerItem(JolCraftItemIds.IMPURE_MITHRIL,
             Item::new, new Item.Properties().fireResistant().rarity(Rarity.RARE));
 

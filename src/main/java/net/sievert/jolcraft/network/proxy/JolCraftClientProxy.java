@@ -21,7 +21,7 @@ import net.sievert.jolcraft.network.data.client.ClientDeliriumData;
 import net.sievert.jolcraft.network.packet.s2c.*;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

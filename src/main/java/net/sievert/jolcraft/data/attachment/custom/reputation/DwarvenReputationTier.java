@@ -3,7 +3,7 @@ package net.sievert.jolcraft.data.attachment.custom.reputation;
 import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
-import net.sievert.jolcraft.data.util.JolCraftEnumHelper;
+import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 public enum DwarvenReputationTier implements JolCraftEnumHelper.IntId {

@@ -32,6 +32,8 @@ public final class JolCraftDirectoryIds extends JolCraftIds {
     public static final String CREATURE = JolCraftDictionary.CREATURE;
     public static final String OBJECT = JolCraftDictionary.OBJECT;
 
+    public static final String BOUNTY = JolCraftDictionary.BOUNTY;
+
     // File extensions
     public static final String PNG = JolCraftDictionary.PNG;
     public static final String JSON = JolCraftDictionary.JSON;

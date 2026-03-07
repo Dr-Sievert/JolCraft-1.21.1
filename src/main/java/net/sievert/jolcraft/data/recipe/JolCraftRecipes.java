@@ -10,13 +10,13 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
-import net.sievert.jolcraft.data.recipe.custom.*;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
 import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
+import net.sievert.jolcraft.data.recipe.custom.vanilla.AttributeSmithingTrimRecipe;
 
 public final class JolCraftRecipes {
 

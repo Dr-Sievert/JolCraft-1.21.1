@@ -6,7 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
+import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigManager;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -19,7 +19,10 @@ public final class JolCraftConfigs {
     public record Entry(ResourceLocation id, Supplier<? extends PreparableReloadListener> factory) {}
 
     public static final List<Entry> ALL = List.of(
-            new Entry(DwarfProfessionConfigs.RELOAD_LISTENER_ID, DwarfProfessionConfigs::new)
+            new Entry(
+                    DwarfProfessionConfigManager.LISTENER_ID,
+                    () -> DwarfProfessionConfigManager.INSTANCE
+            )
     );
 
     @SubscribeEvent

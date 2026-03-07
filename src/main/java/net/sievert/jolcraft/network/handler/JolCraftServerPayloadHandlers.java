@@ -176,13 +176,12 @@ public final class JolCraftServerPayloadHandlers {
             var level = sp.serverLevel();
 
             long tick = level.getGameTime();
-            if (PARTICLE_LIMITER.isRateLimited(sp, tick, MAX_PARTICLE_PACKETS_PER_TICK)){
+            if (PARTICLE_LIMITER.isRateLimited(sp, tick, MAX_PARTICLE_PACKETS_PER_TICK)) {
                 JolCraftLogs.debug(
                         JolCraftLogTags.NETWORK,
                         "Rate-limited particle packet from {}",
                         player.getGameProfile().getName()
                 );
-
                 return;
             }
 
@@ -200,22 +199,27 @@ public final class JolCraftServerPayloadHandlers {
             }
 
             double maxDist = overrideLimiter ? 512.0D : 32.0D;
-
             if (sp.distanceToSqr(packet.x(), packet.y(), packet.z()) > (maxDist * maxDist)) return;
 
-            double vx = packet.vx();
-            double vy = packet.vy();
-            double vz = packet.vz();
-            if (!Double.isFinite(vx) || !Double.isFinite(vy) || !Double.isFinite(vz)) return;
+            int count = packet.count();
+            if (count < 0) return;
+
+            double xDist = packet.xDist();
+            double yDist = packet.yDist();
+            double zDist = packet.zDist();
+            double speed = packet.speed();
+
+            if (!Double.isFinite(xDist) || !Double.isFinite(yDist) || !Double.isFinite(zDist)) return;
+            if (!Double.isFinite(speed)) return;
 
             level.sendParticles(
                     packet.particle(),
                     overrideLimiter,
                     packet.alwaysShow(),
                     packet.x(), packet.y(), packet.z(),
-                    0,
-                    vx, vy, vz,
-                    1.0D
+                    count,
+                    xDist, yDist, zDist,
+                    speed
             );
         });
     }

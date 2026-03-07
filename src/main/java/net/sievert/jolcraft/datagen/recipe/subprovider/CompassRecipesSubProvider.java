@@ -1,86 +1,95 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.world.item.DyeColor;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.DyedItemColor;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.vanilla.ComponentPreservingShapelessRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.build.custom.vanilla.DyeColorRecipeBuilder;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-public final class CompassRecipesSubProvider implements AbstractRecipeProvider.RecipeSubProvider {
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    private static final String FOLDER = "deepslate_compass";
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public final class CompassRecipesSubProvider implements RecipeSubProvider {
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void addRecipes(@NotNull AbstractRecipeProvider p) {
+    public @NotNull String folder() {
+        return JolCraftItemIds.DEEPSLATE_COMPASS;
+    }
 
-        p.modShaped(RecipeCategory.MISC, JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
-                .pattern(" B ")
-                .pattern("B B")
-                .pattern(" B ")
-                .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
-                .unlockedBy(p.hasName(JolCraftItems.DEEPSLATE_PLATE.get()), p.hasItem(JolCraftItems.DEEPSLATE_PLATE.get()))
-                .save(p.out(), p.inFolder(FOLDER, p.itemName(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())));
+    @Override
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
-        for (int i = 0; i < AbstractRecipeProvider.DYES.size(); i++) {
-            Item dyeItem = AbstractRecipeProvider.DYES.get(i);
-            DyeColor dyeColor = DyeColor.values()[i];
-            int colorInt = dyeColor.getFireworkColor();
+        // =========================================================
+        // DYE RECIPES (EMPTY DEEPSLATE COMPASS)
+        // =========================================================
 
-            ItemStack dyedEmpty = new ItemStack(
-                    JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get().builtInRegistryHolder(),
-                    1,
-                    DataComponentPatch.builder()
-                            .set(DataComponents.DYED_COLOR, new DyedItemColor(colorInt, true))
-                            .build()
-            );
-
-            String idPath = p.itemName(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()) + "_" + dyeColor.getName();
-
-            p.modShapeless(RecipeCategory.MISC, dyedEmpty.getItem())
-                    .requires(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
-                    .requires(dyeItem)
-                    .unlockedBy(p.hasName(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()), p.hasItem(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()))
-                    .unlockedBy(p.hasName(dyeItem), p.hasItem(dyeItem))
-                    .save(p.out(), p.inFolder(FOLDER, idPath));
+        for (var r : DyeColorRecipeBuilder.buildAll(
+                CraftingBookCategory.MISC,
+                JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()
+        )) {
+            r.builder().save(output, recipeKey(r.file()));
         }
 
-        p.modShapeless(RecipeCategory.MISC, JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
-                .requires(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
-                .unlockedBy(p.hasName(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()), p.hasItem(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()))
-                .save(p.out(), p.inFolder(FOLDER, p.itemName(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()) + "_remove_dye"));
+        // =========================================================
+        // DYE RECIPES (DEEPSLATE COMPASS)
+        // =========================================================
 
-        for (int i = 0; i < AbstractRecipeProvider.DYES.size(); i++) {
-            Item dyeItem = AbstractRecipeProvider.DYES.get(i);
-            DyeColor dyeColor = DyeColor.values()[i];
-            int colorInt = dyeColor.getFireworkColor();
-
-            ItemStack dyedFull = new ItemStack(
-                    JolCraftItems.DEEPSLATE_COMPASS.get().builtInRegistryHolder(),
-                    1,
-                    DataComponentPatch.builder()
-                            .set(DataComponents.DYED_COLOR, new DyedItemColor(colorInt, true))
-                            .build()
-            );
-
-            String idPath = p.itemName(JolCraftItems.DEEPSLATE_COMPASS.get()) + "_" + dyeColor.getName();
-
-            p.modShapeless(RecipeCategory.MISC, dyedFull.getItem())
-                    .requires(JolCraftItems.DEEPSLATE_COMPASS.get())
-                    .requires(dyeItem)
-                    .unlockedBy(p.hasName(JolCraftItems.DEEPSLATE_COMPASS.get()), p.hasItem(JolCraftItems.DEEPSLATE_COMPASS.get()))
-                    .unlockedBy(p.hasName(dyeItem), p.hasItem(dyeItem))
-                    .save(p.out(), p.inFolder(FOLDER, idPath));
+        for (var r : DyeColorRecipeBuilder.buildAll(
+                CraftingBookCategory.MISC,
+                JolCraftItems.DEEPSLATE_COMPASS.get()
+        )) {
+            r.builder().save(output, recipeKey(r.file()));
         }
 
-        p.modShapeless(RecipeCategory.MISC, JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
-                .requires(JolCraftItems.DEEPSLATE_COMPASS.get())
-                .unlockedBy(p.hasName(JolCraftItems.DEEPSLATE_COMPASS.get()), p.hasItem(JolCraftItems.DEEPSLATE_COMPASS.get()))
-                .save(p.out(), p.inFolder(FOLDER, p.itemName(JolCraftItems.DEEPSLATE_COMPASS.get()) + "_remove_dial"));
+        // =========================================================
+        // REMOVE DIAL
+        // =========================================================
+
+        ComponentPreservingShapelessRecipeBuilder.create(
+                        CraftingBookCategory.MISC,
+                        Ingredient.of(JolCraftItems.DEEPSLATE_COMPASS.get())
+                )
+                .result(new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()))
+                .keep(DataComponents.DYED_COLOR)
+                .save(
+                        output,
+                        recipeKey(
+                                JolCraftStrings.underscored(
+                                        JolCraftItemIds.DEEPSLATE_COMPASS,
+                                        JolCraftDictionary.REMOVE,
+                                        JolCraftDictionary.DIAL
+                                )
+                        )
+                );
+    }
+
+    private ResourceKey<Recipe<?>> recipeKey(String file) {
+        return ResourceKey.create(
+                Registries.RECIPE,
+                JolCraft.location(
+                        JolCraftStrings.slashed(folder(), file)
+                )
+        );
     }
 }

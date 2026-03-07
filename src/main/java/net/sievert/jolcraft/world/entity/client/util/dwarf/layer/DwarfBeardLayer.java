@@ -13,56 +13,25 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfBeardColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfBeardLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
+public final class DwarfBeardLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     private static final Map<DwarfBeardColor, ResourceLocation> LOCATION_BY_BEARD =
             Util.make(Maps.newEnumMap(DwarfBeardColor.class), map -> {
-                map.put(DwarfBeardColor.BROWN,
-                        JolCraftTextures.mod(
-                                JolCraftTextures.entity(
-                                        JolCraftDirectoryIds.DWARF,
-                                        JolCraftDirectoryIds.BEARD,
-                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.BROWN.name().toLowerCase()
-                                )
-                        ));
-
-                map.put(DwarfBeardColor.RED,
-                        JolCraftTextures.mod(
-                                JolCraftTextures.entity(
-                                        JolCraftDirectoryIds.DWARF,
-                                        JolCraftDirectoryIds.BEARD,
-                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.RED.name().toLowerCase()
-                                )
-                        ));
-
-                map.put(DwarfBeardColor.BLACK,
-                        JolCraftTextures.mod(
-                                JolCraftTextures.entity(
-                                        JolCraftDirectoryIds.DWARF,
-                                        JolCraftDirectoryIds.BEARD,
-                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.BLACK.name().toLowerCase()
-                                )
-                        ));
-
-                map.put(DwarfBeardColor.GRAY,
-                        JolCraftTextures.mod(
-                                JolCraftTextures.entity(
-                                        JolCraftDirectoryIds.DWARF,
-                                        JolCraftDirectoryIds.BEARD,
-                                        JolCraftDirectoryIds.BEARD + "_" + DwarfBeardColor.GRAY.name().toLowerCase()
-                                )
-                        ));
+                map.put(DwarfBeardColor.BROWN, texture(DwarfBeardColor.BROWN));
+                map.put(DwarfBeardColor.RED, texture(DwarfBeardColor.RED));
+                map.put(DwarfBeardColor.BLACK, texture(DwarfBeardColor.BLACK));
+                map.put(DwarfBeardColor.GRAY, texture(DwarfBeardColor.GRAY));
             });
 
     public DwarfBeardLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {
@@ -70,27 +39,46 @@ public class DwarfBeardLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight,
-                       DwarfRenderState state, float yRot, float xRot) {
+    public void render(
+            @NotNull PoseStack poseStack,
+            @NotNull MultiBufferSource buffer,
+            int packedLight,
+            DwarfRenderState state,
+            float yRot,
+            float xRot
+    ) {
+        if (state.dwarf == null || state.beard == null) {
+            return;
+        }
 
-        if (state.dwarf == null || state.beard == null) return;
+        DwarfModel model = getParentModel();
+        ModelPart head = model.getHead();
+        ModelPart beard = head.getChild(JolCraftModelPartIds.Creature.Humanoid.Dwarf.BEARD);
+        ModelPart rightEyebrow = head.getChild(JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYEBROW);
+        ModelPart leftEyebrow = head.getChild(JolCraftModelPartIds.Creature.Humanoid.LEFT_EYEBROW);
 
-        DwarfModel model = this.getParentModel();
-        ModelPart beard = model.getHead().getChild(JolCraftModelPartIds.Creature.Humanoid.Dwarf.BEARD);
-        ModelPart right_eyebrow = model.getHead().getChild(JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYEBROW);
-        ModelPart left_eyebrow = model.getHead().getChild(JolCraftModelPartIds.Creature.Humanoid.LEFT_EYEBROW);
         beard.visible = true;
-        right_eyebrow.visible = true;
-        left_eyebrow.visible = true;
+        rightEyebrow.visible = true;
+        leftEyebrow.visible = true;
 
         model.setupAnim(state);
+
         ResourceLocation texture = LOCATION_BY_BEARD.get(state.beard);
         VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
         model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
 
         beard.visible = false;
-        right_eyebrow.visible = false;
-        left_eyebrow.visible = false;
+        rightEyebrow.visible = false;
+        leftEyebrow.visible = false;
+    }
 
+    private static ResourceLocation texture(DwarfBeardColor color) {
+        return JolCraftTextures.mod(
+                JolCraftTextures.entity(
+                        JolCraftDirectoryIds.DWARF,
+                        JolCraftDirectoryIds.BEARD,
+                        JolCraftDirectoryIds.BEARD + "_" + color.getId()
+                )
+        );
     }
 }

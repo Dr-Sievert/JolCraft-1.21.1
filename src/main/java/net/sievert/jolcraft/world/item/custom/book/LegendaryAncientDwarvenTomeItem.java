@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
@@ -123,7 +123,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
 
     @Override
     protected List<Component> getFullyReadableTooltip(ItemStack stack, Player player, List<Component> tooltip, TooltipFlag flag) {
-        var dataComponentType = JolCraftDataComponents.LORE_KEY.get();
+        var dataComponentType = JolCraftDataComponents.DWARF_LORE_KEY.get();
         String loreKey = stack.get(dataComponentType);
         if(loreKey != null){
             return List.of(Component.translatable(JolCraftLanguageKeys.TOOLTIP_LEGENDARY_ANCIENT_DWARVEN_TOME_SHIFT).withStyle(ChatFormatting.GRAY));

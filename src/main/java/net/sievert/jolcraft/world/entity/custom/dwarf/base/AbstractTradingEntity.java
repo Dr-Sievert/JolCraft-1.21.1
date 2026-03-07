@@ -3,19 +3,15 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.base;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
@@ -24,13 +20,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
+import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfig;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigs;
-import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionSettings;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
@@ -38,13 +32,13 @@ import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPac
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffer;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantOffers;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfTrades;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionTraits;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffers;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfTrades;
 import net.sievert.jolcraft.world.entity.util.EntityData;
 import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -54,13 +48,9 @@ import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.OptionalInt;
-import java.util.Set;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -68,32 +58,19 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     private static final String NBT_XP = JolCraftDictionary.XP;
     private static final String NBT_OFFERS = JolCraftStrings.plural(JolCraftDictionary.OFFER);
-    private static final String NBT_MERCHANT_DATA = JolCraftStrings.underscored(JolCraftDictionary.MERCHANT, JolCraftDictionary.DATA);
-    private static final String NBT_RESTOCK_OFFER_COUNT = JolCraftStrings.underscored(JolCraftDictionary.RESTOCK, JolCraftDictionary.OFFER, JolCraftDictionary.COUNT);
-    private static final String NBT_PERSISTENT_POOL_SELECTIONS =
-            JolCraftStrings.underscored(JolCraftDictionary.PERSISTENT, JolCraftDictionary.POOL, JolCraftStrings.plural(JolCraftDictionary.SELECTION));
+    private static final String NBT_MERCHANT_DATA =
+            JolCraftStrings.underscored(JolCraftDictionary.MERCHANT, JolCraftDictionary.DATA);
 
-    // ------------------------------------------------------------
-    // Trade sound debounce (server-side)
-    // ------------------------------------------------------------
-
-    private long lastTradeSoundGameTime = Long.MIN_VALUE;
     private static final long TRADE_SOUND_COOLDOWN_TICKS = 8L;
 
-    // ------------------------------------------------------------
-    // Restock
-    // ------------------------------------------------------------
+    public static final EntityDataAccessor<Integer> DATA_MERCHANT_LEVEL =
+            SynchedEntityData.defineId(AbstractTradingEntity.class, EntityDataSerializers.INT);
+
+    private long lastTradeSoundGameTime = Long.MIN_VALUE;
 
     public long lastRestockGameTime = 0L;
-    public static final long RESTOCK_INTERVAL_TICKS = 6000L;
-
-    // ------------------------------------------------------------
-    // XP / Merchant state
-    // ------------------------------------------------------------
-
     public int dwarfXp;
     public int updateMerchantTimer = 0;
-
     public boolean increaseProfessionLevelOnUpdate = false;
 
     @Nullable
@@ -105,38 +82,15 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     @Nullable
     protected DwarfMerchantOffers offers;
 
-    /**
-     * Number of offers at the end of {@link #offers} that belong to the RESTOCK_POOL.
-     * Offers themselves do not encode pool metadata, so we rely on the invariant:
-     * RESTOCK_POOL offers are appended last in {@link #updateTrades()}.
-     */
-    protected int restockOfferCount = 0;
-
-    /**
-     * Persistent selection list for POOL trades.
-     * Stored as recipe ids (ResourceLocation) because:
-     * - NBT friendly
-     * - stable across datapack reloads (as long as ids remain)
-     * - avoids ResourceKey/RecipeKey mismatch problems
-     */
-    protected final List<ResourceLocation> persistentPoolSelections = new ArrayList<>();
-
     protected AbstractTradingEntity(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);
     }
-
-    public static final EntityDataAccessor<Integer> DATA_MERCHANT_LEVEL =
-            SynchedEntityData.defineId(AbstractTradingEntity.class, EntityDataSerializers.INT);
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_MERCHANT_LEVEL, DwarfMerchantData.MIN_MERCHANT_LEVEL);
     }
-
-    // ------------------------------------------------------------
-    // Merchant Level (JolCraft-owned)
-    // ------------------------------------------------------------
 
     public int getMerchantLevel() {
         return getData(DATA_MERCHANT_LEVEL);
@@ -145,10 +99,6 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     public void setMerchantLevel(int level) {
         setData(DATA_MERCHANT_LEVEL, level);
     }
-
-    // ------------------------------------------------------------
-    // Save / Load
-    // ------------------------------------------------------------
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
@@ -160,23 +110,14 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                 .ifPresent(tag -> compound.put(NBT_MERCHANT_DATA, tag));
 
         compound.putInt(NBT_XP, this.dwarfXp);
-        compound.putInt(NBT_RESTOCK_OFFER_COUNT, this.restockOfferCount);
-
-        if (!this.persistentPoolSelections.isEmpty()) {
-            ListTag list = new ListTag();
-            for (ResourceLocation id : this.persistentPoolSelections) {
-                list.add(StringTag.valueOf(id.toString()));
-            }
-            compound.put(NBT_PERSISTENT_POOL_SELECTIONS, list);
-        }
 
         if (!this.level().isClientSide) {
-            DwarfMerchantOffers merchantoffers = this.getOffers();
-            if (!merchantoffers.isEmpty()) {
+            DwarfMerchantOffers merchantOffers = this.getOffers();
+            if (!merchantOffers.isEmpty()) {
                 compound.put(
                         NBT_OFFERS,
                         DwarfMerchantOffers.CODEC
-                                .encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), merchantoffers)
+                                .encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), merchantOffers)
                                 .getOrThrow()
                 );
             }
@@ -198,25 +139,6 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             this.dwarfXp = compound.getInt(NBT_XP);
         }
 
-        if (compound.contains(NBT_RESTOCK_OFFER_COUNT, 3)) {
-            this.restockOfferCount = Math.max(0, compound.getInt(NBT_RESTOCK_OFFER_COUNT));
-        } else {
-            this.restockOfferCount = 0;
-        }
-
-        this.persistentPoolSelections.clear();
-        if (compound.contains(NBT_PERSISTENT_POOL_SELECTIONS, 9)) {
-            ListTag list = compound.getList(NBT_PERSISTENT_POOL_SELECTIONS, 8);
-            for (int i = 0; i < list.size(); i++) {
-                String s = list.getString(i);
-                try {
-                    this.persistentPoolSelections.add(ResourceLocation.parse(s));
-                } catch (Exception ignored) {
-                    // ignore invalid ids
-                }
-            }
-        }
-
         if (compound.contains(NBT_OFFERS)) {
             DwarfMerchantOffers.CODEC
                     .parse(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), compound.get(NBT_OFFERS))
@@ -228,41 +150,17 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         }
     }
 
-    // ------------------------------------------------------------
-    // Trading plumbing
-    // ------------------------------------------------------------
-
     public boolean canTrade() {
-        return DwarfProfessionTraits.of(this.getTradeProfession()).canTrade().test((AbstractDwarfEntity) this);
-    }
-
-    @Nullable
-    protected final DwarfProfessionSettings.TradeSettings getTradeSettingsOrNull() {
-        DwarfProfession profession = getTradeProfession();
-        return DwarfProfessionConfigs.getOrDefault(profession).tradesOrNull();
-    }
-
-    public boolean hasRandomTrades() {
-        DwarfProfessionSettings.TradeSettings tradeSettings = getTradeSettingsOrNull();
-        if (tradeSettings == null) return false;
-
-        int level = this.getMerchantLevel();
-        for (int lvl = 1; lvl <= level; lvl++) {
-            if (tradeSettings.rollsFor(DwarfProfessionSettings.TradeSettings.PoolType.RESTOCK_POOL, lvl) > 0) {
-                return true;
-            }
+        if (this instanceof AbstractDwarfEntity dwarf) {
+            return DwarfProfessionTraits.canTrade(dwarf);
         }
         return false;
     }
 
     public boolean canReroll() {
-        return DwarfProfessionTraits.of(this.getTradeProfession()).canReroll();
+        return DwarfProfessionTraits.canReroll(this.getTradeProfession());
     }
 
-    /**
-     * Hook for professions that want "crate restock" to behave differently.
-     * Default: same as restock().
-     */
     public void crateRestock() {
         restock();
     }
@@ -289,21 +187,11 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     @Override
     public boolean showProgressBar() {
-        return DwarfProfessionTraits.of(this.getTradeProfession()).showProgressBar();
+        return DwarfProfessionTraits.showProgressBar(this.getTradeProfession());
     }
 
     public boolean showLevel() {
-        return true;
-    }
-
-    @Override
-    public void overrideOffers(@Nullable DwarfMerchantOffers offers) {
-        // no-op (no legacy)
-    }
-
-    @Override
-    public void overrideXp(int xp) {
-        // no-op (no legacy)
+        return DwarfProfessionTraits.showLevel(this.getTradeProfession());
     }
 
     protected void stopTrading() {
@@ -333,6 +221,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                     this.level().dimension().location()
             );
         }
+
         super.die(cause);
         this.stopTrading();
     }
@@ -349,18 +238,20 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     }
 
     public SoundEvent getRestockSound() {
-        SoundEvent sound = DwarfProfessionTraits.of(this.getTradeProfession()).restockSound();
+        SoundEvent sound = null;
+        if (this instanceof AbstractDwarfEntity dwarf) {
+            sound = DwarfProfessionTraits.restockSound(dwarf);
+        }
         return sound != null ? sound : SoundEvents.VILLAGER_WORK_FISHERMAN;
     }
 
     public SoundEvent getRerollSound() {
-        SoundEvent sound = DwarfProfessionTraits.of(this.getTradeProfession()).rerollSound();
+        SoundEvent sound = null;
+        if (this instanceof AbstractDwarfEntity dwarf) {
+            sound = DwarfProfessionTraits.rerollSound(dwarf);
+        }
         return sound != null ? sound : SoundEvents.VILLAGER_WORK_FISHERMAN;
     }
-
-    // ------------------------------------------------------------
-    // Profession resolution for recipe trades
-    // ------------------------------------------------------------
 
     public final DwarfProfession getTradeProfession() {
         if (this instanceof AbstractDwarfEntity dwarf) {
@@ -369,358 +260,47 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         throw new IllegalStateException("Trading entity is not a dwarf: " + this);
     }
 
-    // ------------------------------------------------------------
-    // Validity
-    // ------------------------------------------------------------
-
     @Override
     public boolean stillValid(Player player) {
         return this.getTradingPlayer() == player && this.isAlive() && player.canInteractWithEntity(this, 4.0);
     }
 
-    // ------------------------------------------------------------
-    // Offer building (RECIPE + CONFIG)
-    // ------------------------------------------------------------
-
-    /**
-     * Authoritative server-side trade rebuild.
-     *
-     * Reconstructs the merchant offer list from scratch based on:
-     *  - the dwarf's current merchant level,
-     *  - recipe definitions (datapack-driven),
-     *  - profession trade settings (config-driven),
-     *  - and persistent POOL selections.
-     *
-     * Order of offers in the final list:
-     *
-     * 1) MAIN trades
-     *    - All MAIN recipes unlocked up to the current merchant level.
-     *    - Processed level-by-level (1 → currentLevel).
-     *    - Within each level:
-     *         • Recipes with an explicit order() come first (ascending).
-     *         • Recipes without order() follow.
-     *         • Stable tie-break by recipe id.
-     *    - MAIN trades persist across levels (cumulative unlock model).
-     *
-     * 2) POOL trades
-     *    - Rolled per level (1 → currentLevel) according to config rolls.
-     *    - Persist across rebuilds via persistentPoolSelections.
-     *    - Once selected, remain until a full rerollTrades() clears memory.
-     *
-     * 3) RESTOCK_POOL trades
-     *    - Appended last.
-     *    - Rolled per level (1 → currentLevel) according to config rolls.
-     *    - These offers form a suffix in the list and are rerolled on restock().
-     *
-     * This method:
-     *  - Always clears the existing offer list.
-     *  - Never appends to previous state.
-     *  - Is fully deterministic except for weighted roll logic in POOL/RESTOCK_POOL.
-     */
     public void updateTrades() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        rebuildTrades(DwarfTrades.RefreshMode.FULL);
+    }
+
+    private void rebuildTrades(DwarfTrades.RefreshMode mode) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
 
         DwarfMerchantOffers out = this.offers;
         if (out == null) {
             this.offers = out = new DwarfMerchantOffers();
         }
+
         out.clear();
 
         DwarfProfession profession = getTradeProfession();
-        int currentLevel = this.getMerchantLevel();
+        DwarfMerchantData.Level level = DwarfMerchantData.Level.fromId(this.getMerchantLevel());
 
-        DwarfProfessionSettings settings = DwarfProfessionConfigs.getOrDefault(profession);
-        DwarfProfessionSettings.TradeSettings tradeSettings = settings.tradesOrNull();
-
-        // ---------------------------------------------------------------------
-        // Collect remaining POOL recipes (merchantLevel ≤ currentLevel)
-        // ---------------------------------------------------------------------
-
-        List<RecipeHolder<DwarfTradeRecipe>> remainingPool = new ArrayList<>(
-                DwarfTrades.getTradeRecipesUpToLevel(
-                        serverLevel,
-                        profession,
-                        DwarfTradeRecipe.TradePool.POOL,
-                        currentLevel
-                )
-        );
-
-        // Map recipe id -> holder for stable persistent selection resolution
-        Map<ResourceLocation, RecipeHolder<DwarfTradeRecipe>> poolById = new HashMap<>();
-        for (RecipeHolder<DwarfTradeRecipe> h : remainingPool) {
-            poolById.put(h.id().location(), h);
+        var recipes = DwarfTrades.getTradeRecipesForMode(serverLevel, profession, level, this.random, mode);
+        for (var holder : recipes) {
+            addOfferFromRecipe(out, holder.value());
         }
-
-        List<ResourceLocation> newPersistentPoolSelections = new ArrayList<>();
-        Set<ResourceLocation> usedPoolIds = new HashSet<>();
-
-        // =====================================================================
-        // 1) MAIN TRADES — cumulative unlock model
-        // =====================================================================
-
-        for (int lvl = 1; lvl <= currentLevel; lvl++) {
-            List<RecipeHolder<DwarfTradeRecipe>> mainAtLevel = new ArrayList<>(
-                    DwarfTrades.getTradeRecipesAtLevel(
-                            serverLevel,
-                            profession,
-                            DwarfTradeRecipe.TradePool.MAIN,
-                            lvl
-                    )
-            );
-
-            // Sort within level for deterministic ordering
-            mainAtLevel.sort((a, b) -> {
-                DwarfTradeRecipe ra = a.value();
-                DwarfTradeRecipe rb = b.value();
-
-                boolean ao = ra.order().isPresent();
-                boolean bo = rb.order().isPresent();
-
-                if (ao != bo) {
-                    return ao ? -1 : 1;
-                }
-
-                if (ao) {
-                    int cmp = Integer.compare(
-                            ra.order().getAsInt(),
-                            rb.order().getAsInt()
-                    );
-                    if (cmp != 0) return cmp;
-                }
-
-                // Stable tie-break
-                return a.id().location().compareTo(b.id().location());
-            });
-
-            for (RecipeHolder<DwarfTradeRecipe> holder : mainAtLevel) {
-                addOfferFromRecipe(out, holder.value());
-            }
-        }
-
-        // =====================================================================
-        // 2) POOL TRADES — persistent weighted selection
-        // =====================================================================
-
-        for (int lvl = 1; lvl <= currentLevel; lvl++) {
-            int rolls = tradeSettings != null
-                    ? tradeSettings.rollsFor(
-                    DwarfProfessionSettings.TradeSettings.PoolType.POOL,
-                    lvl
-            )
-                    : 0;
-
-            for (int r = 0; r < rolls; r++) {
-                RecipeHolder<DwarfTradeRecipe> chosen =
-                        takeNextPersistedOrRollPool(
-                                lvl,
-                                remainingPool,
-                                poolById,
-                                usedPoolIds,
-                                this.persistentPoolSelections,
-                                newPersistentPoolSelections
-                        );
-
-                if (chosen == null) break;
-                addOfferFromRecipe(out, chosen.value());
-            }
-        }
-
-        // Persist actual selections used this rebuild
-        this.persistentPoolSelections.clear();
-        this.persistentPoolSelections.addAll(newPersistentPoolSelections);
-
-        // =====================================================================
-        // 3) RESTOCK_POOL — rerollable suffix
-        // =====================================================================
-
-        this.restockOfferCount = appendRestockPoolOffers(
-                serverLevel,
-                out,
-                profession,
-                currentLevel,
-                tradeSettings
-        );
     }
 
     protected void addOfferFromRecipe(DwarfMerchantOffers out, DwarfTradeRecipe recipe) {
-        DwarfMerchantOffer offer = new DwarfTrades.RecipeListing(recipe).getOffer(this, this.random);
+        DwarfMerchantOffer offer = new DwarfTrades.RecipeListing(recipe).getOffer(this);
         if (offer != null) {
             out.add(offer);
         }
     }
 
-    private static int requireWeight(RecipeHolder<DwarfTradeRecipe> h) {
-        return h.value().weight().orElseThrow(() ->
-                new IllegalStateException("Missing weight for pooled trade: " + h.id().location()));
-    }
-
-    @Nullable
-    private RecipeHolder<DwarfTradeRecipe> takeNextPersistedOrRollPool(
-            int unlockLevel,
-            List<RecipeHolder<DwarfTradeRecipe>> remainingPool,
-            Map<ResourceLocation, RecipeHolder<DwarfTradeRecipe>> poolById,
-            Set<ResourceLocation> usedPoolIds,
-            List<ResourceLocation> oldSelections,
-            List<ResourceLocation> newSelections
-    ) {
-        for (ResourceLocation id : oldSelections) {
-            if (usedPoolIds.contains(id)) continue;
-
-            RecipeHolder<DwarfTradeRecipe> holder = poolById.get(id);
-            if (holder == null) {
-                // recipe removed/renamed in datapack -> skip
-                usedPoolIds.add(id);
-                continue;
-            }
-            if (holder.value().merchantLevel() > unlockLevel) continue;
-
-            usedPoolIds.add(id);
-            newSelections.add(id);
-
-            remainingPool.remove(holder);
-            poolById.remove(id);
-            return holder;
-        }
-
-        RecipeHolder<DwarfTradeRecipe> rolled =
-                rollOneFromRemainingByUnlockLevel(remainingPool, unlockLevel, this.random);
-        if (rolled == null) return null;
-
-        ResourceLocation id = rolled.id().location();
-        usedPoolIds.add(id);
-        newSelections.add(id);
-        poolById.remove(id);
-        return rolled;
-    }
-
-    @Nullable
-    private static RecipeHolder<DwarfTradeRecipe> rollOneFromRemainingByUnlockLevel(
-            List<RecipeHolder<DwarfTradeRecipe>> remaining,
-            int unlockLevel,
-            RandomSource random
-    ) {
-        int totalWeight = 0;
-        for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
-            if (h.value().merchantLevel() > unlockLevel) continue;
-            totalWeight += requireWeight(h);
-        }
-        if (totalWeight <= 0) return null;
-
-        int roll = random.nextInt(totalWeight);
-        for (int i = 0; i < remaining.size(); i++) {
-            RecipeHolder<DwarfTradeRecipe> h = remaining.get(i);
-            if (h.value().merchantLevel() > unlockLevel) continue;
-
-            roll -= requireWeight(h);
-            if (roll < 0) {
-                remaining.remove(i);
-                return h;
-            }
-        }
-
-        return null;
-    }
-
-    private static List<RecipeHolder<DwarfTradeRecipe>> rollFromRemainingByUnlockLevel(
-            List<RecipeHolder<DwarfTradeRecipe>> remaining,
-            int rolls,
-            int unlockLevel,
-            RandomSource random
-    ) {
-        int capped = Math.min(Math.max(rolls, 0), remaining.size());
-        List<RecipeHolder<DwarfTradeRecipe>> out = new ArrayList<>(capped);
-
-        boolean hasExactAtLevel = false;
-        for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
-            DwarfTradeRecipe r = h.value();
-            if (r.merchantLevel() == unlockLevel && r.exactLevel()) {
-                hasExactAtLevel = true;
-                break;
-            }
-        }
-
-        for (int i = 0; i < capped; i++) {
-            RecipeHolder<DwarfTradeRecipe> one = hasExactAtLevel
-                    ? rollOneFromExactLevel(remaining, unlockLevel, random)
-                    : rollOneFromRemainingByUnlockLevel(remaining, unlockLevel, random);
-
-            if (one == null) break;
-            out.add(one);
-        }
-
-        return out;
-    }
-
-    @Nullable
-    private static RecipeHolder<DwarfTradeRecipe> rollOneFromExactLevel(
-            List<RecipeHolder<DwarfTradeRecipe>> remaining,
-            int exactLevel,
-            RandomSource random
-    ) {
-        int totalWeight = 0;
-        for (RecipeHolder<DwarfTradeRecipe> h : remaining) {
-            DwarfTradeRecipe r = h.value();
-            if (r.merchantLevel() != exactLevel) continue;
-            if (!r.exactLevel()) continue;
-            totalWeight += requireWeight(h);
-        }
-        if (totalWeight <= 0) return null;
-
-        int roll = random.nextInt(totalWeight);
-        for (int i = 0; i < remaining.size(); i++) {
-            RecipeHolder<DwarfTradeRecipe> h = remaining.get(i);
-            DwarfTradeRecipe r = h.value();
-            if (r.merchantLevel() != exactLevel) continue;
-            if (!r.exactLevel()) continue;
-
-            roll -= requireWeight(h);
-            if (roll < 0) {
-                remaining.remove(i);
-                return h;
-            }
-        }
-
-        return null;
-    }
-
-    private int appendRestockPoolOffers(
-            ServerLevel serverLevel,
-            DwarfMerchantOffers out,
-            DwarfProfession profession,
-            int currentLevel,
-            @Nullable DwarfProfessionSettings.TradeSettings tradeSettings
-    ) {
-        List<RecipeHolder<DwarfTradeRecipe>> remainingRestock = new ArrayList<>(
-                DwarfTrades.getTradeRecipesUpToLevel(
-                        serverLevel,
-                        profession,
-                        DwarfTradeRecipe.TradePool.RESTOCK_POOL,
-                        currentLevel
-                )
-        );
-
-        int added = 0;
-        for (int lvl = 1; lvl <= currentLevel; lvl++) {
-            int rolls = tradeSettings != null
-                    ? tradeSettings.rollsFor(DwarfProfessionSettings.TradeSettings.PoolType.RESTOCK_POOL, lvl)
-                    : 0;
-            if (rolls <= 0) continue;
-
-            List<RecipeHolder<DwarfTradeRecipe>> picked =
-                    rollFromRemainingByUnlockLevel(remainingRestock, rolls, lvl, this.random);
-
-            for (RecipeHolder<DwarfTradeRecipe> holder : picked) {
-                addOfferFromRecipe(out, holder.value());
-                added++;
-            }
-        }
-
-        return added;
-    }
-
     public void resendOffersToTradingPlayer() {
         DwarfMerchantOffers merchantOffers = this.getOffers();
         Player player = this.getTradingPlayer();
+
         if (player instanceof ServerPlayer serverPlayer && !merchantOffers.isEmpty()) {
             JolCraftNetworking.sendToClient(
                     serverPlayer,
@@ -737,95 +317,127 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         }
     }
 
-    // ------------------------------------------------------------
-    // Restock / Reroll
-    // ------------------------------------------------------------
-
     public boolean shouldRestock() {
-        return this.level() instanceof ServerLevel serverLevel &&
-                serverLevel.getGameTime() >= lastRestockGameTime + RESTOCK_INTERVAL_TICKS;
-    }
-
-    /**
-     * Restock rules:
-     * - MAIN + POOL: restock uses only (no reroll)
-     * - RESTOCK_POOL: reroll the restock suffix
-     */
-    public void restock() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
-
-        DwarfMerchantOffers offers = this.getOffers();
-        if (offers.isEmpty()) return;
-
-        boolean didAnything = false;
-
-        int restockStart = Math.max(0, offers.size() - Math.max(0, this.restockOfferCount));
-
-        // MAIN + POOL: restock uses only
-        for (int i = 0; i < restockStart; i++) {
-            DwarfMerchantOffer offer = offers.get(i);
-            if (offer.needsRestock()) {
-                offer.resetUses();
-                didAnything = true;
-            }
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
         }
 
-        // RESTOCK_POOL: reroll suffix
-        if (this.restockOfferCount > 0) {
-            for (int i = 0; i < this.restockOfferCount && !offers.isEmpty(); i++) {
-                offers.removeLast();
+        long interval = DwarfProfessionTraits.restockTicks(this.getTradeProfession());
+        return serverLevel.getGameTime() >= this.lastRestockGameTime + interval;
+    }
+
+    private boolean rerollsOnRestock(@Nullable DwarfTradeRecipe.TradeGroup group) {
+        if (group == null) return false;
+
+        DwarfProfessionConfig.PoolType type = group.poolType();
+        if (type == null) return false;
+
+        return DwarfProfessionTraits.config(this.getTradeProfession())
+                .tradePools()
+                .get(type)
+                .map(DwarfProfessionConfig.PoolConfig::rerollsOnRestock)
+                .orElse(false);
+    }
+
+    public void restock() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        DwarfMerchantOffers currentOffers = this.getOffers();
+        if (currentOffers.isEmpty()) {
+            return;
+        }
+
+        boolean didAnything = false;
+        boolean needsRestockReroll = false;
+
+        for (DwarfMerchantOffer offer : currentOffers) {
+            if (!offer.needsRestock()) {
+                continue;
             }
 
-            DwarfProfession profession = getTradeProfession();
-            int currentLevel = this.getMerchantLevel();
+            if (rerollsOnRestock(offer.getTradeGroup())) {
+                needsRestockReroll = true;
+                continue;
+            }
 
-            DwarfProfessionSettings settings = DwarfProfessionConfigs.getOrDefault(profession);
-            DwarfProfessionSettings.TradeSettings tradeSettings = settings.tradesOrNull();
-
-            this.restockOfferCount = appendRestockPoolOffers(serverLevel, offers, profession, currentLevel, tradeSettings);
+            offer.resetUses();
             didAnything = true;
         }
 
-        if (didAnything) {
-            this.lastRestockGameTime = this.level().getGameTime();
-            JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRestockSound()));
+        if (needsRestockReroll) {
+            List<DwarfMerchantOffer> preserved = new ArrayList<>();
+
+            for (DwarfMerchantOffer offer : currentOffers) {
+                if (rerollsOnRestock(offer.getTradeGroup())) {
+                    continue;
+                }
+                preserved.add(offer.copy());
+            }
+
+            currentOffers.clear();
+            currentOffers.addAll(preserved);
+
+            DwarfProfession profession = getTradeProfession();
+            DwarfMerchantData.Level level = DwarfMerchantData.Level.fromId(this.getMerchantLevel());
+
+            var rerolledRecipes = DwarfTrades.getTradeRecipesForMode(
+                    serverLevel,
+                    profession,
+                    level,
+                    this.random,
+                    DwarfTrades.RefreshMode.RESTOCK
+            );
+
+            for (var holder : rerolledRecipes) {
+                addOfferFromRecipe(currentOffers, holder.value());
+            }
+
+            didAnything = true;
         }
+
+        if (!didAnything) {
+            return;
+        }
+
+        this.lastRestockGameTime = serverLevel.getGameTime();
+        JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRestockSound()));
+        this.resendOffersToTradingPlayer();
     }
 
     public void restockBountiesOnly() {
-        if (this.level().isClientSide) return;
-        if (this.getOffers().isEmpty()) return;
+        if (this.level().isClientSide) {
+            return;
+        }
+
+        if (this.getOffers().isEmpty()) {
+            return;
+        }
 
         boolean restocked = false;
+
         for (DwarfMerchantOffer offer : this.getOffers()) {
             if (offer.getResult().is(JolCraftItems.BOUNTY.get()) && offer.needsRestock()) {
                 offer.resetUses();
                 restocked = true;
             }
         }
+
         if (restocked) {
             JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRestockSound()));
         }
     }
 
-    /**
-     * Full reroll:
-     * - clear POOL memory
-     * - rebuild everything from recipes + config
-     */
     public void rerollTrades() {
-        if (this.level().isClientSide) return;
+        if (this.level().isClientSide) {
+            return;
+        }
 
-        this.persistentPoolSelections.clear();
-        this.getOffers().clear();
-        this.updateTrades();
-
+        rebuildTrades(DwarfTrades.RefreshMode.REROLL);
         JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRerollSound()));
+        this.resendOffersToTradingPlayer();
     }
-
-    // ------------------------------------------------------------
-    // XP / Level-up
-    // ------------------------------------------------------------
 
     protected void rewardTradeXp(DwarfMerchantOffer offer) {
         int xpReward = 3 + this.random.nextInt(4);
@@ -857,7 +469,9 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     }
 
     public void increaseMerchantCareer() {
-        if (this.level().isClientSide) return;
+        if (this.level().isClientSide) {
+            return;
+        }
 
         int current = this.getMerchantLevel();
         if (DwarfMerchantData.canLevelUp(current)) {
@@ -872,15 +486,10 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                     DwarfMerchantData.Level.fromId(next)
             );
 
-            // Rebuild for the new level (POOL selections persist)
             this.updateTrades();
             this.resendOffersToTradingPlayer();
         }
     }
-
-    // ------------------------------------------------------------
-    // UI
-    // ------------------------------------------------------------
 
     @Override
     public void openTradingScreen(Player player, Component displayName, int level) {
@@ -908,13 +517,11 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         }
     }
 
-    // ------------------------------------------------------------
-    // Trade notifications
-    // ------------------------------------------------------------
-
     @Override
     public void notifyTrade(DwarfMerchantOffer offer) {
-        if (this.level().isClientSide) return;
+        if (this.level().isClientSide) {
+            return;
+        }
 
         Player player = this.getTradingPlayer();
 
@@ -947,6 +554,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             this.offers = new DwarfMerchantOffers();
             this.updateTrades();
         }
+
         return this.offers;
     }
 
@@ -957,4 +565,10 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             this.makeSound(this.getTradeUpdatedSound(!stack.isEmpty()));
         }
     }
+
+    @Override
+    public void overrideOffers(DwarfMerchantOffers offers) {}
+
+    @Override
+    public void overrideXp(int xp) {}
 }

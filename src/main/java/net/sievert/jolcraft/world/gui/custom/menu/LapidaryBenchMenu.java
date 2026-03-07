@@ -86,7 +86,7 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
         this.access.execute((level, pos) -> {
             if (player instanceof ServerPlayer sp) {
                 if (level.getBlockEntity(pos) instanceof LapidaryBenchBlockEntity be) {
-                    be.handleAction(sp, buttonId);
+                    be.handleAction(sp);
                 }
             }
         });

@@ -78,7 +78,8 @@ public final class DiscoveredStructuresImpl implements DiscoveredStructures {
 
             ResourceLocation dimRL = ResourceLocation.tryParse(t.getString(JolCraftDictionary.DIMENSION));
             if (dimRL == null) {
-                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT, "Invalid dimension getId in discovered structure NBT: {}", t.getString(JolCraftDictionary.DIMENSION));
+                JolCraftLogs.debug(JolCraftLogTags.ATTACHMENT,
+                        "Invalid dimension getId in discovered structure NBT: {}", t.getString(JolCraftDictionary.DIMENSION));
                 continue;
             }
             ResourceKey<Level> dimKey = ResourceKey.create(Registries.DIMENSION, dimRL);

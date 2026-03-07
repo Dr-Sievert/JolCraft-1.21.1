@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.id.item.JolCraftItemPropertyIds;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +37,7 @@ public final class LoreKey implements SelectItemModelProperty<String> {
     @Nullable
     @Override
     public String get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, @NotNull ItemDisplayContext context) {
-        return stack.get(JolCraftDataComponents.LORE_KEY.get());
+        return stack.get(JolCraftDataComponents.DWARF_LORE_KEY.get());
     }
 
     @Override

@@ -45,7 +45,7 @@ public final class DwarvenReputationLangSubProvider implements AbstractLanguageP
         );
         p.putManual(
                 JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS_INFO,
-                "To gain endorsements, give your reputation tablet to a master-level dwarf with a profession. " +
+                "To gain endorsements, give your reputation tablet to a masterTask-level dwarf with a profession. " +
                         "Endorsements are unique per profession and can only be gained once."
         );
         p.putManual(

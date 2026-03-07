@@ -5,321 +5,328 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeBookCategories;
-import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.data.recipe.custom.base.CustomRecipe;
+import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
+import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
+import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
+import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Optional;
+public record FermentingCauldronRecipe(
+        ItemInput ingredient,
+        ItemSelector lastIngredient,
+        ItemOutput extract,
+        EffectOutput effect,
+        int brewTicks,
+        int bubbleTicks,
+        int brewColor,
+        boolean finalizeBrew
+) implements CustomRecipe<FermentingCauldronRecipeInput> {
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public class FermentingCauldronRecipe implements Recipe<FermentingCauldronRecipeInput> {
+    // ---------------------------------------------------------------------
+    // Sentinel
+    // ---------------------------------------------------------------------
 
-    private final Ingredient ingredient;
+    public static final FermentingCauldronRecipe EMPTY =
+            new FermentingCauldronRecipe(
+                    ItemInput.EMPTY,
+                    ItemSelector.EMPTY,
+                    ItemOutput.EMPTY,
+                    EffectOutput.EMPTY,
+                    1,
+                    1,
+                    0,
+                    false
+            );
 
-    @Nullable
-    private final Ingredient validStates;
+    public FermentingCauldronRecipe {
+        ingredient     = ingredient != null ? ingredient : ItemInput.EMPTY;
+        lastIngredient = lastIngredient != null ? lastIngredient : ItemSelector.EMPTY;
+        extract        = extract != null ? extract : ItemOutput.EMPTY;
+        effect         = effect != null ? effect : EffectOutput.EMPTY;
 
-    private final int brewTicks;
-    private final int bubbleTicks;
-    private final int color;
-
-    @Nullable
-    private final EffectData effect;
-
-    private final boolean finalize;
-
-    @Nullable
-    private final ItemStack extract;
-
-    public FermentingCauldronRecipe(
-            Ingredient ingredient,
-            @Nullable Ingredient validStates,
-            int brewTicks,
-            int bubbleTicks,
-            int color,
-            @Nullable EffectData effect,
-            boolean finalize,
-            @Nullable ItemStack extract
-    ) {
-        this.ingredient = ingredient;
-        this.validStates = validStates;
-        this.brewTicks = Math.max(1, brewTicks);
-        this.bubbleTicks = Math.max(1, bubbleTicks);
-        this.color = color;
-        this.effect = effect;
-        this.finalize = finalize;
-        this.extract = (extract == null || extract.isEmpty()) ? null : extract.copy();
+        brewTicks   = Math.max(1, brewTicks);
+        bubbleTicks = Math.max(1, bubbleTicks);
     }
 
-    public Ingredient ingredient() {
-        return ingredient;
-    }
-
-    public int brewTicks() {
-        return brewTicks;
-    }
-
-    public int bubbleTicks() {
-        return bubbleTicks;
-    }
-
-    public int color() {
-        return color;
-    }
-
-    @Nullable
-    public EffectData effect() {
-        return effect;
-    }
-
-    public boolean finalizeBrew() {
-        return finalize;
-    }
-
-    @Nullable
-    public ItemStack extract() {
-        return extract;
-    }
-
-    public boolean isExtraction() {
-        return extract != null;
-    }
+    // ---------------------------------------------------------------------
+    // Recipe
+    // ---------------------------------------------------------------------
 
     @Override
-    public boolean matches(FermentingCauldronRecipeInput in, Level level) {
-        if (!ingredient.test(in.usedItem())) return false;
+    public boolean matches(@NotNull FermentingCauldronRecipeInput in, @NotNull Level level) {
 
-        if (extract != null) {
-            return validStates == null || validStates.test(in.lastIngredient());
+        WorldContext ctx = in.ctx();
+
+        if (!ingredient.matches(ctx, in.ingredient())) return false;
+
+        if (lastIngredient != ItemSelector.EMPTY) {
+            return !in.lastIngredient().isEmpty() && lastIngredient.matches(ctx, in.lastIngredient());
         }
 
-        if (validStates == null) {
-            return in.isVanillaFullWaterCauldron();
-        }
-
-        return !in.lastIngredient().isEmpty() && validStates.test(in.lastIngredient());
+        return in.lastIngredient().isEmpty();
     }
 
     @Override
-    public ItemStack assemble(FermentingCauldronRecipeInput in, HolderLookup.Provider registries) {
-        return ItemStack.EMPTY;
+    public @NotNull ItemStack assemble(@NotNull FermentingCauldronRecipeInput in, HolderLookup.@NotNull Provider registries) {
+        WorldContext ctx = in.ctx();
+        if (ctx.level().isClientSide) return ItemStack.EMPTY;
+
+        ItemOutput out = extract;
+        if (out == null || out == ItemOutput.EMPTY) return ItemStack.EMPTY;
+
+        ItemSpec spec = out.result();
+        if (spec == null || spec == ItemSpec.EMPTY) return ItemStack.EMPTY;
+
+        ItemStack stack = spec.create(ctx);
+        if (stack.isEmpty()) return ItemStack.EMPTY;
+
+        out.transforms().apply(ctx, stack);
+        return stack.isEmpty() ? ItemStack.EMPTY : stack;
     }
 
     @Override
-    public PlacementInfo placementInfo() {
-        return PlacementInfo.create(this.ingredient);
-    }
-
-    @Override
-    public RecipeBookCategory recipeBookCategory() {
-        return RecipeBookCategories.CRAFTING_MISC;
-    }
-
-    @Override
-    public RecipeSerializer<? extends Recipe<FermentingCauldronRecipeInput>> getSerializer() {
+    public @NotNull RecipeSerializer<? extends Recipe<FermentingCauldronRecipeInput>> getSerializer() {
         return JolCraftRecipes.FERMENTING_CAULDRON_SERIALIZER.get();
     }
 
     @Override
-    public RecipeType<? extends Recipe<FermentingCauldronRecipeInput>> getType() {
+    public @NotNull RecipeType<? extends Recipe<FermentingCauldronRecipeInput>> getType() {
         return JolCraftRecipes.FERMENTING_CAULDRON_TYPE.get();
     }
 
-    public record EffectData(
-            ResourceKey<MobEffect> id,
-            int duration,
-            int amplifier
-    ) {
-        public static final Codec<EffectData> CODEC =
-                RecordCodecBuilder.create(inst -> inst.group(
-                        ResourceKey.codec(Registries.MOB_EFFECT)
-                                .fieldOf(JolCraftDictionary.ID)
-                                .forGetter(EffectData::id),
+    // =====================================================================
+    // Serializer
+    // =====================================================================
 
-                        Codec.INT
-                                .fieldOf(JolCraftDictionary.DURATION)
-                                .forGetter(EffectData::duration),
+    public static final class Serializer implements RecipeSerializer<FermentingCauldronRecipe> {
 
-                        Codec.INT
-                                .optionalFieldOf(JolCraftDictionary.AMPLIFIER, 0)
-                                .forGetter(EffectData::amplifier)
-                ).apply(inst, EffectData::new));
 
-        public static EffectData fromHolder(Holder<MobEffect> effect, int duration, int amplifier) {
-            ResourceKey<MobEffect> key = effect.unwrapKey()
-                    .orElseThrow(() -> new IllegalStateException("Unregistered MobEffect holder: " + effect));
-            return new EffectData(key, duration, amplifier);
-        }
-    }
+        private static final StreamCodec<RegistryFriendlyByteBuf, ItemOutput> EXTRACT_STREAM_CODEC =
+                StreamCodec.of(
+                        OutputDispatch.STREAM_CODEC::encode,
+                        buf -> {
+                            OutputParam op = OutputDispatch.STREAM_CODEC.decode(buf);
+                            OutputParam leaf = OutputParam.unwrap(op);
+                            return (leaf instanceof ItemOutput io) ? io : ItemOutput.EMPTY;
+                        }
+                );
 
-    public static class Serializer implements RecipeSerializer<FermentingCauldronRecipe> {
+        private static final Codec<Integer> POSITIVE_TICKS =
+                Codec.intRange(1, Integer.MAX_VALUE);
 
         private static final Codec<Integer> COLOR_CODEC =
                 Codec.either(Codec.INT, Codec.STRING).comapFlatMap(
                         either -> either.map(
                                 DataResult::success,
-                                Serializer::parseColorStringResult
+                                s -> {
+                                    if (s == null || s.isBlank()) {
+                                        return DataResult.error(() -> "Invalid color");
+                                    }
+
+                                    String t = s.trim();
+                                    if (t.startsWith("#")) t = t.substring(1);
+
+                                    if (t.length() != 6 && t.length() != 8) {
+                                        return DataResult.error(() -> "Invalid color: " + s);
+                                    }
+
+                                    try {
+                                        return DataResult.success((int) Long.parseLong(t, 16));
+                                    } catch (NumberFormatException e) {
+                                        return DataResult.error(() -> "Invalid color: " + s);
+                                    }
+                                }
                         ),
-                        argb -> Either.right(toRgbString(argb))
+                        Either::left
                 );
 
-        private static DataResult<Integer> parseColorStringResult(String s) {
-            try {
-                return DataResult.success(parseColorString(s));
-            } catch (RuntimeException e) {
-                return DataResult.error(() -> "Invalid color: " + s + " (expected #RRGGBB or #AARRGGBB)");
-            }
-        }
+        private static final String LAST_INGREDIENT_KEY =
+                JolCraftStrings.underscored(JolCraftDictionary.LAST, JolCraftDictionary.INGREDIENT);
+
+        private static final String BREW_TICKS_KEY =
+                JolCraftStrings.underscored(JolCraftDictionary.BREW, JolCraftStrings.plural(JolCraftDictionary.TICK));
+
+        private static final String BUBBLE_TICKS_KEY =
+                JolCraftStrings.underscored(JolCraftDictionary.BUBBLE, JolCraftStrings.plural(JolCraftDictionary.TICK));
 
         public static final MapCodec<FermentingCauldronRecipe> CODEC =
-                RecordCodecBuilder.mapCodec(inst -> inst.group(
-                        Ingredient.CODEC.fieldOf(JolCraftDictionary.INGREDIENT).forGetter(r -> r.ingredient),
+                RecordCodecBuilder.mapCodec(
+                        (RecordCodecBuilder.Instance<FermentingCauldronRecipe> inst) ->
+                                inst.group(
 
-                        Ingredient.CODEC.optionalFieldOf(JolCraftStrings.underscored(JolCraftDictionary.VALID, JolCraftStrings.plural(JolCraftDictionary.STATE)))
-                                .forGetter(r -> Optional.ofNullable(r.validStates)),
+                                        ItemInput.CODEC
+                                                .fieldOf(JolCraftDictionary.INGREDIENT)
+                                                .forGetter(FermentingCauldronRecipe::ingredient),
 
-                        Codec.INT.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.BREW, JolCraftStrings.plural(JolCraftDictionary.TICK))).forGetter(r -> r.brewTicks),
-                        Codec.INT.fieldOf(JolCraftStrings.underscored(JolCraftDictionary.BUBBLE, JolCraftStrings.plural(JolCraftDictionary.TICK))).forGetter(r -> r.bubbleTicks),
+                                        ItemSelector.CODEC
+                                                .optionalFieldOf(
+                                                        LAST_INGREDIENT_KEY,
+                                                        ItemSelector.EMPTY
+                                                )
+                                                .forGetter(FermentingCauldronRecipe::lastIngredient),
 
-                        COLOR_CODEC.fieldOf(JolCraftDictionary.COLOR).forGetter(r -> r.color),
+                                        OutputDispatch.CODEC
+                                                .optionalFieldOf(
+                                                        JolCraftDictionary.EXTRACT,
+                                                        ItemOutput.EMPTY
+                                                )
+                                                .xmap(
+                                                        op -> {
+                                                            OutputParam leaf = OutputParam.unwrap(op);
+                                                            return (leaf instanceof ItemOutput io) ? io : ItemOutput.EMPTY;
+                                                        },
+                                                        io -> io != null ? io : ItemOutput.EMPTY
+                                                )
+                                                .forGetter(FermentingCauldronRecipe::extract),
 
-                        EffectData.CODEC.optionalFieldOf(JolCraftDictionary.EFFECT).forGetter(r -> Optional.ofNullable(r.effect)),
-                        Codec.BOOL.optionalFieldOf(JolCraftDictionary.FINALIZE, false).forGetter(r -> r.finalize),
+                                        EffectOutput.CODEC
+                                                .optionalFieldOf(
+                                                        JolCraftDictionary.EFFECT,
+                                                        EffectOutput.EMPTY
+                                                )
+                                                .forGetter(FermentingCauldronRecipe::effect),
 
-                        ItemStack.CODEC.optionalFieldOf(JolCraftDictionary.EXTRACT)
-                                .forGetter(r -> Optional.ofNullable(r.extract))
-                ).apply(inst, (ingredient, validStatesOpt, brewTicks, bubbleTicks, color, effectOpt, finalize, extractOpt) ->
-                        new FermentingCauldronRecipe(
-                                ingredient,
-                                validStatesOpt.orElse(null),
-                                brewTicks,
-                                bubbleTicks,
-                                color,
-                                effectOpt.orElse(null),
-                                finalize,
-                                extractOpt.orElse(null)
-                        )
-                ));
+                                        POSITIVE_TICKS
+                                                .fieldOf(BREW_TICKS_KEY)
+                                                .forGetter(FermentingCauldronRecipe::brewTicks),
+
+                                        POSITIVE_TICKS
+                                                .fieldOf(BUBBLE_TICKS_KEY)
+                                                .forGetter(FermentingCauldronRecipe::bubbleTicks),
+
+                                        COLOR_CODEC
+                                                .fieldOf(JolCraftDictionary.COLOR)
+                                                .forGetter(FermentingCauldronRecipe::brewColor),
+
+                                        Codec.BOOL
+                                                .optionalFieldOf(JolCraftDictionary.FINALIZE, false)
+                                                .forGetter(FermentingCauldronRecipe::finalizeBrew)
+
+                                ).apply(inst, FermentingCauldronRecipe::new)
+                ).validate(FermentingCauldronRecipe::validateRecipe);
 
         public static final StreamCodec<RegistryFriendlyByteBuf, FermentingCauldronRecipe> STREAM_CODEC =
-                StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
+                StreamCodec.composite(
+
+                        ItemInput.STREAM_CODEC,
+                        FermentingCauldronRecipe::ingredient,
+
+                        ItemSelector.STREAM_CODEC,
+                        FermentingCauldronRecipe::lastIngredient,
+
+                        EXTRACT_STREAM_CODEC,
+                        FermentingCauldronRecipe::extract,
+
+                        EffectOutput.STREAM_CODEC,
+                        FermentingCauldronRecipe::effect,
+
+                        StreamCodec.of(
+                                RegistryFriendlyByteBuf::writeVarInt,
+                                RegistryFriendlyByteBuf::readVarInt
+                        ),
+                        FermentingCauldronRecipe::brewTicks,
+
+                        StreamCodec.of(
+                                RegistryFriendlyByteBuf::writeVarInt,
+                                RegistryFriendlyByteBuf::readVarInt
+                        ),
+                        FermentingCauldronRecipe::bubbleTicks,
+
+                        StreamCodec.of(
+                                RegistryFriendlyByteBuf::writeInt,
+                                RegistryFriendlyByteBuf::readInt
+                        ),
+                        FermentingCauldronRecipe::brewColor,
+
+                        StreamCodec.of(
+                                RegistryFriendlyByteBuf::writeBoolean,
+                                RegistryFriendlyByteBuf::readBoolean
+                        ),
+                        FermentingCauldronRecipe::finalizeBrew,
+
+                        FermentingCauldronRecipe::new
+                );
 
         @Override
-        public MapCodec<FermentingCauldronRecipe> codec() {
+        public @NotNull MapCodec<FermentingCauldronRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, FermentingCauldronRecipe> streamCodec() {
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, FermentingCauldronRecipe> streamCodec() {
             return STREAM_CODEC;
         }
+    }
 
-        private static int parseColorString(String s) {
-            String str = s.trim();
-            if (str.startsWith("#")) str = str.substring(1);
+    // ---------------------------------------------------------------------
+    // VALIDATION
+    // ---------------------------------------------------------------------
 
-            if (str.length() == 6) {
-                int rgb = Integer.parseUnsignedInt(str, 16);
-                return 0xFF000000 | rgb;
-            }
+    public static @NotNull DataResult<FermentingCauldronRecipe> validateRecipe(FermentingCauldronRecipe r) {
 
-            if (str.length() == 8) {
-                return (int) Long.parseUnsignedLong(str, 16);
-            }
-
-            throw new IllegalArgumentException("Invalid color: " + s + " (expected #RRGGBB or #AARRGGBB)");
+        // ---- recipe required ----
+        DataResult<FermentingCauldronRecipe> rr = JolCraftRecipeValidation.requireRecipe(r);
+        var rrErr = rr.error();
+        if (rrErr.isPresent()) {
+            String msg = rrErr.map(DataResult.Error::message).orElse("recipe is null");
+            return DataResult.error(() -> msg);
         }
 
-        private static String toRgbString(int argb) {
-            int rgb = argb & 0xFFFFFF;
-            return String.format("#%06X", rgb);
+        FermentingCauldronRecipe recipe = rr.result().orElse(null);
+        if (recipe == null) {
+            return DataResult.error(() -> "recipe is null");
         }
 
-        private static FermentingCauldronRecipe fromNetwork(RegistryFriendlyByteBuf buf) {
-            Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
+        final String lastIngredientKey =
+                JolCraftStrings.underscored(JolCraftDictionary.LAST, JolCraftDictionary.INGREDIENT);
 
-            Ingredient validStates = null;
-            boolean hasValidStates = buf.readBoolean();
-            if (hasValidStates) {
-                validStates = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
-            }
+        var v = JolCraftRecipeValidation.validate(recipe)
 
-            int brewTicks = buf.readVarInt();
-            int bubbleTicks = buf.readVarInt();
-            int color = buf.readInt();
+                .requireValid(recipe.ingredient(), JolCraftDictionary.INGREDIENT)
 
-            EffectData effect = null;
-            boolean hasEffect = buf.readBoolean();
-            if (hasEffect) {
-                var idLoc = buf.readResourceLocation();
-                ResourceKey<MobEffect> id = ResourceKey.create(Registries.MOB_EFFECT, idLoc);
+                .rule(recipe.brewTicks() >= 1, () -> "brew_ticks must be >= 1")
+                .rule(recipe.bubbleTicks() >= 1, () -> "bubble_ticks must be >= 1");
 
-                int duration = buf.readVarInt();
-                int amplifier = buf.readVarInt();
-                effect = new EffectData(id, duration, amplifier);
-            }
-
-            boolean finalize = buf.readBoolean();
-
-            ItemStack extract = null;
-            boolean hasExtract = buf.readBoolean();
-            if (hasExtract) {
-                extract = ItemStack.STREAM_CODEC.decode(buf);
-                if (extract.isEmpty()) extract = null;
-            }
-
-            return new FermentingCauldronRecipe(ingredient, validStates, brewTicks, bubbleTicks, color, effect, finalize, extract);
+        if (recipe.lastIngredient() != ItemSelector.EMPTY) {
+            v.check(recipe.lastIngredient().validate().map(x -> recipe), lastIngredientKey);
         }
 
-        private static void toNetwork(RegistryFriendlyByteBuf buf, FermentingCauldronRecipe recipe) {
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient);
-
-            boolean hasValidStates = recipe.validStates != null;
-            buf.writeBoolean(hasValidStates);
-            if (hasValidStates) {
-                Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.validStates);
-            }
-
-            buf.writeVarInt(recipe.brewTicks);
-            buf.writeVarInt(recipe.bubbleTicks);
-            buf.writeInt(recipe.color);
-
-            boolean hasEffect = recipe.effect != null;
-            buf.writeBoolean(hasEffect);
-            if (hasEffect) {
-                EffectData eff = recipe.effect;
-                buf.writeResourceLocation(eff.id().location());
-                buf.writeVarInt(eff.duration());
-                buf.writeVarInt(eff.amplifier());
-            }
-
-            buf.writeBoolean(recipe.finalize);
-
-            boolean hasExtract = recipe.extract != null;
-            buf.writeBoolean(hasExtract);
-            if (hasExtract) {
-                ItemStack.STREAM_CODEC.encode(buf, recipe.extract);
-            }
+        if (recipe.extract() != ItemOutput.EMPTY) {
+            v.check(recipe.extract().validate().map(x -> recipe), JolCraftDictionary.EXTRACT);
         }
+
+        ItemOutput out = r.extract();
+        if (out.transforms().requiresInputSource()) {
+            return DataResult.error(() ->
+                    "this recipe type does not support input-sourced component transforms");
+        }
+
+        v.rule(
+                recipe.lastIngredient() != ItemSelector.EMPTY || recipe.extract() == ItemOutput.EMPTY,
+                () -> "extract requires last_ingredient (water cauldron cannot extract)"
+        );
+
+        if (recipe.effect() != EffectOutput.EMPTY) {
+            v.check(recipe.effect().validate().map(x -> recipe), JolCraftDictionary.EFFECT);
+        }
+
+        return v.done();
     }
 }

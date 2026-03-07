@@ -28,20 +28,20 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.attribute.DwarfAttributes;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.goal.DwarfGoals;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.loadout.DwarfLoadouts;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfessionTraits;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfVariant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.attribute.DwarfAttributes;
+import net.sievert.jolcraft.world.entity.custom.dwarf.goal.DwarfGoals;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
+import net.sievert.jolcraft.world.entity.custom.dwarf.loadout.DwarfLoadouts;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionTraits;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionHelper;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.util.EntityData;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchant;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfBeardColor;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfEyeColor;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.variation.DwarfVariant;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchant;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 
@@ -88,27 +88,15 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     //General fields
 
     public boolean canSign() {
-        return DwarfProfessionTraits.of(this.getProfession()).canSign().test(this);
+        return DwarfProfessionTraits.canSign(this);
     }
 
     public boolean canEndorse() {
-        return DwarfProfessionTraits.of(this.getProfession()).canEndorse().test(this);
-    }
-
-    public boolean canBountyInteract() {
-        return DwarfProfessionTraits.of(this.getProfession()).canBountyInteract();
-    }
-
-    public boolean neverEndorse() {
-        return DwarfProfessionTraits.of(this.getProfession()).neverEndorse();
+        return DwarfProfessionTraits.canEndorse(this);
     }
 
     public int getRequiredTier() {
-        return DwarfProfessionTraits.of(this.getProfession()).requiredTier();
-    }
-
-    public ItemStack getSignedContractItem() {
-        return DwarfProfessionTraits.of(this.getProfession()).contract().create();
+        return DwarfProfessionTraits.requiredTier(this.getProfession());
     }
 
     public DwarfProfession getProfession() {
@@ -516,17 +504,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     @Override
     public float getVoicePitch() {
-        return this.isBaby() ? 1.5F : DwarfProfessionTraits.of(this.getProfession()).adultVoicePitch();
-    }
-
-    @Nullable
-    public SoundEvent getBountyRewardSound() {
-        return DwarfProfessionTraits.of(this.getProfession()).bountyRewardSound();
-    }
-
-    @Nullable
-    public DwarfProfessionTraits.BountyRewardParticles getBountyRewardParticles() {
-        return DwarfProfessionTraits.of(this.getProfession()).bountyRewardParticles();
+        return this.isBaby() ? 1.5F : DwarfProfessionTraits.adultVoicePitch(this.getProfession());
     }
 
     //Spawn
@@ -535,26 +513,29 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {return false;}
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level,
-                                        DifficultyInstance difficulty,
-                                        EntitySpawnReason spawnType,
-                                        @Nullable SpawnGroupData spawnGroupData) {
-
-        if (!this.level().isClientSide) {
+    public SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor level,
+            DifficultyInstance difficulty,
+            EntitySpawnReason spawnType,
+            @Nullable SpawnGroupData spawnGroupData
+    ) {
+        if (!level.isClientSide()) {
             this.setProfession(this.getSpawnProfession());
         }
 
         DwarfVariant variant = Util.getRandom(DwarfVariant.values(), this.random);
         DwarfBeardColor beard = Util.getRandom(DwarfBeardColor.values(), this.random);
         DwarfEyeColor eye = Util.getRandom(DwarfEyeColor.values(), this.random);
+
         this.setData(VARIANT, variant.getId());
         this.setData(BEARD_COLOR, beard.getId());
         this.setData(EYE_COLOR, eye.getId());
+
         this.setLeftHanded(false);
 
         SpawnGroupData out = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
 
-        if (!this.level().isClientSide) {
+        if (!level.isClientSide()) {
             DwarfLoadouts.applySpawnLoadout(this, level, difficulty, spawnType, out);
         }
 

@@ -44,7 +44,7 @@ public final class JolCraftEquipmentHelper {
             this.armorType = armorType;
         }
 
-        /** e.g. "helmet" used by file naming (models/trims/recipes). */
+        /** e.g. "helmet" used by name naming (models/trims/recipes). */
         public @NotNull String suffix() {
             return suffix;
         }

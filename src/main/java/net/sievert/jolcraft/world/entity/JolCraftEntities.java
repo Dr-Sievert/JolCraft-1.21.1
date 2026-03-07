@@ -11,7 +11,7 @@ import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
 import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
 import net.sievert.jolcraft.world.entity.custom.creature.MuffhornEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
 
 import java.util.function.Supplier;

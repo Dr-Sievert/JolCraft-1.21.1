@@ -14,62 +14,57 @@ public final class JolCraftLogs {
     private JolCraftLogs() {}
 
     private static final String LOGGER_NAME = JolCraft.MOD_ID.toUpperCase();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(LOGGER_NAME);
 
     /* ---------------------------------------------------------------------
      * Debug
      * ------------------------------------------------------------------ */
 
-    public static void debug(String message, Object... args) {
+    public static void debug(JolCraftLogTags tag, String message, Object... args) {
         if (!LOGGER.isDebugEnabled()) return;
-        LOGGER.debug(message, args);
-    }
-
-    public static void debug(String tag, String message, Object... args) {
-        if (!LOGGER.isDebugEnabled()) return;
-        LOGGER.debug(prefix(tag, message), args);
+        log(Level.DEBUG, tag, message, args);
     }
 
     /* ---------------------------------------------------------------------
      * Info
      * ------------------------------------------------------------------ */
 
-    public static void info(String message, Object... args) {
-        LOGGER.info(message, args);
-    }
-
-    public static void info(String tag, String message, Object... args) {
-        LOGGER.info(prefix(tag, message), args);
+    public static void info(JolCraftLogTags tag, String message, Object... args) {
+        log(Level.INFO, tag, message, args);
     }
 
     /* ---------------------------------------------------------------------
      * Warn
      * ------------------------------------------------------------------ */
 
-    public static void warn(String message, Object... args) {
-        LOGGER.warn(message, args);
-    }
-
-    public static void warn(String tag, String message, Object... args) {
-        LOGGER.warn(prefix(tag, message), args);
+    public static void warn(JolCraftLogTags tag, String message, Object... args) {
+        log(Level.WARN, tag, message, args);
     }
 
     /* ---------------------------------------------------------------------
      * Error
      * ------------------------------------------------------------------ */
 
-    public static void error(String message, Object... args) {
-        LOGGER.error(message, args);
-    }
-
-    public static void error(String tag, String message, Object... args) {
-        LOGGER.error(prefix(tag, message), args);
+    public static void error(JolCraftLogTags tag, String message, Object... args) {
+        log(Level.ERROR, tag, message, args);
     }
 
     /* ---------------------------------------------------------------------
      * Internal
      * ------------------------------------------------------------------ */
+
+    private enum Level { DEBUG, INFO, WARN, ERROR }
+
+    private static void log(Level level, JolCraftLogTags tag, String message, Object... args) {
+        String prefixed = prefix(tag.getId(), message);
+
+        switch (level) {
+            case DEBUG -> LOGGER.debug(prefixed, args);
+            case INFO  -> LOGGER.info(prefixed, args);
+            case WARN  -> LOGGER.warn(prefixed, args);
+            case ERROR -> LOGGER.error(prefixed, args);
+        }
+    }
 
     private static String prefix(String tag, String message) {
         return "[" + tag + "] " + message;
@@ -79,20 +74,14 @@ public final class JolCraftLogs {
      * Formatting helpers
      * ------------------------------------------------------------------ */
 
-    /**
-     * Formats a fractional value (e.g. 0.15) as a percentage with 1 decimal (e.g. 15.0).
-     * Intended for logging only.
-     */
     public static double pct1(double value) {
         return Math.round(value * 1000.0D) / 10.0D;
     }
-
 
     private static String formatXYZ(long x, long y, long z) {
         return "X=" + x + ", Y=" + y + ", Z=" + z;
     }
 
-    /** Returns "(x, y, z)" rounded to nearest integer. */
     public static String roundedPos(Vec3 pos) {
         return formatXYZ(
                 Math.round(pos.x),
@@ -101,7 +90,6 @@ public final class JolCraftLogs {
         );
     }
 
-    /** Returns "(x, y, z)" from a BlockPos. */
     public static String roundedPos(BlockPos pos) {
         return formatXYZ(
                 pos.getX(),
@@ -109,8 +97,6 @@ public final class JolCraftLogs {
                 pos.getZ()
         );
     }
-
-    /** Convenience overloads */
 
     public static String roundedPos(BlockEntity be) {
         return roundedPos(be.getBlockPos());

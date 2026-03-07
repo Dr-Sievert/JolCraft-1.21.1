@@ -10,8 +10,9 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class DwarfEndorsementTrigger extends SimpleCriterionTrigger<DwarfEndorse
      */
     public void trigger(ServerPlayer player, DwarfProfession profession) {
         if (profession == null) {
-            JolCraftLogs.debug("Dwarf endorsement trigger called with null profession for {}", player.getGameProfile().getName());
+            JolCraftLogs.debug(JolCraftLogTags.ADVANCEMENT, "Dwarf endorsement trigger called with null profession for {}", player.getGameProfile().getName());
             return;
         }
         if (profession == DwarfProfession.NONE) return;

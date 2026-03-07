@@ -15,13 +15,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.item.util.bounty.BountyData;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
 import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
 
 import javax.annotation.Nullable;

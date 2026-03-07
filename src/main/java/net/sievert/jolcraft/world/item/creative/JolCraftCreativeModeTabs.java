@@ -13,7 +13,7 @@ import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
 import net.sievert.jolcraft.world.item.util.compass.StructureGroup;

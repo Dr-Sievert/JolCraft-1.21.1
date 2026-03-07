@@ -15,7 +15,7 @@ import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 
 public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 

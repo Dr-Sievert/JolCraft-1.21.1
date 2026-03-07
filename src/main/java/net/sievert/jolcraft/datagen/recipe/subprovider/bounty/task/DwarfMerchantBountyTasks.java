@@ -1,110 +1,103 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task.util.AbstractBountyTasks;
-import net.sievert.jolcraft.datagen.recipe.util.AbstractRecipeProvider;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
+import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.build.custom.bounty.BountyTaskRecipeBuilder;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.bounty.BountyTier;
-import net.sievert.jolcraft.world.item.util.bounty.BountyType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class DwarfMerchantBountyTasks extends AbstractBountyTasks {
+public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
+
+    private static final SoundOutput SOUND_1 = SoundOutput.of(SoundEvents.VILLAGER_WORK_CARTOGRAPHER);
+    private static final SoundOutput SOUND_2 = SoundOutput.of(SoundEvents.VILLAGER_WORK_FISHERMAN);
 
     @Override
-    protected @NotNull BountyType bountyType() {
-        return BountyType.MERCHANT;
+    public String folder() {
+        return DwarfProfession.MERCHANT.professionName();
     }
 
     @Override
-    public void addTasks(@NotNull AbstractRecipeProvider p) {
+    public void registerRecipes(
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            @NotNull HolderGetter<Item> items
+    ) {
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.NOVICE, 1,
-                collect(Items.COAL, amount(5, 12)));
+        emitTier(executor, BountyTier.NOVICE, b -> {
+            b.collect(Items.COAL, 5, 12);
+            b.collect(Items.FLINT, 5, 12);
+            b.collect(Items.COPPER_INGOT, 5, 12);
+            b.collect(Items.COBBLED_DEEPSLATE, 5, 12);
+            b.collect(Items.TORCH, 5, 12);
+            b.collect(Items.CLAY_BALL, 5, 12);
+            b.collect(Items.IRON_NUGGET, 5, 12);
+        });
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.NOVICE, 1,
-                collect(Items.FLINT, amount(5, 12)));
+        emitTier(executor, BountyTier.APPRENTICE, b -> {
+            b.collect(Items.IRON_INGOT, 4, 8);
+            b.collect(Items.LAPIS_LAZULI, 4, 8);
+            b.collect(Items.REDSTONE, 4, 8);
+            b.collect(Items.GLOW_INK_SAC, 3, 6);
+            b.collect(Items.SPIDER_EYE, 3, 6);
+            b.collect(Items.GUNPOWDER, 3, 6);
+            b.collect(Items.BONE, 5, 9);
+        });
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.NOVICE, 1,
-                collect(Items.COPPER_INGOT, amount(5, 12)));
+        emitTier(executor, BountyTier.JOURNEYMAN, b -> {
+            b.collect(Items.GOLD_INGOT, 3, 6);
+            b.collect(Items.EMERALD, 2, 5);
+            b.collect(Items.AMETHYST_SHARD, 3, 6);
+            b.collect(Items.BLAZE_POWDER, 3, 6);
+            b.collect(Items.INK_SAC, 3, 6);
+        });
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.NOVICE, 1,
-                collect(Items.COBBLED_DEEPSLATE, amount(5, 12)));
+        emitTier(executor, BountyTier.EXPERT, b -> {
+            b.collect(Items.ANVIL, 1, 1);
+            b.collect(Items.GOLDEN_APPLE, 1, 2);
+            b.collect(Items.BOOK, 1, 2);
+            b.collect(Items.CAULDRON, 1, 1);
+            b.collect(Items.ITEM_FRAME, 1, 3);
+            b.collect(Items.ENDER_PEARL, 1, 1);
+        });
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.NOVICE, 1,
-                collect(Items.TORCH, amount(5, 12)));
+        emitTier(executor, BountyTier.MASTER, b -> {
+            b.collect(Items.NETHERITE_SCRAP, 1, 2);
+            b.collect(Items.HEART_OF_THE_SEA, 1, 1);
+            b.collect(Items.DRAGON_BREATH, 1, 2);
+        });
+    }
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.NOVICE, 1,
-                collect(Items.CLAY_BALL, amount(5, 12)));
+    private void emitTier(
+            RecipeEmissionExecutor executor,
+            BountyTier tier,
+            Consumer<BountyTaskRecipeBuilder> objectives
+    ) {
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.NOVICE, 1,
-                collect(Items.IRON_NUGGET, amount(5, 12)));
+        BountyTaskRecipeBuilder b = BountyTaskRecipeBuilder.create();
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.IRON_INGOT, amount(4, 8)));
+        b.bountyType(BountyType.MERCHANT)
+                .tier(tier)
+                .result(JolCraftItems.BOUNTY_CRATE.get())
+                .sound1(SOUND_1)
+                .sound2(SOUND_2);
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.LAPIS_LAZULI, amount(4, 8)));
+        objectives.accept(b);
 
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.REDSTONE, amount(4, 8)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.GLOW_INK_SAC, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.SPIDER_EYE, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.GUNPOWDER, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.APPRENTICE, 1,
-                collect(Items.BONE, amount(5, 9)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.JOURNEYMAN, 1,
-                collect(Items.GOLD_INGOT, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.JOURNEYMAN, 1,
-                collect(Items.EMERALD, amount(2, 5)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.JOURNEYMAN, 1,
-                collect(Items.AMETHYST_SHARD, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.JOURNEYMAN, 1,
-                collect(Items.BLAZE_POWDER, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.JOURNEYMAN, 1,
-                collect(Items.INK_SAC, amount(3, 6)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.EXPERT, 1,
-                collect(Items.ANVIL, amount(1)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.EXPERT, 1,
-                collect(Items.GOLDEN_APPLE, amount(1, 2)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.EXPERT, 1,
-                collect(Items.BOOK, amount(1, 2)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.EXPERT, 1,
-                collect(Items.CAULDRON, amount(1)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.EXPERT, 1,
-                collect(Items.ITEM_FRAME, amount(1, 3)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.EXPERT, 1,
-                collect(Items.ENDER_PEARL, amount(1)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.MASTER, 1,
-                collect(Items.NETHERITE_SCRAP, amount(1, 2)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.MASTER, 1,
-                collect(Items.HEART_OF_THE_SEA, amount(1)));
-
-        task(p, JolCraftItems.BOUNTY_CRATE.get(), BountyTier.MASTER, 1,
-                collect(Items.DRAGON_BREATH, amount(1, 2)));
+        executor.emit(b.buildValidated());
     }
 }

@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.util.creature.MuffhornFurLayer;

@@ -11,18 +11,20 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipeHooks;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipeParameters;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.data.JolCraftAttributes;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.interaction.DwarfInteractions;
-import net.sievert.jolcraft.world.entity.custom.dwarf.util.loadout.DwarfLoadouts;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
+import net.sievert.jolcraft.world.entity.custom.dwarf.loadout.DwarfLoadouts;
 import net.sievert.jolcraft.world.item.creative.JolCraftCreativeModeTabs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentAssets;
@@ -93,6 +95,8 @@ public class JolCraft {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            JolCraftRecipeParameters.registerAll();
+            JolCraftRecipeHooks.registerAll();
             DwarfInteractions.registerAll();
             DwarfLoadouts.bootstrap();
 
