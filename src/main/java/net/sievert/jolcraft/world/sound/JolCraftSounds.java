@@ -10,6 +10,7 @@ import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;
 
 import java.util.function.Supplier;
 
+@SuppressWarnings("SameParameterValue")
 public final class JolCraftSounds {
 
     private JolCraftSounds() {}

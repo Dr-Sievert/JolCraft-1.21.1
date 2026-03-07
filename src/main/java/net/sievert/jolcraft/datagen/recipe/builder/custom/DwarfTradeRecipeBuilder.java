@@ -521,13 +521,13 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         String prof = professionNameSafe();
         String lvl = levelNameSafe();
 
-        String a = tokenFromConcreteCostFailClosed(
+        String a = tokenFromCostFailClosed(
                 costA,
                 JolCraftStrings.underscored(JolCraftDictionary.COST, "a")
         );
 
         String b = (costB != null && costB != ItemInput.EMPTY)
-                ? tokenFromConcreteCostFailClosed(
+                ? tokenFromCostFailClosed(
                 costB,
                 JolCraftStrings.underscored(JolCraftDictionary.COST, "b")
         )
@@ -664,29 +664,38 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         return merchantLevel.name().toLowerCase(Locale.ROOT);
     }
 
-    private String tokenFromConcreteCostFailClosed(@Nullable ItemInput in, @NotNull String label) {
+    private String tokenFromCostFailClosed(@Nullable ItemInput in, @NotNull String label) {
         if (in == null || in == ItemInput.EMPTY) {
             errors.add(label + " is missing");
             return JolCraftDictionary.UNKNOWN;
         }
 
-        Optional<Holder<Item>> h = in.singleConcrete(Registries.ITEM);
-        if (h.isEmpty()) {
-            errors.add(label + " must be a specific item (for naming)");
-            return JolCraftDictionary.UNKNOWN;
+        Optional<Holder<Item>> concrete = in.singleConcrete(Registries.ITEM);
+        if (concrete.isPresent()) {
+            ResourceLocation id = concrete.get()
+                    .unwrapKey()
+                    .map(ResourceKey::location)
+                    .orElse(null);
+
+            if (id == null) {
+                errors.add(label + " has no registry key (for naming)");
+                return JolCraftDictionary.UNKNOWN;
+            }
+
+            return id.getPath();
         }
 
-        ResourceLocation id = h.get()
-                .unwrapKey()
-                .map(ResourceKey::location)
-                .orElse(null);
+        var tag = in.singleTag(Registries.ITEM);
+        if (tag.isPresent()) {
+            if (tag.get().equals(DwarfTradeRecipe.COINS_TAG)) {
+                return JolCraftStrings.plural(JolCraftDictionary.COIN);
+            }
 
-        if (id == null) {
-            errors.add(label + " has no registry key (for naming)");
-            return JolCraftDictionary.UNKNOWN;
+            return tag.get().location().getPath();
         }
 
-        return id.getPath();
+        errors.add(label + " must be a specific item or single tag (for naming)");
+        return JolCraftDictionary.UNKNOWN;
     }
 
     private String tokenFromResultFailClosed(@Nullable ItemOutput out) {

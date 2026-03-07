@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
@@ -331,19 +332,28 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
             return JolCraftDictionary.UNKNOWN;
         }
 
-        Optional<Holder<Item>> h = sel.singleConcrete(Registries.ITEM);
-        if (h.isEmpty()) {
-            errors.add("last_ingredient must be exactly one concrete item (no tags) for naming");
-            return JolCraftDictionary.UNKNOWN;
+        Optional<Holder<Item>> concrete = sel.singleConcrete(Registries.ITEM);
+        if (concrete.isPresent()) {
+            String path = pathOfItem(concrete.get());
+            if (path == null) {
+                errors.add("last_ingredient has no registry key (for naming)");
+                return JolCraftDictionary.UNKNOWN;
+            }
+            return path;
         }
 
-        String path = pathOfItem(h.get());
-        if (path == null) {
-            errors.add("last_ingredient has no registry key (for naming)");
-            return JolCraftDictionary.UNKNOWN;
+        Optional<TagKey<Item>> tag = sel.singleTag(Registries.ITEM);
+        if (tag.isPresent()) {
+            return pathOfTag(tag.get());
         }
 
-        return path;
+        errors.add("last_ingredient must be exactly one concrete item or single tag for naming");
+        return JolCraftDictionary.UNKNOWN;
+    }
+
+    private static @Nullable String pathOfTag(@Nullable TagKey<Item> tag) {
+        if (tag == null) return null;
+        return tag.location().getPath();
     }
 
     private String tokenFromExtractFailClosed(ItemOutput out) {

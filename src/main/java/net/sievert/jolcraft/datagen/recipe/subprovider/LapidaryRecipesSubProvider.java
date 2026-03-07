@@ -2,12 +2,14 @@ package net.sievert.jolcraft.datagen.recipe.subprovider;
 
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
+import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
@@ -19,6 +21,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.custom.LapidaryBenchRecipeBui
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
@@ -102,6 +105,7 @@ public final class LapidaryRecipesSubProvider implements RecipeSubProvider {
                         )
                         .tool(hammerTool())
                         .result(itemResult(dust, minCount, maxCount))
+                        .sound(hammerGemCrushSound())
                         .xp(IntRange.fixed(xp))
                         .toolDamage(IntRange.ONE)
                         .buildValidated()
@@ -126,6 +130,7 @@ public final class LapidaryRecipesSubProvider implements RecipeSubProvider {
                         )
                         .tool(hammerTool())
                         .result(tagResult(resultTag, minCount, maxCount))
+                        .sound(hammerGeodeBreakSound())
                         .xp(IntRange.fixed(xp))
                         .toolDamage(IntRange.ONE)
                         .buildValidated()
@@ -148,6 +153,7 @@ public final class LapidaryRecipesSubProvider implements RecipeSubProvider {
                         )
                         .tool(chiselTool())
                         .result(itemResult(cutGem, 1, 1))
+                        .sound(chiselGemCutSound())
                         .xp(IntRange.fixed(xp))
                         .toolDamage(IntRange.ONE)
                         .buildValidated()
@@ -168,6 +174,18 @@ public final class LapidaryRecipesSubProvider implements RecipeSubProvider {
                         .tag(JolCraftTags.Items.CHISELS)
                         .build()
         );
+    }
+
+    private static SoundOutput hammerGeodeBreakSound() {
+        return SoundOutput.of(SoundEvents.DEEPSLATE_BREAK, 0.8F, 1.5F);
+    }
+
+    private static SoundOutput hammerGemCrushSound() {
+        return SoundOutput.of(SoundEvents.AMETHYST_BLOCK_BREAK, 0.8F, 1.5F);
+    }
+
+    private static SoundOutput chiselGemCutSound() {
+        return SoundOutput.of(JolCraftSounds.GEM_CUT.get(), 0.8F, 1.0F);
     }
 
     private static ItemOutput itemResult(ItemLike item, int minCount, int maxCount) {

@@ -11,7 +11,6 @@ import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeHookIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
 import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
@@ -85,7 +84,11 @@ public final class CompassHandInteractions implements RecipeSubProvider {
                                         .pitch(1.4F)
                                         .build()
                         )
-                        .failSound(SoundOutput.EMPTY)
+                        .failSound(SoundOutputBuilder.create()
+                                .sound(SoundEvents.METAL_HIT)
+                                .volume(0.4F)
+                                .pitch(1.6F)
+                                .build())
                         .requireSneaking(false)
                         .buildValidated()
         );

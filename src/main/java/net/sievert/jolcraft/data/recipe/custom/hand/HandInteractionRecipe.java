@@ -14,6 +14,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomOutputRecipe;
 import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
@@ -48,21 +49,11 @@ public record HandInteractionRecipe(
     public static final String SOURCE_INGREDIENT_B =
             JolCraftStrings.underscored(JolCraftDictionary.INGREDIENT, "b");
 
-    public static final HandInteractionRecipe EMPTY =
-            new HandInteractionRecipe(
-                    ItemInput.EMPTY,
-                    ItemIngredientAction.CATALYST,
-                    ItemInput.EMPTY,
-                    ItemIngredientAction.CATALYST,
-                    Outputs.EMPTY,
-                    SoundOutput.EMPTY,
-                    SoundOutput.EMPTY,
-                    false
-            );
-
     @Override
     public boolean matches(@NotNull HandInteractionRecipeInput in, Level level) {
-        if (level.isClientSide) return false;
+        if (level.isClientSide) {
+            return false;
+        }
 
         WorldContext ctx = in.ctx();
         ItemStack a = in.ingredientA();
@@ -74,7 +65,9 @@ public record HandInteractionRecipe(
                         ItemIngredientAction.isSatisfied(a, actionA) &&
                         ItemIngredientAction.isSatisfied(b, actionB);
 
-        if (direct) return true;
+        if (direct) {
+            return true;
+        }
 
         return ingredientA.matches(ctx, b) &&
                 ingredientB.matches(ctx, a) &&
@@ -84,18 +77,35 @@ public record HandInteractionRecipe(
 
     @Override
     public @NotNull List<Output> roll(@NotNull HandInteractionRecipeInput input, @NotNull WorldContext ctx) {
-        Outputs r = output != null ? output : Outputs.EMPTY;
-        return r.generateResolved(ctx, input);
+        return output.generateResolved(ctx, input);
     }
 
     @Override
-    public RecipeSerializer<? extends Recipe<HandInteractionRecipeInput>> getSerializer() {
+    public @NotNull RecipeSerializer<? extends Recipe<HandInteractionRecipeInput>> getSerializer() {
         return JolCraftRecipes.HAND_INTERACTION_SERIALIZER.get();
     }
 
     @Override
-    public RecipeType<? extends Recipe<HandInteractionRecipeInput>> getType() {
+    public @NotNull RecipeType<? extends Recipe<HandInteractionRecipeInput>> getType() {
         return JolCraftRecipes.HAND_INTERACTION_TYPE.get();
+    }
+
+    public static @NotNull DataResult<HandInteractionRecipe> validateRecipe(HandInteractionRecipe recipe) {
+        return JolCraftRecipeValidation.validate(recipe)
+                .requireValid(recipe.ingredientA(), SOURCE_INGREDIENT_A)
+                .require(recipe.actionA(), JolCraftStrings.underscored(JolCraftDictionary.ACTION, "a"))
+                .requireValid(recipe.ingredientB(), SOURCE_INGREDIENT_B)
+                .require(recipe.actionB(), JolCraftStrings.underscored(JolCraftDictionary.ACTION, "b"))
+                .requireValid(recipe.output(), JolCraftStrings.plural(JolCraftDictionary.RESULT))
+                .requireValid(
+                        recipe.successSound(),
+                        JolCraftStrings.underscored(JolCraftDictionary.SUCCESS, JolCraftDictionary.SOUND)
+                )
+                .requireValid(
+                        recipe.failSound(),
+                        JolCraftStrings.underscored(JolCraftDictionary.FAIL, JolCraftDictionary.SOUND)
+                )
+                .done();
     }
 
     public static final class Serializer implements RecipeSerializer<HandInteractionRecipe> {
@@ -107,15 +117,16 @@ public record HandInteractionRecipe(
                 RecordCodecBuilder.mapCodec(
                         (RecordCodecBuilder.Instance<HandInteractionRecipe> inst) ->
                                 inst.group(
-
                                         ItemInput.CODEC
                                                 .fieldOf(JolCraftStrings.underscored(
                                                         JolCraftDictionary.INGREDIENT, "a"))
                                                 .forGetter(HandInteractionRecipe::ingredientA),
 
                                         ItemIngredientAction.CODEC
-                                                .optionalFieldOf(JolCraftStrings.underscored(
-                                                        JolCraftDictionary.ACTION, "a"), ItemIngredientAction.CATALYST)
+                                                .optionalFieldOf(
+                                                        JolCraftStrings.underscored(
+                                                                JolCraftDictionary.ACTION, "a"),
+                                                        ItemIngredientAction.CATALYST)
                                                 .forGetter(HandInteractionRecipe::actionA),
 
                                         ItemInput.CODEC
@@ -124,13 +135,14 @@ public record HandInteractionRecipe(
                                                 .forGetter(HandInteractionRecipe::ingredientB),
 
                                         ItemIngredientAction.CODEC
-                                                .optionalFieldOf(JolCraftStrings.underscored(
-                                                        JolCraftDictionary.ACTION, "b"), ItemIngredientAction.CATALYST)
+                                                .optionalFieldOf(
+                                                        JolCraftStrings.underscored(
+                                                                JolCraftDictionary.ACTION, "b"),
+                                                        ItemIngredientAction.CATALYST)
                                                 .forGetter(HandInteractionRecipe::actionB),
 
                                         OUTPUT_CODEC
-                                                .fieldOf(JolCraftStrings.plural(
-                                                        JolCraftDictionary.RESULT))
+                                                .fieldOf(JolCraftStrings.plural(JolCraftDictionary.RESULT))
                                                 .forGetter(HandInteractionRecipe::output),
 
                                         SoundOutput.CODEC
@@ -152,9 +164,8 @@ public record HandInteractionRecipe(
                                                                 JolCraftDictionary.SNEAK),
                                                         false)
                                                 .forGetter(HandInteractionRecipe::requireSneaking)
-
                                 ).apply(inst, HandInteractionRecipe::new)
-                ).validate(Serializer::validate);
+                ).validate(HandInteractionRecipe::validateRecipe);
 
         public static final StreamCodec<RegistryFriendlyByteBuf, HandInteractionRecipe> STREAM_CODEC =
                 StreamCodec.composite(
@@ -170,27 +181,13 @@ public record HandInteractionRecipe(
                 );
 
         @Override
-        public MapCodec<HandInteractionRecipe> codec() {
+        public @NotNull MapCodec<HandInteractionRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, HandInteractionRecipe> streamCodec() {
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, HandInteractionRecipe> streamCodec() {
             return STREAM_CODEC;
-        }
-
-        private static DataResult<HandInteractionRecipe> validate(HandInteractionRecipe r) {
-            DataResult<HandInteractionRecipe> result =
-                    r.ingredientA.validate().map(v -> r);
-
-            result = result.flatMap(x -> r.actionA.validate().map(v -> r));
-            result = result.flatMap(x -> r.ingredientB.validate().map(v -> r));
-            result = result.flatMap(x -> r.actionB.validate().map(v -> r));
-            result = result.flatMap(x -> r.output.validate().map(v -> r));
-            result = result.flatMap(x -> r.successSound.validate().map(v -> r));
-            result = result.flatMap(x -> r.failSound.validate().map(v -> r));
-
-            return result;
         }
     }
 }

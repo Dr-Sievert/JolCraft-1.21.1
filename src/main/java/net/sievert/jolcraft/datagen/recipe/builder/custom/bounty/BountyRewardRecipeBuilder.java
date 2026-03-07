@@ -6,6 +6,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Recipe;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
@@ -32,10 +33,9 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
 
     private BountyType bountyType = BountyType.UNKNOWN;
     private BountyTier tier = BountyTier.UNKNOWN;
-
     private Outputs rewards = Outputs.EMPTY;
 
-    private @Nullable SoundOutput sound = null;
+    private @Nullable SoundOutput sound;
 
     private BountyRewardRecipeBuilder() {}
 
@@ -65,12 +65,23 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    public @NotNull BountyRewardRecipeBuilder reward(@NotNull OutputParam param) {
+    public @NotNull BountyRewardRecipeBuilder reward(@Nullable OutputParam param) {
+        if (param == null) {
+            errors.add("reward is null");
+            return this;
+        }
+
         this.rewards = this.rewards.merge(Outputs.wrapSingle(param));
         return this;
     }
 
     public @NotNull BountyRewardRecipeBuilder sound(@Nullable SoundOutput sound) {
+        if (sound == null) {
+            errors.add("sound is null");
+            this.sound = null;
+            return this;
+        }
+
         this.sound = sound;
         return this;
     }
@@ -78,10 +89,20 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
         DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
-                .word(tier.name().toLowerCase(Locale.ROOT))
-                .word(bountyType.getId())
+                .word(tierNameSafe())
+                .word(bountyTypeNameSafe())
                 .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_REWARD))
                 .build();
+
+        if (sound == null) {
+            errors.add("sound is required");
+        }
+
+        if (!errors.isEmpty()) {
+            return nameBuilt.flatMap(name ->
+                    DataResult.error(() -> "builder: " + String.join("; ", errors))
+            );
+        }
 
         BountyRewardRecipe recipe = new BountyRewardRecipe(
                 bountyType,
@@ -90,16 +111,8 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
                 sound
         );
 
-        DataResult<BountyRewardRecipe> validated =
-                BountyRewardRecipe.validateRecipe(recipe);
-
-        DataResult<BountyRewardRecipe> recipeResult =
-                (!errors.isEmpty() && validated.error().isEmpty())
-                        ? DataResult.error(() -> "builder: " + String.join("; ", errors), recipe)
-                        : validated;
-
         return nameBuilt.flatMap(name ->
-                recipeResult.flatMap(validRecipe ->
+                BountyRewardRecipe.validateRecipe(recipe).flatMap(validRecipe ->
                         RecipeEmission.of(
                                 JolCraftRecipeIds.BOUNTY_REWARD,
                                 name,
@@ -108,5 +121,21 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
                         )
                 )
         );
+    }
+
+    private @NotNull String tierNameSafe() {
+        return tier.name().toLowerCase(Locale.ROOT);
+    }
+
+    private @NotNull String bountyTypeNameSafe() {
+        try {
+            String id = bountyType.getId();
+            return (id == null || id.isBlank())
+                    ? JolCraftDictionary.UNKNOWN
+                    : id;
+        } catch (RuntimeException e) {
+            errors.add("bountyType.getId() threw");
+            return JolCraftDictionary.UNKNOWN;
+        }
     }
 }

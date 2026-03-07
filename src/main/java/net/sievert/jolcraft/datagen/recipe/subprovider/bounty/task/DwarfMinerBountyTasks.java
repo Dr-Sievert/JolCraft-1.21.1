@@ -3,10 +3,12 @@ package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
+import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyTaskRecipeBuilder;
@@ -15,11 +17,14 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Consumer;
 
 @SuppressWarnings("SameParameterValue")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class DwarfMinerBountyTasks implements RecipeSubProvider {
+
+    private static final SoundOutput SOUND = SoundOutput.of(SoundEvents.VILLAGER_WORK_CARTOGRAPHER);
 
     @Override
     public String folder() {
@@ -79,14 +84,16 @@ public final class DwarfMinerBountyTasks implements RecipeSubProvider {
     private void emitTier(
             RecipeEmissionExecutor executor,
             BountyTier tier,
-            java.util.function.Consumer<BountyTaskRecipeBuilder> objectives
+            Consumer<BountyTaskRecipeBuilder> objectives
     ) {
 
         BountyTaskRecipeBuilder b = BountyTaskRecipeBuilder.create();
 
         b.bountyType(BountyType.MINER)
                 .tier(tier)
-                .result(JolCraftItems.BOUNTY_CRATE.get());
+                .result(JolCraftItems.BOUNTY_CRATE.get())
+                .sound1(SOUND)
+                .sound2(SOUND);
 
         objectives.accept(b);
 

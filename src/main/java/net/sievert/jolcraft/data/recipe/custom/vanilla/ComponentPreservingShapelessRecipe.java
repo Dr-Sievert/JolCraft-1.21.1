@@ -11,13 +11,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.PlacementInfo;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
@@ -25,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,8 +105,8 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
     }
 
     @Override
-    public @NotNull RecipeSerializer<ComponentPreservingShapelessRecipe> getSerializer() {
-        return Serializer.INSTANCE;
+    public @NotNull RecipeSerializer<CraftingRecipe> getSerializer() {
+        return JolCraftRecipes.COMPONENT_PRESERVING_SHAPELESS_SERIALIZER.get();
     }
 
     @Override public @NotNull String group() { return group; }
@@ -239,19 +234,18 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
     }
 
     // ---------------------------------------------------------------------
-    // Serializer
-    // ---------------------------------------------------------------------
+// Serializer
+// ---------------------------------------------------------------------
 
-    public static final class Serializer implements RecipeSerializer<ComponentPreservingShapelessRecipe> {
-
-        public static final Serializer INSTANCE = new Serializer();
+    public static final class Serializer implements RecipeSerializer<CraftingRecipe> {
 
         private static final String KEY_BASE = JolCraftParameterIds.BASE;
         private static final String KEY_INGREDIENTS = JolCraftParameterIds.INGREDIENTS;
         private static final String KEY_RESULT = JolCraftParameterIds.RESULT;
         private static final String KEY_KEEP = JolCraftParameterIds.KEEP;
 
-        private static final String KEY_BASE_REQUIRE = JolCraftStrings.underscored(JolCraftParameterIds.BASE, JolCraftParameterIds.REQUIREMENTS);
+        private static final String KEY_BASE_REQUIRE =
+                JolCraftStrings.underscored(JolCraftParameterIds.BASE, JolCraftParameterIds.REQUIREMENTS);
         private static final String KEY_PATCH = JolCraftParameterIds.PATCH;
 
         private static final int MAX_INGREDIENTS =
@@ -290,7 +284,7 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                         ).apply(inst, ComponentPreservingShapelessRecipe::new))
                         .flatXmap(Serializer::validate, DataResult::success);
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, ComponentPreservingShapelessRecipe> STREAM_CODEC =
+        private static final StreamCodec<RegistryFriendlyByteBuf, ComponentPreservingShapelessRecipe> STREAM_CODEC =
                 StreamCodec.composite(
                         ByteBufCodecs.STRING_UTF8, r -> r.group,
                         CraftingBookCategory.STREAM_CODEC, r -> r.category,
@@ -302,13 +296,37 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                         DataComponentPatch.STREAM_CODEC, r -> r.patch,
                         (group, category, base, ingredients, result, keep, baseReq, patch) -> {
                             ComponentPreservingShapelessRecipe built =
-                                    new ComponentPreservingShapelessRecipe(group, category, base, ingredients, result, keep, baseReq, patch);
-                            return validate(built).error().isPresent() ? ComponentPreservingShapelessRecipe.EMPTY : built;
+                                    new ComponentPreservingShapelessRecipe(
+                                            group,
+                                            category,
+                                            base,
+                                            ingredients,
+                                            result,
+                                            keep,
+                                            baseReq,
+                                            patch
+                                    );
+                            return validate(built).error().isPresent()
+                                    ? ComponentPreservingShapelessRecipe.EMPTY
+                                    : built;
                         }
                 );
 
-        @Override public @NotNull MapCodec<ComponentPreservingShapelessRecipe> codec() { return CODEC; }
-        @Override public @NotNull StreamCodec<RegistryFriendlyByteBuf, ComponentPreservingShapelessRecipe> streamCodec() { return STREAM_CODEC; }
+        @Override
+        public @NotNull MapCodec<CraftingRecipe> codec() {
+            return CODEC.xmap(
+                    recipe -> recipe,
+                    recipe -> (ComponentPreservingShapelessRecipe) recipe
+            );
+        }
+
+        @Override
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, CraftingRecipe> streamCodec() {
+            return STREAM_CODEC.map(
+                    recipe -> recipe,
+                    recipe -> (ComponentPreservingShapelessRecipe) recipe
+            );
+        }
 
         public static @NotNull DataResult<ComponentPreservingShapelessRecipe> validate(
                 @Nullable ComponentPreservingShapelessRecipe r

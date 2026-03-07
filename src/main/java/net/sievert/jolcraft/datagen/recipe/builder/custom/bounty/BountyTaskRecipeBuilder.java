@@ -51,8 +51,8 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
     private ItemOutput bounty = ItemOutput.one(new ItemStack(JolCraftItems.BOUNTY.get()));
     private Outputs objective = Outputs.EMPTY;
 
-    private SoundOutput sound1 = SoundOutput.EMPTY;
-    private SoundOutput sound2 = SoundOutput.EMPTY;
+    private @Nullable SoundOutput sound1;
+    private @Nullable SoundOutput sound2;
 
     private BountyTaskRecipeBuilder() {}
 
@@ -70,6 +70,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             this.bountyType = BountyType.UNKNOWN;
             return this;
         }
+
         this.bountyType = type;
         return this;
     }
@@ -80,6 +81,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             this.tier = BountyTier.UNKNOWN;
             return this;
         }
+
         this.tier = tier;
         return this;
     }
@@ -90,6 +92,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             this.bounty = ItemOutput.EMPTY;
             return this;
         }
+
         this.bounty = out;
         return this;
     }
@@ -100,17 +103,30 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             this.bounty = ItemOutput.EMPTY;
             return this;
         }
+
         this.bounty = ItemOutput.one(new ItemStack(item.asItem(), 1));
         return this;
     }
 
-    public @NotNull BountyTaskRecipeBuilder sound1(@Nullable SoundOutput s) {
-        this.sound1 = (s == null) ? SoundOutput.EMPTY : s;
+    public @NotNull BountyTaskRecipeBuilder sound1(@Nullable SoundOutput sound) {
+        if (sound == null) {
+            errors.add("sound1 is null");
+            this.sound1 = null;
+            return this;
+        }
+
+        this.sound1 = sound;
         return this;
     }
 
-    public @NotNull BountyTaskRecipeBuilder sound2(@Nullable SoundOutput s) {
-        this.sound2 = (s == null) ? SoundOutput.EMPTY : s;
+    public @NotNull BountyTaskRecipeBuilder sound2(@Nullable SoundOutput sound) {
+        if (sound == null) {
+            errors.add("sound2 is null");
+            this.sound2 = null;
+            return this;
+        }
+
+        this.sound2 = sound;
         return this;
     }
 
@@ -119,13 +135,13 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
     // ---------------------------------------------------------------------
 
     private void appendObjective(@NotNull Outputs next) {
-        if (next == Outputs.EMPTY) return;
-
-        if (this.objective == Outputs.EMPTY) {
-            this.objective = next;
-        } else {
-            this.objective = this.objective.merge(next);
+        if (next == Outputs.EMPTY) {
+            return;
         }
+
+        this.objective = (this.objective == Outputs.EMPTY)
+                ? next
+                : this.objective.merge(next);
     }
 
     public @NotNull BountyTaskRecipeBuilder collect(@Nullable ItemLike item, int min, int max) {
@@ -201,14 +217,27 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
-
         DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
                 .word(bountyTierNameSafe())
                 .word(bountyTypeNameSafe())
                 .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_TASK))
                 .build();
 
-        BountyTaskRecipe r = new BountyTaskRecipe(
+        if (sound1 == null) {
+            errors.add("sound1 is required");
+        }
+
+        if (sound2 == null) {
+            errors.add("sound2 is required");
+        }
+
+        if (!errors.isEmpty()) {
+            return nameBuilt.flatMap(name ->
+                    DataResult.error(() -> "builder: " + String.join("; ", errors))
+            );
+        }
+
+        BountyTaskRecipe recipe = new BountyTaskRecipe(
                 bountyType,
                 tier,
                 bounty,
@@ -217,15 +246,8 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
                 sound2
         );
 
-        DataResult<BountyTaskRecipe> validated = BountyTaskRecipe.validateRecipe(r);
-
-        DataResult<BountyTaskRecipe> recipeResult =
-                (!errors.isEmpty() && validated.error().isEmpty())
-                        ? DataResult.error(() -> "builder: " + String.join("; ", errors), r)
-                        : validated;
-
         return nameBuilt.flatMap(name ->
-                recipeResult.flatMap(validRecipe ->
+                BountyTaskRecipe.validateRecipe(recipe).flatMap(validRecipe ->
                         RecipeEmission.of(
                                 JolCraftRecipeIds.BOUNTY_TASK,
                                 name,
@@ -236,15 +258,13 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
         );
     }
 
-    private String bountyTierNameSafe() {
-        return (tier == null) ? JolCraftDictionary.UNKNOWN
-                : tier.name().toLowerCase(Locale.ROOT);
+    private @NotNull String bountyTierNameSafe() {
+        return tier.name().toLowerCase(Locale.ROOT);
     }
 
-    private String bountyTypeNameSafe() {
+    private @NotNull String bountyTypeNameSafe() {
         try {
-            BountyType t = (bountyType == null) ? BountyType.UNKNOWN : bountyType;
-            String id = t.getId();
+            String id = bountyType.getId();
             return (id == null || id.isBlank())
                     ? JolCraftDictionary.UNKNOWN
                     : id;

@@ -50,7 +50,7 @@ import java.util.Optional;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-@SuppressWarnings({"UnusedReturnValue"})
+@SuppressWarnings("UnusedReturnValue")
 public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
 
     private final List<String> errors = new ArrayList<>();
@@ -58,7 +58,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
     private ItemInput input = ItemInput.EMPTY;
     private ItemSelector tool = ItemSelector.EMPTY;
     private ItemOutput result = ItemOutput.EMPTY;
-    private SoundOutput sound = SoundOutput.EMPTY;
+    private @Nullable SoundOutput sound;
     private IntRange xp = IntRange.ZERO;
     private IntRange toolDamage = IntRange.fixed(1);
 
@@ -78,6 +78,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
             this.input = ItemInput.EMPTY;
             return this;
         }
+
         this.input = in;
         return this;
     }
@@ -88,6 +89,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
             this.tool = ItemSelector.EMPTY;
             return this;
         }
+
         this.tool = sel;
         return this;
     }
@@ -98,17 +100,19 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
             this.result = ItemOutput.EMPTY;
             return this;
         }
+
         this.result = out;
         return this;
     }
 
-    public @NotNull LapidaryBenchRecipeBuilder sound(@Nullable SoundOutput s) {
-        if (s == null) {
+    public @NotNull LapidaryBenchRecipeBuilder sound(@Nullable SoundOutput sound) {
+        if (sound == null) {
             errors.add("sound is null");
-            this.sound = SoundOutput.EMPTY;
+            this.sound = null;
             return this;
         }
-        this.sound = s;
+
+        this.sound = sound;
         return this;
     }
 
@@ -118,17 +122,19 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
             this.xp = IntRange.ZERO;
             return this;
         }
+
         this.xp = xp;
         return this;
     }
 
-    public @NotNull LapidaryBenchRecipeBuilder toolDamage(@Nullable IntRange dmg) {
-        if (dmg == null) {
+    public @NotNull LapidaryBenchRecipeBuilder toolDamage(@Nullable IntRange damage) {
+        if (damage == null) {
             errors.add("toolDamage is null");
             this.toolDamage = IntRange.fixed(1);
             return this;
         }
-        this.toolDamage = dmg;
+
+        this.toolDamage = damage;
         return this;
     }
 
@@ -138,47 +144,38 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
-
-        // ---- file name (fail-closed) ----
-        String toolTok = toolTokenFailClosed(tool);
-        String inTok   = tokenFromItemSourceFailClosed(input, JolCraftDictionary.INPUT);
-        String resTok  = tokenFromItemSourceFailClosed(result, JolCraftDictionary.RESULT);
+        String toolToken = toolTokenFailClosed(tool);
+        String inputToken = tokenFromItemSourceFailClosed(input, JolCraftDictionary.INPUT);
+        String resultToken = tokenFromItemSourceFailClosed(result, JolCraftDictionary.RESULT);
 
         DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
-                .word(toolTok)
-                .word(inTok)
+                .word(toolToken)
+                .word(inputToken)
                 .word(JolCraftDictionary.INTO)
-                .word(resTok)
+                .word(resultToken)
                 .build();
 
-        if (!errors.isEmpty()) {
-            String partial = nameBuilt.result().orElse("");
-            String msg = "recipeName: " + String.join("; ", errors) +
-                    (nameBuilt.error().isPresent() ? ("; " + nameBuilt.error().get().message()) : "");
-            nameBuilt = DataResult.error(() -> msg, partial);
+        if (sound == null) {
+            errors.add("sound is required");
         }
 
-        // ---- recipe ----
-        LapidaryBenchRecipe r = new LapidaryBenchRecipe(
-                (input == null) ? ItemInput.EMPTY : input,
-                (tool == null) ? ItemSelector.EMPTY : tool,
-                (result == null) ? ItemOutput.EMPTY : result,
-                (sound == null) ? SoundOutput.EMPTY : sound,
-                (xp == null) ? IntRange.ZERO : xp,
-                (toolDamage == null) ? IntRange.fixed(1) : toolDamage
+        if (!errors.isEmpty()) {
+            String msg = "builder: " + String.join("; ", errors) +
+                    (nameBuilt.error().isPresent() ? ("; " + nameBuilt.error().get().message()) : "");
+            return DataResult.error(() -> msg, null);
+        }
+
+        LapidaryBenchRecipe recipe = new LapidaryBenchRecipe(
+                input,
+                tool,
+                result,
+                sound,
+                xp,
+                toolDamage
         );
 
-        // ---- validate (mirror recipe serializer validation) ----
-        DataResult<LapidaryBenchRecipe> validated = validateRecipeLikeSerializer(r);
-
-        DataResult<LapidaryBenchRecipe> recipeResult =
-                (!errors.isEmpty() && validated.error().isEmpty())
-                        ? DataResult.error(() -> "builder: " + String.join("; ", errors), r)
-                        : validated;
-
-        // ---- combine -> emission ----
         return nameBuilt.flatMap(name ->
-                recipeResult.flatMap(validRecipe ->
+                validateRecipeLikeSerializer(recipe).flatMap(validRecipe ->
                         RecipeEmission.of(
                                 JolCraftRecipeIds.LAPIDARY_BENCH,
                                 name,
@@ -193,54 +190,59 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
     // Validation
     // ---------------------------------------------------------------------
 
-    private @NotNull DataResult<LapidaryBenchRecipe> validateRecipeLikeSerializer(@NotNull LapidaryBenchRecipe r) {
+    private @NotNull DataResult<LapidaryBenchRecipe> validateRecipeLikeSerializer(@NotNull LapidaryBenchRecipe recipe) {
+        DataResult<LapidaryBenchRecipe> resultValidation = recipe.input().validate().map(x -> recipe);
+        resultValidation = resultValidation.flatMap(x -> recipe.tool().validate().map(y -> recipe));
+        resultValidation = resultValidation.flatMap(x -> recipe.result().validate().map(y -> recipe));
+        resultValidation = resultValidation.flatMap(x -> recipe.sound().validate().map(y -> recipe));
 
-        DataResult<LapidaryBenchRecipe> v = r.input().validate().map(x -> r);
-        v = v.flatMap(x -> r.tool().validate().map(y -> r));
-        v = v.flatMap(x -> r.result().validate().map(y -> r));
-        v = v.flatMap(x -> r.sound().validate().map(y -> r));
+        if (resultValidation.error().isPresent()) {
+            return resultValidation;
+        }
 
-        DataResult<IntRange> xpV = IntRange.validateRange(r.xp());
-        if (xpV.error().isPresent()) {
-            String msg = xpV.error().get().message();
+        DataResult<IntRange> xpValidation = IntRange.validateRange(recipe.xp());
+        if (xpValidation.error().isPresent()) {
+            String msg = xpValidation.error().get().message();
             return DataResult.error(() -> JolCraftDictionary.XP + " invalid: " + msg);
         }
-        if (r.xp().min() < 0) {
+
+        if (recipe.xp().min() < 0) {
             return DataResult.error(() -> "xp must have min >= 0");
         }
 
         String toolDamageKey = JolCraftStrings.underscored(JolCraftDictionary.TOOL, JolCraftDictionary.DAMAGE);
-        DataResult<IntRange> tdV = IntRange.validateRange(r.toolDamage());
-        if (tdV.error().isPresent()) {
-            String msg = tdV.error().get().message();
+        DataResult<IntRange> toolDamageValidation = IntRange.validateRange(recipe.toolDamage());
+        if (toolDamageValidation.error().isPresent()) {
+            String msg = toolDamageValidation.error().get().message();
             return DataResult.error(() -> toolDamageKey + " invalid: " + msg);
         }
-        if (r.toolDamage().min() < 0) {
+
+        if (recipe.toolDamage().min() < 0) {
             return DataResult.error(() -> toolDamageKey + " must have min >= 0");
         }
 
-        return v;
+        if (recipe.result().transforms().requiresInputSource()) {
+            return DataResult.error(() ->
+                    "this recipe type does not support input-sourced component transforms");
+        }
+
+        return DataResult.success(recipe);
     }
 
     // ---------------------------------------------------------------------
     // Naming helpers
     // ---------------------------------------------------------------------
 
-    private static @Nullable String holderPath(@NotNull Holder<Item> h) {
-        ResourceLocation id = h.unwrapKey().map(ResourceKey::location).orElse(null);
-        return id != null ? id.getPath() : null;
-    }
-
     private @NotNull String tokenFromItemSourceFailClosed(
-            @Nullable RegistryIntrospectionSource src,
+            @Nullable RegistryIntrospectionSource source,
             @NotNull String fallback
     ) {
-        if (src == null) {
+        if (source == null) {
             errors.add(fallback + " is null (for naming)");
             return fallback;
         }
 
-        Optional<Holder<Item>> concrete = src.singleConcrete(Registries.ITEM);
+        Optional<Holder<Item>> concrete = source.singleConcrete(Registries.ITEM);
         if (concrete.isPresent()) {
             ResourceLocation id = concrete.get()
                     .unwrapKey()
@@ -255,42 +257,45 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
             return id.getPath();
         }
 
-        Optional<TagKey<Item>> tag = src.singleTag(Registries.ITEM);
+        Optional<TagKey<Item>> tag = source.singleTag(Registries.ITEM);
         if (tag.isPresent()) {
-            ResourceLocation id = tag.get().location();
-            return id.getPath();
+            return tag.get().location().getPath();
         }
 
         errors.add(fallback + " must be exactly one item or exactly one tag (for naming)");
         return fallback;
     }
 
-    private @NotNull String toolTokenFailClosed(@Nullable ItemSelector sel) {
-        if (sel == null || sel == ItemSelector.EMPTY) {
+    private @NotNull String toolTokenFailClosed(@Nullable ItemSelector selector) {
+        if (selector == null || selector == ItemSelector.EMPTY) {
             errors.add("tool is missing (for naming)");
             return JolCraftDictionary.TOOL;
         }
 
-        Optional<TagKey<Item>> tag = sel.singleTag(Registries.ITEM);
+        Optional<TagKey<Item>> tag = selector.singleTag(Registries.ITEM);
         if (tag.isPresent()) {
-            if (tag.get().equals(JolCraftTags.Items.ARTISAN_HAMMERS))
+            if (tag.get().equals(JolCraftTags.Items.ARTISAN_HAMMERS)) {
                 return JolCraftDictionary.HAMMER;
+            }
 
-            if (tag.get().equals(JolCraftTags.Items.CHISELS))
+            if (tag.get().equals(JolCraftTags.Items.CHISELS)) {
                 return JolCraftDictionary.CHISEL;
+            }
 
             return tag.get().location().getPath();
         }
 
-        Optional<Holder<Item>> h = sel.singleConcrete(Registries.ITEM);
-        if (h.isPresent()) {
-            Holder<Item> holder = h.get();
+        Optional<Holder<Item>> concrete = selector.singleConcrete(Registries.ITEM);
+        if (concrete.isPresent()) {
+            Holder<Item> holder = concrete.get();
 
-            if (holder.is(JolCraftTags.Items.ARTISAN_HAMMERS))
+            if (holder.is(JolCraftTags.Items.ARTISAN_HAMMERS)) {
                 return JolCraftDictionary.HAMMER;
+            }
 
-            if (holder.is(JolCraftTags.Items.CHISELS))
+            if (holder.is(JolCraftTags.Items.CHISELS)) {
                 return JolCraftDictionary.CHISEL;
+            }
 
             ResourceLocation id = holder.unwrapKey()
                     .map(ResourceKey::location)

@@ -15,8 +15,8 @@ import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectio
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -63,45 +63,44 @@ public record ItemTransforms(
     }
 
     private static <T> List<T> sanitize(List<T> in) {
-        if (in == null || in.isEmpty()) return List.of();
+        if (in == null || in.isEmpty()) {
+            return List.of();
+        }
+
         ArrayList<T> safe = new ArrayList<>(in.size());
         for (T t : in) {
-            if (t != null) safe.add(t);
+            if (t != null) {
+                safe.add(t);
+            }
         }
+
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        ArrayList<RegistryIntrospectionSource> srcs = new ArrayList<>(8);
+        ArrayList<RegistryIntrospectionSource> sources = new ArrayList<>(enchantments.size() + components.size());
 
-        List<EnchantmentTransform> es = enchantments == null ? List.of() : enchantments;
-        for (EnchantmentTransform t : es) {
-            if (t != null) srcs.add(t);
+        sources.addAll(enchantments);
+        sources.addAll(components);
+
+        if (sources.isEmpty()) {
+            return List.of();
         }
 
-        List<ComponentTransform> cs = components == null ? List.of() : components;
-        for (ComponentTransform t : cs) {
-            if (t != null) srcs.add(t);
-        }
+        ArrayList<RegistryIntrospection> merged =
+                new ArrayList<>(RegistryIntrospectionSource.mergeByRegistry(sources));
 
-        if (srcs.isEmpty()) return List.of();
-
-        List<RegistryIntrospection> merged = RegistryIntrospectionSource.mergeByRegistry(srcs);
         merged.sort(Comparator.comparing(r -> r.registryKey().location()));
+
         return List.copyOf(merged);
     }
 
     @Override
-    public DataResult<ItemTransforms> validate() {
-        List<EnchantmentTransform> es = enchantments == null ? List.of() : enchantments;
-        List<ComponentTransform> cs = components == null ? List.of() : components;
-
-        for (EnchantmentTransform t : es) {
-            if (t == null) continue;
-
-            DataResult<EnchantmentTransform> r = t.validate();
-            var error = r.error();
+    public @NotNull DataResult<ItemTransforms> validate() {
+        for (EnchantmentTransform t : enchantments) {
+            DataResult<EnchantmentTransform> result = t.validate();
+            var error = result.error();
             if (error.isPresent()) {
                 String msg = error.map(DataResult.Error::message).orElse("invalid enchantment transform");
                 return SelfValidating.invalid(
@@ -110,11 +109,9 @@ public record ItemTransforms(
             }
         }
 
-        for (ComponentTransform t : cs) {
-            if (t == null) continue;
-
-            DataResult<ComponentTransform> r = t.validate();
-            var error = r.error();
+        for (ComponentTransform t : components) {
+            DataResult<ComponentTransform> result = t.validate();
+            var error = result.error();
             if (error.isPresent()) {
                 String msg = error.map(DataResult.Error::message).orElse("invalid component transform");
                 return SelfValidating.invalid(
@@ -131,30 +128,30 @@ public record ItemTransforms(
             @Nullable ItemTransformSourceResolver resolver,
             @NotNull ItemStack output
     ) {
-        if (output.isEmpty()) return;
+        if (output.isEmpty()) {
+            return;
+        }
 
         DifficultyInstance difficulty =
                 ctx.level().getCurrentDifficultyAt(ctx.player().blockPosition());
 
         for (EnchantmentTransform t : enchantments) {
-            if (t != null) {
-                t.apply(ctx, output, difficulty);
-            }
+            t.apply(ctx, output, difficulty);
         }
 
         for (ComponentTransform t : components) {
-            if (t == null) continue;
-
             ItemStack input = ItemStack.EMPTY;
 
-            if (resolver != null && t instanceof ComponentTransform.Config c) {
-                String source = c.source();
+            if (resolver != null && t instanceof ComponentTransform.Config config) {
+                String source = config.source();
                 if (source != null) {
                     input = resolver.resolveItemTransformSource(source);
                 }
             }
 
-            if (t.requiresInput() && input.isEmpty()) continue;
+            if (t.requiresInput() && input.isEmpty()) {
+                continue;
+            }
 
             t.apply(input, output);
         }
@@ -166,7 +163,7 @@ public record ItemTransforms(
 
     public boolean requiresInputSource() {
         for (ComponentTransform t : components) {
-            if (t != null && t.requiresInput()) {
+            if (t.requiresInput()) {
                 return true;
             }
         }

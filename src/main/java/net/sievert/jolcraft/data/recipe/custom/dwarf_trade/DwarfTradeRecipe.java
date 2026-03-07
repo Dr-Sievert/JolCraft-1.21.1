@@ -539,12 +539,14 @@ public record DwarfTradeRecipe(
         if (recipe.stats().priceMultiplier() < 0.0F)
             return DataResult.error(() -> "price_multiplier must be >= 0");
 
-        if (!recipe.costA().exactlyOneConcrete(Registries.ITEM)) {
-            return DataResult.error(() -> "cost_a must be a specific item");
+        if (!recipe.costA().exactlyOneConcrete(Registries.ITEM) && !recipe.costA().exactlyOneTag(Registries.ITEM)) {
+            return DataResult.error(() -> "cost_a must be a specific item or single tag");
         }
 
-        if (recipe.costB() != ItemInput.EMPTY && !recipe.costB().exactlyOneConcrete(Registries.ITEM)) {
-            return DataResult.error(() -> "cost_b must be a specific item");
+        if (recipe.costB() != ItemInput.EMPTY
+                && !recipe.costB().exactlyOneConcrete(Registries.ITEM)
+                && !recipe.costB().exactlyOneTag(Registries.ITEM)) {
+            return DataResult.error(() -> "cost_b must be a specific item or single tag");
         }
 
         ItemOutput out = recipe.result();

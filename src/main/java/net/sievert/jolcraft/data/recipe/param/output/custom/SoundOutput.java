@@ -27,24 +27,19 @@ import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 @MethodsReturnNonnullByDefault
 public record SoundOutput(
-        @Nullable Holder<SoundEvent> sound,
-        @Nullable WorldAnchor anchor,
+        Holder<SoundEvent> sound,
+        WorldAnchor anchor,
         float volume,
         float pitch
 ) implements OutputParam, SelfValidating<SoundOutput>, RegistryIntrospectable {
 
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.SOUND, JolCraftDictionary.OUTPUT));
-
-    public static final SoundOutput EMPTY =
-            new SoundOutput(null, null, 0.0F, 1.0F);
 
     // ---------------------------------------------------------------------
     // CODEC
@@ -59,19 +54,17 @@ public record SoundOutput(
     private static final Codec<SoundOutput> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     SOUND_CODEC.fieldOf(JolCraftParameterIds.SOUND)
-                            .forGetter(v -> v.sound),
+                            .forGetter(SoundOutput::sound),
 
-                    ANCHOR_CODEC.optionalFieldOf(JolCraftParameterIds.POSITION)
-                            .forGetter(v -> Optional.ofNullable(v.anchor)),
+                    ANCHOR_CODEC.optionalFieldOf(JolCraftParameterIds.POSITION, WorldAnchor.PLAYER)
+                            .forGetter(SoundOutput::anchor),
 
                     Codec.FLOAT.optionalFieldOf(JolCraftParameterIds.VOLUME, 1.0F)
                             .forGetter(SoundOutput::volume),
 
                     Codec.FLOAT.optionalFieldOf(JolCraftParameterIds.PITCH, 1.0F)
                             .forGetter(SoundOutput::pitch)
-            ).apply(instance, (s, aOpt, vol, pit) ->
-                    new SoundOutput(s, aOpt.orElse(null), vol, pit)
-            ));
+            ).apply(instance, SoundOutput::new));
 
     public static final Codec<SoundOutput> CODEC =
             ParamCodecs.validated(RAW_CODEC);
@@ -86,29 +79,17 @@ public record SoundOutput(
     public static final StreamCodec<RegistryFriendlyByteBuf, SoundOutput> STREAM_CODEC =
             StreamCodec.of(
                     (buf, value) -> {
-                        Holder<SoundEvent> s = value.sound;
-                        buf.writeBoolean(s != null);
-                        if (s != null) {
-                            SOUND_STREAM.encode(buf, s);
-                        }
-
-                        WorldAnchor.encodeOptional(buf, value.anchor);
+                        SOUND_STREAM.encode(buf, value.sound);
+                        WorldAnchor.STREAM_CODEC.encode(buf, value.anchor);
                         buf.writeFloat(value.volume);
                         buf.writeFloat(value.pitch);
                     },
-                    buf -> {
-                        Holder<SoundEvent> s = null;
-                        if (buf.readBoolean()) {
-                            s = SOUND_STREAM.decode(buf);
-                        }
-
-                        WorldAnchor anchor = WorldAnchor.decodeOptional(buf);
-
-                        float volume = buf.readFloat();
-                        float pitch = buf.readFloat();
-
-                        return new SoundOutput(s, anchor, volume, pitch);
-                    }
+                    buf -> new SoundOutput(
+                            SOUND_STREAM.decode(buf),
+                            WorldAnchor.STREAM_CODEC.decode(buf),
+                            buf.readFloat(),
+                            buf.readFloat()
+                    )
             );
 
     // ---------------------------------------------------------------------
@@ -122,8 +103,6 @@ public record SoundOutput(
 
     @Override
     public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
-
-        if (sound == null) return List.of();
 
         if (!Float.isFinite(volume) || volume < 0.0F) return List.of();
         if (!Float.isFinite(pitch) || pitch <= 0.0F) return List.of();
@@ -141,10 +120,7 @@ public record SoundOutput(
 
     @Override
     public @NotNull RegistryIntrospection introspection() {
-        Holder<SoundEvent> h = sound;
-        return (h != null)
-                ? RegistryIntrospection.single(Registries.SOUND_EVENT, h)
-                : RegistryIntrospection.mixed(Registries.SOUND_EVENT, 0, false);
+        return RegistryIntrospection.single(Registries.SOUND_EVENT, sound);
     }
 
     // ---------------------------------------------------------------------
@@ -153,9 +129,6 @@ public record SoundOutput(
 
     @Override
     public @NotNull DataResult<SoundOutput> validate() {
-        if (sound == null) {
-            return SelfValidating.invalid("Missing required field: '" + JolCraftParameterIds.SOUND + "'");
-        }
 
         if (!Float.isFinite(volume) || volume < 0.0F) {
             return SelfValidating.invalid("'" + JolCraftParameterIds.VOLUME + "' must be finite and >= 0");
@@ -172,15 +145,12 @@ public record SoundOutput(
     // CREATION
     // ---------------------------------------------------------------------
 
-    public static SoundOutput of(@Nullable SoundEvent sound, float volume, float pitch) {
-        if (sound == null) return EMPTY;
-
+    public static @NotNull SoundOutput of(@NotNull SoundEvent sound, float volume, float pitch) {
         Holder<SoundEvent> holder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
-
-        return new SoundOutput(holder, null, volume, pitch);
+        return new SoundOutput(holder, WorldAnchor.PLAYER, volume, pitch);
     }
 
-    public static SoundOutput of(@Nullable SoundEvent sound) {
+    public static @NotNull SoundOutput of(@NotNull SoundEvent sound) {
         return of(sound, 1.0F, 1.0F);
     }
 }

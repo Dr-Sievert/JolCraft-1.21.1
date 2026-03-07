@@ -146,7 +146,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MISSING = "missing";
     public static final String NONE = "none";
     public static final String NEVER = "never";
-    public static final String OFF = "off";
     public static final String OLD = "old";
     public static final String OUT = "out";
     public static final String PARTIAL = "partial";
@@ -154,6 +153,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PLACED = "placed";
     public static final String PLANTABLE = "plantable";
     public static final String POTTED = "potted";
+    public static final String PRESERVING = "preserving";
     public static final String PURE = "pure";
     public static final String RANDOM = "random";
     public static final String REQUIRED = "required";
@@ -484,6 +484,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SEED = "seed";
     public static final String SELECTOR = "selector";
     public static final String SETTING = "setting";
+    public static final String SHAPELESS = "shapeless";
     public static final String SHIELD = "shield";
     public static final String SHIFT = "shift";
     public static final String SHOVEL = "shovel";

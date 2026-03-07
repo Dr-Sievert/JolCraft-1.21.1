@@ -1,11 +1,8 @@
 package net.sievert.jolcraft.data.recipe;
 
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.SmithingTrimRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.sievert.jolcraft.JolCraft;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -16,7 +13,7 @@ import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCau
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
-import net.sievert.jolcraft.data.recipe.custom.vanilla.AttributeSmithingTrimRecipe;
+import net.sievert.jolcraft.data.recipe.custom.vanilla.*;
 
 public final class JolCraftRecipes {
 
@@ -28,6 +25,9 @@ public final class JolCraftRecipes {
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SmithingTrimRecipe>> ATTRIBUTE_SMITHING_TRIM_SERIALIZER =
             SERIALIZERS.register(JolCraftRecipeIds.ATTRIBUTE_SMITHING_TRIM, AttributeSmithingTrimRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CraftingRecipe>> COMPONENT_PRESERVING_SHAPELESS_SERIALIZER =
+            SERIALIZERS.register(JolCraftRecipeIds.COMPONENT_PRESERVING_SHAPELESS, ComponentPreservingShapelessRecipe.Serializer::new);
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<HandInteractionRecipe>> HAND_INTERACTION_SERIALIZER =
             SERIALIZERS.register(JolCraftRecipeIds.HAND_INTERACTION, HandInteractionRecipe.Serializer::new);

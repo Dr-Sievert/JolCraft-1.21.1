@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.custom;
 
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -38,7 +37,7 @@ import java.util.Optional;
  * - never throws
  * - never saves
  * - name via {@link RecipeFileNameBuilder}
- * - validation via {@link HandInteractionRecipe.Serializer#CODEC} validate hook (param validate)
+ * - validation via {@link HandInteractionRecipe#validateRecipe(HandInteractionRecipe)}
  *
  * Naming policy (deterministic, fail-closed):
  * hand_interaction_<a>_<actionA>__<b>_<actionB>[_sneak]
@@ -50,7 +49,7 @@ import java.util.Optional;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-@SuppressWarnings({"UnusedReturnValue"})
+@SuppressWarnings("UnusedReturnValue")
 public final class HandInteractionRecipeBuilder implements RecipeBuilder {
 
     private final List<String> errors = new ArrayList<>();
@@ -62,8 +61,9 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     private ItemIngredientAction actionB = ItemIngredientAction.CATALYST;
 
     private Outputs output = Outputs.EMPTY;
-    private SoundOutput successSound = SoundOutput.EMPTY;
-    private SoundOutput failSound = SoundOutput.EMPTY;
+
+    private @Nullable SoundOutput successSound;
+    private @Nullable SoundOutput failSound;
 
     private boolean requireSneaking = false;
 
@@ -79,6 +79,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             this.ingredientA = ItemInput.EMPTY;
             return this;
         }
+
         this.ingredientA = in;
         return this;
     }
@@ -89,10 +90,12 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             this.ingredientA = ItemInput.EMPTY;
             return this;
         }
+
         ItemInput built = ItemInputBuilder.create()
                 .item(item)
                 .count(IntRange.fixed(Math.max(1, count)))
                 .build();
+
         return ingredientA(built);
     }
 
@@ -106,6 +109,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             this.actionA = ItemIngredientAction.CATALYST;
             return this;
         }
+
         this.actionA = action;
         return this;
     }
@@ -116,6 +120,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             this.ingredientB = ItemInput.EMPTY;
             return this;
         }
+
         this.ingredientB = in;
         return this;
     }
@@ -126,10 +131,12 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             this.ingredientB = ItemInput.EMPTY;
             return this;
         }
+
         ItemInput built = ItemInputBuilder.create()
                 .item(item)
                 .count(IntRange.fixed(Math.max(1, count)))
                 .build();
+
         return ingredientB(built);
     }
 
@@ -143,6 +150,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             this.actionB = ItemIngredientAction.CATALYST;
             return this;
         }
+
         this.actionB = action;
         return this;
     }
@@ -153,6 +161,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             this.output = Outputs.EMPTY;
             return this;
         }
+
         this.output = out;
         return this;
     }
@@ -160,9 +169,10 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     public @NotNull HandInteractionRecipeBuilder successSound(@Nullable SoundOutput sound) {
         if (sound == null) {
             errors.add("success_sound is null");
-            this.successSound = SoundOutput.EMPTY;
+            this.successSound = null;
             return this;
         }
+
         this.successSound = sound;
         return this;
     }
@@ -170,9 +180,10 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     public @NotNull HandInteractionRecipeBuilder failSound(@Nullable SoundOutput sound) {
         if (sound == null) {
             errors.add("fail_sound is null");
-            this.failSound = SoundOutput.EMPTY;
+            this.failSound = null;
             return this;
         }
+
         this.failSound = sound;
         return this;
     }
@@ -195,14 +206,18 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
         String aAct = actionToken(actionA);
         String bAct = actionToken(actionB);
 
-        DataResult<String> built = RecipeFileNameBuilder.create()
+        RecipeFileNameBuilder builder = RecipeFileNameBuilder.create()
                 .word(JolCraftRecipeIds.HAND_INTERACTION)
                 .word(aTok)
                 .word(aAct)
                 .word(bTok)
-                .word(bAct)
-                .word(requireSneaking ? JolCraftDictionary.SNEAK : null)
-                .build();
+                .word(bAct);
+
+        if (requireSneaking) {
+            builder.word(JolCraftDictionary.SNEAK);
+        }
+
+        DataResult<String> built = builder.build();
 
         if (errors.isEmpty()) {
             return built;
@@ -214,15 +229,22 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
         return DataResult.error(() -> msg, partial);
     }
 
-    private String actionToken(@Nullable ItemIngredientAction a) {
-        if (a == null) {
+    private @NotNull String actionToken(@Nullable ItemIngredientAction action) {
+        if (action == null) {
             errors.add("action is null (for naming)");
             return JolCraftDictionary.UNKNOWN;
         }
-        return a.type().getId();
+
+        String id = action.type().getId();
+        if (id == null || id.isBlank()) {
+            errors.add("action token is null/blank (for naming)");
+            return JolCraftDictionary.UNKNOWN;
+        }
+
+        return id;
     }
 
-    private String tokenFromIngredientFailClosed(@NotNull ItemInput in, @NotNull String label) {
+    private @NotNull String tokenFromIngredientFailClosed(@NotNull ItemInput in, @NotNull String label) {
         if (in == ItemInput.EMPTY) {
             errors.add(label + " is missing");
             return JolCraftDictionary.UNKNOWN;
@@ -254,30 +276,35 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
-        HandInteractionRecipe r = new HandInteractionRecipe(
-                ingredientA == null ? ItemInput.EMPTY : ingredientA,
-                actionA == null ? ItemIngredientAction.CATALYST : actionA,
-                ingredientB == null ? ItemInput.EMPTY : ingredientB,
-                actionB == null ? ItemIngredientAction.CATALYST : actionB,
-                output == null ? Outputs.EMPTY : output,
-                successSound == null ? SoundOutput.EMPTY : successSound,
-                failSound == null ? SoundOutput.EMPTY : failSound,
+        if (successSound == null) {
+            errors.add("success_sound is required");
+        }
+
+        if (failSound == null) {
+            errors.add("fail_sound is required");
+        }
+
+        DataResult<String> nameResult = recipeNameValidated();
+
+        if (!errors.isEmpty()) {
+            return nameResult.flatMap(name ->
+                    DataResult.error(() -> "builder: " + String.join("; ", errors))
+            );
+        }
+
+        HandInteractionRecipe recipe = new HandInteractionRecipe(
+                ingredientA,
+                actionA,
+                ingredientB,
+                actionB,
+                output,
+                successSound,
+                failSound,
                 requireSneaking
         );
 
-        DataResult<HandInteractionRecipe> validated =
-                HandInteractionRecipe.Serializer.CODEC.codec()
-                        .encodeStart(JsonOps.INSTANCE, r)
-                        .flatMap(json -> HandInteractionRecipe.Serializer.CODEC.codec().parse(JsonOps.INSTANCE, json))
-                        .map(x -> r);
-
-        DataResult<HandInteractionRecipe> recipeResult =
-                (!errors.isEmpty() && validated.error().isEmpty())
-                        ? DataResult.error(() -> "builder: " + String.join("; ", errors), r)
-                        : validated;
-
-        return recipeNameValidated().flatMap(name ->
-                recipeResult.flatMap(validRecipe ->
+        return nameResult.flatMap(name ->
+                HandInteractionRecipe.validateRecipe(recipe).flatMap(validRecipe ->
                         RecipeEmission.of(
                                 JolCraftRecipeIds.HAND_INTERACTION,
                                 name,
