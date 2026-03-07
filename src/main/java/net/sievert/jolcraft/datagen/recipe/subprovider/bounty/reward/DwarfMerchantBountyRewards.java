@@ -15,7 +15,7 @@ import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemT
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.build.custom.bounty.BountyRewardRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyRewardRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;

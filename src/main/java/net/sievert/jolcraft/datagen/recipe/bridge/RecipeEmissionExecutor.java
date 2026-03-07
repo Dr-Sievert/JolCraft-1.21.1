@@ -4,7 +4,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Recipe;
-import net.sievert.jolcraft.datagen.recipe.build.base.OrderedBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.base.OrderedBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 

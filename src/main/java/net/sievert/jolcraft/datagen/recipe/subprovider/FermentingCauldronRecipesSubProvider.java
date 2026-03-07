@@ -16,8 +16,8 @@ import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSel
 import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.build.custom.FermentingCauldronRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.build.param.input.item.selector.ItemIngredientBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.custom.FermentingCauldronRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

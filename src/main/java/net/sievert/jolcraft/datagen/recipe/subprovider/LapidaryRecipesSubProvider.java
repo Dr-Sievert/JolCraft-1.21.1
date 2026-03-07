@@ -15,9 +15,9 @@ import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemT
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.build.custom.LapidaryBenchRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.build.param.input.item.ItemInputBuilder;
-import net.sievert.jolcraft.datagen.recipe.build.param.input.item.selector.ItemIngredientBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.custom.LapidaryBenchRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.ItemInputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
