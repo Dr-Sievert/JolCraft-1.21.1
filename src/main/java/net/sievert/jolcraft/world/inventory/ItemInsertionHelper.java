@@ -19,6 +19,7 @@ import java.util.function.Consumer;
  * - When only a {@link Container} + index is provided, no per-slot eligibility rules exist (caller controls routing).
  * - "Inventory" means player inventory items only: indices [0, 36). No armor/offhand.
  */
+@SuppressWarnings("UnusedReturnValue")
 public final class ItemInsertionHelper {
 
     private ItemInsertionHelper() {}

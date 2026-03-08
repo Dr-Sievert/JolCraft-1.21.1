@@ -274,20 +274,17 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             return;
         }
 
-        DwarfMerchantOffers out = this.offers;
-        if (out == null) {
-            this.offers = out = new DwarfMerchantOffers();
-        }
-
-        out.clear();
+        DwarfMerchantOffers rebuilt = new DwarfMerchantOffers();
 
         DwarfProfession profession = getTradeProfession();
         DwarfMerchantData.Level level = DwarfMerchantData.Level.fromId(this.getMerchantLevel());
 
         var recipes = DwarfTrades.getTradeRecipesForMode(serverLevel, profession, level, this.random, mode);
         for (var holder : recipes) {
-            addOfferFromRecipe(out, holder.value());
+            addOfferFromRecipe(rebuilt, holder.value());
         }
+
+        this.offers = rebuilt;
     }
 
     protected void addOfferFromRecipe(DwarfMerchantOffers out, DwarfTradeRecipe recipe) {
@@ -493,12 +490,19 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     @Override
     public void openTradingScreen(Player player, Component displayName, int level) {
+        this.setTradingPlayer(player);
+
         OptionalInt menuId = player.openMenu(new SimpleMenuProvider(
                 (containerId, inventory, accessingPlayer) -> new DwarfMerchantMenu(containerId, inventory, this),
                 displayName
         ));
 
-        if (menuId.isPresent() && !player.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
+        if (menuId.isEmpty()) {
+            this.setTradingPlayer(null);
+            return;
+        }
+
+        if (!player.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
             DwarfMerchantOffers offers = this.getOffers();
             if (!offers.isEmpty()) {
                 JolCraftNetworking.sendToClient(

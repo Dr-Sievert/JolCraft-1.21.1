@@ -15,13 +15,12 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomRecipe;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
@@ -122,15 +121,14 @@ public record LapidaryBenchRecipe(
 
         private static final StreamCodec<RegistryFriendlyByteBuf, ItemOutput> RESULT_STREAM_CODEC =
                 StreamCodec.of(
-                        OutputDispatch.STREAM_CODEC::encode,
-                        buf -> {
-                            OutputParam op = OutputDispatch.STREAM_CODEC.decode(buf);
-                            OutputParam leaf = OutputParam.unwrap(op);
-                            if (leaf instanceof ItemOutput io) {
-                                return io;
-                            }
-                            throw new IllegalStateException("Lapidary bench result must decode to item_output");
-                        }
+                        OutputParam.STREAM_CODEC::encode,
+                        buf -> requireItemOutput(OutputParam.STREAM_CODEC.decode(buf))
+                );
+
+        private static final com.mojang.serialization.Codec<ItemOutput> RESULT_CODEC =
+                OutputParam.CODEC.comapFlatMap(
+                        Serializer::requireItemOutputResult,
+                        io -> io
                 );
 
         public static final MapCodec<LapidaryBenchRecipe> CODEC =
@@ -143,20 +141,8 @@ public record LapidaryBenchRecipe(
                                 .fieldOf(JolCraftDictionary.TOOL)
                                 .forGetter(LapidaryBenchRecipe::tool),
 
-                        OutputDispatch.CODEC
+                        RESULT_CODEC
                                 .fieldOf(JolCraftDictionary.RESULT)
-                                .flatXmap(
-                                        op -> {
-                                            OutputParam leaf = OutputParam.unwrap(op);
-                                            if (leaf instanceof ItemOutput io) {
-                                                return DataResult.success(io);
-                                            }
-                                            return DataResult.error(() ->
-                                                    "result must be item_output for lapidary bench recipes"
-                                            );
-                                        },
-                                        DataResult::success
-                                )
                                 .forGetter(LapidaryBenchRecipe::result),
 
                         SoundOutput.CODEC
@@ -199,13 +185,29 @@ public record LapidaryBenchRecipe(
             return STREAM_CODEC;
         }
 
+        private static @NotNull DataResult<ItemOutput> requireItemOutputResult(OutputParam param) {
+            if (param instanceof ItemOutput io) {
+                return DataResult.success(io);
+            }
+            return DataResult.error(() ->
+                    "result must be item_output for lapidary bench recipes"
+            );
+        }
+
+        private static @NotNull ItemOutput requireItemOutput(OutputParam param) {
+            return requireItemOutputResult(param)
+                    .result()
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("result must be item_output for lapidary bench recipes"));
+        }
+
         private static @NotNull DataResult<LapidaryBenchRecipe> validate(LapidaryBenchRecipe recipe) {
             String toolDamageKey = JolCraftStrings.underscored(
                     JolCraftDictionary.TOOL,
                     JolCraftDictionary.DAMAGE
             );
 
-            DataResult<LapidaryBenchRecipe> base = JolCraftRecipeValidation.validate(recipe)
+            DataResult<LapidaryBenchRecipe> base = RecipeValidation.validate(recipe)
                     .requireValid(recipe.input(), JolCraftDictionary.INPUT)
                     .requireValid(recipe.tool(), JolCraftDictionary.TOOL)
                     .requireValid(recipe.result(), JolCraftDictionary.RESULT)

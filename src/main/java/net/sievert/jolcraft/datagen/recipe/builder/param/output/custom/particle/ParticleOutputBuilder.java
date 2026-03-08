@@ -1,11 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.particle;
 
 import com.mojang.serialization.DataResult;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
 import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleProducer;
 import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleSpec;
@@ -13,12 +9,18 @@ import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Datagen-only builder for {@link ParticleOutput}.
+ *
+ * Policy:
+ * - No throwing, no logging during validated build.
+ * - Missing required fields return {@link DataResult#error}.
+ * - Delegates final semantic validation to {@link ParticleOutput#validate()}.
+ */
 public final class ParticleOutputBuilder {
 
-    private @Nullable ParticleOptions particle;
-    private IntRange count = IntRange.ONE;
-    private @Nullable WorldAnchor anchor;
-    private ParticleOutput.Vec3f spread = ParticleOutput.Vec3f.zero();
+    private @Nullable ParticleSpec spec;
+    private @Nullable IntRange count;
     private float speed = 0.0F;
 
     private ParticleOutputBuilder() {}
@@ -27,13 +29,26 @@ public final class ParticleOutputBuilder {
         return new ParticleOutputBuilder();
     }
 
-    public @NotNull ParticleOutputBuilder particle(@Nullable ParticleOptions particle) {
-        this.particle = particle;
+    public @NotNull ParticleOutputBuilder spec(@Nullable ParticleSpec spec) {
+        this.spec = spec;
+        return this;
+    }
+
+    public @NotNull ParticleOutputBuilder particle(
+            @Nullable ParticleProducer producer,
+            @Nullable ParticleOptions particle
+    ) {
+        if (producer == null || particle == null) {
+            this.spec = null;
+            return this;
+        }
+
+        this.spec = new ParticleSpec(producer, particle);
         return this;
     }
 
     public @NotNull ParticleOutputBuilder count(@Nullable IntRange count) {
-        this.count = count != null ? count : IntRange.ONE;
+        this.count = count;
         return this;
     }
 
@@ -42,49 +57,32 @@ public final class ParticleOutputBuilder {
         return this;
     }
 
-    public @NotNull ParticleOutputBuilder anchor(@Nullable WorldAnchor anchor) {
-        this.anchor = anchor;
-        return this;
-    }
-
-    public @NotNull ParticleOutputBuilder spread(@Nullable ParticleOutput.Vec3f spread) {
-        this.spread = spread != null ? spread : ParticleOutput.Vec3f.zero();
-        return this;
-    }
-
-    public @NotNull ParticleOutputBuilder spread(float x, float y, float z) {
-        this.spread = new ParticleOutput.Vec3f(x, y, z);
-        return this;
-    }
-
     public @NotNull ParticleOutputBuilder speed(float speed) {
         this.speed = speed;
         return this;
     }
 
-    public @NotNull DataResult<ParticleOutput> build() {
-        if (particle == null) {
-            return DataResult.error(() -> "Missing required field: 'particle'");
+    public @NotNull DataResult<ParticleOutput> buildValidated() {
+        ParticleSpec s = this.spec;
+        IntRange c = this.count;
+        float sp = this.speed;
+
+        if (s == null) {
+            return DataResult.error(() -> "Missing required field: 'spec'");
         }
-        if (count == null) {
+
+        if (c == null) {
             return DataResult.error(() -> "Missing required field: 'count'");
         }
-        if (spread == null) {
-            return DataResult.error(() -> "Missing required field: 'spread'");
-        }
-        if (!Float.isFinite(speed) || speed < 0.0F) {
+
+        if (!Float.isFinite(sp) || sp < 0.0F) {
             return DataResult.error(() -> "'speed' must be finite and >= 0");
         }
 
-        ParticleType<?> type = particle.getType();
-        Holder<ParticleType<?>> typeHolder = BuiltInRegistries.PARTICLE_TYPE.wrapAsHolder(type);
+        return new ParticleOutput(s, c, sp).validate();
+    }
 
-        ParticleSpec spec = new ParticleSpec(
-                ParticleProducer.of(typeHolder),
-                particle
-        );
-
-        ParticleOutput out = new ParticleOutput(spec, count, anchor, spread, speed);
-        return out.validate();
+    public @NotNull ParticleOutput build() {
+        return buildValidated().getOrThrow(IllegalStateException::new);
     }
 }

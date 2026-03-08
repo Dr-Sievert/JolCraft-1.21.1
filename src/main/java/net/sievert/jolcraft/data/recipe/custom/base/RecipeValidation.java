@@ -1,15 +1,15 @@
-package net.sievert.jolcraft.data.recipe;
+package net.sievert.jolcraft.data.recipe.custom.base;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public final class JolCraftRecipeValidation {
+public final class RecipeValidation {
 
-    private JolCraftRecipeValidation() {}
+    private RecipeValidation() {}
 
     // ---------------------------------------------------------------------
     // Required / null checks
@@ -62,7 +62,7 @@ public final class JolCraftRecipeValidation {
 
         public @NotNull Validator<R> require(@Nullable Object v, @NotNull String name) {
             if (state.error().isPresent()) return this;
-            var err = JolCraftRecipeValidation.require(v, name).error();
+            var err = RecipeValidation.require(v, name).error();
             if (err.isPresent()) {
                 var e = err.orElseThrow();
                 state = DataResult.error(e::message);
@@ -75,7 +75,7 @@ public final class JolCraftRecipeValidation {
                 @NotNull String name
         ) {
             if (state.error().isPresent()) return this;
-            var err = JolCraftRecipeValidation.requireValid(v, name).error();
+            var err = RecipeValidation.requireValid(v, name).error();
             if (err.isPresent()) {
                 var e = err.orElseThrow();
                 state = DataResult.error(e::message);

@@ -168,6 +168,7 @@ public record ItemIngredientAction(
      * Contract:
      * - Creative players => no-op
      * - Fail-closed: empty stack => no-op
+     * - Missing player for player-dependent behavior => no-op
      * - CONSUME shrinks by amount (clamped)
      * - DAMAGE uses vanilla hurtAndBreak (break is allowed)
      * - CATALYST => no-op
@@ -177,13 +178,17 @@ public record ItemIngredientAction(
             @NotNull ItemStack stack,
             @NotNull ItemIngredientAction action
     ) {
-        if (stack.isEmpty()) return;
-
-        Player p = ctx.player();
-        if (p.isCreative()) return;
+        if (stack.isEmpty()) {
+            return;
+        }
 
         Type t = action.type();
         if (t == Type.CATALYST) {
+            return;
+        }
+
+        Player player = ctx.player();
+        if (player != null && player.isCreative()) {
             return;
         }
 
@@ -198,9 +203,11 @@ public record ItemIngredientAction(
         }
 
         if (t == Type.DAMAGE) {
-            if (!stack.isDamageableItem()) return;
+            if (!stack.isDamageableItem()) {
+                return;
+            }
 
-            if (!(p instanceof ServerPlayer sp)) {
+            if (!(player instanceof ServerPlayer sp)) {
                 return;
             }
 
@@ -210,7 +217,7 @@ public record ItemIngredientAction(
                     sp,
                     brokenItem -> ctx.level().playSound(
                             null,
-                            ctx.player().blockPosition(),
+                            sp.blockPosition(),
                             brokenItem.getBreakingSound(),
                             sp.getSoundSource(),
                             1.0F,
@@ -230,7 +237,6 @@ public record ItemIngredientAction(
 
     private static @NotNull DataResult<ItemIngredientAction> validateAndNormalize(@NotNull ItemIngredientAction a) {
         Type t = a.type();
-
         Integer amt = a.amount();
 
         if (t == Type.CATALYST) {

@@ -11,10 +11,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
@@ -91,10 +91,13 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
             player.giveExperiencePoints(xp);
         }
 
-        SoundOutput s = r.recipe.sound();
-        if (s != null) {
-            JolCraftSoundHelper.player(player, s.sound().value(), s.volume(), s.pitch());
-        }
+        SoundOutput sound = r.recipe.sound();
+        JolCraftSoundHelper.player(
+                player,
+                sound.sound().value(),
+                sound.volume(),
+                sound.pitch()
+        );
 
         JolCraftParticleHelper.spawn(
                 level,
@@ -102,9 +105,11 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
                 player.getX(),
                 player.getY() + 1.1D,
                 player.getZ(),
+                1,
                 (level.random.nextDouble() - 0.5D) * 0.24D,
                 level.random.nextDouble() * 0.10D,
-                (level.random.nextDouble() - 0.5D) * 0.24D
+                (level.random.nextDouble() - 0.5D) * 0.24D,
+                0.0D
         );
     }
 
@@ -174,7 +179,6 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
         if (opt.isEmpty()) return Optional.empty();
 
         LapidaryBenchRecipe recipe = opt.get().value();
-
         if (!recipe.matches(in, level)) return Optional.empty();
 
         ItemStack result = recipe.assemble(in, level.registryAccess());

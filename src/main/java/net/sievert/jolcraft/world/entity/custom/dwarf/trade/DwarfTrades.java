@@ -4,7 +4,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -15,10 +14,9 @@ import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
+import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.Nullable;
@@ -50,30 +48,34 @@ public final class DwarfTrades {
             if (recipe == null || recipe == DwarfTradeRecipe.EMPTY) return null;
             if (!(trader.level() instanceof ServerLevel serverLevel)) return null;
 
-            Player player = trader.getTradingPlayer();
-            if (player == null) return null;
-
-            WorldContext ctx = new WorldContext(
-                    serverLevel,
-                    player,
-                    trader
-            );
+            WorldContext ctx = new WorldContext(serverLevel, null, trader);
 
             ItemStack costAStack = materializeCost(recipe.costA(), ctx);
             if (costAStack.isEmpty()) return null;
 
+            ItemStack costBConcrete = ItemStack.EMPTY;
             Optional<ItemStack> costBStack = Optional.empty();
-            if (recipe.costB() != null && recipe.costB() != ItemInput.EMPTY) {
-                ItemStack b = materializeCost(recipe.costB(), ctx);
-                if (b.isEmpty()) return null;
-                costBStack = Optional.of(b);
+
+            if (recipe.costB() != ItemInput.EMPTY) {
+                costBConcrete = materializeCost(recipe.costB(), ctx);
+                if (costBConcrete.isEmpty()) return null;
+                costBStack = Optional.of(costBConcrete);
             }
 
-            ItemStack out = materializeResult(recipe.result(), ctx);
+            DwarfTradeRecipeInput input = new DwarfTradeRecipeInput(
+                    ctx,
+                    trader.getTradeProfession(),
+                    DwarfMerchantData.Level.fromId(trader.getMerchantLevel()),
+                    costAStack.copy(),
+                    costBConcrete.copy()
+            );
+
+            ItemStack out = recipe.assemble(input, serverLevel.registryAccess());
             if (out.isEmpty()) return null;
 
-            DwarfTradeRecipe.TradeStats stats = recipe.stats();
-            if (stats == null) stats = DwarfTradeRecipe.TradeStats.DEFAULT;
+            DwarfTradeRecipe.TradeStats stats = recipe.stats() != null
+                    ? recipe.stats()
+                    : DwarfTradeRecipe.TradeStats.DEFAULT;
 
             DwarfItemCost costA = new DwarfItemCost(costAStack.getItem(), costAStack.getCount());
             Optional<DwarfItemCost> costB = costBStack.map(s -> new DwarfItemCost(s.getItem(), s.getCount()));
@@ -97,8 +99,8 @@ public final class DwarfTrades {
         private static ItemStack materializeCost(ItemInput in, WorldContext ctx) {
             if (in == null || in == ItemInput.EMPTY) return ItemStack.EMPTY;
 
-            Optional<Holder<Item>> itemOpt = in.singleConcrete(Registries.ITEM);
-            if (itemOpt.isEmpty()) return ItemStack.EMPTY;
+            Holder<Item> holder = resolveCostItem(in, ctx);
+            if (holder == null) return ItemStack.EMPTY;
 
             int rolled = 1;
             if (in.count() != null) {
@@ -106,21 +108,38 @@ public final class DwarfTrades {
             }
             if (rolled < 1) return ItemStack.EMPTY;
 
-            ItemStack stack = new ItemStack(itemOpt.get().value(), rolled);
+            ItemStack stack = new ItemStack(holder.value(), rolled);
             return in.matches(ctx, stack) ? stack : ItemStack.EMPTY;
         }
 
-        private static ItemStack materializeResult(ItemOutput out, WorldContext ctx) {
-            if (out == null || out == ItemOutput.EMPTY) return ItemStack.EMPTY;
+        @Nullable
+        private static Holder<Item> resolveCostItem(ItemInput in, WorldContext ctx) {
+            Optional<Holder<Item>> concrete = in.singleConcrete(Registries.ITEM);
+            if (concrete.isPresent()) {
+                return concrete.get();
+            }
 
-            ItemSpec spec = out.result();
-            if (spec == null || spec == ItemSpec.EMPTY) return ItemStack.EMPTY;
+            var lookup = ctx.level().registryAccess().lookupOrThrow(Registries.ITEM);
 
-            ItemStack stack = spec.create(ctx);
-            if (stack.isEmpty()) return ItemStack.EMPTY;
+            for (var introspection : in.introspections()) {
+                if (!Registries.ITEM.equals(introspection.registryKey())) continue;
 
-            out.transforms().apply(ctx, stack);
-            return stack.isEmpty() ? ItemStack.EMPTY : stack;
+                var tagOpt = introspection.singleTagOpt();
+                if (tagOpt.isEmpty()) continue;
+
+                @SuppressWarnings("unchecked")
+                var tag = (net.minecraft.tags.TagKey<Item>) tagOpt.get();
+
+                var namedOpt = lookup.get(tag);
+                if (namedOpt.isEmpty()) continue;
+
+                var named = namedOpt.get();
+                if (named.size() == 0) continue;
+
+                return named.get(0);
+            }
+
+            return null;
         }
     }
 
@@ -375,7 +394,7 @@ public final class DwarfTrades {
                 Comparator
                         .comparingInt((RecipeHolder<DwarfTradeRecipe> h) -> {
                             DwarfMerchantData.Level lvl = h.value().merchantLevel();
-                            return (lvl != null) ? lvl.getId() : 0;
+                            return lvl != null ? lvl.getId() : 0;
                         })
                         .thenComparingInt(h -> h.value().order())
                         .thenComparing(RecipeHolder::id)

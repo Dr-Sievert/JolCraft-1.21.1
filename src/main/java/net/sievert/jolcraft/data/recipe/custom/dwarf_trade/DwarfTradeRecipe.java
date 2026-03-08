@@ -21,13 +21,12 @@ import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfig;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomRecipe;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
@@ -148,15 +147,19 @@ public record DwarfTradeRecipe(
                             WeightParam.STREAM_CODEC.encode(buf, entry.weight());
                         },
                         buf -> {
-                            TradeGroup group;
-                            try {
-                                group = TradeGroup.valueOf(buf.readUtf().trim().toUpperCase(Locale.ROOT));
-                            } catch (IllegalArgumentException e) {
-                                group = TradeGroup.MAIN;
-                            }
+                            String raw = buf.readUtf();
+                            TradeGroup group = TradeGroup.fromSerialized(raw)
+                                    .result()
+                                    .orElseThrow(() ->
+                                            new IllegalArgumentException("unknown group '" + raw + "'"));
 
                             WeightParam weight = WeightParam.STREAM_CODEC.decode(buf);
-                            return new TradePoolEntry(group, weight);
+                            TradePoolEntry entry = new TradePoolEntry(group, weight);
+
+                            return validate(entry)
+                                    .result()
+                                    .orElseThrow(() ->
+                                            new IllegalArgumentException("invalid trade pool entry"));
                         }
                 );
 
@@ -331,12 +334,8 @@ public record DwarfTradeRecipe(
 
         private static final StreamCodec<RegistryFriendlyByteBuf, ItemOutput> RESULT_STREAM_CODEC =
                 StreamCodec.of(
-                        OutputDispatch.STREAM_CODEC::encode,
-                        buf -> {
-                            OutputParam op = OutputDispatch.STREAM_CODEC.decode(buf);
-                            OutputParam leaf = OutputParam.unwrap(op);
-                            return (leaf instanceof ItemOutput io) ? io : ItemOutput.EMPTY;
-                        }
+                        OutputParam.STREAM_CODEC::encode,
+                        buf -> requireItemOutput(OutputParam.STREAM_CODEC.decode(buf))
                 );
 
         private static final Codec<DwarfProfession> PROFESSION_CODEC =
@@ -364,6 +363,12 @@ public record DwarfTradeRecipe(
                             }
                         },
                         lvl -> lvl.name().toLowerCase(Locale.ROOT)
+                );
+
+        private static final Codec<ItemOutput> RESULT_CODEC =
+                OutputParam.CODEC.comapFlatMap(
+                        Serializer::requireItemOutputResult,
+                        io -> io
                 );
 
         private static final Codec<TradeStats> STATS_CODEC =
@@ -416,15 +421,7 @@ public record DwarfTradeRecipe(
                                                 ItemInput.EMPTY)
                                         .forGetter(DwarfTradeRecipe::costB),
 
-                                OutputDispatch.CODEC
-                                        .fieldOf(JolCraftDictionary.RESULT)
-                                        .xmap(
-                                                op -> {
-                                                    OutputParam leaf = OutputParam.unwrap(op);
-                                                    return (leaf instanceof ItemOutput io) ? io : ItemOutput.EMPTY;
-                                                },
-                                                io -> io != null ? io : ItemOutput.EMPTY
-                                        )
+                                RESULT_CODEC.fieldOf(JolCraftDictionary.RESULT)
                                         .forGetter(DwarfTradeRecipe::result),
 
                                 STATS_CODEC.optionalFieldOf(
@@ -452,8 +449,8 @@ public record DwarfTradeRecipe(
                             buf.writeFloat(stats.priceMultiplier());
                         },
                         buf -> {
-                            DwarfProfession profession = DwarfProfession.byId(buf.readUtf());
-                            DwarfMerchantData.Level merchantLevel = DwarfMerchantData.Level.fromId(buf.readVarInt());
+                            DwarfProfession profession = decodeProfession(buf.readUtf());
+                            DwarfMerchantData.Level merchantLevel = decodeMerchantLevel(buf.readVarInt());
                             TradePoolEntry pool = TradePoolEntry.STREAM_CODEC.decode(buf);
                             int order = buf.readVarInt();
                             ItemInput costA = ItemInput.STREAM_CODEC.decode(buf);
@@ -488,6 +485,39 @@ public record DwarfTradeRecipe(
         public @NotNull StreamCodec<RegistryFriendlyByteBuf, DwarfTradeRecipe> streamCodec() {
             return STREAM_CODEC;
         }
+
+        private static @NotNull DataResult<ItemOutput> requireItemOutputResult(OutputParam param) {
+            OutputParam leaf = OutputParam.unwrap(param);
+            if (leaf instanceof ItemOutput io) {
+                return DataResult.success(io);
+            }
+            return DataResult.error(() ->
+                    "result must decode to item_output for dwarf trades"
+            );
+        }
+
+        private static @NotNull ItemOutput requireItemOutput(OutputParam param) {
+            return requireItemOutputResult(param)
+                    .result()
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("result must decode to item_output for dwarf trades"));
+        }
+
+        private static @NotNull DwarfProfession decodeProfession(@NotNull String id) {
+            DwarfProfession profession = DwarfProfession.byId(id);
+            if (profession == null || profession == DwarfProfession.NONE) {
+                throw new IllegalArgumentException("unknown profession '" + id + "'");
+            }
+            return profession;
+        }
+
+        private static @NotNull DwarfMerchantData.Level decodeMerchantLevel(int id) {
+            DwarfMerchantData.Level level = DwarfMerchantData.Level.fromId(id);
+            if (level == null) {
+                throw new IllegalArgumentException("unknown merchant level id " + id);
+            }
+            return level;
+        }
     }
 
     private static boolean supportsSource(@NotNull String source) {
@@ -495,7 +525,7 @@ public record DwarfTradeRecipe(
     }
 
     public static @NotNull DataResult<DwarfTradeRecipe> validateRecipe(DwarfTradeRecipe r) {
-        DataResult<DwarfTradeRecipe> rr = JolCraftRecipeValidation.requireRecipe(r);
+        DataResult<DwarfTradeRecipe> rr = RecipeValidation.requireRecipe(r);
         var rrErr = rr.error();
         if (rrErr.isPresent()) {
             String msg = rrErr.map(DataResult.Error::message).orElse("recipe is null");

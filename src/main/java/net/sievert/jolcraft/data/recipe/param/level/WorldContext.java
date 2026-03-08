@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public record WorldContext(
         @NotNull ServerLevel level,
-        @NotNull Player player,
+        @Nullable Player player,
         @Nullable Entity entity
 ) {
     public @NotNull RandomSource random() {

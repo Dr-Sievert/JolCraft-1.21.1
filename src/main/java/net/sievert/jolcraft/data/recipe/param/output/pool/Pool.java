@@ -7,15 +7,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.RandomSource;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.condition.ConditionGate;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
 import net.sievert.jolcraft.data.recipe.param.output.base.ResolvedOutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
@@ -36,12 +35,6 @@ public record Pool(
     private static final int MAX_TOTAL_OUTPUTS = 4096;
     private static final int MAX_ENTRIES_STREAM = 2048;
 
-    private static final PoolEntry NULL_ENTRY =
-            new PoolEntry(
-                    OutputDispatch.None.INSTANCE,
-                    new DrawRule(IntRange.ONE, Conditions.EMPTY),
-                    WeightParam.ONE
-            );
 
     @Override
     public @NotNull Conditions conditions() {
@@ -78,7 +71,7 @@ public record Pool(
                         List<PoolEntry> list = value.entriesSafe();
                         buf.writeVarInt(list.size());
                         for (PoolEntry e : list) {
-                            PoolEntry.STREAM_CODEC.encode(buf, e == null ? NULL_ENTRY : e);
+                            PoolEntry.STREAM_CODEC.encode(buf, e);
                         }
                     },
                     buf -> {
@@ -86,28 +79,33 @@ public record Pool(
                         Conditions conditions = Conditions.STREAM_CODEC.decode(buf);
 
                         int size = buf.readVarInt();
-                        if (size <= 0) {
+                        if (size < 0) {
+                            throw new IllegalArgumentException(
+                                    JolCraftParameterIds.ENTRIES + " size must be >= 0 (got " + size + ")"
+                            );
+                        }
+                        if (size == 0) {
                             return new Pool(rolls, conditions, List.of());
                         }
+                        if (size > MAX_ENTRIES_STREAM) {
+                            throw new IllegalArgumentException(
+                                    JolCraftParameterIds.ENTRIES + " size exceeds max " + MAX_ENTRIES_STREAM + " (got " + size + ")"
+                            );
+                        }
 
-                        int capped = Math.min(size, MAX_ENTRIES_STREAM);
-
-                        ArrayList<PoolEntry> list = new ArrayList<>(Math.min(capped, 64));
-                        for (int i = 0; i < capped; i++) {
+                        ArrayList<PoolEntry> list = new ArrayList<>(size);
+                        for (int i = 0; i < size; i++) {
                             list.add(PoolEntry.STREAM_CODEC.decode(buf));
                         }
-                        for (int i = capped; i < size; i++) {
-                            PoolEntry.STREAM_CODEC.decode(buf);
-                        }
 
-                        return new Pool(rolls, conditions, list);
+                        return new Pool(rolls, conditions, List.copyOf(list));
                     }
             );
 
     public Pool(IntRange rolls, Conditions conditions, List<PoolEntry> entries) {
         this.rolls = rolls != null ? rolls : IntRange.ONE;
         this.conditions = conditions != null ? conditions : Conditions.EMPTY;
-        this.entries = entries != null ? sanitizeList(entries) : List.of();
+        this.entries = entries != null ? List.copyOf(entries) : List.of();
     }
 
     private IntRange rollsSafe() {
@@ -122,12 +120,6 @@ public record Pool(
         return entries != null ? entries : List.of();
     }
 
-    private static <T> List<T> sanitizeList(List<T> in) {
-        if (in == null || in.isEmpty()) return List.of();
-        ArrayList<T> safe = new ArrayList<>(in.size());
-        for (T t : in) if (t != null) safe.add(t);
-        return safe.isEmpty() ? List.of() : List.copyOf(safe);
-    }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
@@ -237,7 +229,7 @@ public record Pool(
             }
         }
 
-        return out.isEmpty() ? List.of() : sanitizeList(out);
+        return out.isEmpty() ? List.of() : List.copyOf(out);
     }
 
     private static int rollEntryExecs(

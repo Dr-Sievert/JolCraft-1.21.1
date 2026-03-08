@@ -11,8 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
@@ -54,6 +55,8 @@ public record TextOutput(
 
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.TEXT, JolCraftDictionary.OUTPUT));
+
+    public static final byte DISC = 5;
 
     // ---------------------------------------------------------------------
     // CODEC
@@ -145,6 +148,8 @@ public record TextOutput(
     // ---------------------------------------------------------------------
     // OUTPUT PARAM
     // ---------------------------------------------------------------------
+
+    public static final ParamTypeDef<OutputParam> TYPE_DEF = new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     @Override
     public @NotNull ResourceLocation typeId() {

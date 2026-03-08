@@ -6,9 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
@@ -16,7 +15,6 @@ import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.ResolvedOutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +32,6 @@ public record Pools(List<Pool> pools)
     private static final int MAX_TOTAL_OUTPUTS = 4096;
     private static final int MAX_POOLS_STREAM = 2048;
 
-    private static final Pool NULL_POOL =
-            new Pool(IntRange.ONE, Conditions.EMPTY, List.of());
-
     private static final Codec<Pools> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Pool.CODEC.listOf()
@@ -52,41 +47,38 @@ public record Pools(List<Pool> pools)
                         List<Pool> list = value.poolsSafe();
                         buf.writeVarInt(list.size());
                         for (Pool p : list) {
-                            Pool.STREAM_CODEC.encode(buf, p == null ? NULL_POOL : p);
+                            Pool.STREAM_CODEC.encode(buf, p);
                         }
                     },
                     buf -> {
                         int size = buf.readVarInt();
-                        if (size <= 0) return new Pools(List.of());
+                        if (size < 0) {
+                            throw new IllegalArgumentException(
+                                    JolCraftParameterIds.POOLS + " size must be >= 0 (got " + size + ")"
+                            );
+                        }
+                        if (size == 0) return new Pools(List.of());
+                        if (size > MAX_POOLS_STREAM) {
+                            throw new IllegalArgumentException(
+                                    JolCraftParameterIds.POOLS + " size exceeds max " + MAX_POOLS_STREAM + " (got " + size + ")"
+                            );
+                        }
 
-                        int capped = Math.min(size, MAX_POOLS_STREAM);
-
-                        ArrayList<Pool> list = new ArrayList<>(Math.min(capped, 64));
-                        for (int i = 0; i < capped; i++) {
+                        ArrayList<Pool> list = new ArrayList<>(size);
+                        for (int i = 0; i < size; i++) {
                             list.add(Pool.STREAM_CODEC.decode(buf));
                         }
 
-                        for (int i = capped; i < size; i++) {
-                            Pool.STREAM_CODEC.decode(buf);
-                        }
-
-                        return new Pools(list);
+                        return new Pools(List.copyOf(list));
                     }
             );
 
     public Pools(List<Pool> pools) {
-        this.pools = pools != null ? sanitizeList(pools) : List.of();
+        this.pools = pools != null ? List.copyOf(pools) : List.of();
     }
 
     public List<Pool> poolsSafe() {
         return pools != null ? pools : List.of();
-    }
-
-    private static <T> List<T> sanitizeList(List<T> in) {
-        if (in == null || in.isEmpty()) return List.of();
-        ArrayList<T> safe = new ArrayList<>(in.size());
-        for (T t : in) if (t != null) safe.add(t);
-        return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 
     @Override
@@ -160,7 +152,7 @@ public record Pools(List<Pool> pools)
             }
         }
 
-        return out.isEmpty() ? List.of() : sanitizeList(out);
+        return out.isEmpty() ? List.of() : List.copyOf(out);
     }
 
     public boolean anyParam(@NotNull Predicate<OutputParam> test) {
@@ -172,7 +164,7 @@ public record Pools(List<Pool> pools)
 
             for (PoolEntry e : es) {
                 if (e == null) continue;
-                OutputParam op = e.output();
+                OutputParam op = OutputParam.unwrap(e.output());
                 if (op != null && test.test(op)) return true;
             }
         }

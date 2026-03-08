@@ -2,7 +2,6 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.condition;
 
 import com.mojang.serialization.DataResult;
 import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.ConditionTypes;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
@@ -16,9 +15,9 @@ import java.util.List;
  * Policy:
  * - No throwing, no logging.
  * - Null entries are ignored (fail-closed).
- * - {@link ConditionTypes.InvalidCondition} is ignored (avoid silent "always false" gates).
+ * - No sentinel filtering: condition dispatch is strict and sentinels no longer exist.
  * - Canonicalizes empty => {@link Conditions#EMPTY}.
- * - Order preserved (even though AND semantics, keep stable output).
+ * - Order preserved for deterministic output.
  */
 public final class ConditionsBuilder implements ParamBuilder<Conditions> {
 
@@ -34,10 +33,9 @@ public final class ConditionsBuilder implements ParamBuilder<Conditions> {
     // ADDERS
     // ---------------------------------------------------------------------
 
-    public ConditionsBuilder condition(Condition c) {
-        if (c == null) return this;
-        if (c instanceof ConditionTypes.InvalidCondition) return this;
-        list.add(c);
+    public ConditionsBuilder condition(Condition condition) {
+        if (condition == null) return this;
+        list.add(condition);
         return this;
     }
 
@@ -45,9 +43,26 @@ public final class ConditionsBuilder implements ParamBuilder<Conditions> {
         if (builder == null) return this;
 
         DataResult<? extends Condition> built = builder.buildValidated();
-        Condition c = built.result().orElse(null);
+        return condition(built.result().orElse(null));
+    }
 
-        return condition(c);
+    public ConditionsBuilder conditions(List<? extends Condition> conditions) {
+        if (conditions == null || conditions.isEmpty()) return this;
+
+        for (Condition condition : conditions) {
+            condition(condition);
+        }
+        return this;
+    }
+
+    @SafeVarargs
+    public final ConditionsBuilder conditions(ValidatedBuilder<? extends Condition>... builders) {
+        if (builders == null) return this;
+
+        for (ValidatedBuilder<? extends Condition> builder : builders) {
+            condition(builder);
+        }
+        return this;
     }
 
     // ---------------------------------------------------------------------
@@ -56,9 +71,8 @@ public final class ConditionsBuilder implements ParamBuilder<Conditions> {
 
     @Override
     public Conditions build() {
-        if (list.isEmpty()) {
-            return Conditions.EMPTY;
-        }
-        return new Conditions(List.copyOf(list));
+        return list.isEmpty()
+                ? Conditions.EMPTY
+                : new Conditions(List.copyOf(list));
     }
 }

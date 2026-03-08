@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
+import net.minecraft.core.BlockPos;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class EntitySpawnConfigBuilder {
 
-    private WorldAnchor anchor = WorldAnchor.PLAYER;
+    private BlockPos pos = BlockPos.ZERO;
     private int offsetX = 0;
     private int offsetY = 0;
     private int offsetZ = 0;
@@ -34,8 +34,13 @@ public final class EntitySpawnConfigBuilder {
     // Fields
     // ---------------------------------------------------------------------
 
-    public @NotNull EntitySpawnConfigBuilder anchor(@Nullable WorldAnchor anchor) {
-        this.anchor = anchor != null ? anchor : WorldAnchor.PLAYER;
+    public @NotNull EntitySpawnConfigBuilder pos(@NotNull BlockPos pos) {
+        this.pos = pos;
+        return this;
+    }
+
+    public @NotNull EntitySpawnConfigBuilder pos(int x, int y, int z) {
+        this.pos = new BlockPos(x, y, z);
         return this;
     }
 
@@ -86,19 +91,19 @@ public final class EntitySpawnConfigBuilder {
     // ---------------------------------------------------------------------
 
     public @NotNull DataResult<EntitySpawnConfig> build() {
-        EntitySpawnConfig cfg = new EntitySpawnConfig(
-                anchor,
-                offsetX, offsetY, offsetZ,
+        return new EntitySpawnConfig(
+                pos,
+                offsetX,
+                offsetY,
+                offsetZ,
                 radius,
                 forced,
                 persistent,
                 noAi
-        );
-        return cfg.validate();
+        ).validate();
     }
 
     public @Nullable EntitySpawnConfig buildOrNull() {
-        EntitySpawnConfig cfg = build().result().orElse(null);
-        return EntitySpawnConfig.normalize(cfg);
+        return build().result().orElse(null);
     }
 }

@@ -4,15 +4,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.ResolvedOutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
@@ -22,92 +22,104 @@ import net.sievert.jolcraft.data.recipe.param.quantity.draw.DrawRule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * One weighted/selectable output entry inside a pool.
+ *
+ * Holds exactly one atomic {@link OutputParam}.
+ */
 public record PoolEntry(
         OutputParam output,
-        DrawRule pool,
-        WeightParam weight
-) implements SelfValidating<PoolEntry>, RegistryIntrospectionSource, ResolvedOutputParam {
-
-    private static final DrawRule DEFAULT_POOL =
-            new DrawRule(IntRange.ONE, net.sievert.jolcraft.data.recipe.param.condition.Conditions.EMPTY);
-
-    public PoolEntry {
-        output = output != null ? output : OutputDispatch.None.INSTANCE;
-        pool = pool != null ? pool : DEFAULT_POOL;
-        weight = weight != null ? weight : WeightParam.ONE;
-    }
-
-    public boolean isSinglePick() {
-        return pool.rolls().isOne();
-    }
+        @Nullable DrawRule pool,
+        @Nullable WeightParam weight
+)
+        implements SelfValidating<PoolEntry>, RegistryIntrospectionSource, ResolvedOutputParam {
 
     private static final Codec<PoolEntry> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
-                    OutputDispatch.CODEC.fieldOf(JolCraftParameterIds.OUTPUT).forGetter(PoolEntry::output),
-                    DrawRule.CODEC.optionalFieldOf(JolCraftParameterIds.POOL, DEFAULT_POOL).forGetter(PoolEntry::pool),
-                    WeightParam.CODEC.optionalFieldOf(JolCraftParameterIds.WEIGHT, WeightParam.ONE).forGetter(PoolEntry::weight)
-            ).apply(instance, PoolEntry::new));
+                    OutputParam.CODEC
+                            .fieldOf(JolCraftParameterIds.OUTPUT)
+                            .forGetter(PoolEntry::outputSafe),
+
+                    DrawRule.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.POOL)
+                            .forGetter(e -> Optional.ofNullable(e.pool())),
+
+                    WeightParam.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.WEIGHT)
+                            .forGetter(e -> Optional.ofNullable(e.weight()))
+            ).apply(instance, (output, pool, weight) ->
+                    new PoolEntry(output, pool.orElse(null), weight.orElse(null))
+            ));
 
     public static final Codec<PoolEntry> CODEC = ParamCodecs.validated(RAW_CODEC);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PoolEntry> STREAM_CODEC =
             StreamCodec.composite(
-                    OutputDispatch.STREAM_CODEC, PoolEntry::output,
-                    DrawRule.STREAM_CODEC, PoolEntry::pool,
-                    WeightParam.STREAM_CODEC, PoolEntry::weight,
-                    PoolEntry::new
+                    OutputParam.STREAM_CODEC, PoolEntry::outputSafe,
+                    DrawRule.STREAM_CODEC.apply(ByteBufCodecs::optional), e -> Optional.ofNullable(e.pool()),
+                    WeightParam.STREAM_CODEC.apply(ByteBufCodecs::optional), e -> Optional.ofNullable(e.weight()),
+                    (output, pool, weight) -> new PoolEntry(output, pool.orElse(null), weight.orElse(null))
             );
 
-    @Override
-    public @NotNull List<Output> generateResolved(
-            @NotNull WorldContext ctx,
-            @Nullable ItemTransformSourceResolver resolver
-    ) {
-        OutputParam raw = output;
-        OutputParam leaf = OutputParam.unwrap(raw);
-
-        if (leaf instanceof ResolvedOutputParam resolved) {
-            return resolved.generateResolved(ctx, resolver);
+    public PoolEntry {
+        if (output == null) {
+            throw new IllegalArgumentException("pool entry output cannot be null");
         }
+    }
 
-        return raw.generate(ctx);
+    private @NotNull OutputParam outputSafe() {
+        if (output == null) {
+            throw new IllegalStateException("pool entry output cannot be null");
+        }
+        return output;
     }
 
     @Override
     public @NotNull DataResult<PoolEntry> validate() {
-        OutputParam raw = output;
-        OutputParam leaf = OutputParam.unwrap(raw);
-
-        if (leaf instanceof OutputDispatch.None) {
-            return DataResult.error(() -> JolCraftParameterIds.OUTPUT + " cannot be none");
+        if (output == null) {
+            return DataResult.error(() -> JolCraftParameterIds.OUTPUT + " cannot be null");
         }
 
-        {
-            DataResult<?> ov = raw.validate();
-            Optional<? extends DataResult.Error<?>> oErr = ov.error();
-            if (oErr.isPresent()) {
-                String msg = oErr.map(DataResult.Error::message).orElse("invalid");
-                return DataResult.error(() -> JolCraftParameterIds.OUTPUT + " invalid: " + msg);
+        DataResult<?> ov;
+        try {
+            ov = output.validate();
+        } catch (Exception e) {
+            return DataResult.error(() -> JolCraftParameterIds.OUTPUT + " validation threw: " + e.getMessage());
+        }
+
+        if (ov.error().isPresent()) {
+            String msg = ov.error().map(DataResult.Error::message).orElse("invalid");
+            return DataResult.error(() -> JolCraftParameterIds.OUTPUT + " invalid: " + msg);
+        }
+
+        if (pool != null) {
+            DataResult<?> pv;
+            try {
+                pv = pool.validate();
+            } catch (Exception e) {
+                return DataResult.error(() -> JolCraftParameterIds.POOL + " validation threw: " + e.getMessage());
+            }
+
+            if (pv.error().isPresent()) {
+                String msg = pv.error().map(DataResult.Error::message).orElse("invalid");
+                return DataResult.error(() -> JolCraftParameterIds.POOL + " invalid: " + msg);
             }
         }
 
-        {
-            DataResult<WeightParam> wv = weight.validate();
-            var wErr = wv.error();
-            if (wErr.isPresent()) {
-                return DataResult.error(() -> JolCraftParameterIds.WEIGHT + " invalid: " + wErr.get().message());
+        if (weight != null) {
+            DataResult<?> wv;
+            try {
+                wv = weight.validate();
+            } catch (Exception e) {
+                return DataResult.error(() -> JolCraftParameterIds.WEIGHT + " validation threw: " + e.getMessage());
             }
-        }
 
-        {
-            DataResult<DrawRule> pv = pool.validate();
-            var pErr = pv.error();
-            if (pErr.isPresent()) {
-                return DataResult.error(() -> JolCraftParameterIds.POOL + " invalid: " + pErr.get().message());
+            if (wv.error().isPresent()) {
+                String msg = wv.error().map(DataResult.Error::message).orElse("invalid");
+                return DataResult.error(() -> JolCraftParameterIds.WEIGHT + " invalid: " + msg);
             }
         }
 
@@ -116,24 +128,33 @@ public record PoolEntry(
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(3);
+        return output instanceof RegistryIntrospectionSource src ? src.introspections() : List.of();
+    }
 
-        src.add(pool);
+    public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
+        return generateResolved(ctx, null);
+    }
 
-        OutputParam raw = output;
-        if (raw instanceof RegistryIntrospectionSource s) {
-            src.add(s);
+    @Override
+    public @NotNull List<Output> generateResolved(
+            @NotNull WorldContext ctx,
+            @Nullable ItemTransformSourceResolver resolver
+    ) {
+        try {
+            return output instanceof ResolvedOutputParam resolved
+                    ? resolved.generateResolved(ctx, resolver)
+                    : output.generate(ctx);
+        } catch (Exception ignored) {
+            return List.of();
+        }
+    }
+
+    public boolean isSinglePick() {
+        if (pool == null) {
+            return true;
         }
 
-        OutputParam leaf = OutputParam.unwrap(raw);
-        if (leaf != raw && leaf instanceof RegistryIntrospectionSource s2) {
-            src.add(s2);
-        }
-
-        if (src.size() == 1) {
-            return src.getFirst().introspections();
-        }
-
-        return RegistryIntrospectionSource.mergeByRegistry(src);
+        IntRange rolls = pool.rolls();
+        return rolls == null || rolls.isOne();
     }
 }

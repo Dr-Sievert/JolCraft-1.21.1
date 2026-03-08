@@ -12,9 +12,20 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.subprovider.*;
+import net.sievert.jolcraft.datagen.recipe.subprovider.CompassRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfBountyRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfTradeRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.EquipmentRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.FermentingCauldronRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.HandInteractionRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.LapidaryRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.MaterialRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.MiscRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.ToolRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.TrimRecipesSubProvider;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 
@@ -52,7 +63,10 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
         ) {
             return new JolCraftRecipeProvider(
                     provider,
-                    new CountingRecipeOutput(recipeOutput)
+                    new CountingRecipeOutput(
+                            recipeOutput,
+                            provider.lookupOrThrow(Registries.RECIPE_SERIALIZER)
+                    )
             );
         }
 
@@ -64,9 +78,7 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes() {
-
         CountingRecipeOutput counting = (CountingRecipeOutput) this.output;
-
         RecipeEmissionExecutor root = new RecipeEmissionExecutor(counting);
 
         List<RecipeSubProvider> subs = new ArrayList<>();
@@ -82,7 +94,6 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
         subs.add(new ToolRecipesSubProvider());
         subs.add(new TrimRecipesSubProvider());
 
-
         HolderGetter<Item> items = this.registries.lookupOrThrow(Registries.ITEM);
 
         for (RecipeSubProvider sub : subs) {
@@ -93,14 +104,16 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
             );
         }
 
-        counting.counts().forEach((type, count) ->
-                JolCraftLogs.debug(
-                        JolCraftLogTags.DATAGEN,
-                        "Added {} recipes of type: {}",
-                        count,
-                        type
-                )
-        );
+        counting.counts().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(e ->
+                        JolCraftLogs.debug(
+                                JolCraftLogTags.DATAGEN,
+                                "Added {} recipes of type: {}",
+                                e.getValue(),
+                                e.getKey()
+                        )
+                );
 
         JolCraftLogs.info(
                 JolCraftLogTags.DATAGEN,
@@ -109,21 +122,23 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
         );
     }
 
-    // =====================================================
-    // Counting wrapper
-    // =====================================================
-
     private static final class CountingRecipeOutput implements RecipeOutput {
 
         private final RecipeOutput delegate;
-
+        private final HolderLookup.RegistryLookup<RecipeSerializer<?>> serializers;
+        private final Map<RecipeSerializer<?>, String> serializerIds = new java.util.IdentityHashMap<>();
         private final Map<String, Integer> perType = new HashMap<>();
         private final Map<ResourceKey<Recipe<?>>, Recipe<?>> seen = new HashMap<>();
 
         private int total = 0;
 
-        private CountingRecipeOutput(RecipeOutput delegate) {
+        private CountingRecipeOutput(
+                RecipeOutput delegate,
+                HolderLookup.RegistryLookup<RecipeSerializer<?>> serializers
+        ) {
             this.delegate = delegate;
+            this.serializers = serializers;
+            indexSerializers();
         }
 
         int total() {
@@ -141,20 +156,15 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
                 @Nullable AdvancementHolder advancement,
                 ICondition... conditions
         ) {
-
             if (seen.containsKey(key)) {
-                throw new IllegalStateException(
-                        "Duplicate recipe id detected: " + key.location()
-                );
+                throw new IllegalStateException("Duplicate recipe id detected: " + key.location());
             }
 
             seen.put(key, recipe);
-
             delegate.accept(key, recipe, advancement, conditions);
 
-            String type = recipe.getSerializer().toString();
-
-            perType.merge(type, 1, Integer::sum);
+            String serializerId = serializerId(recipe.getSerializer());
+            perType.merge(serializerId, 1, Integer::sum);
             total++;
         }
 
@@ -166,6 +176,24 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
         @Override
         public void includeRootAdvancement() {
             delegate.includeRootAdvancement();
+        }
+
+        private void indexSerializers() {
+            serializers.listElements().forEach(reference -> {
+                RecipeSerializer<?> serializer = reference.value();
+                String id = reference.key().location().toString();
+                serializerIds.put(serializer, id);
+            });
+        }
+
+        private String serializerId(RecipeSerializer<?> serializer) {
+            String id = serializerIds.get(serializer);
+            if (id == null) {
+                throw new IllegalStateException(
+                        "Unregistered recipe serializer: " + serializer.getClass().getName()
+                );
+            }
+            return id;
         }
     }
 }

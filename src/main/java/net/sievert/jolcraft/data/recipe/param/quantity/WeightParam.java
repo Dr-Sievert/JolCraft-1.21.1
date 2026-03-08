@@ -5,8 +5,8 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import org.jetbrains.annotations.NotNull;
 
 /**

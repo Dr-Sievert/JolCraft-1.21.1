@@ -39,11 +39,13 @@ public final class ParticleProducerBuilder {
     // ---------------------------------------------------------------------
 
     public @NotNull DataResult<ParticleProducer> build() {
-        if (type == null) {
+        Holder<ParticleType<?>> t = this.type;
+
+        if (t == null) {
             return DataResult.error(() -> "Missing required field: 'type'");
         }
 
-        ParticleProducer p = ParticleProducer.of(type);
-        return p.validate();
+        ParticleProducer producer = new ParticleProducer(t);
+        return producer.validate();
     }
 }

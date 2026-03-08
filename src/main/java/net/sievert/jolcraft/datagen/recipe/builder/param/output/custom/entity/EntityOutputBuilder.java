@@ -27,7 +27,7 @@ public final class EntityOutputBuilder {
     // Result
     // ---------------------------------------------------------------------
 
-    public @NotNull EntityOutputBuilder result(@Nullable EntitySpec result) {
+    public @NotNull EntityOutputBuilder result(@NotNull EntitySpec result) {
         this.result = result;
         return this;
     }
@@ -42,15 +42,10 @@ public final class EntityOutputBuilder {
         }
 
         EntityOutput out = new EntityOutput(result);
-
-        DataResult<EntityOutput> v = out.validate();
-        var err = v.error();
-        return err.<DataResult<EntityOutput>>map(entityOutputError ->
-                DataResult.error(entityOutputError::message)).orElseGet(() -> DataResult.success(out));
-
+        return out.validate();
     }
 
-    public @NotNull EntityOutput buildOrEmpty() {
-        return build().result().orElse(EntityOutput.EMPTY);
+    public @Nullable EntityOutput buildOrNull() {
+        return build().result().orElse(null);
     }
 }

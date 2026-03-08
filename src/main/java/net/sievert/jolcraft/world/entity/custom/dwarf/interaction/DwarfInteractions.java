@@ -56,7 +56,6 @@ public final class DwarfInteractions {
      */
     public static void registerAll() {
 
-        // Core interactions
         registerCore(new IgnoreInteractionHandler());
         registerCore(new LanguageGateInteractionHandler());
         registerCore(new ReputationGateInteractionHandler());
@@ -70,12 +69,10 @@ public final class DwarfInteractions {
         registerCore(new TradeCrateInteractionHandler());
         registerCore(new TradeInteractionHandler());
 
-        // Unique profession interactions
         register(DwarfProfession.GUARD, new GuardInteractionHandler());
         register(DwarfProfession.EXPLORER, new ExplorerInteractionHandler());
         register(DwarfProfession.GUILDMASTER, new GuildmasterInteractionHandler());
 
-        // No-op profession interactions
         final ProfessionInteraction DEFAULT = new DefaultProfessionInteractionHandler();
 
         for (DwarfProfession prof : DwarfProfession.values()) {
@@ -106,7 +103,6 @@ public final class DwarfInteractions {
     // -------------------------------------------------------------------------
 
     public static InteractionResult dispatch(DwarfInteractionContext ctx) {
-        // Client: early SUCCESS only (animation / swing)
         if (ctx.isClient()) {
             return InteractionResult.SUCCESS;
         }
@@ -120,12 +116,10 @@ public final class DwarfInteractions {
             );
         }
 
-        // Optional timing hooks (explicit phases)
         if (professionHandler instanceof DwarfInteractionHooks hooks) {
             hooks.preCore(ctx);
         }
 
-        // Core (shared) interaction pipeline
         for (CoreInteraction core : CORE_PIPELINE) {
             InteractionResult coreResult = core.handle(ctx);
             if (coreResult != InteractionResult.PASS) {
@@ -138,7 +132,6 @@ public final class DwarfInteractions {
             hooks.preProfession(ctx);
         }
 
-        // Profession-specific interaction
         InteractionResult profResult = professionHandler.handle(ctx);
         if (profResult != InteractionResult.PASS) {
             return profResult;
@@ -148,7 +141,6 @@ public final class DwarfInteractions {
             hooks.postProfession(ctx);
         }
 
-        // Deterministic fallback
         return InteractionResult.FAIL;
     }
 

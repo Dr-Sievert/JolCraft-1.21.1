@@ -6,33 +6,18 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.data.recipe.param.condition.Condition;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.condition.ConditionTypes;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Atomic condition: probabilistic gate.
- *
- * Schema:
- * { "type": "jolcraft:chance", "chance": 0.25, "invert": false }
- *
- * Invariant:
- * - chance in [0.0, 1.0]
- *
- * Runtime:
- * - ctx null -> false
- * - ctx.random null -> false (fail-closed; caller must supply RNG)
- * - pass = random.nextDouble() < chance
- * - result = invert XOR pass
- */
 public record ChanceCondition(double chance, boolean invert) implements Condition {
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
+    public static final ResourceLocation TYPE_ID = JolCraft.location(JolCraftDictionary.CHANCE);
+    public static final byte DISC = 1;
 
     private static final Codec<ChanceCondition> RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
@@ -41,26 +26,7 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
             ).apply(inst, ChanceCondition::new));
 
     public static final Codec<ChanceCondition> CODEC =
-            RAW_CODEC.flatXmap(
-                    ChanceCondition::validateDecoded,
-                    DataResult::success
-            );
-
-    private static DataResult<ChanceCondition> validateDecoded(ChanceCondition c) {
-        double v = c.chance;
-
-        if (Double.isNaN(v)) return DataResult.error(() -> "chance must not be NaN");
-        if (Double.isInfinite(v)) return DataResult.error(() -> "chance must be finite");
-        if (v < 0.0D || v > 1.0D) {
-            return DataResult.error(() -> "chance must be in range [0.0, 1.0] (got " + v + ")");
-        }
-
-        return DataResult.success(c);
-    }
-
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
+            RAW_CODEC.flatXmap(ChanceCondition::validateDecoded, DataResult::success);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ChanceCondition> STREAM_CODEC =
             StreamCodec.of(
@@ -71,18 +37,23 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
                     buf -> new ChanceCondition(buf.readDouble(), buf.readBoolean())
             );
 
-    // ---------------------------------------------------------------------
-    // DISPATCH
-    // ---------------------------------------------------------------------
+    public static final ParamTypeDef<Condition> TYPE_DEF =
+            new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
-    @Override
-    public ResourceLocation typeId() {
-        return ConditionTypes.TYPE_CHANCE;
+    private static DataResult<ChanceCondition> validateDecoded(ChanceCondition c) {
+        double v = c.chance;
+        if (Double.isNaN(v)) return DataResult.error(() -> "chance must not be NaN");
+        if (Double.isInfinite(v)) return DataResult.error(() -> "chance must be finite");
+        if (v < 0.0D || v > 1.0D) {
+            return DataResult.error(() -> "chance must be in range [0.0, 1.0] (got " + v + ")");
+        }
+        return DataResult.success(c);
     }
 
-    // ---------------------------------------------------------------------
-    // TEST
-    // ---------------------------------------------------------------------
+    @Override
+    public @NotNull ResourceLocation typeId() {
+        return TYPE_ID;
+    }
 
     @Override
     public boolean test(@NotNull WorldContext ctx) {
@@ -94,10 +65,6 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
         boolean pass = ctx.random().nextDouble() < v;
         return invert != pass;
     }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<Condition> validate() {

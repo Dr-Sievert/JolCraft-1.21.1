@@ -13,21 +13,22 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.animation.DwarfAnimationHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.layer.DwarfArmorLayer;
-import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfBeardColor;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.layer.DwarfBeardLayer;
-import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.layer.DwarfEyeLayer;
-import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfVariant;
 import net.sievert.jolcraft.world.entity.client.util.layer.EmissiveLayer;
+import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
-import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfBeardColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
+import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfVariant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,8 +51,12 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         return dwarfProfessionTexture(entityPath + EMISSIVE_SUFFIX);
     }
 
-    // With StringId enums: texture key is the lowercase enum name.
-    private static final ResourceLocation FALLBACK_TEXTURE = dwarfTexture(DwarfVariant.GREY.getId());
+    private static String dwarfVariantTextureName(@NotNull DwarfVariant variant) {
+        return JolCraftStrings.underscored(JolCraftDictionary.DWARF, variant.getId());
+    }
+
+    private static final ResourceLocation FALLBACK_TEXTURE =
+            dwarfTexture(dwarfVariantTextureName(DwarfVariant.GREY));
 
     private static final int LAYER_ARMOR = 1;
     private static final int LAYER_BEARD = 2;
@@ -64,7 +69,6 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
 
     private final float extraScale;
 
-    // === Base dwarf: variant texture ===
     public DwarfRenderer(EntityRendererProvider.Context context) {
         super(context, new DwarfModel(context.bakeLayer(DwarfModel.LAYER_LOCATION)), 0.4f);
         this.fixedTexture = null;
@@ -94,8 +98,10 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         if (emissiveTexture != null)         this.addLayer(new EmissiveLayer<>(this, emissiveTexture));
     }
 
-    // === Profession entry point: decide layers + emissive + scale based on entity getId path ===
-    public static <T extends AbstractDwarfEntity> DwarfRenderer<T> profession(EntityRendererProvider.Context context, @NotNull EntityType<?> type) {
+    public static <T extends AbstractDwarfEntity> DwarfRenderer<T> profession(
+            EntityRendererProvider.Context context,
+            @NotNull EntityType<?> type
+    ) {
         return profession(context, type, 1.0f);
     }
 
@@ -109,7 +115,6 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         String path = id.getPath();
 
         Profile profile = profileFor(type, overrideScale);
-
         ResourceLocation emissive = profile.hasEmissive ? dwarfProfessionEmissiveTexture(path) : null;
 
         return new DwarfRenderer<>(
@@ -143,7 +148,7 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
     private static final Map<DwarfVariant, ResourceLocation> LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(DwarfVariant.class), map -> {
                 for (DwarfVariant variant : DwarfVariant.values()) {
-                    map.put(variant, dwarfTexture(variant.getId()));
+                    map.put(variant, dwarfTexture(dwarfVariantTextureName(variant)));
                 }
             });
 
@@ -153,7 +158,7 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
             return fixedTexture;
         }
         ResourceLocation loc = LOCATION_BY_VARIANT.get(entity.variant);
-        return (loc != null) ? loc : FALLBACK_TEXTURE;
+        return loc != null ? loc : FALLBACK_TEXTURE;
     }
 
     @Override
@@ -197,7 +202,6 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends HumanoidMobRen
         reused.ageInTicks = persistent.ageInTicks;
 
         reused.dwarf = entity;
-
         reused.variant = DwarfVariant.byId(entity.getData(AbstractBreedingEntity.VARIANT));
         reused.beard = DwarfBeardColor.byId(entity.getData(AbstractBreedingEntity.BEARD_COLOR));
         reused.eye = DwarfEyeColor.byId(entity.getData(AbstractBreedingEntity.EYE_COLOR));

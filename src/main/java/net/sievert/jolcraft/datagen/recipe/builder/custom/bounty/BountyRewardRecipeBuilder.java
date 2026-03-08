@@ -4,6 +4,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.crafting.Recipe;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -16,6 +17,7 @@ import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,14 +77,24 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    public @NotNull BountyRewardRecipeBuilder sound(@Nullable SoundOutput sound) {
+    public @NotNull BountyRewardRecipeBuilder sound(@Nullable SoundEvent sound) {
         if (sound == null) {
             errors.add("sound is null");
             this.sound = null;
             return this;
         }
 
-        this.sound = sound;
+        var built = SoundOutputBuilder.create()
+                .sound(sound)
+                .buildValidated();
+
+        if (built.error().isPresent()) {
+            errors.add("sound invalid: " + built.error().map(DataResult.Error::message).orElse("invalid"));
+            this.sound = null;
+            return this;
+        }
+
+        this.sound = built.result().orElse(null);
         return this;
     }
 

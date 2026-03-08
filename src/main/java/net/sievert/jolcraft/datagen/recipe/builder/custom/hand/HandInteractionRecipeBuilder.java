@@ -1,0 +1,316 @@
+package net.sievert.jolcraft.datagen.recipe.builder.custom.hand;
+
+import com.mojang.serialization.DataResult;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
+import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
+import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
+import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Datagen-only fluent builder for {@link HandInteractionRecipe}.
+ *
+ * Contract:
+ * - never throws
+ * - never saves
+ * - name via {@link RecipeFileNameBuilder}
+ * - validation via {@link HandInteractionRecipe#validateRecipe(HandInteractionRecipe)}
+ *
+ * Naming policy (deterministic, fail-closed):
+ * hand_interaction_<a>_<actionA>__<b>_<actionB>[_sneak]
+ *
+ * Notes:
+ * - For naming, ingredientA/ingredientB must each be exactly one concrete item
+ *   or one single tag.
+ * - Actions are always included for deterministic names.
+ */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+@SuppressWarnings("UnusedReturnValue")
+public final class HandInteractionRecipeBuilder implements RecipeBuilder {
+
+    private final List<String> errors = new ArrayList<>();
+
+    private ItemInput ingredientA = ItemInput.EMPTY;
+    private ItemIngredientAction actionA = ItemIngredientAction.CATALYST;
+
+    private ItemInput ingredientB = ItemInput.EMPTY;
+    private ItemIngredientAction actionB = ItemIngredientAction.CATALYST;
+
+    private Outputs output = Outputs.EMPTY;
+
+    private @Nullable SoundOutput successSound;
+    private @Nullable SoundOutput failSound;
+
+    private boolean requireSneaking = false;
+
+    private HandInteractionRecipeBuilder() {}
+
+    public static @NotNull HandInteractionRecipeBuilder create() {
+        return new HandInteractionRecipeBuilder();
+    }
+
+    public @NotNull HandInteractionRecipeBuilder ingredientA(@Nullable ItemInput in) {
+        if (in == null) {
+            errors.add("ingredient_a is null");
+            this.ingredientA = ItemInput.EMPTY;
+            return this;
+        }
+
+        this.ingredientA = in;
+        return this;
+    }
+
+    public @NotNull HandInteractionRecipeBuilder ingredientA(@Nullable ItemLike item, int count) {
+        if (item == null) {
+            errors.add("ingredient_a item is null");
+            this.ingredientA = ItemInput.EMPTY;
+            return this;
+        }
+
+        ItemInput built = ItemInputBuilder.create()
+                .item(item)
+                .count(IntRange.fixed(Math.max(1, count)))
+                .build();
+
+        return ingredientA(built);
+    }
+
+    public @NotNull HandInteractionRecipeBuilder ingredientA(@Nullable ItemLike item) {
+        return ingredientA(item, 1);
+    }
+
+    public @NotNull HandInteractionRecipeBuilder actionA(@Nullable ItemIngredientAction action) {
+        if (action == null) {
+            errors.add("action_a is null");
+            this.actionA = ItemIngredientAction.CATALYST;
+            return this;
+        }
+
+        this.actionA = action;
+        return this;
+    }
+
+    public @NotNull HandInteractionRecipeBuilder ingredientB(@Nullable ItemInput in) {
+        if (in == null) {
+            errors.add("ingredient_b is null");
+            this.ingredientB = ItemInput.EMPTY;
+            return this;
+        }
+
+        this.ingredientB = in;
+        return this;
+    }
+
+    public @NotNull HandInteractionRecipeBuilder ingredientB(@Nullable ItemLike item, int count) {
+        if (item == null) {
+            errors.add("ingredient_b item is null");
+            this.ingredientB = ItemInput.EMPTY;
+            return this;
+        }
+
+        ItemInput built = ItemInputBuilder.create()
+                .item(item)
+                .count(IntRange.fixed(Math.max(1, count)))
+                .build();
+
+        return ingredientB(built);
+    }
+
+    public @NotNull HandInteractionRecipeBuilder ingredientB(@Nullable ItemLike item) {
+        return ingredientB(item, 1);
+    }
+
+    public @NotNull HandInteractionRecipeBuilder actionB(@Nullable ItemIngredientAction action) {
+        if (action == null) {
+            errors.add("action_b is null");
+            this.actionB = ItemIngredientAction.CATALYST;
+            return this;
+        }
+
+        this.actionB = action;
+        return this;
+    }
+
+    public @NotNull HandInteractionRecipeBuilder output(@Nullable Outputs out) {
+        if (out == null) {
+            errors.add("output is null");
+            this.output = Outputs.EMPTY;
+            return this;
+        }
+
+        this.output = out;
+        return this;
+    }
+
+    public @NotNull HandInteractionRecipeBuilder successSound(@Nullable SoundOutput sound) {
+        if (sound == null) {
+            errors.add("success_sound is null");
+            this.successSound = null;
+            return this;
+        }
+
+        this.successSound = sound;
+        return this;
+    }
+
+    public @NotNull HandInteractionRecipeBuilder failSound(@Nullable SoundOutput sound) {
+        if (sound == null) {
+            errors.add("fail_sound is null");
+            this.failSound = null;
+            return this;
+        }
+
+        this.failSound = sound;
+        return this;
+    }
+
+    public @NotNull HandInteractionRecipeBuilder requireSneaking(boolean require) {
+        this.requireSneaking = require;
+        return this;
+    }
+
+    public @NotNull DataResult<String> recipeNameValidated() {
+        String aTok = tokenFromIngredientFailClosed(
+                ingredientA,
+                JolCraftStrings.underscored(JolCraftDictionary.INGREDIENT, "a")
+        );
+        String bTok = tokenFromIngredientFailClosed(
+                ingredientB,
+                JolCraftStrings.underscored(JolCraftDictionary.INGREDIENT, "b")
+        );
+
+        String aAct = actionToken(actionA);
+        String bAct = actionToken(actionB);
+
+        RecipeFileNameBuilder builder = RecipeFileNameBuilder.create()
+                .word(JolCraftRecipeIds.HAND_INTERACTION)
+                .word(aTok)
+                .word(aAct)
+                .word(bTok)
+                .word(bAct);
+
+        if (requireSneaking) {
+            builder.word(JolCraftDictionary.SNEAK);
+        }
+
+        DataResult<String> built = builder.build();
+
+        if (errors.isEmpty()) {
+            return built;
+        }
+
+        String partial = built.result().orElse("");
+        String msg = "recipeName: " + String.join("; ", errors) +
+                (built.error().isPresent() ? ("; " + built.error().get().message()) : "");
+        return DataResult.error(() -> msg, partial);
+    }
+
+    private @NotNull String actionToken(@Nullable ItemIngredientAction action) {
+        if (action == null) {
+            errors.add("action is null (for naming)");
+            return JolCraftDictionary.UNKNOWN;
+        }
+
+        String id = action.type().getId();
+        if (id == null || id.isBlank()) {
+            errors.add("action token is null/blank (for naming)");
+            return JolCraftDictionary.UNKNOWN;
+        }
+
+        return id;
+    }
+
+    private @NotNull String tokenFromIngredientFailClosed(@NotNull ItemInput in, @NotNull String label) {
+        if (in == ItemInput.EMPTY) {
+            errors.add(label + " is missing");
+            return JolCraftDictionary.UNKNOWN;
+        }
+
+        Optional<Holder<Item>> concrete = in.singleConcrete(Registries.ITEM);
+        if (concrete.isPresent()) {
+            ResourceLocation id = concrete.get()
+                    .unwrapKey()
+                    .map(ResourceKey::location)
+                    .orElse(null);
+
+            if (id == null) {
+                errors.add(label + " has no registry key (for naming)");
+                return JolCraftDictionary.UNKNOWN;
+            }
+
+            return id.getPath();
+        }
+
+        Optional<TagKey<Item>> tag = in.singleTag(Registries.ITEM);
+        if (tag.isPresent()) {
+            return tag.get().location().getPath();
+        }
+
+        errors.add(label + " must be a specific item or single tag (for naming)");
+        return JolCraftDictionary.UNKNOWN;
+    }
+
+    @Override
+    public @NotNull DataResult<RecipeEmission> buildValidated() {
+        if (successSound == null) {
+            errors.add("success_sound is required");
+        }
+
+        if (failSound == null) {
+            errors.add("fail_sound is required");
+        }
+
+        DataResult<String> nameResult = recipeNameValidated();
+
+        if (!errors.isEmpty()) {
+            return nameResult.flatMap(name ->
+                    DataResult.error(() -> "builder: " + String.join("; ", errors))
+            );
+        }
+
+        HandInteractionRecipe recipe = new HandInteractionRecipe(
+                ingredientA,
+                actionA,
+                ingredientB,
+                actionB,
+                output,
+                successSound,
+                failSound,
+                requireSneaking
+        );
+
+        return nameResult.flatMap(name ->
+                HandInteractionRecipe.validateRecipe(recipe).flatMap(validRecipe ->
+                        RecipeEmission.of(
+                                JolCraftRecipeIds.HAND_INTERACTION,
+                                name,
+                                (outAccept, id) -> outAccept.accept(id, validRecipe, null)
+                        )
+                )
+        );
+    }
+}

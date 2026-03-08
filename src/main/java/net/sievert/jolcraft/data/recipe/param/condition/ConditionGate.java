@@ -19,6 +19,7 @@ public interface ConditionGate {
      * - EMPTY => true
      * - Otherwise delegates to {@link Conditions#test(WorldContext)}
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     default boolean gatePasses(@NotNull WorldContext ctx) {
         return conditions().test(ctx);
     }

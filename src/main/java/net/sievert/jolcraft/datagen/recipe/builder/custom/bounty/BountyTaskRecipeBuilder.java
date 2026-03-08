@@ -4,6 +4,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -25,6 +26,7 @@ import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity.EntityOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity.EntitySpecBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
@@ -108,25 +110,34 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    public @NotNull BountyTaskRecipeBuilder sound1(@Nullable SoundOutput sound) {
+    private @Nullable SoundOutput resolveSound(
+            @Nullable SoundEvent sound,
+            @NotNull String field
+    ) {
         if (sound == null) {
-            errors.add("sound1 is null");
-            this.sound1 = null;
-            return this;
+            errors.add(field + " is null");
+            return null;
         }
 
-        this.sound1 = sound;
+        var built = SoundOutputBuilder.create()
+                .sound(sound)
+                .buildValidated();
+
+        if (built.error().isPresent()) {
+            errors.add(field + " invalid: " + built.error().map(DataResult.Error::message).orElse("invalid"));
+            return null;
+        }
+
+        return built.result().orElse(null);
+    }
+
+    public @NotNull BountyTaskRecipeBuilder sound1(@Nullable SoundEvent sound) {
+        this.sound1 = resolveSound(sound, "sound1");
         return this;
     }
 
-    public @NotNull BountyTaskRecipeBuilder sound2(@Nullable SoundOutput sound) {
-        if (sound == null) {
-            errors.add("sound2 is null");
-            this.sound2 = null;
-            return this;
-        }
-
-        this.sound2 = sound;
+    public @NotNull BountyTaskRecipeBuilder sound2(@Nullable SoundEvent sound) {
+        this.sound2 = resolveSound(sound, "sound2");
         return this;
     }
 
@@ -197,11 +208,21 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
         EntitySpec spec = EntitySpecBuilder.builder()
                 .entity(type.builtInRegistryHolder())
                 .count(new IntRange(min, max))
-                .buildOrEmpty();
+                .buildOrNull();
+
+        if (spec == null) {
+            errors.add("slay entity spec could not be built");
+            return this;
+        }
 
         EntityOutput out = EntityOutputBuilder.builder()
                 .result(spec)
-                .buildOrEmpty();
+                .buildOrNull();
+
+        if (out == null) {
+            errors.add("slay entity output could not be built");
+            return this;
+        }
 
         appendObjective(Outputs.wrapSingle(out));
         return this;

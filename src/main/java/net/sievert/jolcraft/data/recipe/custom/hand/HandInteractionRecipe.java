@@ -14,14 +14,14 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomOutputRecipe;
 import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
+import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -91,7 +91,7 @@ public record HandInteractionRecipe(
     }
 
     public static @NotNull DataResult<HandInteractionRecipe> validateRecipe(HandInteractionRecipe recipe) {
-        return JolCraftRecipeValidation.validate(recipe)
+        return RecipeValidation.validate(recipe)
                 .requireValid(recipe.ingredientA(), SOURCE_INGREDIENT_A)
                 .require(recipe.actionA(), JolCraftStrings.underscored(JolCraftDictionary.ACTION, "a"))
                 .requireValid(recipe.ingredientB(), SOURCE_INGREDIENT_B)
@@ -111,7 +111,7 @@ public record HandInteractionRecipe(
     public static final class Serializer implements RecipeSerializer<HandInteractionRecipe> {
 
         private static final Codec<Outputs> OUTPUT_CODEC =
-                Outputs.codecShorthand(OutputDispatch.CODEC);
+                Outputs.codecShorthand(OutputParam.CODEC);
 
         public static final MapCodec<HandInteractionRecipe> CODEC =
                 RecordCodecBuilder.mapCodec(

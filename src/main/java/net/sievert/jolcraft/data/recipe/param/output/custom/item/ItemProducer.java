@@ -27,9 +27,10 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
+import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
@@ -142,29 +143,39 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
                             .forGetter(CodecData::type),
 
                     ITEM_HOLDER_CODEC
-                            .optionalFieldOf(ITEM, null)
-                            .forGetter(CodecData::item),
+                            .optionalFieldOf(ITEM)
+                            .forGetter(d -> Optional.ofNullable(d.item())),
 
                     ITEM_TAG_CODEC
-                            .optionalFieldOf(TAG, null)
-                            .forGetter(CodecData::tag),
+                            .optionalFieldOf(TAG)
+                            .forGetter(d -> Optional.ofNullable(d.tag())),
 
                     STRUCTURE_TAG_CODEC
-                            .optionalFieldOf(STRUCTURE_TAG, null)
-                            .forGetter(CodecData::structureTag),
+                            .optionalFieldOf(STRUCTURE_TAG)
+                            .forGetter(d -> Optional.ofNullable(d.structureTag())),
 
                     MAP_DECO_HOLDER_CODEC
-                            .optionalFieldOf(MAP_DECORATION, null)
-                            .forGetter(CodecData::decoration),
+                            .optionalFieldOf(MAP_DECORATION)
+                            .forGetter(d -> Optional.ofNullable(d.decoration())),
 
                     Codec.STRING
                             .optionalFieldOf(DISPLAY_NAME_KEY, "")
                             .forGetter(CodecData::displayNameKey),
 
                     ResourceLocation.CODEC
-                            .optionalFieldOf(INVALID, null)
-                            .forGetter(CodecData::invalid)
-            ).apply(i, CodecData::new));
+                            .optionalFieldOf(INVALID)
+                            .forGetter(d -> Optional.ofNullable(d.invalid()))
+            ).apply(i, (type, item, tag, structureTag, decoration, displayNameKey, invalid) ->
+                    new CodecData(
+                            type,
+                            item.orElse(null),
+                            tag.orElse(null),
+                            structureTag.orElse(null),
+                            decoration.orElse(null),
+                            displayNameKey,
+                            invalid.orElse(null)
+                    )
+            ));
 
     public static final Codec<ItemProducer> CODEC =
             RAW_CODEC.comapFlatMap(ItemProducer::fromCodecData, ItemProducer::toCodecData);
@@ -344,19 +355,31 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
             @NotNull String displayNameKey
     ) {
         ServerLevel server = ctx.level();
-        BlockPos origin = ctx.player().blockPosition();
+
+        BlockPos origin = WorldAnchor.resolve(ctx);
+        if (origin == null) {
+            return ItemStack.EMPTY;
+        }
 
         BlockPos found = server.findNearestMapStructure(structureTag, origin, 100, true);
-        if (found == null) return ItemStack.EMPTY;
+        if (found == null) {
+            return ItemStack.EMPTY;
+        }
 
         ItemStack map =
                 MapItem.create(server, found.getX(), found.getZ(), (byte) 2, true, true);
 
-        map.set(DataComponents.CUSTOM_NAME,
-                Component.translatable(displayNameKey));
+        map.set(
+                DataComponents.CUSTOM_NAME,
+                Component.translatable(displayNameKey)
+        );
 
         MapItemSavedData.addTargetDecoration(
-                map, found, JolCraftDictionary.MAP, decoration);
+                map,
+                found,
+                JolCraftDictionary.MAP,
+                decoration
+        );
 
         return map;
     }

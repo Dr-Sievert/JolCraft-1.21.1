@@ -3,17 +3,18 @@ package net.sievert.jolcraft.data.recipe.param.output.custom.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
@@ -42,8 +43,7 @@ public record EntityOutput(
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftParameterIds.ENTITY, JolCraftDictionary.OUTPUT));
 
-    public static final EntityOutput EMPTY =
-            new EntityOutput(EntitySpec.EMPTY);
+    public static final byte DISC = 7;
 
     // ---------------------------------------------------------------------
     // CODEC
@@ -56,7 +56,8 @@ public record EntityOutput(
                             .forGetter(EntityOutput::result)
             ).apply(inst, EntityOutput::new));
 
-    public static final Codec<EntityOutput> CODEC = ParamCodecs.validated(RAW_CODEC);
+    public static final Codec<EntityOutput> CODEC =
+            ParamCodecs.validated(RAW_CODEC);
 
     // ---------------------------------------------------------------------
     // STREAM
@@ -68,13 +69,7 @@ public record EntityOutput(
                     EntityOutput::new
             );
 
-    // ---------------------------------------------------------------------
-    // DATA
-    // ---------------------------------------------------------------------
-
-    public EntityOutput {
-        result = result != null ? result : EntitySpec.EMPTY;
-    }
+    public static final ParamTypeDef<OutputParam> TYPE_DEF = new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     @Override
     public @NotNull ResourceLocation typeId() {
@@ -87,9 +82,12 @@ public record EntityOutput(
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        EntitySpec r = result != null ? result : EntitySpec.EMPTY;
-        return r.introspections();
+        return result.introspections();
     }
+
+    // ---------------------------------------------------------------------
+    // OUTPUT PARAM
+    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
@@ -98,12 +96,12 @@ public record EntityOutput(
         if (rolledOpt.isEmpty()) return List.of();
 
         EntitySpec.RolledEntity rolled = rolledOpt.get();
-        WorldAnchor anchor = (rolled.spawn() != null) ? rolled.spawn().anchor() : null;
+        BlockPos pos = rolled.spawn() != null ? rolled.spawn().pos() : null;
 
         Output.EntitySpec spec = new Output.EntitySpec(
                 rolled.type(),
                 rolled.count(),
-                anchor,
+                pos,
                 rolled.nbt(),
                 rolled.spawn()
         );
@@ -111,12 +109,21 @@ public record EntityOutput(
         return List.of(new Output.Entities(List.of(spec)));
     }
 
+    // ---------------------------------------------------------------------
+    // VALIDATION
+    // ---------------------------------------------------------------------
+
     @Override
     public @NotNull DataResult<EntityOutput> validate() {
+
+        if (result == null) {
+            return DataResult.error(() -> "'" + JolCraftParameterIds.RESULT + "' is required");
+        }
+
         var rv = result.validate();
         var rerr = rv.error();
         return rerr.<DataResult<EntityOutput>>map(entitySpecError ->
-                DataResult.error(() -> "result invalid: " + entitySpecError.message())
-        ).orElseGet(() -> DataResult.success(this));
+                DataResult.error(() -> "'" + JolCraftParameterIds.RESULT + "' invalid: " + entitySpecError.message())).orElseGet(() -> DataResult.success(this));
+
     }
 }

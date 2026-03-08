@@ -21,12 +21,11 @@ import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomRecipe;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
@@ -52,10 +51,6 @@ public record BountyTaskRecipe(
         SoundOutput sound1,
         SoundOutput sound2
 ) implements CustomRecipe<BountyRecipeInput> {
-
-    // ---------------------------------------------------------------------
-    // Recipe implementation
-    // ---------------------------------------------------------------------
 
     @Override
     public boolean matches(@NotNull BountyRecipeInput in, Level level) {
@@ -93,7 +88,7 @@ public record BountyTaskRecipe(
 
         BountyData.BountyObjective resolved = null;
 
-        for (Output o :  pools.generate(ctx)) {
+        for (Output o : pools.generate(ctx)) {
             if (o instanceof Output.Items items) {
                 var stacks = items.stacksSafe();
                 if (!stacks.isEmpty()) {
@@ -147,10 +142,6 @@ public record BountyTaskRecipe(
         return !stack.has(JolCraftDataComponents.BOUNTY_COMPLETE.get());
     }
 
-    // ---------------------------------------------------------------------
-    // TASK RESULT CODEC
-    // ---------------------------------------------------------------------
-
     private static final Codec<ItemOutput> TASK_RESULT_CODEC =
             Codec.either(
                     ItemOutput.CODEC,
@@ -180,18 +171,36 @@ public record BountyTaskRecipe(
                     }
             );
 
-    // ---------------------------------------------------------------------
-    // OBJECTIVE
-    // ---------------------------------------------------------------------
-
     private static final Codec<Outputs> OBJECTIVE_CODEC =
-            Outputs.codecShorthand(OutputDispatch.CODEC);
-
-    // ---------------------------------------------------------------------
-    // SERIALIZER
-    // ---------------------------------------------------------------------
+            Outputs.codecShorthand(OutputParam.CODEC);
 
     public static final class Serializer implements RecipeSerializer<BountyTaskRecipe> {
+
+        private static final StreamCodec<RegistryFriendlyByteBuf, BountyType> BOUNTY_TYPE_STREAM_CODEC =
+                StreamCodec.of(
+                        (buf, value) -> buf.writeUtf(value.getId()),
+                        buf -> {
+                            String id = buf.readUtf();
+                            BountyType type = BountyType.fromString(id);
+                            if (type == null || type == BountyType.UNKNOWN) {
+                                throw new IllegalArgumentException("unknown bounty type '" + id + "'");
+                            }
+                            return type;
+                        }
+                );
+
+        private static final StreamCodec<RegistryFriendlyByteBuf, BountyTier> BOUNTY_TIER_STREAM_CODEC =
+                StreamCodec.of(
+                        (buf, value) -> buf.writeVarInt(value.getId()),
+                        buf -> {
+                            int id = buf.readVarInt();
+                            BountyTier tier = BountyTier.fromValue(id);
+                            if (tier == null || tier == BountyTier.UNKNOWN) {
+                                throw new IllegalArgumentException("unknown bounty tier id " + id);
+                            }
+                            return tier;
+                        }
+                );
 
         public static final MapCodec<BountyTaskRecipe> CODEC =
                 RecordCodecBuilder.mapCodec((RecordCodecBuilder.Instance<BountyTaskRecipe> inst) -> inst.group(
@@ -222,27 +231,12 @@ public record BountyTaskRecipe(
 
         public static final StreamCodec<RegistryFriendlyByteBuf, BountyTaskRecipe> STREAM_CODEC =
                 StreamCodec.composite(
-                        StreamCodec.of(
-                                (buf, t) -> buf.writeUtf(t.getId()),
-                                buf -> {
-                                    BountyType t = BountyType.fromString(buf.readUtf());
-                                    return t == null ? BountyType.UNKNOWN : t;
-                                }
-                        ), BountyTaskRecipe::bountyType,
-
-                        StreamCodec.of(
-                                (buf, t) -> buf.writeVarInt(t.getId()),
-                                buf -> {
-                                    BountyTier t = BountyTier.fromValue(buf.readVarInt());
-                                    return t == null ? BountyTier.UNKNOWN : t;
-                                }
-                        ), BountyTaskRecipe::tier,
-
+                        BOUNTY_TYPE_STREAM_CODEC, BountyTaskRecipe::bountyType,
+                        BOUNTY_TIER_STREAM_CODEC, BountyTaskRecipe::tier,
                         ItemOutput.STREAM_CODEC, BountyTaskRecipe::bounty,
                         Outputs.STREAM_CODEC, BountyTaskRecipe::objective,
                         SoundOutput.STREAM_CODEC, BountyTaskRecipe::sound1,
                         SoundOutput.STREAM_CODEC, BountyTaskRecipe::sound2,
-
                         BountyTaskRecipe::new
                 );
 
@@ -257,16 +251,12 @@ public record BountyTaskRecipe(
         }
     }
 
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
-
     public static @NotNull DataResult<BountyTaskRecipe> validateRecipe(BountyTaskRecipe r) {
 
         var sound1Key = JolCraftStrings.underscored(JolCraftDictionary.SOUND, "1");
         var sound2Key = JolCraftStrings.underscored(JolCraftDictionary.SOUND, "2");
 
-        var base = JolCraftRecipeValidation.validate(r)
+        var base = RecipeValidation.validate(r)
                 .require(r.bountyType(), BountyRecipe.TYPE_KEY)
                 .require(r.tier(), BountyRecipe.TIER_KEY)
                 .requireValid(r.bounty(), JolCraftParameterIds.RESULT)
@@ -327,7 +317,9 @@ public record BountyTaskRecipe(
         }
 
         List<PoolEntry> entries = pool.entries();
-        if (entries.isEmpty()) return DataResult.error(() -> "objective.pool.entries must not be empty");
+        if (entries.isEmpty()) {
+            return DataResult.error(() -> "objective.pool.entries must not be empty");
+        }
 
         for (int ei = 0; ei < entries.size(); ei++) {
             PoolEntry entry = entries.get(ei);
@@ -339,8 +331,7 @@ public record BountyTaskRecipe(
                 );
             }
 
-            OutputParam raw = entry.output();
-            OutputParam op = OutputParam.unwrap(raw);
+            OutputParam op = entry.output();
 
             var tid = op.typeId();
             if (!tid.equals(ItemOutput.TYPE_ID) && !tid.equals(EntityOutput.TYPE_ID)) {

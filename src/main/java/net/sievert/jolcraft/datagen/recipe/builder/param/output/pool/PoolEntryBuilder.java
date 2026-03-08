@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.pool;
 
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
@@ -20,10 +19,6 @@ public final class PoolEntryBuilder implements ParamBuilder<PoolEntry> {
         return new PoolEntryBuilder();
     }
 
-    // ---------------------------------------------------------------------
-    // OUTPUT
-    // ---------------------------------------------------------------------
-
     public PoolEntryBuilder output(OutputParam output) {
         this.output = OutputParam.unwrap(output);
         return this;
@@ -34,10 +29,6 @@ public final class PoolEntryBuilder implements ParamBuilder<PoolEntry> {
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // POOL
-    // ---------------------------------------------------------------------
-
     public PoolEntryBuilder pool(DrawRule pool) {
         this.pool = pool;
         return this;
@@ -47,10 +38,6 @@ public final class PoolEntryBuilder implements ParamBuilder<PoolEntry> {
         this.pool = builder != null ? builder.build() : null;
         return this;
     }
-
-    // ---------------------------------------------------------------------
-    // WEIGHT
-    // ---------------------------------------------------------------------
 
     public PoolEntryBuilder weight(WeightParam weight) {
         this.weight = weight;
@@ -64,7 +51,6 @@ public final class PoolEntryBuilder implements ParamBuilder<PoolEntry> {
 
     @Override
     public PoolEntry build() {
-        OutputParam o = (output != null) ? output : OutputDispatch.None.INSTANCE;
-        return new PoolEntry(o, pool, weight);
+        return new PoolEntry(output, pool, weight);
     }
 }

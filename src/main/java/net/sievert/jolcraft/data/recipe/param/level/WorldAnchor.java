@@ -1,50 +1,16 @@
 package net.sievert.jolcraft.data.recipe.param.level;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.Nullable;
 
-/**
- * Execution anchor for resolving a spatial reference from {@link WorldContext}.
- *
- * Fail-closed behavior:
- * - Unknown serialized value -> {@link #PLAYER}
- * - Missing required context field -> {@link #resolve(WorldContext)} returns null
- */
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public enum WorldAnchor implements StringRepresentable, JolCraftEnumHelper.StringId {
+public enum WorldAnchor implements JolCraftEnumHelper.StringId {
 
-    /**
-     * Use {@link WorldContext#player()} position.
-     */
     PLAYER(JolCraftParameterIds.PLAYER),
-
-    /**
-     * Use {@link WorldContext#entity()} position.
-     */
     ENTITY(JolCraftParameterIds.ENTITY);
-
-    public static final Codec<WorldAnchor> CODEC =
-            StringRepresentable.fromEnum(WorldAnchor::values);
-
-    private static final int MAX_ANCHOR_NAME = 32;
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, WorldAnchor> STREAM_CODEC =
-            StreamCodec.of(
-                    (buf, value) -> buf.writeUtf(value.getSerializedName(), MAX_ANCHOR_NAME),
-                    buf -> fromSerializedName(buf.readUtf(MAX_ANCHOR_NAME))
-            );
 
     private final String id;
 
@@ -53,88 +19,123 @@ public enum WorldAnchor implements StringRepresentable, JolCraftEnumHelper.Strin
     }
 
     @Override
-    public @NotNull String getId() {
+    public String getId() {
         return id;
     }
 
-    @Override
-    public @NotNull String getSerializedName() {
-        return id;
-    }
+    /* ------------------------------------------------------------ */
+    /* Forced anchor                                                */
+    /* ------------------------------------------------------------ */
 
-    /**
-     * Parse an anchor from its serialized name.
-     *
-     * Fail-closed:
-     * - null / unknown -> {@link #PLAYER}
-     */
-    public static @NotNull WorldAnchor fromSerializedName(@Nullable String id) {
-        return JolCraftEnumHelper.byStringId(WorldAnchor.class, id, PLAYER);
-    }
-
-    /**
-     * Resolve this anchor to a {@link BlockPos} using the given context.
-     *
-     * Fail-closed:
-     * - required field missing -> null
-     */
-    public @Nullable BlockPos resolve(@NotNull WorldContext ctx) {
+    /** Resolve this anchor only. */
+    public @Nullable BlockPos resolveAnchor(@NotNull WorldContext ctx) {
         return switch (this) {
-            case PLAYER -> ctx.player().blockPosition();
+            case PLAYER -> ctx.player() != null ? ctx.player().blockPosition() : null;
             case ENTITY -> ctx.entity() != null ? ctx.entity().blockPosition() : null;
         };
     }
 
+    /* ------------------------------------------------------------ */
+    /* Automatic runtime resolution                                 */
+    /* ------------------------------------------------------------ */
+
+    /** entity -> player -> null */
+    public static @Nullable BlockPos auto(@NotNull WorldContext ctx) {
+        return resolve(ctx, null, null);
+    }
+
+    /** manual -> entity -> player -> null */
+    public static @Nullable BlockPos auto(
+            @NotNull WorldContext ctx,
+            @Nullable BlockPos manual
+    ) {
+        return resolve(ctx, manual, null);
+    }
+
+    /* ------------------------------------------------------------ */
+    /* Forced anchor helpers                                        */
+    /* ------------------------------------------------------------ */
+
+    /** entity/player only (no automatic fallback) */
+    public static @Nullable BlockPos forced(
+            @NotNull WorldContext ctx,
+            @NotNull WorldAnchor anchor
+    ) {
+        return resolve(ctx, null, anchor);
+    }
+
+    /** manual -> forced anchor -> null */
+    public static @Nullable BlockPos forced(
+            @NotNull WorldContext ctx,
+            @Nullable BlockPos manual,
+            @NotNull WorldAnchor anchor
+    ) {
+        return resolve(ctx, manual, anchor);
+    }
+
+    /* ------------------------------------------------------------ */
+    /* Core resolver                                                */
+    /* ------------------------------------------------------------ */
+
     /**
-     * Resolve this anchor to a centered Vec3 (block center).
+     * Resolution order:
      *
-     * Fail-closed:
-     * - missing required context -> null
+     * entity -> player -> null
      */
-    public @Nullable Vec3 resolveCenter(@NotNull WorldContext ctx) {
-        BlockPos pos = resolve(ctx);
-        if (pos == null) {
-            return null;
-        }
-
-        return new Vec3(
-                pos.getX() + 0.5D,
-                pos.getY() + 0.5D,
-                pos.getZ() + 0.5D
-        );
+    public static @Nullable BlockPos resolve(@NotNull WorldContext ctx) {
+        return resolve(ctx, null, null);
     }
 
     /**
-     * Resolve optional anchor to a centered Vec3 (block center),
-     * falling back to player position if anchor is null or cannot resolve.
+     * Resolution order:
+     *
+     * manual -> entity -> player -> null
      */
-    public static @NotNull Vec3 resolveCenterOrPlayer(@Nullable WorldAnchor anchor, @NotNull WorldContext ctx) {
+    public static @Nullable BlockPos resolve(
+            @NotNull WorldContext ctx,
+            @Nullable BlockPos manual
+    ) {
+        return resolve(ctx, manual, null);
+    }
+
+    /**
+     * Resolution order:
+     *
+     * forced anchor -> null
+     */
+    public static @Nullable BlockPos resolve(
+            @NotNull WorldContext ctx,
+            @NotNull WorldAnchor anchor
+    ) {
+        return anchor.resolveAnchor(ctx);
+    }
+
+    /**
+     * Resolution order:
+     *
+     * manual -> forced anchor -> entity -> player -> null
+     */
+    public static @Nullable BlockPos resolve(
+            @NotNull WorldContext ctx,
+            @Nullable BlockPos manual,
+            @Nullable WorldAnchor anchor
+    ) {
+        if (manual != null) {
+            return manual;
+        }
+
         if (anchor != null) {
-            Vec3 resolved = anchor.resolveCenter(ctx);
-            if (resolved != null) {
-                return resolved;
-            }
+            return anchor.resolveAnchor(ctx);
         }
 
-        BlockPos pos = ctx.player().blockPosition();
-        return new Vec3(
-                pos.getX() + 0.5D,
-                pos.getY() + 0.5D,
-                pos.getZ() + 0.5D
-        );
-    }
-
-    public static void encodeOptional(@NotNull RegistryFriendlyByteBuf buf, @Nullable WorldAnchor anchor) {
-        if (anchor == null) {
-            buf.writeBoolean(false);
-            return;
+        if (ctx.entity() != null) {
+            return ctx.entity().blockPosition();
         }
 
-        buf.writeBoolean(true);
-        STREAM_CODEC.encode(buf, anchor);
-    }
+        if (ctx.player() != null) {
+            return ctx.player().blockPosition();
+        }
 
-    public static @Nullable WorldAnchor decodeOptional(@NotNull RegistryFriendlyByteBuf buf) {
-        return buf.readBoolean() ? STREAM_CODEC.decode(buf) : null;
+        return null;
     }
 }

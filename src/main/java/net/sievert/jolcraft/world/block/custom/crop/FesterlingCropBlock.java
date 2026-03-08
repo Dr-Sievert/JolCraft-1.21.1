@@ -104,11 +104,14 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
                 double dx = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.7;
                 double dy = pos.getY() + 0.7 + (random.nextDouble() * 0.3);
                 double dz = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.7;
+
                 JolCraftParticleHelper.spawn(
                         level,
                         ParticleTypes.HAPPY_VILLAGER,
                         dx, dy, dz,
-                        0.0, 0.0, 0.0
+                        1,
+                        0.0, 0.0, 0.0,
+                        0.0
                 );
             }
         }

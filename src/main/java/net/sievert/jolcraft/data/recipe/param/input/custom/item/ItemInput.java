@@ -13,8 +13,9 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.condition.ConditionGate;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.input.base.InputParam;
@@ -53,6 +54,8 @@ public record ItemInput(
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.ITEM, JolCraftParameterIds.INPUT));
 
+    public static final byte DISC = 1;
+
     public static final ItemRequirements EMPTY_REQUIREMENTS = ItemRequirements.EMPTY;
 
     private Conditions conditionsSafe() {
@@ -76,10 +79,6 @@ public record ItemInput(
         return requirements != null ? requirements : ItemRequirements.EMPTY;
     }
 
-    // ---------------------------------------------------------------------
-    // Convenience factories
-    // ---------------------------------------------------------------------
-
     @SuppressWarnings("deprecation")
     public static ItemInput one(Ingredient ingredient) {
         if (ingredient == null || ingredient.isEmpty()) return EMPTY;
@@ -101,24 +100,17 @@ public record ItemInput(
         return new ItemInput(Conditions.EMPTY, ItemSelector.of(item), IntRange.ONE, EMPTY_REQUIREMENTS);
     }
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
-
     private static final Codec<ItemInput> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Conditions.CODEC
                             .optionalFieldOf(JolCraftParameterIds.CONDITIONS, Conditions.EMPTY)
                             .forGetter(ItemInput::conditionsSafe),
-
                     ItemSelector.CODEC
                             .fieldOf(JolCraftParameterIds.SELECTOR)
                             .forGetter(ItemInput::selectorSafe),
-
                     IntRange.CODEC
                             .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
                             .forGetter(ItemInput::countSafe),
-
                     ItemRequirements.CODEC
                             .optionalFieldOf(JolCraftParameterIds.REQUIREMENTS, EMPTY_REQUIREMENTS)
                             .forGetter(ItemInput::requirementsSafe)
@@ -126,17 +118,13 @@ public record ItemInput(
 
     public static final Codec<ItemInput> CODEC = ParamCodecs.validated(RAW_CODEC);
 
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
-
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemInput> STREAM_CODEC =
             StreamCodec.of(
-                    (buf, v) -> {
-                        Conditions.STREAM_CODEC.encode(buf, v.conditionsSafe());
-                        ItemSelector.STREAM_CODEC.encode(buf, v.selectorSafe());
-                        IntRange.STREAM_CODEC.encode(buf, v.countSafe());
-                        ItemRequirements.STREAM_CODEC.encode(buf, v.requirementsSafe());
+                    (buf, value) -> {
+                        Conditions.STREAM_CODEC.encode(buf, value.conditionsSafe());
+                        ItemSelector.STREAM_CODEC.encode(buf, value.selectorSafe());
+                        IntRange.STREAM_CODEC.encode(buf, value.countSafe());
+                        ItemRequirements.STREAM_CODEC.encode(buf, value.requirementsSafe());
                     },
                     buf -> new ItemInput(
                             Conditions.STREAM_CODEC.decode(buf),
@@ -146,9 +134,7 @@ public record ItemInput(
                     )
             );
 
-    // ---------------------------------------------------------------------
-    // INPUT PARAM
-    // ---------------------------------------------------------------------
+    public static final ParamTypeDef<InputParam<?, ?>> TYPE_DEF = new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     @Override
     public @NotNull ResourceLocation typeId() {
@@ -156,41 +142,19 @@ public record ItemInput(
     }
 
     @Override
-    public @NotNull Codec<ItemInput> codec() {
-        return CODEC;
-    }
-
-    // ---------------------------------------------------------------------
-    // MATCHING
-    // ---------------------------------------------------------------------
-
-    @Override
     public boolean matches(@NotNull WorldContext ctx, @Nullable ItemStack subject) {
         if (subject == null || subject.isEmpty()) return false;
-
         if (!gatePasses(ctx)) return false;
-
         if (!selectorSafe().matches(ctx, subject)) return false;
-
         if (!requirementsSafe().matches(subject)) return false;
-
         if (!hasValidCountRange()) return false;
-
         return subject.getCount() >= countSafe().min();
     }
-
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
         return RegistryIntrospectionSource.mergeByRegistry(List.of(selectorSafe(), requirementsSafe()));
     }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<ItemInput> validate() {

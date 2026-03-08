@@ -1,15 +1,26 @@
 package net.sievert.jolcraft.data.recipe.param.output.hook;
 
 import net.minecraft.resources.ResourceLocation;
+import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeHookIds;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
+import net.sievert.jolcraft.data.recipe.param.output.hook.custom.DeepslateCompassHook;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Strict immutable hook dispatch table.
+ *
+ * Rules:
+ * - no runtime registration
+ * - no mutable global state
+ * - unknown hook ids are ignored (no-op)
+ * - all known hooks are declared here as static entries
+ */
 public final class Hooks {
 
     @FunctionalInterface
@@ -22,23 +33,21 @@ public final class Hooks {
     }
 
     private static final Operation NOOP = (ctx, resolver, outputs) -> {};
-    private static final Map<ResourceLocation, Operation> REGISTRY = new ConcurrentHashMap<>();
+
+    public static final ResourceLocation DEEPSLATE_COMPASS_ID =
+            JolCraft.location(JolCraftRecipeHookIds.DEEPSLATE_COMPASS);
+
+    private static final Map<ResourceLocation, Operation> REGISTRY = Map.of(
+            DEEPSLATE_COMPASS_ID, DeepslateCompassHook::apply
+    );
 
     private Hooks() {}
 
-    public static boolean register(ResourceLocation id, Operation operation) {
-        if (id == null || operation == null) {
-            return false;
-        }
-        return REGISTRY.putIfAbsent(id, operation) == null;
-    }
-
-    public static Operation resolve(ResourceLocation id) {
+    public static @NotNull Operation resolve(ResourceLocation id) {
         if (id == null) {
             return NOOP;
         }
-        Operation op = REGISTRY.get(id);
-        return op != null ? op : NOOP;
+        return REGISTRY.getOrDefault(id, NOOP);
     }
 
     public static void apply(

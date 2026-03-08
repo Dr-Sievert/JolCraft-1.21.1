@@ -6,25 +6,16 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.data.recipe.param.condition.Condition;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.condition.ConditionTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-/**
- * Atomic condition: weather gate.
- *
- * Schema (at least one of rain/thunder must be present):
- * { "type": "jolcraft:weather", "rain": true, "invert": false }
- * { "type": "jolcraft:weather", "thunder": false }
- * { "type": "jolcraft:weather", "rain": true, "thunder": false }
- *
- * Invalid state representable (no requirements selected).
- * Invalid -> false at runtime.
- */
 public record WeatherCondition(
         boolean requireRaining,
         boolean raining,
@@ -33,9 +24,8 @@ public record WeatherCondition(
         boolean invert
 ) implements Condition {
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
+    public static final ResourceLocation TYPE_ID = JolCraft.location(JolCraftDictionary.WEATHER);
+    public static final byte DISC = 2;
 
     private static final Codec<WeatherCondition> RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
@@ -54,28 +44,7 @@ public record WeatherCondition(
             )));
 
     public static final Codec<WeatherCondition> CODEC =
-            RAW_CODEC.flatXmap(
-                    WeatherCondition::validateDecoded,
-                    DataResult::success
-            );
-
-    private static DataResult<WeatherCondition> validateDecoded(WeatherCondition c) {
-        if (c == null) {
-            return DataResult.error(() -> "weather condition is null");
-        }
-        if (!c.requireRaining && !c.requireThundering) {
-            return DataResult.error(() ->
-                    "weather condition must specify at least one of '" +
-                            JolCraftParameterIds.RAIN + "' or '" +
-                            JolCraftParameterIds.THUNDER + "'"
-            );
-        }
-        return DataResult.success(c);
-    }
-
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
+            RAW_CODEC.flatXmap(WeatherCondition::validateDecoded, DataResult::success);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, WeatherCondition> STREAM_CODEC =
             StreamCodec.of(
@@ -95,18 +64,23 @@ public record WeatherCondition(
                     )
             );
 
-    // ---------------------------------------------------------------------
-    // DISPATCH
-    // ---------------------------------------------------------------------
+    public static final ParamTypeDef<Condition> TYPE_DEF =
+            new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
-    @Override
-    public ResourceLocation typeId() {
-        return ConditionTypes.TYPE_WEATHER;
+    private static DataResult<WeatherCondition> validateDecoded(WeatherCondition c) {
+        if (!c.requireRaining && !c.requireThundering) {
+            return DataResult.error(() ->
+                    "weather condition must specify at least one of '" +
+                            JolCraftParameterIds.RAIN + "' or '" + JolCraftParameterIds.THUNDER + "'"
+            );
+        }
+        return DataResult.success(c);
     }
 
-    // ---------------------------------------------------------------------
-    // TEST
-    // ---------------------------------------------------------------------
+    @Override
+    public @NotNull ResourceLocation typeId() {
+        return TYPE_ID;
+    }
 
     @Override
     public boolean test(@NotNull WorldContext ctx) {
@@ -115,7 +89,6 @@ public record WeatherCondition(
         }
 
         var level = ctx.level();
-
         boolean pass = true;
 
         if (requireRaining) {
@@ -127,10 +100,6 @@ public record WeatherCondition(
 
         return invert != pass;
     }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<Condition> validate() {

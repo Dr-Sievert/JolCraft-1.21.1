@@ -9,8 +9,8 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectable;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * Rules:
  * - producer REQUIRED
  * - particle REQUIRED
- * - producer.typeHolder() MUST match particle.getType()
+ * - producer.type() MUST match particle.getType()
  */
 public record ParticleSpec(
         @NotNull ParticleProducer producer,
@@ -77,18 +77,13 @@ public record ParticleSpec(
 
     @Override
     public @NotNull DataResult<ParticleSpec> validate() {
-
         DataResult<ParticleProducer> pv = producer.validate();
         if (pv.error().isPresent()) {
             String msg = pv.error().map(DataResult.Error::message).orElse("");
             return DataResult.error(() -> "producer invalid: " + msg);
         }
 
-        Holder<ParticleType<?>> holder = producer.typeHolder();
-        if (holder == null) {
-            return DataResult.error(() -> "producer has no particle type");
-        }
-
+        Holder<ParticleType<?>> holder = producer.type();
         ParticleType<?> payloadType = particle.getType();
 
         if (holder.value() != payloadType) {

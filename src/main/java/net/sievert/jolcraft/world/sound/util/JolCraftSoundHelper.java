@@ -86,6 +86,40 @@ public final class JolCraftSoundHelper {
     }
 
     // ------------------------------------------------------------
+    // GENERIC
+    // ------------------------------------------------------------
+
+
+    /** Generic positional sound centered on a block position. */
+    public static void position(Level level,
+                                BlockPos pos,
+                                SoundEvent sound,
+                                SoundSource source,
+                                float volume,
+                                float pitch) {
+
+        play(
+                level,
+                sound,
+                source,
+                pos.getX() + 0.5D,
+                pos.getY() + 0.5D,
+                pos.getZ() + 0.5D,
+                volume,
+                pitch
+        );
+    }
+
+    /** Generic positional sound centered on a block position (1.0 / 1.0). */
+    public static void position(Level level,
+                                BlockPos pos,
+                                SoundEvent sound,
+                                SoundSource source) {
+
+        position(level, pos, sound, source, 1.0F, 1.0F);
+    }
+
+    // ------------------------------------------------------------
     // PLAYER
     // ------------------------------------------------------------
 
@@ -160,16 +194,7 @@ public final class JolCraftSoundHelper {
                                       float volume,
                                       float pitch) {
 
-        play(
-                level,
-                sound,
-                SoundSource.BLOCKS,
-                pos.getX() + 0.5D,
-                pos.getY() + 0.5D,
-                pos.getZ() + 0.5D,
-                volume,
-                pitch
-        );
+        position(level, pos, sound, SoundSource.BLOCKS, volume, pitch);
     }
 
     /** Preferred block sound entry: BlockEntity. */

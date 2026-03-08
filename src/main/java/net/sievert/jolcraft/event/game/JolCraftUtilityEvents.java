@@ -79,16 +79,14 @@ public final class JolCraftUtilityEvents {
             String baseName = stack.getHoverName().getString();
             stack.remove(DataComponents.CUSTOM_NAME);
             stack.remove(DataComponents.ITEM_NAME);
-            stack.set(DataComponents.ITEM_NAME,
-                    Component.literal(baseName).withStyle(JolCraftEnumParams.Rarity.LEGENDARY.getValue().getStyleModifier()));
+            stack.set(DataComponents.ITEM_NAME, Component.literal(baseName).withStyle(JolCraftEnumParams.Rarity.LEGENDARY.getValue().getStyleModifier()));
         }
 
         if (stack.is(JolCraftTags.Items.MITHRIL_ITEMS)) {
             String baseName = stack.getHoverName().getString();
             stack.remove(DataComponents.CUSTOM_NAME);
             stack.remove(DataComponents.ITEM_NAME);
-            stack.set(DataComponents.ITEM_NAME,
-                    Component.literal(baseName).withStyle(ChatFormatting.AQUA));
+            stack.set(DataComponents.ITEM_NAME, Component.literal(baseName).withStyle(ChatFormatting.AQUA));
         }
     }
 }

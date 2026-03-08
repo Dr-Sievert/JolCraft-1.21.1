@@ -80,6 +80,7 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String MODE = JolCraftDictionary.MODE;
     public static final String RANGE = JolCraftDictionary.RANGE;
     public static final String SOURCE = JolCraftDictionary.SOURCE;
+    public static final String TARGET = JolCraftDictionary.TARGET;
 
     // ---------------------------------------------------------------------
     // Item requirements / transforms fields

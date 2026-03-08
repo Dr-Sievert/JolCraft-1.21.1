@@ -3,16 +3,18 @@ package net.sievert.jolcraft.data.recipe.param.output.custom.item.transform;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
+import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -132,8 +134,12 @@ public record ItemTransforms(
             return;
         }
 
-        DifficultyInstance difficulty =
-                ctx.level().getCurrentDifficultyAt(ctx.player().blockPosition());
+        BlockPos anchor = WorldAnchor.resolve(ctx);
+        if (anchor == null) {
+            return;
+        }
+
+        DifficultyInstance difficulty = ctx.level().getCurrentDifficultyAt(anchor);
 
         for (EnchantmentTransform t : enchantments) {
             t.apply(ctx, output, difficulty);

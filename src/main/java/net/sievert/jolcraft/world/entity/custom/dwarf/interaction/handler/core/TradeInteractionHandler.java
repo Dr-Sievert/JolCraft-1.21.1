@@ -43,7 +43,6 @@ public final class TradeInteractionHandler implements DwarfInteractions.CoreInte
             return InteractionResult.SUCCESS;
         }
 
-        dwarf.setTradingPlayer(player);
         dwarf.openTradingScreen(player, dwarf.getDisplayName(), dwarf.getMerchantLevel());
         return InteractionResult.SUCCESS;
     }

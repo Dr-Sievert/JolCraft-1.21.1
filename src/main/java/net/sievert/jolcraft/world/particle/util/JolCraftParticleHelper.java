@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.world.particle.util;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -81,23 +82,38 @@ public final class JolCraftParticleHelper {
                              int count,
                              double xDist, double yDist, double zDist,
                              double speed) {
-        spawn(level, particle, particle.getType().getOverrideLimiter(), false, x, y, z, count, xDist, yDist, zDist, speed);
+
+        spawn(
+                level,
+                particle,
+                particle.getType().getOverrideLimiter(),
+                false,
+                x, y, z,
+                count,
+                xDist, yDist, zDist,
+                speed
+        );
     }
 
     public static void spawn(Level level,
                              ParticleOptions particle,
-                             boolean overrideLimiter,
-                             boolean alwaysShow,
-                             double x, double y, double z,
-                             double vx, double vy, double vz) {
-        spawn(level, particle, overrideLimiter, alwaysShow, x, y, z, 0, vx, vy, vz, 1.0D);
-    }
+                             BlockPos pos,
+                             int count,
+                             double xDist, double yDist, double zDist,
+                             double speed) {
 
-    public static void spawn(Level level,
-                             ParticleOptions particle,
-                             double x, double y, double z,
-                             double vx, double vy, double vz) {
-        spawn(level, particle, particle.getType().getOverrideLimiter(), false, x, y, z, 0, vx, vy, vz, 1.0D);
+        spawn(
+                level,
+                particle,
+                particle.getType().getOverrideLimiter(),
+                false,
+                pos.getX() + 0.5D,
+                pos.getY() + 0.5D,
+                pos.getZ() + 0.5D,
+                count,
+                xDist, yDist, zDist,
+                speed
+        );
     }
 
     // ------------------------------------------------------------
@@ -148,30 +164,5 @@ public final class JolCraftParticleHelper {
                     count
             ));
         }
-    }
-
-    public static void spawnLocal(Player player,
-                                  ParticleOptions particle,
-                                  double x, double y, double z,
-                                  int count,
-                                  double xDist, double yDist, double zDist,
-                                  double speed) {
-        spawnLocal(player, particle, particle.getType().getOverrideLimiter(), false, x, y, z, count, xDist, yDist, zDist, speed);
-    }
-
-    public static void spawnLocal(Player player,
-                                  ParticleOptions particle,
-                                  boolean overrideLimiter,
-                                  boolean alwaysShow,
-                                  double x, double y, double z,
-                                  double vx, double vy, double vz) {
-        spawnLocal(player, particle, overrideLimiter, alwaysShow, x, y, z, 0, vx, vy, vz, 1.0D);
-    }
-
-    public static void spawnLocal(Player player,
-                                  ParticleOptions particle,
-                                  double x, double y, double z,
-                                  double vx, double vy, double vz) {
-        spawnLocal(player, particle, particle.getType().getOverrideLimiter(), false, x, y, z, 0, vx, vy, vz, 1.0D);
     }
 }

@@ -6,12 +6,9 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
@@ -22,7 +19,6 @@ import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
 import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,16 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * OutputParam wrapper around {@link Pools}.
+ * Composite output wrapper around {@link Pools}.
+ *
+ * IMPORTANT:
+ * - Outputs is NOT an OutputParam variant.
+ * - Outputs is the outer container/program form used by recipes that want pooled/multi output behavior.
  */
 public record Outputs(Pools pools)
-        implements OutputParam, ResolvedOutputParam, SelfValidating<Outputs>, RegistryIntrospectionSource {
-
-    public static final ResourceLocation TYPE_ID =
-            JolCraft.location(JolCraftStrings.underscored(
-                    JolCraftDictionary.OUTPUT,
-                    JolCraftParameterIds.POOLS
-            ));
+        implements ResolvedOutputParam, SelfValidating<Outputs>, RegistryIntrospectionSource {
 
     public static final Pools EMPTY_POOLS = new Pools(List.of());
     public static final Outputs EMPTY = new Outputs(EMPTY_POOLS);
@@ -49,8 +43,10 @@ public record Outputs(Pools pools)
     }
 
     public static @NotNull Outputs wrapSingle(OutputParam out) {
-        OutputParam p = (out != null) ? out : OutputDispatch.None.INSTANCE;
-        PoolEntry entry = new PoolEntry(p, null, null);
+        if (out == null) {
+            throw new IllegalArgumentException("single output cannot be null");
+        }
+        PoolEntry entry = new PoolEntry(out, null, null);
         Pool pool = new Pool(IntRange.ONE, Conditions.EMPTY, List.of(entry));
         return new Outputs(new Pools(List.of(pool)));
     }
@@ -106,12 +102,6 @@ public record Outputs(Pools pools)
         return pools != null ? pools : EMPTY_POOLS;
     }
 
-    @Override
-    public @NotNull ResourceLocation typeId() {
-        return TYPE_ID;
-    }
-
-    @Override
     public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
         return generateResolved(ctx, null);
     }

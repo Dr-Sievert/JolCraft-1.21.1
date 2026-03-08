@@ -4,7 +4,9 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +20,7 @@ import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.ComponentPreservingShapelessRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.DyeColorRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +44,18 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
     ) {
 
         // =========================================================
-        // DYE RECIPES (EMPTY DEEPSLATE COMPASS)
+        // EMPTY DEEPSLATE COMPASS
         // =========================================================
+
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
+                )
+                .pattern(" B ")
+                .pattern("B B")
+                .pattern(" B ")
+                .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
+                .unlockedByHas(JolCraftItems.DEEPSLATE_PLATE.get())
+                .save(output);
 
         for (var r : DyeColorRecipeBuilder.buildAll(
                 CraftingBookCategory.MISC,
@@ -52,7 +65,7 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
         }
 
         // =========================================================
-        // DYE RECIPES (DEEPSLATE COMPASS)
+        // DEEPSLATE COMPASS
         // =========================================================
 
         for (var r : DyeColorRecipeBuilder.buildAll(
@@ -61,10 +74,6 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
         )) {
             r.builder().save(output, recipeKey(r.file()));
         }
-
-        // =========================================================
-        // REMOVE DIAL
-        // =========================================================
 
         ComponentPreservingShapelessRecipeBuilder.create(
                         CraftingBookCategory.MISC,

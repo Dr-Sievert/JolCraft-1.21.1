@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.builder.base;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 
 /**
  * Param-specific builder contract.

@@ -25,35 +25,47 @@ import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
+public final class DwarfArmorLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
     public DwarfArmorLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {
         super(parent);
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack,
-                       @NotNull MultiBufferSource buffer,
-                       int packedLight,
-                       DwarfRenderState state,
-                       float yRot,
-                       float xRot) {
-        if (state.dwarf == null) return;
+    public void render(
+            @NotNull PoseStack poseStack,
+            @NotNull MultiBufferSource buffer,
+            int packedLight,
+            @NotNull DwarfRenderState state,
+            float yRot,
+            float xRot
+    ) {
+        if (state.dwarf == null) {
+            return;
+        }
 
-        DwarfModel model = this.getParentModel();
+        DwarfModel model = getParentModel();
         model.setupAnim(state);
 
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (!slot.isArmor()) continue;
+            if (!slot.isArmor()) {
+                continue;
+            }
 
             ItemStack stack = state.dwarf.getItemBySlot(slot);
-            if (stack.isEmpty()) continue;
+            if (stack.isEmpty()) {
+                continue;
+            }
 
             Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
-            if (equippable == null || equippable.slot() != slot) continue;
+            if (equippable == null || equippable.slot() != slot) {
+                continue;
+            }
 
             ResourceKey<EquipmentAsset> assetKey = equippable.assetId().orElse(null);
-            if (assetKey == null) continue;
+            if (assetKey == null) {
+                continue;
+            }
 
             ResourceLocation texture = armorTexture(assetKey);
 

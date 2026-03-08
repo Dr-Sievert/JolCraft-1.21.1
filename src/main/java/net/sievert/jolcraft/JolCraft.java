@@ -11,8 +11,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeHooks;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeParameters;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -95,8 +93,6 @@ public class JolCraft {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            JolCraftRecipeParameters.registerAll();
-            JolCraftRecipeHooks.registerAll();
             DwarfInteractions.registerAll();
             DwarfLoadouts.bootstrap();
 

@@ -9,15 +9,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.data.component.JolCraftDataComponents;
-import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeHookIds;
 import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
-import net.sievert.jolcraft.data.recipe.param.output.hook.Hooks;
 import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
@@ -29,29 +26,31 @@ public final class DeepslateCompassHook {
 
     private DeepslateCompassHook() {}
 
-    public static void register() {
-        Hooks.register(
-                JolCraft.location(JolCraftRecipeHookIds.DEEPSLATE_COMPASS),
-                DeepslateCompassHook::apply
-        );
-    }
-
-    private static void apply(
+    public static void apply(
             @NotNull WorldContext ctx,
             @NotNull ItemTransformSourceResolver resolver,
             @NotNull List<Output> outputs
     ) {
-
         ServerLevel serverLevel = ctx.level();
         Player player = ctx.player();
+        if (player == null) {
+            return;
+        }
 
         ItemStack dial = resolver.resolveItemTransformSource(HandInteractionRecipe.SOURCE_INGREDIENT_B);
+        if (dial.isEmpty()) {
+            return;
+        }
 
         String group = dial.get(JolCraftDataComponents.STRUCTURE_GROUP);
-        if (group == null || group.isBlank()) return;
+        if (group == null || group.isBlank()) {
+            return;
+        }
 
         TagKey<Structure> structureTag = DeepslateCompassHelper.getStructureTagForGroup(group);
-        if (structureTag == null) return;
+        if (structureTag == null) {
+            return;
+        }
 
         GlobalPos targetPos = DiscoveredStructuresHelper.findNearestUndiscoveredStructure(
                 serverLevel,
@@ -60,8 +59,9 @@ public final class DeepslateCompassHook {
                 100,
                 player
         );
-
-        if (targetPos == null) return;
+        if (targetPos == null) {
+            return;
+        }
 
         String foundStructureFullId = group;
 
@@ -82,12 +82,14 @@ public final class DeepslateCompassHook {
         }
 
         for (Output out : outputs) {
+            if (!(out instanceof Output.Items items)) {
+                continue;
+            }
 
-            if (!(out instanceof Output.Items(List<ItemStack> stacks))) continue;
-
-            for (ItemStack stack : stacks) {
-
-                if (stack.isEmpty()) continue;
+            for (ItemStack stack : items.stacksSafe()) {
+                if (stack.isEmpty()) {
+                    continue;
+                }
 
                 stack.set(JolCraftDataComponents.STRUCTURE_GROUP, foundStructureFullId);
 

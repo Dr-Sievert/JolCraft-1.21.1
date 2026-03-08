@@ -10,9 +10,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.ConditionTypes;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import org.jetbrains.annotations.NotNull;
@@ -20,21 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Atomic condition: dimension gate.
- *
- * Exactly one of id/tag.
- * Invalid state -> false at runtime.
- */
 public record DimensionCondition(
         Optional<ResourceKey<Level>> dimension,
         Optional<TagKey<Level>> tag,
         boolean invert
 ) implements Condition {
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
+    public static final ResourceLocation TYPE_ID = JolCraft.location(JolCraftDictionary.DIMENSION);
+    public static final byte DISC = 4;
 
     private static final Codec<ResourceKey<Level>> DIMENSION_KEY_CODEC =
             ResourceKey.codec(Registries.DIMENSION);
@@ -53,33 +48,7 @@ public record DimensionCondition(
             ).apply(inst, DimensionCondition::new));
 
     public static final Codec<DimensionCondition> CODEC =
-            RAW_CODEC.flatXmap(
-                    DimensionCondition::validateDecoded,
-                    DataResult::success
-            );
-
-    private static DataResult<DimensionCondition> validateDecoded(DimensionCondition c) {
-        if (c == null) {
-            return DataResult.error(() -> "dimension condition is null");
-        }
-
-        boolean hasId = c.dimensionSafe().isPresent();
-        boolean hasTag = c.tagSafe().isPresent();
-
-        if (hasId == hasTag) {
-            return DataResult.error(() ->
-                    "dimension condition must specify exactly one of '" +
-                            JolCraftParameterIds.ID + "' or '" +
-                            JolCraftParameterIds.TAG + "'"
-            );
-        }
-
-        return DataResult.success(c);
-    }
-
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
+            RAW_CODEC.flatXmap(DimensionCondition::validateDecoded, DataResult::success);
 
     private static final StreamCodec<RegistryFriendlyByteBuf, ResourceKey<Level>> DIMENSION_KEY_STREAM =
             ResourceKey.streamCodec(Registries.DIMENSION).cast();
@@ -90,8 +59,8 @@ public record DimensionCondition(
     public static final StreamCodec<RegistryFriendlyByteBuf, DimensionCondition> STREAM_CODEC =
             StreamCodec.of(
                     (buf, c) -> {
-                        Optional<ResourceKey<Level>> dim = c.dimension != null ? c.dimension : Optional.empty();
-                        Optional<TagKey<Level>> tg = c.tag != null ? c.tag : Optional.empty();
+                        Optional<ResourceKey<Level>> dim = c.dimensionSafe();
+                        Optional<TagKey<Level>> tg = c.tagSafe();
 
                         buf.writeBoolean(dim.isPresent());
                         dim.ifPresent(key -> DIMENSION_KEY_STREAM.encode(buf, key));
@@ -110,34 +79,36 @@ public record DimensionCondition(
                                 ? Optional.of(DIMENSION_TAG_STREAM.decode(buf))
                                 : Optional.empty();
 
-                        boolean inv = buf.readBoolean();
-                        return new DimensionCondition(dim, tg, inv);
+                        return new DimensionCondition(dim, tg, buf.readBoolean());
                     }
             );
 
-    // ---------------------------------------------------------------------
-    // DISPATCH
-    // ---------------------------------------------------------------------
+    public static final ParamTypeDef<Condition> TYPE_DEF =
+            new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
-    @Override
-    public ResourceLocation typeId() {
-        return ConditionTypes.TYPE_DIMENSION;
+    private static DataResult<DimensionCondition> validateDecoded(DimensionCondition c) {
+        boolean hasId = c.dimensionSafe().isPresent();
+        boolean hasTag = c.tagSafe().isPresent();
+
+        if (hasId == hasTag) {
+            return DataResult.error(() ->
+                    "dimension condition must specify exactly one of '" +
+                            JolCraftParameterIds.ID + "' or '" + JolCraftParameterIds.TAG + "'"
+            );
+        }
+
+        return DataResult.success(c);
     }
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
+    @Override
+    public @NotNull ResourceLocation typeId() {
+        return TYPE_ID;
+    }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        Optional<ResourceKey<Level>> d = (dimension != null) ? dimension : Optional.empty();
-        Optional<TagKey<Level>> t = (tag != null) ? tag : Optional.empty();
-        return fromKeyOrTag(Registries.DIMENSION, d, t);
+        return fromKeyOrTag(Registries.DIMENSION, dimensionSafe(), tagSafe());
     }
-
-    // ---------------------------------------------------------------------
-    // TEST
-    // ---------------------------------------------------------------------
 
     @Override
     public boolean test(@NotNull WorldContext ctx) {
@@ -152,33 +123,19 @@ public record DimensionCondition(
         ResourceKey<Level> current = level.dimension();
 
         boolean pass;
-        if (dim.isPresent()) {
-            pass = current.equals(dim.get());
-        } else {
-            TagKey<Level> tagKey = tg.get();
-
-            pass = level.registryAccess()
-                    .lookup(Registries.DIMENSION)
-                    .flatMap(lookup -> lookup.get(current))
-                    .map(holder -> holder.is(tagKey))
-                    .orElse(false);
-        }
+        pass = dim.map(current::equals).orElseGet(() -> level.registryAccess()
+                .lookup(Registries.DIMENSION)
+                .flatMap(lookup -> lookup.get(current))
+                .map(holder -> holder.is(tg.get()))
+                .orElse(false));
 
         return invert != pass;
     }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<Condition> validate() {
         return validateDecoded(this).map(c -> c);
     }
-
-    // ---------------------------------------------------------------------
-    // INTERNAL SAFE GETTERS
-    // ---------------------------------------------------------------------
 
     private Optional<ResourceKey<Level>> dimensionSafe() {
         return dimension != null ? dimension : Optional.empty();

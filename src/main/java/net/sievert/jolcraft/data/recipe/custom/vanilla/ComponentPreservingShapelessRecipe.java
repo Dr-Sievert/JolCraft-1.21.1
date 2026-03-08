@@ -18,7 +18,7 @@ import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
@@ -331,7 +331,7 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
         public static @NotNull DataResult<ComponentPreservingShapelessRecipe> validate(
                 @Nullable ComponentPreservingShapelessRecipe r
         ) {
-            DataResult<ComponentPreservingShapelessRecipe> rr = JolCraftRecipeValidation.requireRecipe(r);
+            DataResult<ComponentPreservingShapelessRecipe> rr = RecipeValidation.requireRecipe(r);
             var rrErr = rr.error();
             if (rrErr.isPresent()) {
                 String msg = rrErr.map(DataResult.Error::message).orElse("recipe is null");
@@ -341,7 +341,7 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
             ComponentPreservingShapelessRecipe recipe = rr.result().orElse(null);
             if (recipe == null) return DataResult.error(() -> "recipe is null");
 
-            var v = JolCraftRecipeValidation.validate(recipe)
+            var v = RecipeValidation.validate(recipe)
                     .require(recipe.base(), KEY_BASE)
                     .require(recipe.ingredients(), KEY_INGREDIENTS)
                     .require(recipe.result(), KEY_RESULT)

@@ -7,7 +7,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
@@ -26,8 +25,6 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class DwarfMerchantBountyRewards implements RecipeSubProvider {
-
-    private static final SoundOutput SOUND = SoundOutput.of(SoundEvents.VILLAGER_WORK_FISHERMAN);
 
     @Override
     public String folder() {
@@ -80,7 +77,7 @@ public final class DwarfMerchantBountyRewards implements RecipeSubProvider {
 
         b.bountyType(BountyType.MERCHANT)
                 .tier(tier)
-                .sound(SOUND);
+                .sound(SoundEvents.VILLAGER_WORK_FISHERMAN);
 
         rewards.accept(b);
 

@@ -2,6 +2,7 @@ package net.sievert.jolcraft.event.game.recipe;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -15,6 +16,7 @@ import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
 import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipeInput;
+import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputHandler;
@@ -42,21 +44,14 @@ public final class JolCraftHandInteractionEvents {
         if (main.isEmpty() || off.isEmpty()) return;
 
         WorldContext ctx = new WorldContext(level, player, player);
-
         HandInteractionRecipeInput rawInput = new HandInteractionRecipeInput(ctx, main, off);
 
-        HandInteractionRecipe recipe = level.getServer().getRecipeManager()
-                .getRecipeFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level)
-                .map(RecipeHolder::value)
-                .orElse(null);
+        Optional<ResolvedRecipe> resolvedOpt = findResolvedRecipe(level, player, rawInput);
+        if (resolvedOpt.isEmpty()) return;
 
-        if (recipe == null) return;
-        if (recipe.requireSneaking() && !player.isShiftKeyDown()) return;
-
-        Optional<HandMapping> mappingOpt = resolveMapping(recipe, rawInput);
-        if (mappingOpt.isEmpty()) return;
-
-        HandMapping mapping = mappingOpt.get();
+        ResolvedRecipe resolved = resolvedOpt.get();
+        HandInteractionRecipe recipe = resolved.recipe();
+        HandMapping mapping = resolved.mapping();
 
         HandInteractionRecipeInput resolvedInput = new HandInteractionRecipeInput(
                 ctx,
@@ -72,7 +67,7 @@ public final class JolCraftHandInteractionEvents {
             return;
         }
 
-        OUTPUTS.handleAll(ctx, outputs);
+        OUTPUTS.handleAll(ctx, outputs, null, WorldAnchor.PLAYER, SoundSource.PLAYERS);
 
         playSuccessSound(player, recipe);
 
@@ -80,6 +75,31 @@ public final class JolCraftHandInteractionEvents {
         ItemIngredientAction.apply(ctx, mapping.stackB(), recipe.actionB());
 
         player.swing(mapping.swingHand(), true);
+    }
+
+    private static @NotNull Optional<ResolvedRecipe> findResolvedRecipe(
+            @NotNull ServerLevel level,
+            @NotNull Player player,
+            @NotNull HandInteractionRecipeInput rawInput
+    ) {
+        var recipes = level.getServer()
+                .getRecipeManager()
+                .recipeMap()
+                .getRecipesFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level);
+
+        return recipes
+                .map(RecipeHolder::value)
+                .map(recipe -> {
+                    if (recipe.requireSneaking() && !player.isShiftKeyDown()) {
+                        return null;
+                    }
+
+                    Optional<HandMapping> mapping = resolveMapping(recipe, rawInput);
+                    return mapping.map(handMapping -> new ResolvedRecipe(recipe, handMapping)).orElse(null);
+
+                })
+                .filter(java.util.Objects::nonNull)
+                .findFirst();
     }
 
     private static @NotNull Optional<HandMapping> resolveMapping(
@@ -134,20 +154,21 @@ public final class JolCraftHandInteractionEvents {
             InteractionHand swingHand
     ) {}
 
+    private record ResolvedRecipe(
+            HandInteractionRecipe recipe,
+            HandMapping mapping
+    ) {}
+
     private static void playSuccessSound(Player player, HandInteractionRecipe recipe) {
         SoundOutput s = recipe.successSound();
-        if (s.sound() != null) {
-            SoundEvent soundEvent = s.sound().value();
-            JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
-        }
+        SoundEvent soundEvent = s.sound().value();
+        JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
     }
 
     private static void playFailSound(Player player, HandInteractionRecipe recipe) {
         SoundOutput s = recipe.failSound();
-        if (s.sound() != null) {
-            SoundEvent soundEvent = s.sound().value();
-            JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
-        }
+        SoundEvent soundEvent = s.sound().value();
+        JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
     }
 
     private static void cancel(PlayerInteractEvent.RightClickItem event) {

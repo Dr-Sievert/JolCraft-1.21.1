@@ -76,9 +76,11 @@ public class BlockDwarfAction implements DwarfAction {
                     ox,
                     oy,
                     oz,
+                    1,
                     vx,
                     vy,
-                    vz
+                    vz,
+                    0.0D
             );
         }
     }

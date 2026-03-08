@@ -1,18 +1,14 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom;
 
 import com.mojang.serialization.DataResult;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
-import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class SoundOutputBuilder {
 
-    private @Nullable Holder<SoundEvent> sound;
-    private WorldAnchor anchor = WorldAnchor.PLAYER;
+    private @Nullable SoundEvent sound;
     private float volume = 1.0F;
     private float pitch = 1.0F;
 
@@ -22,22 +18,8 @@ public final class SoundOutputBuilder {
         return new SoundOutputBuilder();
     }
 
-    public @NotNull SoundOutputBuilder sound(@Nullable Holder<SoundEvent> sound) {
-        this.sound = sound;
-        return this;
-    }
-
     public @NotNull SoundOutputBuilder sound(@Nullable SoundEvent sound) {
-        this.sound = (sound == null)
-                ? null
-                : BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
-        return this;
-    }
-
-    public @NotNull SoundOutputBuilder anchor(@Nullable WorldAnchor anchor) {
-        if (anchor != null) {
-            this.anchor = anchor;
-        }
+        this.sound = sound;
         return this;
     }
 
@@ -64,7 +46,7 @@ public final class SoundOutputBuilder {
             return DataResult.error(() -> "pitch must be finite and > 0");
         }
 
-        return DataResult.success(new SoundOutput(sound, anchor, volume, pitch));
+        return SoundOutput.of(sound, volume, pitch).validate();
     }
 
     public @NotNull SoundOutput build() {

@@ -15,6 +15,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
 import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
@@ -26,6 +27,10 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
+    private static String eyeTextureName(@NotNull DwarfEyeColor color) {
+        return JolCraftStrings.underscored(JolCraftDirectoryIds.EYE, color.getId());
+    }
+
     private static final Map<DwarfEyeColor, ResourceLocation> LOCATION_BY_EYE =
             Util.make(Maps.newEnumMap(DwarfEyeColor.class), map -> {
                 for (DwarfEyeColor color : DwarfEyeColor.values()) {
@@ -35,7 +40,7 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
                                     JolCraftTextures.entity(
                                             JolCraftDirectoryIds.DWARF,
                                             JolCraftDirectoryIds.EYE,
-                                            color.getId()
+                                            eyeTextureName(color)
                                     )
                             )
                     );
@@ -65,7 +70,7 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
 
         ModelPart head = model.getHead();
         ModelPart rightEye = head.getChild(JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYE);
-        ModelPart leftEye  = head.getChild(JolCraftModelPartIds.Creature.Humanoid.LEFT_EYE);
+        ModelPart leftEye = head.getChild(JolCraftModelPartIds.Creature.Humanoid.LEFT_EYE);
 
         boolean prevRight = rightEye.visible;
         boolean prevLeft = leftEye.visible;

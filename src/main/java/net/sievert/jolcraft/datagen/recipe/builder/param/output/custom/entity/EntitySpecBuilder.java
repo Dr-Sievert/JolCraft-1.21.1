@@ -76,7 +76,7 @@ public final class EntitySpecBuilder {
     }
 
     public @NotNull EntitySpecBuilder spawn(@Nullable EntitySpawnConfig spawn) {
-        this.spawn = EntitySpawnConfig.normalize(spawn);
+        this.spawn = spawn;
         return this;
     }
 
@@ -89,7 +89,7 @@ public final class EntitySpecBuilder {
         return spec.validate();
     }
 
-    public @NotNull EntitySpec buildOrEmpty() {
-        return build().result().orElse(EntitySpec.EMPTY);
+    public @Nullable EntitySpec buildOrNull() {
+        return build().result().orElse(null);
     }
 }

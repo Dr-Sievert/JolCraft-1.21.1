@@ -10,8 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
@@ -33,6 +34,8 @@ public record ItemOutput(
 
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.ITEM, JolCraftDictionary.OUTPUT));
+
+    public static final byte DISC = 2;
 
     public static final ItemOutput EMPTY = new ItemOutput(
             ItemSpec.EMPTY,
@@ -76,6 +79,8 @@ public record ItemOutput(
         this.result = result != null ? result : ItemSpec.EMPTY;
         this.transforms = transforms != null ? transforms : ItemTransforms.EMPTY;
     }
+
+    public static final ParamTypeDef<OutputParam> TYPE_DEF = new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     @Override
     public @NotNull ResourceLocation typeId() {

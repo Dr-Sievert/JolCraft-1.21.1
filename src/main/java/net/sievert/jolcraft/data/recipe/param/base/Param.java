@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.recipe.param;
+package net.sievert.jolcraft.data.recipe.param.base;
 
 import com.mojang.serialization.DataResult;
 

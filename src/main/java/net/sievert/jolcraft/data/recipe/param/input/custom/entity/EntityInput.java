@@ -11,8 +11,9 @@ import net.minecraft.world.entity.Entity;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.ParamCodecs;
-import net.sievert.jolcraft.data.recipe.param.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
+import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.condition.ConditionGate;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.input.base.InputParam;
@@ -46,6 +47,8 @@ public record EntityInput(
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.ENTITY, JolCraftParameterIds.INPUT));
 
+    public static final byte DISC = 2;
+
     private Conditions conditionsSafe() {
         return conditions != null ? conditions : Conditions.EMPTY;
     }
@@ -55,42 +58,43 @@ public record EntityInput(
         return conditionsSafe();
     }
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
+    private EntitySelector selectorSafe() {
+        return selector != null ? selector : EntitySelector.EMPTY;
+    }
+
+    private IntRange countSafe() {
+        return count != null ? count : IntRange.ONE;
+    }
+
+    private EntityRequirements requirementsSafe() {
+        return requirements != null ? requirements : EntityRequirements.EMPTY;
+    }
 
     private static final Codec<EntityInput> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Conditions.CODEC
                             .optionalFieldOf(JolCraftParameterIds.CONDITIONS, Conditions.EMPTY)
                             .forGetter(EntityInput::conditionsSafe),
-
                     EntitySelector.CODEC
                             .fieldOf(JolCraftParameterIds.SELECTOR)
-                            .forGetter(EntityInput::selector),
-
+                            .forGetter(EntityInput::selectorSafe),
                     IntRange.CODEC
                             .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
-                            .forGetter(EntityInput::count),
-
+                            .forGetter(EntityInput::countSafe),
                     EntityRequirements.CODEC
                             .optionalFieldOf(JolCraftParameterIds.REQUIREMENTS, EntityRequirements.EMPTY)
-                            .forGetter(EntityInput::requirements)
+                            .forGetter(EntityInput::requirementsSafe)
             ).apply(instance, EntityInput::new));
 
     public static final Codec<EntityInput> CODEC = ParamCodecs.validated(RAW_CODEC);
 
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
-
     public static final StreamCodec<RegistryFriendlyByteBuf, EntityInput> STREAM_CODEC =
             StreamCodec.of(
-                    (buf, v) -> {
-                        Conditions.STREAM_CODEC.encode(buf, v.conditionsSafe());
-                        EntitySelector.STREAM_CODEC.encode(buf, v.selector());
-                        IntRange.STREAM_CODEC.encode(buf, v.count());
-                        EntityRequirements.STREAM_CODEC.encode(buf, v.requirements());
+                    (buf, value) -> {
+                        Conditions.STREAM_CODEC.encode(buf, value.conditionsSafe());
+                        EntitySelector.STREAM_CODEC.encode(buf, value.selectorSafe());
+                        IntRange.STREAM_CODEC.encode(buf, value.countSafe());
+                        EntityRequirements.STREAM_CODEC.encode(buf, value.requirementsSafe());
                     },
                     buf -> new EntityInput(
                             Conditions.STREAM_CODEC.decode(buf),
@@ -100,9 +104,7 @@ public record EntityInput(
                     )
             );
 
-    // ---------------------------------------------------------------------
-    // INPUT PARAM
-    // ---------------------------------------------------------------------
+    public static final ParamTypeDef<InputParam<?, ?>> TYPE_DEF = new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     @Override
     public @NotNull ResourceLocation typeId() {
@@ -110,46 +112,21 @@ public record EntityInput(
     }
 
     @Override
-    public @NotNull Codec<EntityInput> codec() {
-        return CODEC;
-    }
-
-    @Override
     public boolean matches(@NotNull WorldContext ctx, @Nullable Entity subject) {
         if (subject == null) return false;
-
         if (!gatePasses(ctx)) return false;
-
-        if (!selector.matches(ctx, subject)) return false;
-
-        if (!requirements.matches(ctx, subject)) return false;
-
+        if (!selectorSafe().matches(ctx, subject)) return false;
+        if (!requirementsSafe().matches(ctx, subject)) return false;
         return hasValidCountRange();
     }
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
-
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        if (conditionsSafe() != Conditions.EMPTY) return List.of();
-
         ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(2);
-
-        if (selector instanceof RegistryIntrospectionSource s) {
-            src.add(s);
-        }
-        if (requirements instanceof RegistryIntrospectionSource r) {
-            src.add(r);
-        }
-
-        return src.isEmpty() ? List.of() : RegistryIntrospectionSource.mergeByRegistry(src);
+        src.add(selectorSafe());
+        src.add(requirementsSafe());
+        return RegistryIntrospectionSource.mergeByRegistry(src);
     }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<EntityInput> validate() {
@@ -172,19 +149,19 @@ public record EntityInput(
                     cv.error().map(DataResult.Error::message).orElse(""));
         }
 
-        DataResult<EntitySelector> sv = selector.validate();
+        DataResult<EntitySelector> sv = selectorSafe().validate();
         if (sv.error().isPresent()) {
             return SelfValidating.invalid(JolCraftParameterIds.SELECTOR + ": " +
                     sv.error().map(DataResult.Error::message).orElse(""));
         }
 
-        DataResult<IntRange> countRes = IntRange.validateRange(count);
+        DataResult<IntRange> countRes = IntRange.validateRange(countSafe());
         if (countRes.error().isPresent()) {
             return SelfValidating.invalid(JolCraftParameterIds.COUNT + ": " +
                     countRes.error().map(DataResult.Error::message).orElse(""));
         }
 
-        DataResult<EntityRequirements> reqRes = requirements.validate();
+        DataResult<EntityRequirements> reqRes = requirementsSafe().validate();
         if (reqRes.error().isPresent()) {
             return SelfValidating.invalid(JolCraftParameterIds.REQUIREMENTS + ": " +
                     reqRes.error().map(DataResult.Error::message).orElse(""));

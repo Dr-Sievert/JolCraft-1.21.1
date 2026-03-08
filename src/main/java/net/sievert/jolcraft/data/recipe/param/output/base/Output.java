@@ -1,16 +1,17 @@
 package net.sievert.jolcraft.data.recipe.param.output.base;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
+import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,10 @@ import java.util.List;
  *
  * Purpose:
  * - Pools need ONE return type while supporting heterogeneous outputs (items/sound/xp/etc).
+ *
+ * Positioning/spread policy:
+ * - Sounds and particles are payload-only.
+ * - World placement is resolved by the caller/interpreter.
  */
 public sealed interface Output permits
         Output.Empty,
@@ -73,10 +78,36 @@ public sealed interface Output permits
         }
     }
 
+    enum EffectTarget implements JolCraftEnumHelper.StringId {
+
+        PLAYER(JolCraftParameterIds.PLAYER),
+        ENTITY(JolCraftParameterIds.ENTITY);
+
+        private final String id;
+
+        EffectTarget(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        public static EffectTarget byId(String id) {
+            return JolCraftEnumHelper.byStringId(EffectTarget.class, id, PLAYER);
+        }
+    }
+
     /**
      * Single mob effect instance.
      */
-    record EffectSpec(Holder<MobEffect> id, int duration, int amplifier) {}
+    record EffectSpec(
+            Holder<MobEffect> id,
+            int duration,
+            int amplifier,
+            EffectTarget target
+    ) {}
 
     /**
      * Produced sound events to play.
@@ -93,14 +124,12 @@ public sealed interface Output permits
     }
 
     /**
-     * Single sound instance.
+     * Single sound payload.
      *
-     * If anchor != null, runtime may auto-play using {@link WorldAnchor#resolve(WorldContext)}.
-     * If anchor == null, caller can decide how/where to play.
+     * Position is caller-owned.
      */
     record Sound(
-            Holder<SoundEvent> sound,
-            @Nullable WorldAnchor anchor,
+            @NotNull Holder<SoundEvent> sound,
             float volume,
             float pitch
     ) {}
@@ -120,18 +149,13 @@ public sealed interface Output permits
     }
 
     /**
-     * Single particle spawn instruction.
+     * Single particle payload.
      *
-     * If anchor != null, runtime may auto-spawn using {@link WorldAnchor#resolve(WorldContext)}.
-     * If anchor == null, caller can decide where/how to spawn.
+     * Position and spread are caller-owned.
      */
     record Particle(
             ParticleOptions particle,
             int count,
-            @Nullable WorldAnchor anchor,
-            float spreadX,
-            float spreadY,
-            float spreadZ,
             float speed
     ) {}
 
@@ -156,12 +180,6 @@ public sealed interface Output permits
 
     /**
      * Produced entity instructions (generic).
-     *
-     * Can be interpreted as:
-     * - "spawn these entities" (future)
-     * - "require killing these entities" (bounty objective)
-     *
-     * Interpretation is decided by the caller.
      */
     record Entities(List<EntitySpec> entities) implements Output {
 
@@ -176,17 +194,11 @@ public sealed interface Output permits
 
     /**
      * Single entity instruction.
-     *
-     * If anchor != null, runtime may resolve a position using {@link WorldAnchor#resolve(WorldContext)}.
-     * If anchor == null, caller can decide where/how to use it.
-     *
-     * spawnConfig is optional metadata for future spawn behavior.
-     * nbt is optional entity data payload for future spawning.
      */
     record EntitySpec(
             Holder<EntityType<?>> type,
             int count,
-            @Nullable WorldAnchor anchor,
+            @Nullable BlockPos pos,
             @Nullable CompoundTag nbt,
             @Nullable EntitySpawnConfig spawnConfig
     ) {}
@@ -194,7 +206,9 @@ public sealed interface Output permits
     private static <T> List<T> sanitizeList(List<T> in) {
         if (in == null || in.isEmpty()) return List.of();
         ArrayList<T> safe = new ArrayList<>(in.size());
-        for (T t : in) if (t != null) safe.add(t);
+        for (T t : in) {
+            if (t != null) safe.add(t);
+        }
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 }

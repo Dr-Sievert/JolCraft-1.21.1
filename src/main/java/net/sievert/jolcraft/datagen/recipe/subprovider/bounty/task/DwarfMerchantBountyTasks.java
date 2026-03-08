@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
@@ -8,7 +7,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyTaskRecipeBuilder;
@@ -16,15 +14,9 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
-
-    private static final SoundOutput SOUND_1 = SoundOutput.of(SoundEvents.VILLAGER_WORK_CARTOGRAPHER);
-    private static final SoundOutput SOUND_2 = SoundOutput.of(SoundEvents.VILLAGER_WORK_FISHERMAN);
 
     @Override
     public String folder() {
@@ -93,8 +85,8 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
         b.bountyType(BountyType.MERCHANT)
                 .tier(tier)
                 .result(JolCraftItems.BOUNTY_CRATE.get())
-                .sound1(SOUND_1)
-                .sound2(SOUND_2);
+                .sound1(SoundEvents.VILLAGER_WORK_CARTOGRAPHER)
+                .sound2(SoundEvents.VILLAGER_WORK_FISHERMAN);
 
         objectives.accept(b);
 

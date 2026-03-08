@@ -91,6 +91,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         return DwarfProfessionTraits.canSign(this);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean canEndorse() {
         return DwarfProfessionTraits.canEndorse(this);
     }
@@ -258,7 +259,16 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
                 double d1 = this.random.nextGaussian() * 0.02;
                 double d2 = this.random.nextGaussian() * 0.02;
                 if (!this.level().isClientSide) {
-                    JolCraftParticleHelper.spawn(this.level(), ParticleTypes.HEART, this.getRandomX(1.0), this.getRandomY() + 0.5, this.getRandomZ(1.0), d0, d1, d2);
+                    JolCraftParticleHelper.spawn(
+                            this.level(),
+                            ParticleTypes.HEART,
+                            this.getRandomX(1.0),
+                            this.getRandomY() + 0.5,
+                            this.getRandomZ(1.0),
+                            1,
+                            d0, d1, d2,
+                            0.0D
+                    );
                 }
             }
         }
@@ -420,6 +430,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     }
 
     public void spawnColoredParticles(float r, float g, float b, float scale, int count, double scatter) {
+
         int rgb = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255);
         DustParticleOptions dust = new DustParticleOptions(rgb, scale);
 
@@ -429,6 +440,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         double baseZ = this.getZ() + forward.z * 0.5;
 
         for (int i = 0; i < count; i++) {
+
             double offsetX = baseX + (this.random.nextDouble() - 0.5D) * scatter;
             double offsetY = baseY + (this.random.nextDouble() - 0.5D) * scatter;
             double offsetZ = baseZ + (this.random.nextDouble() - 0.5D) * scatter;
@@ -436,15 +448,18 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
             double velocityX = (this.random.nextDouble() - 0.5D) * 0.1D;
             double velocityY = this.random.nextDouble() * 0.1D;
             double velocityZ = (this.random.nextDouble() - 0.5D) * 0.1D;
+
             JolCraftParticleHelper.spawn(
                     this.level(),
                     dust,
                     offsetX,
                     offsetY,
                     offsetZ,
+                    1,
                     velocityX,
                     velocityY,
-                    velocityZ
+                    velocityZ,
+                    0.0D
             );
         }
     }

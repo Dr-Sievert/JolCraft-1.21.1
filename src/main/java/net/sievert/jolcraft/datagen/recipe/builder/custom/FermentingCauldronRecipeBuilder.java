@@ -14,6 +14,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
@@ -48,15 +49,15 @@ import java.util.Optional;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-@SuppressWarnings({"UnusedReturnValue"})
+@SuppressWarnings({"UnusedReturnValue", "OptionalUsedAsFieldOrParameterType"})
 public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
 
     private final List<String> errors = new ArrayList<>();
 
     private ItemInput ingredient = ItemInput.EMPTY;
-    private ItemSelector lastIngredient = ItemSelector.EMPTY;
-    private ItemOutput extract = ItemOutput.EMPTY;
-    private EffectOutput effect = EffectOutput.EMPTY;
+    private Optional<ItemSelector> lastIngredient = Optional.empty();
+    private Optional<ItemOutput> extract = Optional.empty();
+    private Optional<EffectOutput> effect = Optional.empty();
 
     private int brewTicks = 1;
     private int bubbleTicks = 1;
@@ -85,10 +86,12 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
             this.ingredient = ItemInput.EMPTY;
             return this;
         }
+
         ItemInput built = ItemInputBuilder.create()
                 .item(item)
                 .count(IntRange.fixed(Math.max(1, count)))
                 .build();
+
         return ingredient(built);
     }
 
@@ -97,34 +100,30 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull FermentingCauldronRecipeBuilder lastIngredient(@Nullable ItemSelector sel) {
+        this.lastIngredient = Optional.ofNullable(sel);
         if (sel == null) {
-            errors.add("lastIngredient is null (treated as EMPTY)");
-            this.lastIngredient = ItemSelector.EMPTY;
-            return this;
+            errors.add("lastIngredient is null");
         }
-        this.lastIngredient = sel;
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder noLastIngredient() {
-        this.lastIngredient = ItemSelector.EMPTY;
+        this.lastIngredient = Optional.empty();
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder extract(@Nullable ItemOutput out) {
+        this.extract = Optional.ofNullable(out);
         if (out == null) {
-            errors.add("extract is null (treated as EMPTY)");
-            this.extract = ItemOutput.EMPTY;
-            return this;
+            errors.add("extract is null");
         }
-        this.extract = out;
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder extract(@Nullable ItemLike item, int min, int max) {
         if (item == null) {
             errors.add("extract item is null");
-            this.extract = ItemOutput.EMPTY;
+            this.extract = Optional.empty();
             return this;
         }
 
@@ -140,22 +139,20 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull FermentingCauldronRecipeBuilder noExtract() {
-        this.extract = ItemOutput.EMPTY;
+        this.extract = Optional.empty();
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder effect(@Nullable EffectOutput eff) {
+        this.effect = Optional.ofNullable(eff);
         if (eff == null) {
-            errors.add("effect is null (treated as EMPTY)");
-            this.effect = EffectOutput.EMPTY;
-            return this;
+            errors.add("effect is null");
         }
-        this.effect = eff;
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder noEffect() {
-        this.effect = EffectOutput.EMPTY;
+        this.effect = Optional.empty();
         return this;
     }
 
@@ -194,18 +191,24 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
 
         String ingredientTok = tokenFromIngredientFailClosed(ingredient);
 
-        boolean hasLast = lastIngredient != null && lastIngredient != ItemSelector.EMPTY;
-        String lastTok = hasLast ? tokenFromLastIngredientFailClosed(lastIngredient) : null;
+        boolean hasLast = lastIngredient.isPresent();
+        String lastTok = hasLast
+                ? tokenFromLastIngredientFailClosed(lastIngredient.get())
+                : null;
 
         String cauldronTok = hasLast
                 ? JolCraftStrings.underscored(lastTok, JolCraftDictionary.CAULDRON)
                 : JolCraftStrings.underscored(JolCraftDictionary.WATER, JolCraftDictionary.CAULDRON);
 
-        boolean hasExtract = extract != null && extract != ItemOutput.EMPTY;
-        String extractTok = hasExtract ? tokenFromExtractFailClosed(extract) : null;
+        boolean hasExtract = extract.isPresent();
+        String extractTok = hasExtract
+                ? tokenFromExtractFailClosed(extract.get())
+                : null;
 
-        boolean hasEffect = effect != null && effect != EffectOutput.EMPTY;
-        String effectTok = hasEffect ? tokenFromEffectFailClosed(effect) : null;
+        boolean hasEffect = effect.isPresent();
+        String effectTok = hasEffect
+                ? tokenFromEffectFailClosed(effect.get())
+                : null;
 
         if (hasExtract && !hasLast) {
             errors.add("extract requires lastIngredient (cannot extract from water cauldron)");
@@ -262,11 +265,11 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
             nameBuilt = DataResult.error(() -> msg, partial);
         }
 
-        FermentingCauldronRecipe r = new FermentingCauldronRecipe(
-                (ingredient == null) ? ItemInput.EMPTY : ingredient,
-                (lastIngredient == null) ? ItemSelector.EMPTY : lastIngredient,
-                (extract == null) ? ItemOutput.EMPTY : extract,
-                (effect == null) ? EffectOutput.EMPTY : effect,
+        FermentingCauldronRecipe recipe = new FermentingCauldronRecipe(
+                ingredient != null ? ingredient : ItemInput.EMPTY,
+                lastIngredient != null ? lastIngredient : Optional.empty(),
+                extract != null ? extract : Optional.empty(),
+                effect != null ? effect : Optional.empty(),
                 Math.max(1, brewTicks),
                 Math.max(1, bubbleTicks),
                 brewColor,
@@ -274,11 +277,11 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
         );
 
         DataResult<FermentingCauldronRecipe> validated =
-                FermentingCauldronRecipe.validateRecipe(r);
+                FermentingCauldronRecipe.validateRecipe(recipe);
 
         DataResult<FermentingCauldronRecipe> recipeResult =
                 (!errors.isEmpty() && validated.error().isEmpty())
-                        ? DataResult.error(() -> "builder: " + String.join("; ", errors), r)
+                        ? DataResult.error(() -> "builder: " + String.join("; ", errors), recipe)
                         : validated;
 
         return nameBuilt.flatMap(name ->
@@ -296,13 +299,13 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     private static @Nullable String pathOfItem(@Nullable Holder<Item> h) {
         if (h == null) return null;
         ResourceLocation id = h.unwrapKey().map(ResourceKey::location).orElse(null);
-        return (id != null) ? id.getPath() : null;
+        return id != null ? id.getPath() : null;
     }
 
     private static @Nullable String pathOfEffect(@Nullable Holder<MobEffect> h) {
         if (h == null) return null;
         ResourceLocation id = h.unwrapKey().map(ResourceKey::location).orElse(null);
-        return (id != null) ? id.getPath() : null;
+        return id != null ? id.getPath() : null;
     }
 
     private String tokenFromIngredientFailClosed(ItemInput in) {
@@ -327,11 +330,6 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     private String tokenFromLastIngredientFailClosed(ItemSelector sel) {
-        if (sel == ItemSelector.EMPTY) {
-            errors.add("last_ingredient is missing");
-            return JolCraftDictionary.UNKNOWN;
-        }
-
         Optional<Holder<Item>> concrete = sel.singleConcrete(Registries.ITEM);
         if (concrete.isPresent()) {
             String path = pathOfItem(concrete.get());
@@ -357,11 +355,6 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     private String tokenFromExtractFailClosed(ItemOutput out) {
-        if (out == ItemOutput.EMPTY) {
-            errors.add("extract is missing");
-            return JolCraftDictionary.UNKNOWN;
-        }
-
         Optional<Holder<Item>> h = out.singleConcrete(Registries.ITEM);
         if (h.isEmpty()) {
             errors.add("extract must be a direct item producer (for naming)");
@@ -378,11 +371,6 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     private String tokenFromEffectFailClosed(EffectOutput eff) {
-        if (eff == EffectOutput.EMPTY) {
-            errors.add("effect is missing");
-            return JolCraftDictionary.EFFECT;
-        }
-
         Holder<MobEffect> h = eff.id();
         if (h == null) {
             errors.add("effect has null id (for naming)");

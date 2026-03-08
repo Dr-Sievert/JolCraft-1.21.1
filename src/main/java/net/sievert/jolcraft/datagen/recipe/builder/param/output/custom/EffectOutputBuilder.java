@@ -1,27 +1,37 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom;
 
-import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
+import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
+import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class EffectOutputBuilder {
+/**
+ * Datagen builder for {@link EffectOutput}.
+ *
+ * Updated for the current effect output shape:
+ * - target is required
+ * - no EMPTY sentinel exists
+ * - validation is delegated through {@link ParamBuilder#buildValidated()}
+ */
+public final class EffectOutputBuilder implements ParamBuilder<EffectOutput> {
 
     private @Nullable Holder<MobEffect> id;
-    private int duration = 0;
+    private int duration = 1;
     private int amplifier = 0;
+    private @Nullable Output.EffectTarget target;
 
     private EffectOutputBuilder() {}
 
-    public static @NotNull EffectOutputBuilder builder() {
+    public static @NotNull EffectOutputBuilder create() {
         return new EffectOutputBuilder();
     }
 
-    // ---------------------------------------------------------------------
-    // Fields
-    // ---------------------------------------------------------------------
+    public static @NotNull EffectOutputBuilder builder() {
+        return create();
+    }
 
     public @NotNull EffectOutputBuilder id(@Nullable Holder<MobEffect> id) {
         this.id = id;
@@ -38,26 +48,27 @@ public final class EffectOutputBuilder {
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // Build
-    // ---------------------------------------------------------------------
-
-    public @NotNull DataResult<EffectOutput> build() {
-        if (id == null) {
-            return DataResult.error(() -> "Missing required field: 'id'");
-        }
-        if (duration < 1) {
-            return DataResult.error(() -> "'duration' must be >= 1");
-        }
-        if (amplifier < 0) {
-            return DataResult.error(() -> "'amplifier' must be >= 0");
-        }
-
-        EffectOutput out = new EffectOutput(id, duration, amplifier);
-        return out.validate();
+    public @NotNull EffectOutputBuilder target(@Nullable Output.EffectTarget target) {
+        this.target = target;
+        return this;
     }
 
-    public @NotNull EffectOutput buildOrEmpty() {
-        return build().result().orElse(EffectOutput.EMPTY);
+    public @NotNull EffectOutputBuilder targetPlayer() {
+        this.target = Output.EffectTarget.PLAYER;
+        return this;
+    }
+
+    public @NotNull EffectOutputBuilder targetEntity() {
+        this.target = Output.EffectTarget.ENTITY;
+        return this;
+    }
+
+    @Override
+    public @NotNull EffectOutput build() {
+        return new EffectOutput(id, duration, amplifier, target);
+    }
+
+    public @Nullable EffectOutput buildOrNull() {
+        return buildValidated().result().orElse(null);
     }
 }

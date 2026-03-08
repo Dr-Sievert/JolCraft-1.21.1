@@ -13,12 +13,11 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipeValidation;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomOutputRecipe;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputDispatch;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
@@ -117,10 +116,36 @@ public record BountyRewardRecipe(
     public static final class Serializer implements RecipeSerializer<BountyRewardRecipe> {
 
         private static final Codec<Outputs> REWARDS_CODEC =
-                Outputs.codecShorthand(OutputDispatch.CODEC);
+                Outputs.codecShorthand(OutputParam.CODEC);
 
         private static final String REWARDS_KEY =
                 JolCraftStrings.plural(JolCraftDictionary.REWARD);
+
+        private static final StreamCodec<RegistryFriendlyByteBuf, BountyType> BOUNTY_TYPE_STREAM_CODEC =
+                StreamCodec.of(
+                        (buf, value) -> buf.writeUtf(value.getId()),
+                        buf -> {
+                            String id = buf.readUtf();
+                            BountyType type = BountyType.fromString(id);
+                            if (type == null || type == BountyType.UNKNOWN) {
+                                throw new IllegalArgumentException("unknown bounty type '" + id + "'");
+                            }
+                            return type;
+                        }
+                );
+
+        private static final StreamCodec<RegistryFriendlyByteBuf, BountyTier> BOUNTY_TIER_STREAM_CODEC =
+                StreamCodec.of(
+                        (buf, value) -> buf.writeVarInt(value.getId()),
+                        buf -> {
+                            int id = buf.readVarInt();
+                            BountyTier tier = BountyTier.fromValue(id);
+                            if (tier == null || tier == BountyTier.UNKNOWN) {
+                                throw new IllegalArgumentException("unknown bounty tier id " + id);
+                            }
+                            return tier;
+                        }
+                );
 
         public static final MapCodec<BountyRewardRecipe> CODEC =
                 RecordCodecBuilder.mapCodec((RecordCodecBuilder.Instance<BountyRewardRecipe> inst) -> inst.group(
@@ -143,22 +168,10 @@ public record BountyRewardRecipe(
 
         public static final StreamCodec<RegistryFriendlyByteBuf, BountyRewardRecipe> STREAM_CODEC =
                 StreamCodec.composite(
-                        StreamCodec.of(
-                                (buf, t) -> buf.writeUtf(t.getId()),
-                                buf -> {
-                                    BountyType t = BountyType.fromString(buf.readUtf());
-                                    return t == null ? BountyType.UNKNOWN : t;
-                                }
-                        ),
+                        BOUNTY_TYPE_STREAM_CODEC,
                         BountyRewardRecipe::bountyType,
 
-                        StreamCodec.of(
-                                (buf, t) -> buf.writeVarInt(t.getId()),
-                                buf -> {
-                                    BountyTier t = BountyTier.fromValue(buf.readVarInt());
-                                    return t == null ? BountyTier.UNKNOWN : t;
-                                }
-                        ),
+                        BOUNTY_TIER_STREAM_CODEC,
                         BountyRewardRecipe::tier,
 
                         Outputs.STREAM_CODEC,
@@ -184,7 +197,7 @@ public record BountyRewardRecipe(
     public static @NotNull DataResult<BountyRewardRecipe> validateRecipe(BountyRewardRecipe recipe) {
         String rewardsKey = JolCraftStrings.plural(JolCraftDictionary.REWARD);
 
-        DataResult<BountyRewardRecipe> base = JolCraftRecipeValidation.validate(recipe)
+        DataResult<BountyRewardRecipe> base = RecipeValidation.validate(recipe)
                 .require(recipe.bountyType(), BountyRecipe.TYPE_KEY)
                 .require(recipe.tier(), BountyRecipe.TIER_KEY)
                 .requireValid(recipe.rewards(), rewardsKey)
@@ -208,7 +221,7 @@ public record BountyRewardRecipe(
 
         for (Pool pool : pools.pools()) {
             for (PoolEntry entry : pool.entries()) {
-                OutputParam output = OutputParam.unwrap(entry.output());
+                OutputParam output = entry.output();
                 if (!output.typeId().equals(ItemOutput.TYPE_ID)) {
                     var typeId = output.typeId();
                     return DataResult.error(() ->

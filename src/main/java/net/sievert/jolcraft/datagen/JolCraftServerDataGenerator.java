@@ -41,7 +41,7 @@ public final class JolCraftServerDataGenerator {
 
         JolCraftLogs.debug(
                 JolCraftLogTags.DATAGEN,
-                "Server providers: {}, {}, {}, {}, {}, {}, {}, {}, {}",
+                "Server providers: {}, {}, {}, {}, {}, {}, {}, {}, {}, {}",
                 JolCraftBlockTagProvider.class.getSimpleName(),
                 JolCraftDataMapProvider.class.getSimpleName(),
                 JolCraftRecipeProvider.Runner.class.getSimpleName(),

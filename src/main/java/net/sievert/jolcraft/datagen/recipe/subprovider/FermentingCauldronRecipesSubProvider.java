@@ -13,6 +13,7 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
+import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
@@ -199,7 +200,7 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
                 .bubbleTicks(bubbleTicks)
                 .brewColor(argb(colorRgb))
                 .finalizeBrew(false)
-                .effect(new EffectOutput(effect, duration, amplifier))
+                .effect(new EffectOutput(effect, duration, amplifier, Output.EffectTarget.PLAYER))
                 .noExtract();
 
         if (lastIngredientTag != null) {
