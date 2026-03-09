@@ -33,6 +33,8 @@ import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ComponentTransform;
 import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -279,44 +281,100 @@ public record DwarfTradeRecipe(
 
     @Override
     public boolean matches(@NotNull DwarfTradeRecipeInput in, Level level) {
-        if (level.isClientSide) return false;
-        if (in.profession() != profession) return false;
-        if (in.merchantLevel().getId() < merchantLevel.getId()) return false;
+        if (level.isClientSide) {
+            return false;
+        }
+
+        if (in.profession() != profession) {
+            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.matches failed: profession mismatch recipe={} input={}",
+                    profession, in.profession());
+            return false;
+        }
+
+        if (in.merchantLevel().getId() < merchantLevel.getId()) {
+            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.matches failed: level mismatch recipe={} input={}",
+                    merchantLevel, in.merchantLevel());
+            return false;
+        }
 
         WorldContext ctx = in.ctx();
 
-        if (!costA.matches(ctx, in.costA())) return false;
-
-        if (costB != ItemInput.EMPTY) {
-            return costB.matches(ctx, in.costB());
+        if (!costA.matches(ctx, in.costA())) {
+            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.matches failed: costA mismatch stack={} x{}",
+                    in.costA().getItem(), in.costA().getCount());
+            return false;
         }
 
-        return in.costB().isEmpty();
+        if (costB != ItemInput.EMPTY) {
+            boolean ok = costB.matches(ctx, in.costB());
+            if (!ok) {
+                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                        "DwarfTradeRecipe.matches failed: costB mismatch stack={} x{}",
+                        in.costB().getItem(), in.costB().getCount());
+            }
+            return ok;
+        }
+
+        boolean ok = in.costB().isEmpty();
+        if (!ok) {
+            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.matches failed: expected empty costB but got stack={} x{}",
+                    in.costB().getItem(), in.costB().getCount());
+        }
+        return ok;
     }
 
     @Override
     public @NotNull ItemStack assemble(@NotNull DwarfTradeRecipeInput in, @NotNull HolderLookup.Provider registries) {
         WorldContext ctx = in.ctx();
-        if (ctx.level().isClientSide) return ItemStack.EMPTY;
 
-        if (!matches(in, ctx.level())) return ItemStack.EMPTY;
+        if (ctx.level().isClientSide) {
+            return ItemStack.EMPTY;
+        }
+
+        if (!matches(in, ctx.level())) {
+            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.assemble failed: matches returned false for profession={} level={}",
+                    profession, merchantLevel);
+            return ItemStack.EMPTY;
+        }
 
         ItemOutput out = result;
-        if (out == null || out == ItemOutput.EMPTY) return ItemStack.EMPTY;
+        if (out == null || out == ItemOutput.EMPTY) {
+            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.assemble failed: result output empty for profession={} level={}",
+                    profession, merchantLevel);
+            return ItemStack.EMPTY;
+        }
 
         List<Output> generated = out.generateResolved(ctx, in);
-        if (generated.isEmpty()) return ItemStack.EMPTY;
+        if (generated.isEmpty()) {
+            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.assemble failed: generated outputs empty for profession={} level={}",
+                    profession, merchantLevel);
+            return ItemStack.EMPTY;
+        }
 
         for (Output o : generated) {
             if (o instanceof Output.Items items) {
                 List<ItemStack> stacks = items.stacksSafe();
                 if (!stacks.isEmpty()) {
                     ItemStack stack = stacks.getFirst();
-                    return stack.isEmpty() ? ItemStack.EMPTY : stack;
+                    if (stack.isEmpty()) {
+                        JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                                "DwarfTradeRecipe.assemble failed: first generated item stack empty");
+                        return ItemStack.EMPTY;
+                    }
+                    return stack;
                 }
             }
         }
 
+        JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                "DwarfTradeRecipe.assemble failed: no Output.Items found in generated outputs");
         return ItemStack.EMPTY;
     }
 
@@ -341,11 +399,10 @@ public record DwarfTradeRecipe(
         private static final Codec<DwarfProfession> PROFESSION_CODEC =
                 Codec.STRING.comapFlatMap(
                         s -> {
-                            DwarfProfession p = DwarfProfession.fromProfessionName(s);
-                            if (p == DwarfProfession.NONE) {
+                            if (!isValidProfessionSerializedName(s)) {
                                 return DataResult.error(() -> "unknown profession '" + s + "'");
                             }
-                            return DataResult.success(p);
+                            return DataResult.success(DwarfProfession.fromProfessionName(s.trim()));
                         },
                         DwarfProfession::professionName
                 );
@@ -504,11 +561,45 @@ public record DwarfTradeRecipe(
         }
 
         private static @NotNull DwarfProfession decodeProfession(@NotNull String id) {
-            DwarfProfession profession = DwarfProfession.byId(id);
-            if (profession == null || profession == DwarfProfession.NONE) {
+            if (!isValidProfessionSerializedName(id)) {
                 throw new IllegalArgumentException("unknown profession '" + id + "'");
             }
-            return profession;
+
+            String normalized = id.trim();
+
+            DwarfProfession byId = DwarfProfession.byId(normalized);
+            if (byId != DwarfProfession.NONE
+                    || normalized.equalsIgnoreCase(JolCraftDictionary.NONE)
+                    || normalized.equalsIgnoreCase(JolCraftDwarfIds.DWARF)) {
+                return byId;
+            }
+
+            return DwarfProfession.fromProfessionName(normalized);
+        }
+
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+        private static boolean isValidProfessionSerializedName(@NotNull String raw) {
+            if (raw.isBlank()) {
+                return false;
+            }
+
+            String normalized = raw.trim();
+
+            if (normalized.equalsIgnoreCase(JolCraftDictionary.NONE)) {
+                return true;
+            }
+
+            if (normalized.equalsIgnoreCase(JolCraftDwarfIds.DWARF)) {
+                return true;
+            }
+
+            DwarfProfession byName = DwarfProfession.fromProfessionName(normalized);
+            if (byName != DwarfProfession.NONE) {
+                return true;
+            }
+
+            DwarfProfession byId = DwarfProfession.byId(normalized);
+            return byId != DwarfProfession.NONE;
         }
 
         private static @NotNull DwarfMerchantData.Level decodeMerchantLevel(int id) {

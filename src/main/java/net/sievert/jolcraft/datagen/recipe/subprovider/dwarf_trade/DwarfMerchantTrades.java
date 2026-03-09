@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("SameParameterValue")
 public final class DwarfMerchantTrades implements RecipeSubProvider {
 
-    private static final DwarfProfession PROFESSION = DwarfProfession.GUILDMASTER;
+    private static final DwarfProfession PROFESSION = DwarfProfession.MERCHANT;
 
     @Override
     public @NotNull String folder() {

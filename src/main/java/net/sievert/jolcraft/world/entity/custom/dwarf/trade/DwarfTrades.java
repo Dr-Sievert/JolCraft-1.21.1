@@ -17,14 +17,13 @@ import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.Trad
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public final class DwarfTrades {
 
@@ -45,20 +44,34 @@ public final class DwarfTrades {
 
         @Nullable
         public DwarfMerchantOffer getOffer(AbstractTradingEntity trader) {
-            if (recipe == null || recipe == DwarfTradeRecipe.EMPTY) return null;
-            if (!(trader.level() instanceof ServerLevel serverLevel)) return null;
+            if (recipe == null || recipe == DwarfTradeRecipe.EMPTY) {
+                return null;
+            }
+            if (!(trader.level() instanceof ServerLevel serverLevel)) {
+                return null;
+            }
 
             WorldContext ctx = new WorldContext(serverLevel, null, trader);
 
             ItemStack costAStack = materializeCost(recipe.costA(), ctx);
-            if (costAStack.isEmpty()) return null;
+            if (costAStack.isEmpty()) {
+                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                        "Dwarf trade offer failed: costA empty for recipe profession={} level={} order={}",
+                        recipe.profession(), recipe.merchantLevel(), recipe.order());
+                return null;
+            }
 
             ItemStack costBConcrete = ItemStack.EMPTY;
             Optional<ItemStack> costBStack = Optional.empty();
 
             if (recipe.costB() != ItemInput.EMPTY) {
                 costBConcrete = materializeCost(recipe.costB(), ctx);
-                if (costBConcrete.isEmpty()) return null;
+                if (costBConcrete.isEmpty()) {
+                    JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                            "Dwarf trade offer failed: costB empty for recipe profession={} level={} order={}",
+                            recipe.profession(), recipe.merchantLevel(), recipe.order());
+                    return null;
+                }
                 costBStack = Optional.of(costBConcrete);
             }
 
@@ -71,7 +84,13 @@ public final class DwarfTrades {
             );
 
             ItemStack out = recipe.assemble(input, serverLevel.registryAccess());
-            if (out.isEmpty()) return null;
+            if (out.isEmpty()) {
+                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                        "Dwarf trade offer failed: assembled result empty for recipe profession={} level={} order={} traderProfession={} traderLevel={}",
+                        recipe.profession(), recipe.merchantLevel(), recipe.order(),
+                        trader.getTradeProfession(), trader.getMerchantLevel());
+                return null;
+            }
 
             DwarfTradeRecipe.TradeStats stats = recipe.stats() != null
                     ? recipe.stats()
@@ -97,19 +116,38 @@ public final class DwarfTrades {
         }
 
         private static ItemStack materializeCost(ItemInput in, WorldContext ctx) {
-            if (in == null || in == ItemInput.EMPTY) return ItemStack.EMPTY;
+            if (in == null || in == ItemInput.EMPTY) {
+                return ItemStack.EMPTY;
+            }
 
             Holder<Item> holder = resolveCostItem(in, ctx);
-            if (holder == null) return ItemStack.EMPTY;
+            if (holder == null) {
+                JolCraftLogs.warn(JolCraftLogTags.ENTITY, "Dwarf trade cost materialization failed: no resolvable item");
+                return ItemStack.EMPTY;
+            }
 
             int rolled = 1;
             if (in.count() != null) {
                 rolled = in.count().roll(ctx.random());
             }
-            if (rolled < 1) return ItemStack.EMPTY;
+            if (rolled < 1) {
+                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                        "Dwarf trade cost materialization failed: rolled < 1 for item {}",
+                        holder.getRegisteredName());
+                return ItemStack.EMPTY;
+            }
 
             ItemStack stack = new ItemStack(holder.value(), rolled);
-            return in.matches(ctx, stack) ? stack : ItemStack.EMPTY;
+            boolean matches = in.matches(ctx, stack);
+
+            if (!matches) {
+                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                        "Dwarf trade cost materialization failed: generated stack {} x{} does not match ItemInput",
+                        stack.getItem(), stack.getCount());
+                return ItemStack.EMPTY;
+            }
+
+            return stack;
         }
 
         @Nullable
@@ -407,16 +445,25 @@ public final class DwarfTrades {
         }
 
         var type = JolCraftRecipes.DWARF_TRADE_TYPE.get();
-        var all = serverLevel.getServer().getRecipeManager().getRecipes();
+        Collection<RecipeHolder<?>> all = serverLevel.getServer().getRecipeManager().getRecipes();
 
         List<RecipeHolder<DwarfTradeRecipe>> out = new ArrayList<>();
 
         for (RecipeHolder<?> holder : all) {
-            if (holder.value().getType() != type) continue;
+            if (holder.value().getType() != type) {
+                continue;
+            }
 
-            DwarfTradeRecipe trade = (DwarfTradeRecipe) holder.value();
+            if (!(holder.value() instanceof DwarfTradeRecipe trade)) {
+                continue;
+            }
+
             out.add(new RecipeHolder<>(holder.id(), trade));
         }
+
+        JolCraftLogs.info(JolCraftLogTags.ENTITY,
+                "Found {} dwarf trade recipes in RecipeManager",
+                out.size());
 
         return List.copyOf(out);
     }

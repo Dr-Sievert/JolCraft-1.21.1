@@ -280,9 +280,18 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         DwarfMerchantData.Level level = DwarfMerchantData.Level.fromId(this.getMerchantLevel());
 
         var recipes = DwarfTrades.getTradeRecipesForMode(serverLevel, profession, level, this.random, mode);
+
+        JolCraftLogs.info(JolCraftLogTags.ENTITY,
+                "Rebuilding dwarf trades for profession={} level={} mode={} recipeCount={}",
+                profession, level, mode, recipes.size());
+
         for (var holder : recipes) {
             addOfferFromRecipe(rebuilt, holder.value());
         }
+
+        JolCraftLogs.info(JolCraftLogTags.ENTITY,
+                "Finished rebuilding dwarf trades for profession={} level={} mode={} offerCount={}",
+                profession, level, mode, rebuilt.size());
 
         this.offers = rebuilt;
     }
@@ -554,7 +563,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             throw new IllegalStateException("Cannot load Dwarf offers on the client");
         }
 
-        if (this.offers == null) {
+        if (this.offers == null || this.offers.isEmpty()) {
             this.offers = new DwarfMerchantOffers();
             this.updateTrades();
         }

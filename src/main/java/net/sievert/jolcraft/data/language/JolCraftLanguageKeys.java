@@ -15,7 +15,7 @@ import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 
 public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
@@ -283,12 +283,6 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String MERCHANT_TITLE = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.TITLE);
     public static final String MERCHANT_TRADES = dot(JolCraftDictionary.MERCHANT, pl(JolCraftDictionary.TRADE));
     public static final String MERCHANT_DEPRECATED = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.DEPRECATED);
-
-    public static final String LEVEL_NOVICE      = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.LEVEL, DwarfMerchantData.Level.NOVICE.idToString());
-    public static final String LEVEL_APPRENTICE  = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.LEVEL, DwarfMerchantData.Level.APPRENTICE.idToString());
-    public static final String LEVEL_JOURNEYMAN  = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.LEVEL, DwarfMerchantData.Level.JOURNEYMAN.idToString());
-    public static final String LEVEL_EXPERT      = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.LEVEL, DwarfMerchantData.Level.EXPERT.idToString());
-    public static final String LEVEL_MASTER      = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.LEVEL, DwarfMerchantData.Level.MASTER.idToString());
 
     public static final String TOOLTIP_DWARF_LOCKED =
             tooltip(JolCraftDwarfIds.DWARF, JolCraftDictionary.LOCKED);
