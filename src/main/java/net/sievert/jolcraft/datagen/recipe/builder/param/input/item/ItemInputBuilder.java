@@ -2,6 +2,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.input.item;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.requirement.ItemRequirements;
@@ -18,7 +19,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.selector.Ite
  * Datagen builder for {@link ItemInput}.
  *
  * Policy:
- * - Never throws
+ * - Mutation methods never throw
  * - Deterministic build
  * - Leaves strict validation to {@link ItemInput#validate()}
  */
@@ -65,7 +66,6 @@ public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
 
     /**
      * Convenience: wrap a single ingredient into a selector.
-     * (shorthand-friendly)
      */
     public ItemInputBuilder selector(ItemIngredient ingredient) {
         this.selector = ingredient != null ? ItemSelector.of(ingredient) : null;
@@ -85,7 +85,8 @@ public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
     }
 
     /**
-     * Convenience: use stack's item as selector (count ignored here; use {@link #count(IntRange)}).
+     * Convenience: use stack's item as selector.
+     * Stack count is ignored here; use {@link #count(IntRange)} for quantity.
      */
     public ItemInputBuilder item(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return this;
@@ -121,11 +122,14 @@ public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
 
     @Override
     public ItemInput build() {
-        Conditions c = (conditions != null) ? conditions : Conditions.EMPTY;
-        ItemSelector s = (selector != null) ? selector : ItemSelector.EMPTY;
-        IntRange n = (count != null) ? count : IntRange.ONE;
-        ItemRequirements r = (requirements != null) ? requirements : ItemRequirements.EMPTY;
+        Conditions c = conditions != null ? conditions : Conditions.EMPTY;
+        IntRange n = count != null ? count : IntRange.ONE;
+        ItemRequirements r = requirements != null ? requirements : ItemRequirements.EMPTY;
 
-        return new ItemInput(c, s, n, r);
+        if (selector == null) {
+            throw new IllegalStateException("Missing required field '" + JolCraftParameterIds.SELECTOR + "'");
+        }
+
+        return new ItemInput(c, selector, n, r);
     }
 }

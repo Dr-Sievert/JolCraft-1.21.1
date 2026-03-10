@@ -30,9 +30,9 @@ public record WeatherCondition(
     private static final Codec<WeatherCondition> RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
                     Codec.BOOL.optionalFieldOf(JolCraftParameterIds.RAIN)
-                            .forGetter(c -> c.requireRaining ? Optional.of(c.raining) : Optional.empty()),
+                            .forGetter(c -> c.requireRaining() ? Optional.of(c.raining()) : Optional.empty()),
                     Codec.BOOL.optionalFieldOf(JolCraftParameterIds.THUNDER)
-                            .forGetter(c -> c.requireThundering ? Optional.of(c.thundering) : Optional.empty()),
+                            .forGetter(c -> c.requireThundering() ? Optional.of(c.thundering()) : Optional.empty()),
                     Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false)
                             .forGetter(WeatherCondition::invert)
             ).apply(inst, (optRain, optThunder, inv) -> new WeatherCondition(
@@ -49,11 +49,11 @@ public record WeatherCondition(
     public static final StreamCodec<RegistryFriendlyByteBuf, WeatherCondition> STREAM_CODEC =
             StreamCodec.of(
                     (buf, c) -> {
-                        buf.writeBoolean(c.requireRaining);
-                        buf.writeBoolean(c.raining);
-                        buf.writeBoolean(c.requireThundering);
-                        buf.writeBoolean(c.thundering);
-                        buf.writeBoolean(c.invert);
+                        buf.writeBoolean(c.requireRaining());
+                        buf.writeBoolean(c.raining());
+                        buf.writeBoolean(c.requireThundering());
+                        buf.writeBoolean(c.thundering());
+                        buf.writeBoolean(c.invert());
                     },
                     buf -> new WeatherCondition(
                             buf.readBoolean(),
@@ -68,7 +68,7 @@ public record WeatherCondition(
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     private static DataResult<WeatherCondition> validateDecoded(WeatherCondition c) {
-        if (!c.requireRaining && !c.requireThundering) {
+        if (!c.requireRaining() && !c.requireThundering()) {
             return DataResult.error(() ->
                     "weather condition must specify at least one of '" +
                             JolCraftParameterIds.RAIN + "' or '" + JolCraftParameterIds.THUNDER + "'"
@@ -103,6 +103,6 @@ public record WeatherCondition(
 
     @Override
     public @NotNull DataResult<Condition> validate() {
-        return validateDecoded(this).map(c -> c);
+        return validateDecoded(this).map(v -> v);
     }
 }

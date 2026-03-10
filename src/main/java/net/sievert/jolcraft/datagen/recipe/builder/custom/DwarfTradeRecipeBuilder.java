@@ -15,8 +15,6 @@ import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.lore.util.LoreHelper;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
@@ -52,19 +50,19 @@ import java.util.Optional;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-@SuppressWarnings({"UnusedReturnValue"})
+@SuppressWarnings("UnusedReturnValue")
 public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
 
     private final List<String> errors = new ArrayList<>();
 
-    private DwarfProfession profession = DwarfProfession.NONE;
-    private DwarfMerchantData.Level merchantLevel = DwarfMerchantData.Level.NOVICE;
+    private @Nullable DwarfProfession profession;
+    private @Nullable DwarfMerchantData.Level merchantLevel;
     private TradePoolEntry pool = TradePoolEntry.MAIN;
     private int order = 0;
 
-    private ItemInput costA = ItemInput.EMPTY;
-    private ItemInput costB = ItemInput.EMPTY;
-    private ItemOutput result = ItemOutput.EMPTY;
+    private @Nullable ItemInput costA;
+    private @Nullable ItemInput costB;
+    private @Nullable ItemOutput result;
 
     private TradeStats stats = TradeStats.DEFAULT;
 
@@ -75,6 +73,10 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
 
     public static @NotNull DwarfTradeRecipeBuilder create() {
         return new DwarfTradeRecipeBuilder();
+    }
+
+    private static @NotNull ItemTransforms noTransforms() {
+        return new ItemTransforms(List.of(), List.of());
     }
 
     @Override
@@ -97,7 +99,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder profession(@Nullable DwarfProfession p) {
         if (p == null) {
             errors.add("profession is null");
-            this.profession = DwarfProfession.NONE;
+            this.profession = null;
             return this;
         }
         this.profession = p;
@@ -107,7 +109,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder merchantLevel(@Nullable DwarfMerchantData.Level lvl) {
         if (lvl == null) {
             errors.add("level is null");
-            this.merchantLevel = DwarfMerchantData.Level.NOVICE;
+            this.merchantLevel = null;
             return this;
         }
         this.merchantLevel = lvl;
@@ -127,36 +129,33 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder tradeGroup(@Nullable TradeGroup group) {
         if (group == null) {
             errors.add("trade_group is null");
-            this.pool = new TradePoolEntry(TradeGroup.MAIN, pool != null ? pool.weight() : WeightParam.ONE);
+            this.pool = new TradePoolEntry(TradeGroup.MAIN, pool.weight());
             return this;
         }
 
-        WeightParam currentWeight = pool != null ? pool.weight() : WeightParam.ONE;
-        this.pool = new TradePoolEntry(group, currentWeight);
+        this.pool = new TradePoolEntry(group, pool.weight());
         return this;
     }
 
     public @NotNull DwarfTradeRecipeBuilder weight(@Nullable WeightParam weight) {
         if (weight == null) {
             errors.add("weight is null");
-            this.pool = new TradePoolEntry(pool != null ? pool.group() : TradeGroup.MAIN, WeightParam.ONE);
+            this.pool = new TradePoolEntry(pool.group(), WeightParam.ONE);
             return this;
         }
 
-        TradeGroup group = pool != null ? pool.group() : TradeGroup.MAIN;
-        this.pool = new TradePoolEntry(group, weight);
+        this.pool = new TradePoolEntry(pool.group(), weight);
         return this;
     }
 
     public @NotNull DwarfTradeRecipeBuilder weight(int value) {
         if (value < 0) {
             errors.add("weight must be >= 0");
-            this.pool = new TradePoolEntry(pool != null ? pool.group() : TradeGroup.MAIN, WeightParam.ONE);
+            this.pool = new TradePoolEntry(pool.group(), WeightParam.ONE);
             return this;
         }
 
-        TradeGroup group = pool != null ? pool.group() : TradeGroup.MAIN;
-        this.pool = new TradePoolEntry(group, new WeightParam(value));
+        this.pool = new TradePoolEntry(pool.group(), new WeightParam(value));
         return this;
     }
 
@@ -173,7 +172,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder costA(@Nullable ItemInput input) {
         if (input == null) {
             errors.add("cost_a is null");
-            this.costA = ItemInput.EMPTY;
+            this.costA = null;
             return this;
         }
         this.costA = input;
@@ -183,7 +182,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder costA(@Nullable ItemLike item, int min, int max) {
         if (item == null) {
             errors.add("cost_a item is null");
-            this.costA = ItemInput.EMPTY;
+            this.costA = null;
             return this;
         }
 
@@ -201,7 +200,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder costA(@Nullable ItemLike item, int count) {
         if (item == null) {
             errors.add("cost_a item is null");
-            this.costA = ItemInput.EMPTY;
+            this.costA = null;
             return this;
         }
 
@@ -216,7 +215,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder costA(@Nullable ItemLike item) {
         if (item == null) {
             errors.add("cost_a item is null");
-            this.costA = ItemInput.EMPTY;
+            this.costA = null;
             return this;
         }
 
@@ -229,11 +228,6 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     public @NotNull DwarfTradeRecipeBuilder costB(@Nullable ItemInput input) {
-        if (input == null) {
-            errors.add("cost_b is null");
-            this.costB = ItemInput.EMPTY;
-            return this;
-        }
         this.costB = input;
         return this;
     }
@@ -241,7 +235,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder costB(@Nullable ItemLike item, int min, int max) {
         if (item == null) {
             errors.add("cost_b item is null");
-            this.costB = ItemInput.EMPTY;
+            this.costB = null;
             return this;
         }
 
@@ -259,7 +253,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder costB(@Nullable ItemLike item, int count) {
         if (item == null) {
             errors.add("cost_b item is null");
-            this.costB = ItemInput.EMPTY;
+            this.costB = null;
             return this;
         }
 
@@ -274,7 +268,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder costB(@Nullable ItemLike item) {
         if (item == null) {
             errors.add("cost_b item is null");
-            this.costB = ItemInput.EMPTY;
+            this.costB = null;
             return this;
         }
 
@@ -287,14 +281,14 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     public @NotNull DwarfTradeRecipeBuilder noCostB() {
-        this.costB = ItemInput.EMPTY;
+        this.costB = null;
         return this;
     }
 
     public @NotNull DwarfTradeRecipeBuilder result(@Nullable ItemOutput out) {
         if (out == null) {
             errors.add("result is null");
-            this.result = ItemOutput.EMPTY;
+            this.result = null;
             return this;
         }
         this.result = out;
@@ -304,13 +298,13 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     public @NotNull DwarfTradeRecipeBuilder result(@Nullable ItemLike item, int min, int max) {
         if (item == null) {
             errors.add("result item is null");
-            this.result = ItemOutput.EMPTY;
+            this.result = null;
             return this;
         }
 
         ItemOutput built = ItemOutputBuilder.create()
                 .result(item.asItem(), min, max)
-                .transforms(ItemTransforms.EMPTY)
+                .transforms(noTransforms())
                 .build();
 
         return result(built);
@@ -356,7 +350,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
 
         return ItemOutputBuilder.create()
                 .result(DwarfTradeRecipe.GOLD_COIN.asItem(), lo, hi)
-                .transforms(ItemTransforms.EMPTY)
+                .transforms(noTransforms())
                 .build();
     }
 
@@ -402,12 +396,12 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
                                                         LoreHelper.toLoreKeyString(loreKey)
                                                 )
                                 )
+                                .build()
                 )
                 .build();
 
         String override = RecipeFileNameBuilder.create()
                 .word(lvl.name().toLowerCase(Locale.ROOT))
-                .word(safeProfessionNameToken(prof))
                 .word(JolCraftDictionary.BUY)
                 .word(LoreHelper.toLoreKeyString(loreKey))
                 .word(JolCraftDictionary.TOME)
@@ -431,33 +425,31 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
             @Nullable DwarfProfession profession
     ) {
         DwarfProfession prof = profession != null ? profession : DwarfProfession.NONE;
+        if (prof == DwarfProfession.NONE) {
+            return;
+        }
 
-        BountyType bountyType = BountyType.fromString(prof.professionName());
-        if (bountyType == BountyType.UNKNOWN) {
+        String bountyType = prof.professionName();
+        if (bountyType == null || bountyType.isBlank() || bountyType.equals(JolCraftDictionary.NONE)) {
             return;
         }
 
         for (DwarfMerchantData.Level level : DwarfMerchantData.Level.values()) {
-            BountyTier bountyTier = BountyTier.fromValue(level.getId());
-            if (bountyTier == BountyTier.UNKNOWN) {
-                continue;
-            }
-
             ItemOutput bountyOut = ItemOutputBuilder.create()
                     .result(JolCraftItems.BOUNTY.asItem())
                     .transforms(
                             ItemTransformsBuilder.create()
                                     .component(
                                             ComponentTransformBuilder.create()
-                                                    .set(JolCraftDataComponents.BOUNTY_TYPE.get(), bountyType.getId())
-                                                    .set(JolCraftDataComponents.BOUNTY_TIER.get(), bountyTier.getId())
+                                                    .set(JolCraftDataComponents.BOUNTY_TYPE.get(), bountyType)
+                                                    .set(JolCraftDataComponents.BOUNTY_TIER.get(), level.getId())
                                     )
+                                    .build()
                     )
                     .build();
 
             String override = RecipeFileNameBuilder.create()
                     .word(level.name().toLowerCase(Locale.ROOT))
-                    .word(safeProfessionNameToken(prof))
                     .word(JolCraftDictionary.BOUNTY)
                     .build()
                     .result()
@@ -488,19 +480,19 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     public @NotNull DwarfTradeRecipeBuilder maxUses(int maxUses) {
-        TradeStats s = stats != null ? stats : TradeStats.DEFAULT;
+        TradeStats s = stats;
         this.stats = new TradeStats(maxUses, s.dwarfXp(), s.priceMultiplier());
         return this;
     }
 
     public @NotNull DwarfTradeRecipeBuilder dwarfXp(int dwarfXp) {
-        TradeStats s = stats != null ? stats : TradeStats.DEFAULT;
+        TradeStats s = stats;
         this.stats = new TradeStats(s.maxUses(), dwarfXp, s.priceMultiplier());
         return this;
     }
 
     public @NotNull DwarfTradeRecipeBuilder priceMultiplier(float priceMultiplier) {
-        TradeStats s = stats != null ? stats : TradeStats.DEFAULT;
+        TradeStats s = stats;
         this.stats = new TradeStats(s.maxUses(), s.dwarfXp(), priceMultiplier);
         return this;
     }
@@ -516,9 +508,24 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
+        if (profession == null) {
+            errors.add("profession is required");
+        }
+
+        if (merchantLevel == null) {
+            errors.add("merchantLevel is required");
+        }
+
+        if (costA == null) {
+            errors.add("cost_a is required");
+        }
+
+        if (result == null) {
+            errors.add("result is required");
+        }
+
         TradeKind kind = determineKindFailClosed();
 
-        String prof = professionNameSafe();
         String lvl = levelNameSafe();
 
         String a = tokenFromCostFailClosed(
@@ -526,7 +533,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
                 JolCraftStrings.underscored(JolCraftDictionary.COST, "a")
         );
 
-        String b = (costB != null && costB != ItemInput.EMPTY)
+        String b = (costB != null)
                 ? tokenFromCostFailClosed(
                 costB,
                 JolCraftStrings.underscored(JolCraftDictionary.COST, "b")
@@ -534,7 +541,6 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
                 : null;
 
         RecipeFileNameBuilder nb = RecipeFileNameBuilder.create()
-                .word(prof)
                 .word(lvl);
 
         if (kind == TradeKind.BUY) {
@@ -565,11 +571,9 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
             nb.word(JolCraftDictionary.FOR).word(res);
         }
 
-        DataResult<String> nameBuilt = nb.build();
-
-        if (fileNameOverride != null) {
-            nameBuilt = DataResult.success(fileNameOverride);
-        }
+        DataResult<String> nameBuilt = fileNameOverride != null
+                ? DataResult.success(fileNameOverride)
+                : nb.build();
 
         if (!errors.isEmpty()) {
             String partial = nameBuilt.result().orElse("");
@@ -578,15 +582,21 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
             nameBuilt = DataResult.error(() -> msg, partial);
         }
 
+        if (profession == null || merchantLevel == null || costA == null || result == null) {
+            return nameBuilt.flatMap(name ->
+                    DataResult.error(() -> "builder: missing required fields")
+            );
+        }
+
         DwarfTradeRecipe recipe = new DwarfTradeRecipe(
-                profession == null ? DwarfProfession.NONE : profession,
-                merchantLevel == null ? DwarfMerchantData.Level.NOVICE : merchantLevel,
-                pool == null ? TradePoolEntry.MAIN : pool,
+                profession,
+                merchantLevel,
+                pool,
                 Math.max(0, order),
-                costA == null ? ItemInput.EMPTY : costA,
-                costB == null ? ItemInput.EMPTY : costB,
-                result == null ? ItemOutput.EMPTY : result,
-                stats == null ? TradeStats.DEFAULT : stats
+                costA,
+                costB,
+                result,
+                stats
         );
 
         DataResult<DwarfTradeRecipe> validated = DwarfTradeRecipe.validateRecipe(recipe);
@@ -616,56 +626,45 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
 
     private TradeKind determineKindFailClosed() {
         boolean costHasCoins = costHasCoins(costA) || costHasCoins(costB);
-        if (costHasCoins) return TradeKind.BUY;
+        if (costHasCoins) {
+            return TradeKind.BUY;
+        }
 
         boolean resultHasCoins = resultHasCoins(result);
-        if (resultHasCoins) return TradeKind.SELL;
+        if (resultHasCoins) {
+            return TradeKind.SELL;
+        }
 
         return TradeKind.TRADE;
     }
 
     private boolean costHasCoins(@Nullable ItemInput in) {
-        if (in == null || in == ItemInput.EMPTY) return false;
+        if (in == null) {
+            return false;
+        }
 
         Optional<Holder<Item>> h = in.singleConcrete(Registries.ITEM);
         return h.isPresent() && h.get().is(DwarfTradeRecipe.COINS_TAG);
     }
 
     private boolean resultHasCoins(@Nullable ItemOutput out) {
-        if (out == null || out == ItemOutput.EMPTY) return false;
+        if (out == null) {
+            return false;
+        }
 
         Optional<Holder<Item>> h = out.singleConcrete(Registries.ITEM);
         return h.isPresent() && h.get().is(DwarfTradeRecipe.COINS_TAG);
     }
 
-    private String professionNameSafe() {
-        if (profession == null) return JolCraftDictionary.NONE;
-        try {
-            return profession.professionName();
-        } catch (RuntimeException e) {
-            errors.add("profession.professionName() threw");
-            return JolCraftDictionary.NONE;
-        }
-    }
-
-    private static @NotNull String safeProfessionNameToken(@NotNull DwarfProfession prof) {
-        try {
-            String n = prof.professionName();
-            return (n == null || n.isBlank())
-                    ? JolCraftDictionary.NONE
-                    : n.toLowerCase(Locale.ROOT);
-        } catch (RuntimeException e) {
-            return JolCraftDictionary.NONE;
-        }
-    }
-
     private String levelNameSafe() {
-        if (merchantLevel == null) return JolCraftDictionary.UNKNOWN;
+        if (merchantLevel == null) {
+            return JolCraftDictionary.UNKNOWN;
+        }
         return merchantLevel.name().toLowerCase(Locale.ROOT);
     }
 
     private String tokenFromCostFailClosed(@Nullable ItemInput in, @NotNull String label) {
-        if (in == null || in == ItemInput.EMPTY) {
+        if (in == null) {
             errors.add(label + " is missing");
             return JolCraftDictionary.UNKNOWN;
         }
@@ -699,17 +698,19 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     private String tokenFromResultFailClosed(@Nullable ItemOutput out) {
-        if (out == null || out == ItemOutput.EMPTY) {
+        if (out == null) {
             errors.add("result is missing (for naming)");
             return JolCraftDictionary.UNKNOWN;
         }
 
         ItemSpec spec = out.result();
-        if (spec != ItemSpec.EMPTY) {
+        if (spec != null) {
             ItemProducer producer = spec.producer();
-            Optional<String> tok = producer.mapFileNameTokenOpt();
-            if (tok.isPresent()) {
-                return tok.get();
+            if (producer != null) {
+                Optional<String> tok = producer.mapFileNameTokenOpt();
+                if (tok.isPresent()) {
+                    return tok.get();
+                }
             }
         }
 

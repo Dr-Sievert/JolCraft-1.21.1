@@ -37,22 +37,24 @@ public final class OutputsBuilder implements ParamBuilder<Outputs> {
     }
 
     public OutputsBuilder pool(Pool pool) {
-        Pools current = this.pools;
-        if (current == null) {
-            this.pools = new Pools(pool != null ? List.of(pool) : List.of());
-            return this;
-        }
-
-        List<Pool> list = current.poolsSafe();
-        if (list.isEmpty()) {
-            this.pools = new Pools(pool != null ? List.of(pool) : List.of());
-            return this;
-        }
-
         if (pool == null) return this;
 
+        Pools current = this.pools;
+        if (current == null) {
+            this.pools = new Pools(List.of(pool));
+            return this;
+        }
+
+        List<Pool> list = current.pools();
+        if (list.isEmpty()) {
+            this.pools = new Pools(List.of(pool));
+            return this;
+        }
+
         ArrayList<Pool> next = new ArrayList<>(list.size() + 1);
-        for (Pool p : list) if (p != null) next.add(p);
+        for (Pool p : list) {
+            if (p != null) next.add(p);
+        }
         next.add(pool);
         this.pools = new Pools(next);
         return this;
@@ -63,13 +65,14 @@ public final class OutputsBuilder implements ParamBuilder<Outputs> {
     }
 
     public OutputsBuilder wrapSingle(OutputParam out) {
+        if (out == null) return this;
         this.pools = Outputs.wrapSingle(OutputParam.unwrap(out)).pools();
         return this;
     }
 
     @Override
     public Outputs build() {
-        Pools ps = (pools != null) ? pools : Outputs.EMPTY_POOLS;
+        Pools ps = pools != null ? pools : Outputs.EMPTY_POOLS;
         return new Outputs(ps);
     }
 }

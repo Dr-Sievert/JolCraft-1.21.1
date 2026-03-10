@@ -5,12 +5,11 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyTaskRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +29,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             @NotNull HolderGetter<Item> items
     ) {
 
-        emitTier(executor, BountyTier.NOVICE, b -> {
+        emitTier(executor, DwarfMerchantData.Level.NOVICE, b -> {
             b.collect(Items.COAL, 5, 12);
             b.collect(Items.FLINT, 5, 12);
             b.collect(Items.COPPER_INGOT, 5, 12);
@@ -40,7 +39,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collect(Items.IRON_NUGGET, 5, 12);
         });
 
-        emitTier(executor, BountyTier.APPRENTICE, b -> {
+        emitTier(executor, DwarfMerchantData.Level.APPRENTICE, b -> {
             b.collect(Items.IRON_INGOT, 4, 8);
             b.collect(Items.LAPIS_LAZULI, 4, 8);
             b.collect(Items.REDSTONE, 4, 8);
@@ -50,7 +49,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collect(Items.BONE, 5, 9);
         });
 
-        emitTier(executor, BountyTier.JOURNEYMAN, b -> {
+        emitTier(executor, DwarfMerchantData.Level.JOURNEYMAN, b -> {
             b.collect(Items.GOLD_INGOT, 3, 6);
             b.collect(Items.EMERALD, 2, 5);
             b.collect(Items.AMETHYST_SHARD, 3, 6);
@@ -58,7 +57,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collect(Items.INK_SAC, 3, 6);
         });
 
-        emitTier(executor, BountyTier.EXPERT, b -> {
+        emitTier(executor, DwarfMerchantData.Level.EXPERT, b -> {
             b.collect(Items.ANVIL, 1, 1);
             b.collect(Items.GOLDEN_APPLE, 1, 2);
             b.collect(Items.BOOK, 1, 2);
@@ -67,7 +66,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collect(Items.ENDER_PEARL, 1, 1);
         });
 
-        emitTier(executor, BountyTier.MASTER, b -> {
+        emitTier(executor, DwarfMerchantData.Level.MASTER, b -> {
             b.collect(Items.NETHERITE_SCRAP, 1, 2);
             b.collect(Items.HEART_OF_THE_SEA, 1, 1);
             b.collect(Items.DRAGON_BREATH, 1, 2);
@@ -76,13 +75,13 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
 
     private void emitTier(
             RecipeEmissionExecutor executor,
-            BountyTier tier,
+            DwarfMerchantData.Level tier,
             Consumer<BountyTaskRecipeBuilder> objectives
     ) {
 
         BountyTaskRecipeBuilder b = BountyTaskRecipeBuilder.create();
 
-        b.bountyType(BountyType.MERCHANT)
+        b.bountyType(DwarfProfession.MERCHANT)
                 .tier(tier)
                 .result(JolCraftItems.BOUNTY_CRATE.get())
                 .sound1(SoundEvents.VILLAGER_WORK_CARTOGRAPHER)

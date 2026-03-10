@@ -18,9 +18,13 @@ import java.util.List;
  * - Targets are either concrete item holder or item tag.
  *
  * Policy:
- * - Never throws
- * - Ignores nulls and {@link ItemIngredient.Target#EMPTY}
+ * - Never throws during mutation
+ * - Ignores nulls
  * - Deterministic build
+ *
+ * Note:
+ * - Since runtime no longer uses EMPTY sentinels, build() now fails fast
+ *   if no valid targets were provided.
  */
 public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient> {
 
@@ -42,7 +46,7 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
     }
 
     public ItemIngredientBuilder target(ItemIngredient.Target target) {
-        if (target == null || target == ItemIngredient.Target.EMPTY) return this;
+        if (target == null) return this;
 
         List<ItemIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
@@ -52,7 +56,7 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
 
         ArrayList<ItemIngredient.Target> next = new ArrayList<>(list.size() + 1);
         for (ItemIngredient.Target t : list) {
-            if (t != null && t != ItemIngredient.Target.EMPTY) next.add(t);
+            if (t != null) next.add(t);
         }
         next.add(target);
 
@@ -92,14 +96,18 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
     public ItemIngredient build() {
         List<ItemIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
-            return ItemIngredient.EMPTY;
+            throw new IllegalStateException("ItemIngredient requires at least one target");
         }
 
         ArrayList<ItemIngredient.Target> safe = new ArrayList<>(list.size());
         for (ItemIngredient.Target t : list) {
-            if (t != null && t != ItemIngredient.Target.EMPTY) safe.add(t);
+            if (t != null) safe.add(t);
         }
 
-        return safe.isEmpty() ? ItemIngredient.EMPTY : ItemIngredient.ofTargets(safe);
+        if (safe.isEmpty()) {
+            throw new IllegalStateException("ItemIngredient requires at least one target");
+        }
+
+        return ItemIngredient.ofTargets(safe);
     }
 }

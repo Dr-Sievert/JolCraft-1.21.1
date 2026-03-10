@@ -14,9 +14,9 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
 import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
+import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,14 +25,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Text/message output param.
- *
- * Pure data:
- * - text (literal OR translation key; caller decides interpretation)
- * - style (0..N formatting tokens)
- * - overlay (actionbar) default true
- */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public record TextOutput(
@@ -45,111 +37,97 @@ public record TextOutput(
     private static final int MAX_TEXT = 1024;
     private static final int MAX_STYLE = 32;
 
-    public TextOutput {
-        style = style.isEmpty() ? List.of() : sanitizeList(style);
-    }
-
-    // ---------------------------------------------------------------------
-    // OUTPUT PARAM TYPE ID
-    // ---------------------------------------------------------------------
-
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.TEXT, JolCraftDictionary.OUTPUT));
 
     public static final byte DISC = 5;
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
+    public TextOutput {
+        if (text.isBlank()) {
+            throw new IllegalArgumentException("Missing/blank required field: '" + JolCraftParameterIds.TEXT + "'");
+        }
+        style = sanitizeList(style);
+    }
 
     private static final Codec<ChatFormatting> FORMATTING_CODEC =
             Codec.STRING.comapFlatMap(
                     s -> {
-                        ChatFormatting f = ChatFormatting.getByName(s);
-                        return f == null
+                        ChatFormatting formatting = ChatFormatting.getByName(s);
+                        return formatting == null
                                 ? DataResult.error(() -> "Unknown ChatFormatting: '" + s + "'")
-                                : DataResult.success(f);
+                                : DataResult.success(formatting);
                     },
                     ChatFormatting::getName
             );
 
     private static final Codec<TextOutput> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
-                    Codec.STRING.fieldOf(JolCraftParameterIds.TEXT)
+                    Codec.STRING
+                            .fieldOf(JolCraftParameterIds.TEXT)
                             .forGetter(TextOutput::text),
 
                     FORMATTING_CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.STYLE, List.of())
                             .forGetter(TextOutput::style),
 
-                    Codec.BOOL.optionalFieldOf(JolCraftParameterIds.OVERLAY, true)
+                    Codec.BOOL
+                            .optionalFieldOf(JolCraftParameterIds.OVERLAY, true)
                             .forGetter(TextOutput::overlay)
             ).apply(instance, TextOutput::new));
 
     public static final Codec<TextOutput> CODEC =
             ParamCodecs.validated(RAW_CODEC);
 
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
-
-    private static void encodeFormatting(RegistryFriendlyByteBuf buf, ChatFormatting f) {
-        String name = f.getName();
-        buf.writeUtf(name);
+    private static void encodeFormatting(RegistryFriendlyByteBuf buf, ChatFormatting formatting) {
+        buf.writeUtf(formatting.getName());
     }
 
     private static ChatFormatting decodeFormatting(RegistryFriendlyByteBuf buf) {
         String name = buf.readUtf(MAX_FORMATTING_NAME);
-        ChatFormatting f = ChatFormatting.getByName(name);
-        return (f != null) ? f : ChatFormatting.RESET;
+        ChatFormatting formatting = ChatFormatting.getByName(name);
+        return formatting != null ? formatting : ChatFormatting.RESET;
     }
 
     private static void encodeStyle(RegistryFriendlyByteBuf buf, @Nullable List<ChatFormatting> style) {
-        List<ChatFormatting> s = (style == null) ? List.of() : style;
-
-        int n = Math.min(MAX_STYLE, s.size());
-        buf.writeVarInt(n);
-        for (int i = 0; i < n; i++) {
-            encodeFormatting(buf, s.get(i));
+        List<ChatFormatting> safe = style == null ? List.of() : style;
+        int size = Math.min(MAX_STYLE, safe.size());
+        buf.writeVarInt(size);
+        for (int i = 0; i < size; i++) {
+            encodeFormatting(buf, safe.get(i));
         }
     }
 
     private static List<ChatFormatting> decodeStyle(RegistryFriendlyByteBuf buf) {
-        int n = buf.readVarInt();
-
-        int store = Math.max(0, Math.min(MAX_STYLE, n));
+        int size = buf.readVarInt();
+        int store = Math.max(0, Math.min(MAX_STYLE, size));
 
         List<ChatFormatting> out = new ArrayList<>(store);
-        for (int i = 0; i < n; i++) {
-            ChatFormatting f = decodeFormatting(buf);
+        for (int i = 0; i < size; i++) {
+            ChatFormatting formatting = decodeFormatting(buf);
             if (i < store) {
-                out.add(f);
+                out.add(formatting);
             }
         }
 
-        return out.isEmpty() ? List.of() : sanitizeList(out);
+        return sanitizeList(out);
     }
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TextOutput> STREAM_CODEC =
             StreamCodec.of(
                     (buf, value) -> {
-                        buf.writeUtf(value.text);
-                        encodeStyle(buf, value.style);
-                        buf.writeBoolean(value.overlay);
+                        buf.writeUtf(value.text(), MAX_TEXT);
+                        encodeStyle(buf, value.style());
+                        buf.writeBoolean(value.overlay());
                     },
-                    (buf) -> {
-                        String text = buf.readUtf(MAX_TEXT);
-                        List<ChatFormatting> style = decodeStyle(buf);
-                        boolean overlay = buf.readBoolean();
-                        return new TextOutput(text, style, overlay);
-                    }
+                    buf -> new TextOutput(
+                            buf.readUtf(MAX_TEXT),
+                            decodeStyle(buf),
+                            buf.readBoolean()
+                    )
             );
 
-    // ---------------------------------------------------------------------
-    // OUTPUT PARAM
-    // ---------------------------------------------------------------------
-
-    public static final ParamTypeDef<OutputParam> TYPE_DEF = new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
+    public static final ParamTypeDef<OutputParam> TYPE_DEF =
+            new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     @Override
     public @NotNull ResourceLocation typeId() {
@@ -158,40 +136,30 @@ public record TextOutput(
 
     @Override
     public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
-        if (text == null || text.isBlank()) {
-            return List.of();
-        }
-
-        if (style.size() > MAX_STYLE) {
-            return List.of();
-        }
-
         return List.of(new Output.Text(List.of(new Output.Message(text, style, overlay))));
     }
 
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
-
     @Override
     public @NotNull DataResult<TextOutput> validate() {
-        if (text == null || text.isBlank()) {
-            return SelfValidating.invalid("Missing/blank required field: '" + JolCraftParameterIds.TEXT + "'");
-        }
-
         if (style.size() > MAX_STYLE) {
             return SelfValidating.invalid("'" + JolCraftParameterIds.STYLE + "' may not exceed " + MAX_STYLE + " entries");
+        }
+
+        if (text.length() > MAX_TEXT) {
+            return SelfValidating.invalid("'" + JolCraftParameterIds.TEXT + "' may not exceed " + MAX_TEXT + " chars");
         }
 
         return SelfValidating.ok(this);
     }
 
+    private static <T> List<T> sanitizeList(@Nullable List<T> in) {
+        if (in == null || in.isEmpty()) return List.of();
 
-    private static <T> List<T> sanitizeList(List<T> in) {
-        if (in.isEmpty()) return List.of();
         ArrayList<T> safe = new ArrayList<>(in.size());
-        for (T t : in) if (t != null) safe.add(t);
+        for (T value : in) {
+            if (value != null) safe.add(value);
+        }
+
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
-
 }

@@ -161,14 +161,18 @@ public final class JolCraftHandInteractionEvents {
 
     private static void playSuccessSound(Player player, HandInteractionRecipe recipe) {
         SoundOutput s = recipe.successSound();
-        SoundEvent soundEvent = s.sound().value();
-        JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
+        SoundEvent soundEvent = s.resolveValue(player.registryAccess());
+        if (soundEvent != null) {
+            JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
+        }
     }
 
     private static void playFailSound(Player player, HandInteractionRecipe recipe) {
         SoundOutput s = recipe.failSound();
-        SoundEvent soundEvent = s.sound().value();
-        JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
+        SoundEvent soundEvent = s.resolveValue(player.registryAccess());
+        if (soundEvent != null) {
+            JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
+        }
     }
 
     private static void cancel(PlayerInteractEvent.RightClickItem event) {

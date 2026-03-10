@@ -19,10 +19,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
+import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,11 +60,10 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     protected void appendHeaderLines(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        DwarfProfession type = BountyRecipe.getType(stack);
+        DwarfMerchantData.Level tier = BountyRecipe.getTier(stack);
 
-        BountyType type = BountyRecipe.getType(stack);
-        BountyTier tier = BountyRecipe.getTier(stack);
-
-        if (type != BountyType.UNKNOWN) {
+        if (type != null) {
             tooltip.add(
                     Component.translatable(
                             JolCraftLanguageKeys.TOOLTIP_BOUNTY_TYPE,
@@ -75,24 +74,23 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
             );
         }
 
-        if (tier != BountyTier.UNKNOWN) {
+        if (tier != null) {
             tooltip.add(
                     Component.translatable(
                             JolCraftLanguageKeys.TOOLTIP_BOUNTY_TIER,
-                            tier.getDisplayName()
+                            Component.translatable(tier.langKey())
                     ).withStyle(ChatFormatting.GRAY)
             );
         }
     }
 
-
     @OnlyIn(Dist.CLIENT)
     @Override
     protected void appendInvalidLines(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        BountyType type = BountyRecipe.getType(stack);
-        BountyTier tier = BountyRecipe.getTier(stack);
+        DwarfProfession type = BountyRecipe.getType(stack);
+        DwarfMerchantData.Level tier = BountyRecipe.getTier(stack);
 
-        if (type == BountyType.UNKNOWN && tier == BountyTier.UNKNOWN) {
+        if (type == null && tier == null) {
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_INVALID)
                     .withStyle(ChatFormatting.RED));
         }

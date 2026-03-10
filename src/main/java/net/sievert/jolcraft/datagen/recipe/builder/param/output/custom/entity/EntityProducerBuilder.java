@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
  *
  * Contract:
  * - exactly one of entity/tag
- * - no throwing
- * - fail-closed
+ * - mutation never throws
+ * - strict build via {@link #build()}
  */
 public final class EntityProducerBuilder {
 
@@ -27,8 +27,12 @@ public final class EntityProducerBuilder {
 
     private EntityProducerBuilder() {}
 
-    public static @NotNull EntityProducerBuilder builder() {
+    public static @NotNull EntityProducerBuilder create() {
         return new EntityProducerBuilder();
+    }
+
+    public static @NotNull EntityProducerBuilder builder() {
+        return create();
     }
 
     // ---------------------------------------------------------------------
@@ -62,14 +66,14 @@ public final class EntityProducerBuilder {
      * Fail-closed: returns an error if invalid; never throws.
      */
     public @NotNull DataResult<EntityProducer> build() {
-
         boolean hasEntity = entity != null;
         boolean hasTag = tag != null;
 
         int count = (hasEntity ? 1 : 0) + (hasTag ? 1 : 0);
         if (count != 1) {
             return DataResult.error(() ->
-                    "EntityProducerBuilder must set exactly one of '" + KEY_ENTITY + "' or '" + KEY_TAG + "'");
+                    "EntityProducerBuilder must set exactly one of '" + KEY_ENTITY + "' or '" + KEY_TAG + "'"
+            );
         }
 
         if (hasEntity) {
@@ -80,10 +84,19 @@ public final class EntityProducerBuilder {
     }
 
     /**
-     * Convenience for datagen call sites that prefer a value.
-     * Still fail-closed: invalid -> {@link EntityProducer#EMPTY}.
+     * Convenience for call sites that want a value directly.
+     * Invalid state throws with the builder validation message.
      */
-    public @NotNull EntityProducer buildOrEmpty() {
-        return build().result().orElse(EntityProducer.EMPTY);
+    public @NotNull EntityProducer buildOrThrow() {
+        DataResult<EntityProducer> result = build();
+        if (result.result().isPresent()) {
+            return result.result().orElseThrow();
+        }
+
+        String msg = result.error()
+                .map(DataResult.Error::message)
+                .orElse("invalid EntityProducerBuilder state");
+
+        throw new IllegalStateException(msg);
     }
 }

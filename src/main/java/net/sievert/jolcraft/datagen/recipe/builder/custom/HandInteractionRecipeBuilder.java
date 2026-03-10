@@ -54,13 +54,13 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
 
     private final List<String> errors = new ArrayList<>();
 
-    private ItemInput ingredientA = ItemInput.EMPTY;
+    private @Nullable ItemInput ingredientA;
     private ItemIngredientAction actionA = ItemIngredientAction.CATALYST;
 
-    private ItemInput ingredientB = ItemInput.EMPTY;
+    private @Nullable ItemInput ingredientB;
     private ItemIngredientAction actionB = ItemIngredientAction.CATALYST;
 
-    private Outputs output = Outputs.EMPTY;
+    private @Nullable Outputs output;
 
     private @Nullable SoundOutput successSound;
     private @Nullable SoundOutput failSound;
@@ -76,7 +76,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     public @NotNull HandInteractionRecipeBuilder ingredientA(@Nullable ItemInput in) {
         if (in == null) {
             errors.add("ingredient_a is null");
-            this.ingredientA = ItemInput.EMPTY;
+            this.ingredientA = null;
             return this;
         }
 
@@ -87,7 +87,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     public @NotNull HandInteractionRecipeBuilder ingredientA(@Nullable ItemLike item, int count) {
         if (item == null) {
             errors.add("ingredient_a item is null");
-            this.ingredientA = ItemInput.EMPTY;
+            this.ingredientA = null;
             return this;
         }
 
@@ -117,7 +117,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     public @NotNull HandInteractionRecipeBuilder ingredientB(@Nullable ItemInput in) {
         if (in == null) {
             errors.add("ingredient_b is null");
-            this.ingredientB = ItemInput.EMPTY;
+            this.ingredientB = null;
             return this;
         }
 
@@ -128,7 +128,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     public @NotNull HandInteractionRecipeBuilder ingredientB(@Nullable ItemLike item, int count) {
         if (item == null) {
             errors.add("ingredient_b item is null");
-            this.ingredientB = ItemInput.EMPTY;
+            this.ingredientB = null;
             return this;
         }
 
@@ -158,7 +158,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     public @NotNull HandInteractionRecipeBuilder output(@Nullable Outputs out) {
         if (out == null) {
             errors.add("output is null");
-            this.output = Outputs.EMPTY;
+            this.output = null;
             return this;
         }
 
@@ -244,8 +244,8 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
         return id;
     }
 
-    private @NotNull String tokenFromIngredientFailClosed(@NotNull ItemInput in, @NotNull String label) {
-        if (in == ItemInput.EMPTY) {
+    private @NotNull String tokenFromIngredientFailClosed(@Nullable ItemInput in, @NotNull String label) {
+        if (in == null) {
             errors.add(label + " is missing");
             return JolCraftDictionary.UNKNOWN;
         }
@@ -276,6 +276,18 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
+        if (ingredientA == null) {
+            errors.add("ingredient_a is required");
+        }
+
+        if (ingredientB == null) {
+            errors.add("ingredient_b is required");
+        }
+
+        if (output == null) {
+            errors.add("output is required");
+        }
+
         if (successSound == null) {
             errors.add("success_sound is required");
         }

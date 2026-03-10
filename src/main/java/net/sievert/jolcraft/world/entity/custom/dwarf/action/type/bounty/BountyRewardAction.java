@@ -16,8 +16,6 @@ import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipeInput;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
@@ -27,6 +25,8 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +122,7 @@ public final class BountyRewardAction extends InspectDwarfAction {
         if (ticksRemaining == FX_SOUND_TICKS && rewardSound != null) {
             JolCraftSoundHelper.entity(
                     dwarf,
-                    Objects.requireNonNull(rewardSound.sound()).value(),
+                    Objects.requireNonNull(rewardSound.resolveValue(player.registryAccess())),
                     rewardSound.volume(),
                     rewardSound.pitch()
             );
@@ -178,15 +178,15 @@ public final class BountyRewardAction extends InspectDwarfAction {
             return;
         }
 
-        BountyType redeemType = input.type();
-        BountyTier redeemTier = input.tier();
+        DwarfProfession redeemType = input.type();
+        DwarfMerchantData.Level redeemTier = input.tier();
 
         JolCraftLogs.info(
                 JolCraftLogTags.PLAYER,
-                "{} completed a {} {} bounty at {} in {}",
+                "{} completed a level {} {} bounty at {} in {}",
                 player.getDisplayName().getString(),
-                redeemTier.getDisplayName().getString().toLowerCase(),
-                redeemType.getId(),
+                redeemTier.getId(),
+                redeemType.professionName(),
                 JolCraftLogs.roundedPos(player),
                 serverLevel.dimension().location()
         );
@@ -228,25 +228,23 @@ public final class BountyRewardAction extends InspectDwarfAction {
         player.awardStat(JolCraftStats.DWARVEN_BOUNTIES_COMPLETED.get());
     }
 
-    private static int xpForTier(BountyTier tier) {
-        return switch (tier.getId()) {
-            case 1 -> 10;
-            case 2 -> 35;
-            case 3 -> 50;
-            case 4 -> 65;
-            case 5 -> 80;
-            default -> 0;
+    private static int xpForTier(@NotNull DwarfMerchantData.Level tier) {
+        return switch (tier) {
+            case NOVICE -> 10;
+            case APPRENTICE -> 35;
+            case JOURNEYMAN -> 50;
+            case EXPERT -> 65;
+            case MASTER -> 80;
         };
     }
 
-    private static int particleCountFor(BountyTier tier) {
-        return switch (tier.getId()) {
-            case 1 -> 6;
-            case 2 -> 10;
-            case 3 -> 14;
-            case 4 -> 18;
-            case 5 -> 24;
-            default -> 0;
+    private static int particleCountFor(@NotNull DwarfMerchantData.Level tier) {
+        return switch (tier) {
+            case NOVICE -> 6;
+            case APPRENTICE -> 10;
+            case JOURNEYMAN -> 14;
+            case EXPERT -> 18;
+            case MASTER -> 24;
         };
     }
 

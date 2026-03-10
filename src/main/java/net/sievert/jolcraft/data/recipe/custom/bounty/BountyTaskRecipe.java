@@ -21,9 +21,9 @@ import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomRecipe;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
@@ -37,6 +37,8 @@ import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
 import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,12 +46,12 @@ import java.util.List;
 import java.util.Optional;
 
 public record BountyTaskRecipe(
-        BountyType bountyType,
-        BountyTier tier,
-        ItemOutput bounty,
-        Outputs objective,
-        SoundOutput sound1,
-        SoundOutput sound2
+        @NotNull DwarfProfession bountyType,
+        @NotNull DwarfMerchantData.Level tier,
+        @NotNull ItemOutput bounty,
+        @NotNull Outputs objective,
+        @NotNull SoundOutput sound1,
+        @NotNull SoundOutput sound2
 ) implements CustomRecipe<BountyRecipeInput> {
 
     @Override
@@ -69,7 +71,7 @@ public record BountyTaskRecipe(
     @Override
     public @NotNull ItemStack assemble(@NotNull BountyRecipeInput in, HolderLookup.@NotNull Provider registries) {
         ItemOutput outParam = bounty;
-        if (outParam.transforms() != ItemTransforms.EMPTY) return ItemStack.EMPTY;
+        if (!hasNoTransforms(outParam.transforms())) return ItemStack.EMPTY;
 
         ItemSpec spec = outParam.result();
         var producer = spec.producer();
@@ -83,7 +85,6 @@ public record BountyTaskRecipe(
         if (item != bountyItem && item != crateItem) return ItemStack.EMPTY;
 
         WorldContext ctx = in.ctx();
-
         Pools pools = objective.pools();
 
         BountyData.BountyObjective resolved = null;
@@ -146,57 +147,74 @@ public record BountyTaskRecipe(
             Codec.either(
                     ItemOutput.CODEC,
                     RegistryFixedCodec.create(Registries.ITEM)
-            ).xmap(
+            ).comapFlatMap(
                     either -> either.map(
-                            o -> o,
+                            DataResult::success,
                             itemHolder -> ItemOutput.one(new ItemStack(itemHolder.value(), 1))
                     ),
-                    out -> {
-                        if (out.transforms() != ItemTransforms.EMPTY) return Either.left(out);
-
-                        ItemSpec res = out.result();
-                        var count = res.count();
-                        if (count.min() != 1 || count.max() != 1) return Either.left(out);
-
-                        var producer = res.producer();
-                        Optional<Holder<Item>> holderOpt = producer.itemHolderOpt();
-                        if (holderOpt.isEmpty()) return Either.left(out);
-
-                        Item item = holderOpt.get().value();
-                        if (item != JolCraftItems.BOUNTY.get() && item != JolCraftItems.BOUNTY_CRATE.get()) {
-                            return Either.left(out);
-                        }
-
-                        return Either.right(holderOpt.get());
-                    }
+                    BountyTaskRecipe::encodeTaskResult
             );
+
+    private static @NotNull Either<ItemOutput, Holder<Item>> encodeTaskResult(@NotNull ItemOutput out) {
+        if (!hasNoTransforms(out.transforms())) {
+            return Either.left(out);
+        }
+
+        ItemSpec res = out.result();
+        if (res == null) {
+            return Either.left(out);
+        }
+
+        var count = res.count();
+        if (count.min() != 1 || count.max() != 1) {
+            return Either.left(out);
+        }
+
+        var producer = res.producer();
+        Optional<Holder<Item>> holderOpt = producer.itemHolderOpt();
+        if (holderOpt.isEmpty()) {
+            return Either.left(out);
+        }
+
+        Item item = holderOpt.get().value();
+        if (item != JolCraftItems.BOUNTY.get() && item != JolCraftItems.BOUNTY_CRATE.get()) {
+            return Either.left(out);
+        }
+
+        return Either.right(holderOpt.get());
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private static boolean hasNoTransforms(@NotNull ItemTransforms transforms) {
+        return transforms.enchantments().isEmpty() && transforms.components().isEmpty();
+    }
 
     private static final Codec<Outputs> OBJECTIVE_CODEC =
             Outputs.codecShorthand(OutputParam.CODEC);
 
     public static final class Serializer implements RecipeSerializer<BountyTaskRecipe> {
 
-        private static final StreamCodec<RegistryFriendlyByteBuf, BountyType> BOUNTY_TYPE_STREAM_CODEC =
+        private static final StreamCodec<RegistryFriendlyByteBuf, DwarfProfession> BOUNTY_TYPE_STREAM_CODEC =
                 StreamCodec.of(
-                        (buf, value) -> buf.writeUtf(value.getId()),
+                        (buf, value) -> buf.writeUtf(value.professionName()),
                         buf -> {
-                            String id = buf.readUtf();
-                            BountyType type = BountyType.fromString(id);
-                            if (type == null || type == BountyType.UNKNOWN) {
-                                throw new IllegalArgumentException("unknown bounty type '" + id + "'");
+                            String raw = buf.readUtf();
+                            DwarfProfession type = BountyRecipe.parseType(raw);
+                            if (type == null) {
+                                throw new IllegalArgumentException("unknown bounty type '" + raw + "'");
                             }
                             return type;
                         }
                 );
 
-        private static final StreamCodec<RegistryFriendlyByteBuf, BountyTier> BOUNTY_TIER_STREAM_CODEC =
+        private static final StreamCodec<RegistryFriendlyByteBuf, DwarfMerchantData.Level> BOUNTY_TIER_STREAM_CODEC =
                 StreamCodec.of(
                         (buf, value) -> buf.writeVarInt(value.getId()),
                         buf -> {
-                            int id = buf.readVarInt();
-                            BountyTier tier = BountyTier.fromValue(id);
-                            if (tier == null || tier == BountyTier.UNKNOWN) {
-                                throw new IllegalArgumentException("unknown bounty tier id " + id);
+                            int raw = buf.readVarInt();
+                            DwarfMerchantData.Level tier = BountyRecipe.parseTier(raw);
+                            if (tier == null) {
+                                throw new IllegalArgumentException("unknown bounty tier id " + raw);
                             }
                             return tier;
                         }
@@ -252,7 +270,6 @@ public record BountyTaskRecipe(
     }
 
     public static @NotNull DataResult<BountyTaskRecipe> validateRecipe(BountyTaskRecipe r) {
-
         var sound1Key = JolCraftStrings.underscored(JolCraftDictionary.SOUND, "1");
         var sound2Key = JolCraftStrings.underscored(JolCraftDictionary.SOUND, "2");
 
@@ -274,7 +291,7 @@ public record BountyTaskRecipe(
         }
 
         ItemOutput out = r.bounty();
-        if (out.transforms() != ItemTransforms.EMPTY) {
+        if (!hasNoTransforms(out.transforms())) {
             return DataResult.error(() -> "result.transforms must be empty for bounty tasks");
         }
 
@@ -343,7 +360,7 @@ public record BountyTaskRecipe(
             }
 
             if (op instanceof ItemOutput io) {
-                if (io.transforms() != ItemTransforms.EMPTY) {
+                if (!hasNoTransforms(io.transforms())) {
                     int eIdx = ei;
                     return DataResult.error(() ->
                             "objective item_output.transforms must be empty (entries[" + eIdx + "])"

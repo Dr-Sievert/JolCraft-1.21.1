@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.pool;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -20,31 +21,36 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
-/**
- * Plural container for {@link Pool}.
- */
 public record Pools(List<Pool> pools)
         implements SelfValidating<Pools>, RegistryIntrospectionSource, ResolvedOutputParam {
 
     private static final int MAX_TOTAL_OUTPUTS = 4096;
     private static final int MAX_POOLS_STREAM = 2048;
 
-    private static final Codec<Pools> RAW_CODEC =
+    private static final Codec<Pools> FULL_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Pool.CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.POOLS, List.of())
-                            .forGetter(Pools::poolsSafe)
+                            .forGetter(Pools::pools)
             ).apply(instance, Pools::new));
+
+    private static final Codec<Pools> RAW_CODEC =
+            Codec.either(Pool.CODEC.listOf(), FULL_CODEC).xmap(
+                    either -> either.map(
+                            Pools::new,
+                            pools -> pools
+                    ),
+                    pools -> Either.left(pools.pools())
+            );
 
     public static final Codec<Pools> CODEC = ParamCodecs.validated(RAW_CODEC);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Pools> STREAM_CODEC =
             StreamCodec.of(
                     (buf, value) -> {
-                        List<Pool> list = value.poolsSafe();
+                        List<Pool> list = value.pools();
                         buf.writeVarInt(list.size());
                         for (Pool p : list) {
                             Pool.STREAM_CODEC.encode(buf, p);
@@ -69,46 +75,41 @@ public record Pools(List<Pool> pools)
                             list.add(Pool.STREAM_CODEC.decode(buf));
                         }
 
-                        return new Pools(List.copyOf(list));
+                        return new Pools(list);
                     }
             );
 
-    public Pools(List<Pool> pools) {
-        this.pools = pools != null ? List.copyOf(pools) : List.of();
+    public Pools {
+        pools = sanitizePools(pools);
     }
 
-    public List<Pool> poolsSafe() {
-        return pools != null ? pools : List.of();
+    private static @NotNull List<Pool> sanitizePools(@Nullable List<Pool> pools) {
+        if (pools == null || pools.isEmpty()) {
+            return List.of();
+        }
+
+        ArrayList<Pool> safe = new ArrayList<>(pools.size());
+        for (Pool pool : pools) {
+            if (pool == null) {
+                throw new IllegalArgumentException(JolCraftParameterIds.POOLS + " contains null");
+            }
+            safe.add(pool);
+        }
+        return List.copyOf(safe);
     }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        List<Pool> list = poolsSafe();
-        if (list.isEmpty()) return List.of();
-
-        ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(list.size());
-        for (Pool p : list) {
-            if (p != null) src.add(p);
-        }
-
-        return src.isEmpty() ? List.of() : RegistryIntrospectionSource.mergeByRegistry(src);
+        if (pools.isEmpty()) return List.of();
+        return RegistryIntrospectionSource.mergeByRegistry(pools);
     }
 
     @Override
     public @NotNull DataResult<Pools> validate() {
-        if (pools == null) {
-            return DataResult.error(() -> JolCraftParameterIds.POOLS + " cannot be null");
-        }
-
         for (int i = 0; i < pools.size(); i++) {
             Pool p = pools.get(i);
-            if (p == null) {
-                int idx = i;
-                return DataResult.error(() -> JolCraftParameterIds.POOLS + " contains null at index " + idx);
-            }
-
             DataResult<Pool> pv = p.validate();
-            Optional<DataResult.Error<Pool>> err = pv.error();
+            var err = pv.error();
             if (err.isPresent()) {
                 int idx = i;
                 String msg = err.get().message();
@@ -130,14 +131,11 @@ public record Pools(List<Pool> pools)
             @NotNull WorldContext ctx,
             @Nullable ItemTransformSourceResolver resolver
     ) {
-        List<Pool> list = poolsSafe();
-        if (list.isEmpty()) return List.of();
+        if (pools.isEmpty()) return List.of();
 
         ArrayList<Output> out = new ArrayList<>(64);
 
-        for (Pool p : list) {
-            if (p == null) return List.of();
-
+        for (Pool p : pools) {
             List<Output> gen = p.generateResolved(ctx, resolver);
             if (gen.isEmpty()) continue;
 
@@ -156,14 +154,11 @@ public record Pools(List<Pool> pools)
     }
 
     public boolean anyParam(@NotNull Predicate<OutputParam> test) {
-        List<Pool> ps = poolsSafe();
-        for (Pool p : ps) {
-            if (p == null) continue;
+        for (Pool p : pools) {
             List<PoolEntry> es = p.entries();
-            if (es == null || es.isEmpty()) continue;
+            if (es.isEmpty()) continue;
 
             for (PoolEntry e : es) {
-                if (e == null) continue;
                 OutputParam op = OutputParam.unwrap(e.output());
                 if (op != null && test.test(op)) return true;
             }

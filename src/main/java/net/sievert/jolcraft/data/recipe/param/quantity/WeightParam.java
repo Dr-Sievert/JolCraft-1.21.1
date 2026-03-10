@@ -24,7 +24,7 @@ public record WeightParam(int value) implements SelfValidating<WeightParam> {
     public static final WeightParam ONE = new WeightParam(1);
 
     // ---------------------------------------------------------------------
-    // CANONICAL (clamp storage to >= 0)
+    // CANONICAL
     // ---------------------------------------------------------------------
 
     public WeightParam {
@@ -32,7 +32,7 @@ public record WeightParam(int value) implements SelfValidating<WeightParam> {
     }
 
     // ---------------------------------------------------------------------
-    // CODEC (validated)
+    // CODEC
     // ---------------------------------------------------------------------
 
     private static final Codec<WeightParam> RAW_CODEC =

@@ -1,9 +1,11 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom.particle;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -11,11 +13,11 @@ import net.minecraft.util.RandomSource;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
-import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectable;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
+import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
@@ -26,25 +28,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-/**
- * Particle output param (universal).
- *
- * Uses vanilla ParticleOptions dispatch (inside {@link ParticleSpec}), so JSON and network
- * support all particle option types.
- *
- * Introspection:
- * - Reports PARTICLE_TYPE registry usage based on {@link ParticleSpec#producer()}.
- * - No tags possible (ParticleOptions encodes a concrete type).
- *
- * Runtime position/spread are caller-owned, not stored in the param.
- */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public record ParticleOutput(
         @NotNull ParticleSpec spec,
         @NotNull IntRange count,
         float speed
-) implements OutputParam, SelfValidating<ParticleOutput>, RegistryIntrospectable {
+) implements OutputParam, SelfValidating<ParticleOutput>, RegistryIntrospectionSource {
 
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(
@@ -54,30 +44,66 @@ public record ParticleOutput(
 
     public static final byte DISC = 6;
 
-    private static final Codec<ParticleOutput> RAW_CODEC =
+    private record CanonicalRaw(
+            @NotNull ResourceLocation id,
+            @NotNull ParticleOptions particle,
+            @NotNull IntRange count,
+            float speed
+    ) {}
+
+    private record VerboseRaw(
+            @NotNull ParticleSpec particle,
+            @NotNull IntRange count,
+            float speed
+    ) {}
+
+    private static final Codec<CanonicalRaw> CANONICAL_RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
-                    ParticleSpec.CODEC
+                    ResourceLocation.CODEC
+                            .fieldOf(JolCraftParameterIds.ID)
+                            .forGetter(CanonicalRaw::id),
+
+                    net.minecraft.core.particles.ParticleTypes.CODEC
                             .fieldOf(JolCraftParameterIds.PARTICLE)
-                            .forGetter(ParticleOutput::spec),
+                            .forGetter(CanonicalRaw::particle),
 
                     IntRange.CODEC
                             .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
-                            .forGetter(ParticleOutput::count),
+                            .forGetter(CanonicalRaw::count),
 
                     Codec.FLOAT
                             .optionalFieldOf(JolCraftParameterIds.SPEED, 0.0F)
-                            .forGetter(ParticleOutput::speed)
-            ).apply(instance, ParticleOutput::new));
+                            .forGetter(CanonicalRaw::speed)
+            ).apply(instance, CanonicalRaw::new));
+
+    private static final Codec<VerboseRaw> VERBOSE_RAW_CODEC =
+            RecordCodecBuilder.create(instance -> instance.group(
+                    ParticleSpec.CODEC
+                            .fieldOf(JolCraftParameterIds.PARTICLE)
+                            .forGetter(VerboseRaw::particle),
+
+                    IntRange.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
+                            .forGetter(VerboseRaw::count),
+
+                    Codec.FLOAT
+                            .optionalFieldOf(JolCraftParameterIds.SPEED, 0.0F)
+                            .forGetter(VerboseRaw::speed)
+            ).apply(instance, VerboseRaw::new));
 
     public static final Codec<ParticleOutput> CODEC =
-            ParamCodecs.validated(RAW_CODEC);
+            ParamCodecContract.create(
+                    Codec.either(CANONICAL_RAW_CODEC, VERBOSE_RAW_CODEC),
+                    ParticleOutput::fromRaw,
+                    ParticleOutput::toRaw
+            );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ParticleOutput> STREAM_CODEC =
             StreamCodec.of(
                     (buf, value) -> {
-                        ParticleSpec.STREAM_CODEC.encode(buf, value.spec);
-                        IntRange.STREAM_CODEC.encode(buf, value.count);
-                        buf.writeFloat(value.speed);
+                        ParticleSpec.STREAM_CODEC.encode(buf, value.spec());
+                        IntRange.STREAM_CODEC.encode(buf, value.count());
+                        buf.writeFloat(value.speed());
                     },
                     buf -> new ParticleOutput(
                             ParticleSpec.STREAM_CODEC.decode(buf),
@@ -88,17 +114,44 @@ public record ParticleOutput(
 
     public static final ParamTypeDef<OutputParam> TYPE_DEF = new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
+    private static @NotNull DataResult<ParticleOutput> fromRaw(
+            @NotNull Either<CanonicalRaw, VerboseRaw> raw
+    ) {
+        if (raw.left().isPresent()) {
+            CanonicalRaw canonical = raw.left().orElseThrow();
+            return ParticleSpec.of(canonical.id(), canonical.particle())
+                    .map(spec -> new ParticleOutput(spec, canonical.count(), canonical.speed()));
+        }
+
+        VerboseRaw verbose = raw.right().orElseThrow();
+        return DataResult.success(new ParticleOutput(
+                verbose.particle(),
+                verbose.count(),
+                verbose.speed()
+        ));
+    }
+
+    private static @NotNull Either<CanonicalRaw, VerboseRaw> toRaw(@NotNull ParticleOutput output) {
+        return Either.left(new CanonicalRaw(
+                output.spec().producer().particleId(),
+                output.spec().particle(),
+                output.count(),
+                output.speed()
+        ));
+    }
+
     @Override
     public @NotNull ResourceLocation typeId() {
         return TYPE_ID;
     }
 
     @Override
-    public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
-        if (validate().error().isPresent()) {
-            return List.of();
-        }
+    public @NotNull List<RegistryIntrospection> introspections() {
+        return spec.introspections();
+    }
 
+    @Override
+    public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
         RandomSource random = ctx.random();
         int rolled = count.roll(random);
         if (rolled <= 0) {
@@ -117,21 +170,16 @@ public record ParticleOutput(
     }
 
     @Override
-    public @NotNull RegistryIntrospection introspection() {
-        return spec.introspection();
-    }
-
-    @Override
     public @NotNull DataResult<ParticleOutput> validate() {
-        var sv = spec.validate();
-        if (sv.error().isPresent()) {
-            String msg = sv.error().map(DataResult.Error::message).orElse("");
+        DataResult<ParticleSpec> specValidation = spec.validate();
+        if (specValidation.error().isPresent()) {
+            String msg = specValidation.error().map(DataResult.Error::message).orElse("");
             return DataResult.error(() -> "invalid particle spec: " + msg);
         }
 
-        var countValid = IntRange.validateRange(count);
-        if (countValid.error().isPresent()) {
-            String msg = countValid.error().get().message();
+        DataResult<IntRange> countValidation = IntRange.validateRange(count);
+        if (countValidation.error().isPresent()) {
+            String msg = countValidation.error().map(DataResult.Error::message).orElse("");
             return DataResult.error(() -> "invalid '" + JolCraftParameterIds.COUNT + "': " + msg);
         }
 

@@ -14,7 +14,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
@@ -54,7 +53,7 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
 
     private final List<String> errors = new ArrayList<>();
 
-    private ItemInput ingredient = ItemInput.EMPTY;
+    private @Nullable ItemInput ingredient;
     private Optional<ItemSelector> lastIngredient = Optional.empty();
     private Optional<ItemOutput> extract = Optional.empty();
     private Optional<EffectOutput> effect = Optional.empty();
@@ -73,7 +72,7 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     public @NotNull FermentingCauldronRecipeBuilder ingredient(@Nullable ItemInput in) {
         if (in == null) {
             errors.add("ingredient is null");
-            this.ingredient = ItemInput.EMPTY;
+            this.ingredient = null;
             return this;
         }
         this.ingredient = in;
@@ -83,7 +82,7 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     public @NotNull FermentingCauldronRecipeBuilder ingredient(@Nullable ItemLike item, int count) {
         if (item == null) {
             errors.add("ingredient item is null");
-            this.ingredient = ItemInput.EMPTY;
+            this.ingredient = null;
             return this;
         }
 
@@ -188,6 +187,9 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
+        if (ingredient == null) {
+            errors.add("ingredient is required");
+        }
 
         String ingredientTok = tokenFromIngredientFailClosed(ingredient);
 
@@ -265,11 +267,17 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
             nameBuilt = DataResult.error(() -> msg, partial);
         }
 
+        if (ingredient == null) {
+            return nameBuilt.flatMap(name ->
+                    DataResult.error(() -> "builder: missing required fields")
+            );
+        }
+
         FermentingCauldronRecipe recipe = new FermentingCauldronRecipe(
-                ingredient != null ? ingredient : ItemInput.EMPTY,
-                lastIngredient != null ? lastIngredient : Optional.empty(),
-                extract != null ? extract : Optional.empty(),
-                effect != null ? effect : Optional.empty(),
+                ingredient,
+                lastIngredient,
+                extract,
+                effect,
                 Math.max(1, brewTicks),
                 Math.max(1, bubbleTicks),
                 brewColor,
@@ -308,8 +316,8 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
         return id != null ? id.getPath() : null;
     }
 
-    private String tokenFromIngredientFailClosed(ItemInput in) {
-        if (in == ItemInput.EMPTY) {
+    private String tokenFromIngredientFailClosed(@Nullable ItemInput in) {
+        if (in == null) {
             errors.add("ingredient is missing");
             return JolCraftDictionary.UNKNOWN;
         }

@@ -5,6 +5,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
+import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
@@ -13,11 +14,9 @@ import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
  *
  * Policy:
  * - Single-assignment mode selection: first selection wins, subsequent mode calls are ignored.
- * - No throwing, no logging.
- * - Fail-closed assembly:
- *   - If a selected mode is missing required inputs, build() returns {@link ItemProducer#EMPTY}.
- *   - This keeps builder output sentinel-clean and avoids emitting known-invalid shapes.
- * - No domain validation here (ParamBuilder.buildValidated delegates to ItemProducer.validate()).
+ * - Mutation never throws.
+ * - Strict build: required mode data must be present.
+ * - No domain validation here beyond structural builder completeness.
  */
 public final class ItemProducerBuilder implements ParamBuilder<ItemProducer> {
 
@@ -56,15 +55,16 @@ public final class ItemProducerBuilder implements ParamBuilder<ItemProducer> {
         return this;
     }
 
-    public ItemProducerBuilder map(TagKey<Structure> structureTag,
-                                   Holder<MapDecorationType> decoration,
-                                   String displayNameKey) {
+    public ItemProducerBuilder map(
+            TagKey<Structure> structureTag,
+            Holder<MapDecorationType> decoration,
+            String displayNameKey
+    ) {
         if (this.kind != null) return this;
         this.kind = Kind.MAP;
         this.structureTag = structureTag;
         this.decoration = decoration;
 
-        // Canonicalize name key (fail-closed on blank).
         String k = displayNameKey == null ? "" : displayNameKey.trim();
         this.displayNameKey = k.isEmpty() ? null : k;
 
@@ -77,20 +77,37 @@ public final class ItemProducerBuilder implements ParamBuilder<ItemProducer> {
 
     @Override
     public ItemProducer build() {
-        if (kind == null) return ItemProducer.EMPTY;
+        if (kind == null) {
+            throw new IllegalStateException("Missing required item producer kind");
+        }
 
         return switch (kind) {
-            case ITEM -> (item == null)
-                    ? ItemProducer.EMPTY
-                    : ItemProducer.item(item.value());
+            case ITEM -> {
+                if (item == null) {
+                    throw new IllegalStateException("Missing required field '" + JolCraftParameterIds.ITEM + "'");
+                }
+                yield ItemProducer.holder(item);
+            }
 
-            case TAG -> (tag == null)
-                    ? ItemProducer.EMPTY
-                    : ItemProducer.tag(tag);
+            case TAG -> {
+                if (tag == null) {
+                    throw new IllegalStateException("Missing required field '" + JolCraftParameterIds.TAG + "'");
+                }
+                yield ItemProducer.tag(tag);
+            }
 
-            case MAP -> (structureTag == null || decoration == null || displayNameKey == null)
-                    ? ItemProducer.EMPTY
-                    : ItemProducer.map(structureTag, decoration, displayNameKey);
+            case MAP -> {
+                if (structureTag == null) {
+                    throw new IllegalStateException("Missing required field 'structure_tag'");
+                }
+                if (decoration == null) {
+                    throw new IllegalStateException("Missing required field 'map_decoration'");
+                }
+                if (displayNameKey == null) {
+                    throw new IllegalStateException("Missing required field 'display_name_key'");
+                }
+                yield ItemProducer.map(structureTag, decoration, displayNameKey);
+            }
         };
     }
 }

@@ -31,8 +31,8 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
     public static final StreamCodec<RegistryFriendlyByteBuf, ChanceCondition> STREAM_CODEC =
             StreamCodec.of(
                     (buf, c) -> {
-                        buf.writeDouble(c.chance);
-                        buf.writeBoolean(c.invert);
+                        buf.writeDouble(c.chance());
+                        buf.writeBoolean(c.invert());
                     },
                     buf -> new ChanceCondition(buf.readDouble(), buf.readBoolean())
             );
@@ -41,7 +41,7 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     private static DataResult<ChanceCondition> validateDecoded(ChanceCondition c) {
-        double v = c.chance;
+        double v = c.chance();
         if (Double.isNaN(v)) return DataResult.error(() -> "chance must not be NaN");
         if (Double.isInfinite(v)) return DataResult.error(() -> "chance must be finite");
         if (v < 0.0D || v > 1.0D) {
@@ -57,17 +57,12 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
 
     @Override
     public boolean test(@NotNull WorldContext ctx) {
-        double v = this.chance;
-        if (Double.isNaN(v) || Double.isInfinite(v) || v < 0.0D || v > 1.0D) {
-            return false;
-        }
-
-        boolean pass = ctx.random().nextDouble() < v;
+        boolean pass = ctx.random().nextDouble() < chance;
         return invert != pass;
     }
 
     @Override
     public @NotNull DataResult<Condition> validate() {
-        return validateDecoded(this).map(c -> c);
+        return validateDecoded(this).map(v -> v);
     }
 }

@@ -25,13 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Composite output wrapper around {@link Pools}.
- *
- * IMPORTANT:
- * - Outputs is NOT an OutputParam variant.
- * - Outputs is the outer container/program form used by recipes that want pooled/multi output behavior.
- */
 public record Outputs(Pools pools)
         implements ResolvedOutputParam, SelfValidating<Outputs>, RegistryIntrospectionSource {
 
@@ -51,31 +44,108 @@ public record Outputs(Pools pools)
         return new Outputs(new Pools(List.of(pool)));
     }
 
+    private static @NotNull Outputs wrapBareList(@NotNull List<OutputParam> outputs) {
+        if (outputs.isEmpty()) {
+            return EMPTY;
+        }
+
+        ArrayList<PoolEntry> entries = new ArrayList<>(outputs.size());
+        for (OutputParam output : outputs) {
+            if (output != null) {
+                entries.add(new PoolEntry(output, null, null));
+            }
+        }
+
+        if (entries.isEmpty()) {
+            return EMPTY;
+        }
+
+        return new Outputs(new Pools(List.of(
+                new Pool(IntRange.ONE, Conditions.EMPTY, entries)
+        )));
+    }
+
+    private boolean isSingleBareOutput() {
+        List<Pool> ps = poolsSafe().pools();
+        if (ps.size() != 1) return false;
+
+        Pool pool = ps.getFirst();
+        if (!pool.isBareEntryList()) return false;
+
+        List<PoolEntry> entries = pool.entries();
+        return entries.size() == 1;
+    }
+
+    private boolean isSingleBarePoolList() {
+        List<Pool> ps = poolsSafe().pools();
+        return ps.size() == 1 && ps.getFirst().isBareEntryList();
+    }
+
+    private @Nullable OutputParam singleBareOutputOrNull() {
+        if (!isSingleBareOutput()) return null;
+        return poolsSafe().pools().getFirst().entries().getFirst().output();
+    }
+
+    private @NotNull List<OutputParam> bareOutputsOrEmpty() {
+        if (!isSingleBarePoolList()) return List.of();
+
+        List<PoolEntry> entries = poolsSafe().pools().getFirst().entries();
+        if (entries.isEmpty()) return List.of();
+
+        ArrayList<OutputParam> out = new ArrayList<>(entries.size());
+        for (PoolEntry entry : entries) {
+            OutputParam output = entry.output();
+            if (output != null) out.add(output);
+        }
+        return out.isEmpty() ? List.of() : List.copyOf(out);
+    }
+
     @SuppressWarnings("unchecked")
     public static @NotNull Codec<Outputs> codecShorthand(
             @NotNull Codec<? extends OutputParam> singleParamCodec
     ) {
+        Codec<OutputParam> leaf = (Codec<OutputParam>) singleParamCodec;
+        Codec<List<OutputParam>> leafList = leaf.listOf();
+
         return Codec.either(
-                (Codec<OutputParam>) singleParamCodec,
+                leaf,
                 Codec.either(
-                        Outputs.CODEC,
+                        leafList,
                         Codec.either(
-                                Pools.CODEC,
-                                Pool.CODEC.listOf()
+                                Outputs.CODEC,
+                                Codec.either(
+                                        Pools.CODEC,
+                                        Pool.CODEC.listOf()
+                                )
                         )
                 )
         ).xmap(
                 either -> either.map(
                         Outputs::wrapSingle,
-                        outputsOrPools -> outputsOrPools.map(
-                                o -> o,
-                                poolsOrList -> poolsOrList.map(
-                                        Outputs::new,
-                                        list -> new Outputs(new Pools(list))
+                        rest -> rest.map(
+                                Outputs::wrapBareList,
+                                outputsOrPools -> outputsOrPools.map(
+                                        o -> o,
+                                        poolsOrList -> poolsOrList.map(
+                                                Outputs::new,
+                                                list -> new Outputs(new Pools(list))
+                                        )
                                 )
                         )
                 ),
-                outputs -> Either.right(Either.right(Either.right(outputs.poolsSafe().pools())))
+                outputs -> {
+                    OutputParam single = outputs.singleBareOutputOrNull();
+                    if (single != null) {
+                        return Either.left(single);
+                    }
+
+                    List<OutputParam> list = outputs.bareOutputsOrEmpty();
+                    if (!list.isEmpty()) {
+                        return Either.right(Either.left(list));
+                    }
+
+                    return Either.right(Either.right(Either.right(Either.right(outputs.poolsSafe().pools()))));
+                }
         );
     }
 

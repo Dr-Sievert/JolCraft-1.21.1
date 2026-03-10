@@ -23,7 +23,11 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public final class DwarfTrades {
 
@@ -44,7 +48,7 @@ public final class DwarfTrades {
 
         @Nullable
         public DwarfMerchantOffer getOffer(AbstractTradingEntity trader) {
-            if (recipe == null || recipe == DwarfTradeRecipe.EMPTY) {
+            if (recipe == null) {
                 return null;
             }
             if (!(trader.level() instanceof ServerLevel serverLevel)) {
@@ -64,7 +68,7 @@ public final class DwarfTrades {
             ItemStack costBConcrete = ItemStack.EMPTY;
             Optional<ItemStack> costBStack = Optional.empty();
 
-            if (recipe.costB() != ItemInput.EMPTY) {
+            if (recipe.costB() != null) {
                 costBConcrete = materializeCost(recipe.costB(), ctx);
                 if (costBConcrete.isEmpty()) {
                     JolCraftLogs.warn(JolCraftLogTags.ENTITY,
@@ -92,9 +96,7 @@ public final class DwarfTrades {
                 return null;
             }
 
-            DwarfTradeRecipe.TradeStats stats = recipe.stats() != null
-                    ? recipe.stats()
-                    : DwarfTradeRecipe.TradeStats.DEFAULT;
+            DwarfTradeRecipe.TradeStats stats = recipe.stats();
 
             DwarfItemCost costA = new DwarfItemCost(costAStack.getItem(), costAStack.getCount());
             Optional<DwarfItemCost> costB = costBStack.map(s -> new DwarfItemCost(s.getItem(), s.getCount()));
@@ -115,14 +117,15 @@ public final class DwarfTrades {
             );
         }
 
-        private static ItemStack materializeCost(ItemInput in, WorldContext ctx) {
-            if (in == null || in == ItemInput.EMPTY) {
+        private static ItemStack materializeCost(@Nullable ItemInput in, WorldContext ctx) {
+            if (in == null) {
                 return ItemStack.EMPTY;
             }
 
             Holder<Item> holder = resolveCostItem(in, ctx);
             if (holder == null) {
-                JolCraftLogs.warn(JolCraftLogTags.ENTITY, "Dwarf trade cost materialization failed: no resolvable item");
+                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                        "Dwarf trade cost materialization failed: no resolvable item");
                 return ItemStack.EMPTY;
             }
 
@@ -130,6 +133,7 @@ public final class DwarfTrades {
             if (in.count() != null) {
                 rolled = in.count().roll(ctx.random());
             }
+
             if (rolled < 1) {
                 JolCraftLogs.warn(JolCraftLogTags.ENTITY,
                         "Dwarf trade cost materialization failed: rolled < 1 for item {}",
@@ -138,9 +142,7 @@ public final class DwarfTrades {
             }
 
             ItemStack stack = new ItemStack(holder.value(), rolled);
-            boolean matches = in.matches(ctx, stack);
-
-            if (!matches) {
+            if (!in.matches(ctx, stack)) {
                 JolCraftLogs.warn(JolCraftLogTags.ENTITY,
                         "Dwarf trade cost materialization failed: generated stack {} x{} does not match ItemInput",
                         stack.getItem(), stack.getCount());
@@ -160,19 +162,27 @@ public final class DwarfTrades {
             var lookup = ctx.level().registryAccess().lookupOrThrow(Registries.ITEM);
 
             for (var introspection : in.introspections()) {
-                if (!Registries.ITEM.equals(introspection.registryKey())) continue;
+                if (!Registries.ITEM.equals(introspection.registryKey())) {
+                    continue;
+                }
 
                 var tagOpt = introspection.singleTagOpt();
-                if (tagOpt.isEmpty()) continue;
+                if (tagOpt.isEmpty()) {
+                    continue;
+                }
 
                 @SuppressWarnings("unchecked")
                 var tag = (net.minecraft.tags.TagKey<Item>) tagOpt.get();
 
                 var namedOpt = lookup.get(tag);
-                if (namedOpt.isEmpty()) continue;
+                if (namedOpt.isEmpty()) {
+                    continue;
+                }
 
                 var named = namedOpt.get();
-                if (named.size() == 0) continue;
+                if (named.size() == 0) {
+                    continue;
+                }
 
                 return named.get(0);
             }
@@ -209,7 +219,9 @@ public final class DwarfTrades {
 
         for (RecipeHolder<DwarfTradeRecipe> holder : all) {
             DwarfTradeRecipe recipe = holder.value();
-            if (recipe.profession() != prof) continue;
+            if (recipe.profession() != prof) {
+                continue;
+            }
 
             TradePoolEntry pool = recipe.pool();
             TradeGroup group = pool != null ? pool.group() : TradeGroup.MAIN;
@@ -365,7 +377,9 @@ public final class DwarfTrades {
             for (int idx = 0; idx < pool.size(); idx++) {
                 RecipeHolder<DwarfTradeRecipe> holder = pool.get(idx);
                 int weight = safeWeight(holder.value());
-                if (weight <= 0) continue;
+                if (weight <= 0) {
+                    continue;
+                }
 
                 cursor += weight;
                 if (pick < cursor) {
@@ -394,10 +408,16 @@ public final class DwarfTrades {
     }
 
     private static int safeWeight(DwarfTradeRecipe recipe) {
-        if (recipe == null || recipe.pool() == null || recipe.pool().weight() == null) {
+        if (recipe == null) {
             return 1;
         }
-        return Math.max(0, recipe.pool().weight().safe());
+
+        TradePoolEntry pool = recipe.pool();
+        if (pool == null || pool.weight() == null) {
+            return 1;
+        }
+
+        return Math.max(0, pool.weight().safe());
     }
 
     private static List<RecipeHolder<DwarfTradeRecipe>> findTradeRecipesAtLevel(
@@ -413,12 +433,16 @@ public final class DwarfTrades {
         for (RecipeHolder<DwarfTradeRecipe> holder : all) {
             DwarfTradeRecipe r = holder.value();
 
-            if (r.profession() != profession) continue;
+            if (r.profession() != profession) {
+                continue;
+            }
 
             DwarfMerchantData.Level req = r.merchantLevel();
             int reqId = req != null ? req.getId() : 0;
 
-            if (reqId != want) continue;
+            if (reqId != want) {
+                continue;
+            }
 
             filtered.add(holder);
         }
@@ -460,10 +484,6 @@ public final class DwarfTrades {
 
             out.add(new RecipeHolder<>(holder.id(), trade));
         }
-
-        JolCraftLogs.info(JolCraftLogTags.ENTITY,
-                "Found {} dwarf trade recipes in RecipeManager",
-                out.size());
 
         return List.copyOf(out);
     }

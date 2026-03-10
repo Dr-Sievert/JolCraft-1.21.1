@@ -30,6 +30,7 @@ import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 import java.util.Optional;
 
 @ParametersAreNonnullByDefault
@@ -94,7 +95,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
         SoundOutput sound = r.recipe.sound();
         JolCraftSoundHelper.player(
                 player,
-                sound.sound().value(),
+                Objects.requireNonNull(sound.resolveValue(player.registryAccess())),
                 sound.volume(),
                 sound.pitch()
         );

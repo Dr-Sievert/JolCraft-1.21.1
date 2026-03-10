@@ -21,7 +21,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
 
     @Override
     public @NotNull String folder() {
-        return PROFESSION.getId();
+        return PROFESSION.professionName();
     }
 
     @Override

@@ -37,44 +37,18 @@ public record BiomeCondition(
     public static final ResourceLocation TYPE_ID = JolCraft.location(JolCraftDictionary.BIOME);
     public static final byte DISC = 5;
 
+    private static final Codec<Holder<Biome>> BIOME_HOLDER_CODEC =
+            RegistryFixedCodec.create(Registries.BIOME);
+
+    private static final Codec<BiomeCondition> RAW_CODEC =
+            RecordCodecBuilder.create(instance -> instance.group(
+                    BIOME_HOLDER_CODEC.optionalFieldOf(JolCraftParameterIds.BIOME).forGetter(BiomeCondition::biome),
+                    TagKey.codec(Registries.BIOME).optionalFieldOf(JolCraftParameterIds.TAG).forGetter(BiomeCondition::tag),
+                    Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(BiomeCondition::invert)
+            ).apply(instance, BiomeCondition::new));
+
     public static final Codec<BiomeCondition> CODEC =
-            Raw.CODEC.flatXmap(
-                    Raw::toCondition,
-                    c -> DataResult.success(Raw.fromCondition(c))
-            );
-
-    private record Raw(Optional<Holder<Biome>> biome, Optional<TagKey<Biome>> tag, boolean invert) {
-
-        private static final Codec<Holder<Biome>> BIOME_HOLDER_CODEC =
-                RegistryFixedCodec.create(Registries.BIOME);
-
-        private static final Codec<Raw> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                BIOME_HOLDER_CODEC.optionalFieldOf(JolCraftParameterIds.BIOME).forGetter(Raw::biome),
-                TagKey.codec(Registries.BIOME).optionalFieldOf(JolCraftParameterIds.TAG).forGetter(Raw::tag),
-                Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(Raw::invert)
-        ).apply(instance, Raw::new));
-
-        DataResult<BiomeCondition> toCondition() {
-            Optional<Holder<Biome>> safeBiome = biome != null ? biome : Optional.empty();
-            Optional<TagKey<Biome>> safeTag = tag != null ? tag : Optional.empty();
-
-            boolean hasBiome = safeBiome.isPresent();
-            boolean hasTag = safeTag.isPresent();
-
-            if (hasBiome == hasTag) {
-                return DataResult.error(() ->
-                        "BiomeCondition requires exactly one of '" + JolCraftParameterIds.BIOME +
-                                "' or '" + JolCraftParameterIds.TAG + "'"
-                );
-            }
-
-            return DataResult.success(new BiomeCondition(safeBiome, safeTag, invert));
-        }
-
-        static Raw fromCondition(BiomeCondition c) {
-            return new Raw(c.biomeSafe(), c.tagSafe(), c.invert());
-        }
-    }
+            RAW_CODEC.flatXmap(BiomeCondition::validateDecoded, DataResult::success);
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<ResourceLocation>> OPTIONAL_RL_STREAM =
             StreamCodec.of(
@@ -87,7 +61,7 @@ public record BiomeCondition(
 
     public static final StreamCodec<RegistryFriendlyByteBuf, BiomeCondition> STREAM_CODEC =
             StreamCodec.composite(
-                    ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.BIOME)), BiomeCondition::biomeSafe,
+                    ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.BIOME)), BiomeCondition::biome,
                     OPTIONAL_RL_STREAM, BiomeCondition::tagLocation,
                     ByteBufCodecs.BOOL, BiomeCondition::invert,
                     BiomeCondition::fromStreamFields
@@ -96,29 +70,39 @@ public record BiomeCondition(
     public static final ParamTypeDef<Condition> TYPE_DEF =
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
+    public BiomeCondition {
+        biome = biome != null ? biome : Optional.empty();
+        tag = tag != null ? tag : Optional.empty();
+    }
+
+    private static @NotNull DataResult<BiomeCondition> validateDecoded(BiomeCondition c) {
+        boolean hasBiome = c.biome().isPresent();
+        boolean hasTag = c.tag().isPresent();
+
+        if (hasBiome == hasTag) {
+            return DataResult.error(() ->
+                    "BiomeCondition requires exactly one of '" + JolCraftParameterIds.BIOME +
+                            "' or '" + JolCraftParameterIds.TAG + "'"
+            );
+        }
+
+        return DataResult.success(c);
+    }
+
     private static BiomeCondition fromStreamFields(
             Optional<Holder<Biome>> biome,
             Optional<ResourceLocation> tagLoc,
             boolean invert
     ) {
         return new BiomeCondition(
-                biome != null ? biome : Optional.empty(),
-                (tagLoc != null ? tagLoc : Optional.<ResourceLocation>empty())
-                        .map(loc -> TagKey.create(Registries.BIOME, loc)),
+                biome,
+                tagLoc.map(loc -> TagKey.create(Registries.BIOME, loc)),
                 invert
         );
     }
 
-    private Optional<Holder<Biome>> biomeSafe() {
-        return biome != null ? biome : Optional.empty();
-    }
-
-    private Optional<TagKey<Biome>> tagSafe() {
-        return tag != null ? tag : Optional.empty();
-    }
-
     private Optional<ResourceLocation> tagLocation() {
-        return tagSafe().map(TagKey::location);
+        return tag.map(TagKey::location);
     }
 
     @Override
@@ -128,7 +112,7 @@ public record BiomeCondition(
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        return fromConcreteOrTag(Registries.BIOME, biomeSafe(), tagSafe());
+        return fromConcreteOrTag(Registries.BIOME, biome, tag);
     }
 
     @Override
@@ -144,30 +128,18 @@ public record BiomeCondition(
         }
 
         Holder<Biome> holder = ctx.level().getBiome(pos);
-
         Optional<ResourceLocation> hereKey = holder.unwrapKey().map(ResourceKey::location);
 
-        Optional<Holder<Biome>> safeBiome = biomeSafe();
-        if (safeBiome.isPresent()) {
-            Optional<ResourceLocation> wantedKey = safeBiome.flatMap(h -> h.unwrapKey().map(ResourceKey::location));
+        if (biome.isPresent()) {
+            Optional<ResourceLocation> wantedKey = biome.flatMap(h -> h.unwrapKey().map(ResourceKey::location));
             return wantedKey.flatMap(wk -> hereKey.map(hk -> hk.equals(wk))).orElse(false);
         }
 
-        return tagSafe().map(holder::is).orElse(false);
+        return tag.map(holder::is).orElse(false);
     }
 
     @Override
     public @NotNull DataResult<Condition> validate() {
-        boolean hasBiome = biomeSafe().isPresent();
-        boolean hasTag = tagSafe().isPresent();
-
-        if (hasBiome == hasTag) {
-            return DataResult.error(() ->
-                    "BiomeCondition requires exactly one of '" + JolCraftParameterIds.BIOME +
-                            "' or '" + JolCraftParameterIds.TAG + "'"
-            );
-        }
-
-        return DataResult.success(this);
+        return validateDecoded(this).map(v -> v);
     }
 }

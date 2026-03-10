@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.pool;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,40 +26,57 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * One weighted/selectable output entry inside a pool.
- *
- * Holds exactly one atomic {@link OutputParam}.
- */
 public record PoolEntry(
         OutputParam output,
         @Nullable DrawRule pool,
         @Nullable WeightParam weight
-)
-        implements SelfValidating<PoolEntry>, RegistryIntrospectionSource, ResolvedOutputParam {
+) implements SelfValidating<PoolEntry>, RegistryIntrospectionSource, ResolvedOutputParam {
 
-    private static final Codec<PoolEntry> RAW_CODEC =
+    private record FullRaw(
+            OutputParam output,
+            Optional<DrawRule> pool,
+            Optional<WeightParam> weight
+    ) {}
+
+    private static final Codec<FullRaw> FULL_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     OutputParam.CODEC
                             .fieldOf(JolCraftParameterIds.OUTPUT)
-                            .forGetter(PoolEntry::outputSafe),
+                            .forGetter(FullRaw::output),
 
                     DrawRule.CODEC
                             .optionalFieldOf(JolCraftParameterIds.POOL)
-                            .forGetter(e -> Optional.ofNullable(e.pool())),
+                            .forGetter(FullRaw::pool),
 
                     WeightParam.CODEC
                             .optionalFieldOf(JolCraftParameterIds.WEIGHT)
-                            .forGetter(e -> Optional.ofNullable(e.weight()))
-            ).apply(instance, (output, pool, weight) ->
-                    new PoolEntry(output, pool.orElse(null), weight.orElse(null))
-            ));
+                            .forGetter(FullRaw::weight)
+            ).apply(instance, FullRaw::new));
+
+    private static final Codec<PoolEntry> RAW_CODEC =
+            Codec.either(OutputParam.CODEC, FULL_CODEC).xmap(
+                    either -> either.map(
+                            output -> new PoolEntry(output, null, null),
+                            full -> new PoolEntry(
+                                    full.output(),
+                                    full.pool().orElse(null),
+                                    full.weight().orElse(null)
+                            )
+                    ),
+                    entry -> entry.isBareOutput()
+                            ? Either.left(entry.output())
+                            : Either.right(new FullRaw(
+                            entry.output(),
+                            Optional.ofNullable(entry.pool()),
+                            Optional.ofNullable(entry.weight())
+                    ))
+            );
 
     public static final Codec<PoolEntry> CODEC = ParamCodecs.validated(RAW_CODEC);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PoolEntry> STREAM_CODEC =
             StreamCodec.composite(
-                    OutputParam.STREAM_CODEC, PoolEntry::outputSafe,
+                    OutputParam.STREAM_CODEC, PoolEntry::output,
                     DrawRule.STREAM_CODEC.apply(ByteBufCodecs::optional), e -> Optional.ofNullable(e.pool()),
                     WeightParam.STREAM_CODEC.apply(ByteBufCodecs::optional), e -> Optional.ofNullable(e.weight()),
                     (output, pool, weight) -> new PoolEntry(output, pool.orElse(null), weight.orElse(null))
@@ -70,19 +88,12 @@ public record PoolEntry(
         }
     }
 
-    private @NotNull OutputParam outputSafe() {
-        if (output == null) {
-            throw new IllegalStateException("pool entry output cannot be null");
-        }
-        return output;
+    public boolean isBareOutput() {
+        return pool == null && weight == null;
     }
 
     @Override
     public @NotNull DataResult<PoolEntry> validate() {
-        if (output == null) {
-            return DataResult.error(() -> JolCraftParameterIds.OUTPUT + " cannot be null");
-        }
-
         DataResult<?> ov;
         try {
             ov = output.validate();

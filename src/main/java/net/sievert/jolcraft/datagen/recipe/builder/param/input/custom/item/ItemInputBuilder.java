@@ -1,7 +1,9 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.requirement.ItemRequirements;
@@ -14,14 +16,6 @@ import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.requi
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemSelectorBuilder;
 
-/**
- * Datagen builder for {@link ItemInput}.
- *
- * Policy:
- * - Never throws
- * - Deterministic build
- * - Leaves strict validation to {@link ItemInput#validate()}
- */
 public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
 
     private Conditions conditions;
@@ -33,6 +27,14 @@ public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
 
     public static ItemInputBuilder create() {
         return new ItemInputBuilder();
+    }
+
+    public static ItemInputBuilder one(ItemLike item) {
+        return create().item(item).count(IntRange.ONE);
+    }
+
+    public static ItemInputBuilder one(Ingredient ingredient) {
+        return create().ingredient(ingredient).count(IntRange.ONE);
     }
 
     // ---------------------------------------------------------------------
@@ -63,10 +65,6 @@ public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
         return this;
     }
 
-    /**
-     * Convenience: wrap a single ingredient into a selector.
-     * (shorthand-friendly)
-     */
     public ItemInputBuilder selector(ItemIngredient ingredient) {
         this.selector = ingredient != null ? ItemSelector.of(ingredient) : null;
         return this;
@@ -76,20 +74,28 @@ public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
         return selector(builder != null ? builder.build() : null);
     }
 
-    /**
-     * Convenience: single concrete item selector.
-     */
     public ItemInputBuilder item(ItemLike item) {
         this.selector = item != null ? ItemSelector.of(item) : null;
         return this;
     }
 
-    /**
-     * Convenience: use stack's item as selector (count ignored here; use {@link #count(IntRange)}).
-     */
     public ItemInputBuilder item(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return this;
         return item(stack.getItem());
+    }
+
+    public ItemInputBuilder ingredient(Ingredient ingredient) {
+        if (ingredient == null || ingredient.isEmpty()) {
+            this.selector = null;
+            return this;
+        }
+
+        try {
+            this.selector = ItemInput.one(ingredient).selector();
+        } catch (IllegalArgumentException ignored) {
+            this.selector = null;
+        }
+        return this;
     }
 
     // ---------------------------------------------------------------------
@@ -121,11 +127,14 @@ public final class ItemInputBuilder implements ParamBuilder<ItemInput> {
 
     @Override
     public ItemInput build() {
-        Conditions c = (conditions != null) ? conditions : Conditions.EMPTY;
-        ItemSelector s = (selector != null) ? selector : ItemSelector.EMPTY;
-        IntRange n = (count != null) ? count : IntRange.ONE;
-        ItemRequirements r = (requirements != null) ? requirements : ItemRequirements.EMPTY;
+        Conditions c = conditions != null ? conditions : Conditions.EMPTY;
+        IntRange n = count != null ? count : IntRange.ONE;
+        ItemRequirements r = requirements != null ? requirements : ItemRequirements.EMPTY;
 
-        return new ItemInput(c, s, n, r);
+        if (selector == null) {
+            throw new IllegalStateException("Missing required field '" + JolCraftParameterIds.SELECTOR + "'");
+        }
+
+        return new ItemInput(c, selector, n, r);
     }
 }

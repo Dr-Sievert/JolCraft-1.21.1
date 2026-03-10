@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.selector;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -17,9 +18,13 @@ import java.util.List;
  * - No gating/conditions here (that belongs to higher-level selectors/inputs).
  *
  * Policy:
- * - Never throws
- * - Ignores nulls and {@link EntityIngredient.Target#EMPTY}
+ * - Never throws during mutation
+ * - Ignores nulls
  * - Deterministic build
+ *
+ * Note:
+ * - Since runtime no longer uses EMPTY sentinels, build() now fails fast
+ *   if no valid targets were provided.
  */
 public final class EntityIngredientBuilder implements ParamBuilder<EntityIngredient> {
 
@@ -41,7 +46,7 @@ public final class EntityIngredientBuilder implements ParamBuilder<EntityIngredi
     }
 
     public EntityIngredientBuilder target(EntityIngredient.Target target) {
-        if (target == null || target == EntityIngredient.Target.EMPTY) return this;
+        if (target == null) return this;
 
         List<EntityIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
@@ -51,7 +56,7 @@ public final class EntityIngredientBuilder implements ParamBuilder<EntityIngredi
 
         ArrayList<EntityIngredient.Target> next = new ArrayList<>(list.size() + 1);
         for (EntityIngredient.Target t : list) {
-            if (t != null && t != EntityIngredient.Target.EMPTY) next.add(t);
+            if (t != null) next.add(t);
         }
         next.add(target);
 
@@ -70,7 +75,7 @@ public final class EntityIngredientBuilder implements ParamBuilder<EntityIngredi
 
     public EntityIngredientBuilder entity(Holder<EntityType<?>> holder) {
         if (holder == null) return this;
-        return entity(holder.value());
+        return target(new EntityIngredient.Target(Either.left(holder)));
     }
 
     public EntityIngredientBuilder tag(TagKey<EntityType<?>> tag) {
@@ -86,14 +91,18 @@ public final class EntityIngredientBuilder implements ParamBuilder<EntityIngredi
     public EntityIngredient build() {
         List<EntityIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
-            return EntityIngredient.EMPTY;
+            throw new IllegalStateException("EntityIngredient requires at least one target");
         }
 
         ArrayList<EntityIngredient.Target> safe = new ArrayList<>(list.size());
         for (EntityIngredient.Target t : list) {
-            if (t != null && t != EntityIngredient.Target.EMPTY) safe.add(t);
+            if (t != null) safe.add(t);
         }
 
-        return safe.isEmpty() ? EntityIngredient.EMPTY : EntityIngredient.ofTargets(safe);
+        if (safe.isEmpty()) {
+            throw new IllegalStateException("EntityIngredient requires at least one target");
+        }
+
+        return EntityIngredient.ofTargets(safe);
     }
 }

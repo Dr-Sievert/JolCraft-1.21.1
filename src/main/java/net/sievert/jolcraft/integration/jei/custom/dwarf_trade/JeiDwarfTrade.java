@@ -46,7 +46,7 @@ public record JeiDwarfTrade(
 
     public @Nullable ItemStack inputBExample() {
         ItemInput costB = recipe.costB();
-        if (costB == null || costB == ItemInput.EMPTY) {
+        if (costB == null) {
             return null;
         }
 
@@ -60,7 +60,7 @@ public record JeiDwarfTrade(
 
     public boolean costBItemIs(TagKey<Item> tag) {
         ItemInput costB = recipe.costB();
-        if (costB == null || costB == ItemInput.EMPTY) {
+        if (costB == null) {
             return false;
         }
 
@@ -102,7 +102,7 @@ public record JeiDwarfTrade(
 
     public @Nullable IntRange inputAmountB() {
         ItemInput costB = recipe.costB();
-        if (costB == null || costB == ItemInput.EMPTY) {
+        if (costB == null) {
             return null;
         }
 
@@ -114,16 +114,16 @@ public record JeiDwarfTrade(
         return IntRange.fixed(Math.max(1, preview.getCount()));
     }
 
-    private static Optional<Holder<Item>> singleConcrete(ItemInput input) {
-        if (input == null || input == ItemInput.EMPTY) {
+    private static Optional<Holder<Item>> singleConcrete(@Nullable ItemInput input) {
+        if (input == null) {
             return Optional.empty();
         }
 
         return input.singleConcrete(Registries.ITEM);
     }
 
-    private static ItemStack materializeInput(ItemInput input, RandomSource random) {
-        if (input == null || input == ItemInput.EMPTY) {
+    private static ItemStack materializeInput(@Nullable ItemInput input, RandomSource random) {
+        if (input == null) {
             return ItemStack.EMPTY;
         }
 
@@ -132,11 +132,7 @@ public record JeiDwarfTrade(
             return ItemStack.EMPTY;
         }
 
-        int rolled = 1;
-        if (input.count() != null) {
-            rolled = input.count().roll(random);
-        }
-
+        int rolled = input.count().roll(random);
         if (rolled < 1) {
             return ItemStack.EMPTY;
         }
@@ -148,7 +144,7 @@ public record JeiDwarfTrade(
         ItemStack costA = materializeInput(recipe.costA(), random);
 
         ItemStack costB = ItemStack.EMPTY;
-        if (recipe.costB() != null && recipe.costB() != ItemInput.EMPTY) {
+        if (recipe.costB() != null) {
             costB = materializeInput(recipe.costB(), random);
         }
 

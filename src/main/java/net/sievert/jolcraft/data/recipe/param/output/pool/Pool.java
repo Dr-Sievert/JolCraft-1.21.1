@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.pool;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -35,40 +36,40 @@ public record Pool(
     private static final int MAX_TOTAL_OUTPUTS = 4096;
     private static final int MAX_ENTRIES_STREAM = 2048;
 
-
-    @Override
-    public @NotNull Conditions conditions() {
-        return conditionsSafe();
-    }
-
-    public boolean isSingleRoll() {
-        return rollsSafe().isOne();
-    }
-
-    private static final Codec<Pool> RAW_CODEC =
+    private static final Codec<Pool> FULL_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     IntRange.CODEC
                             .optionalFieldOf(JolCraftParameterIds.ROLLS, IntRange.ONE)
-                            .forGetter(Pool::rollsSafe),
+                            .forGetter(Pool::rolls),
 
                     Conditions.CODEC
                             .optionalFieldOf(JolCraftParameterIds.CONDITIONS, Conditions.EMPTY)
-                            .forGetter(Pool::conditionsSafe),
+                            .forGetter(Pool::conditions),
 
                     PoolEntry.CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.ENTRIES, List.of())
-                            .forGetter(Pool::entriesSafe)
+                            .forGetter(Pool::entries)
             ).apply(instance, Pool::new));
 
-    public static final Codec<Pool> CODEC = ParamCodecs.validated(RAW_CODEC);
+    private static final Codec<Pool> RAW_CODEC =
+            Codec.either(PoolEntry.CODEC.listOf(), FULL_CODEC).xmap(
+                    either -> either.map(
+                            list -> new Pool(IntRange.ONE, Conditions.EMPTY, list),
+                            pool -> pool
+                    ),
+                    pool -> pool.isBareEntryList()
+                            ? Either.left(pool.entries())
+                            : Either.right(pool)
+            );
 
+    public static final Codec<Pool> CODEC = ParamCodecs.validated(RAW_CODEC);
     public static final StreamCodec<RegistryFriendlyByteBuf, Pool> STREAM_CODEC =
             StreamCodec.of(
                     (buf, value) -> {
-                        IntRange.STREAM_CODEC.encode(buf, value.rollsSafe());
-                        Conditions.STREAM_CODEC.encode(buf, value.conditionsSafe());
+                        IntRange.STREAM_CODEC.encode(buf, value.rolls());
+                        Conditions.STREAM_CODEC.encode(buf, value.conditions());
 
-                        List<PoolEntry> list = value.entriesSafe();
+                        List<PoolEntry> list = value.entries();
                         buf.writeVarInt(list.size());
                         for (PoolEntry e : list) {
                             PoolEntry.STREAM_CODEC.encode(buf, e);
@@ -98,38 +99,54 @@ public record Pool(
                             list.add(PoolEntry.STREAM_CODEC.decode(buf));
                         }
 
-                        return new Pool(rolls, conditions, List.copyOf(list));
+                        return new Pool(rolls, conditions, list);
                     }
             );
 
-    public Pool(IntRange rolls, Conditions conditions, List<PoolEntry> entries) {
-        this.rolls = rolls != null ? rolls : IntRange.ONE;
-        this.conditions = conditions != null ? conditions : Conditions.EMPTY;
-        this.entries = entries != null ? List.copyOf(entries) : List.of();
+    public Pool {
+        rolls = rolls != null ? rolls : IntRange.ONE;
+        conditions = conditions != null ? conditions : Conditions.EMPTY;
+        entries = sanitizeEntries(entries);
     }
 
-    private IntRange rollsSafe() {
-        return rolls != null ? rolls : IntRange.ONE;
+    private static @NotNull List<PoolEntry> sanitizeEntries(@Nullable List<PoolEntry> entries) {
+        if (entries == null || entries.isEmpty()) {
+            return List.of();
+        }
+
+        ArrayList<PoolEntry> safe = new ArrayList<>(entries.size());
+        for (PoolEntry entry : entries) {
+            if (entry == null) {
+                throw new IllegalArgumentException(JolCraftParameterIds.ENTRIES + " contains null");
+            }
+            safe.add(entry);
+        }
+        return List.copyOf(safe);
     }
 
-    private Conditions conditionsSafe() {
-        return conditions != null ? conditions : Conditions.EMPTY;
+    @Override
+    public @NotNull Conditions conditions() {
+        return conditions;
     }
 
-    private List<PoolEntry> entriesSafe() {
-        return entries != null ? entries : List.of();
+    public boolean isSingleRoll() {
+        return rolls.isOne();
     }
 
+    public boolean isBareEntryList() {
+        if (!rolls.isOne()) return false;
+        if (conditions != Conditions.EMPTY) return false;
+        for (PoolEntry entry : entries) {
+            if (entry == null || !entry.isBareOutput()) return false;
+        }
+        return true;
+    }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(1 + entriesSafe().size());
-
-        src.add(conditionsSafe());
-
-        for (PoolEntry e : entriesSafe()) {
-            if (e != null) src.add(e);
-        }
+        ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(1 + entries.size());
+        src.add(conditions);
+        src.addAll(entries);
 
         return src.size() == 1
                 ? src.getFirst().introspections()
@@ -138,30 +155,20 @@ public record Pool(
 
     @Override
     public @NotNull DataResult<Pool> validate() {
-        DataResult<IntRange> rv = IntRange.validateRange(rollsSafe())
+        DataResult<IntRange> rv = IntRange.validateRange(rolls)
                 .mapError(msg -> JolCraftParameterIds.ROLLS + " invalid: " + msg);
 
         return rv.error()
                 .<DataResult<Pool>>map(e -> DataResult.error(e::message))
                 .orElseGet(() -> {
-
-                    DataResult<Conditions> cv = conditionsSafe().validate()
+                    DataResult<Conditions> cv = conditions.validate()
                             .mapError(msg -> JolCraftParameterIds.CONDITIONS + " invalid: " + msg);
 
                     return cv.error()
                             .<DataResult<Pool>>map(e -> DataResult.error(e::message))
                             .orElseGet(() -> {
-
-                                List<PoolEntry> list = entriesSafe();
-                                for (int i = 0; i < list.size(); i++) {
-                                    PoolEntry pe = list.get(i);
-                                    if (pe == null) {
-                                        int idx = i;
-                                        return DataResult.error(() ->
-                                                JolCraftParameterIds.ENTRIES + " contains null at index " + idx
-                                        );
-                                    }
-
+                                for (int i = 0; i < entries.size(); i++) {
+                                    PoolEntry pe = entries.get(i);
                                     int idx = i;
                                     DataResult<PoolEntry> ev = pe.validate()
                                             .mapError(msg -> JolCraftParameterIds.ENTRIES
@@ -191,13 +198,11 @@ public record Pool(
             @Nullable ItemTransformSourceResolver resolver
     ) {
         if (!gatePasses(ctx)) return List.of();
-
-        List<PoolEntry> list = entriesSafe();
-        if (list.isEmpty()) return List.of();
+        if (entries.isEmpty()) return List.of();
 
         RandomSource random = ctx.random();
 
-        int poolRolls = Math.max(0, rollsSafe().roll(random));
+        int poolRolls = Math.max(0, rolls.roll(random));
         if (poolRolls == 0) return List.of();
         if (poolRolls > MAX_TOTAL_OUTPUTS) poolRolls = MAX_TOTAL_OUTPUTS;
 
@@ -206,7 +211,7 @@ public record Pool(
         for (int i = 0; i < poolRolls; i++) {
             if (out.size() >= MAX_TOTAL_OUTPUTS) break;
 
-            PoolEntry chosen = pickWeighted(list, ctx, random);
+            PoolEntry chosen = pickWeighted(entries, ctx, random);
             if (chosen == null) break;
 
             int execs = rollEntryExecs(chosen, random);
@@ -219,7 +224,6 @@ public record Pool(
                 if (gen.isEmpty()) continue;
 
                 int remaining = MAX_TOTAL_OUTPUTS - out.size();
-
                 if (gen.size() <= remaining) {
                     out.addAll(gen);
                 } else {
@@ -246,7 +250,7 @@ public record Pool(
         return execs;
     }
 
-    private static PoolEntry pickWeighted(
+    private static @Nullable PoolEntry pickWeighted(
             @NotNull List<PoolEntry> list,
             @NotNull WorldContext ctx,
             @NotNull RandomSource random
@@ -254,8 +258,6 @@ public record Pool(
         long total = 0L;
 
         for (PoolEntry e : list) {
-            if (e == null) return null;
-
             DrawRule rule = e.pool();
             Conditions entryCond = (rule != null) ? rule.conditions() : Conditions.EMPTY;
             if (!entryCond.test(ctx)) continue;
@@ -265,7 +267,7 @@ public record Pool(
 
             if (w > 0) {
                 total += w;
-                if (total >= (long) Integer.MAX_VALUE) {
+                if (total >= Integer.MAX_VALUE) {
                     total = Integer.MAX_VALUE;
                     break;
                 }

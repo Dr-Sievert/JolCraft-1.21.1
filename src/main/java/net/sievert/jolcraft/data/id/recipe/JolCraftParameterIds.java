@@ -67,7 +67,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
 
     public static final String VALUE = JolCraftDictionary.VALUE;
     public static final String RESULT = JolCraftDictionary.RESULT;
-    public static final String MESSAGE = JolCraftDictionary.MESSAGE;
     public static final String GROUP = JolCraftDictionary.GROUP;
     public static final String CATEGORY = JolCraftDictionary.CATEGORY;
     public static final String ENTRIES = JolCraftDictionary.ENTRIES;
@@ -81,6 +80,8 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String RANGE = JolCraftDictionary.RANGE;
     public static final String SOURCE = JolCraftDictionary.SOURCE;
     public static final String TARGET = JolCraftDictionary.TARGET;
+    public static final String NAME = JolCraftDictionary.NAME;
+    public static final String KEY = JolCraftDictionary.KEY;
 
     // ---------------------------------------------------------------------
     // Item requirements / transforms fields
@@ -141,8 +142,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
 
     public static final String TYPE = JolCraftDictionary.TYPE;
     public static final String ID = JolCraftDictionary.ID;
-    public static final String ALL = JolCraftDictionary.ALL;
-    public static final String ANY = JolCraftDictionary.ANY;
 
     // ---------------------------------------------------------------------
     // Runtime
@@ -152,13 +151,8 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String VOLUME = JolCraftDictionary.VOLUME;
     public static final String PITCH = JolCraftDictionary.PITCH;
 
-
-    public static final String X = "x";
-    public static final String Y = "y";
-    public static final String Z = "z";
     public static final String PARTICLE = JolCraftDictionary.PARTICLE;
     public static final String POSITION = JolCraftDictionary.POSITION;
-    public static final String SPREAD = JolCraftDictionary.SPREAD;
     public static final String SPEED = JolCraftDictionary.SPEED;
 
     public static final String DURATION = JolCraftDictionary.DURATION;

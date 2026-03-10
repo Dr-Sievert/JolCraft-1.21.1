@@ -39,12 +39,9 @@ public record DimensionCondition(
 
     private static final Codec<DimensionCondition> RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
-                    DIMENSION_KEY_CODEC.optionalFieldOf(JolCraftParameterIds.ID)
-                            .forGetter(DimensionCondition::dimensionSafe),
-                    DIMENSION_TAG_CODEC.optionalFieldOf(JolCraftParameterIds.TAG)
-                            .forGetter(DimensionCondition::tagSafe),
-                    Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false)
-                            .forGetter(DimensionCondition::invert)
+                    DIMENSION_KEY_CODEC.optionalFieldOf(JolCraftParameterIds.ID).forGetter(DimensionCondition::dimension),
+                    DIMENSION_TAG_CODEC.optionalFieldOf(JolCraftParameterIds.TAG).forGetter(DimensionCondition::tag),
+                    Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(DimensionCondition::invert)
             ).apply(inst, DimensionCondition::new));
 
     public static final Codec<DimensionCondition> CODEC =
@@ -59,16 +56,13 @@ public record DimensionCondition(
     public static final StreamCodec<RegistryFriendlyByteBuf, DimensionCondition> STREAM_CODEC =
             StreamCodec.of(
                     (buf, c) -> {
-                        Optional<ResourceKey<Level>> dim = c.dimensionSafe();
-                        Optional<TagKey<Level>> tg = c.tagSafe();
+                        buf.writeBoolean(c.dimension().isPresent());
+                        c.dimension().ifPresent(key -> DIMENSION_KEY_STREAM.encode(buf, key));
 
-                        buf.writeBoolean(dim.isPresent());
-                        dim.ifPresent(key -> DIMENSION_KEY_STREAM.encode(buf, key));
+                        buf.writeBoolean(c.tag().isPresent());
+                        c.tag().ifPresent(t -> DIMENSION_TAG_STREAM.encode(buf, t));
 
-                        buf.writeBoolean(tg.isPresent());
-                        tg.ifPresent(t -> DIMENSION_TAG_STREAM.encode(buf, t));
-
-                        buf.writeBoolean(c.invert);
+                        buf.writeBoolean(c.invert());
                     },
                     buf -> {
                         Optional<ResourceKey<Level>> dim = buf.readBoolean()
@@ -86,9 +80,14 @@ public record DimensionCondition(
     public static final ParamTypeDef<Condition> TYPE_DEF =
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
+    public DimensionCondition {
+        dimension = dimension != null ? dimension : Optional.empty();
+        tag = tag != null ? tag : Optional.empty();
+    }
+
     private static DataResult<DimensionCondition> validateDecoded(DimensionCondition c) {
-        boolean hasId = c.dimensionSafe().isPresent();
-        boolean hasTag = c.tagSafe().isPresent();
+        boolean hasId = c.dimension().isPresent();
+        boolean hasTag = c.tag().isPresent();
 
         if (hasId == hasTag) {
             return DataResult.error(() ->
@@ -107,26 +106,22 @@ public record DimensionCondition(
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        return fromKeyOrTag(Registries.DIMENSION, dimensionSafe(), tagSafe());
+        return fromKeyOrTag(Registries.DIMENSION, dimension, tag);
     }
 
     @Override
     public boolean test(@NotNull WorldContext ctx) {
-        Optional<ResourceKey<Level>> dim = dimensionSafe();
-        Optional<TagKey<Level>> tg = tagSafe();
-
-        if (dim.isPresent() == tg.isPresent()) {
+        if (dimension.isPresent() == tag.isPresent()) {
             return false;
         }
 
         Level level = ctx.level();
         ResourceKey<Level> current = level.dimension();
 
-        boolean pass;
-        pass = dim.map(current::equals).orElseGet(() -> level.registryAccess()
+        boolean pass = dimension.map(current::equals).orElseGet(() -> level.registryAccess()
                 .lookup(Registries.DIMENSION)
                 .flatMap(lookup -> lookup.get(current))
-                .map(holder -> holder.is(tg.get()))
+                .map(holder -> holder.is(tag.orElseThrow()))
                 .orElse(false));
 
         return invert != pass;
@@ -134,14 +129,6 @@ public record DimensionCondition(
 
     @Override
     public @NotNull DataResult<Condition> validate() {
-        return validateDecoded(this).map(c -> c);
-    }
-
-    private Optional<ResourceKey<Level>> dimensionSafe() {
-        return dimension != null ? dimension : Optional.empty();
-    }
-
-    private Optional<TagKey<Level>> tagSafe() {
-        return tag != null ? tag : Optional.empty();
+        return validateDecoded(this).map(v -> v);
     }
 }

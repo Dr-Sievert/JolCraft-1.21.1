@@ -99,4 +99,10 @@ public record RegistryIntrospection(
     ) {
         return new RegistryIntrospection(key, Math.max(0, holderCount), hasAnyTag, null, null, null);
     }
+
+    public static @NotNull RegistryIntrospection empty(
+            @NotNull ResourceKey<? extends Registry<?>> key
+    ) {
+        return new RegistryIntrospection(key, 0, false, null, null, null);
+    }
 }

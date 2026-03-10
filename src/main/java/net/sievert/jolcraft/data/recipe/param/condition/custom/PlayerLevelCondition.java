@@ -30,7 +30,7 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
                     Codec.INT.optionalFieldOf(JolCraftParameterIds.MIN_LEVEL, 0)
                             .forGetter(PlayerLevelCondition::minLevel),
                     Codec.INT.optionalFieldOf(JolCraftParameterIds.MAX_LEVEL)
-                            .forGetter(PlayerLevelCondition::maxLevelSafe),
+                            .forGetter(PlayerLevelCondition::maxLevel),
                     Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false)
                             .forGetter(PlayerLevelCondition::invert)
             ).apply(inst, PlayerLevelCondition::new));
@@ -41,11 +41,10 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
     public static final StreamCodec<RegistryFriendlyByteBuf, PlayerLevelCondition> STREAM_CODEC =
             StreamCodec.of(
                     (buf, c) -> {
-                        Optional<Integer> max = c.maxLevelSafe();
-                        buf.writeVarInt(c.minLevel);
-                        buf.writeBoolean(max.isPresent());
-                        max.ifPresent(buf::writeVarInt);
-                        buf.writeBoolean(c.invert);
+                        buf.writeVarInt(c.minLevel());
+                        buf.writeBoolean(c.maxLevel().isPresent());
+                        c.maxLevel().ifPresent(buf::writeVarInt);
+                        buf.writeBoolean(c.invert());
                     },
                     buf -> {
                         int min = buf.readVarInt();
@@ -60,16 +59,19 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
     public static final ParamTypeDef<Condition> TYPE_DEF =
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
+    public PlayerLevelCondition {
+        maxLevel = maxLevel != null ? maxLevel : Optional.empty();
+    }
+
     private static DataResult<PlayerLevelCondition> validateDecoded(PlayerLevelCondition c) {
-        if (c.minLevel < 0) {
+        if (c.minLevel() < 0) {
             return DataResult.error(() ->
-                    "player_level." + JolCraftParameterIds.MIN_LEVEL + " must be >= 0 (got " + c.minLevel + ")"
+                    "player_level." + JolCraftParameterIds.MIN_LEVEL + " must be >= 0 (got " + c.minLevel() + ")"
             );
         }
 
-        Optional<Integer> maxOpt = c.maxLevelSafe();
-        if (maxOpt.isPresent()) {
-            int max = maxOpt.get();
+        if (c.maxLevel().isPresent()) {
+            int max = c.maxLevel().get();
 
             if (max < 0) {
                 return DataResult.error(() ->
@@ -77,10 +79,10 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
                 );
             }
 
-            if (c.minLevel > max) {
+            if (c.minLevel() > max) {
                 return DataResult.error(() ->
                         "player_level." + JolCraftParameterIds.MIN_LEVEL + " must be <= " +
-                                JolCraftParameterIds.MAX_LEVEL + " (got " + c.minLevel + " > " + max + ")"
+                                JolCraftParameterIds.MAX_LEVEL + " (got " + c.minLevel() + " > " + max + ")"
                 );
             }
         }
@@ -95,15 +97,13 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
 
     @Override
     public boolean test(@NotNull WorldContext ctx) {
-        if (minLevel < 0) return false;
-
         Player player = ctx.player();
         if (player == null) return false;
 
         int lvl = player.experienceLevel;
 
-        boolean pass = maxLevelSafe()
-                .map(max -> max >= 0 && lvl >= minLevel && lvl <= max)
+        boolean pass = maxLevel
+                .map(max -> lvl >= minLevel && lvl <= max)
                 .orElse(lvl >= minLevel);
 
         return invert != pass;
@@ -111,10 +111,6 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
 
     @Override
     public @NotNull DataResult<Condition> validate() {
-        return validateDecoded(this).map(c -> c);
-    }
-
-    private Optional<Integer> maxLevelSafe() {
-        return maxLevel != null ? maxLevel : Optional.empty();
+        return validateDecoded(this).map(v -> v);
     }
 }

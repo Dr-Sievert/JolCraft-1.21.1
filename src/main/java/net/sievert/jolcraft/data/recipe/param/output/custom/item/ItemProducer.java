@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
@@ -24,9 +23,9 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
@@ -36,200 +35,195 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("deprecation")
 public final class ItemProducer implements SelfValidating<ItemProducer>, RegistryIntrospectionSource {
 
-    private static final ResourceLocation INVALID_ID = JolCraft.location(JolCraftDictionary.INVALID);
+    static final String ITEM = JolCraftDictionary.ITEM;
+    static final String TAG = JolCraftDictionary.TAG;
+    static final String MAP = JolCraftDictionary.MAP;
 
-    public static final ItemProducer EMPTY = new ItemProducer(new InvalidTarget(INVALID_ID));
+    private static final String STRUCTURE_TAG =
+            JolCraftStrings.underscored(JolCraftDictionary.STRUCTURE, TAG);
 
-    // ---------------------------------------------------------------------
-    // LOCAL STRINGS
-    // ---------------------------------------------------------------------
+    private static final String MAP_DECORATION =
+            JolCraftStrings.underscored(MAP, JolCraftDictionary.DECORATION);
 
-    private static final String TYPE = JolCraftParameterIds.TYPE;
-    private static final String ITEM = JolCraftDictionary.ITEM;
-    private static final String TAG = JolCraftDictionary.TAG;
-    private static final String MAP = JolCraftDictionary.MAP;
-    private static final String STRUCTURE_TAG = JolCraftStrings.underscored(JolCraftDictionary.STRUCTURE, TAG);
-    private static final String MAP_DECORATION = JolCraftStrings.underscored(MAP, JolCraftDictionary.DECORATION);
-    private static final String DISPLAY_NAME_KEY = JolCraftStrings.underscored(JolCraftDictionary.DISPLAY, JolCraftDictionary.NAME, JolCraftDictionary.KEY);
-    private static final String INVALID = JolCraftDictionary.INVALID;
+    private static final String DISPLAY_NAME_KEY =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.DISPLAY,
+                    JolCraftDictionary.NAME,
+                    JolCraftDictionary.KEY
+            );
 
-    // ---------------------------------------------------------------------
-    // TARGETS
-    // ---------------------------------------------------------------------
+    public record MapData(
+            @NotNull TagKey<Structure> structureTag,
+            @NotNull Holder<MapDecorationType> decoration,
+            @NotNull String displayNameKey
+    ) {
+        public static final Codec<MapData> CODEC =
+                RecordCodecBuilder.create(instance -> instance.group(
+                        TagKey.codec(Registries.STRUCTURE)
+                                .fieldOf(STRUCTURE_TAG)
+                                .forGetter(MapData::structureTag),
 
-    private sealed interface Target permits ItemTarget, TagTarget, MapTarget, InvalidTarget {}
+                        RegistryFixedCodec.<MapDecorationType>create(Registries.MAP_DECORATION_TYPE)
+                                .fieldOf(MAP_DECORATION)
+                                .forGetter(MapData::decoration),
 
-    private record ItemTarget(Holder<Item> item) implements Target {}
-    private record TagTarget(TagKey<Item> tag) implements Target {}
-    private record MapTarget(TagKey<Structure> structureTag, Holder<MapDecorationType> decoration, String displayNameKey) implements Target {}
-    private record InvalidTarget(ResourceLocation reasonId) implements Target {}
+                        Codec.STRING
+                                .fieldOf(DISPLAY_NAME_KEY)
+                                .forGetter(MapData::displayNameKey)
+                ).apply(instance, MapData::new));
 
-    private final Target target;
+        public MapData {
+            Objects.requireNonNull(structureTag, STRUCTURE_TAG);
+            Objects.requireNonNull(decoration, MAP_DECORATION);
+            Objects.requireNonNull(displayNameKey, DISPLAY_NAME_KEY);
 
-    private ItemProducer(Target target) {
-        this.target = target != null ? target : new InvalidTarget(INVALID_ID);
+            if (displayNameKey.isBlank()) {
+                throw new IllegalArgumentException(DISPLAY_NAME_KEY + " cannot be blank");
+            }
+        }
     }
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
+    private sealed interface Target permits ItemTarget, TagTarget, MapTarget {}
+
+    private record ItemTarget(@NotNull Holder<Item> item) implements Target {
+        private ItemTarget {
+            Objects.requireNonNull(item, JolCraftParameterIds.ITEM);
+        }
+    }
+
+    private record TagTarget(@NotNull TagKey<Item> tag) implements Target {
+        private TagTarget {
+            Objects.requireNonNull(tag, JolCraftParameterIds.TAG);
+        }
+    }
+
+    private record MapTarget(@NotNull MapData data) implements Target {
+        private MapTarget {
+            Objects.requireNonNull(data, MAP);
+        }
+    }
+
+    private final @NotNull Target target;
+
+    private ItemProducer(@NotNull Target target) {
+        this.target = Objects.requireNonNull(target, JolCraftParameterIds.TARGET);
+    }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
         return switch (target) {
             case ItemTarget(Holder<Item> item) ->
-                    (item != null)
-                            ? List.of(RegistryIntrospection.single(Registries.ITEM, item))
-                            : List.of(RegistryIntrospection.mixed(Registries.ITEM, 0, false));
+                    List.of(RegistryIntrospection.single(Registries.ITEM, item));
 
             case TagTarget(TagKey<Item> tag) ->
-                    (tag != null)
-                            ? List.of(RegistryIntrospection.singleTag(Registries.ITEM, tag))
-                            : List.of(RegistryIntrospection.mixed(Registries.ITEM, 0, false));
+                    List.of(RegistryIntrospection.singleTag(Registries.ITEM, tag));
 
-            case MapTarget(TagKey<Structure> structureTag, Holder<MapDecorationType> deco, String ignoredKey) -> {
-                RegistryIntrospection a =
-                        (structureTag != null)
-                                ? RegistryIntrospection.singleTag(Registries.STRUCTURE, structureTag)
-                                : RegistryIntrospection.mixed(Registries.STRUCTURE, 0, false);
-
-                RegistryIntrospection b =
-                        (deco != null)
-                                ? RegistryIntrospection.single(Registries.MAP_DECORATION_TYPE, deco)
-                                : RegistryIntrospection.mixed(Registries.MAP_DECORATION_TYPE, 0, false);
-
-                yield List.of(a, b);
-            }
-
-            case InvalidTarget ignored -> List.of();
+            case MapTarget(MapData data) ->
+                    List.of(
+                            RegistryIntrospection.singleTag(Registries.STRUCTURE, data.structureTag()),
+                            RegistryIntrospection.single(Registries.MAP_DECORATION_TYPE, data.decoration())
+                    );
         };
     }
 
-    // ---------------------------------------------------------------------
-    // CODEC / STREAM_CODEC
-    // ---------------------------------------------------------------------
-
-    private static final Codec<Holder<Item>> ITEM_HOLDER_CODEC =
+    static final Codec<Holder<Item>> ITEM_HOLDER_CODEC =
             RegistryFixedCodec.create(Registries.ITEM);
 
-    private static final Codec<TagKey<Item>> ITEM_TAG_CODEC =
+    static final Codec<TagKey<Item>> ITEM_TAG_CODEC =
             TagKey.codec(Registries.ITEM);
 
-    private static final Codec<TagKey<Structure>> STRUCTURE_TAG_CODEC =
-            TagKey.codec(Registries.STRUCTURE);
-
-    private static final Codec<Holder<MapDecorationType>> MAP_DECO_HOLDER_CODEC =
-            RegistryFixedCodec.create(Registries.MAP_DECORATION_TYPE);
-
-    private record CodecData(
-            String type,
-            Holder<Item> item,
-            TagKey<Item> tag,
-            TagKey<Structure> structureTag,
-            Holder<MapDecorationType> decoration,
-            String displayNameKey,
-            ResourceLocation invalid
-    ) {}
-
-    private static final Codec<CodecData> RAW_CODEC =
-            RecordCodecBuilder.create(i -> i.group(
-                    Codec.STRING
-                            .fieldOf(TYPE)
-                            .forGetter(CodecData::type),
-
-                    ITEM_HOLDER_CODEC
-                            .optionalFieldOf(ITEM)
-                            .forGetter(d -> Optional.ofNullable(d.item())),
-
-                    ITEM_TAG_CODEC
-                            .optionalFieldOf(TAG)
-                            .forGetter(d -> Optional.ofNullable(d.tag())),
-
-                    STRUCTURE_TAG_CODEC
-                            .optionalFieldOf(STRUCTURE_TAG)
-                            .forGetter(d -> Optional.ofNullable(d.structureTag())),
-
-                    MAP_DECO_HOLDER_CODEC
-                            .optionalFieldOf(MAP_DECORATION)
-                            .forGetter(d -> Optional.ofNullable(d.decoration())),
-
-                    Codec.STRING
-                            .optionalFieldOf(DISPLAY_NAME_KEY, "")
-                            .forGetter(CodecData::displayNameKey),
-
-                    ResourceLocation.CODEC
-                            .optionalFieldOf(INVALID)
-                            .forGetter(d -> Optional.ofNullable(d.invalid()))
-            ).apply(i, (type, item, tag, structureTag, decoration, displayNameKey, invalid) ->
-                    new CodecData(
-                            type,
-                            item.orElse(null),
-                            tag.orElse(null),
-                            structureTag.orElse(null),
-                            decoration.orElse(null),
-                            displayNameKey,
-                            invalid.orElse(null)
-                    )
-            ));
-
-    public static final Codec<ItemProducer> CODEC =
-            RAW_CODEC.comapFlatMap(ItemProducer::fromCodecData, ItemProducer::toCodecData);
-
-    private static DataResult<ItemProducer> fromCodecData(CodecData d) {
-        if (d == null || d.type == null) return DataResult.success(EMPTY);
-
-        return switch (d.type) {
-            case ITEM -> (d.item != null)
-                    ? DataResult.success(item(d.item.value()))
-                    : DataResult.error(() -> "item producer missing '" + ITEM + "'");
-            case TAG -> (d.tag != null)
-                    ? DataResult.success(tag(d.tag))
-                    : DataResult.error(() -> "tag producer missing '" + TAG + "'");
-            case MAP -> {
-                if (d.structureTag == null)
-                    yield DataResult.error(() -> "map producer missing '" + STRUCTURE_TAG + "'");
-                if (d.decoration == null)
-                    yield DataResult.error(() -> "map producer missing '" + MAP_DECORATION + "'");
-                if (d.displayNameKey == null || d.displayNameKey.isBlank())
-                    yield DataResult.error(() -> "map producer missing '" + DISPLAY_NAME_KEY + "'");
-                yield DataResult.success(map(d.structureTag, d.decoration, d.displayNameKey));
-            }
-            case INVALID -> DataResult.success(invalid(d.invalid));
-            default -> DataResult.success(EMPTY);
-        };
+    private record RawCodecData(
+            Optional<Holder<Item>> item,
+            Optional<TagKey<Item>> tag,
+            Optional<MapData> map
+    ) {
+        private RawCodecData {
+            item = item != null ? item : Optional.empty();
+            tag = tag != null ? tag : Optional.empty();
+            map = map != null ? map : Optional.empty();
+        }
     }
 
-    private static CodecData toCodecData(ItemProducer p) {
-        if (p == null) {
-            return new CodecData(INVALID, null, null, null, null, "", INVALID_ID);
+    private static final Codec<RawCodecData> RAW_CODEC =
+            RecordCodecBuilder.create(instance -> instance.group(
+                    ITEM_HOLDER_CODEC.optionalFieldOf(ITEM).forGetter(RawCodecData::item),
+                    ITEM_TAG_CODEC.optionalFieldOf(TAG).forGetter(RawCodecData::tag),
+                    MapData.CODEC.optionalFieldOf(MAP).forGetter(RawCodecData::map)
+            ).apply(instance, RawCodecData::new));
+
+    public static final Codec<ItemProducer> CODEC =
+            ParamCodecContract.create(
+                    RAW_CODEC,
+                    ItemProducer::fromRaw,
+                    ItemProducer::toRaw
+            );
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static @NotNull DataResult<ItemProducer> fromSelection(
+            @NotNull Optional<Holder<Item>> item,
+            @NotNull Optional<TagKey<Item>> tag,
+            @NotNull Optional<MapData> map
+    ) {
+        return fromRaw(new RawCodecData(item, tag, map));
+    }
+
+    private static int selectionCount(@NotNull RawCodecData raw) {
+        int count = 0;
+        if (raw.item().isPresent()) count++;
+        if (raw.tag().isPresent()) count++;
+        if (raw.map().isPresent()) count++;
+        return count;
+    }
+
+    private static @NotNull DataResult<ItemProducer> fromRaw(@NotNull RawCodecData raw) {
+        int familyCount = selectionCount(raw);
+
+        if (familyCount == 0) {
+            return DataResult.error(() ->
+                    "item producer requires exactly one family: '" + ITEM + "', '" + TAG + "', or '" + MAP + "'");
         }
 
-        return switch (p.target) {
+        if (familyCount > 1) {
+            return DataResult.error(() ->
+                    "item producer has ambiguous families; provide exactly one of '" + ITEM + "', '" + TAG + "', or '" + MAP + "'");
+        }
+
+        if (raw.item().isPresent()) {
+            return DataResult.success(new ItemProducer(new ItemTarget(raw.item().orElseThrow())));
+        }
+
+        if (raw.tag().isPresent()) {
+            return DataResult.success(new ItemProducer(new TagTarget(raw.tag().orElseThrow())));
+        }
+
+        return DataResult.success(new ItemProducer(new MapTarget(raw.map().orElseThrow())));
+    }
+
+    private static @NotNull RawCodecData toRaw(@NotNull ItemProducer producer) {
+        return switch (producer.target) {
             case ItemTarget(Holder<Item> item) ->
-                    new CodecData(ITEM, item, null, null, null, "", null);
+                    new RawCodecData(Optional.of(item), Optional.empty(), Optional.empty());
 
             case TagTarget(TagKey<Item> tag) ->
-                    new CodecData(TAG, null, tag, null, null, "", null);
+                    new RawCodecData(Optional.empty(), Optional.of(tag), Optional.empty());
 
-            case MapTarget(TagKey<Structure> structureTag, Holder<MapDecorationType> deco, String key) ->
-                    new CodecData(MAP, null, null, structureTag, deco, key, null);
-
-            case InvalidTarget(ResourceLocation id) ->
-                    new CodecData(INVALID, null, null, null, null, "", id);
+            case MapTarget(MapData data) ->
+                    new RawCodecData(Optional.empty(), Optional.empty(), Optional.of(data));
         };
     }
 
     private static final byte KIND_ITEM = 0;
     private static final byte KIND_TAG = 1;
     private static final byte KIND_MAP = 2;
-    private static final byte KIND_INVALID = 3;
 
-    private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Item>> ITEM_HOLDER_STREAM = ByteBufCodecs.holderRegistry(Registries.ITEM);
+    private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Item>> ITEM_HOLDER_STREAM =
+            ByteBufCodecs.holderRegistry(Registries.ITEM);
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Holder<MapDecorationType>> MAP_DECO_STREAM =
             ByteBufCodecs.holderRegistry(Registries.MAP_DECORATION_TYPE);
@@ -242,8 +236,8 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemProducer> STREAM_CODEC =
             StreamCodec.of(
-                    (buf, p) -> {
-                        switch (p.target) {
+                    (buf, producer) -> {
+                        switch (producer.target) {
                             case ItemTarget(Holder<Item> item) -> {
                                 buf.writeByte(KIND_ITEM);
                                 ITEM_HOLDER_STREAM.encode(buf, item);
@@ -252,169 +246,111 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
                                 buf.writeByte(KIND_TAG);
                                 ITEM_TAG_STREAM.encode(buf, tag);
                             }
-                            case MapTarget(TagKey<Structure> structureTag, Holder<MapDecorationType> deco, String key) -> {
+                            case MapTarget(MapData data) -> {
                                 buf.writeByte(KIND_MAP);
-                                STRUCTURE_TAG_STREAM.encode(buf, structureTag);
-                                MAP_DECO_STREAM.encode(buf, deco);
-                                buf.writeUtf(key != null ? key : "");
-                            }
-                            case InvalidTarget(ResourceLocation id) -> {
-                                buf.writeByte(KIND_INVALID);
-                                buf.writeResourceLocation(id != null ? id : INVALID_ID);
+                                STRUCTURE_TAG_STREAM.encode(buf, data.structureTag());
+                                MAP_DECO_STREAM.encode(buf, data.decoration());
+                                buf.writeUtf(data.displayNameKey());
                             }
                         }
                     },
                     buf -> {
                         byte kind = buf.readByte();
                         return switch (kind) {
-                            case KIND_ITEM -> item(ITEM_HOLDER_STREAM.decode(buf).value());
-                            case KIND_TAG -> tag(ITEM_TAG_STREAM.decode(buf));
-                            case KIND_MAP -> {
-                                TagKey<Structure> st = STRUCTURE_TAG_STREAM.decode(buf);
-                                Holder<MapDecorationType> deco = MAP_DECO_STREAM.decode(buf);
-                                String key = buf.readUtf();
-                                yield map(st, deco, key);
-                            }
-                            case KIND_INVALID -> invalid(buf.readResourceLocation());
-                            default -> EMPTY;
+                            case KIND_ITEM -> new ItemProducer(new ItemTarget(ITEM_HOLDER_STREAM.decode(buf)));
+                            case KIND_TAG -> new ItemProducer(new TagTarget(ITEM_TAG_STREAM.decode(buf)));
+                            case KIND_MAP -> new ItemProducer(new MapTarget(new MapData(
+                                    STRUCTURE_TAG_STREAM.decode(buf),
+                                    MAP_DECO_STREAM.decode(buf),
+                                    buf.readUtf()
+                            )));
+                            default -> throw new IllegalArgumentException("unknown item producer kind: " + kind);
                         };
                     }
             );
 
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
-
     @Override
     public @NotNull DataResult<ItemProducer> validate() {
-        return switch (target) {
-            case InvalidTarget(ResourceLocation id) ->
-                    DataResult.error(() -> "invalid producer (" + id + ")");
-            case ItemTarget(Holder<Item> item) ->
-                    item == null
-                            ? DataResult.error(() -> "item cannot be null")
-                            : DataResult.success(this);
-            case TagTarget(TagKey<Item> tag) ->
-                    tag == null
-                            ? DataResult.error(() -> "tag cannot be null")
-                            : DataResult.success(this);
-            case MapTarget(TagKey<Structure> tag,
-                           Holder<MapDecorationType> deco,
-                           String name) ->
-                    (tag == null || deco == null || name == null || name.isBlank())
-                            ? DataResult.error(() -> "invalid map producer")
-                            : DataResult.success(this);
-        };
+        return SelfValidating.ok(this);
     }
-
-    // ---------------------------------------------------------------------
-    // RUNTIME CREATION
-    // ---------------------------------------------------------------------
 
     public @NotNull ItemStack create(@NotNull WorldContext ctx) {
         return switch (target) {
-
             case ItemTarget(Holder<Item> item) ->
-                    item == null ? ItemStack.EMPTY : new ItemStack(item.value());
+                    new ItemStack(item.value());
 
             case TagTarget(TagKey<Item> tag) ->
                     createFromTag(ctx, tag);
 
-            case MapTarget(TagKey<Structure> structureTag,
-                           Holder<MapDecorationType> decoration,
-                           String nameKey) ->
-                    createTreasureMap(ctx, structureTag, decoration, nameKey);
-
-            case InvalidTarget ignored ->
-                    ItemStack.EMPTY;
+            case MapTarget(MapData data) ->
+                    createTreasureMap(ctx, data.structureTag(), data.decoration(), data.displayNameKey());
         };
     }
 
-    private static ItemStack createFromTag(@NotNull WorldContext ctx, @NotNull TagKey<Item> tag) {
+    private static @NotNull ItemStack createFromTag(@NotNull WorldContext ctx, @NotNull TagKey<Item> tag) {
         RegistryAccess access = ctx.level().registryAccess();
         RandomSource random = ctx.random();
 
-        var regOpt = access.lookup(Registries.ITEM);
-        if (regOpt.isEmpty()) return ItemStack.EMPTY;
+        var registryLookup = access.lookup(Registries.ITEM);
+        if (registryLookup.isEmpty()) return ItemStack.EMPTY;
 
-        var namedOpt = regOpt.get().get(tag);
-        if (namedOpt.isEmpty()) return ItemStack.EMPTY;
+        var namedSet = registryLookup.get().get(tag);
+        if (namedSet.isEmpty()) return ItemStack.EMPTY;
 
-        var named = namedOpt.get();
-        int size = named.size();
+        var holders = namedSet.get();
+        int size = holders.size();
         if (size <= 0) return ItemStack.EMPTY;
 
-        Holder<Item> chosen = named.get(random.nextInt(size));
+        Holder<Item> chosen = holders.get(random.nextInt(size));
         return new ItemStack(chosen.value());
     }
 
-    private static ItemStack createTreasureMap(
+    private static @NotNull ItemStack createTreasureMap(
             @NotNull WorldContext ctx,
             @NotNull TagKey<Structure> structureTag,
             @NotNull Holder<MapDecorationType> decoration,
             @NotNull String displayNameKey
     ) {
-        ServerLevel server = ctx.level();
+        ServerLevel level = ctx.level();
 
         BlockPos origin = WorldAnchor.resolve(ctx);
         if (origin == null) {
             return ItemStack.EMPTY;
         }
 
-        BlockPos found = server.findNearestMapStructure(structureTag, origin, 100, true);
+        BlockPos found = level.findNearestMapStructure(structureTag, origin, 100, true);
         if (found == null) {
             return ItemStack.EMPTY;
         }
 
-        ItemStack map =
-                MapItem.create(server, found.getX(), found.getZ(), (byte) 2, true, true);
-
-        map.set(
-                DataComponents.CUSTOM_NAME,
-                Component.translatable(displayNameKey)
-        );
-
-        MapItemSavedData.addTargetDecoration(
-                map,
-                found,
-                JolCraftDictionary.MAP,
-                decoration
-        );
-
+        ItemStack map = MapItem.create(level, found.getX(), found.getZ(), (byte) 2, true, true);
+        map.set(DataComponents.CUSTOM_NAME, Component.translatable(displayNameKey));
+        MapItemSavedData.addTargetDecoration(map, found, JolCraftDictionary.MAP, decoration);
         return map;
     }
 
-    // ---------------------------------------------------------------------
-    // FACTORIES
-    // ---------------------------------------------------------------------
-
-    public static ItemProducer item(ItemLike item) {
-        if (item == null) return EMPTY;
-
-        return new ItemProducer(
-                new ItemTarget(item.asItem().builtInRegistryHolder())
-        );
+    public static @NotNull ItemProducer item(@NotNull ItemLike item) {
+        return new ItemProducer(new ItemTarget(item.asItem().builtInRegistryHolder()));
     }
 
-    public static ItemProducer tag(TagKey<Item> tag) {
-        return tag == null ? EMPTY : new ItemProducer(new TagTarget(tag));
+    public static @NotNull ItemProducer holder(@NotNull Holder<Item> item) {
+        return new ItemProducer(new ItemTarget(item));
     }
 
-    public static ItemProducer map(TagKey<Structure> tag, Holder<MapDecorationType> deco, String name) {
-        if (tag == null || deco == null || name == null || name.isBlank()) return EMPTY;
-        return new ItemProducer(new MapTarget(tag, deco, name));
+    public static @NotNull ItemProducer tag(@NotNull TagKey<Item> tag) {
+        return new ItemProducer(new TagTarget(tag));
     }
 
-    public static ItemProducer invalid(ResourceLocation id) {
-        return new ItemProducer(new InvalidTarget(id != null ? id : INVALID_ID));
+    public static @NotNull ItemProducer map(
+            @NotNull TagKey<Structure> structureTag,
+            @NotNull Holder<MapDecorationType> decoration,
+            @NotNull String displayNameKey
+    ) {
+        return new ItemProducer(new MapTarget(new MapData(structureTag, decoration, displayNameKey)));
     }
-
-    // ---------------------------------------------------------------------
-    // TYPE HELPERS
-    // ---------------------------------------------------------------------
 
     public boolean isItemSelection() {
-        return target instanceof ItemTarget || isMapSelection();
+        return target instanceof ItemTarget;
     }
 
     public boolean isTagSelection() {
@@ -425,46 +361,38 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
         return target instanceof MapTarget;
     }
 
-    public Optional<Holder<Item>> itemHolderOpt() {
-        if (target instanceof ItemTarget(Holder<Item> item)) {
-            return Optional.ofNullable(item);
-        }
-        return Optional.empty();
+    public @NotNull Optional<Holder<Item>> itemHolderOpt() {
+        return target instanceof ItemTarget(Holder<Item> item) ? Optional.of(item) : Optional.empty();
     }
 
-    // ---------------------------------------------------------------------
-    // NAMING HELPERS
-    // ---------------------------------------------------------------------
+    public @NotNull Optional<TagKey<Item>> tagOpt() {
+        return target instanceof TagTarget(TagKey<Item> tag) ? Optional.of(tag) : Optional.empty();
+    }
 
-    /**
-     * If this producer is a treasure-map producer, returns a stable filename token:
-     * - take displayNameKey
-     * - keep substring after last '.'
-     * - append "_map"
-     *
-     * Example: "filled_map.forge" -> "forge_map"
-     *
-     * Fail-closed: Optional.empty() if missing/blank.
-     */
-    public Optional<String> mapFileNameTokenOpt() {
-        if (target instanceof MapTarget(TagKey<Structure> ignoredTag,
-                                        Holder<MapDecorationType> ignoredDeco,
-                                        String key)) {
+    public @NotNull Optional<MapData> mapDataOpt() {
+        return target instanceof MapTarget(MapData data) ? Optional.of(data) : Optional.empty();
+    }
 
-            if (key == null) return Optional.empty();
-            String k = key.trim();
-            if (k.isEmpty()) return Optional.empty();
-
-            int lastDot = k.lastIndexOf('.');
-            String leaf = (lastDot >= 0 && lastDot + 1 < k.length())
-                    ? k.substring(lastDot + 1)
-                    : k;
-
-            leaf = leaf.trim();
-            if (leaf.isEmpty()) return Optional.empty();
-
-            return Optional.of(leaf + "_map");
+    public @NotNull Optional<String> mapFileNameTokenOpt() {
+        if (!(target instanceof MapTarget(MapData data))) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        String key = data.displayNameKey().trim();
+        if (key.isEmpty()) {
+            return Optional.empty();
+        }
+
+        int lastDot = key.lastIndexOf('.');
+        String leaf = (lastDot >= 0 && lastDot + 1 < key.length())
+                ? key.substring(lastDot + 1)
+                : key;
+
+        leaf = leaf.trim();
+        if (leaf.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(JolCraftStrings.underscored(leaf, JolCraftDictionary.MAP));
     }
 }

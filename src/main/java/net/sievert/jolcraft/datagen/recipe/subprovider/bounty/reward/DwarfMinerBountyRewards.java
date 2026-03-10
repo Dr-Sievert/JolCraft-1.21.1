@@ -5,8 +5,6 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
@@ -16,6 +14,7 @@ import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyRewardRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,32 +36,31 @@ public final class DwarfMinerBountyRewards implements RecipeSubProvider {
             @NotNull RecipeOutput output,
             @NotNull HolderGetter<Item> items
     ) {
-
-        geodes(executor, BountyTier.NOVICE,
+        geodes(executor, DwarfMerchantData.Level.NOVICE,
                 4, 2, 1,
                 a(),
                 a(),
                 a());
 
-        geodes(executor, BountyTier.APPRENTICE,
+        geodes(executor, DwarfMerchantData.Level.APPRENTICE,
                 4, 3, 1,
                 a(1, 2),
                 a(),
                 a());
 
-        geodes(executor, BountyTier.JOURNEYMAN,
+        geodes(executor, DwarfMerchantData.Level.JOURNEYMAN,
                 3, 2, 1,
                 a(1, 3),
                 a(1, 2),
                 a());
 
-        geodes(executor, BountyTier.EXPERT,
+        geodes(executor, DwarfMerchantData.Level.EXPERT,
                 2, 2, 1,
                 a(2, 3),
                 a(1, 3),
                 a());
 
-        geodes(executor, BountyTier.MASTER,
+        geodes(executor, DwarfMerchantData.Level.MASTER,
                 1, 2, 2,
                 a(3, 4),
                 a(2, 3),
@@ -71,15 +69,15 @@ public final class DwarfMinerBountyRewards implements RecipeSubProvider {
 
     private record Amt(int min, int max) {}
 
-    private static Amt a() {
+    private static @NotNull Amt a() {
         return new Amt(1, 1);
     }
 
-    private static Amt a(int min, int max) {
+    private static @NotNull Amt a(int min, int max) {
         return new Amt(min, max);
     }
 
-    private static ItemOutput give(Item item, Amt amt) {
+    private static @NotNull ItemOutput give(@NotNull Item item, @NotNull Amt amt) {
         return new ItemOutput(
                 new ItemSpec(
                         ItemProducer.item(item),
@@ -90,16 +88,15 @@ public final class DwarfMinerBountyRewards implements RecipeSubProvider {
     }
 
     private void geodes(
-            RecipeEmissionExecutor executor,
-            BountyTier tier,
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull DwarfMerchantData.Level tier,
             int smallW,
             int medW,
             int largeW,
-            Amt smallAmt,
-            Amt medAmt,
-            Amt largeAmt
+            @NotNull Amt smallAmt,
+            @NotNull Amt medAmt,
+            @NotNull Amt largeAmt
     ) {
-
         emitTier(executor, tier, b -> {
             for (int i = 0; i < smallW; i++) {
                 b.reward(give(JolCraftItems.GEODE_SMALL.get(), smallAmt));
@@ -116,14 +113,13 @@ public final class DwarfMinerBountyRewards implements RecipeSubProvider {
     }
 
     private void emitTier(
-            RecipeEmissionExecutor executor,
-            BountyTier tier,
-            Consumer<BountyRewardRecipeBuilder> rewards
+            @NotNull RecipeEmissionExecutor executor,
+            @NotNull DwarfMerchantData.Level tier,
+            @NotNull Consumer<BountyRewardRecipeBuilder> rewards
     ) {
-
         BountyRewardRecipeBuilder b = BountyRewardRecipeBuilder.create();
 
-        b.bountyType(BountyType.MINER)
+        b.bountyType(DwarfProfession.MINER)
                 .tier(tier)
                 .sound(SoundEvents.BASALT_BREAK);
 

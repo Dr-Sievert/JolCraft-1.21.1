@@ -13,11 +13,8 @@ import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Optional spawn metadata for EntityOutput.
- *
- * Kept minimal and total-safe. Conditions are handled by outer param system.
- */
+import java.util.Objects;
+
 public record EntitySpawnConfig(
         @NotNull BlockPos pos,
         int offsetX,
@@ -28,10 +25,6 @@ public record EntitySpawnConfig(
         boolean persistent,
         boolean noAi
 ) implements SelfValidating<EntitySpawnConfig> {
-
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
 
     private static final Codec<EntitySpawnConfig> RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
@@ -69,14 +62,16 @@ public record EntitySpawnConfig(
     public static final Codec<EntitySpawnConfig> CODEC =
             ParamCodecs.validated(RAW_CODEC);
 
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
-
     private static final StreamCodec<RegistryFriendlyByteBuf, Integer> VAR_INT =
             StreamCodec.of(
                     RegistryFriendlyByteBuf::writeVarInt,
                     RegistryFriendlyByteBuf::readVarInt
+            );
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, Boolean> BOOL =
+            StreamCodec.of(
+                    RegistryFriendlyByteBuf::writeBoolean,
+                    RegistryFriendlyByteBuf::readBoolean
             );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EntitySpawnConfig> STREAM_CODEC =
@@ -86,33 +81,23 @@ public record EntitySpawnConfig(
                     VAR_INT, EntitySpawnConfig::offsetY,
                     VAR_INT, EntitySpawnConfig::offsetZ,
                     VAR_INT, EntitySpawnConfig::radius,
-                    StreamCodec.of(
-                            RegistryFriendlyByteBuf::writeBoolean,
-                            RegistryFriendlyByteBuf::readBoolean
-                    ), EntitySpawnConfig::forced,
-                    StreamCodec.of(
-                            RegistryFriendlyByteBuf::writeBoolean,
-                            RegistryFriendlyByteBuf::readBoolean
-                    ), EntitySpawnConfig::persistent,
-                    StreamCodec.of(
-                            RegistryFriendlyByteBuf::writeBoolean,
-                            RegistryFriendlyByteBuf::readBoolean
-                    ), EntitySpawnConfig::noAi,
+                    BOOL, EntitySpawnConfig::forced,
+                    BOOL, EntitySpawnConfig::persistent,
+                    BOOL, EntitySpawnConfig::noAi,
                     EntitySpawnConfig::new
             );
 
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
+    public EntitySpawnConfig {
+        Objects.requireNonNull(pos, JolCraftParameterIds.POSITION);
+    }
 
     @Override
     public @NotNull DataResult<EntitySpawnConfig> validate() {
-
         if (radius < 0) {
             return DataResult.error(() ->
                     JolCraftDictionary.RADIUS + " must be >= 0 (got " + radius + ")");
         }
 
-        return DataResult.success(this);
+        return SelfValidating.ok(this);
     }
 }

@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
+import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityProducer;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpec;
@@ -16,45 +17,57 @@ import org.jetbrains.annotations.Nullable;
  * Datagen builder for {@link EntitySpec}.
  *
  * S+:
- * - no throwing
- * - fail-closed
+ * - mutation never throws
+ * - fail-closed build
  * - minimal surface
  */
 public final class EntitySpecBuilder {
 
-    private EntityProducer producer = EntityProducer.EMPTY;
+    private Holder<EntityType<?>> entity;
+    private TagKey<EntityType<?>> tag;
     private IntRange count = IntRange.ONE;
     private @Nullable CompoundTag nbt;
     private @Nullable EntitySpawnConfig spawn;
 
     private EntitySpecBuilder() {}
 
-    public static @NotNull EntitySpecBuilder builder() {
+    public static @NotNull EntitySpecBuilder create() {
         return new EntitySpecBuilder();
     }
 
-    // ---------------------------------------------------------------------
-    // Producer
-    // ---------------------------------------------------------------------
+    public static @NotNull EntitySpecBuilder builder() {
+        return create();
+    }
 
     public @NotNull EntitySpecBuilder entity(@Nullable Holder<EntityType<?>> entity) {
-        this.producer = EntityProducer.entity(entity);
+        this.entity = entity;
+        this.tag = null;
         return this;
     }
 
     public @NotNull EntitySpecBuilder tag(@Nullable TagKey<EntityType<?>> tag) {
-        this.producer = EntityProducer.tag(tag);
+        this.tag = tag;
+        this.entity = null;
         return this;
     }
 
     public @NotNull EntitySpecBuilder producer(@Nullable EntityProducer producer) {
-        this.producer = producer != null ? producer : EntityProducer.EMPTY;
+        if (producer == null) {
+            this.entity = null;
+            this.tag = null;
+            return this;
+        }
+
+        this.entity = producer.entityOpt().orElse(null);
+        this.tag = producer.tagOpt().orElse(null);
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // Count
-    // ---------------------------------------------------------------------
+    public @NotNull EntitySpecBuilder clearProducer() {
+        this.entity = null;
+        this.tag = null;
+        return this;
+    }
 
     public @NotNull EntitySpecBuilder count(@Nullable IntRange count) {
         this.count = count != null ? count : IntRange.ONE;
@@ -66,10 +79,6 @@ public final class EntitySpecBuilder {
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // Optional fields
-    // ---------------------------------------------------------------------
-
     public @NotNull EntitySpecBuilder nbt(@Nullable CompoundTag nbt) {
         this.nbt = (nbt != null && nbt.isEmpty()) ? null : nbt;
         return this;
@@ -80,13 +89,23 @@ public final class EntitySpecBuilder {
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // Build
-    // ---------------------------------------------------------------------
-
     public @NotNull DataResult<EntitySpec> build() {
-        EntitySpec spec = new EntitySpec(producer, count, nbt, spawn);
-        return spec.validate();
+        boolean hasEntity = entity != null;
+        boolean hasTag = tag != null;
+
+        if (hasEntity == hasTag) {
+            return DataResult.error(() ->
+                    "EntitySpecBuilder requires exactly one of '" +
+                            JolCraftParameterIds.ENTITY + "' or '" +
+                            JolCraftParameterIds.TAG + "'"
+            );
+        }
+
+        EntityProducer producer = hasEntity
+                ? EntityProducer.entity(entity)
+                : EntityProducer.tag(tag);
+
+        return new EntitySpec(producer, count, nbt, spawn).validate();
     }
 
     public @Nullable EntitySpec buildOrNull() {

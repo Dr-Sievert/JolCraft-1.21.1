@@ -14,10 +14,10 @@ import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipeInput;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,8 +56,8 @@ public final class BountyInteractionHandler implements DwarfInteractions.CoreInt
             return InteractionResult.PASS;
         }
 
-        BountyType expected = BountyType.fromString(dwarf.getProfession().getId());
-        if (expected == BountyType.UNKNOWN) {
+        DwarfProfession expected = dwarf.getProfession();
+        if (expected == DwarfProfession.NONE) {
             return InteractionResult.PASS;
         }
 

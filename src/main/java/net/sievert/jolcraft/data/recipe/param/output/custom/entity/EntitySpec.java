@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom.entity;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,10 +8,11 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
@@ -22,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public record EntitySpec(
         EntityProducer producer,
         IntRange count,
@@ -29,42 +32,83 @@ public record EntitySpec(
         @Nullable EntitySpawnConfig spawn
 ) implements SelfValidating<EntitySpec>, RegistryIntrospectionSource {
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
+    private record CanonicalRaw(
+            Optional<Holder<EntityType<?>>> entity,
+            Optional<TagKey<EntityType<?>>> tag,
+            IntRange count,
+            Optional<CompoundTag> nbt,
+            Optional<EntitySpawnConfig> spawn
+    ) {
+        private CanonicalRaw {
+            entity = entity != null ? entity : Optional.empty();
+            tag = tag != null ? tag : Optional.empty();
+            count = count != null ? count : IntRange.ONE;
+            nbt = nbt != null ? nbt : Optional.empty();
+            spawn = spawn != null ? spawn : Optional.empty();
+        }
+    }
 
-    private static final Codec<EntitySpec> RAW_CODEC =
+    private record VerboseRaw(
+            EntityProducer producer,
+            IntRange count,
+            Optional<CompoundTag> nbt,
+            Optional<EntitySpawnConfig> spawn
+    ) {
+        private VerboseRaw {
+            count = count != null ? count : IntRange.ONE;
+            nbt = nbt != null ? nbt : Optional.empty();
+            spawn = spawn != null ? spawn : Optional.empty();
+        }
+    }
+
+    private static final Codec<CanonicalRaw> CANONICAL_RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
-                    EntityProducer.CODEC
-                            .fieldOf(JolCraftParameterIds.PRODUCER)
-                            .forGetter(EntitySpec::producer),
+                    EntityProducer.ENTITY_HOLDER_CODEC
+                            .optionalFieldOf(EntityProducer.ENTITY)
+                            .forGetter(CanonicalRaw::entity),
+
+                    EntityProducer.ENTITY_TAG_CODEC
+                            .optionalFieldOf(EntityProducer.TAG)
+                            .forGetter(CanonicalRaw::tag),
 
                     IntRange.CODEC
                             .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
-                            .forGetter(EntitySpec::count),
+                            .forGetter(CanonicalRaw::count),
 
                     CompoundTag.CODEC
                             .optionalFieldOf(JolCraftParameterIds.NBT)
-                            .forGetter(spec -> Optional.ofNullable(spec.nbt())),
+                            .forGetter(CanonicalRaw::nbt),
 
                     EntitySpawnConfig.CODEC
                             .optionalFieldOf(JolCraftParameterIds.SPAWN)
-                            .forGetter(spec -> Optional.ofNullable(spec.spawn()))
-            ).apply(inst, (producer, count, nbt, spawn) ->
-                    new EntitySpec(
-                            producer,
-                            count,
-                            nbt.orElse(null),
-                            spawn.orElse(null)
-                    )
-            ));
+                            .forGetter(CanonicalRaw::spawn)
+            ).apply(inst, CanonicalRaw::new));
+
+    private static final Codec<VerboseRaw> VERBOSE_RAW_CODEC =
+            RecordCodecBuilder.create(inst -> inst.group(
+                    EntityProducer.CODEC
+                            .fieldOf(JolCraftParameterIds.PRODUCER)
+                            .forGetter(VerboseRaw::producer),
+
+                    IntRange.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
+                            .forGetter(VerboseRaw::count),
+
+                    CompoundTag.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.NBT)
+                            .forGetter(VerboseRaw::nbt),
+
+                    EntitySpawnConfig.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.SPAWN)
+                            .forGetter(VerboseRaw::spawn)
+            ).apply(inst, VerboseRaw::new));
 
     public static final Codec<EntitySpec> CODEC =
-            ParamCodecs.validated(RAW_CODEC);
-
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
+            ParamCodecContract.create(
+                    Codec.either(CANONICAL_RAW_CODEC, VERBOSE_RAW_CODEC),
+                    EntitySpec::fromRaw,
+                    EntitySpec::toRaw
+            );
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<CompoundTag>> OPTIONAL_NBT_STREAM =
             StreamCodec.of(
@@ -84,7 +128,7 @@ public record EntitySpec(
             StreamCodec.of(
                     (buf, opt) -> {
                         buf.writeBoolean(opt.isPresent());
-                        opt.ifPresent(entitySpawnConfig -> EntitySpawnConfig.STREAM_CODEC.encode(buf, entitySpawnConfig));
+                        opt.ifPresent(v -> EntitySpawnConfig.STREAM_CODEC.encode(buf, v));
                     },
                     buf -> {
                         if (!buf.readBoolean()) {
@@ -108,52 +152,88 @@ public record EntitySpec(
                     )
             );
 
-    // ---------------------------------------------------------------------
-    // DATA
-    // ---------------------------------------------------------------------
-
     public EntitySpec {
+        if (producer == null) {
+            throw new IllegalArgumentException("'" + JolCraftParameterIds.PRODUCER + "' is required");
+        }
+        count = count != null ? count : IntRange.ONE;
         if (nbt != null && nbt.isEmpty()) {
             nbt = null;
         }
     }
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
+    public static @NotNull DataResult<EntitySpec> fromSelection(
+            @NotNull Optional<Holder<EntityType<?>>> entity,
+            @NotNull Optional<TagKey<EntityType<?>>> tag,
+            @NotNull IntRange count,
+            @Nullable CompoundTag nbt,
+            @Nullable EntitySpawnConfig spawn
+    ) {
+        return EntityProducer.fromSelection(entity, tag)
+                .map(producer -> new EntitySpec(
+                        producer,
+                        count,
+                        nbt != null && nbt.isEmpty() ? null : nbt,
+                        spawn
+                ));
+    }
+
+    private static @NotNull DataResult<EntitySpec> fromRaw(
+            @NotNull Either<CanonicalRaw, VerboseRaw> raw
+    ) {
+        if (raw.left().isPresent()) {
+            CanonicalRaw canonical = raw.left().orElseThrow();
+            return fromSelection(
+                    canonical.entity(),
+                    canonical.tag(),
+                    canonical.count(),
+                    canonical.nbt().orElse(null),
+                    canonical.spawn().orElse(null)
+            );
+        }
+
+        VerboseRaw verbose = raw.right().orElseThrow();
+        if (verbose.producer() == null) {
+            return DataResult.error(() -> JolCraftParameterIds.PRODUCER + " is required");
+        }
+
+        return DataResult.success(new EntitySpec(
+                verbose.producer(),
+                verbose.count(),
+                verbose.nbt().orElse(null),
+                verbose.spawn().orElse(null)
+        ));
+    }
+
+    private static @NotNull Either<CanonicalRaw, VerboseRaw> toRaw(@NotNull EntitySpec spec) {
+        return Either.left(new CanonicalRaw(
+                spec.producer().entityOpt(),
+                spec.producer().tagOpt(),
+                spec.count(),
+                Optional.ofNullable(spec.nbt()),
+                Optional.ofNullable(spec.spawn())
+        ));
+    }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
         return producer.introspections();
     }
 
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
-
     @Override
     public @NotNull DataResult<EntitySpec> validate() {
-
-        if (producer == null) {
-            return DataResult.error(() -> "'" + JolCraftParameterIds.PRODUCER + "' is required");
-        }
-
-        if (count == null) {
-            return DataResult.error(() -> "'" + JolCraftParameterIds.COUNT + "' is required");
-        }
-
-        DataResult<EntityProducer> pv = producer.validate();
-        var perr = pv.error();
-        if (perr.isPresent()) {
+        DataResult<EntityProducer> producerValidation = producer.validate();
+        var producerError = producerValidation.error();
+        if (producerError.isPresent()) {
             return DataResult.error(() ->
-                    JolCraftParameterIds.PRODUCER + " invalid: " + perr.get().message());
+                    JolCraftParameterIds.PRODUCER + " invalid: " + producerError.get().message());
         }
 
-        DataResult<IntRange> cv = IntRange.validateRange(count);
-        var cerr = cv.error();
-        if (cerr.isPresent()) {
+        DataResult<IntRange> countValidation = IntRange.validateRange(count);
+        var countError = countValidation.error();
+        if (countError.isPresent()) {
             return DataResult.error(() ->
-                    JolCraftParameterIds.COUNT + " invalid: " + cerr.get().message());
+                    JolCraftParameterIds.COUNT + " invalid: " + countError.get().message());
         }
 
         if (count.min() < 1) {
@@ -162,20 +242,16 @@ public record EntitySpec(
         }
 
         if (spawn != null) {
-            DataResult<EntitySpawnConfig> sv = spawn.validate();
-            var serr = sv.error();
-            if (serr.isPresent()) {
+            DataResult<EntitySpawnConfig> spawnValidation = spawn.validate();
+            var spawnError = spawnValidation.error();
+            if (spawnError.isPresent()) {
                 return DataResult.error(() ->
-                        JolCraftParameterIds.SPAWN + " invalid: " + serr.get().message());
+                        JolCraftParameterIds.SPAWN + " invalid: " + spawnError.get().message());
             }
         }
 
-        return DataResult.success(this);
+        return SelfValidating.ok(this);
     }
-
-    // ---------------------------------------------------------------------
-    // RUNTIME
-    // ---------------------------------------------------------------------
 
     public Optional<RolledEntity> roll(@NotNull WorldContext ctx) {
         Optional<Holder<EntityType<?>>> typeOpt = producer.select(ctx);

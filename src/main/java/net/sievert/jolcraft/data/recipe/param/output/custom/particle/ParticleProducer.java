@@ -3,56 +3,66 @@ package net.sievert.jolcraft.data.recipe.param.output.custom.particle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
-import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectable;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
+import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Structural particle type handle.
- *
- * - Strict, non-null particle type holder.
- * - Introspectable: reports PARTICLE_TYPE registry usage.
- * - Runtime creation of ParticleOptions is owned by ParticleSpec (payload may vary per type).
- */
-public record ParticleProducer(
-        @NotNull Holder<ParticleType<?>> type
-) implements SelfValidating<ParticleProducer>, RegistryIntrospectable {
+import java.util.List;
+import java.util.Optional;
 
-    private static final Codec<Holder<ParticleType<?>>> PARTICLE_TYPE_HOLDER_CODEC =
-            RegistryFixedCodec.create(Registries.PARTICLE_TYPE);
+public record ParticleProducer(
+        @NotNull ResourceLocation particleId
+) implements SelfValidating<ParticleProducer>, RegistryIntrospectionSource {
 
     private static final Codec<ParticleProducer> RAW_CODEC =
-            PARTICLE_TYPE_HOLDER_CODEC.xmap(ParticleProducer::new, ParticleProducer::type);
+            ResourceLocation.CODEC.xmap(ParticleProducer::new, ParticleProducer::particleId);
 
     public static final Codec<ParticleProducer> CODEC =
             ParamCodecs.validated(RAW_CODEC);
 
-    private static final StreamCodec<RegistryFriendlyByteBuf, Holder<ParticleType<?>>> PARTICLE_TYPE_HOLDER_STREAM =
-            ByteBufCodecs.holderRegistry(Registries.PARTICLE_TYPE);
-
     public static final StreamCodec<RegistryFriendlyByteBuf, ParticleProducer> STREAM_CODEC =
-            PARTICLE_TYPE_HOLDER_STREAM.map(ParticleProducer::new, ParticleProducer::type);
+            StreamCodec.of(
+                    (buf, value) -> ResourceLocation.STREAM_CODEC.encode(buf, value.particleId()),
+                    buf -> new ParticleProducer(ResourceLocation.STREAM_CODEC.decode(buf))
+            );
 
+    public static @NotNull DataResult<ParticleProducer> of(@NotNull ResourceLocation particleId) {
+        return DataResult.success(new ParticleProducer(particleId));
+    }
 
     public static @NotNull DataResult<ParticleProducer> of(@NotNull Holder<ParticleType<?>> type) {
-        return DataResult.success(new ParticleProducer(type));
+        return DataResult.success(new ParticleProducer(extractParticleId(type)));
+    }
+
+    public @NotNull Optional<Holder.Reference<ParticleType<?>>> resolve(@NotNull RegistryAccess access) {
+        return access.lookupOrThrow(Registries.PARTICLE_TYPE)
+                .get(ResourceKey.create(Registries.PARTICLE_TYPE, particleId));
+    }
+
+    @Override
+    public @NotNull List<RegistryIntrospection> introspections() {
+        return List.of(
+                RegistryIntrospection.empty(Registries.PARTICLE_TYPE)
+        );
     }
 
     @Override
     public @NotNull DataResult<ParticleProducer> validate() {
-        return DataResult.success(this);
+        return SelfValidating.ok(this);
     }
 
-    @Override
-    public @NotNull RegistryIntrospection introspection() {
-        return RegistryIntrospection.single(Registries.PARTICLE_TYPE, type);
+    private static @NotNull ResourceLocation extractParticleId(@NotNull Holder<ParticleType<?>> type) {
+        return type.unwrapKey()
+                .map(ResourceKey::location)
+                .orElseThrow(() -> new IllegalArgumentException("particle holder has no registry key"));
     }
 }

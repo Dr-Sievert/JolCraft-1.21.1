@@ -21,9 +21,9 @@ import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfig;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomRecipe;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
@@ -52,7 +52,7 @@ public record DwarfTradeRecipe(
         TradePoolEntry pool,
         int order,
         ItemInput costA,
-        ItemInput costB,
+        @Nullable ItemInput costB,
         ItemOutput result,
         TradeStats stats
 ) implements CustomRecipe<DwarfTradeRecipeInput> {
@@ -70,6 +70,33 @@ public record DwarfTradeRecipe(
 
     public static final String SOURCE_COST_B =
             JolCraftStrings.underscored(JolCraftDictionary.COST, "b");
+
+    public static final int DEFAULT_MAX_USES = 5;
+    public static final int DEFAULT_DWARF_XP = 0;
+    public static final float DEFAULT_PRICE_MULTIPLIER = 0.05F;
+
+    public DwarfTradeRecipe {
+        if (profession == null) {
+            throw new IllegalArgumentException("profession is required");
+        }
+        if (merchantLevel == null) {
+            throw new IllegalArgumentException("merchantLevel is required");
+        }
+
+        pool = pool != null ? pool : TradePoolEntry.MAIN;
+
+        if (order < 0) {
+            throw new IllegalArgumentException("order must be >= 0");
+        }
+        if (costA == null) {
+            throw new IllegalArgumentException("costA is required");
+        }
+        if (result == null) {
+            throw new IllegalArgumentException("result is required");
+        }
+
+        stats = stats != null ? stats : TradeStats.DEFAULT;
+    }
 
     public enum TradeGroup {
         MAIN,
@@ -235,37 +262,6 @@ public record DwarfTradeRecipe(
         }
     }
 
-    public static final DwarfTradeRecipe EMPTY =
-            new DwarfTradeRecipe(
-                    DwarfProfession.NONE,
-                    DwarfMerchantData.Level.NOVICE,
-                    TradePoolEntry.MAIN,
-                    0,
-                    ItemInput.EMPTY,
-                    ItemInput.EMPTY,
-                    ItemOutput.EMPTY,
-                    TradeStats.DEFAULT
-            );
-
-    public DwarfTradeRecipe {
-        profession = profession != null ? profession : DwarfProfession.NONE;
-        merchantLevel = merchantLevel != null ? merchantLevel : DwarfMerchantData.Level.NOVICE;
-        pool = pool != null ? pool : TradePoolEntry.MAIN;
-
-        order = Math.max(0, order);
-
-        costA = costA != null ? costA : ItemInput.EMPTY;
-        costB = costB != null ? costB : ItemInput.EMPTY;
-
-        result = result != null ? result : ItemOutput.EMPTY;
-
-        stats = stats != null ? stats : TradeStats.DEFAULT;
-    }
-
-    public static final int DEFAULT_MAX_USES = 5;
-    public static final int DEFAULT_DWARF_XP = 0;
-    public static final float DEFAULT_PRICE_MULTIPLIER = 0.05F;
-
     public record TradeStats(
             int maxUses,
             int dwarfXp,
@@ -308,7 +304,7 @@ public record DwarfTradeRecipe(
             return false;
         }
 
-        if (costB != ItemInput.EMPTY) {
+        if (costB != null) {
             boolean ok = costB.matches(ctx, in.costB());
             if (!ok) {
                 JolCraftLogs.warn(JolCraftLogTags.ENTITY,
@@ -342,15 +338,7 @@ public record DwarfTradeRecipe(
             return ItemStack.EMPTY;
         }
 
-        ItemOutput out = result;
-        if (out == null || out == ItemOutput.EMPTY) {
-            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                    "DwarfTradeRecipe.assemble failed: result output empty for profession={} level={}",
-                    profession, merchantLevel);
-            return ItemStack.EMPTY;
-        }
-
-        List<Output> generated = out.generateResolved(ctx, in);
+        List<Output> generated = result.generateResolved(ctx, in);
         if (generated.isEmpty()) {
             JolCraftLogs.warn(JolCraftLogTags.ENTITY,
                     "DwarfTradeRecipe.assemble failed: generated outputs empty for profession={} level={}",
@@ -410,7 +398,9 @@ public record DwarfTradeRecipe(
         private static final Codec<DwarfMerchantData.Level> LEVEL_CODEC =
                 Codec.STRING.comapFlatMap(
                         s -> {
-                            if (s == null) return DataResult.error(() -> "level is null");
+                            if (s == null) {
+                                return DataResult.error(() -> "level is null");
+                            }
                             try {
                                 return DataResult.success(
                                         DwarfMerchantData.Level.valueOf(s.trim().toUpperCase(Locale.ROOT))
@@ -474,9 +464,8 @@ public record DwarfTradeRecipe(
                                         .forGetter(DwarfTradeRecipe::costA),
 
                                 ItemInput.CODEC.optionalFieldOf(
-                                                JolCraftStrings.underscored(JolCraftDictionary.COST, "b"),
-                                                ItemInput.EMPTY)
-                                        .forGetter(DwarfTradeRecipe::costB),
+                                                JolCraftStrings.underscored(JolCraftDictionary.COST, "b"))
+                                        .forGetter(recipe -> Optional.ofNullable(recipe.costB())),
 
                                 RESULT_CODEC.fieldOf(JolCraftDictionary.RESULT)
                                         .forGetter(DwarfTradeRecipe::result),
@@ -486,7 +475,17 @@ public record DwarfTradeRecipe(
                                                 TradeStats.DEFAULT)
                                         .forGetter(DwarfTradeRecipe::stats)
 
-                        ).apply(inst, DwarfTradeRecipe::new)
+                        ).apply(inst, (profession, merchantLevel, pool, order, costA, costB, result, stats) ->
+                                new DwarfTradeRecipe(
+                                        profession,
+                                        merchantLevel,
+                                        pool,
+                                        order,
+                                        costA,
+                                        costB.orElse(null),
+                                        result,
+                                        stats
+                                ))
                 ).validate(DwarfTradeRecipe::validateRecipe);
 
         public static final StreamCodec<RegistryFriendlyByteBuf, DwarfTradeRecipe> STREAM_CODEC =
@@ -497,7 +496,12 @@ public record DwarfTradeRecipe(
                             TradePoolEntry.STREAM_CODEC.encode(buf, recipe.pool());
                             buf.writeVarInt(recipe.order());
                             ItemInput.STREAM_CODEC.encode(buf, recipe.costA());
-                            ItemInput.STREAM_CODEC.encode(buf, recipe.costB());
+
+                            buf.writeBoolean(recipe.costB() != null);
+                            if (recipe.costB() != null) {
+                                ItemInput.STREAM_CODEC.encode(buf, recipe.costB());
+                            }
+
                             RESULT_STREAM_CODEC.encode(buf, recipe.result());
 
                             TradeStats stats = recipe.stats();
@@ -511,7 +515,11 @@ public record DwarfTradeRecipe(
                             TradePoolEntry pool = TradePoolEntry.STREAM_CODEC.decode(buf);
                             int order = buf.readVarInt();
                             ItemInput costA = ItemInput.STREAM_CODEC.decode(buf);
-                            ItemInput costB = ItemInput.STREAM_CODEC.decode(buf);
+
+                            ItemInput costB = buf.readBoolean()
+                                    ? ItemInput.STREAM_CODEC.decode(buf)
+                                    : null;
+
                             ItemOutput result = RESULT_STREAM_CODEC.decode(buf);
 
                             TradeStats stats = new TradeStats(
@@ -619,8 +627,8 @@ public record DwarfTradeRecipe(
         DataResult<DwarfTradeRecipe> rr = RecipeValidation.requireRecipe(r);
         var rrErr = rr.error();
         if (rrErr.isPresent()) {
-            String msg = rrErr.map(DataResult.Error::message).orElse("recipe is null");
-            return DataResult.error(() -> msg);
+            return DataResult.error(() ->
+                    rrErr.map(DataResult.Error::message).orElse("recipe is null"));
         }
 
         DwarfTradeRecipe recipe = rr.result().orElse(null);
@@ -628,14 +636,17 @@ public record DwarfTradeRecipe(
             return DataResult.error(() -> "recipe is null");
         }
 
-        if (recipe.profession() == null)
+        if (recipe.profession() == null) {
             return DataResult.error(() -> "profession is required");
+        }
 
-        if (recipe.merchantLevel() == null)
+        if (recipe.merchantLevel() == null) {
             return DataResult.error(() -> "level is required");
+        }
 
-        if (recipe.pool() == null)
+        if (recipe.pool() == null) {
             return DataResult.error(() -> "pool is required");
+        }
 
         {
             DataResult<TradePoolEntry> poolValidation = TradePoolEntry.validate(recipe.pool());
@@ -645,43 +656,64 @@ public record DwarfTradeRecipe(
             }
         }
 
-        if (recipe.order() < 0)
+        if (recipe.order() < 0) {
             return DataResult.error(() -> "order must be >= 0");
+        }
 
-        if (recipe.stats() == null)
+        if (recipe.costA() == null) {
+            return DataResult.error(() -> "cost_a is required");
+        }
+
+        if (recipe.stats() == null) {
             return DataResult.error(() -> "stats is required");
+        }
 
-        if (recipe.stats().maxUses() < 1)
+        if (recipe.stats().maxUses() < 1) {
             return DataResult.error(() -> "max_uses must be >= 1");
+        }
 
-        if (recipe.stats().dwarfXp() < 0)
+        if (recipe.stats().dwarfXp() < 0) {
             return DataResult.error(() -> "dwarf_xp must be >= 0");
+        }
 
-        if (recipe.stats().priceMultiplier() < 0.0F)
+        if (recipe.stats().priceMultiplier() < 0.0F) {
             return DataResult.error(() -> "price_multiplier must be >= 0");
+        }
+
+        {
+            var costAErr = recipe.costA().validate().error();
+            if (costAErr.isPresent()) {
+                return DataResult.error(() -> "cost_a invalid: " + costAErr.get().message());
+            }
+        }
 
         if (!recipe.costA().exactlyOneConcrete(Registries.ITEM) && !recipe.costA().exactlyOneTag(Registries.ITEM)) {
             return DataResult.error(() -> "cost_a must be a specific item or single tag");
         }
 
-        if (recipe.costB() != ItemInput.EMPTY
-                && !recipe.costB().exactlyOneConcrete(Registries.ITEM)
-                && !recipe.costB().exactlyOneTag(Registries.ITEM)) {
-            return DataResult.error(() -> "cost_b must be a specific item or single tag");
+        if (recipe.costB() != null) {
+            var costBErr = recipe.costB().validate().error();
+            if (costBErr.isPresent()) {
+                return DataResult.error(() -> "cost_b invalid: " + costBErr.get().message());
+            }
+
+            if (!recipe.costB().exactlyOneConcrete(Registries.ITEM) && !recipe.costB().exactlyOneTag(Registries.ITEM)) {
+                return DataResult.error(() -> "cost_b must be a specific item or single tag");
+            }
         }
 
         ItemOutput out = recipe.result();
-        if (out == null || out == ItemOutput.EMPTY)
+        if (out == null) {
             return DataResult.error(() -> "result is required");
+        }
 
         var outErr = out.validate().error();
         if (outErr.isPresent()) {
-            String msg = outErr.map(e -> "result invalid: " + e.message()).orElse("result invalid");
-            return DataResult.error(() -> msg);
+            return DataResult.error(() -> "result invalid: " + outErr.get().message());
         }
 
         ItemSpec spec = out.result();
-        if (spec == null || spec == ItemSpec.EMPTY) {
+        if (spec == null) {
             return DataResult.error(() -> "result.result is required");
         }
 
@@ -696,10 +728,14 @@ public record DwarfTradeRecipe(
 
         List<ComponentTransform> components = out.transforms().components();
         for (ComponentTransform transform : components) {
-            if (!(transform instanceof ComponentTransform.Config c)) continue;
+            if (!(transform instanceof ComponentTransform.Config c)) {
+                continue;
+            }
 
             String source = c.source();
-            if (source == null) continue;
+            if (source == null) {
+                continue;
+            }
 
             if (!supportsSource(source)) {
                 return DataResult.error(() ->
@@ -709,7 +745,7 @@ public record DwarfTradeRecipe(
         }
 
         Holder<Item> costAH = recipe.costA().singleConcrete(Registries.ITEM).orElse(null);
-        Holder<Item> costBH = recipe.costB() != ItemInput.EMPTY
+        Holder<Item> costBH = recipe.costB() != null
                 ? recipe.costB().singleConcrete(Registries.ITEM).orElse(null)
                 : null;
 

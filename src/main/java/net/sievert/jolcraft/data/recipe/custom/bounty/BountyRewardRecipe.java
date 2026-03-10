@@ -13,9 +13,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomOutputRecipe;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
@@ -26,6 +26,8 @@ import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
 import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -46,10 +48,10 @@ import java.util.List;
  * - Outputs
  */
 public record BountyRewardRecipe(
-        BountyType bountyType,
-        BountyTier tier,
-        Outputs rewards,
-        SoundOutput sound
+        @NotNull DwarfProfession bountyType,
+        @NotNull DwarfMerchantData.Level tier,
+        @NotNull Outputs rewards,
+        @NotNull SoundOutput sound
 ) implements CustomOutputRecipe<BountyRecipeInput, List<Output>> {
 
     @Override
@@ -121,27 +123,27 @@ public record BountyRewardRecipe(
         private static final String REWARDS_KEY =
                 JolCraftStrings.plural(JolCraftDictionary.REWARD);
 
-        private static final StreamCodec<RegistryFriendlyByteBuf, BountyType> BOUNTY_TYPE_STREAM_CODEC =
+        private static final StreamCodec<RegistryFriendlyByteBuf, DwarfProfession> BOUNTY_TYPE_STREAM_CODEC =
                 StreamCodec.of(
-                        (buf, value) -> buf.writeUtf(value.getId()),
+                        (buf, value) -> buf.writeUtf(value.professionName()),
                         buf -> {
-                            String id = buf.readUtf();
-                            BountyType type = BountyType.fromString(id);
-                            if (type == null || type == BountyType.UNKNOWN) {
-                                throw new IllegalArgumentException("unknown bounty type '" + id + "'");
+                            String raw = buf.readUtf();
+                            DwarfProfession type = BountyRecipe.parseType(raw);
+                            if (type == null) {
+                                throw new IllegalArgumentException("unknown bounty type '" + raw + "'");
                             }
                             return type;
                         }
                 );
 
-        private static final StreamCodec<RegistryFriendlyByteBuf, BountyTier> BOUNTY_TIER_STREAM_CODEC =
+        private static final StreamCodec<RegistryFriendlyByteBuf, DwarfMerchantData.Level> BOUNTY_TIER_STREAM_CODEC =
                 StreamCodec.of(
                         (buf, value) -> buf.writeVarInt(value.getId()),
                         buf -> {
-                            int id = buf.readVarInt();
-                            BountyTier tier = BountyTier.fromValue(id);
-                            if (tier == null || tier == BountyTier.UNKNOWN) {
-                                throw new IllegalArgumentException("unknown bounty tier id " + id);
+                            int raw = buf.readVarInt();
+                            DwarfMerchantData.Level tier = BountyRecipe.parseTier(raw);
+                            if (tier == null) {
+                                throw new IllegalArgumentException("unknown bounty tier id " + raw);
                             }
                             return tier;
                         }

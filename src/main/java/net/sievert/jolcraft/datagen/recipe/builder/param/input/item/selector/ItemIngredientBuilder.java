@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.item.selector;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -19,8 +20,9 @@ import java.util.List;
  *
  * Policy:
  * - Never throws
- * - Ignores nulls and {@link ItemIngredient.Target#EMPTY}
+ * - Ignores nulls
  * - Deterministic build
+ * - Leaves strict validation to {@link ItemIngredient#validate()}
  */
 public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient> {
 
@@ -42,7 +44,7 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
     }
 
     public ItemIngredientBuilder target(ItemIngredient.Target target) {
-        if (target == null || target == ItemIngredient.Target.EMPTY) return this;
+        if (target == null) return this;
 
         List<ItemIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
@@ -52,7 +54,7 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
 
         ArrayList<ItemIngredient.Target> next = new ArrayList<>(list.size() + 1);
         for (ItemIngredient.Target t : list) {
-            if (t != null && t != ItemIngredient.Target.EMPTY) next.add(t);
+            if (t != null) next.add(t);
         }
         next.add(target);
 
@@ -76,7 +78,7 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
 
     public ItemIngredientBuilder item(Holder<Item> holder) {
         if (holder == null) return this;
-        return item(holder.value());
+        return target(new ItemIngredient.Target(Either.left(holder)));
     }
 
     public ItemIngredientBuilder tag(TagKey<Item> tag) {
@@ -92,14 +94,14 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
     public ItemIngredient build() {
         List<ItemIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
-            return ItemIngredient.EMPTY;
+            return ItemIngredient.ofTargets(List.of());
         }
 
         ArrayList<ItemIngredient.Target> safe = new ArrayList<>(list.size());
         for (ItemIngredient.Target t : list) {
-            if (t != null && t != ItemIngredient.Target.EMPTY) safe.add(t);
+            if (t != null) safe.add(t);
         }
 
-        return safe.isEmpty() ? ItemIngredient.EMPTY : ItemIngredient.ofTargets(safe);
+        return ItemIngredient.ofTargets(safe);
     }
 }

@@ -9,8 +9,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTier;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyType;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
@@ -19,6 +17,8 @@ import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -33,8 +33,8 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
 
     private final List<String> errors = new ArrayList<>();
 
-    private BountyType bountyType = BountyType.UNKNOWN;
-    private BountyTier tier = BountyTier.UNKNOWN;
+    private @Nullable DwarfProfession bountyType;
+    private @Nullable DwarfMerchantData.Level tier;
     private Outputs rewards = Outputs.EMPTY;
 
     private @Nullable SoundOutput sound;
@@ -45,10 +45,16 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
         return new BountyRewardRecipeBuilder();
     }
 
-    public @NotNull BountyRewardRecipeBuilder bountyType(@Nullable BountyType type) {
+    public @NotNull BountyRewardRecipeBuilder bountyType(@Nullable DwarfProfession type) {
         if (type == null) {
             errors.add("bountyType is null");
-            this.bountyType = BountyType.UNKNOWN;
+            this.bountyType = null;
+            return this;
+        }
+
+        if (type == DwarfProfession.NONE) {
+            errors.add("bountyType must not be NONE");
+            this.bountyType = null;
             return this;
         }
 
@@ -56,10 +62,10 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    public @NotNull BountyRewardRecipeBuilder tier(@Nullable BountyTier tier) {
+    public @NotNull BountyRewardRecipeBuilder tier(@Nullable DwarfMerchantData.Level tier) {
         if (tier == null) {
             errors.add("tier is null");
-            this.tier = BountyTier.UNKNOWN;
+            this.tier = null;
             return this;
         }
 
@@ -100,15 +106,22 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
-        DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
-                .word(tierNameSafe())
-                .word(bountyTypeNameSafe())
-                .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_REWARD))
-                .build();
+        if (bountyType == null) {
+            errors.add("bountyType is required");
+        }
+
+        if (tier == null) {
+            errors.add("tier is required");
+        }
 
         if (sound == null) {
             errors.add("sound is required");
         }
+
+        DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
+                .word(tierNameSafe())
+                .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_REWARD))
+                .build();
 
         if (!errors.isEmpty()) {
             return nameBuilt.flatMap(name ->
@@ -116,11 +129,19 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
             );
         }
 
+        DwarfProfession finalType = bountyType;
+        DwarfMerchantData.Level finalTier = tier;
+        SoundOutput finalSound = sound;
+
+        if (finalType == null || finalTier == null || finalSound == null) {
+            return DataResult.error(() -> "builder: missing required fields");
+        }
+
         BountyRewardRecipe recipe = new BountyRewardRecipe(
-                bountyType,
-                tier,
+                finalType,
+                finalTier,
                 rewards,
-                sound
+                finalSound
         );
 
         return nameBuilt.flatMap(name ->
@@ -136,18 +157,10 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
     }
 
     private @NotNull String tierNameSafe() {
-        return tier.name().toLowerCase(Locale.ROOT);
-    }
-
-    private @NotNull String bountyTypeNameSafe() {
-        try {
-            String id = bountyType.getId();
-            return (id == null || id.isBlank())
-                    ? JolCraftDictionary.UNKNOWN
-                    : id;
-        } catch (RuntimeException e) {
-            errors.add("bountyType.getId() threw");
+        if (tier == null) {
             return JolCraftDictionary.UNKNOWN;
         }
+
+        return tier.name().toLowerCase(Locale.ROOT);
     }
 }

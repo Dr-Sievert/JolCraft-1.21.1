@@ -12,15 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Strict immutable hook dispatch table.
- *
- * Rules:
- * - no runtime registration
- * - no mutable global state
- * - unknown hook ids are ignored (no-op)
- * - all known hooks are declared here as static entries
- */
 public final class Hooks {
 
     @FunctionalInterface
@@ -43,10 +34,7 @@ public final class Hooks {
 
     private Hooks() {}
 
-    public static @NotNull Operation resolve(ResourceLocation id) {
-        if (id == null) {
-            return NOOP;
-        }
+    public static @NotNull Operation resolve(@NotNull ResourceLocation id) {
         return REGISTRY.getOrDefault(id, NOOP);
     }
 

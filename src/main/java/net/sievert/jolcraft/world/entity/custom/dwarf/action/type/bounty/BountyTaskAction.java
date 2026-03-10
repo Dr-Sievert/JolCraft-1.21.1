@@ -101,7 +101,7 @@ public final class BountyTaskAction extends InspectDwarfAction {
         if (ticksRemaining == FX_SOUND_1_TICKS && sound1 != null) {
             JolCraftSoundHelper.entity(
                     dwarf,
-                    Objects.requireNonNull(sound1.sound()).value(),
+                    Objects.requireNonNull(sound1.resolveValue(player.registryAccess())),
                     sound1.volume(),
                     sound1.pitch()
             );
@@ -110,7 +110,7 @@ public final class BountyTaskAction extends InspectDwarfAction {
         if (ticksRemaining == FX_SOUND_2_TICKS && sound2 != null) {
             JolCraftSoundHelper.entity(
                     dwarf,
-                    Objects.requireNonNull(sound2.sound()).value(),
+                    Objects.requireNonNull(sound2.resolveValue(player.registryAccess())),
                     sound2.volume(),
                     sound2.pitch()
             );

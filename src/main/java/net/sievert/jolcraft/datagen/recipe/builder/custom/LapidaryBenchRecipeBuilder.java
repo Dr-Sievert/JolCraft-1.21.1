@@ -55,9 +55,9 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
 
     private final List<String> errors = new ArrayList<>();
 
-    private ItemInput input = ItemInput.EMPTY;
-    private ItemSelector tool = ItemSelector.EMPTY;
-    private ItemOutput result = ItemOutput.EMPTY;
+    private @Nullable ItemInput input;
+    private @Nullable ItemSelector tool;
+    private @Nullable ItemOutput result;
     private @Nullable SoundOutput sound;
     private IntRange xp = IntRange.ZERO;
     private IntRange toolDamage = IntRange.fixed(1);
@@ -75,7 +75,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
     public @NotNull LapidaryBenchRecipeBuilder input(@Nullable ItemInput in) {
         if (in == null) {
             errors.add("input is null");
-            this.input = ItemInput.EMPTY;
+            this.input = null;
             return this;
         }
 
@@ -86,7 +86,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
     public @NotNull LapidaryBenchRecipeBuilder tool(@Nullable ItemSelector sel) {
         if (sel == null) {
             errors.add("tool is null");
-            this.tool = ItemSelector.EMPTY;
+            this.tool = null;
             return this;
         }
 
@@ -97,7 +97,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
     public @NotNull LapidaryBenchRecipeBuilder result(@Nullable ItemOutput out) {
         if (out == null) {
             errors.add("result is null");
-            this.result = ItemOutput.EMPTY;
+            this.result = null;
             return this;
         }
 
@@ -154,6 +154,18 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
                 .word(JolCraftDictionary.INTO)
                 .word(resultToken)
                 .build();
+
+        if (input == null) {
+            errors.add("input is required");
+        }
+
+        if (tool == null) {
+            errors.add("tool is required");
+        }
+
+        if (result == null) {
+            errors.add("result is required");
+        }
 
         if (sound == null) {
             errors.add("sound is required");
@@ -267,7 +279,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
     }
 
     private @NotNull String toolTokenFailClosed(@Nullable ItemSelector selector) {
-        if (selector == null || selector == ItemSelector.EMPTY) {
+        if (selector == null) {
             errors.add("tool is missing (for naming)");
             return JolCraftDictionary.TOOL;
         }

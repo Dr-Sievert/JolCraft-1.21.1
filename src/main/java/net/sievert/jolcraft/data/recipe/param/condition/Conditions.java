@@ -30,7 +30,7 @@ public record Conditions(List<Condition> conditions)
     public static final StreamCodec<RegistryFriendlyByteBuf, Conditions> STREAM_CODEC =
             StreamCodec.of(
                     (buf, value) -> {
-                        List<Condition> list = value.conditions;
+                        List<Condition> list = value.conditions();
                         buf.writeVarInt(list.size());
                         for (Condition condition : list) {
                             Condition.STREAM_CODEC.encode(buf, condition);
@@ -56,29 +56,30 @@ public record Conditions(List<Condition> conditions)
                         for (int i = 0; i < size; i++) {
                             list.add(Condition.STREAM_CODEC.decode(buf));
                         }
-                        return new Conditions(List.copyOf(list));
+                        return new Conditions(list);
                     }
             );
 
     public Conditions(List<Condition> conditions) {
-        this.conditions = conditions == null ? List.of() : List.copyOf(conditions);
+        if (conditions == null || conditions.isEmpty()) {
+            this.conditions = List.of();
+            return;
+        }
+
+        ArrayList<Condition> safe = new ArrayList<>(conditions.size());
+        for (Condition condition : conditions) {
+            if (condition == null) {
+                throw new IllegalArgumentException(JolCraftParameterIds.CONDITIONS + " contains null");
+            }
+            safe.add(condition);
+        }
+        this.conditions = List.copyOf(safe);
     }
 
     @Override
     public @NotNull DataResult<Conditions> validate() {
-        if (conditions == null) {
-            return DataResult.error(() -> JolCraftParameterIds.CONDITIONS + " cannot be null");
-        }
-
         for (int i = 0; i < conditions.size(); i++) {
             Condition condition = conditions.get(i);
-            if (condition == null) {
-                final int idx = i;
-                return DataResult.error(() ->
-                        JolCraftParameterIds.CONDITIONS + " contains null at index " + idx
-                );
-            }
-
             DataResult<Condition> child = condition.validate();
             var err = child.error();
             if (err.isPresent()) {

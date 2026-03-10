@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.entity;
 
+import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.input.custom.entity.EntityInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement.EntityRequirements;
@@ -14,7 +15,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.param.input.entity.selector.E
  * Datagen builder for {@link EntityInput}.
  *
  * Policy:
- * - Never throws
+ * - Mutation methods never throw
  * - Ignores null builders
  * - Deterministic build
  * - Leaves domain validation to {@link EntityInput#validate()}
@@ -89,11 +90,14 @@ public final class EntityInputBuilder implements ParamBuilder<EntityInput> {
 
     @Override
     public EntityInput build() {
-        Conditions c = (conditions != null) ? conditions : Conditions.EMPTY;
-        EntitySelector s = (selector != null) ? selector : EntitySelector.EMPTY;
-        IntRange n = (count != null) ? count : IntRange.ONE;
-        EntityRequirements r = (requirements != null) ? requirements : EntityRequirements.EMPTY;
+        Conditions c = conditions != null ? conditions : Conditions.EMPTY;
+        IntRange n = count != null ? count : IntRange.ONE;
+        EntityRequirements r = requirements != null ? requirements : EntityRequirements.EMPTY;
 
-        return new EntityInput(c, s, n, r);
+        if (selector == null) {
+            throw new IllegalStateException("Missing required field '" + JolCraftParameterIds.SELECTOR + "'");
+        }
+
+        return new EntityInput(c, selector, n, r);
     }
 }

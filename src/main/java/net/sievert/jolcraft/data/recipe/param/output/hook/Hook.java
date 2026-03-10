@@ -30,22 +30,18 @@ public record Hook(ResourceLocation id) implements SelfValidating<Hook> {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Hook> STREAM_CODEC =
             StreamCodec.of(
-                    (buf, v) -> {
-                        ResourceLocation rl = v.id;
-                        buf.writeBoolean(rl != null);
-                        if (rl != null) buf.writeResourceLocation(rl);
-                    },
-                    buf -> {
-                        boolean present = buf.readBoolean();
-                        return present ? new Hook(buf.readResourceLocation()) : new Hook(null);
-                    }
+                    (buf, v) -> buf.writeResourceLocation(v.id()),
+                    buf -> new Hook(buf.readResourceLocation())
             );
+
+    public Hook {
+        if (id == null) {
+            throw new IllegalArgumentException("missing required field '" + JolCraftParameterIds.ID + "'");
+        }
+    }
 
     @Override
     public @NotNull DataResult<Hook> validate() {
-        if (id == null) {
-            return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.ID + "'");
-        }
         return SelfValidating.ok(this);
     }
 
@@ -54,7 +50,6 @@ public record Hook(ResourceLocation id) implements SelfValidating<Hook> {
             @NotNull ItemTransformSourceResolver resolver,
             @NotNull List<Output> outputs
     ) {
-        if (id == null) return;
         Hooks.apply(id, ctx, resolver, outputs);
     }
 }
