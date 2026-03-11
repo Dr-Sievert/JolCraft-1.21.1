@@ -208,10 +208,10 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
 
         RecipeFileNameBuilder builder = RecipeFileNameBuilder.create()
                 .word(JolCraftRecipeIds.HAND_INTERACTION)
-                .word(aTok)
                 .word(aAct)
-                .word(bTok)
-                .word(bAct);
+                .word(aTok)
+                .word(bAct)
+                .word(bTok);
 
         if (requireSneaking) {
             builder.word(JolCraftDictionary.SNEAK);

@@ -18,19 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-/**
- * Atomic entity requirement: entity must have an item matching the given {@link ItemInput}
- * in a given equipment slot.
- * JSON:
- * { "slot": "mainhand", "item": { ... ItemInput ... } }
- *
- * Option 1 (S+ strict):
- * - No invalid/sentinel instances.
- * - slot/item required and non-null.
- * - Stream assumes valid instances.
- *
- * Runtime matches(...) is total + fail-closed.
- */
 public record EquipmentRequirement(EquipmentSlot slot, ItemInput item) implements SelfValidating<EquipmentRequirement> {
 
     private static final Codec<EquipmentSlot> SLOT_CODEC =
@@ -38,10 +25,7 @@ public record EquipmentRequirement(EquipmentSlot slot, ItemInput item) implement
                 if (name == null || name.isEmpty()) {
                     return DataResult.error(() -> "missing '" + JolCraftParameterIds.SLOT + "'");
                 }
-
-                EquipmentSlot slot = EquipmentSlot.byName(name);
-
-                return DataResult.success(slot);
+                return DataResult.success(EquipmentSlot.byName(name));
             }, EquipmentSlot::getName);
 
     private static final Codec<EquipmentRequirement> RAW_CODEC =
@@ -54,36 +38,29 @@ public record EquipmentRequirement(EquipmentSlot slot, ItemInput item) implement
 
     private static final int MAX_SLOT_NAME = 64;
 
-    /**
-     * Stream:
-     * - Stable slot names (NOT ordinals).
-     * - Strict: assumes valid instances (non-null slot/item).
-     * - No validate() calls here (no allocations).
-     */
     public static final StreamCodec<RegistryFriendlyByteBuf, EquipmentRequirement> STREAM_CODEC =
             StreamCodec.of(
                     (buf, req) -> {
-                        buf.writeUtf(req.slot.getName());
-                        ItemInput.STREAM_CODEC.encode(buf, req.item);
+                        buf.writeUtf(req.slot().getName());
+                        ItemInput.STREAM_CODEC.encode(buf, req.item());
                     },
-                    buf -> {
-                        String slotName = buf.readUtf(MAX_SLOT_NAME);
-                        EquipmentSlot s = EquipmentSlot.byName(slotName);
-                        ItemInput it = ItemInput.STREAM_CODEC.decode(buf);
-                        return new EquipmentRequirement(s, it);
-                    }
+                    buf -> new EquipmentRequirement(
+                            EquipmentSlot.byName(buf.readUtf(MAX_SLOT_NAME)),
+                            ItemInput.STREAM_CODEC.decode(buf)
+                    )
             );
+
+    public EquipmentRequirement {
+        if (slot == null) {
+            throw new IllegalArgumentException("missing required field '" + JolCraftParameterIds.SLOT + "'");
+        }
+        if (item == null) {
+            throw new IllegalArgumentException("missing required field '" + JolCraftParameterIds.ITEM + "'");
+        }
+    }
 
     @Override
     public @NotNull DataResult<EquipmentRequirement> validate() {
-        if (slot == null) {
-            return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.SLOT + "'");
-        }
-
-        if (item == null) {
-            return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.ITEM + "'");
-        }
-
         DataResult<ItemInput> iv = item.validate();
         Optional<DataResult.Error<ItemInput>> err = iv.error();
         return err.<DataResult<EquipmentRequirement>>map(e ->
@@ -92,10 +69,7 @@ public record EquipmentRequirement(EquipmentSlot slot, ItemInput item) implement
     }
 
     public boolean matches(@NotNull WorldContext ctx, Entity entity) {
-        if (entity == null) return false;
         if (!(entity instanceof LivingEntity living)) return false;
-        if (slot == null || item == null) return false;
-
         ItemStack stack = living.getItemBySlot(slot);
         return item.matches(ctx, stack);
     }

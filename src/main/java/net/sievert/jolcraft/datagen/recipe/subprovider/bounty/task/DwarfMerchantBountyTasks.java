@@ -30,46 +30,46 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
     ) {
 
         emitTier(executor, DwarfMerchantData.Level.NOVICE, b -> {
-            b.collect(Items.COAL, 5, 12);
-            b.collect(Items.FLINT, 5, 12);
-            b.collect(Items.COPPER_INGOT, 5, 12);
-            b.collect(Items.COBBLED_DEEPSLATE, 5, 12);
-            b.collect(Items.TORCH, 5, 12);
-            b.collect(Items.CLAY_BALL, 5, 12);
-            b.collect(Items.IRON_NUGGET, 5, 12);
+            b.collectWeighted(Items.COAL, 5, 12, 4);
+            b.collectWeighted(Items.FLINT, 5, 12, 4);
+            b.collectWeighted(Items.COPPER_INGOT, 5, 12, 3);
+            b.collectWeighted(Items.COBBLED_DEEPSLATE, 5, 12, 3);
+            b.collectWeighted(Items.TORCH, 5, 12, 2);
+            b.collectWeighted(Items.CLAY_BALL, 5, 12, 2);
+            b.collectWeighted(Items.IRON_NUGGET, 5, 12, 2);
         });
 
         emitTier(executor, DwarfMerchantData.Level.APPRENTICE, b -> {
-            b.collect(Items.IRON_INGOT, 4, 8);
-            b.collect(Items.LAPIS_LAZULI, 4, 8);
-            b.collect(Items.REDSTONE, 4, 8);
-            b.collect(Items.GLOW_INK_SAC, 3, 6);
-            b.collect(Items.SPIDER_EYE, 3, 6);
-            b.collect(Items.GUNPOWDER, 3, 6);
-            b.collect(Items.BONE, 5, 9);
+            b.collectWeighted(Items.IRON_INGOT, 4, 8, 4);
+            b.collectWeighted(Items.LAPIS_LAZULI, 4, 8, 3);
+            b.collectWeighted(Items.REDSTONE, 4, 8, 3);
+            b.collectWeighted(Items.GLOW_INK_SAC, 3, 6, 2);
+            b.collectWeighted(Items.SPIDER_EYE, 3, 6, 2);
+            b.collectWeighted(Items.GUNPOWDER, 3, 6, 2);
+            b.collectWeighted(Items.BONE, 5, 9, 3);
         });
 
         emitTier(executor, DwarfMerchantData.Level.JOURNEYMAN, b -> {
-            b.collect(Items.GOLD_INGOT, 3, 6);
-            b.collect(Items.EMERALD, 2, 5);
-            b.collect(Items.AMETHYST_SHARD, 3, 6);
-            b.collect(Items.BLAZE_POWDER, 3, 6);
-            b.collect(Items.INK_SAC, 3, 6);
+            b.collectWeighted(Items.GOLD_INGOT, 3, 6, 3);
+            b.collectWeighted(Items.EMERALD, 2, 5, 2);
+            b.collectWeighted(Items.AMETHYST_SHARD, 3, 6, 3);
+            b.collectWeighted(Items.BLAZE_POWDER, 3, 6, 2);
+            b.collectWeighted(Items.INK_SAC, 3, 6, 2);
         });
 
         emitTier(executor, DwarfMerchantData.Level.EXPERT, b -> {
-            b.collect(Items.ANVIL, 1, 1);
-            b.collect(Items.GOLDEN_APPLE, 1, 2);
-            b.collect(Items.BOOK, 1, 2);
-            b.collect(Items.CAULDRON, 1, 1);
-            b.collect(Items.ITEM_FRAME, 1, 3);
-            b.collect(Items.ENDER_PEARL, 1, 1);
+            b.collectWeighted(Items.ANVIL, 1, 1, 1);
+            b.collectWeighted(Items.GOLDEN_APPLE, 1, 2, 2);
+            b.collectWeighted(Items.BOOK, 1, 2, 3);
+            b.collectWeighted(Items.CAULDRON, 1, 1, 2);
+            b.collectWeighted(Items.ITEM_FRAME, 1, 3, 2);
+            b.collectWeighted(Items.ENDER_PEARL, 1, 1, 1);
         });
 
         emitTier(executor, DwarfMerchantData.Level.MASTER, b -> {
-            b.collect(Items.NETHERITE_SCRAP, 1, 2);
-            b.collect(Items.HEART_OF_THE_SEA, 1, 1);
-            b.collect(Items.DRAGON_BREATH, 1, 2);
+            b.collectWeighted(Items.NETHERITE_SCRAP, 1, 2, 2);
+            b.collectWeighted(Items.HEART_OF_THE_SEA, 1, 1, 1);
+            b.collectWeighted(Items.DRAGON_BREATH, 1, 2, 2);
         });
     }
 
@@ -78,7 +78,6 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             DwarfMerchantData.Level tier,
             Consumer<BountyTaskRecipeBuilder> objectives
     ) {
-
         BountyTaskRecipeBuilder b = BountyTaskRecipeBuilder.create();
 
         b.bountyType(DwarfProfession.MERCHANT)

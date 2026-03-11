@@ -49,9 +49,6 @@ public final class DwarfBaseTrades implements RecipeSubProvider {
                         .costACoins(30, 30)
                         .costB(Items.PURPLE_DYE, 1)
                         .result(JolCraftItems.GUILD_SIGIL.get().asItem(), 1)
-                        .maxUses(1)
-                        .dwarfXp(0)
-                        .priceMultiplier(0.05F)
                         .buildValidated()
         );
     }

@@ -275,7 +275,7 @@ public final class BountyRewardAction extends InspectDwarfAction {
                 SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR,
                 dwarf.getSoundSource(),
                 dwarf.getX(),
-                dwarf.getY() + dwarf.getBbHeight() * 0.6D,
+                dwarf.getY() + dwarf.getBbHeight() * 2.1D,
                 dwarf.getZ(),
                 1.0F,
                 1.2F

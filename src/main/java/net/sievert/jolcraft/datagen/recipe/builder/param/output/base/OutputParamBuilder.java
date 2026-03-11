@@ -3,6 +3,8 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.base;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Datagen helper that produces canonical {@link Outputs}.
@@ -18,31 +20,31 @@ import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
  */
 public final class OutputParamBuilder implements ParamBuilder<Outputs> {
 
-    private Outputs outputs;
+    private @Nullable Outputs outputs;
 
     private OutputParamBuilder() {}
 
-    public static OutputParamBuilder create() {
+    public static @NotNull OutputParamBuilder create() {
         return new OutputParamBuilder();
     }
 
-    public OutputParamBuilder outputs(Outputs outputs) {
+    public @NotNull OutputParamBuilder outputs(@Nullable Outputs outputs) {
         this.outputs = outputs;
         return this;
     }
 
-    public OutputParamBuilder outputs(OutputsBuilder builder) {
+    public @NotNull OutputParamBuilder outputs(@Nullable OutputsBuilder builder) {
         this.outputs = builder != null ? builder.build() : null;
         return this;
     }
 
-    public OutputParamBuilder wrapSingle(OutputParam leaf) {
-        this.outputs = Outputs.wrapSingle(OutputParam.unwrap(leaf));
+    public @NotNull OutputParamBuilder wrapSingle(@Nullable OutputParam leaf) {
+        this.outputs = leaf != null ? Outputs.wrapSingle(leaf) : null;
         return this;
     }
 
     @Override
-    public Outputs build() {
+    public @NotNull Outputs build() {
         return outputs != null ? outputs : Outputs.EMPTY;
     }
 }

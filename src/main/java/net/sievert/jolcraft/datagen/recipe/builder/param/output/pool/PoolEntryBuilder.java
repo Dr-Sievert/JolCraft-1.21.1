@@ -3,9 +3,9 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.pool;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
-import net.sievert.jolcraft.data.recipe.param.quantity.draw.DrawRule;
+import net.sievert.jolcraft.data.recipe.param.quantity.DrawRule;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.quantity.draw.DrawRuleBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.quantity.DrawRuleBuilder;
 
 public final class PoolEntryBuilder implements ParamBuilder<PoolEntry> {
 

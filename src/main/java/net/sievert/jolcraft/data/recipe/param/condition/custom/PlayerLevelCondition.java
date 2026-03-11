@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -42,18 +43,14 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
             StreamCodec.of(
                     (buf, c) -> {
                         buf.writeVarInt(c.minLevel());
-                        buf.writeBoolean(c.maxLevel().isPresent());
-                        c.maxLevel().ifPresent(buf::writeVarInt);
+                        ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).encode(buf, c.maxLevel());
                         buf.writeBoolean(c.invert());
                     },
-                    buf -> {
-                        int min = buf.readVarInt();
-                        Optional<Integer> max = buf.readBoolean()
-                                ? Optional.of(buf.readVarInt())
-                                : Optional.empty();
-                        boolean inv = buf.readBoolean();
-                        return new PlayerLevelCondition(min, max, inv);
-                    }
+                    buf -> new PlayerLevelCondition(
+                            buf.readVarInt(),
+                            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT).decode(buf),
+                            buf.readBoolean()
+                    )
             );
 
     public static final ParamTypeDef<Condition> TYPE_DEF =
@@ -63,7 +60,7 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
         maxLevel = maxLevel != null ? maxLevel : Optional.empty();
     }
 
-    private static DataResult<PlayerLevelCondition> validateDecoded(PlayerLevelCondition c) {
+    private static @NotNull DataResult<PlayerLevelCondition> validateDecoded(@NotNull PlayerLevelCondition c) {
         if (c.minLevel() < 0) {
             return DataResult.error(() ->
                     "player_level." + JolCraftParameterIds.MIN_LEVEL + " must be >= 0 (got " + c.minLevel() + ")"

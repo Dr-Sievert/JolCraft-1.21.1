@@ -58,10 +58,10 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     private Optional<ItemOutput> extract = Optional.empty();
     private Optional<EffectOutput> effect = Optional.empty();
 
-    private int brewTicks = 1;
-    private int bubbleTicks = 1;
-    private int brewColor = 0;
-    private boolean finalizeBrew = false;
+    private int brewTicks = FermentingCauldronRecipe.DEFAULT_BREW_TICKS;
+    private int bubbleTicks = FermentingCauldronRecipe.DEFAULT_BUBBLE_TICKS;
+    private int brewColor = FermentingCauldronRecipe.DEFAULT_BREW_COLOR;
+    private boolean finalizeBrew = FermentingCauldronRecipe.DEFAULT_FINALIZE_BREW;
 
     private FermentingCauldronRecipeBuilder() {}
 
@@ -75,6 +75,7 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
             this.ingredient = null;
             return this;
         }
+
         this.ingredient = in;
         return this;
     }
@@ -99,10 +100,13 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull FermentingCauldronRecipeBuilder lastIngredient(@Nullable ItemSelector sel) {
-        this.lastIngredient = Optional.ofNullable(sel);
         if (sel == null) {
             errors.add("lastIngredient is null");
+            this.lastIngredient = Optional.empty();
+            return this;
         }
+
+        this.lastIngredient = Optional.of(sel);
         return this;
     }
 
@@ -112,10 +116,13 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull FermentingCauldronRecipeBuilder extract(@Nullable ItemOutput out) {
-        this.extract = Optional.ofNullable(out);
         if (out == null) {
             errors.add("extract is null");
+            this.extract = Optional.empty();
+            return this;
         }
+
+        this.extract = Optional.of(out);
         return this;
     }
 
@@ -143,24 +150,29 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull FermentingCauldronRecipeBuilder effect(@Nullable EffectOutput eff) {
-        this.effect = Optional.ofNullable(eff);
         if (eff == null) {
             errors.add("effect is null");
+            this.effect = Optional.empty();
+            return this;
         }
+
+        this.effect = Optional.of(eff);
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder noEffect() {
         this.effect = Optional.empty();
+        this.brewColor = FermentingCauldronRecipe.DEFAULT_BREW_COLOR;
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder brewTicks(int ticks) {
         if (ticks < 1) {
             errors.add("brewTicks must be >= 1");
-            this.brewTicks = 1;
+            this.brewTicks = FermentingCauldronRecipe.DEFAULT_BREW_TICKS;
             return this;
         }
+
         this.brewTicks = ticks;
         return this;
     }
@@ -168,15 +180,26 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     public @NotNull FermentingCauldronRecipeBuilder bubbleTicks(int ticks) {
         if (ticks < 1) {
             errors.add("bubbleTicks must be >= 1");
-            this.bubbleTicks = 1;
+            this.bubbleTicks = FermentingCauldronRecipe.DEFAULT_BUBBLE_TICKS;
             return this;
         }
+
         this.bubbleTicks = ticks;
+        return this;
+    }
+
+    public @NotNull FermentingCauldronRecipeBuilder noBubbleTicks() {
+        this.bubbleTicks = FermentingCauldronRecipe.DEFAULT_BREW_COLOR;
         return this;
     }
 
     public @NotNull FermentingCauldronRecipeBuilder brewColor(int color) {
         this.brewColor = color;
+        return this;
+    }
+
+    public @NotNull FermentingCauldronRecipeBuilder noBrewColor() {
+        this.brewColor = FermentingCauldronRecipe.DEFAULT_BREW_COLOR;
         return this;
     }
 
@@ -305,13 +328,19 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     private static @Nullable String pathOfItem(@Nullable Holder<Item> h) {
-        if (h == null) return null;
+        if (h == null) {
+            return null;
+        }
+
         ResourceLocation id = h.unwrapKey().map(ResourceKey::location).orElse(null);
         return id != null ? id.getPath() : null;
     }
 
     private static @Nullable String pathOfEffect(@Nullable Holder<MobEffect> h) {
-        if (h == null) return null;
+        if (h == null) {
+            return null;
+        }
+
         ResourceLocation id = h.unwrapKey().map(ResourceKey::location).orElse(null);
         return id != null ? id.getPath() : null;
     }
@@ -358,7 +387,9 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     private static @Nullable String pathOfTag(@Nullable TagKey<Item> tag) {
-        if (tag == null) return null;
+        if (tag == null) {
+            return null;
+        }
         return tag.location().getPath();
     }
 
@@ -380,10 +411,6 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
 
     private String tokenFromEffectFailClosed(EffectOutput eff) {
         Holder<MobEffect> h = eff.id();
-        if (h == null) {
-            errors.add("effect has null id (for naming)");
-            return JolCraftDictionary.EFFECT;
-        }
 
         String path = pathOfEffect(h);
         if (path == null) {

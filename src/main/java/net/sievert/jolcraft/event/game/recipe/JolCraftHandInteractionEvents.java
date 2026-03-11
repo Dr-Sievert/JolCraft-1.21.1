@@ -23,43 +23,61 @@ import net.sievert.jolcraft.data.recipe.param.output.base.OutputHandler;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class JolCraftHandInteractionEvents {
 
-    private JolCraftHandInteractionEvents() {}
+    private static final int HAND_INTERACTION_COOLDOWN_TICKS = 10;
 
     private static final OutputHandler OUTPUTS = new OutputHandler() {};
 
+    private JolCraftHandInteractionEvents() {}
+
     @SubscribeEvent
     public static void onHandInteractionRecipe(PlayerInteractEvent.RightClickItem event) {
+        if (event.getHand() != InteractionHand.MAIN_HAND) {
+            return;
+        }
+
         Player player = event.getEntity();
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
+        if (!(event.getLevel() instanceof ServerLevel level)) {
+            return;
+        }
 
         ItemStack main = player.getMainHandItem();
         ItemStack off = player.getOffhandItem();
-        if (main.isEmpty() || off.isEmpty()) return;
+        if (main.isEmpty() || off.isEmpty()) {
+            return;
+        }
+
+        if (player.getCooldowns().isOnCooldown(main)) {
+            return;
+        }
+        if (player.getCooldowns().isOnCooldown(off)) {
+            return;
+        }
 
         WorldContext ctx = new WorldContext(level, player, player);
         HandInteractionRecipeInput rawInput = new HandInteractionRecipeInput(ctx, main, off);
 
-        Optional<ResolvedRecipe> resolvedOpt = findResolvedRecipe(level, player, rawInput);
-        if (resolvedOpt.isEmpty()) return;
+        ResolvedRecipe resolved = findResolvedRecipe(level, player, rawInput);
+        if (resolved == null) {
+            return;
+        }
 
-        ResolvedRecipe resolved = resolvedOpt.get();
         HandInteractionRecipe recipe = resolved.recipe();
         HandMapping mapping = resolved.mapping();
+
+        cancel(event);
 
         HandInteractionRecipeInput resolvedInput = new HandInteractionRecipeInput(
                 ctx,
                 mapping.stackA(),
                 mapping.stackB()
         );
-
-        cancel(event);
 
         List<Output> outputs = recipe.roll(resolvedInput, ctx);
         if (outputs.isEmpty()) {
@@ -74,35 +92,40 @@ public final class JolCraftHandInteractionEvents {
         ItemIngredientAction.apply(ctx, mapping.stackA(), recipe.actionA());
         ItemIngredientAction.apply(ctx, mapping.stackB(), recipe.actionB());
 
+        player.getCooldowns().addCooldown(main, HAND_INTERACTION_COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(off, HAND_INTERACTION_COOLDOWN_TICKS);
+
         player.swing(mapping.swingHand(), true);
     }
 
-    private static @NotNull Optional<ResolvedRecipe> findResolvedRecipe(
+    private static @Nullable ResolvedRecipe findResolvedRecipe(
             @NotNull ServerLevel level,
             @NotNull Player player,
             @NotNull HandInteractionRecipeInput rawInput
     ) {
-        var recipes = level.getServer()
+        List<RecipeHolder<HandInteractionRecipe>> recipes = level.getServer()
                 .getRecipeManager()
                 .recipeMap()
-                .getRecipesFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level);
+                .getRecipesFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level)
+                .toList();
 
-        return recipes
-                .map(RecipeHolder::value)
-                .map(recipe -> {
-                    if (recipe.requireSneaking() && !player.isShiftKeyDown()) {
-                        return null;
-                    }
+        for (RecipeHolder<HandInteractionRecipe> holder : recipes) {
+            HandInteractionRecipe recipe = holder.value();
 
-                    Optional<HandMapping> mapping = resolveMapping(recipe, rawInput);
-                    return mapping.map(handMapping -> new ResolvedRecipe(recipe, handMapping)).orElse(null);
+            if (recipe.requireSneaking() && !player.isShiftKeyDown()) {
+                continue;
+            }
 
-                })
-                .filter(java.util.Objects::nonNull)
-                .findFirst();
+            HandMapping mapping = resolveMapping(recipe, rawInput);
+            if (mapping != null) {
+                return new ResolvedRecipe(recipe, mapping);
+            }
+        }
+
+        return null;
     }
 
-    private static @NotNull Optional<HandMapping> resolveMapping(
+    private static @Nullable HandMapping resolveMapping(
             @NotNull HandInteractionRecipe recipe,
             @NotNull HandInteractionRecipeInput in
     ) {
@@ -118,13 +141,11 @@ public final class JolCraftHandInteractionEvents {
                         ItemIngredientAction.isSatisfied(off, recipe.actionB());
 
         if (direct) {
-            return Optional.of(new HandMapping(
+            return new HandMapping(
                     main,
                     off,
-                    InteractionHand.MAIN_HAND,
-                    InteractionHand.OFF_HAND,
                     InteractionHand.MAIN_HAND
-            ));
+            );
         }
 
         boolean swapped =
@@ -134,23 +155,19 @@ public final class JolCraftHandInteractionEvents {
                         ItemIngredientAction.isSatisfied(main, recipe.actionB());
 
         if (swapped) {
-            return Optional.of(new HandMapping(
+            return new HandMapping(
                     off,
                     main,
-                    InteractionHand.OFF_HAND,
-                    InteractionHand.MAIN_HAND,
                     InteractionHand.OFF_HAND
-            ));
+            );
         }
 
-        return Optional.empty();
+        return null;
     }
 
     private record HandMapping(
             ItemStack stackA,
             ItemStack stackB,
-            InteractionHand handA,
-            InteractionHand handB,
             InteractionHand swingHand
     ) {}
 
@@ -159,23 +176,23 @@ public final class JolCraftHandInteractionEvents {
             HandMapping mapping
     ) {}
 
-    private static void playSuccessSound(Player player, HandInteractionRecipe recipe) {
+    private static void playSuccessSound(@NotNull Player player, @NotNull HandInteractionRecipe recipe) {
         SoundOutput s = recipe.successSound();
-        SoundEvent soundEvent = s.resolveValue(player.registryAccess());
-        if (soundEvent != null) {
-            JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
+        SoundEvent sound = s.resolveValue(player.registryAccess());
+        if (sound != null) {
+            JolCraftSoundHelper.player(player, sound, s.volume(), s.pitch());
         }
     }
 
-    private static void playFailSound(Player player, HandInteractionRecipe recipe) {
+    private static void playFailSound(@NotNull Player player, @NotNull HandInteractionRecipe recipe) {
         SoundOutput s = recipe.failSound();
-        SoundEvent soundEvent = s.resolveValue(player.registryAccess());
-        if (soundEvent != null) {
-            JolCraftSoundHelper.player(player, soundEvent, s.volume(), s.pitch());
+        SoundEvent sound = s.resolveValue(player.registryAccess());
+        if (sound != null) {
+            JolCraftSoundHelper.player(player, sound, s.volume(), s.pitch());
         }
     }
 
-    private static void cancel(PlayerInteractEvent.RightClickItem event) {
+    private static void cancel(@NotNull PlayerInteractEvent.RightClickItem event) {
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
     }

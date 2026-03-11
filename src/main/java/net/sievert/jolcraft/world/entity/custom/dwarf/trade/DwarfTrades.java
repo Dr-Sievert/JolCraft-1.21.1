@@ -417,7 +417,7 @@ public final class DwarfTrades {
             return 1;
         }
 
-        return Math.max(0, pool.weight().safe());
+        return Math.max(0, pool.weight().value());
     }
 
     private static List<RecipeHolder<DwarfTradeRecipe>> findTradeRecipesAtLevel(

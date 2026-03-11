@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.condition.custom;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -37,15 +38,38 @@ public record DimensionCondition(
     private static final Codec<TagKey<Level>> DIMENSION_TAG_CODEC =
             TagKey.codec(Registries.DIMENSION);
 
-    private static final Codec<DimensionCondition> RAW_CODEC =
-            RecordCodecBuilder.create(inst -> inst.group(
-                    DIMENSION_KEY_CODEC.optionalFieldOf(JolCraftParameterIds.ID).forGetter(DimensionCondition::dimension),
-                    DIMENSION_TAG_CODEC.optionalFieldOf(JolCraftParameterIds.TAG).forGetter(DimensionCondition::tag),
-                    Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(DimensionCondition::invert)
-            ).apply(inst, DimensionCondition::new));
+    private record Raw(
+            Optional<ResourceKey<Level>> dimension,
+            Optional<TagKey<Level>> tag,
+            boolean invert
+    ) {}
+
+    private static final Codec<Raw> RAW_CODEC =
+            Codec.either(
+                    DIMENSION_KEY_CODEC,
+                    RecordCodecBuilder.<Raw>create(inst -> inst.group(
+                            DIMENSION_KEY_CODEC.optionalFieldOf(JolCraftParameterIds.ID).forGetter(Raw::dimension),
+                            DIMENSION_TAG_CODEC.optionalFieldOf(JolCraftParameterIds.TAG).forGetter(Raw::tag),
+                            Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(Raw::invert)
+                    ).apply(inst, Raw::new))
+            ).xmap(
+                    either -> either.map(
+                            key -> new Raw(Optional.of(key), Optional.empty(), false),
+                            raw -> raw
+                    ),
+                    raw -> {
+                        if (raw.dimension().isPresent() && raw.tag().isEmpty() && !raw.invert()) {
+                            return Either.left(raw.dimension().orElseThrow());
+                        }
+                        return Either.right(raw);
+                    }
+            );
 
     public static final Codec<DimensionCondition> CODEC =
-            RAW_CODEC.flatXmap(DimensionCondition::validateDecoded, DataResult::success);
+            RAW_CODEC.flatXmap(
+                    DimensionCondition::fromRaw,
+                    value -> DataResult.success(DimensionCondition.toRaw(value))
+            );
 
     private static final StreamCodec<RegistryFriendlyByteBuf, ResourceKey<Level>> DIMENSION_KEY_STREAM =
             ResourceKey.streamCodec(Registries.DIMENSION).cast();
@@ -85,7 +109,16 @@ public record DimensionCondition(
         tag = tag != null ? tag : Optional.empty();
     }
 
-    private static DataResult<DimensionCondition> validateDecoded(DimensionCondition c) {
+    private static @NotNull DataResult<DimensionCondition> fromRaw(@NotNull Raw raw) {
+        DimensionCondition c = new DimensionCondition(raw.dimension(), raw.tag(), raw.invert());
+        return validateDecoded(c);
+    }
+
+    private static @NotNull Raw toRaw(@NotNull DimensionCondition c) {
+        return new Raw(c.dimension(), c.tag(), c.invert());
+    }
+
+    private static @NotNull DataResult<DimensionCondition> validateDecoded(@NotNull DimensionCondition c) {
         boolean hasId = c.dimension().isPresent();
         boolean hasTag = c.tag().isPresent();
 

@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -9,7 +10,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.sievert.jolcraft.JolCraft;
@@ -37,8 +39,54 @@ public record EffectOutput(
         @NotNull EffectTarget target
 ) implements OutputParam, SelfValidating<EffectOutput>, RegistryIntrospectable {
 
-    private static final Codec<Holder<MobEffect>> EFFECT_CODEC =
-            RegistryFixedCodec.create(Registries.MOB_EFFECT);
+    private static final Codec<Holder<MobEffect>> EFFECT_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<Holder<MobEffect>, T>> decode(
+                com.mojang.serialization.DynamicOps<T> ops,
+                T input
+        ) {
+            return ResourceLocation.CODEC.decode(ops, input).flatMap(pair -> {
+                ResourceLocation id = pair.getFirst();
+                T rest = pair.getSecond();
+
+                if (!(ops instanceof RegistryOps<T> registryOps)) {
+                    return DataResult.error(() ->
+                            "effect output requires RegistryOps for '" + Registries.MOB_EFFECT.location() + "'"
+                    );
+                }
+
+                var lookupOpt = registryOps.lookupProvider.lookup(Registries.MOB_EFFECT);
+                if (lookupOpt.isEmpty()) {
+                    return DataResult.error(() ->
+                            "missing registry info for '" + Registries.MOB_EFFECT.location() + "'"
+                    );
+                }
+
+                ResourceKey<MobEffect> key = ResourceKey.create(Registries.MOB_EFFECT, id);
+                var holderOpt = lookupOpt.get().getter().get(key);
+
+                return holderOpt.<DataResult<Pair<Holder<MobEffect>, T>>>map(mobEffectReference ->
+                        DataResult.success(Pair.of(mobEffectReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown mob effect '" + id + "'"));
+
+            });
+        }
+
+        @Override
+        public <T> DataResult<T> encode(
+                Holder<MobEffect> input,
+                com.mojang.serialization.DynamicOps<T> ops,
+                T prefix
+        ) {
+            if (input == null) {
+                return DataResult.error(() -> "mob effect holder cannot be null");
+            }
+
+            return input.unwrapKey()
+                    .map(ResourceKey::location)
+                    .map(id -> ResourceLocation.CODEC.encode(id, ops, prefix))
+                    .orElseGet(() -> DataResult.error(() -> "unkeyed mob effect holder"));
+        }
+    };
 
     private static final Codec<EffectTarget> TARGET_CODEC =
             Codec.STRING.comapFlatMap(

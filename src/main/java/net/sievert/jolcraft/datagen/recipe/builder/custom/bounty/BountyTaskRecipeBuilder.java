@@ -14,13 +14,19 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
+import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpec;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
+import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
+import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
@@ -51,7 +57,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
     private @Nullable DwarfMerchantData.Level tier;
 
     private @Nullable ItemOutput bounty;
-    private @Nullable Outputs objective;
+    private final List<PoolEntry> objectiveEntries = new ArrayList<>();
 
     private @Nullable SoundOutput sound1;
     private @Nullable SoundOutput sound2;
@@ -73,10 +79,6 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
         }
         return built.result().orElse(null);
     }
-
-    // ---------------------------------------------------------------------
-    // Setters
-    // ---------------------------------------------------------------------
 
     public @NotNull BountyTaskRecipeBuilder bountyType(@Nullable DwarfProfession type) {
         if (type == null) {
@@ -171,22 +173,25 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // Objective accumulation
-    // ---------------------------------------------------------------------
-
-    private void appendObjective(@NotNull Outputs next) {
-        if (isEmptyOutputs(next)) {
+    private void appendObjective(@Nullable OutputParam next, int weight) {
+        if (next == null) {
+            errors.add("objective is null");
             return;
         }
 
-        this.objective = isEmptyOutputs(this.objective)
-                ? next
-                : this.objective.merge(next);
+        final WeightParam builtWeight;
+        try {
+            builtWeight = new WeightParam(weight);
+        } catch (Exception e) {
+            errors.add("objective weight invalid: " + e.getMessage());
+            return;
+        }
+
+        objectiveEntries.add(new PoolEntry(next, null, builtWeight));
     }
 
-    private static boolean isEmptyOutputs(@Nullable Outputs outputs) {
-        return outputs == null || outputs.pools().pools().isEmpty();
+    private boolean hasObjectives() {
+        return !objectiveEntries.isEmpty();
     }
 
     private static @NotNull ItemTransforms noTransforms() {
@@ -194,50 +199,95 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull BountyTaskRecipeBuilder collect(@Nullable ItemLike item, int min, int max) {
+        return collectWeighted(item, min, max, 1);
+    }
+
+    public @NotNull BountyTaskRecipeBuilder collect(@Nullable ItemLike item, int fixedCount) {
+        return collectWeighted(item, fixedCount, fixedCount, 1);
+    }
+
+    public @NotNull BountyTaskRecipeBuilder collectWeighted(
+            @Nullable ItemLike item,
+            int min,
+            int max,
+            int weight
+    ) {
         if (item == null) {
             errors.add("collect item is null");
             return this;
         }
 
         appendObjective(
-                Outputs.wrapSingle(
-                        ItemOutputBuilder.create()
-                                .result(item.asItem(), min, max)
-                                .transforms(noTransforms())
-                                .build()
-                )
+                ItemOutputBuilder.create()
+                        .result(item.asItem(), min, max)
+                        .transforms(noTransforms())
+                        .build(),
+                weight
         );
 
         return this;
     }
 
-    public @NotNull BountyTaskRecipeBuilder collect(@Nullable ItemLike item, int fixedCount) {
-        return collect(item, fixedCount, fixedCount);
+    public @NotNull BountyTaskRecipeBuilder collectWeighted(
+            @Nullable ItemLike item,
+            int fixedCount,
+            int weight
+    ) {
+        return collectWeighted(item, fixedCount, fixedCount, weight);
     }
 
     public @NotNull BountyTaskRecipeBuilder collectTag(@Nullable TagKey<Item> tag, int min, int max) {
+        return collectTagWeighted(tag, min, max, 1);
+    }
+
+    public @NotNull BountyTaskRecipeBuilder collectTag(@Nullable TagKey<Item> tag, int fixedCount) {
+        return collectTagWeighted(tag, fixedCount, fixedCount, 1);
+    }
+
+    public @NotNull BountyTaskRecipeBuilder collectTagWeighted(
+            @Nullable TagKey<Item> tag,
+            int min,
+            int max,
+            int weight
+    ) {
         if (tag == null) {
             errors.add("collectTag tag is null");
             return this;
         }
 
         appendObjective(
-                Outputs.wrapSingle(
-                        ItemOutputBuilder.create()
-                                .result(tag, new IntRange(min, max))
-                                .transforms(noTransforms())
-                                .build()
-                )
+                ItemOutputBuilder.create()
+                        .result(tag, new IntRange(min, max))
+                        .transforms(noTransforms())
+                        .build(),
+                weight
         );
 
         return this;
     }
 
-    public @NotNull BountyTaskRecipeBuilder collectTag(@Nullable TagKey<Item> tag, int fixedCount) {
-        return collectTag(tag, fixedCount, fixedCount);
+    public @NotNull BountyTaskRecipeBuilder collectTagWeighted(
+            @Nullable TagKey<Item> tag,
+            int fixedCount,
+            int weight
+    ) {
+        return collectTagWeighted(tag, fixedCount, fixedCount, weight);
     }
 
     public @NotNull BountyTaskRecipeBuilder slay(@Nullable EntityType<?> type, int min, int max) {
+        return slayWeighted(type, min, max, 1);
+    }
+
+    public @NotNull BountyTaskRecipeBuilder slay(@Nullable EntityType<?> type, int fixedCount) {
+        return slayWeighted(type, fixedCount, fixedCount, 1);
+    }
+
+    public @NotNull BountyTaskRecipeBuilder slayWeighted(
+            @Nullable EntityType<?> type,
+            int min,
+            int max,
+            int weight
+    ) {
         if (type == null) {
             errors.add("slay entity type is null");
             return this;
@@ -262,17 +312,17 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             return this;
         }
 
-        appendObjective(Outputs.wrapSingle(out));
+        appendObjective(out, weight);
         return this;
     }
 
-    public @NotNull BountyTaskRecipeBuilder slay(@Nullable EntityType<?> type, int fixedCount) {
-        return slay(type, fixedCount, fixedCount);
+    public @NotNull BountyTaskRecipeBuilder slayWeighted(
+            @Nullable EntityType<?> type,
+            int fixedCount,
+            int weight
+    ) {
+        return slayWeighted(type, fixedCount, fixedCount, weight);
     }
-
-    // ---------------------------------------------------------------------
-    // Build
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<RecipeEmission> buildValidated() {
@@ -288,7 +338,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             errors.add("result is required");
         }
 
-        if (isEmptyOutputs(objective)) {
+        if (!hasObjectives()) {
             errors.add("objective is required");
         }
 
@@ -314,19 +364,20 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
         DwarfProfession finalType = bountyType;
         DwarfMerchantData.Level finalTier = tier;
         ItemOutput finalBounty = bounty;
-        Outputs finalObjective = objective;
         SoundOutput finalSound1 = sound1;
         SoundOutput finalSound2 = sound2;
 
         if (finalType == null
                 || finalTier == null
                 || finalBounty == null
-                || finalObjective == null
-                || finalObjective.pools().pools().isEmpty()
                 || finalSound1 == null
                 || finalSound2 == null) {
             return DataResult.error(() -> "builder: missing required fields");
         }
+
+        Outputs finalObjective = new Outputs(new Pools(List.of(
+                new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(objectiveEntries))
+        )));
 
         BountyTaskRecipe recipe = new BountyTaskRecipe(
                 finalType,

@@ -19,6 +19,7 @@ import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
 import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,15 +32,12 @@ public record Outputs(Pools pools)
     public static final Pools EMPTY_POOLS = new Pools(List.of());
     public static final Outputs EMPTY = new Outputs(EMPTY_POOLS);
 
-    public static Outputs empty() {
+    public static @NotNull Outputs empty() {
         return EMPTY;
     }
 
-    public static @NotNull Outputs wrapSingle(OutputParam out) {
-        if (out == null) {
-            throw new IllegalArgumentException("single output cannot be null");
-        }
-        PoolEntry entry = new PoolEntry(out, null, null);
+    public static @NotNull Outputs wrapSingle(@NotNull OutputParam out) {
+        PoolEntry entry = new PoolEntry(out, null, WeightParam.ONE);
         Pool pool = new Pool(IntRange.ONE, Conditions.EMPTY, List.of(entry));
         return new Outputs(new Pools(List.of(pool)));
     }
@@ -52,7 +50,7 @@ public record Outputs(Pools pools)
         ArrayList<PoolEntry> entries = new ArrayList<>(outputs.size());
         for (OutputParam output : outputs) {
             if (output != null) {
-                entries.add(new PoolEntry(output, null, null));
+                entries.add(new PoolEntry(output, null, WeightParam.ONE));
             }
         }
 
@@ -72,8 +70,7 @@ public record Outputs(Pools pools)
         Pool pool = ps.getFirst();
         if (!pool.isBareEntryList()) return false;
 
-        List<PoolEntry> entries = pool.entries();
-        return entries.size() == 1;
+        return pool.entries().size() == 1;
     }
 
     private boolean isSingleBarePoolList() {
@@ -168,7 +165,7 @@ public record Outputs(Pools pools)
         this.pools = pools != null ? pools : EMPTY_POOLS;
     }
 
-    private Pools poolsSafe() {
+    private @NotNull Pools poolsSafe() {
         return pools != null ? pools : EMPTY_POOLS;
     }
 
@@ -186,7 +183,7 @@ public record Outputs(Pools pools)
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        return (poolsSafe() instanceof RegistryIntrospectionSource s) ? s.introspections() : List.of();
+        return poolsSafe().introspections();
     }
 
     @Override
@@ -197,39 +194,19 @@ public record Outputs(Pools pools)
     }
 
     public @NotNull Outputs merge(@NotNull Outputs other) {
-        if (other == EMPTY) return this;
-        if (this == EMPTY) return other;
+        if (other == EMPTY || other.poolsSafe().pools().isEmpty()) return this;
+        if (this == EMPTY || this.poolsSafe().pools().isEmpty()) return other;
 
-        List<Pool> left = this.poolsSafe().pools();
-        List<Pool> right = other.poolsSafe().pools();
+        ArrayList<Pool> merged = new ArrayList<>(this.poolsSafe().pools().size() + other.poolsSafe().pools().size());
+        merged.addAll(this.poolsSafe().pools());
+        merged.addAll(other.poolsSafe().pools());
 
-        if (left.isEmpty()) return other;
-        if (right.isEmpty()) return this;
-
-        Pool base = left.getFirst();
-        Pool add = right.getFirst();
-
-        List<PoolEntry> mergedEntries = new ArrayList<>(base.entries());
-        mergedEntries.addAll(add.entries());
-
-        Pool mergedPool = new Pool(
-                base.rolls(),
-                base.conditions(),
-                mergedEntries
-        );
-
-        return new Outputs(new Pools(List.of(mergedPool)));
+        return new Outputs(new Pools(merged));
     }
 
-    public static boolean anyItemOutputRequiresInputSource(Outputs outputs) {
-        for (Pool pool : outputs.pools().pools()) {
-            for (PoolEntry entry : pool.entries()) {
-                OutputParam op = OutputParam.unwrap(entry.output());
-                if (op instanceof ItemOutput io && io.transforms().requiresInputSource()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public static boolean anyItemOutputRequiresInputSource(@NotNull Outputs outputs) {
+        return outputs.pools().anyParam(op ->
+                op instanceof ItemOutput io && io.transforms().requiresInputSource()
+        );
     }
 }

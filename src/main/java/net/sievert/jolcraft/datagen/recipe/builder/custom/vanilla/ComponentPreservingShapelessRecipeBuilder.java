@@ -49,12 +49,14 @@ public final class ComponentPreservingShapelessRecipeBuilder {
 
     private final ArrayList<Ingredient> ingredients = new ArrayList<>();
     private final ArrayList<DataComponentType<?>> keep = new ArrayList<>();
+    private final ArrayList<DataComponentType<?>> remove = new ArrayList<>();
     private final ArrayList<DataComponentType<?>> baseRequire = new ArrayList<>();
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private String group = "";
     private ItemStack result = ItemStack.EMPTY;
-    private DataComponentPatch patch = EMPTY_PATCH;
+    private boolean removeAll = false;
+    private DataComponentPatch set = EMPTY_PATCH;
 
     private ComponentPreservingShapelessRecipeBuilder(
             CraftingBookCategory category,
@@ -86,6 +88,7 @@ public final class ComponentPreservingShapelessRecipeBuilder {
             this.result = ItemStack.EMPTY;
             return this;
         }
+
         this.result = stack.copyWithCount(1);
         return this;
     }
@@ -99,6 +102,7 @@ public final class ComponentPreservingShapelessRecipeBuilder {
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder ingredients(List<Ingredient> list) {
         if (list.isEmpty()) return this;
+
         for (Ingredient ing : list) {
             if (ing != null && !ing.isEmpty()) {
                 this.ingredients.add(ing);
@@ -114,9 +118,38 @@ public final class ComponentPreservingShapelessRecipeBuilder {
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder keepAll(List<DataComponentType<?>> types) {
         if (types.isEmpty()) return this;
+
         for (DataComponentType<?> t : types) {
-            if (t != null) this.keep.add(t);
+            if (t != null) {
+                this.keep.add(t);
+            }
         }
+        return this;
+    }
+
+    public @NotNull ComponentPreservingShapelessRecipeBuilder remove(DataComponentType<?> type) {
+        this.remove.add(type);
+        return this;
+    }
+
+    public @NotNull ComponentPreservingShapelessRecipeBuilder removeAll(List<DataComponentType<?>> types) {
+        if (types.isEmpty()) return this;
+
+        for (DataComponentType<?> t : types) {
+            if (t != null) {
+                this.remove.add(t);
+            }
+        }
+        return this;
+    }
+
+    public @NotNull ComponentPreservingShapelessRecipeBuilder clearCopiedComponents() {
+        this.removeAll = true;
+        return this;
+    }
+
+    public @NotNull ComponentPreservingShapelessRecipeBuilder removeAll(boolean removeAll) {
+        this.removeAll = removeAll;
         return this;
     }
 
@@ -127,21 +160,30 @@ public final class ComponentPreservingShapelessRecipeBuilder {
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder requireBaseHasAll(List<DataComponentType<?>> types) {
         if (types.isEmpty()) return this;
+
         for (DataComponentType<?> t : types) {
-            if (t != null) this.baseRequire.add(t);
+            if (t != null) {
+                this.baseRequire.add(t);
+            }
         }
         return this;
     }
 
-    public @NotNull ComponentPreservingShapelessRecipeBuilder patch(DataComponentPatch patch) {
-        this.patch = patch;
+    public @NotNull ComponentPreservingShapelessRecipeBuilder set(DataComponentPatch set) {
+        this.set = set;
         return this;
+    }
+
+    /** Backwards-compat convenience alias. */
+    public @NotNull ComponentPreservingShapelessRecipeBuilder patch(DataComponentPatch patch) {
+        return set(patch);
     }
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder unlocks(String key, Criterion<?> criterion) {
         if (key.isBlank()) {
             return this;
         }
+
         this.criteria.put(key, criterion);
         return this;
     }
@@ -206,8 +248,10 @@ public final class ComponentPreservingShapelessRecipeBuilder {
                 List.copyOf(this.ingredients),
                 this.result,
                 List.copyOf(this.keep),
+                List.copyOf(this.remove),
                 List.copyOf(this.baseRequire),
-                this.patch
+                this.removeAll,
+                this.set
         );
     }
 }

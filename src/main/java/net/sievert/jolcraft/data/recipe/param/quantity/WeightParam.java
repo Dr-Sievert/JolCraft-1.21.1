@@ -13,78 +13,54 @@ import org.jetbrains.annotations.NotNull;
  * Atomic weight parameter.
  *
  * - Serialized as a plain integer.
- * - Optional at usage sites (default = 1).
- * - value >= 0 (0 disables entry).
+ * - Valid values are whole numbers >= 1.
+ * - Optional at usage sites; omission means default weight = 1.
  *
- * This class does not define semantics.
- * Containers decide how weight is interpreted.
+ * This class defines the atomic validity of a weight.
+ * Containers decide whether the field itself is optional.
  */
 public record WeightParam(int value) implements SelfValidating<WeightParam> {
 
     public static final WeightParam ONE = new WeightParam(1);
 
-    // ---------------------------------------------------------------------
-    // CANONICAL
-    // ---------------------------------------------------------------------
-
     public WeightParam {
-        if (value < 0) value = 0;
+        if (value < 1) {
+            throw new IllegalArgumentException("'" + JolCraftParameterIds.WEIGHT + "' must be >= 1");
+        }
     }
 
-    // ---------------------------------------------------------------------
-    // CODEC
-    // ---------------------------------------------------------------------
-
     private static final Codec<WeightParam> RAW_CODEC =
-            Codec.INT.xmap(WeightParam::new, WeightParam::value);
+            Codec.INT.flatXmap(
+                    value -> value < 1
+                            ? DataResult.error(() ->
+                            "'" + JolCraftParameterIds.WEIGHT + "' must be a whole number greater than 0")
+                            : DataResult.success(new WeightParam(value)),
+                    weight -> DataResult.success(weight.value())
+            );
 
     public static final Codec<WeightParam> CODEC =
             ParamCodecs.validated(RAW_CODEC);
 
-    // ---------------------------------------------------------------------
-    // STREAM
-    // ---------------------------------------------------------------------
-
-    /**
-     * Stream is always one varint: value.
-     * Decode degrades deterministically to {@link #ONE} on invalid (<0).
-     */
     public static final StreamCodec<RegistryFriendlyByteBuf, WeightParam> STREAM_CODEC =
             StreamCodec.of(
-                    (buf, w) -> buf.writeVarInt(w.safe()),
-                    buf -> {
-                        int v = buf.readVarInt();
-                        if (v < 0) return ONE;
-                        return new WeightParam(v);
-                    }
+                    (buf, weight) -> buf.writeVarInt(weight.value()),
+                    buf -> new WeightParam(buf.readVarInt())
             );
-
-    // ---------------------------------------------------------------------
-    // HELPERS
-    // ---------------------------------------------------------------------
-
-    public int safe() {
-        return Math.max(0, value);
-    }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<WeightParam> validate() {
-        if (value < 0) {
+        if (value < 1) {
             return DataResult.error(() ->
-                    JolCraftParameterIds.WEIGHT + " must be >= 0");
+                    "'" + JolCraftParameterIds.WEIGHT + "' must be a whole number greater than 0");
         }
         return DataResult.success(this);
     }
 
-    public static @NotNull DataResult<WeightParam> validate(WeightParam w) {
-        if (w == null) {
+    public static @NotNull DataResult<WeightParam> validate(WeightParam weight) {
+        if (weight == null) {
             return DataResult.error(() ->
-                    JolCraftParameterIds.WEIGHT + " cannot be null");
+                    "'" + JolCraftParameterIds.WEIGHT + "' cannot be null");
         }
-        return w.validate();
+        return weight.validate();
     }
 }

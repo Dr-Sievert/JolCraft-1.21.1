@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.input.custom.entity;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -11,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.condition.ConditionGate;
@@ -29,10 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -47,25 +46,29 @@ public record EntityInput(
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.ENTITY, JolCraftParameterIds.INPUT));
     public static final byte DISC = 2;
 
-    private static final Codec<EntityInput> RAW_CODEC =
-            RecordCodecBuilder.create(instance -> instance.group(
-                    Conditions.CODEC.optionalFieldOf(JolCraftParameterIds.CONDITIONS)
-                            .forGetter(value -> Optional.ofNullable(value.rawConditions())),
-                    EntitySelector.CODEC.fieldOf(JolCraftParameterIds.SELECTOR)
-                            .forGetter(EntityInput::selector),
-                    IntRange.CODEC.optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
-                            .forGetter(EntityInput::count),
-                    EntityRequirements.CODEC.optionalFieldOf(JolCraftParameterIds.REQUIREMENTS)
-                            .forGetter(value -> Optional.ofNullable(value.rawRequirements()))
-            ).apply(instance, (conditions, selector, count, requirements) ->
-                    new EntityInput(
-                            conditions.orElse(null),
-                            selector,
-                            count,
-                            requirements.orElse(null)
-                    )));
+    private static final EntityRequirements EMPTY_REQUIREMENTS = EntityRequirements.EMPTY;
 
-    public static final Codec<EntityInput> CODEC = ParamCodecs.validated(RAW_CODEC);
+    private record FullRaw(
+            Conditions conditions,
+            EntitySelector selector,
+            IntRange count,
+            EntityRequirements requirements
+    ) {}
+
+    private static final Codec<FullRaw> FULL_CODEC =
+            RecordCodecBuilder.<FullRaw>create(instance -> instance.group(
+                    Conditions.CODEC.optionalFieldOf(JolCraftParameterIds.CONDITIONS, Conditions.EMPTY).forGetter(FullRaw::conditions),
+                    EntitySelector.CODEC.fieldOf(JolCraftParameterIds.SELECTOR).forGetter(FullRaw::selector),
+                    IntRange.CODEC.optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE).forGetter(FullRaw::count),
+                    EntityRequirements.CODEC.optionalFieldOf(JolCraftParameterIds.REQUIREMENTS, EMPTY_REQUIREMENTS).forGetter(FullRaw::requirements)
+            ).apply(instance, FullRaw::new));
+
+    public static final Codec<EntityInput> CODEC =
+            ParamCodecContract.create(
+                    Codec.either(EntitySelector.CODEC, FULL_CODEC),
+                    EntityInput::fromRaw,
+                    EntityInput::toRaw
+            );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EntityInput> STREAM_CODEC =
             StreamCodec.of(
@@ -95,12 +98,7 @@ public record EntityInput(
                                 ? EntityRequirements.STREAM_CODEC.decode(buf)
                                 : null;
 
-                        return new EntityInput(
-                                conditions,
-                                selector,
-                                count,
-                                requirements
-                        );
+                        return new EntityInput(conditions, selector, count, requirements);
                     }
             );
 
@@ -110,6 +108,33 @@ public record EntityInput(
     public EntityInput {
         Objects.requireNonNull(selector, JolCraftDictionary.SELECTOR);
         Objects.requireNonNull(count, JolCraftDictionary.COUNT);
+    }
+
+    private static @NotNull DataResult<EntityInput> fromRaw(@NotNull Either<EntitySelector, FullRaw> raw) {
+        return DataResult.success(raw.map(
+                selector -> new EntityInput(null, selector, IntRange.ONE, null),
+                full -> new EntityInput(
+                        full.conditions() == Conditions.EMPTY ? null : full.conditions(),
+                        full.selector(),
+                        full.count(),
+                        full.requirements() == EMPTY_REQUIREMENTS ? null : full.requirements()
+                )
+        )).flatMap(EntityInput::validate);
+    }
+
+    private static @NotNull Either<EntitySelector, FullRaw> toRaw(@NotNull EntityInput input) {
+        if (input.conditions() == Conditions.EMPTY
+                && input.count().equals(IntRange.ONE)
+                && (input.requirements == null || input.requirements.equals(EMPTY_REQUIREMENTS))) {
+            return Either.left(input.selector());
+        }
+
+        return Either.right(new FullRaw(
+                input.conditions(),
+                input.selector(),
+                input.count(),
+                input.requirements == null ? EMPTY_REQUIREMENTS : input.requirements
+        ));
     }
 
     private @Nullable Conditions rawConditions() {
@@ -150,15 +175,11 @@ public record EntityInput(
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(2);
-        src.add(selector);
-
-        EntityRequirements req = requirementsOrNull();
-        if (req instanceof RegistryIntrospectionSource ris) {
-            src.add(ris);
-        }
-
-        return RegistryIntrospectionSource.mergeByRegistry(src);
+        return RegistryIntrospectionSource.mergeByRegistry(
+                requirementsOrNull() == null
+                        ? List.of(selector)
+                        : List.of(selector, requirementsOrNull())
+        );
     }
 
     @Override

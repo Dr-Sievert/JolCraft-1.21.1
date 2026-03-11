@@ -67,7 +67,7 @@ public record WeatherCondition(
     public static final ParamTypeDef<Condition> TYPE_DEF =
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
-    private static DataResult<WeatherCondition> validateDecoded(WeatherCondition c) {
+    private static @NotNull DataResult<WeatherCondition> validateDecoded(@NotNull WeatherCondition c) {
         if (!c.requireRaining() && !c.requireThundering()) {
             return DataResult.error(() ->
                     "weather condition must specify at least one of '" +

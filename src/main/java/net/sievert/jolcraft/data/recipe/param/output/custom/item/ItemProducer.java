@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom.item;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,7 +13,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
@@ -58,6 +61,110 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
                     JolCraftDictionary.KEY
             );
 
+    static final Codec<Holder<Item>> ITEM_HOLDER_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<Holder<Item>, T>> decode(
+                com.mojang.serialization.DynamicOps<T> ops,
+                T input
+        ) {
+            return ResourceLocation.CODEC.decode(ops, input).flatMap(pair -> {
+                ResourceLocation id = pair.getFirst();
+                T rest = pair.getSecond();
+
+                if (!(ops instanceof RegistryOps<T> registryOps)) {
+                    return DataResult.error(() ->
+                            "item producer requires RegistryOps for '" + Registries.ITEM.location() + "'"
+                    );
+                }
+
+                var lookupOpt = registryOps.lookupProvider.lookup(Registries.ITEM);
+                if (lookupOpt.isEmpty()) {
+                    return DataResult.error(() ->
+                            "missing registry info for '" + Registries.ITEM.location() + "'"
+                    );
+                }
+
+                ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
+                var holderOpt = lookupOpt.get().getter().get(key);
+
+                return holderOpt.<DataResult<Pair<Holder<Item>, T>>>map(itemReference ->
+                        DataResult.success(Pair.of(itemReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown item '" + id + "'"));
+
+            });
+        }
+
+        @Override
+        public <T> DataResult<T> encode(
+                Holder<Item> input,
+                com.mojang.serialization.DynamicOps<T> ops,
+                T prefix
+        ) {
+            if (input == null) {
+                return DataResult.error(() -> "item holder cannot be null");
+            }
+
+            return input.unwrapKey()
+                    .map(ResourceKey::location)
+                    .map(id -> ResourceLocation.CODEC.encode(id, ops, prefix))
+                    .orElseGet(() -> DataResult.error(() -> "unkeyed item holder"));
+        }
+    };
+
+    static final Codec<TagKey<Item>> ITEM_TAG_CODEC =
+            TagKey.codec(Registries.ITEM);
+
+    static final Codec<Holder<MapDecorationType>> MAP_DECORATION_HOLDER_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<Holder<MapDecorationType>, T>> decode(
+                com.mojang.serialization.DynamicOps<T> ops,
+                T input
+        ) {
+            return ResourceLocation.CODEC.decode(ops, input).flatMap(pair -> {
+                ResourceLocation id = pair.getFirst();
+                T rest = pair.getSecond();
+
+                if (!(ops instanceof RegistryOps<T> registryOps)) {
+                    return DataResult.error(() ->
+                            "map decoration decode requires RegistryOps for '" +
+                                    Registries.MAP_DECORATION_TYPE.location() + "'"
+                    );
+                }
+
+                var lookupOpt = registryOps.lookupProvider.lookup(Registries.MAP_DECORATION_TYPE);
+                if (lookupOpt.isEmpty()) {
+                    return DataResult.error(() ->
+                            "missing registry info for '" +
+                                    Registries.MAP_DECORATION_TYPE.location() + "'"
+                    );
+                }
+
+                ResourceKey<MapDecorationType> key =
+                        ResourceKey.create(Registries.MAP_DECORATION_TYPE, id);
+
+                var holderOpt = lookupOpt.get().getter().get(key);
+                return holderOpt.<DataResult<Pair<Holder<MapDecorationType>, T>>>map(mapDecorationTypeReference ->
+                        DataResult.success(Pair.of(mapDecorationTypeReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown map decoration type '" + id + "'"));
+
+            });
+        }
+
+        @Override
+        public <T> DataResult<T> encode(
+                Holder<MapDecorationType> input,
+                com.mojang.serialization.DynamicOps<T> ops,
+                T prefix
+        ) {
+            if (input == null) {
+                return DataResult.error(() -> "map decoration holder cannot be null");
+            }
+
+            return input.unwrapKey()
+                    .map(ResourceKey::location)
+                    .map(id -> ResourceLocation.CODEC.encode(id, ops, prefix))
+                    .orElseGet(() -> DataResult.error(() -> "unkeyed map decoration holder"));
+        }
+    };
+
     public record MapData(
             @NotNull TagKey<Structure> structureTag,
             @NotNull Holder<MapDecorationType> decoration,
@@ -69,7 +176,7 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
                                 .fieldOf(STRUCTURE_TAG)
                                 .forGetter(MapData::structureTag),
 
-                        RegistryFixedCodec.<MapDecorationType>create(Registries.MAP_DECORATION_TYPE)
+                        MAP_DECORATION_HOLDER_CODEC
                                 .fieldOf(MAP_DECORATION)
                                 .forGetter(MapData::decoration),
 
@@ -132,12 +239,6 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
         };
     }
 
-    static final Codec<Holder<Item>> ITEM_HOLDER_CODEC =
-            RegistryFixedCodec.create(Registries.ITEM);
-
-    static final Codec<TagKey<Item>> ITEM_TAG_CODEC =
-            TagKey.codec(Registries.ITEM);
-
     private record RawCodecData(
             Optional<Holder<Item>> item,
             Optional<TagKey<Item>> tag,
@@ -186,12 +287,14 @@ public final class ItemProducer implements SelfValidating<ItemProducer>, Registr
 
         if (familyCount == 0) {
             return DataResult.error(() ->
-                    "item producer requires exactly one family: '" + ITEM + "', '" + TAG + "', or '" + MAP + "'");
+                    "item producer requires exactly one family: '" + ITEM + "', '" + TAG + "', or '" + MAP + "'"
+            );
         }
 
         if (familyCount > 1) {
             return DataResult.error(() ->
-                    "item producer has ambiguous families; provide exactly one of '" + ITEM + "', '" + TAG + "', or '" + MAP + "'");
+                    "item producer has ambiguous families; provide exactly one of '" + ITEM + "', '" + TAG + "', or '" + MAP + "'"
+            );
         }
 
         if (raw.item().isPresent()) {

@@ -3,7 +3,6 @@ package net.sievert.jolcraft.data.recipe.param.input.custom.entity.selector;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -38,10 +37,24 @@ public record EntityIngredient(List<Target> targets)
         private record Raw(Optional<Holder<EntityType<?>>> entity, Optional<TagKey<EntityType<?>>> tag) {}
 
         private static final Codec<Raw> RAW_CODEC =
-                RecordCodecBuilder.create(inst -> inst.group(
-                        ENTITY_HOLDER_CODEC.optionalFieldOf(JolCraftParameterIds.ENTITY).forGetter(Raw::entity),
-                        TagKey.codec(Registries.ENTITY_TYPE).optionalFieldOf(JolCraftParameterIds.TAG).forGetter(Raw::tag)
-                ).apply(inst, Raw::new));
+                Codec.either(
+                        ENTITY_HOLDER_CODEC,
+                        com.mojang.serialization.codecs.RecordCodecBuilder.<Raw>create(inst -> inst.group(
+                                ENTITY_HOLDER_CODEC.optionalFieldOf(JolCraftParameterIds.ENTITY).forGetter(Raw::entity),
+                                TagKey.codec(Registries.ENTITY_TYPE).optionalFieldOf(JolCraftParameterIds.TAG).forGetter(Raw::tag)
+                        ).apply(inst, Raw::new))
+                ).xmap(
+                        either -> either.map(
+                                entity -> new Raw(Optional.of(entity), Optional.empty()),
+                                raw -> raw
+                        ),
+                        raw -> {
+                            if (raw.entity().isPresent() && raw.tag().isEmpty()) {
+                                return Either.left(raw.entity().orElseThrow());
+                            }
+                            return Either.right(raw);
+                        }
+                );
 
         public static final Codec<Target> CODEC =
                 ParamCodecContract.create(RAW_CODEC, Target::fromRaw, Target::toRaw);
@@ -61,19 +74,23 @@ public record EntityIngredient(List<Target> targets)
                                 ENTITY_HOLDER_STREAM.encode(buf, left.get());
                                 return;
                             }
+
                             Optional<TagKey<EntityType<?>>> right = v.target.right();
                             if (right.isPresent()) {
                                 buf.writeByte(KIND_TAG);
                                 buf.writeResourceLocation(right.get().location());
                                 return;
                             }
+
                             throw new IllegalArgumentException("invalid entity ingredient target");
                         },
                         buf -> {
                             int kind = buf.readUnsignedByte();
                             return switch (kind) {
                                 case KIND_ENTITY -> new Target(Either.left(ENTITY_HOLDER_STREAM.decode(buf)));
-                                case KIND_TAG -> new Target(Either.right(TagKey.create(Registries.ENTITY_TYPE, buf.readResourceLocation())));
+                                case KIND_TAG -> new Target(Either.right(
+                                        TagKey.create(Registries.ENTITY_TYPE, buf.readResourceLocation())
+                                ));
                                 default -> throw new IllegalArgumentException("unknown entity ingredient target kind: " + kind);
                             };
                         }
@@ -86,12 +103,18 @@ public record EntityIngredient(List<Target> targets)
         private static @NotNull DataResult<Target> fromRaw(@NotNull Raw raw) {
             boolean hasEntity = raw.entity().isPresent();
             boolean hasTag = raw.tag().isPresent();
+
             if (hasEntity == hasTag) {
                 return DataResult.error(() ->
                         "EntityIngredient.Target requires exactly one of '" + JolCraftParameterIds.ENTITY + "' or '" + JolCraftParameterIds.TAG + "'"
                 );
             }
-            return DataResult.success(hasEntity ? new Target(Either.left(raw.entity().orElseThrow())) : new Target(Either.right(raw.tag().orElseThrow())));
+
+            return DataResult.success(
+                    hasEntity
+                            ? new Target(Either.left(raw.entity().orElseThrow()))
+                            : new Target(Either.right(raw.tag().orElseThrow()))
+            );
         }
 
         private static @NotNull Raw toRaw(@NotNull Target t) {
@@ -102,11 +125,13 @@ public record EntityIngredient(List<Target> targets)
         public @NotNull DataResult<Target> validate() {
             boolean hasEntity = target.left().isPresent();
             boolean hasTag = target.right().isPresent();
+
             if (hasEntity == hasTag) {
                 return SelfValidating.invalid(
                         "EntityIngredient.Target requires exactly one of '" + JolCraftParameterIds.ENTITY + "' or '" + JolCraftParameterIds.TAG + "'"
                 );
             }
+
             return SelfValidating.ok(this);
         }
 
@@ -116,29 +141,45 @@ public record EntityIngredient(List<Target> targets)
         }
 
         @SuppressWarnings("deprecation")
-        public static Target of(@NotNull EntityType<?> type) {
+        public static @NotNull Target of(@NotNull EntityType<?> type) {
             return new Target(Either.left(type.builtInRegistryHolder()));
         }
 
-        public static Target of(@NotNull TagKey<EntityType<?>> tag) {
+        public static @NotNull Target of(@NotNull TagKey<EntityType<?>> tag) {
             return new Target(Either.right(tag));
         }
     }
 
-    public static EntityIngredient of(@NotNull EntityType<?> type) { return ofTargets(Target.of(type)); }
-    public static EntityIngredient of(@NotNull TagKey<EntityType<?>> tag) { return ofTargets(Target.of(tag)); }
-    public static EntityIngredient ofTargets(Target... targets) {
+    public static @NotNull EntityIngredient of(@NotNull EntityType<?> type) {
+        return ofTargets(Target.of(type));
+    }
+
+    public static @NotNull EntityIngredient of(@NotNull TagKey<EntityType<?>> tag) {
+        return ofTargets(Target.of(tag));
+    }
+
+    public static @NotNull EntityIngredient ofTargets(Target... targets) {
         if (targets == null || targets.length == 0) return new EntityIngredient(List.of());
+
         ArrayList<Target> out = new ArrayList<>(targets.length);
-        for (Target t : targets) if (t != null) out.add(t);
+        for (Target t : targets) {
+            if (t != null) out.add(t);
+        }
         return new EntityIngredient(out);
     }
-    public static EntityIngredient ofTargets(List<Target> targets) { return new EntityIngredient(targets); }
+
+    public static @NotNull EntityIngredient ofTargets(List<Target> targets) {
+        return new EntityIngredient(targets);
+    }
 
     private static final Codec<EntityIngredient> RAW_CODEC =
             Codec.either(Target.CODEC, Target.CODEC.listOf())
-                    .xmap(either -> either.map(EntityIngredient::ofTargets, EntityIngredient::ofTargets),
-                            ing -> ing.targets().size() == 1 ? Either.left(ing.targets().getFirst()) : Either.right(ing.targets()));
+                    .xmap(
+                            either -> either.map(EntityIngredient::ofTargets, EntityIngredient::ofTargets),
+                            ing -> ing.targets().size() == 1
+                                    ? Either.left(ing.targets().getFirst())
+                                    : Either.right(ing.targets())
+                    );
 
     public static final Codec<EntityIngredient> CODEC = ParamCodecs.validated(RAW_CODEC);
 
@@ -148,27 +189,40 @@ public record EntityIngredient(List<Target> targets)
             StreamCodec.of(
                     (buf, ing) -> {
                         buf.writeVarInt(ing.targets().size());
-                        for (Target t : ing.targets()) Target.STREAM_CODEC.encode(buf, t);
+                        for (Target t : ing.targets()) {
+                            Target.STREAM_CODEC.encode(buf, t);
+                        }
                     },
                     buf -> {
                         int size = buf.readVarInt();
                         if (size < 0) throw new IllegalArgumentException("negative target size: " + size);
                         if (size == 0) return new EntityIngredient(List.of());
-                        if (size > MAX_TARGETS_STREAM) throw new IllegalArgumentException("target size exceeds max " + MAX_TARGETS_STREAM + " (got " + size + ")");
+                        if (size > MAX_TARGETS_STREAM) {
+                            throw new IllegalArgumentException("target size exceeds max " + MAX_TARGETS_STREAM + " (got " + size + ")");
+                        }
+
                         ArrayList<Target> list = new ArrayList<>(size);
-                        for (int i = 0; i < size; i++) list.add(Target.STREAM_CODEC.decode(buf));
+                        for (int i = 0; i < size; i++) {
+                            list.add(Target.STREAM_CODEC.decode(buf));
+                        }
                         return new EntityIngredient(list);
                     }
             );
 
-    public EntityIngredient { targets = sanitizeTargets(targets); }
-    public boolean isEmpty() { return targets.isEmpty(); }
+    public EntityIngredient {
+        targets = sanitizeTargets(targets);
+    }
+
+    public boolean isEmpty() {
+        return targets.isEmpty();
+    }
 
     @Override
     public @NotNull DataResult<EntityIngredient> validate() {
         if (targets.isEmpty()) {
             return SelfValidating.invalid("missing or empty field '" + JolCraftStrings.plural(JolCraftDictionary.INGREDIENT) + "'");
         }
+
         for (int i = 0; i < targets.size(); i++) {
             DataResult<Target> tv = targets.get(i).validate();
             if (tv.error().isPresent()) {
@@ -176,12 +230,16 @@ public record EntityIngredient(List<Target> targets)
                 return SelfValidating.invalid("targets[" + i + "] invalid: " + msg);
             }
         }
+
         return SelfValidating.ok(this);
     }
 
     public boolean matches(@NotNull Entity entity) {
         if (targets.isEmpty()) return false;
-        for (Target t : targets) if (t.matches(entity)) return true;
+
+        for (Target t : targets) {
+            if (t.matches(entity)) return true;
+        }
         return false;
     }
 
@@ -191,30 +249,44 @@ public record EntityIngredient(List<Target> targets)
         int tags = 0;
         Holder<?> singleHolder = null;
         TagKey<?> singleTag = null;
+
         for (Target t : targets) {
             Either<Holder<EntityType<?>>, TagKey<EntityType<?>>> e = t.target();
             Optional<Holder<EntityType<?>>> left = e.left();
             if (left.isPresent()) {
                 holders++;
-                if (holders == 1 && tags == 0) singleHolder = left.get(); else singleHolder = null;
+                if (holders == 1 && tags == 0) singleHolder = left.get();
+                else singleHolder = null;
                 continue;
             }
+
             Optional<TagKey<EntityType<?>>> right = e.right();
             if (right.isPresent()) {
                 tags++;
-                if (tags == 1 && holders == 0) singleTag = right.get(); else singleTag = null;
+                if (tags == 1 && holders == 0) singleTag = right.get();
+                else singleTag = null;
             }
         }
-        if (holders == 1 && tags == 0 && singleHolder != null) return RegistryIntrospection.single(Registries.ENTITY_TYPE, singleHolder);
-        if (holders == 0 && tags == 1 && singleTag != null) return RegistryIntrospection.singleTag(Registries.ENTITY_TYPE, singleTag);
-        if (holders == 0 && tags > 0) return RegistryIntrospection.anyTag(Registries.ENTITY_TYPE);
+
+        if (holders == 1 && tags == 0 && singleHolder != null) {
+            return RegistryIntrospection.single(Registries.ENTITY_TYPE, singleHolder);
+        }
+        if (holders == 0 && tags == 1 && singleTag != null) {
+            return RegistryIntrospection.singleTag(Registries.ENTITY_TYPE, singleTag);
+        }
+        if (holders == 0 && tags > 0) {
+            return RegistryIntrospection.anyTag(Registries.ENTITY_TYPE);
+        }
         return RegistryIntrospection.mixed(Registries.ENTITY_TYPE, holders, tags > 0);
     }
 
-    private static List<Target> sanitizeTargets(List<Target> in) {
+    private static @NotNull List<Target> sanitizeTargets(List<Target> in) {
         if (in == null || in.isEmpty()) return List.of();
+
         ArrayList<Target> safe = new ArrayList<>(in.size());
-        for (Target t : in) if (t != null) safe.add(t);
+        for (Target t : in) {
+            if (t != null) safe.add(t);
+        }
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 }

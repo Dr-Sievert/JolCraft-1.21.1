@@ -33,19 +33,16 @@ public record ComponentRequirement(
         List<Holder<DataComponentType<?>>> has
 ) implements SelfValidating<ComponentRequirement>, RegistryIntrospectable {
 
-    /**
-     * Decode/encode "has" as ids, but resolve to holders during decode using RegistryOps.
-     * Matching is holder-based.
-     */
     private static final Codec<List<Holder<DataComponentType<?>>>> HAS_CODEC = new Codec<>() {
         @Override
         public <T> DataResult<Pair<List<Holder<DataComponentType<?>>>, T>> decode(DynamicOps<T> ops, T input) {
-            final DataResult<Pair<List<ResourceLocation>, T>> idsRes =
-                    ResourceLocation.CODEC.listOf().decode(ops, input);
+            DataResult<Pair<List<ResourceLocation>, T>> idsRes =
+                    Codec.withAlternative(ResourceLocation.CODEC.listOf(), ResourceLocation.CODEC, List::of)
+                            .decode(ops, input);
 
             return idsRes.flatMap(pair -> {
-                final List<ResourceLocation> ids = pair.getFirst();
-                final T rest = pair.getSecond();
+                List<ResourceLocation> ids = pair.getFirst();
+                T rest = pair.getSecond();
 
                 if (!(ops instanceof RegistryOps<T> rops)) {
                     return DataResult.error(() ->
@@ -53,29 +50,29 @@ public record ComponentRequirement(
                     );
                 }
 
-                final var infoOpt = rops.lookupProvider.lookup(Registries.DATA_COMPONENT_TYPE);
+                var infoOpt = rops.lookupProvider.lookup(Registries.DATA_COMPONENT_TYPE);
                 if (infoOpt.isEmpty()) {
                     return DataResult.error(() ->
                             "missing registry info for '" + Registries.DATA_COMPONENT_TYPE.location() + "'"
                     );
                 }
 
-                final var getter = infoOpt.get().getter();
-                final ArrayList<Holder<DataComponentType<?>>> out = new ArrayList<>(ids.size());
+                var getter = infoOpt.get().getter();
+                ArrayList<Holder<DataComponentType<?>>> out = new ArrayList<>(ids.size());
 
                 for (int i = 0; i < ids.size(); i++) {
-                    final ResourceLocation id = ids.get(i);
+                    ResourceLocation id = ids.get(i);
                     if (id == null) {
-                        final int idx = i;
+                        int idx = i;
                         return DataResult.error(() ->
                                 "'" + JolCraftDictionary.HAS + "' contains null at index " + idx
                         );
                     }
 
-                    final ResourceKey<DataComponentType<?>> key =
+                    ResourceKey<DataComponentType<?>> key =
                             ResourceKey.create(Registries.DATA_COMPONENT_TYPE, id);
 
-                    final Optional<Holder.Reference<DataComponentType<?>>> refOpt = getter.get(key);
+                    Optional<Holder.Reference<DataComponentType<?>>> refOpt = getter.get(key);
                     if (refOpt.isEmpty()) {
                         return DataResult.error(() ->
                                 "unknown data component type '" + id + "' in '" + JolCraftDictionary.HAS + "'"
@@ -91,19 +88,19 @@ public record ComponentRequirement(
 
         @Override
         public <T> DataResult<T> encode(List<Holder<DataComponentType<?>>> input, DynamicOps<T> ops, T prefix) {
-            final List<Holder<DataComponentType<?>>> list = (input == null) ? List.of() : input;
-            final ArrayList<ResourceLocation> ids = new ArrayList<>(list.size());
+            List<Holder<DataComponentType<?>>> list = input == null ? List.of() : input;
+            ArrayList<ResourceLocation> ids = new ArrayList<>(list.size());
 
             for (int i = 0; i < list.size(); i++) {
-                final Holder<DataComponentType<?>> h = list.get(i);
+                Holder<DataComponentType<?>> h = list.get(i);
                 if (h == null) {
-                    final int idx = i;
+                    int idx = i;
                     return DataResult.error(() -> "'" + JolCraftDictionary.HAS + "' contains null at index " + idx);
                 }
 
-                final Optional<ResourceKey<DataComponentType<?>>> keyOpt = h.unwrapKey();
+                Optional<ResourceKey<DataComponentType<?>>> keyOpt = h.unwrapKey();
                 if (keyOpt.isEmpty()) {
-                    final int idx = i;
+                    int idx = i;
                     return DataResult.error(() ->
                             "unkeyed data component holder in '" + JolCraftDictionary.HAS + "' at index " + idx
                     );
@@ -112,6 +109,9 @@ public record ComponentRequirement(
                 ids.add(keyOpt.get().location());
             }
 
+            if (ids.size() == 1) {
+                return ResourceLocation.CODEC.encode(ids.getFirst(), ops, prefix);
+            }
             return ResourceLocation.CODEC.listOf().encode(ids, ops, prefix);
         }
     };
@@ -121,11 +121,9 @@ public record ComponentRequirement(
                     DataComponentPredicate.CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.PREDICATES, List.of())
                             .forGetter(ComponentRequirement::predicates),
-
                     HAS_CODEC
                             .optionalFieldOf(JolCraftDictionary.HAS, List.of())
-                            .forGetter(ComponentRequirement::has
-                            )
+                            .forGetter(ComponentRequirement::has)
             ).apply(instance, ComponentRequirement::new));
 
     public static final Codec<ComponentRequirement> CODEC = ParamCodecs.validated(RAW_CODEC);
@@ -142,21 +140,22 @@ public record ComponentRequirement(
     public static final StreamCodec<RegistryFriendlyByteBuf, ComponentRequirement> STREAM_CODEC =
             StreamCodec.of(
                     (buf, v) -> {
-                        final List<DataComponentPredicate> preds = (v.predicates == null) ? List.of() : v.predicates;
-                        final ArrayList<DataComponentPredicate> safePreds = new ArrayList<>(preds.size());
-                        for (DataComponentPredicate p : preds) if (p != null) safePreds.add(p);
+                        ArrayList<DataComponentPredicate> safePreds = new ArrayList<>(v.predicates().size());
+                        for (DataComponentPredicate p : v.predicates()) {
+                            if (p != null) safePreds.add(p);
+                        }
                         PRED_LIST_STREAM.encode(buf, safePreds);
 
-                        final List<Holder<DataComponentType<?>>> hasList = (v.has == null) ? List.of() : v.has;
-                        final ArrayList<Holder<DataComponentType<?>>> safeHas = new ArrayList<>(hasList.size());
-                        for (Holder<DataComponentType<?>> h : hasList) if (h != null) safeHas.add(h);
+                        ArrayList<Holder<DataComponentType<?>>> safeHas = new ArrayList<>(v.has().size());
+                        for (Holder<DataComponentType<?>> h : v.has()) {
+                            if (h != null) safeHas.add(h);
+                        }
                         HAS_LIST_STREAM.encode(buf, safeHas);
                     },
-                    buf -> {
-                        final List<DataComponentPredicate> preds = PRED_LIST_STREAM.decode(buf);
-                        final List<Holder<DataComponentType<?>>> hasList = HAS_LIST_STREAM.decode(buf);
-                        return new ComponentRequirement(sanitizeList(preds), sanitizeList(hasList));
-                    }
+                    buf -> new ComponentRequirement(
+                            sanitizeList(PRED_LIST_STREAM.decode(buf)),
+                            sanitizeList(HAS_LIST_STREAM.decode(buf))
+                    )
             );
 
     public ComponentRequirement(List<DataComponentPredicate> predicates, List<Holder<DataComponentType<?>>> has) {
@@ -169,17 +168,22 @@ public record ComponentRequirement(
         int holders = 0;
         Holder<?> single = null;
 
-        List<Holder<DataComponentType<?>>> list = (has == null) ? List.of() : has;
-        for (Holder<DataComponentType<?>> h : list) {
-            if (h == null) continue;
+        for (Holder<DataComponentType<?>> h : has) {
             holders++;
             if (holders == 1) single = h;
             else single = null;
         }
 
-        return (single != null)
-                ? RegistryIntrospection.single(Registries.DATA_COMPONENT_TYPE, single)
-                : RegistryIntrospection.mixed(Registries.DATA_COMPONENT_TYPE, holders, false);
+        if (holders == 1 && single != null && predicates.isEmpty()) {
+            return RegistryIntrospection.single(Registries.DATA_COMPONENT_TYPE, single);
+        }
+        if (holders > 0) {
+            return RegistryIntrospection.mixed(Registries.DATA_COMPONENT_TYPE, holders, false);
+        }
+        if (!predicates.isEmpty()) {
+            return RegistryIntrospection.empty(Registries.DATA_COMPONENT_TYPE);
+        }
+        return RegistryIntrospection.mixed(Registries.DATA_COMPONENT_TYPE, 0, false);
     }
 
     @Override
@@ -197,7 +201,7 @@ public record ComponentRequirement(
         }
 
         for (int i = 0; i < has.size(); i++) {
-            final Holder<DataComponentType<?>> h = has.get(i);
+            Holder<DataComponentType<?>> h = has.get(i);
             if (h == null) {
                 return SelfValidating.invalid("'" + JolCraftDictionary.HAS + "' contains null at index " + i);
             }
@@ -207,15 +211,10 @@ public record ComponentRequirement(
         return SelfValidating.ok(this);
     }
 
-    // ---------------------------------------------------------------------
-    // MATCHING
-    // ---------------------------------------------------------------------
-
-    public boolean matches(ItemStack stack) {
+    public boolean matches(@NotNull ItemStack stack) {
         if (stack.isEmpty()) return false;
 
         for (Holder<DataComponentType<?>> h : has) {
-            if (h == null) return false;
             if (!stack.has(h.value())) return false;
         }
 
@@ -226,10 +225,13 @@ public record ComponentRequirement(
         return !(has.isEmpty() && predicates.isEmpty());
     }
 
-    private static <T> List<T> sanitizeList(List<T> in) {
+    private static <T> @NotNull List<T> sanitizeList(List<T> in) {
         if (in == null || in.isEmpty()) return List.of();
+
         ArrayList<T> safe = new ArrayList<>(in.size());
-        for (T t : in) if (t != null) safe.add(t);
+        for (T t : in) {
+            if (t != null) safe.add(t);
+        }
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 }

@@ -21,19 +21,35 @@ import java.util.List;
 public record EntityRequirements(List<Atomic> requirements)
         implements SelfValidating<EntityRequirements>, RegistryIntrospectionSource {
 
-    // ---------------------------------------------------------------------
-    // Atomic union
-    // ---------------------------------------------------------------------
-
-    public sealed interface Atomic extends RegistryIntrospectionSource permits BabyAtomic, EffectAtomic, AttributeAtomic, EquipmentAtomic, InvalidAtomic {
+    public sealed interface Atomic extends RegistryIntrospectionSource
+            permits BabyAtomic, EffectAtomic, AttributeAtomic, EquipmentAtomic, InvalidAtomic {
 
         Codec<Atomic> CODEC = atomicCodec();
         StreamCodec<RegistryFriendlyByteBuf, Atomic> STREAM_CODEC = streamCodec();
 
         boolean matches(@NotNull WorldContext ctx, Entity entity);
 
+        @Override
         default @NotNull List<RegistryIntrospection> introspections() {
             return List.of();
+        }
+
+        default @NotNull DataResult<Atomic> validateAtomic() {
+            return switch (this) {
+                case BabyAtomic a -> a.req() == null
+                        ? SelfValidating.invalid("baby requirement is null")
+                        : a.req().validate().map(v -> this);
+                case EffectAtomic a -> a.req() == null
+                        ? SelfValidating.invalid("effect requirement is null")
+                        : a.req().validate().map(v -> this);
+                case AttributeAtomic a -> a.req() == null
+                        ? SelfValidating.invalid("attribute requirement is null")
+                        : a.req().validate().map(v -> this);
+                case EquipmentAtomic a -> a.req() == null
+                        ? SelfValidating.invalid("equipment requirement is null")
+                        : a.req().validate().map(v -> this);
+                case InvalidAtomic a -> SelfValidating.invalid("unknown atomic requirement discriminator: " + a.id());
+            };
         }
 
         private static Codec<Atomic> atomicCodec() {
@@ -41,7 +57,6 @@ public record EntityRequirements(List<Atomic> requirements)
                 @Override
                 public <T> DataResult<Pair<Atomic, T>> decode(DynamicOps<T> ops, T input) {
                     return ops.getMap(input).flatMap(map -> {
-
                         boolean hasBaby = map.get(JolCraftParameterIds.BABY) != null;
                         boolean hasEffect = map.get(JolCraftParameterIds.EFFECT) != null;
                         boolean hasAttribute = map.get(JolCraftParameterIds.ATTRIBUTE) != null;
@@ -86,13 +101,13 @@ public record EntityRequirements(List<Atomic> requirements)
                     }
 
                     return switch (input) {
-                        case BabyAtomic a -> BabyRequirement.CODEC.encodeStart(ops, a.req)
+                        case BabyAtomic a -> BabyRequirement.CODEC.encodeStart(ops, a.req())
                                 .flatMap(v -> ops.mapBuilder().add(JolCraftParameterIds.BABY, v).build(prefix));
-                        case EffectAtomic a -> EffectRequirement.CODEC.encodeStart(ops, a.req)
+                        case EffectAtomic a -> EffectRequirement.CODEC.encodeStart(ops, a.req())
                                 .flatMap(v -> ops.mapBuilder().add(JolCraftParameterIds.EFFECT, v).build(prefix));
-                        case AttributeAtomic a -> AttributeRequirement.CODEC.encodeStart(ops, a.req)
+                        case AttributeAtomic a -> AttributeRequirement.CODEC.encodeStart(ops, a.req())
                                 .flatMap(v -> ops.mapBuilder().add(JolCraftParameterIds.ATTRIBUTE, v).build(prefix));
-                        case EquipmentAtomic a -> EquipmentRequirement.CODEC.encodeStart(ops, a.req)
+                        case EquipmentAtomic a -> EquipmentRequirement.CODEC.encodeStart(ops, a.req())
                                 .flatMap(v -> ops.mapBuilder().add(JolCraftParameterIds.EQUIPMENT, v).build(prefix));
                         case InvalidAtomic ignored -> ops.mapBuilder().build(prefix);
                     };
@@ -106,21 +121,21 @@ public record EntityRequirements(List<Atomic> requirements)
                         switch (atomic) {
                             case BabyAtomic a -> {
                                 buf.writeVarInt(0);
-                                BabyRequirement.STREAM_CODEC.encode(buf, a.req);
+                                BabyRequirement.STREAM_CODEC.encode(buf, a.req());
                             }
                             case EffectAtomic a -> {
                                 buf.writeVarInt(1);
-                                EffectRequirement.STREAM_CODEC.encode(buf, a.req);
+                                EffectRequirement.STREAM_CODEC.encode(buf, a.req());
                             }
                             case AttributeAtomic a -> {
                                 buf.writeVarInt(2);
-                                AttributeRequirement.STREAM_CODEC.encode(buf, a.req);
+                                AttributeRequirement.STREAM_CODEC.encode(buf, a.req());
                             }
                             case EquipmentAtomic a -> {
                                 buf.writeVarInt(3);
-                                EquipmentRequirement.STREAM_CODEC.encode(buf, a.req);
+                                EquipmentRequirement.STREAM_CODEC.encode(buf, a.req());
                             }
-                            case InvalidAtomic a -> buf.writeVarInt(a.id);
+                            case InvalidAtomic a -> buf.writeVarInt(a.id());
                         }
                     },
                     buf -> {
@@ -137,30 +152,16 @@ public record EntityRequirements(List<Atomic> requirements)
         }
     }
 
-    public static final class BabyAtomic implements Atomic {
-        private final BabyRequirement req;
-
-        public BabyAtomic(BabyRequirement req) {
-            this.req = req;
-        }
-
+    public record BabyAtomic(BabyRequirement req) implements Atomic {
         @Override
         public boolean matches(@NotNull WorldContext ctx, Entity entity) {
-            if (entity == null) return false;
             return req != null && req.matches(entity);
         }
     }
 
-    public static final class EffectAtomic implements Atomic {
-        private final EffectRequirement req;
-
-        public EffectAtomic(EffectRequirement req) {
-            this.req = req;
-        }
-
+    public record EffectAtomic(EffectRequirement req) implements Atomic {
         @Override
         public boolean matches(@NotNull WorldContext ctx, Entity entity) {
-            if (entity == null) return false;
             return req != null && req.matches(entity);
         }
 
@@ -170,16 +171,9 @@ public record EntityRequirements(List<Atomic> requirements)
         }
     }
 
-    public static final class AttributeAtomic implements Atomic {
-        private final AttributeRequirement req;
-
-        public AttributeAtomic(AttributeRequirement req) {
-            this.req = req;
-        }
-
+    public record AttributeAtomic(AttributeRequirement req) implements Atomic {
         @Override
         public boolean matches(@NotNull WorldContext ctx, Entity entity) {
-            if (entity == null) return false;
             return req != null && req.matches(entity);
         }
 
@@ -189,23 +183,15 @@ public record EntityRequirements(List<Atomic> requirements)
         }
     }
 
-    public static final class EquipmentAtomic implements Atomic {
-        private final EquipmentRequirement req;
-
-        public EquipmentAtomic(EquipmentRequirement req) {
-            this.req = req;
-        }
-
+    public record EquipmentAtomic(EquipmentRequirement req) implements Atomic {
         @Override
         public boolean matches(@NotNull WorldContext ctx, Entity entity) {
-            if (entity == null) return false;
             return req != null && req.matches(ctx, entity);
         }
 
         @Override
         public @NotNull List<RegistryIntrospection> introspections() {
             if (req == null) return List.of();
-
             var item = req.item();
             if (item instanceof RegistryIntrospectionSource s) {
                 return s.introspections();
@@ -214,22 +200,12 @@ public record EntityRequirements(List<Atomic> requirements)
         }
     }
 
-    public static final class InvalidAtomic implements Atomic {
-        private final int id;
-
-        public InvalidAtomic(int id) {
-            this.id = id;
-        }
-
+    public record InvalidAtomic(int id) implements Atomic {
         @Override
         public boolean matches(@NotNull WorldContext ctx, Entity entity) {
             return false;
         }
     }
-
-    // ---------------------------------------------------------------------
-    // EntityRequirements bundle
-    // ---------------------------------------------------------------------
 
     public static final EntityRequirements EMPTY = new EntityRequirements(List.of());
 
@@ -241,21 +217,15 @@ public record EntityRequirements(List<Atomic> requirements)
     public static final StreamCodec<RegistryFriendlyByteBuf, EntityRequirements> STREAM_CODEC =
             StreamCodec.of(
                     (buf, reqs) -> {
-                        List<Atomic> list = reqs.requirements;
-                        int size = (list == null) ? 0 : list.size();
-
-                        buf.writeVarInt(size);
-                        if (size == 0) return;
-
-                        for (Atomic a : list) {
+                        buf.writeVarInt(reqs.requirements().size());
+                        for (Atomic a : reqs.requirements()) {
                             Atomic.STREAM_CODEC.encode(buf, a);
                         }
                     },
                     buf -> {
                         int size = buf.readVarInt();
-                        if (size <= 0) {
-                            return EntityRequirements.EMPTY;
-                        }
+                        if (size <= 0) return EntityRequirements.EMPTY;
+
                         ArrayList<Atomic> list = new ArrayList<>(size);
                         for (int i = 0; i < size; i++) {
                             list.add(Atomic.STREAM_CODEC.decode(buf));
@@ -264,22 +234,19 @@ public record EntityRequirements(List<Atomic> requirements)
                     }
             );
 
-    public EntityRequirements(List<Atomic> requirements) {
-        if (requirements == null || requirements.isEmpty()) {
-            this.requirements = List.of();
-            return;
-        }
-
-        ArrayList<Atomic> safe = new ArrayList<>(requirements.size());
-        for (Atomic a : requirements) {
-            if (a != null) safe.add(a);
-        }
-
-        this.requirements = safe.isEmpty() ? List.of() : List.copyOf(safe);
+    public EntityRequirements {
+        requirements = sanitize(requirements);
     }
 
     @Override
     public @NotNull DataResult<EntityRequirements> validate() {
+        for (int i = 0; i < requirements.size(); i++) {
+            DataResult<Atomic> res = requirements.get(i).validateAtomic();
+            if (res.error().isPresent()) {
+                String msg = res.error().map(DataResult.Error::message).orElse("");
+                return SelfValidating.invalid("requirements[" + i + "] invalid: " + msg);
+            }
+        }
         return SelfValidating.ok(this);
     }
 
@@ -287,19 +254,24 @@ public record EntityRequirements(List<Atomic> requirements)
         if (entity == null) return false;
 
         for (Atomic r : requirements) {
-            if (r == null) return false;
             if (!r.matches(ctx, entity)) return false;
         }
         return true;
     }
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
-
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        if (requirements == null || requirements.isEmpty()) return List.of();
+        if (requirements.isEmpty()) return List.of();
         return RegistryIntrospectionSource.mergeByRegistry(requirements);
+    }
+
+    private static @NotNull List<Atomic> sanitize(List<Atomic> in) {
+        if (in == null || in.isEmpty()) return List.of();
+
+        ArrayList<Atomic> safe = new ArrayList<>(in.size());
+        for (Atomic a : in) {
+            if (a != null) safe.add(a);
+        }
+        return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 }

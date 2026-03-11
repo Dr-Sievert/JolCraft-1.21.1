@@ -79,19 +79,14 @@ public record Inputs<S>(
 
         @Override
         public @NotNull List<RegistryIntrospection> introspections() {
-            ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(2);
-            src.add(conditions);
             if (param instanceof RegistryIntrospectionSource ris) {
-                src.add(ris);
+                return ris.introspections();
             }
-            return RegistryIntrospectionSource.mergeByRegistry(src);
+            return List.of();
         }
 
         @Override
         public @NotNull DataResult<Entry<S>> validate() {
-            if (conditions == null) {
-                return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.CONDITIONS + "'");
-            }
             if (param == null) {
                 return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.PARAMETER + "'");
             }
@@ -166,31 +161,25 @@ public record Inputs<S>(
                     for (int i = 0; i < size; i++) {
                         list.add(esc.decode(buf));
                     }
-                    return new Inputs<>(conditions, List.copyOf(list));
+                    return new Inputs<>(conditions, list);
                 }
         );
     }
 
     public Inputs {
         conditions = conditions != null ? conditions : Conditions.EMPTY;
-        entries = entries == null ? List.of() : List.copyOf(entries);
+        entries = sanitizeList(entries);
     }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(1 + entries.size());
-        src.add(conditions);
-        src.addAll(entries);
-        return RegistryIntrospectionSource.mergeByRegistry(src);
+        if (entries.isEmpty()) return List.of();
+        return RegistryIntrospectionSource.mergeByRegistry(entries);
     }
 
     public boolean matches(@NotNull WorldContext ctx, @Nullable S subject) {
-        if (!conditions.test(ctx)) {
-            return false;
-        }
-        if (entries.isEmpty()) {
-            return false;
-        }
+        if (!conditions.test(ctx)) return false;
+        if (entries.isEmpty()) return false;
 
         for (Entry<S> entry : entries) {
             if (!entry.conditions.test(ctx)) continue;
@@ -201,13 +190,6 @@ public record Inputs<S>(
 
     @Override
     public @NotNull DataResult<Inputs<S>> validate() {
-        if (conditions == null) {
-            return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.CONDITIONS + "'");
-        }
-        if (entries == null) {
-            return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.ENTRIES + "'");
-        }
-
         DataResult<Conditions> cv = conditions.validate();
         if (cv.error().isPresent()) {
             String msg = cv.error().map(DataResult.Error::message).orElse("");
@@ -216,10 +198,6 @@ public record Inputs<S>(
 
         for (int i = 0; i < entries.size(); i++) {
             Entry<S> entry = entries.get(i);
-            if (entry == null) {
-                return SelfValidating.invalid(JolCraftParameterIds.ENTRIES + " contains null at index " + i);
-            }
-
             DataResult<Entry<S>> ev = entry.validate();
             if (ev.error().isPresent()) {
                 String msg = ev.error().map(DataResult.Error::message).orElse("");
@@ -228,5 +206,15 @@ public record Inputs<S>(
         }
 
         return SelfValidating.ok(this);
+    }
+
+    private static <T> @NotNull List<T> sanitizeList(List<T> in) {
+        if (in == null || in.isEmpty()) return List.of();
+
+        ArrayList<T> safe = new ArrayList<>(in.size());
+        for (T t : in) {
+            if (t != null) safe.add(t);
+        }
+        return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 }

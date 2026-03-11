@@ -7,7 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
@@ -29,23 +29,20 @@ public record Pools(List<Pool> pools)
     private static final int MAX_TOTAL_OUTPUTS = 4096;
     private static final int MAX_POOLS_STREAM = 2048;
 
-    private static final Codec<Pools> FULL_CODEC =
-            RecordCodecBuilder.create(instance -> instance.group(
+    private record FullRaw(List<Pool> pools) {}
+
+    private static final Codec<FullRaw> FULL_CODEC =
+            RecordCodecBuilder.<FullRaw>create(instance -> instance.group(
                     Pool.CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.POOLS, List.of())
-                            .forGetter(Pools::pools)
-            ).apply(instance, Pools::new));
+                            .forGetter(FullRaw::pools)
+            ).apply(instance, FullRaw::new));
 
-    private static final Codec<Pools> RAW_CODEC =
-            Codec.either(Pool.CODEC.listOf(), FULL_CODEC).xmap(
-                    either -> either.map(
-                            Pools::new,
-                            pools -> pools
-                    ),
-                    pools -> Either.left(pools.pools())
-            );
+    private static final Codec<Either<List<Pool>, FullRaw>> RAW_CODEC =
+            Codec.either(Pool.CODEC.listOf(), FULL_CODEC);
 
-    public static final Codec<Pools> CODEC = ParamCodecs.validated(RAW_CODEC);
+    public static final Codec<Pools> CODEC =
+            ParamCodecContract.create(RAW_CODEC, Pools::fromRaw, Pools::toRaw);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Pools> STREAM_CODEC =
             StreamCodec.of(
@@ -83,6 +80,17 @@ public record Pools(List<Pool> pools)
         pools = sanitizePools(pools);
     }
 
+    private static @NotNull DataResult<Pools> fromRaw(@NotNull Either<List<Pool>, FullRaw> raw) {
+        return DataResult.success(raw.map(
+                Pools::new,
+                full -> new Pools(full.pools())
+        ));
+    }
+
+    private static @NotNull Either<List<Pool>, FullRaw> toRaw(@NotNull Pools pools) {
+        return Either.left(pools.pools());
+    }
+
     private static @NotNull List<Pool> sanitizePools(@Nullable List<Pool> pools) {
         if (pools == null || pools.isEmpty()) {
             return List.of();
@@ -90,12 +98,11 @@ public record Pools(List<Pool> pools)
 
         ArrayList<Pool> safe = new ArrayList<>(pools.size());
         for (Pool pool : pools) {
-            if (pool == null) {
-                throw new IllegalArgumentException(JolCraftParameterIds.POOLS + " contains null");
+            if (pool != null) {
+                safe.add(pool);
             }
-            safe.add(pool);
         }
-        return List.copyOf(safe);
+        return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 
     @Override

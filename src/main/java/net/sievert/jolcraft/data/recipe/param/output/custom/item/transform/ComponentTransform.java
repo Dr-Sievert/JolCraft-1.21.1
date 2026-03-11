@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom.item.transform;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -13,7 +14,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -31,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -41,14 +45,136 @@ public sealed interface ComponentTransform
     String SOURCE = JolCraftParameterIds.SOURCE;
     String KEEP = JolCraftParameterIds.KEEP;
     String REMOVE = JolCraftParameterIds.REMOVE;
-    String PATCH = JolCraftParameterIds.PATCH;
+    String SET = JolCraftDictionary.SET;
     String REMOVE_ALL = JolCraftStrings.underscored(REMOVE, JolCraftDictionary.ALL);
 
-    Codec<Holder<DataComponentType<?>>> COMPONENT_TYPE_HOLDER_CODEC =
-            RegistryFixedCodec.create(Registries.DATA_COMPONENT_TYPE);
+    int MAX_SOURCE_LENGTH = 256;
+    int MAX_COMPONENT_TYPES = 256;
+
+    Codec<Holder<DataComponentType<?>>> COMPONENT_TYPE_HOLDER_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<Holder<DataComponentType<?>>, T>> decode(
+                com.mojang.serialization.DynamicOps<T> ops,
+                T input
+        ) {
+            return ResourceLocation.CODEC.decode(ops, input).flatMap(pair -> {
+                ResourceLocation id = pair.getFirst();
+                T rest = pair.getSecond();
+
+                if (!(ops instanceof RegistryOps<T> registryOps)) {
+                    return DataResult.error(() ->
+                            "component transform requires RegistryOps for '" +
+                                    Registries.DATA_COMPONENT_TYPE.location() + "'"
+                    );
+                }
+
+                var lookupOpt = registryOps.lookupProvider.lookup(Registries.DATA_COMPONENT_TYPE);
+                if (lookupOpt.isEmpty()) {
+                    return DataResult.error(() ->
+                            "missing registry info for '" +
+                                    Registries.DATA_COMPONENT_TYPE.location() + "'"
+                    );
+                }
+
+                ResourceKey<DataComponentType<?>> key =
+                        ResourceKey.create(Registries.DATA_COMPONENT_TYPE, id);
+
+                Optional<Holder.Reference<DataComponentType<?>>> holderOpt =
+                        lookupOpt.get().getter().get(key);
+
+                return holderOpt.<DataResult<Pair<Holder<DataComponentType<?>>, T>>>map(dataComponentTypeReference ->
+                        DataResult.success(Pair.of(dataComponentTypeReference, rest))).orElseGet(() -> DataResult.error(() ->
+                        "unknown data component type '" + id + "'"
+                ));
+
+            });
+        }
+
+        @Override
+        public <T> DataResult<T> encode(
+                Holder<DataComponentType<?>> input,
+                com.mojang.serialization.DynamicOps<T> ops,
+                T prefix
+        ) {
+
+            return input.unwrapKey()
+                    .map(ResourceKey::location)
+                    .map(id -> ResourceLocation.CODEC.encode(id, ops, prefix))
+                    .orElseGet(() -> DataResult.error(() -> "unkeyed data component holder"));
+        }
+    };
 
     StreamCodec<RegistryFriendlyByteBuf, Holder<DataComponentType<?>>> COMPONENT_TYPE_HOLDER_STREAM =
             ByteBufCodecs.holderRegistry(Registries.DATA_COMPONENT_TYPE);
+
+    MapCodec<Config> RAW_MAP_CODEC =
+            RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    Codec.STRING
+                            .optionalFieldOf(SOURCE)
+                            .forGetter(c -> Optional.ofNullable(c.source())),
+
+                    Codec.BOOL
+                            .optionalFieldOf(REMOVE_ALL, false)
+                            .forGetter(Config::removeAll),
+
+                    COMPONENT_TYPE_HOLDER_CODEC.listOf()
+                            .optionalFieldOf(KEEP, List.of())
+                            .forGetter(Config::keep),
+
+                    COMPONENT_TYPE_HOLDER_CODEC.listOf()
+                            .optionalFieldOf(REMOVE, List.of())
+                            .forGetter(Config::remove),
+
+                    DataComponentPatch.CODEC
+                            .optionalFieldOf(SET, DataComponentPatch.EMPTY)
+                            .forGetter(Config::set)
+            ).apply(instance, (source, removeAll, keep, remove, set) ->
+                    new Config(
+                            source.orElse(null),
+                            removeAll,
+                            keep != null ? keep : List.of(),
+                            remove != null ? remove : List.of(),
+                            set != null ? set : DataComponentPatch.EMPTY
+                    )));
+
+    MapCodec<ComponentTransform> MAP_CODEC =
+            RAW_MAP_CODEC.xmap(v -> v, v -> (Config) v);
+
+    Codec<ComponentTransform> CODEC =
+            ParamCodecs.validated(MAP_CODEC.codec());
+
+    StreamCodec<RegistryFriendlyByteBuf, Config> RAW_STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.optional(ByteBufCodecs.stringUtf8(MAX_SOURCE_LENGTH)),
+                    c -> Optional.ofNullable(c.source()),
+
+                    ByteBufCodecs.BOOL,
+                    Config::removeAll,
+
+                    ByteBufCodecs.collection(ArrayList::new, COMPONENT_TYPE_HOLDER_STREAM, MAX_COMPONENT_TYPES),
+                    Config::keep,
+
+                    ByteBufCodecs.collection(ArrayList::new, COMPONENT_TYPE_HOLDER_STREAM, MAX_COMPONENT_TYPES),
+                    Config::remove,
+
+                    DataComponentPatch.STREAM_CODEC,
+                    Config::set,
+
+                    (source, removeAll, keep, remove, set) ->
+                            new Config(
+                                    source.orElse(null),
+                                    removeAll,
+                                    keep != null ? keep : List.of(),
+                                    remove != null ? remove : List.of(),
+                                    set != null ? set : DataComponentPatch.EMPTY
+                            )
+            );
+
+    StreamCodec<RegistryFriendlyByteBuf, ComponentTransform> STREAM_CODEC =
+            StreamCodec.of(
+                    (buf, value) -> RAW_STREAM_CODEC.encode(buf, value instanceof Config c ? c : Config.EMPTY),
+                    RAW_STREAM_CODEC::decode
+            );
 
     void apply(@Nullable ItemStack input, @NotNull ItemStack output);
 
@@ -64,13 +190,17 @@ public sealed interface ComponentTransform
                 int holders = 0;
 
                 holders = scanList(c.keep(), holders);
-                if (holders == 1) single = firstNonNull(c.keep());
+                if (holders == 1) {
+                    single = firstNonNull(c.keep());
+                }
 
                 int before = holders;
                 holders = scanList(c.remove(), holders);
 
                 if (holders == 1) {
-                    single = (single != null) ? single : firstNonNull(c.remove());
+                    if (single == null) {
+                        single = firstNonNull(c.remove());
+                    }
                 } else if (holders != before) {
                     single = null;
                 }
@@ -88,90 +218,14 @@ public sealed interface ComponentTransform
         return asList();
     }
 
-    private static int scanList(@Nullable List<? extends Holder<?>> list, int holders) {
-        if (list == null) return holders;
-        for (Holder<?> h : list) {
-            if (h != null) holders++;
-        }
-        return holders;
-    }
-
-    private static @Nullable Holder<?> firstNonNull(@Nullable List<? extends Holder<?>> list) {
-        if (list == null) return null;
-        for (Holder<?> h : list) {
-            if (h != null) return h;
-        }
-        return null;
-    }
-
-    private static @Nullable String sanitizeSource(@Nullable String source) {
-        if (source == null) return null;
-        String s = source.trim();
-        return s.isEmpty() ? null : s.toLowerCase(Locale.ROOT);
-    }
-
-    MapCodec<Config> RAW_MAP_CODEC =
-            RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.STRING
-                            .optionalFieldOf(SOURCE)
-                            .forGetter(c -> java.util.Optional.ofNullable(c.source())),
-
-                    Codec.BOOL
-                            .optionalFieldOf(REMOVE_ALL, false)
-                            .forGetter(Config::removeAll),
-
-                    COMPONENT_TYPE_HOLDER_CODEC.listOf()
-                            .optionalFieldOf(KEEP, List.of())
-                            .forGetter(Config::keep),
-
-                    COMPONENT_TYPE_HOLDER_CODEC.listOf()
-                            .optionalFieldOf(REMOVE, List.of())
-                            .forGetter(Config::remove),
-
-                    DataComponentPatch.CODEC
-                            .optionalFieldOf(PATCH, DataComponentPatch.EMPTY)
-                            .forGetter(Config::patch)
-            ).apply(instance, (source, removeAll, keep, remove, patch) ->
-                    new Config(source.orElse(null), removeAll, keep, remove, patch)));
-
-    MapCodec<ComponentTransform> MAP_CODEC =
-            RAW_MAP_CODEC.xmap(v -> v, v -> (Config) v);
-
-    Codec<ComponentTransform> CODEC =
-            ParamCodecs.validated(MAP_CODEC.codec());
-
-    int MAX_SOURCE_LENGTH = 256;
-    int MAX_COMPONENT_TYPES = 256;
-
-    StreamCodec<RegistryFriendlyByteBuf, Config> RAW_STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.optional(ByteBufCodecs.stringUtf8(MAX_SOURCE_LENGTH)),
-                    c -> java.util.Optional.ofNullable(c.source()),
-
-                    ByteBufCodecs.BOOL, Config::removeAll,
-
-                    ByteBufCodecs.collection(ArrayList::new, COMPONENT_TYPE_HOLDER_STREAM, MAX_COMPONENT_TYPES),
-                    Config::keep,
-
-                    ByteBufCodecs.collection(ArrayList::new, COMPONENT_TYPE_HOLDER_STREAM, MAX_COMPONENT_TYPES),
-                    Config::remove,
-
-                    DataComponentPatch.STREAM_CODEC, Config::patch,
-
-                    (source, removeAll, keep, remove, patch) ->
-                            new Config(source.orElse(null), removeAll, keep, remove, patch)
-            );
-
-    StreamCodec<RegistryFriendlyByteBuf, ComponentTransform> STREAM_CODEC =
-            StreamCodec.of(
-                    (buf, v) -> RAW_STREAM_CODEC.encode(buf, v instanceof Config c ? c : Config.EMPTY),
-                    RAW_STREAM_CODEC::decode
-            );
-
     @Override
     default DataResult<ComponentTransform> validate() {
-        if (this instanceof Config c) return c.validate();
-        if (this instanceof Invalid i) return i.validate();
+        if (this instanceof Config c) {
+            return c.validate();
+        }
+        if (this instanceof Invalid i) {
+            return i.validate();
+        }
         return SelfValidating.invalid("unknown component transform");
     }
 
@@ -180,9 +234,64 @@ public sealed interface ComponentTransform
             boolean removeAll,
             List<Holder<DataComponentType<?>>> keep,
             List<Holder<DataComponentType<?>>> remove,
-            DataComponentPatch patch
+            @Nullable DataComponentPatch set
     ) {
-        return new Config(source, removeAll, keep, remove, patch);
+        return new Config(source, removeAll, keep, remove, set);
+    }
+
+    private static int scanList(@Nullable List<? extends Holder<?>> list, int holders) {
+        if (list == null) {
+            return holders;
+        }
+        for (Holder<?> holder : list) {
+            if (holder != null) {
+                holders++;
+            }
+        }
+        return holders;
+    }
+
+    private static @Nullable Holder<?> firstNonNull(@Nullable List<? extends Holder<?>> list) {
+        if (list == null) {
+            return null;
+        }
+        for (Holder<?> holder : list) {
+            if (holder != null) {
+                return holder;
+            }
+        }
+        return null;
+    }
+
+    private static @Nullable String sanitizeSource(@Nullable String source) {
+        if (source == null) {
+            return null;
+        }
+        String s = source.trim();
+        if (s.isEmpty()) {
+            return null;
+        }
+        return s.toLowerCase(Locale.ROOT);
+    }
+
+    private static <T> @NotNull List<T> sanitizeList(@Nullable List<T> in) {
+        if (in == null || in.isEmpty()) {
+            return List.of();
+        }
+
+        ArrayList<T> out = new ArrayList<>(in.size());
+        for (T value : in) {
+            if (value != null) {
+                out.add(value);
+            }
+        }
+
+        return out.isEmpty() ? List.of() : List.copyOf(out);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void copyTypedComponent(@NotNull ItemStack output, @NotNull TypedDataComponent<?> typed) {
+        output.set((DataComponentType) typed.type(), typed.value());
     }
 
     record Invalid() implements ComponentTransform {
@@ -203,7 +312,7 @@ public sealed interface ComponentTransform
             boolean removeAll,
             List<Holder<DataComponentType<?>>> keep,
             List<Holder<DataComponentType<?>>> remove,
-            DataComponentPatch patch
+            DataComponentPatch set
     ) implements ComponentTransform {
 
         public static final Config EMPTY =
@@ -214,13 +323,13 @@ public sealed interface ComponentTransform
                 boolean removeAll,
                 List<Holder<DataComponentType<?>>> keep,
                 List<Holder<DataComponentType<?>>> remove,
-                DataComponentPatch patch
+                @Nullable DataComponentPatch set
         ) {
             this.source = sanitizeSource(source);
             this.removeAll = removeAll;
-            this.keep = sanitizeHolders(keep);
-            this.remove = sanitizeHolders(remove);
-            this.patch = patch;
+            this.keep = sanitizeList(keep);
+            this.remove = sanitizeList(remove);
+            this.set = set != null ? set : DataComponentPatch.EMPTY;
         }
 
         private boolean hasCopyRules() {
@@ -234,15 +343,15 @@ public sealed interface ComponentTransform
 
         @Override
         public void apply(@Nullable ItemStack input, @NotNull ItemStack output) {
-            if (output.isEmpty()) return;
+            if (output.isEmpty()) {
+                return;
+            }
 
             if (input != null && !input.isEmpty()) {
                 if (removeAll) {
                     HashSet<DataComponentType<?>> keepSet = new HashSet<>(keep.size());
-                    for (Holder<DataComponentType<?>> h : keep) {
-                        if (h != null) {
-                            keepSet.add(h.value());
-                        }
+                    for (Holder<DataComponentType<?>> holder : keep) {
+                        keepSet.add(holder.value());
                     }
 
                     for (TypedDataComponent<?> typed : input.getComponents()) {
@@ -252,10 +361,8 @@ public sealed interface ComponentTransform
                     }
                 } else if (!remove.isEmpty()) {
                     HashSet<DataComponentType<?>> removeSet = new HashSet<>(remove.size());
-                    for (Holder<DataComponentType<?>> h : remove) {
-                        if (h != null) {
-                            removeSet.add(h.value());
-                        }
+                    for (Holder<DataComponentType<?>> holder : remove) {
+                        removeSet.add(holder.value());
                     }
 
                     for (TypedDataComponent<?> typed : input.getComponents()) {
@@ -266,8 +373,8 @@ public sealed interface ComponentTransform
                 }
             }
 
-            if (!patch.isEmpty()) {
-                output.applyComponents(patch);
+            if (!set.isEmpty()) {
+                output.applyComponents(set);
             }
         }
 
@@ -275,60 +382,53 @@ public sealed interface ComponentTransform
         public DataResult<ComponentTransform> validate() {
             if (removeAll) {
                 if (!remove.isEmpty()) {
-                    return SelfValidating.invalid("'" + REMOVE + "' is not allowed when '" + REMOVE_ALL + "' is true");
+                    return SelfValidating.invalid(
+                            "'" + REMOVE + "' is not allowed when '" + REMOVE_ALL + "' is true"
+                    );
                 }
-            } else {
-                if (!keep.isEmpty()) {
-                    return SelfValidating.invalid("'" + KEEP + "' is only allowed when '" + REMOVE_ALL + "' is true");
-                }
+            } else if (!keep.isEmpty()) {
+                return SelfValidating.invalid(
+                        "'" + KEEP + "' is only allowed when '" + REMOVE_ALL + "' is true"
+                );
             }
 
-            boolean hasCopyRules = hasCopyRules();
-            if (hasCopyRules && source == null) {
-                return SelfValidating.invalid("'" + SOURCE + "' is required when copy/filter component rules are used");
+            if (hasCopyRules() && source == null) {
+                return SelfValidating.invalid(
+                        "'" + SOURCE + "' is required when copy/filter component rules are used"
+                );
             }
 
             for (int i = 0; i < keep.size(); i++) {
-                Holder<DataComponentType<?>> h = keep.get(i);
-                if (h == null) {
+                Holder<DataComponentType<?>> holder = keep.get(i);
+                if (holder == null) {
                     return SelfValidating.invalid(KEEP + "[" + i + "] is null");
                 }
-                h.value();
+                holder.value();
             }
 
             for (int i = 0; i < remove.size(); i++) {
-                Holder<DataComponentType<?>> h = remove.get(i);
-                if (h == null) {
+                Holder<DataComponentType<?>> holder = remove.get(i);
+                if (holder == null) {
                     return SelfValidating.invalid(REMOVE + "[" + i + "] is null");
                 }
-                h.value();
+                holder.value();
             }
 
-            for (var e : patch.entrySet()) {
-                if (e == null) continue;
-                var v = e.getValue();
-                if (v == null || v.isEmpty()) {
-                    return SelfValidating.invalid("'" + PATCH + "' must not remove components; use '" + REMOVE + "' / '" + REMOVE_ALL + "' instead");
+            for (var entry : set.entrySet()) {
+                if (entry == null) {
+                    continue;
+                }
+
+                var value = entry.getValue();
+                if (value == null || value.isEmpty()) {
+                    return SelfValidating.invalid(
+                            "'" + SET + "' must not remove components; use '" +
+                                    REMOVE + "' / '" + REMOVE_ALL + "' instead"
+                    );
                 }
             }
 
             return SelfValidating.ok(this);
         }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void copyTypedComponent(@NotNull ItemStack output, @NotNull TypedDataComponent<?> typed) {
-        output.set((DataComponentType) typed.type(), typed.value());
-    }
-
-    private static <T> List<T> sanitizeHolders(@Nullable List<T> in) {
-        if (in == null || in.isEmpty()) return List.of();
-
-        ArrayList<T> out = new ArrayList<>(in.size());
-        for (T t : in) {
-            if (t != null) out.add(t);
-        }
-
-        return out.isEmpty() ? List.of() : List.copyOf(out);
     }
 }

@@ -20,12 +20,13 @@ import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public record ItemSpec(
-        ItemProducer producer,
-        IntRange count
+        @NotNull ItemProducer producer,
+        @NotNull IntRange count
 ) implements SelfValidating<ItemSpec>, RegistryIntrospectionSource {
 
     private record CanonicalRaw(
@@ -33,12 +34,23 @@ public record ItemSpec(
             Optional<TagKey<Item>> tag,
             Optional<ItemProducer.MapData> map,
             IntRange count
-    ) {}
+    ) {
+        private CanonicalRaw {
+            item = item != null ? item : Optional.empty();
+            tag = tag != null ? tag : Optional.empty();
+            map = map != null ? map : Optional.empty();
+            count = count != null ? count : IntRange.ONE;
+        }
+    }
 
     private record VerboseRaw(
             ItemProducer producer,
             IntRange count
-    ) {}
+    ) {
+        private VerboseRaw {
+            count = count != null ? count : IntRange.ONE;
+        }
+    }
 
     private static final Codec<CanonicalRaw> CANONICAL_RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
@@ -85,10 +97,7 @@ public record ItemSpec(
             );
 
     public ItemSpec {
-        if (producer == null) {
-            throw new IllegalArgumentException(JolCraftParameterIds.PRODUCER + " cannot be null");
-        }
-        count = count != null ? count : IntRange.ONE;
+        Objects.requireNonNull(producer, JolCraftParameterIds.PRODUCER);
     }
 
     public static @NotNull DataResult<ItemSpec> fromSelection(
@@ -98,10 +107,7 @@ public record ItemSpec(
             @NotNull IntRange count
     ) {
         return ItemProducer.fromSelection(item, tag, map)
-                .map(producer -> new ItemSpec(
-                        producer,
-                        count
-                ));
+                .map(producer -> new ItemSpec(producer, count));
     }
 
     private static @NotNull DataResult<ItemSpec> fromRaw(
@@ -124,7 +130,7 @@ public record ItemSpec(
 
         return DataResult.success(new ItemSpec(
                 verbose.producer(),
-                verbose.count() != null ? verbose.count() : IntRange.ONE
+                verbose.count()
         ));
     }
 
@@ -148,14 +154,16 @@ public record ItemSpec(
         if (pv.error().isPresent()) {
             return DataResult.error(() ->
                     JolCraftParameterIds.PRODUCER + " invalid: " +
-                            pv.error().map(DataResult.Error::message).orElse(""));
+                            pv.error().map(DataResult.Error::message).orElse("")
+            );
         }
 
         DataResult<IntRange> cv = IntRange.validateRange(count);
         if (cv.error().isPresent()) {
             return DataResult.error(() ->
                     JolCraftParameterIds.COUNT + " invalid: " +
-                            cv.error().map(DataResult.Error::message).orElse(""));
+                            cv.error().map(DataResult.Error::message).orElse("")
+            );
         }
 
         return DataResult.success(this);
@@ -163,14 +171,17 @@ public record ItemSpec(
 
     public @NotNull ItemStack create(@NotNull WorldContext ctx) {
         ItemStack stack = producer.create(ctx);
-        if (stack.isEmpty()) return stack;
+        if (stack.isEmpty()) {
+            return stack;
+        }
 
         int rolled = count.roll(ctx.random());
-        if (rolled <= 0) return ItemStack.EMPTY;
+        if (rolled <= 0) {
+            return ItemStack.EMPTY;
+        }
 
         int max = Math.max(1, stack.getMaxStackSize());
         stack.setCount(Math.min(rolled, max));
-
         return stack;
     }
 

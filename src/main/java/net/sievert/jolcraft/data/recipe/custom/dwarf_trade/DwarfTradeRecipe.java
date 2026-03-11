@@ -65,6 +65,24 @@ public record DwarfTradeRecipe(
     public static final String KEY_GROUP = JolCraftDictionary.GROUP;
     public static final String KEY_WEIGHT = JolCraftDictionary.WEIGHT;
 
+    public static final String KEY_MAX_USES =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.MAX,
+                    JolCraftStrings.plural(JolCraftDictionary.USE)
+            );
+
+    public static final String KEY_DWARF_XP =
+            JolCraftStrings.underscored(
+                    JolCraftDwarfIds.DWARF,
+                    JolCraftDictionary.XP
+            );
+
+    public static final String KEY_PRICE_MULTIPLIER =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.PRICE,
+                    JolCraftDictionary.MULTIPLIER
+            );
+
     public static final String SOURCE_COST_A =
             JolCraftStrings.underscored(JolCraftDictionary.COST, "a");
 
@@ -183,9 +201,8 @@ public record DwarfTradeRecipe(
                                             new IllegalArgumentException("unknown group '" + raw + "'"));
 
                             WeightParam weight = WeightParam.STREAM_CODEC.decode(buf);
-                            TradePoolEntry entry = new TradePoolEntry(group, weight);
 
-                            return validate(entry)
+                            return validate(new TradePoolEntry(group, weight))
                                     .result()
                                     .orElseThrow(() ->
                                             new IllegalArgumentException("invalid trade pool entry"));
@@ -200,23 +217,19 @@ public record DwarfTradeRecipe(
         private static @NotNull DataResult<TradePoolEntry> decodeValidated(RawTradePoolEntry raw) {
             TradeGroup group = raw.group() != null ? raw.group() : TradeGroup.MAIN;
             Optional<WeightParam> weightOpt = raw.weight() != null ? raw.weight() : Optional.empty();
+            WeightParam weight = weightOpt.orElse(WeightParam.ONE);
 
-            if (group == TradeGroup.MAIN && weightOpt.isPresent()) {
-                return DataResult.error(() -> "pool.weight must not be provided for main trades");
+            DataResult<WeightParam> weightValidation = weight.validate();
+            var weightErr = weightValidation.error();
+            if (weightErr.isPresent()) {
+                return DataResult.error(() -> "pool.weight invalid: " + weightErr.get().message());
             }
 
-            if (weightOpt.isPresent()) {
-                DataResult<WeightParam> wv = weightOpt.get().validate();
-                var wErr = wv.error();
-                if (wErr.isPresent()) {
-                    return DataResult.error(() -> "pool.weight invalid: " + wErr.get().message());
-                }
+            if (group == TradeGroup.MAIN && weight.value() != WeightParam.ONE.value()) {
+                return DataResult.error(() -> "main trades must use default pool weight");
             }
 
-            return DataResult.success(new TradePoolEntry(
-                    group,
-                    weightOpt.orElse(WeightParam.ONE)
-            ));
+            return DataResult.success(new TradePoolEntry(group, weight));
         }
 
         private static @NotNull DataResult<RawTradePoolEntry> encodeValidated(TradePoolEntry entry) {
@@ -226,39 +239,38 @@ public record DwarfTradeRecipe(
                 return DataResult.error(() -> err.get().message());
             }
 
+            TradePoolEntry normalized = validated.result().orElse(entry);
+
             Optional<WeightParam> weightOpt =
-                    entry.group() == TradeGroup.MAIN
+                    normalized.weight().value() == WeightParam.ONE.value()
                             ? Optional.empty()
-                            : Optional.of(entry.weight());
+                            : Optional.of(normalized.weight());
 
             return DataResult.success(new RawTradePoolEntry(
-                    entry.group(),
+                    normalized.group(),
                     weightOpt
             ));
         }
 
         public static @NotNull DataResult<TradePoolEntry> validate(TradePoolEntry entry) {
-            if (entry.group() == null) {
-                return DataResult.error(() -> "pool.group is required");
+            if (entry == null) {
+                return DataResult.error(() -> "pool is required");
             }
 
-            if (entry.weight() == null) {
-                return DataResult.error(() -> "pool.weight is required");
+            TradeGroup group = entry.group() != null ? entry.group() : TradeGroup.MAIN;
+            WeightParam weight = entry.weight() != null ? entry.weight() : WeightParam.ONE;
+
+            DataResult<WeightParam> weightValidation = weight.validate();
+            var weightErr = weightValidation.error();
+            if (weightErr.isPresent()) {
+                return DataResult.error(() -> "pool.weight invalid: " + weightErr.get().message());
             }
 
-            {
-                DataResult<WeightParam> wv = entry.weight().validate();
-                var wErr = wv.error();
-                if (wErr.isPresent()) {
-                    return DataResult.error(() -> "pool.weight invalid: " + wErr.get().message());
-                }
-            }
-
-            if (entry.group() == TradeGroup.MAIN && entry.weight().safe() != 1) {
+            if (group == TradeGroup.MAIN && weight.value() != WeightParam.ONE.value()) {
                 return DataResult.error(() -> "main trades must use default pool weight");
             }
 
-            return DataResult.success(entry);
+            return DataResult.success(new TradePoolEntry(group, weight));
         }
     }
 
@@ -418,31 +430,6 @@ public record DwarfTradeRecipe(
                         io -> io
                 );
 
-        private static final Codec<TradeStats> STATS_CODEC =
-                RecordCodecBuilder.create(inst -> inst.group(
-                        Codec.INT.optionalFieldOf(
-                                        JolCraftStrings.underscored(
-                                                JolCraftDictionary.MAX,
-                                                JolCraftStrings.plural(JolCraftDictionary.USE)),
-                                        DEFAULT_MAX_USES)
-                                .forGetter(TradeStats::maxUses),
-
-                        Codec.INT.optionalFieldOf(
-                                        JolCraftStrings.underscored(
-                                                JolCraftDwarfIds.DWARF,
-                                                JolCraftDictionary.XP),
-                                        DEFAULT_DWARF_XP)
-                                .forGetter(TradeStats::dwarfXp),
-
-                        Codec.FLOAT.optionalFieldOf(
-                                        JolCraftStrings.underscored(
-                                                JolCraftDictionary.PRICE,
-                                                JolCraftDictionary.MULTIPLIER),
-                                        DEFAULT_PRICE_MULTIPLIER)
-                                .forGetter(TradeStats::priceMultiplier)
-
-                ).apply(inst, TradeStats::new));
-
         public static final MapCodec<DwarfTradeRecipe> CODEC =
                 RecordCodecBuilder.mapCodec(
                         (RecordCodecBuilder.Instance<DwarfTradeRecipe> inst) -> inst.group(
@@ -459,23 +446,26 @@ public record DwarfTradeRecipe(
                                 Codec.INT.optionalFieldOf(JolCraftDictionary.ORDER, 0)
                                         .forGetter(DwarfTradeRecipe::order),
 
-                                ItemInput.CODEC.fieldOf(
-                                                JolCraftStrings.underscored(JolCraftDictionary.COST, "a"))
+                                ItemInput.CODEC.fieldOf(SOURCE_COST_A)
                                         .forGetter(DwarfTradeRecipe::costA),
 
-                                ItemInput.CODEC.optionalFieldOf(
-                                                JolCraftStrings.underscored(JolCraftDictionary.COST, "b"))
+                                ItemInput.CODEC.optionalFieldOf(SOURCE_COST_B)
                                         .forGetter(recipe -> Optional.ofNullable(recipe.costB())),
 
                                 RESULT_CODEC.fieldOf(JolCraftDictionary.RESULT)
                                         .forGetter(DwarfTradeRecipe::result),
 
-                                STATS_CODEC.optionalFieldOf(
-                                                JolCraftStrings.plural(JolCraftDictionary.STAT),
-                                                TradeStats.DEFAULT)
-                                        .forGetter(DwarfTradeRecipe::stats)
+                                Codec.INT.optionalFieldOf(KEY_MAX_USES, DEFAULT_MAX_USES)
+                                        .forGetter(recipe -> recipe.stats().maxUses()),
 
-                        ).apply(inst, (profession, merchantLevel, pool, order, costA, costB, result, stats) ->
+                                Codec.INT.optionalFieldOf(KEY_DWARF_XP, DEFAULT_DWARF_XP)
+                                        .forGetter(recipe -> recipe.stats().dwarfXp()),
+
+                                Codec.FLOAT.optionalFieldOf(KEY_PRICE_MULTIPLIER, DEFAULT_PRICE_MULTIPLIER)
+                                        .forGetter(recipe -> recipe.stats().priceMultiplier())
+
+                        ).apply(inst, (profession, merchantLevel, pool, order, costA, costB, result,
+                                       maxUses, dwarfXp, priceMultiplier) ->
                                 new DwarfTradeRecipe(
                                         profession,
                                         merchantLevel,
@@ -484,7 +474,7 @@ public record DwarfTradeRecipe(
                                         costA,
                                         costB.orElse(null),
                                         result,
-                                        stats
+                                        new TradeStats(maxUses, dwarfXp, priceMultiplier)
                                 ))
                 ).validate(DwarfTradeRecipe::validateRecipe);
 
@@ -642,10 +632,6 @@ public record DwarfTradeRecipe(
 
         if (recipe.merchantLevel() == null) {
             return DataResult.error(() -> "level is required");
-        }
-
-        if (recipe.pool() == null) {
-            return DataResult.error(() -> "pool is required");
         }
 
         {

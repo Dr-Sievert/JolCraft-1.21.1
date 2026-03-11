@@ -11,6 +11,7 @@ import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectio
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,19 +62,21 @@ public record Conditions(List<Condition> conditions)
             );
 
     public Conditions(List<Condition> conditions) {
-        if (conditions == null || conditions.isEmpty()) {
-            this.conditions = List.of();
-            return;
+        this.conditions = sanitize(conditions);
+    }
+
+    private static @NotNull List<Condition> sanitize(@Nullable List<Condition> in) {
+        if (in == null || in.isEmpty()) {
+            return List.of();
         }
 
-        ArrayList<Condition> safe = new ArrayList<>(conditions.size());
-        for (Condition condition : conditions) {
-            if (condition == null) {
-                throw new IllegalArgumentException(JolCraftParameterIds.CONDITIONS + " contains null");
+        ArrayList<Condition> safe = new ArrayList<>(in.size());
+        for (Condition condition : in) {
+            if (condition != null) {
+                safe.add(condition);
             }
-            safe.add(condition);
         }
-        this.conditions = List.copyOf(safe);
+        return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 
     @Override

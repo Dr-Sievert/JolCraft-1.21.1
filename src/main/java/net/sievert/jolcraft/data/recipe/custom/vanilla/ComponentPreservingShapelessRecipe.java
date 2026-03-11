@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,13 +19,15 @@ import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public final class ComponentPreservingShapelessRecipe implements CraftingRecipe {
@@ -37,13 +40,21 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
     private final Ingredient base;
     private final List<Ingredient> ingredients;
     private final ItemStack result;
+
+    /** Copy only these from base when removeAll = true. */
     private final List<DataComponentType<?>> keep;
 
-    /** Components that must be present on the base stack (e.g. DYED_COLOR for remove-dye). */
+    /** Remove these from copied base components when removeAll = false. */
+    private final List<DataComponentType<?>> remove;
+
+    /** Components that must be present on the base stack. */
     private final List<DataComponentType<?>> baseRequire;
 
-    /** Patch applied after preserving components (set/remove/etc). */
-    private final DataComponentPatch patch;
+    /** If true, copy nothing from base except explicit keep whitelist. */
+    private final boolean removeAll;
+
+    /** Set/update components after copy stage. */
+    private final DataComponentPatch set;
 
     @Nullable
     private PlacementInfo placementInfo;
@@ -57,6 +68,8 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                     ItemStack.EMPTY,
                     List.of(),
                     List.of(),
+                    List.of(),
+                    false,
                     EMPTY_PATCH
             );
 
@@ -67,41 +80,21 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
             List<Ingredient> ingredients,
             ItemStack result,
             List<DataComponentType<?>> keep,
+            List<DataComponentType<?>> remove,
             List<DataComponentType<?>> baseRequire,
-            DataComponentPatch patch
+            boolean removeAll,
+            DataComponentPatch set
     ) {
         this.group = group == null ? "" : group;
         this.category = category != null ? category : CraftingBookCategory.MISC;
-
         this.base = base;
-
-        if (ingredients == null || ingredients.isEmpty()) {
-            this.ingredients = List.of();
-        } else {
-            ArrayList<Ingredient> tmp = new ArrayList<>(ingredients.size());
-            for (Ingredient i : ingredients) if (i != null) tmp.add(i);
-            this.ingredients = tmp.isEmpty() ? List.of() : List.copyOf(tmp);
-        }
-
+        this.ingredients = sanitizeIngredients(ingredients);
         this.result = result != null ? result : ItemStack.EMPTY;
-
-        if (keep == null || keep.isEmpty()) {
-            this.keep = List.of();
-        } else {
-            ArrayList<DataComponentType<?>> tmp = new ArrayList<>(keep.size());
-            for (DataComponentType<?> t : keep) if (t != null) tmp.add(t);
-            this.keep = tmp.isEmpty() ? List.of() : List.copyOf(tmp);
-        }
-
-        if (baseRequire == null || baseRequire.isEmpty()) {
-            this.baseRequire = List.of();
-        } else {
-            ArrayList<DataComponentType<?>> tmp = new ArrayList<>(baseRequire.size());
-            for (DataComponentType<?> t : baseRequire) if (t != null) tmp.add(t);
-            this.baseRequire = tmp.isEmpty() ? List.of() : List.copyOf(tmp);
-        }
-
-        this.patch = patch != null ? patch : EMPTY_PATCH;
+        this.keep = sanitizeComponentTypes(keep);
+        this.remove = sanitizeComponentTypes(remove);
+        this.baseRequire = sanitizeComponentTypes(baseRequire);
+        this.removeAll = removeAll;
+        this.set = set != null ? set : EMPTY_PATCH;
     }
 
     @Override
@@ -116,8 +109,10 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
     public List<Ingredient> ingredients() { return ingredients; }
     public ItemStack result() { return result; }
     public List<DataComponentType<?>> keep() { return keep; }
+    public List<DataComponentType<?>> remove() { return remove; }
     public List<DataComponentType<?>> baseRequire() { return baseRequire; }
-    public DataComponentPatch patch() { return patch; }
+    public boolean removeAll() { return removeAll; }
+    public DataComponentPatch set() { return set; }
 
     @Override
     public @NotNull PlacementInfo placementInfo() {
@@ -187,17 +182,35 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
 
         ItemStack out = result.copy();
 
-        if (keep.isEmpty()) {
-            out.applyComponents(baseStack.getComponentsPatch());
-        } else {
+        if (removeAll) {
+            if (!keep.isEmpty()) {
+                for (DataComponentType<?> t : keep) {
+                    if (t == null) continue;
+                    copyOneUnchecked(t, baseStack, out);
+                }
+            }
+        } else if (!remove.isEmpty()) {
+            HashSet<DataComponentType<?>> removeSet = new HashSet<>(remove.size());
+            for (DataComponentType<?> t : remove) {
+                if (t != null) removeSet.add(t);
+            }
+
+            for (TypedDataComponent<?> typed : baseStack.getComponents()) {
+                if (!removeSet.contains(typed.type())) {
+                    copyTypedUnchecked(typed, out);
+                }
+            }
+        } else if (!keep.isEmpty()) {
             for (DataComponentType<?> t : keep) {
                 if (t == null) continue;
                 copyOneUnchecked(t, baseStack, out);
             }
+        } else {
+            out.applyComponents(baseStack.getComponentsPatch());
         }
 
-        if (patch != null) {
-            out.applyComponents(patch);
+        if (!set.isEmpty()) {
+            out.applyComponents(set);
         }
 
         return out;
@@ -209,6 +222,11 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
         if (v != null) {
             to.set(type, v);
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void copyTypedUnchecked(TypedDataComponent<?> typed, ItemStack output) {
+        output.set((DataComponentType) typed.type(), typed.value());
     }
 
     private ItemStack findBaseStack(CraftingInput input) {
@@ -233,9 +251,25 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
         ));
     }
 
-    // ---------------------------------------------------------------------
-// Serializer
-// ---------------------------------------------------------------------
+    private static @NotNull List<Ingredient> sanitizeIngredients(@Nullable List<Ingredient> in) {
+        if (in == null || in.isEmpty()) return List.of();
+
+        ArrayList<Ingredient> out = new ArrayList<>(in.size());
+        for (Ingredient i : in) {
+            if (i != null) out.add(i);
+        }
+        return out.isEmpty() ? List.of() : List.copyOf(out);
+    }
+
+    private static @NotNull List<DataComponentType<?>> sanitizeComponentTypes(@Nullable List<DataComponentType<?>> in) {
+        if (in == null || in.isEmpty()) return List.of();
+
+        ArrayList<DataComponentType<?>> out = new ArrayList<>(in.size());
+        for (DataComponentType<?> t : in) {
+            if (t != null) out.add(t);
+        }
+        return out.isEmpty() ? List.of() : List.copyOf(out);
+    }
 
     public static final class Serializer implements RecipeSerializer<CraftingRecipe> {
 
@@ -243,10 +277,12 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
         private static final String KEY_INGREDIENTS = JolCraftParameterIds.INGREDIENTS;
         private static final String KEY_RESULT = JolCraftParameterIds.RESULT;
         private static final String KEY_KEEP = JolCraftParameterIds.KEEP;
-
+        private static final String KEY_REMOVE = JolCraftParameterIds.REMOVE;
+        private static final String KEY_SET = JolCraftDictionary.SET;
+        private static final String KEY_REMOVE_ALL =
+                JolCraftStrings.underscored(JolCraftParameterIds.REMOVE, JolCraftDictionary.ALL);
         private static final String KEY_BASE_REQUIRE =
                 JolCraftStrings.underscored(JolCraftParameterIds.BASE, JolCraftParameterIds.REQUIREMENTS);
-        private static final String KEY_PATCH = JolCraftParameterIds.PATCH;
 
         private static final int MAX_INGREDIENTS =
                 Math.max(1, ShapedRecipePattern.getMaxWidth() * ShapedRecipePattern.getMaxHeight());
@@ -275,26 +311,49 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                                         .forGetter(ComponentPreservingShapelessRecipe::keep),
 
                                 DataComponentType.PERSISTENT_CODEC.listOf()
+                                        .optionalFieldOf(KEY_REMOVE, List.of())
+                                        .forGetter(ComponentPreservingShapelessRecipe::remove),
+
+                                DataComponentType.PERSISTENT_CODEC.listOf()
                                         .optionalFieldOf(KEY_BASE_REQUIRE, List.of())
                                         .forGetter(ComponentPreservingShapelessRecipe::baseRequire),
 
+                                Codec.BOOL
+                                        .optionalFieldOf(KEY_REMOVE_ALL, false)
+                                        .forGetter(ComponentPreservingShapelessRecipe::removeAll),
+
                                 DataComponentPatch.CODEC
-                                        .optionalFieldOf(KEY_PATCH, EMPTY_PATCH)
-                                        .forGetter(ComponentPreservingShapelessRecipe::patch)
+                                        .optionalFieldOf(KEY_SET, EMPTY_PATCH)
+                                        .forGetter(ComponentPreservingShapelessRecipe::set)
                         ).apply(inst, ComponentPreservingShapelessRecipe::new))
                         .flatXmap(Serializer::validate, DataResult::success);
 
         private static final StreamCodec<RegistryFriendlyByteBuf, ComponentPreservingShapelessRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ByteBufCodecs.STRING_UTF8, r -> r.group,
-                        CraftingBookCategory.STREAM_CODEC, r -> r.category,
-                        Ingredient.CONTENTS_STREAM_CODEC, r -> r.base,
-                        Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), r -> r.ingredients,
-                        ItemStack.STREAM_CODEC, r -> r.result,
-                        DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()), r -> r.keep,
-                        DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()), r -> r.baseRequire,
-                        DataComponentPatch.STREAM_CODEC, r -> r.patch,
-                        (group, category, base, ingredients, result, keep, baseReq, patch) -> {
+                StreamCodec.of(
+                        (buf, recipe) -> {
+                            ByteBufCodecs.STRING_UTF8.encode(buf, recipe.group);
+                            CraftingBookCategory.STREAM_CODEC.encode(buf, recipe.category);
+                            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.base);
+                            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.ingredients);
+                            ItemStack.STREAM_CODEC.encode(buf, recipe.result);
+                            DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.keep);
+                            DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.remove);
+                            DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.baseRequire);
+                            ByteBufCodecs.BOOL.encode(buf, recipe.removeAll);
+                            DataComponentPatch.STREAM_CODEC.encode(buf, recipe.set);
+                        },
+                        buf -> {
+                            String group = ByteBufCodecs.STRING_UTF8.decode(buf);
+                            CraftingBookCategory category = CraftingBookCategory.STREAM_CODEC.decode(buf);
+                            Ingredient base = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
+                            List<Ingredient> ingredients = Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                            ItemStack result = ItemStack.STREAM_CODEC.decode(buf);
+                            List<DataComponentType<?>> keep = DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                            List<DataComponentType<?>> remove = DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                            List<DataComponentType<?>> baseRequire = DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                            boolean removeAll = ByteBufCodecs.BOOL.decode(buf);
+                            DataComponentPatch set = DataComponentPatch.STREAM_CODEC.decode(buf);
+
                             ComponentPreservingShapelessRecipe built =
                                     new ComponentPreservingShapelessRecipe(
                                             group,
@@ -303,9 +362,12 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                                             ingredients,
                                             result,
                                             keep,
-                                            baseReq,
-                                            patch
+                                            remove,
+                                            baseRequire,
+                                            removeAll,
+                                            set
                                     );
+
                             return validate(built).error().isPresent()
                                     ? ComponentPreservingShapelessRecipe.EMPTY
                                     : built;
@@ -346,8 +408,9 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                     .require(recipe.ingredients(), KEY_INGREDIENTS)
                     .require(recipe.result(), KEY_RESULT)
                     .require(recipe.keep(), KEY_KEEP)
+                    .require(recipe.remove(), KEY_REMOVE)
                     .require(recipe.baseRequire(), KEY_BASE_REQUIRE)
-                    .require(recipe.patch(), KEY_PATCH);
+                    .require(recipe.set(), KEY_SET);
 
             DataResult<ComponentPreservingShapelessRecipe> base = v.done();
             if (base.error().isPresent()) return base;
@@ -380,6 +443,14 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                 }
             }
 
+            List<DataComponentType<?>> remove = recipe.remove();
+            for (int i = 0; i < remove.size(); i++) {
+                if (remove.get(i) == null) {
+                    int idx = i;
+                    return DataResult.error(() -> KEY_REMOVE + " contains null at index " + idx);
+                }
+            }
+
             List<DataComponentType<?>> req = recipe.baseRequire();
             for (int i = 0; i < req.size(); i++) {
                 if (req.get(i) == null) {
@@ -388,8 +459,26 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                 }
             }
 
-            if (recipe.patch() == null) {
-                return DataResult.error(() -> KEY_PATCH + " cannot be null");
+            if (recipe.removeAll()) {
+                if (!recipe.remove().isEmpty()) {
+                    return DataResult.error(() -> "'" + KEY_REMOVE + "' is not allowed when '" + KEY_REMOVE_ALL + "' is true");
+                }
+            } else {
+                if (!recipe.keep().isEmpty() && !recipe.remove().isEmpty()) {
+                    return DataResult.error(() -> "'" + KEY_KEEP + "' and '" + KEY_REMOVE + "' cannot be used together");
+                }
+            }
+
+            if (recipe.set() == null) {
+                return DataResult.error(() -> KEY_SET + " cannot be null");
+            }
+
+            for (var e : recipe.set().entrySet()) {
+                if (e == null) continue;
+                var vEntry = e.getValue();
+                if (vEntry == null || vEntry.isEmpty()) {
+                    return DataResult.error(() -> "'" + KEY_SET + "' must not remove components; use '" + KEY_REMOVE + "' / '" + KEY_REMOVE_ALL + "' instead");
+                }
             }
 
             return DataResult.success(recipe);

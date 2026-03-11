@@ -23,18 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Aggregates atomic item requirements.
- *
- * All requirements must match.
- * Empty requirements = always matches.
- *
- * Strict server-only runtime:
- * - No registry params in matching; decoding resolves holders where needed.
- *
- * - No throws in ctor/stream decode.
- * - Invalid child requirements are representable and fail-closed at runtime.
- */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public record ItemRequirements(
         List<EnchantmentRequirement> enchantments,
@@ -51,7 +39,6 @@ public record ItemRequirements(
                     ENCHANTMENTS_CODEC
                             .optionalFieldOf(JolCraftParameterIds.ENCHANTMENTS, List.of())
                             .forGetter(ItemRequirements::enchantments),
-
                     ComponentRequirement.CODEC
                             .optionalFieldOf(JolCraftParameterIds.COMPONENTS)
                             .forGetter(ItemRequirements::componentRequirement)
@@ -59,45 +46,21 @@ public record ItemRequirements(
 
     public static final Codec<ItemRequirements> CODEC = ParamCodecs.validated(RAW_CODEC);
 
-    /**
-     * StreamCodec:
-     * - No validate() calls (no allocations).
-     * - Encodes deterministically.
-     * - Null entries are sanitized on encode (fail-closed).
-     */
     public static final StreamCodec<RegistryFriendlyByteBuf, ItemRequirements> STREAM_CODEC =
             StreamCodec.of(
                     (buf, v) -> {
-                        List<EnchantmentRequirement> ench = v.enchantments == null ? List.of() : v.enchantments;
-
-                        ArrayList<EnchantmentRequirement> safe = new ArrayList<>(ench.size());
-                        for (EnchantmentRequirement r : ench) {
-                            if (r != null) safe.add(r);
-                        }
-
                         ByteBufCodecs.collection(ArrayList::new, EnchantmentRequirement.STREAM_CODEC)
-                                .encode(buf, safe);
-
-                        Optional<ComponentRequirement> comp =
-                                v.componentRequirement == null ? Optional.empty() : v.componentRequirement;
+                                .encode(buf, new ArrayList<>(v.enchantments()));
 
                         ByteBufCodecs.optional(ComponentRequirement.STREAM_CODEC)
-                                .encode(buf, comp);
+                                .encode(buf, v.componentRequirement());
                     },
-                    buf -> {
-                        List<EnchantmentRequirement> ench =
-                                ByteBufCodecs.collection(ArrayList::new, EnchantmentRequirement.STREAM_CODEC).decode(buf);
-
-                        Optional<ComponentRequirement> comp =
-                                ByteBufCodecs.optional(ComponentRequirement.STREAM_CODEC).decode(buf);
-
-                        return new ItemRequirements(sanitizeList(ench), comp);
-                    }
+                    buf -> new ItemRequirements(
+                            sanitizeList(ByteBufCodecs.collection(ArrayList::new, EnchantmentRequirement.STREAM_CODEC).decode(buf)),
+                            ByteBufCodecs.optional(ComponentRequirement.STREAM_CODEC).decode(buf)
+                    )
             );
 
-    /**
-     * No throws. Nulls are normalized.
-     */
     public ItemRequirements(
             List<EnchantmentRequirement> enchantments,
             Optional<ComponentRequirement> componentRequirement
@@ -110,10 +73,6 @@ public record ItemRequirements(
     public @NotNull DataResult<ItemRequirements> validate() {
         for (int i = 0; i < enchantments.size(); i++) {
             EnchantmentRequirement req = enchantments.get(i);
-            if (req == null) {
-                return SelfValidating.invalid("enchantments[" + i + "] is null");
-            }
-
             DataResult<EnchantmentRequirement> res = req.validate();
             if (res.error().isPresent()) {
                 String msg = res.error().map(DataResult.Error::message).orElse("");
@@ -121,9 +80,8 @@ public record ItemRequirements(
             }
         }
 
-        Optional<ComponentRequirement> comp = componentRequirement == null ? Optional.empty() : componentRequirement;
-        if (comp.isPresent()) {
-            DataResult<ComponentRequirement> res = comp.get().validate();
+        if (componentRequirement.isPresent()) {
+            DataResult<ComponentRequirement> res = componentRequirement.get().validate();
             if (res.error().isPresent()) {
                 String msg = res.error().map(DataResult.Error::message).orElse("");
                 return SelfValidating.invalid(JolCraftParameterIds.COMPONENTS + " invalid: " + msg);
@@ -133,21 +91,14 @@ public record ItemRequirements(
         return SelfValidating.ok(this);
     }
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
-
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
         ArrayList<RegistryIntrospection> all = new ArrayList<>(4);
 
         for (EnchantmentRequirement r : enchantments) {
-            if (r == null) continue;
             all.addAll(r.asList());
         }
-
-        Optional<ComponentRequirement> comp = componentRequirement == null ? Optional.empty() : componentRequirement;
-        comp.ifPresent(r -> all.addAll(r.asList()));
+        componentRequirement.ifPresent(r -> all.addAll(r.asList()));
 
         if (all.isEmpty()) return List.of();
 
@@ -160,7 +111,6 @@ public record ItemRequirements(
         if (in.isEmpty()) return List.of();
 
         ArrayList<RegistryIntrospection> out = new ArrayList<>(Math.min(in.size(), 8));
-
         for (RegistryIntrospection info : in) {
             if (info == null) continue;
 
@@ -202,7 +152,7 @@ public record ItemRequirements(
         ResourceKey<?> singleKey = null;
 
         if (!anyTag && holders == 1) {
-            singleConcrete = (a.singleConcrete() != null) ? a.singleConcrete() : b.singleConcrete();
+            singleConcrete = a.singleConcrete() != null ? a.singleConcrete() : b.singleConcrete();
         }
 
         if (holders == 0 && anyTag) {
@@ -220,41 +170,32 @@ public record ItemRequirements(
         if (singleConcrete != null) return RegistryIntrospection.single(key, singleConcrete);
         if (singleTag != null) return RegistryIntrospection.singleTag(key, singleTag);
         if (singleKey != null) return RegistryIntrospection.singleKey(key, singleKey);
-
         if (holders == 0 && anyTag) return RegistryIntrospection.anyTag(key);
         return RegistryIntrospection.mixed(key, holders, anyTag);
     }
 
-    // ---------------------------------------------------------------------
-    // MATCHING
-    // ---------------------------------------------------------------------
-
-    public boolean matches(ItemStack stack) {
-        List<EnchantmentRequirement> ench = this.enchantments;
-        if (ench == null) ench = List.of();
-
-        Optional<ComponentRequirement> comp = this.componentRequirement;
-        if (comp == null) comp = Optional.empty();
-
-        if (ench.isEmpty() && comp.isEmpty()) return true;
-
+    public boolean matches(@NotNull ItemStack stack) {
+        if (enchantments.isEmpty() && componentRequirement.isEmpty()) return true;
         if (stack.isEmpty()) return false;
 
-        for (EnchantmentRequirement requirement : ench) {
-            if (requirement == null || !requirement.matches(stack)) return false;
+        for (EnchantmentRequirement requirement : enchantments) {
+            if (!requirement.matches(stack)) return false;
         }
 
-        return comp.map(r -> r.matches(stack)).orElse(true);
+        return componentRequirement.map(r -> r.matches(stack)).orElse(true);
     }
 
     public boolean isEmpty() {
         return enchantments.isEmpty() && componentRequirement.isEmpty();
     }
 
-    private static <T> List<T> sanitizeList(List<T> in) {
+    private static <T> @NotNull List<T> sanitizeList(List<T> in) {
         if (in == null || in.isEmpty()) return List.of();
+
         ArrayList<T> safe = new ArrayList<>(in.size());
-        for (T t : in) if (t != null) safe.add(t);
+        for (T t : in) {
+            if (t != null) safe.add(t);
+        }
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 }

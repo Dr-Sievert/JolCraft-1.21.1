@@ -9,9 +9,15 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
+import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
+import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
+import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
+import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
@@ -35,7 +41,7 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
 
     private @Nullable DwarfProfession bountyType;
     private @Nullable DwarfMerchantData.Level tier;
-    private Outputs rewards = Outputs.EMPTY;
+    private final List<PoolEntry> rewardEntries = new ArrayList<>();
 
     private @Nullable SoundOutput sound;
 
@@ -74,12 +80,24 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull BountyRewardRecipeBuilder reward(@Nullable OutputParam param) {
+        return reward(param, WeightParam.ONE.value());
+    }
+
+    public @NotNull BountyRewardRecipeBuilder reward(@Nullable OutputParam param, int weight) {
         if (param == null) {
             errors.add("reward is null");
             return this;
         }
 
-        this.rewards = this.rewards.merge(Outputs.wrapSingle(param));
+        WeightParam builtWeight;
+        try {
+            builtWeight = new WeightParam(weight);
+        } catch (Exception e) {
+            errors.add("reward weight invalid: " + e.getMessage());
+            return this;
+        }
+
+        rewardEntries.add(new PoolEntry(param, null, builtWeight));
         return this;
     }
 
@@ -117,6 +135,12 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
         if (sound == null) {
             errors.add("sound is required");
         }
+
+        Outputs rewards = rewardEntries.isEmpty()
+                ? Outputs.EMPTY
+                : new Outputs(new Pools(List.of(
+                new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(rewardEntries))
+        )));
 
         DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
                 .word(tierNameSafe())

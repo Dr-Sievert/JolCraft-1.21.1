@@ -31,11 +31,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 public record EntityOutput(
-        EntitySpec result
+        @NotNull EntitySpec result
 ) implements OutputParam, SelfValidating<EntityOutput>, RegistryIntrospectionSource {
 
     public static final ResourceLocation TYPE_ID =
-            JolCraft.location(JolCraftStrings.underscored(JolCraftParameterIds.ENTITY, JolCraftDictionary.OUTPUT));
+            JolCraft.location(JolCraftStrings.underscored(
+                    JolCraftParameterIds.ENTITY,
+                    JolCraftDictionary.OUTPUT
+            ));
 
     public static final byte DISC = 7;
 
@@ -112,11 +115,11 @@ public record EntityOutput(
             CanonicalRaw canonical = raw.left().orElseThrow();
 
             return EntitySpec.fromSelection(
-                    canonical.entity(),
-                    canonical.tag(),
-                    canonical.count(),
-                    canonical.nbt().orElse(null),
-                    canonical.spawn().orElse(null)
+                    canonical.entity() != null ? canonical.entity() : Optional.empty(),
+                    canonical.tag() != null ? canonical.tag() : Optional.empty(),
+                    canonical.count() != null ? canonical.count() : IntRange.ONE,
+                    canonical.nbt() != null ? canonical.nbt().orElse(null) : null,
+                    canonical.spawn() != null ? canonical.spawn().orElse(null) : null
             ).map(EntityOutput::new);
         }
 
@@ -135,7 +138,7 @@ public record EntityOutput(
         return Either.left(new CanonicalRaw(
                 producer.entityOpt(),
                 producer.tagOpt(),
-                spec.count(),
+                spec.count() != null ? spec.count() : IntRange.ONE,
                 Optional.ofNullable(spec.nbt()),
                 Optional.ofNullable(spec.spawn())
         ));
@@ -154,7 +157,9 @@ public record EntityOutput(
     @Override
     public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
         var rolledOpt = result.roll(ctx);
-        if (rolledOpt.isEmpty()) return List.of();
+        if (rolledOpt.isEmpty()) {
+            return List.of();
+        }
 
         EntitySpec.RolledEntity rolled = rolledOpt.get();
         var pos = rolled.spawn() != null ? rolled.spawn().pos() : null;
@@ -175,11 +180,9 @@ public record EntityOutput(
         DataResult<EntitySpec> resultValidation = result.validate();
         var error = resultValidation.error();
 
-        if (error.isPresent()) {
-            return DataResult.error(() ->
-                    "'" + JolCraftParameterIds.RESULT + "' invalid: " + error.get().message());
-        }
+        return error.<DataResult<EntityOutput>>map(entitySpecError -> DataResult.error(() ->
+                "'" + JolCraftParameterIds.RESULT + "' invalid: " + entitySpecError.message()
+        )).orElseGet(() -> SelfValidating.ok(this));
 
-        return SelfValidating.ok(this);
     }
 }

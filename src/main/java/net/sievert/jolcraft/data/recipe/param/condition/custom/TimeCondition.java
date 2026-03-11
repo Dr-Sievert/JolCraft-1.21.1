@@ -14,26 +14,54 @@ import net.sievert.jolcraft.data.recipe.param.condition.Condition;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import org.jetbrains.annotations.NotNull;
 
-public record TimeCondition(String mode, int min, int max, boolean invert) implements Condition {
+public record TimeCondition(TimeCondition.Mode mode, int min, int max, boolean invert) implements Condition {
 
     public static final ResourceLocation TYPE_ID = JolCraft.location(JolCraftDictionary.TIME);
     public static final byte DISC = 3;
 
     private static final int DAY_TICKS = 24000;
-    private static final String MODE = JolCraftParameterIds.MODE;
-
-    public static final String MODE_RANGE = JolCraftParameterIds.RANGE;
-    public static final String MODE_DAY = JolCraftDictionary.DAY;
-    public static final String MODE_NIGHT = JolCraftDictionary.NIGHT;
 
     private static final int DAY_MIN = 0;
     private static final int DAY_MAX = 11999;
     private static final int NIGHT_MIN = 12000;
     private static final int NIGHT_MAX = 23999;
 
+    public enum Mode {
+        RANGE(JolCraftParameterIds.RANGE),
+        DAY(JolCraftDictionary.DAY),
+        NIGHT(JolCraftDictionary.NIGHT);
+
+        private final String id;
+
+        Mode(String id) {
+            this.id = id;
+        }
+
+        public @NotNull String id() {
+            return id;
+        }
+
+        public static @NotNull DataResult<Mode> fromId(@NotNull String id) {
+            for (Mode mode : values()) {
+                if (mode.id.equals(id)) {
+                    return DataResult.success(mode);
+                }
+            }
+            return DataResult.error(() ->
+                    "time." + JolCraftParameterIds.MODE + " must be one of ["
+                            + JolCraftParameterIds.RANGE + ","
+                            + JolCraftDictionary.DAY + ","
+                            + JolCraftDictionary.NIGHT + "] (got " + id + ")"
+            );
+        }
+    }
+
+    private static final Codec<Mode> MODE_CODEC =
+            Codec.STRING.comapFlatMap(Mode::fromId, Mode::id);
+
     private static final Codec<TimeCondition> RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
-                    Codec.STRING.optionalFieldOf(MODE, MODE_RANGE).forGetter(TimeCondition::mode),
+                    MODE_CODEC.optionalFieldOf(JolCraftParameterIds.MODE, Mode.RANGE).forGetter(TimeCondition::mode),
                     Codec.INT.optionalFieldOf(JolCraftParameterIds.MIN, DAY_MIN).forGetter(TimeCondition::min),
                     Codec.INT.optionalFieldOf(JolCraftParameterIds.MAX, DAY_MAX).forGetter(TimeCondition::max),
                     Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(TimeCondition::invert)
@@ -49,13 +77,13 @@ public record TimeCondition(String mode, int min, int max, boolean invert) imple
     public static final StreamCodec<RegistryFriendlyByteBuf, TimeCondition> STREAM_CODEC =
             StreamCodec.of(
                     (buf, c) -> {
-                        if (MODE_DAY.equals(c.mode())) {
+                        if (c.mode() == Mode.DAY) {
                             buf.writeByte(KIND_DAY);
                             buf.writeBoolean(c.invert());
                             return;
                         }
 
-                        if (MODE_NIGHT.equals(c.mode())) {
+                        if (c.mode() == Mode.NIGHT) {
                             buf.writeByte(KIND_NIGHT);
                             buf.writeBoolean(c.invert());
                             return;
@@ -70,16 +98,16 @@ public record TimeCondition(String mode, int min, int max, boolean invert) imple
                         byte kind = buf.readByte();
 
                         if (kind == KIND_DAY) {
-                            return new TimeCondition(MODE_DAY, DAY_MIN, DAY_MAX, buf.readBoolean());
+                            return new TimeCondition(Mode.DAY, DAY_MIN, DAY_MAX, buf.readBoolean());
                         }
                         if (kind == KIND_NIGHT) {
-                            return new TimeCondition(MODE_NIGHT, NIGHT_MIN, NIGHT_MAX, buf.readBoolean());
+                            return new TimeCondition(Mode.NIGHT, NIGHT_MIN, NIGHT_MAX, buf.readBoolean());
                         }
                         if (kind == KIND_RANGE) {
                             int min = buf.readVarInt();
                             int max = buf.readVarInt();
                             boolean inv = buf.readBoolean();
-                            return new TimeCondition(MODE_RANGE, min, max, inv);
+                            return new TimeCondition(Mode.RANGE, min, max, inv);
                         }
 
                         throw new IllegalArgumentException("Unknown TimeCondition stream kind: " + kind);
@@ -90,11 +118,11 @@ public record TimeCondition(String mode, int min, int max, boolean invert) imple
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     public TimeCondition {
-        mode = normalizeMode(mode);
+        mode = mode != null ? mode : Mode.RANGE;
     }
 
-    private static DataResult<TimeCondition> validateDecoded(TimeCondition c) {
-        if (MODE_RANGE.equals(c.mode())) {
+    private static @NotNull DataResult<TimeCondition> validateDecoded(@NotNull TimeCondition c) {
+        if (c.mode() == Mode.RANGE) {
             if (invalidTime(c.min())) {
                 return DataResult.error(() ->
                         "time." + JolCraftParameterIds.MIN + " must be in range [0, 23999] (got " + c.min() + ")"
@@ -108,22 +136,15 @@ public record TimeCondition(String mode, int min, int max, boolean invert) imple
             return DataResult.success(c);
         }
 
-        if (MODE_DAY.equals(c.mode())) {
-            return DataResult.success(new TimeCondition(MODE_DAY, DAY_MIN, DAY_MAX, c.invert()));
+        if (c.mode() == Mode.DAY) {
+            return DataResult.success(new TimeCondition(Mode.DAY, DAY_MIN, DAY_MAX, c.invert()));
         }
 
-        if (MODE_NIGHT.equals(c.mode())) {
-            return DataResult.success(new TimeCondition(MODE_NIGHT, NIGHT_MIN, NIGHT_MAX, c.invert()));
+        if (c.mode() == Mode.NIGHT) {
+            return DataResult.success(new TimeCondition(Mode.NIGHT, NIGHT_MIN, NIGHT_MAX, c.invert()));
         }
 
-        return DataResult.error(() ->
-                "time." + MODE + " must be one of [" + MODE_RANGE + "," + MODE_DAY + "," + MODE_NIGHT + "] (got " + c.mode() + ")"
-        );
-    }
-
-    private static @NotNull String normalizeMode(String mode) {
-        String m = mode == null ? "" : mode.trim();
-        return m.isEmpty() ? MODE_RANGE : m;
+        return DataResult.error(() -> "invalid time mode");
     }
 
     private static boolean invalidTime(int t) {
@@ -139,7 +160,7 @@ public record TimeCondition(String mode, int min, int max, boolean invert) imple
     public boolean test(@NotNull WorldContext ctx) {
         int t = (int) (ctx.level().getDayTime() % DAY_TICKS);
 
-        if (MODE_RANGE.equals(mode)) {
+        if (mode == Mode.RANGE) {
             boolean pass = (min <= max)
                     ? (t >= min && t <= max)
                     : (t >= min || t <= max);
@@ -147,11 +168,11 @@ public record TimeCondition(String mode, int min, int max, boolean invert) imple
             return invert != pass;
         }
 
-        if (MODE_DAY.equals(mode)) {
+        if (mode == Mode.DAY) {
             return invert != (t >= DAY_MIN && t <= DAY_MAX);
         }
 
-        if (MODE_NIGHT.equals(mode)) {
+        if (mode == Mode.NIGHT) {
             return invert != (t >= NIGHT_MIN);
         }
 

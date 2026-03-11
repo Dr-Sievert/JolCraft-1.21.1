@@ -79,6 +79,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SAVE = "save";
     public static final String SELECT = "select";
     public static final String SELL = "sell";
+    public static final String SET = "set";
     public static final String SHOW = "show";
     public static final String SIGN = "sign";
     public static final String SLAY = "slay";

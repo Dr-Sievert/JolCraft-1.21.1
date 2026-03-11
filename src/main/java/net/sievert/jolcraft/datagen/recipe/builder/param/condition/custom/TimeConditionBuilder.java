@@ -68,13 +68,29 @@ public final class TimeConditionBuilder extends AbstractConditionBuilder<TimeCon
         TimeCondition built;
 
         if (kind == Kind.DAY) {
-            built = new TimeCondition(TimeCondition.MODE_DAY, 0, 0, invert());
+            built = new TimeCondition(
+                    TimeCondition.Mode.DAY,
+                    0,
+                    0,
+                    invert()
+            );
         } else if (kind == Kind.NIGHT) {
-            built = new TimeCondition(TimeCondition.MODE_NIGHT, 0, 0, invert());
+            built = new TimeCondition(
+                    TimeCondition.Mode.NIGHT,
+                    0,
+                    0,
+                    invert()
+            );
         } else {
             int a = (min != null) ? min : -1;
             int b = (max != null) ? max : -1;
-            built = new TimeCondition(TimeCondition.MODE_RANGE, a, b, invert());
+
+            built = new TimeCondition(
+                    TimeCondition.Mode.RANGE,
+                    a,
+                    b,
+                    invert()
+            );
         }
 
         return built.validate().map(v -> v);

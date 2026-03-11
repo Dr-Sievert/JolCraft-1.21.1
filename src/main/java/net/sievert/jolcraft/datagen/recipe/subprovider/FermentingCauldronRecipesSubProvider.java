@@ -220,11 +220,10 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
     ) {
         FermentingCauldronRecipeBuilder builder = FermentingCauldronRecipeBuilder.create()
                 .ingredient(extractor)
-                .brewTicks(1)
-                .bubbleTicks(1)
-                .brewColor(argb(0xFFFFFF))
                 .finalizeBrew(false)
                 .noEffect()
+                .noBrewColor()
+                .noBubbleTicks()
                 .extract(result, 1);
 
         if (lastIngredient != null) {

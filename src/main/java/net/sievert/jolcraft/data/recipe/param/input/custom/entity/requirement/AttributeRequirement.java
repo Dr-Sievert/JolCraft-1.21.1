@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,7 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectable;
@@ -25,7 +26,7 @@ import java.util.Optional;
 
 public record AttributeRequirement(
         Holder<Attribute> attribute,
-        AttributeRequirement.Operator operator,
+        Operator operator,
         double value
 ) implements SelfValidating<AttributeRequirement>, RegistryIntrospectable {
 
@@ -58,18 +59,14 @@ public record AttributeRequirement(
 
         public static DataResult<Operator> fromId(String id) {
             for (Operator op : values()) {
-                if (op.id.equals(id)) {
-                    return DataResult.success(op);
-                }
+                if (op.id.equals(id)) return DataResult.success(op);
             }
             return DataResult.error(() -> "Unknown operator: " + id);
         }
 
         public static Optional<Operator> fromOrdinalSafe(int ordinal) {
             Operator[] values = values();
-            if (ordinal < 0 || ordinal >= values.length) {
-                return Optional.empty();
-            }
+            if (ordinal < 0 || ordinal >= values.length) return Optional.empty();
             return Optional.of(values[ordinal]);
         }
     }
@@ -80,14 +77,35 @@ public record AttributeRequirement(
     private static final Codec<Operator> OPERATOR_CODEC =
             Codec.STRING.comapFlatMap(Operator::fromId, Operator::id);
 
-    private static final Codec<AttributeRequirement> RAW_CODEC =
-            RecordCodecBuilder.create(instance -> instance.group(
-                    ATTRIBUTE_CODEC.fieldOf(JolCraftParameterIds.ATTRIBUTE).forGetter(AttributeRequirement::attribute),
-                    OPERATOR_CODEC.fieldOf(JolCraftParameterIds.OPERATOR).forGetter(AttributeRequirement::operator),
-                    Codec.DOUBLE.fieldOf(JolCraftParameterIds.VALUE).forGetter(AttributeRequirement::value)
-            ).apply(instance, AttributeRequirement::new));
+    private record Raw(Holder<Attribute> attribute, Operator operator, double value) {}
 
-    public static final Codec<AttributeRequirement> CODEC = ParamCodecs.validated(RAW_CODEC);
+    private static final Codec<Raw> RAW_CODEC =
+            Codec.either(
+                    ATTRIBUTE_CODEC,
+                    RecordCodecBuilder.<Raw>create(instance -> instance.group(
+                            ATTRIBUTE_CODEC.fieldOf(JolCraftParameterIds.ATTRIBUTE).forGetter(Raw::attribute),
+                            OPERATOR_CODEC.optionalFieldOf(JolCraftParameterIds.OPERATOR, Operator.EQUAL).forGetter(Raw::operator),
+                            Codec.DOUBLE.fieldOf(JolCraftParameterIds.VALUE).forGetter(Raw::value)
+                    ).apply(instance, Raw::new))
+            ).xmap(
+                    either -> either.map(
+                            attribute -> new Raw(attribute, Operator.EQUAL, 0.0D),
+                            raw -> raw
+                    ),
+                    raw -> {
+                        if (raw.operator() == Operator.EQUAL && Double.compare(raw.value(), 0.0D) == 0) {
+                            return Either.left(raw.attribute());
+                        }
+                        return Either.right(raw);
+                    }
+            );
+
+    public static final Codec<AttributeRequirement> CODEC =
+            ParamCodecContract.create(
+                    RAW_CODEC,
+                    raw -> DataResult.success(new AttributeRequirement(raw.attribute(), raw.operator(), raw.value())),
+                    req -> new Raw(req.attribute(), req.operator(), req.value())
+            );
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Attribute>> ATTRIBUTE_STREAM =
             ByteBufCodecs.holderRegistry(Registries.ATTRIBUTE);
@@ -95,79 +113,42 @@ public record AttributeRequirement(
     public static final StreamCodec<RegistryFriendlyByteBuf, AttributeRequirement> STREAM_CODEC =
             StreamCodec.of(
                     (buf, req) -> {
-                        Holder<Attribute> attr = req.attribute;
-                        boolean hasAttr = attr != null;
-                        buf.writeBoolean(hasAttr);
-                        if (hasAttr) {
-                            ATTRIBUTE_STREAM.encode(buf, attr);
-                        }
-
-                        Operator op = req.operator != null ? req.operator : Operator.EQUAL;
-                        buf.writeVarInt(op.ordinal());
-
-                        buf.writeDouble(req.value);
+                        ATTRIBUTE_STREAM.encode(buf, req.attribute());
+                        buf.writeVarInt(req.operator().ordinal());
+                        buf.writeDouble(req.value());
                     },
-                    buf -> {
-                        Holder<Attribute> attribute = null;
-                        boolean hasAttr = buf.readBoolean();
-                        if (hasAttr) {
-                            attribute = ATTRIBUTE_STREAM.decode(buf);
-                        }
-
-                        int opOrdinal = buf.readVarInt();
-                        Operator op = Operator.fromOrdinalSafe(opOrdinal).orElse(Operator.EQUAL);
-
-                        double value = buf.readDouble();
-
-                        return new AttributeRequirement(attribute, op, value);
-                    }
+                    buf -> new AttributeRequirement(
+                            ATTRIBUTE_STREAM.decode(buf),
+                            Operator.fromOrdinalSafe(buf.readVarInt()).orElse(Operator.EQUAL),
+                            buf.readDouble()
+                    )
             );
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
+    public AttributeRequirement {
+        if (attribute == null) {
+            throw new IllegalArgumentException(JolCraftParameterIds.ATTRIBUTE + " is required");
+        }
+        if (operator == null) {
+            throw new IllegalArgumentException(JolCraftParameterIds.OPERATOR + " is required");
+        }
+    }
 
     @Override
     public @NotNull RegistryIntrospection introspection() {
-        Holder<Attribute> a = attribute;
-        if (a == null) {
-            return RegistryIntrospection.mixed(Registries.ATTRIBUTE, 0, false);
-        }
-        return RegistryIntrospection.single(Registries.ATTRIBUTE, a);
+        return RegistryIntrospection.single(Registries.ATTRIBUTE, attribute);
     }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<AttributeRequirement> validate() {
-        if (attribute == null) {
-            return SelfValidating.invalid(JolCraftParameterIds.ATTRIBUTE + " is required");
-        }
-        if (operator == null) {
-            return SelfValidating.invalid(JolCraftParameterIds.OPERATOR + " is required");
-        }
         if (Double.isNaN(value) || Double.isInfinite(value)) {
             return SelfValidating.invalid(JolCraftParameterIds.VALUE + " must be finite (value=" + value + ")");
         }
         return SelfValidating.ok(this);
     }
 
-    // ---------------------------------------------------------------------
-    // MATCHING
-    // ---------------------------------------------------------------------
-
     public boolean matches(Entity entity) {
-        if (!(entity instanceof LivingEntity living)) {
-            return false;
-        }
-        if (attribute == null || operator == null) {
-            return false;
-        }
-        if (Double.isNaN(value) || Double.isInfinite(value)) {
-            return false;
-        }
+        if (!(entity instanceof LivingEntity living)) return false;
+        if (Double.isNaN(value) || Double.isInfinite(value)) return false;
 
         double current = living.getAttributeValue(attribute);
         return operator.test(current, value);

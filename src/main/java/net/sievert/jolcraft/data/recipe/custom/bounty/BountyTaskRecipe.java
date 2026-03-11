@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.data.recipe.custom.bounty;
 
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -10,7 +11,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -53,6 +56,55 @@ public record BountyTaskRecipe(
         @NotNull SoundOutput sound1,
         @NotNull SoundOutput sound2
 ) implements CustomRecipe<BountyRecipeInput> {
+
+    private static final Codec<Holder<Item>> ITEM_HOLDER_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<Holder<Item>, T>> decode(
+                com.mojang.serialization.DynamicOps<T> ops,
+                T input
+        ) {
+            return ResourceLocation.CODEC.decode(ops, input).flatMap(pair -> {
+                ResourceLocation id = pair.getFirst();
+                T rest = pair.getSecond();
+
+                if (!(ops instanceof RegistryOps<T> registryOps)) {
+                    return DataResult.error(() ->
+                            "bounty task recipe requires RegistryOps for '" + Registries.ITEM.location() + "'"
+                    );
+                }
+
+                var lookupOpt = registryOps.lookupProvider.lookup(Registries.ITEM);
+                if (lookupOpt.isEmpty()) {
+                    return DataResult.error(() ->
+                            "missing registry info for '" + Registries.ITEM.location() + "'"
+                    );
+                }
+
+                ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
+                var holderOpt = lookupOpt.get().getter().get(key);
+
+                return holderOpt.<DataResult<Pair<Holder<Item>, T>>>map(itemReference ->
+                        DataResult.success(Pair.of(itemReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown item '" + id + "'"));
+
+            });
+        }
+
+        @Override
+        public <T> DataResult<T> encode(
+                Holder<Item> input,
+                com.mojang.serialization.DynamicOps<T> ops,
+                T prefix
+        ) {
+            if (input == null) {
+                return DataResult.error(() -> "item holder cannot be null");
+            }
+
+            return input.unwrapKey()
+                    .map(ResourceKey::location)
+                    .map(id -> ResourceLocation.CODEC.encode(id, ops, prefix))
+                    .orElseGet(() -> DataResult.error(() -> "unkeyed item holder"));
+        }
+    };
 
     @Override
     public boolean matches(@NotNull BountyRecipeInput in, Level level) {
@@ -146,7 +198,7 @@ public record BountyTaskRecipe(
     private static final Codec<ItemOutput> TASK_RESULT_CODEC =
             Codec.either(
                     ItemOutput.CODEC,
-                    RegistryFixedCodec.create(Registries.ITEM)
+                    ITEM_HOLDER_CODEC
             ).comapFlatMap(
                     either -> either.map(
                             DataResult::success,
@@ -161,9 +213,6 @@ public record BountyTaskRecipe(
         }
 
         ItemSpec res = out.result();
-        if (res == null) {
-            return Either.left(out);
-        }
 
         var count = res.count();
         if (count.min() != 1 || count.max() != 1) {
@@ -323,10 +372,6 @@ public record BountyTaskRecipe(
         Pools pools = obj.pools();
 
         List<Pool> poolList = pools.pools();
-        if (poolList.size() != 1) {
-            return DataResult.error(() -> "objective must contain exactly 1 pool (got " + poolList.size() + ")");
-        }
-
         Pool pool = poolList.getFirst();
 
         if (!pool.isSingleRoll()) {

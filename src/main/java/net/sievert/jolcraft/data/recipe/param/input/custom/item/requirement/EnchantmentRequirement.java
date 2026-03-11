@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.input.custom.item.requirement;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -13,7 +14,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectable;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
@@ -22,22 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-/**
- * Atomic item requirement: item must have an enchantment matching either:
- * - specific enchantment holder, or
- * - enchantment tag
- *
- * with a minimum level.
- *
- * JSON:
- * { "enchantment": "minecraft:sharpness", "min_level": 1 }
- * { "enchantment_tag": "minecraft:weapon_enchantable", "min_level": 1 }
- *
- * Exactly one of enchantment/enchantment_tag must be present.
- *
- * - No throws in JolCraft logic (ctor/stream decode/runtime). (Buffer IO may throw.)
- * - Invalid state representable; matches(...) is total and deterministic false on invalid.
- */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public record EnchantmentRequirement(
         Optional<Holder<Enchantment>> enchantment,
@@ -54,40 +39,50 @@ public record EnchantmentRequirement(
     private static final Codec<TagKey<Enchantment>> ENCHANTMENT_TAG_CODEC =
             TagKey.codec(Registries.ENCHANTMENT);
 
-    private static final Codec<EnchantmentRequirement> RAW_CODEC =
-            RecordCodecBuilder.create(instance -> instance.group(
-                    ENCHANTMENT_CODEC.optionalFieldOf(JolCraftParameterIds.ENCHANTMENT)
-                            .forGetter(EnchantmentRequirement::enchantment),
+    private record VerboseRaw(
+            Optional<Holder<Enchantment>> enchantment,
+            Optional<TagKey<Enchantment>> enchantmentTag,
+            int minLevel
+    ) {}
 
-                    ENCHANTMENT_TAG_CODEC.optionalFieldOf(ENCHANTMENT_TAG_KEY)
-                            .forGetter(EnchantmentRequirement::enchantmentTag),
+    private static final Codec<VerboseRaw> VERBOSE_CODEC =
+            Codec.either(
+                    ENCHANTMENT_CODEC,
+                    RecordCodecBuilder.<VerboseRaw>create(instance -> instance.group(
+                            ENCHANTMENT_CODEC.optionalFieldOf(JolCraftParameterIds.ENCHANTMENT)
+                                    .forGetter(VerboseRaw::enchantment),
+                            ENCHANTMENT_TAG_CODEC.optionalFieldOf(ENCHANTMENT_TAG_KEY)
+                                    .forGetter(VerboseRaw::enchantmentTag),
+                            Codec.INT.optionalFieldOf(JolCraftParameterIds.MIN_LEVEL, 1)
+                                    .forGetter(VerboseRaw::minLevel)
+                    ).apply(instance, VerboseRaw::new))
+            ).xmap(
+                    either -> either.map(
+                            ench -> new VerboseRaw(Optional.of(ench), Optional.empty(), 1),
+                            full -> full
+                    ),
+                    raw -> {
+                        if (raw.enchantment().isPresent() && raw.enchantmentTag().isEmpty() && raw.minLevel() == 1) {
+                            return Either.left(raw.enchantment().orElseThrow());
+                        }
+                        return Either.right(raw);
+                    }
+            );
 
-                    Codec.INT.optionalFieldOf(JolCraftParameterIds.MIN_LEVEL, 1)
-                            .forGetter(EnchantmentRequirement::minLevel)
-            ).apply(instance, EnchantmentRequirement::new));
+    public static final Codec<EnchantmentRequirement> CODEC =
+            ParamCodecContract.create(VERBOSE_CODEC, EnchantmentRequirement::fromRaw, EnchantmentRequirement::toRaw);
 
-    public static final Codec<EnchantmentRequirement> CODEC = ParamCodecs.validated(RAW_CODEC);
-
-    /**
-     * Stream stores:
-     * - Optional enchantment holder
-     * - Optional tag id (ResourceLocation)
-     * - min level
-     *
-     * No validate() calls here (no allocations).
-     */
     public static final StreamCodec<RegistryFriendlyByteBuf, EnchantmentRequirement> STREAM_CODEC =
             StreamCodec.of(
                     (buf, req) -> {
-                        Optional<Holder<Enchantment>> ench = req.enchantment == null ? Optional.empty() : req.enchantment;
                         ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT))
-                                .encode(buf, ench);
+                                .encode(buf, req.enchantment());
 
-                        Optional<TagKey<Enchantment>> tag = req.enchantmentTag == null ? Optional.empty() : req.enchantmentTag;
+                        Optional<TagKey<Enchantment>> tag = req.enchantmentTag();
                         buf.writeBoolean(tag.isPresent());
-                        tag.ifPresent(enchantmentTagKey -> buf.writeResourceLocation(enchantmentTagKey.location()));
+                        tag.ifPresent(t -> buf.writeResourceLocation(t.location()));
 
-                        buf.writeVarInt(req.minLevel);
+                        buf.writeVarInt(req.minLevel());
                     },
                     buf -> {
                         Optional<Holder<Enchantment>> ench =
@@ -100,14 +95,10 @@ public record EnchantmentRequirement(
                                 : Optional.empty();
 
                         int minLevel = buf.readVarInt();
-
                         return new EnchantmentRequirement(ench, tag, minLevel);
                     }
             );
 
-    /**
-     * Canonical ctor: no throws. Null optionals are normalized.
-     */
     public EnchantmentRequirement(
             Optional<Holder<Enchantment>> enchantment,
             Optional<TagKey<Enchantment>> enchantmentTag,
@@ -118,20 +109,33 @@ public record EnchantmentRequirement(
         this.minLevel = minLevel;
     }
 
+    private static @NotNull DataResult<EnchantmentRequirement> fromRaw(@NotNull VerboseRaw raw) {
+        return DataResult.success(new EnchantmentRequirement(
+                raw.enchantment(),
+                raw.enchantmentTag(),
+                raw.minLevel()
+        ));
+    }
+
+    private static @NotNull VerboseRaw toRaw(@NotNull EnchantmentRequirement req) {
+        return new VerboseRaw(req.enchantment(), req.enchantmentTag(), req.minLevel());
+    }
+
     @Override
     public @NotNull RegistryIntrospection introspection() {
-        boolean hasHolder = enchantment != null && enchantment.isPresent();
-        boolean hasTag = enchantmentTag != null && enchantmentTag.isPresent();
+        boolean hasHolder = enchantment.isPresent();
+        boolean hasTag = enchantmentTag.isPresent();
 
-        if (hasHolder == hasTag) {
-            return RegistryIntrospection.mixed(Registries.ENCHANTMENT, 0, hasTag);
+        if (hasHolder && !hasTag) {
+            return RegistryIntrospection.single(Registries.ENCHANTMENT, enchantment.orElseThrow());
         }
-
-        if (hasTag) {
-            return RegistryIntrospection.singleTag(Registries.ENCHANTMENT, enchantmentTag.get());
+        if (!hasHolder && hasTag) {
+            return RegistryIntrospection.singleTag(Registries.ENCHANTMENT, enchantmentTag.orElseThrow());
         }
-
-        return RegistryIntrospection.single(Registries.ENCHANTMENT, enchantment.get());
+        if (!hasHolder) {
+            return RegistryIntrospection.mixed(Registries.ENCHANTMENT, 0, false);
+        }
+        return RegistryIntrospection.mixed(Registries.ENCHANTMENT, 1, true);
     }
 
     @Override
@@ -152,32 +156,23 @@ public record EnchantmentRequirement(
         return SelfValidating.ok(this);
     }
 
-    public boolean matches(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return false;
-        }
-        if (minLevel < 1) {
-            return false;
-        }
+    public boolean matches(@NotNull ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        if (minLevel < 1) return false;
 
         boolean hasEnch = enchantment.isPresent();
         boolean hasTag = enchantmentTag.isPresent();
-        if (hasEnch == hasTag) {
-            return false;
-        }
+        if (hasEnch == hasTag) return false;
 
         if (hasEnch) {
-            Holder<Enchantment> ench = enchantment.get();
-            int lvl = stack.getEnchantmentLevel(ench);
-            return lvl >= minLevel;
+            Holder<Enchantment> ench = enchantment.orElseThrow();
+            return stack.getEnchantmentLevel(ench) >= minLevel;
         }
 
-        TagKey<Enchantment> tag = enchantmentTag.get();
-
+        TagKey<Enchantment> tag = enchantmentTag.orElseThrow();
         for (Holder<Enchantment> ench : stack.getTagEnchantments().keySet()) {
             if (ench == null) continue;
             if (!ench.is(tag)) continue;
-
             if (stack.getEnchantmentLevel(ench) >= minLevel) {
                 return true;
             }

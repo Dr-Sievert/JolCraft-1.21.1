@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,10 +15,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
-import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectable;
+import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import org.jetbrains.annotations.NotNull;
 
 public record EffectRequirement(
@@ -28,13 +29,31 @@ public record EffectRequirement(
     private static final Codec<Holder<MobEffect>> EFFECT_CODEC =
             RegistryFixedCodec.create(Registries.MOB_EFFECT);
 
-    private static final Codec<EffectRequirement> RAW_CODEC =
-            RecordCodecBuilder.create(instance -> instance.group(
-                    EFFECT_CODEC.fieldOf(JolCraftParameterIds.EFFECT).forGetter(EffectRequirement::effect),
-                    Codec.INT.optionalFieldOf(JolCraftParameterIds.MIN_AMPLIFIER, 0).forGetter(EffectRequirement::minAmplifier)
-            ).apply(instance, EffectRequirement::new));
+    private record Raw(Holder<MobEffect> effect, int minAmplifier) {}
 
-    public static final Codec<EffectRequirement> CODEC = ParamCodecs.validated(RAW_CODEC);
+    private static final Codec<Raw> RAW_CODEC =
+            Codec.either(
+                    EFFECT_CODEC,
+                    RecordCodecBuilder.<Raw>create(instance -> instance.group(
+                            EFFECT_CODEC.fieldOf(JolCraftParameterIds.EFFECT).forGetter(Raw::effect),
+                            Codec.INT.optionalFieldOf(JolCraftParameterIds.MIN_AMPLIFIER, 0).forGetter(Raw::minAmplifier)
+                    ).apply(instance, Raw::new))
+            ).xmap(
+                    either -> either.map(
+                            effect -> new Raw(effect, 0),
+                            raw -> raw
+                    ),
+                    raw -> raw.minAmplifier() == 0
+                            ? Either.left(raw.effect())
+                            : Either.right(raw)
+            );
+
+    public static final Codec<EffectRequirement> CODEC =
+            ParamCodecContract.create(
+                    RAW_CODEC,
+                    raw -> DataResult.success(new EffectRequirement(raw.effect(), raw.minAmplifier())),
+                    req -> new Raw(req.effect(), req.minAmplifier())
+            );
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Holder<MobEffect>> EFFECT_STREAM =
             ByteBufCodecs.holderRegistry(Registries.MOB_EFFECT);
@@ -42,71 +61,40 @@ public record EffectRequirement(
     public static final StreamCodec<RegistryFriendlyByteBuf, EffectRequirement> STREAM_CODEC =
             StreamCodec.of(
                     (buf, req) -> {
-                        Holder<MobEffect> eff = req.effect;
-                        boolean hasEffect = eff != null;
-                        buf.writeBoolean(hasEffect);
-                        if (hasEffect) {
-                            EFFECT_STREAM.encode(buf, eff);
-                        }
-
-                        buf.writeVarInt(Math.max(0, req.minAmplifier));
+                        EFFECT_STREAM.encode(buf, req.effect());
+                        buf.writeVarInt(req.minAmplifier());
                     },
-                    buf -> {
-                        Holder<MobEffect> effect = null;
-                        boolean hasEffect = buf.readBoolean();
-                        if (hasEffect) {
-                            effect = EFFECT_STREAM.decode(buf);
-                        }
-
-                        int minAmplifier = buf.readVarInt();
-                        if (minAmplifier < 0) minAmplifier = 0;
-
-                        return new EffectRequirement(effect, minAmplifier);
-                    }
+                    buf -> new EffectRequirement(
+                            EFFECT_STREAM.decode(buf),
+                            buf.readVarInt()
+                    )
             );
 
-    // ---------------------------------------------------------------------
-    // INTROSPECTION
-    // ---------------------------------------------------------------------
+    public EffectRequirement {
+        if (effect == null) {
+            throw new IllegalArgumentException("missing required field '" + JolCraftParameterIds.EFFECT + "'");
+        }
+    }
 
     @Override
     public @NotNull RegistryIntrospection introspection() {
-        return effect == null
-                ? RegistryIntrospection.mixed(Registries.MOB_EFFECT, 0, false)
-                : RegistryIntrospection.single(Registries.MOB_EFFECT, effect);
+        return RegistryIntrospection.single(Registries.MOB_EFFECT, effect);
     }
-
-    // ---------------------------------------------------------------------
-    // VALIDATION
-    // ---------------------------------------------------------------------
 
     @Override
     public @NotNull DataResult<EffectRequirement> validate() {
-        if (effect == null) {
-            return SelfValidating.invalid("missing required field '" + JolCraftParameterIds.EFFECT + "'");
-        }
         if (minAmplifier < 0) {
             return SelfValidating.invalid("'" + JolCraftParameterIds.MIN_AMPLIFIER + "' must be >= 0");
         }
         return SelfValidating.ok(this);
     }
 
-    // ---------------------------------------------------------------------
-    // MATCHING
-    // ---------------------------------------------------------------------
-
     public boolean matches(Entity entity) {
-        if (!(entity instanceof LivingEntity living)) {
-            return false;
-        }
-        if (effect == null || minAmplifier < 0) {
-            return false;
-        }
+        if (!(entity instanceof LivingEntity living)) return false;
+        if (minAmplifier < 0) return false;
 
         MobEffectInstance inst = living.getEffect(effect);
-        if (inst == null) {
-            return false;
-        }
+        if (inst == null) return false;
 
         return inst.getAmplifier() >= minAmplifier;
     }

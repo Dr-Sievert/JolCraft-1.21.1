@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom.entity;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,7 +9,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
@@ -34,8 +37,54 @@ public final class EntityProducer
     private static final byte DISC_ENTITY = 1;
     private static final byte DISC_TAG = 2;
 
-    static final Codec<Holder<EntityType<?>>> ENTITY_HOLDER_CODEC =
-            RegistryFixedCodec.create(Registries.ENTITY_TYPE);
+    static final Codec<Holder<EntityType<?>>> ENTITY_HOLDER_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<Holder<EntityType<?>>, T>> decode(
+                com.mojang.serialization.DynamicOps<T> ops,
+                T input
+        ) {
+            return ResourceLocation.CODEC.decode(ops, input).flatMap(pair -> {
+                ResourceLocation id = pair.getFirst();
+                T rest = pair.getSecond();
+
+                if (!(ops instanceof RegistryOps<T> registryOps)) {
+                    return DataResult.error(() ->
+                            "entity producer requires RegistryOps for '" + Registries.ENTITY_TYPE.location() + "'"
+                    );
+                }
+
+                var lookupOpt = registryOps.lookupProvider.lookup(Registries.ENTITY_TYPE);
+                if (lookupOpt.isEmpty()) {
+                    return DataResult.error(() ->
+                            "missing registry info for '" + Registries.ENTITY_TYPE.location() + "'"
+                    );
+                }
+
+                ResourceKey<EntityType<?>> key = ResourceKey.create(Registries.ENTITY_TYPE, id);
+                var holderOpt = lookupOpt.get().getter().get(key);
+
+                return holderOpt.<DataResult<Pair<Holder<EntityType<?>>, T>>>map(entityTypeReference ->
+                        DataResult.success(Pair.of(entityTypeReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown entity type '" + id + "'"));
+
+            });
+        }
+
+        @Override
+        public <T> DataResult<T> encode(
+                Holder<EntityType<?>> input,
+                com.mojang.serialization.DynamicOps<T> ops,
+                T prefix
+        ) {
+            if (input == null) {
+                return DataResult.error(() -> "entity holder cannot be null");
+            }
+
+            return input.unwrapKey()
+                    .map(ResourceKey::location)
+                    .map(id -> ResourceLocation.CODEC.encode(id, ops, prefix))
+                    .orElseGet(() -> DataResult.error(() -> "unkeyed entity holder"));
+        }
+    };
 
     static final Codec<TagKey<EntityType<?>>> ENTITY_TAG_CODEC =
             TagKey.codec(Registries.ENTITY_TYPE);

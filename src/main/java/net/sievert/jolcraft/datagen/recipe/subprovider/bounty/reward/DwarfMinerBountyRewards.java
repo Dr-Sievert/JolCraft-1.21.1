@@ -98,17 +98,9 @@ public final class DwarfMinerBountyRewards implements RecipeSubProvider {
             @NotNull Amt largeAmt
     ) {
         emitTier(executor, tier, b -> {
-            for (int i = 0; i < smallW; i++) {
-                b.reward(give(JolCraftItems.GEODE_SMALL.get(), smallAmt));
-            }
-
-            for (int i = 0; i < medW; i++) {
-                b.reward(give(JolCraftItems.GEODE_MEDIUM.get(), medAmt));
-            }
-
-            for (int i = 0; i < largeW; i++) {
-                b.reward(give(JolCraftItems.GEODE_LARGE.get(), largeAmt));
-            }
+            b.reward(give(JolCraftItems.GEODE_SMALL.get(), smallAmt), smallW);
+            b.reward(give(JolCraftItems.GEODE_MEDIUM.get(), medAmt), medW);
+            b.reward(give(JolCraftItems.GEODE_LARGE.get(), largeAmt), largeW);
         });
     }
 

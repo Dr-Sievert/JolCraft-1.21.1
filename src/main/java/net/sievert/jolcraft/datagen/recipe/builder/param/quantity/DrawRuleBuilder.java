@@ -1,8 +1,8 @@
-package net.sievert.jolcraft.datagen.recipe.builder.param.quantity.draw;
+package net.sievert.jolcraft.datagen.recipe.builder.param.quantity;
 
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.data.recipe.param.quantity.draw.DrawRule;
+import net.sievert.jolcraft.data.recipe.param.quantity.DrawRule;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 public final class DrawRuleBuilder implements ParamBuilder<DrawRule> {

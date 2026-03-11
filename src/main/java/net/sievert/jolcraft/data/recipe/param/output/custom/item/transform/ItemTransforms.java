@@ -1,16 +1,19 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom.item.transform;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
@@ -31,18 +34,83 @@ public record ItemTransforms(
     public static final ItemTransforms EMPTY =
             new ItemTransforms(List.of(), List.of());
 
-    private static final Codec<ItemTransforms> RAW_CODEC =
+    private record FullRaw(
+            List<EnchantmentTransform> enchantments,
+            List<ComponentTransform> components
+    ) {}
+
+    private record FlatSetRaw(
+            DataComponentPatch set
+    ) {}
+
+    private static final Codec<FullRaw> FULL_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     EnchantmentTransform.CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.ENCHANTMENTS, List.of())
-                            .forGetter(ItemTransforms::enchantments),
+                            .forGetter(FullRaw::enchantments),
 
                     ComponentTransform.CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.COMPONENTS, List.of())
-                            .forGetter(ItemTransforms::components)
-            ).apply(instance, ItemTransforms::new));
+                            .forGetter(FullRaw::components)
+            ).apply(instance, FullRaw::new));
 
-    public static final Codec<ItemTransforms> CODEC = ParamCodecs.validated(RAW_CODEC);
+    private static final Codec<FlatSetRaw> FLAT_SET_CODEC =
+            RecordCodecBuilder.create(instance -> instance.group(
+                    DataComponentPatch.CODEC
+                            .fieldOf(JolCraftDictionary.SET)
+                            .forGetter(FlatSetRaw::set)
+            ).apply(instance, FlatSetRaw::new));
+
+    public static final Codec<ItemTransforms> CODEC =
+            ParamCodecContract.create(
+                    Codec.either(FLAT_SET_CODEC, FULL_CODEC),
+                    ItemTransforms::fromRaw,
+                    ItemTransforms::toRaw
+            );
+
+    private static @NotNull DataResult<ItemTransforms> fromRaw(@NotNull Either<FlatSetRaw, FullRaw> raw) {
+        if (raw.left().isPresent()) {
+            FlatSetRaw flat = raw.left().orElseThrow();
+            ComponentTransform.Config config =
+                    new ComponentTransform.Config(null, false, List.of(), List.of(), flat.set());
+            return DataResult.success(new ItemTransforms(List.of(), List.of(config)));
+        }
+
+        FullRaw full = raw.right().orElseThrow();
+        return DataResult.success(new ItemTransforms(full.enchantments(), full.components()));
+    }
+
+    private static boolean isPlainSingleSet(@NotNull ItemTransforms transforms) {
+        if (!transforms.enchantments().isEmpty()) return false;
+        if (transforms.components().size() != 1) return false;
+
+        ComponentTransform only = transforms.components().getFirst();
+        if (!(only instanceof ComponentTransform.Config(
+                String source, boolean removeAll,
+                List<net.minecraft.core.Holder<net.minecraft.core.component.DataComponentType<?>>> keep,
+                List<net.minecraft.core.Holder<net.minecraft.core.component.DataComponentType<?>>> remove,
+                DataComponentPatch set
+        ))) return false;
+
+        if (source != null) return false;
+        if (removeAll) return false;
+        if (!keep.isEmpty()) return false;
+        if (!remove.isEmpty()) return false;
+
+        return !set.isEmpty();
+    }
+
+    private static @NotNull Either<FlatSetRaw, FullRaw> toRaw(@NotNull ItemTransforms transforms) {
+        if (isPlainSingleSet(transforms)) {
+            ComponentTransform.Config config = (ComponentTransform.Config) transforms.components().getFirst();
+            return Either.left(new FlatSetRaw(config.set()));
+        }
+
+        return Either.right(new FullRaw(
+                transforms.enchantments(),
+                transforms.components()
+        ));
+    }
 
     private static final int MAX_ENCHANTMENT_TRANSFORMS = 128;
     private static final int MAX_COMPONENT_TRANSFORMS = 128;

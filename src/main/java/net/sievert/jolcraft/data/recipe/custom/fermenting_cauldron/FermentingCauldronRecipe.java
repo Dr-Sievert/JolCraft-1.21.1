@@ -14,9 +14,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomRecipe;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
@@ -40,15 +40,39 @@ public record FermentingCauldronRecipe(
         boolean finalizeBrew
 ) implements CustomRecipe<FermentingCauldronRecipeInput> {
 
+    public static final int DEFAULT_BREW_TICKS = 1;
+    public static final int DEFAULT_BUBBLE_TICKS = 1;
+    public static final int DEFAULT_BREW_COLOR = -1;
+    public static final boolean DEFAULT_FINALIZE_BREW = false;
+
+    public FermentingCauldronRecipe {
+        if (ingredient == null) {
+            throw new IllegalArgumentException("ingredient is required");
+        }
+
+        lastIngredient = lastIngredient != null ? lastIngredient : Optional.empty();
+        extract = extract != null ? extract : Optional.empty();
+        effect = effect != null ? effect : Optional.empty();
+
+        if (brewTicks < 1) {
+            brewTicks = DEFAULT_BREW_TICKS;
+        }
+        if (bubbleTicks < 1) {
+            bubbleTicks = DEFAULT_BUBBLE_TICKS;
+        }
+    }
+
     @Override
     public boolean matches(@NotNull FermentingCauldronRecipeInput in, @NotNull Level level) {
         WorldContext ctx = in.ctx();
 
-        if (!ingredient.matches(ctx, in.ingredient())) return false;
+        if (!ingredient.matches(ctx, in.ingredient())) {
+            return false;
+        }
 
-        return lastIngredient.map(itemSelector -> !in.lastIngredient().isEmpty()
-                && itemSelector.matches(ctx, in.lastIngredient())).orElseGet(() -> in.lastIngredient().isEmpty());
-
+        return lastIngredient.map(selector ->
+                !in.lastIngredient().isEmpty() && selector.matches(ctx, in.lastIngredient())
+        ).orElseGet(() -> in.lastIngredient().isEmpty());
     }
 
     @Override
@@ -57,15 +81,21 @@ public record FermentingCauldronRecipe(
             HolderLookup.@NotNull Provider registries
     ) {
         WorldContext ctx = in.ctx();
-        if (ctx.level().isClientSide) return ItemStack.EMPTY;
+        if (ctx.level().isClientSide) {
+            return ItemStack.EMPTY;
+        }
 
-        if (extract.isEmpty()) return ItemStack.EMPTY;
+        if (extract.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
 
         ItemOutput out = extract.get();
         ItemSpec spec = out.result();
 
         ItemStack stack = spec.create(ctx);
-        if (stack.isEmpty()) return ItemStack.EMPTY;
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
 
         out.transforms().apply(ctx, stack);
         return stack.isEmpty() ? ItemStack.EMPTY : stack;
@@ -96,7 +126,9 @@ public record FermentingCauldronRecipe(
                                     }
 
                                     String t = s.trim();
-                                    if (t.startsWith("#")) t = t.substring(1);
+                                    if (t.startsWith("#")) {
+                                        t = t.substring(1);
+                                    }
 
                                     if (t.length() != 6 && t.length() != 8) {
                                         return DataResult.error(() -> "Invalid color: " + s);
@@ -187,19 +219,19 @@ public record FermentingCauldronRecipe(
                                                 .forGetter(FermentingCauldronRecipe::effect),
 
                                         POSITIVE_TICKS
-                                                .fieldOf(BREW_TICKS_KEY)
+                                                .optionalFieldOf(BREW_TICKS_KEY, DEFAULT_BREW_TICKS)
                                                 .forGetter(FermentingCauldronRecipe::brewTicks),
 
                                         POSITIVE_TICKS
-                                                .fieldOf(BUBBLE_TICKS_KEY)
+                                                .optionalFieldOf(BUBBLE_TICKS_KEY, DEFAULT_BUBBLE_TICKS)
                                                 .forGetter(FermentingCauldronRecipe::bubbleTicks),
 
                                         COLOR_CODEC
-                                                .fieldOf(JolCraftDictionary.COLOR)
+                                                .optionalFieldOf(JolCraftDictionary.COLOR, DEFAULT_BREW_COLOR)
                                                 .forGetter(FermentingCauldronRecipe::brewColor),
 
                                         Codec.BOOL
-                                                .optionalFieldOf(JolCraftDictionary.FINALIZE, false)
+                                                .optionalFieldOf(JolCraftDictionary.FINALIZE, DEFAULT_FINALIZE_BREW)
                                                 .forGetter(FermentingCauldronRecipe::finalizeBrew)
 
                                 ).apply(inst, FermentingCauldronRecipe::new)
