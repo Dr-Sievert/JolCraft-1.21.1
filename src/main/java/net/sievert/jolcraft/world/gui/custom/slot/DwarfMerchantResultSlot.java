@@ -78,7 +78,6 @@ public class DwarfMerchantResultSlot extends Slot {
 
         boolean took = offer.take(slotA, slotB) || offer.take(slotB, slotA);
         if (!took) {
-            this.merchant.overrideXp(this.merchant.getDwarfXp() + offer.getXp());
             return;
         }
 
@@ -105,7 +104,5 @@ public class DwarfMerchantResultSlot extends Slot {
         this.merchant.notifyTrade(offer);
         this.slots.setItem(0, slotA);
         this.slots.setItem(1, slotB);
-
-        this.merchant.overrideXp(this.merchant.getDwarfXp() + offer.getXp());
     }
 }

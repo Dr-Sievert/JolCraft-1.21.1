@@ -23,10 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * JEI wrapper for the real DwarfTradeRecipe.
- * This is only a UI wrapper; it does not define a second recipe system.
- */
 public record JeiDwarfTrade(
         DwarfTradeRecipe recipe,
         DeferredItem<Item> spawnEgg
@@ -36,7 +32,7 @@ public record JeiDwarfTrade(
         return recipe.profession();
     }
 
-    public DwarfMerchantData.Level level() {
+    public @Nullable DwarfMerchantData.Level level() {
         return recipe.merchantLevel();
     }
 
@@ -148,10 +144,14 @@ public record JeiDwarfTrade(
             costB = materializeInput(recipe.costB(), random);
         }
 
+        DwarfMerchantData.Level previewLevel = recipe.merchantLevel() != null
+                ? recipe.merchantLevel()
+                : DwarfMerchantData.Level.NOVICE;
+
         return new DwarfTradeRecipeInput(
                 ctx,
                 recipe.profession(),
-                recipe.merchantLevel(),
+                previewLevel,
                 costA,
                 costB
         );

@@ -34,15 +34,19 @@ public final class GuildmasterInteractionHandler
 
         int currentLevel = dwarf.getMerchantLevel();
 
-        if (currentLevel < desiredLevel) {
-            if (dwarf.getOffers().isEmpty()) {
-                dwarf.updateTrades();
-            }
-
-            for (int level = currentLevel; level < desiredLevel; level++) {
-                dwarf.increaseMerchantCareer();
-            }
+        if (currentLevel >= desiredLevel) {
+            return;
         }
+
+        if (dwarf.getOffers().isEmpty()) {
+            dwarf.updateTrades();
+        }
+
+        for (int level = currentLevel; level < desiredLevel; level++) {
+            dwarf.increaseMerchantCareer();
+        }
+
+        PlaySound.dwarfYes(dwarf);
     }
 
     @Override
@@ -52,7 +56,6 @@ public final class GuildmasterInteractionHandler
         var hand = ctx.hand();
         var stack = ctx.stack();
 
-        // Reputation tablet action
         if (stack.is(JolCraftTags.Items.REPUTATION_TABLETS)) {
             int maxTier = DwarvenReputationImpl.getThresholdCount();
             int tier = DwarvenReputationHelper.getTier(player);

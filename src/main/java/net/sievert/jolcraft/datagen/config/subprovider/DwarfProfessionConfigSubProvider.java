@@ -139,7 +139,7 @@ public final class DwarfProfessionConfigSubProvider implements ConfigSubProvider
                     d.voicePitch(),
                     true,
                     d.canEndorse(),
-                    false,
+                    d.showProgressBar(),
                     d.showLevel(),
                     d.rules(),
                     soundsBoth(SoundEvents.VILLAGER_WORK_CARTOGRAPHER),

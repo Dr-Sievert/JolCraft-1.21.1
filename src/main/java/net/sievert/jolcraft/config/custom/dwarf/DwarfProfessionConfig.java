@@ -13,6 +13,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.Map;
@@ -197,7 +198,9 @@ public record DwarfProfessionConfig(
         );
 
         static MapCodec<? extends Rule> mapCodecForType(String typeId) {
-            if (TYPE_MIN_MERCHANT_LEVEL.equals(typeId)) return MinMerchantLevel.MAP_CODEC;
+            if (TYPE_MIN_MERCHANT_LEVEL.equals(typeId)) {
+                return MinMerchantLevel.MAP_CODEC;
+            }
             return Always.MAP_CODEC;
         }
 
@@ -339,6 +342,10 @@ public record DwarfProfessionConfig(
         }
 
         public static @NotNull DataResult<TradePools> validate(TradePools pools) {
+            if (pools == null) {
+                return DataResult.error(() -> "trade_pools is required");
+            }
+
             for (Map.Entry<PoolType, PoolConfig> entry : pools.values().entrySet()) {
                 PoolType type = entry.getKey();
                 PoolConfig config = entry.getValue();
@@ -362,19 +369,25 @@ public record DwarfProfessionConfig(
             return DataResult.success(pools);
         }
 
-        public boolean has(PoolType type) {
+        public boolean has(@Nullable PoolType type) {
             return type != null && values.containsKey(type);
         }
 
-        public Optional<PoolConfig> get(PoolType type) {
+        public @NotNull Optional<PoolConfig> get(@Nullable PoolType type) {
             if (type == null) {
                 return Optional.empty();
             }
             return Optional.ofNullable(values.get(type));
         }
 
-        public int rollsFor(PoolType type, DwarfMerchantData.Level level) {
-            return get(type).map(cfg -> cfg.rollsFor(level)).orElse(0);
+        public int rollsFor(@Nullable PoolType type, @Nullable DwarfMerchantData.Level level) {
+            if (type == null || level == null) {
+                return 0;
+            }
+
+            return get(type)
+                    .map(cfg -> cfg.rollsFor(type, level))
+                    .orElse(0);
         }
 
         public boolean rerollsOnRestock() {
@@ -417,6 +430,10 @@ public record DwarfProfessionConfig(
                         .validate(PoolConfig::validate);
 
         public static @NotNull DataResult<PoolConfig> validate(PoolConfig config) {
+            if (config == null) {
+                return DataResult.error(() -> "trade pool config is required");
+            }
+
             if (config.rolls() == null) {
                 return DataResult.error(() -> "rolls is required");
             }
@@ -431,8 +448,15 @@ public record DwarfProfessionConfig(
                     DataResult.error(err::message)).orElseGet(() -> DataResult.success(config));
         }
 
-        public int rollsFor(DwarfMerchantData.Level level) {
-            return rolls.rollsFor(level);
+        public int rollsFor(@Nullable PoolType type, @Nullable DwarfMerchantData.Level level) {
+            if (type == null || level == null) {
+                return 0;
+            }
+
+            return switch (type) {
+                case GLOBAL, EXACT_LEVEL -> rolls.rollsFor(level);
+                case CUMULATIVE -> rolls.rollsUpTo(level);
+            };
         }
 
         public boolean rerollsOnRestock() {
@@ -475,6 +499,10 @@ public record DwarfProfessionConfig(
         }
 
         public static @NotNull DataResult<PoolRolls> validate(PoolRolls rolls) {
+            if (rolls == null) {
+                return DataResult.error(() -> "rolls is required");
+            }
+
             for (Map.Entry<DwarfMerchantData.Level, Integer> entry : rolls.rolls().entrySet()) {
                 DwarfMerchantData.Level level = entry.getKey();
                 Integer value = entry.getValue();
@@ -497,11 +525,25 @@ public record DwarfProfessionConfig(
             return DataResult.success(rolls);
         }
 
-        public int rollsFor(DwarfMerchantData.Level level) {
+        public int rollsFor(@Nullable DwarfMerchantData.Level level) {
             if (level == null) {
                 return 0;
             }
             return Math.max(0, rolls.getOrDefault(level, 0));
+        }
+
+        public int rollsUpTo(@Nullable DwarfMerchantData.Level level) {
+            if (level == null) {
+                return 0;
+            }
+
+            int total = 0;
+            for (DwarfMerchantData.Level candidate : DwarfMerchantData.Level.values()) {
+                if (candidate.getId() <= level.getId()) {
+                    total += Math.max(0, rolls.getOrDefault(candidate, 0));
+                }
+            }
+            return Math.max(0, total);
         }
     }
 }

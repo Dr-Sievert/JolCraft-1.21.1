@@ -3,8 +3,8 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.profe
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
-import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,38 +20,21 @@ public final class ExplorerInteractionHandler
         var player = ctx.player();
 
         int score = DiscoveredStructuresHelper.getDiscoveryScore(player);
+        if (score <= dwarf.getDwarfXp()) {
+            return;
+        }
 
-        int currentLevel = dwarf.getMerchantLevel();
-        int targetLevel = getLevelForScore(score);
-
-        if (targetLevel > currentLevel) {
-            dwarf.setMerchantLevel(targetLevel);
-            dwarf.updateTrades();
+        dwarf.overrideXp(score);
+        AbstractTradingEntity.triggerLevelUp(dwarf);
+        dwarf.overrideXp(score);
+        if (AbstractTradingEntity.triggerLevelUp(dwarf) > 0) {
             PlaySound.dwarfYes(dwarf);
         }
     }
 
     @Override
     public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
-        // Explorer has no unique right-click action besides pre-core syncing.
         PlaySound.dwarfNo(ctx.dwarf());
         return InteractionResult.FAIL;
-    }
-
-    private static int getLevelForScore(int score) {
-        for (int level = DwarfMerchantData.MAX_MERCHANT_LEVEL; level >= DwarfMerchantData.MIN_MERCHANT_LEVEL; level--) {
-            int unlockScore = getUnlockScoreForLevel(level);
-            if (score >= unlockScore) {
-                return level;
-            }
-        }
-        return DwarfMerchantData.MIN_MERCHANT_LEVEL;
-    }
-
-    private static int getUnlockScoreForLevel(int level) {
-        if (level >= DwarfMerchantData.MAX_MERCHANT_LEVEL) {
-            return DwarfMerchantData.getMaxXpPerLevel(DwarfMerchantData.MAX_MERCHANT_LEVEL - 1);
-        }
-        return DwarfMerchantData.getMinXpPerLevel(level);
     }
 }

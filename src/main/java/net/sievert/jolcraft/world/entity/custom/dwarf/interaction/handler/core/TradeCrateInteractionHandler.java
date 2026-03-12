@@ -6,8 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionTraits;
-import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -54,8 +52,8 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
         }
 
         if (isRestock) {
-            boolean anyOutOfStock = dwarf.getOffers().stream().anyMatch(DwarfMerchantOffer::isOutOfStock);
-            if (!anyOutOfStock && !DwarfProfessionTraits.config(dwarf.getProfession()).tradePools().rerollsOnRestock()) {
+            boolean changed = dwarf.crateRestock();
+            if (!changed) {
                 player.displayClientMessage(
                         Component.translatable(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_NO_NEED).withStyle(ChatFormatting.RED),
                         true
@@ -64,7 +62,6 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
                 return InteractionResult.SUCCESS;
             }
 
-            dwarf.crateRestock();
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_SUCCESS).withStyle(ChatFormatting.GREEN),
                     true

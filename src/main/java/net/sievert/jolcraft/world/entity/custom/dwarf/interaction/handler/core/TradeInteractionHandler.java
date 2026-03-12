@@ -4,8 +4,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftStats;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -40,14 +38,6 @@ public final class TradeInteractionHandler implements DwarfInteractions.CoreInte
         if (hand == InteractionHand.MAIN_HAND) {
             player.awardStat(JolCraftStats.TALK_TO_DWARF.get());
         }
-
-        JolCraftLogs.info(JolCraftLogTags.ENTITY,
-                "TradeInteractionHandler: dwarf={} profession={} level={} canTrade={} offers={}",
-                dwarf.getUUID(),
-                dwarf.getTradeProfession(),
-                dwarf.getMerchantLevel(),
-                dwarf.canTrade(),
-                dwarf.getOffers().size());
 
         if (dwarf.getOffers().isEmpty()) {
             return InteractionResult.SUCCESS;

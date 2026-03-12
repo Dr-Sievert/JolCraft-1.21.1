@@ -1,13 +1,13 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -28,11 +28,6 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
             @NotNull RecipeOutput output,
             @NotNull HolderGetter<Item> items
     ) {
-
-        // =========================================================
-        // MAIN TRADES (baseline, always present)
-        // =========================================================
-
         executor.emitOrdered(
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
@@ -98,34 +93,29 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        // =========================================================
-        // SALVAGE POOL (GLOBAL_POOL trades)
-        // =========================================================
+        pooledSalvage(executor, JolCraftItems.EXPIRED_POTION.get(), 1, 3, 1);
+        pooledSalvage(executor, JolCraftItems.OLD_FABRIC.get(), 1, 3, 1);
+        pooledSalvage(executor, JolCraftItems.BROKEN_PICKAXE.get(), 1, 4, 1);
+        pooledSalvage(executor, JolCraftItems.BROKEN_AMULET.get(), 1, 4, 1);
+        pooledSalvage(executor, JolCraftItems.BROKEN_BELT.get(), 1, 4, 1);
+        pooledSalvage(executor, JolCraftItems.BROKEN_COINS.get(), 1, 4, 1);
+        pooledSalvage(executor, JolCraftItems.RUSTY_TONGS.get(), 1, 4, 1);
+        pooledSalvage(executor, JolCraftItems.INGOT_MOULD.get(), 1, 4, 1);
 
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.EXPIRED_POTION.get(), 1, 3, 1);
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.OLD_FABRIC.get(), 1, 3, 1);
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.BROKEN_PICKAXE.get(), 1, 4, 1);
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.BROKEN_AMULET.get(), 1, 4, 1);
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.BROKEN_BELT.get(), 1, 4, 1);
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.BROKEN_COINS.get(), 1, 4, 1);
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.RUSTY_TONGS.get(), 1, 4, 1);
-        pooledSalvage(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.INGOT_MOULD.get(), 1, 4, 1);
+        pooledSalvage(executor, JolCraftItems.DEEPSLATE_MUG.get(), 3, 5, 3);
+        pooledSalvage(executor, JolCraftItems.BROKEN_TABLET.get(), 3, 5, 3);
 
-        pooledSalvage(executor, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.DEEPSLATE_MUG.get(), 3, 5, 3);
-        pooledSalvage(executor, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.BROKEN_TABLET.get(), 3, 5, 3);
+        pooledSalvage(executor, JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), 3, 5, 3);
+        pooledSalvage(executor, JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), 3, 5, 3);
+        pooledSalvage(executor, JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), 3, 5, 3);
 
-        pooledSalvage(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), 3, 5, 3);
-        pooledSalvage(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), 3, 5, 3);
-        pooledSalvage(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), 3, 5, 3);
-
-        pooledSalvage(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.MITHRIL_SCRAP.get(), 5, 10, 5);
-        pooledSalvage(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), 5, 10, 5);
-        pooledSalvage(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), 5, 10, 5);
+        pooledSalvage(executor, JolCraftItems.MITHRIL_SCRAP.get(), 5, 10, 5);
+        pooledSalvage(executor, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), 5, 10, 5);
+        pooledSalvage(executor, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), 5, 10, 5);
     }
 
     private static void pooledSalvage(
             RecipeEmissionExecutor executor,
-            DwarfMerchantData.Level level,
             ItemLike item,
             int minGold,
             int maxGold,
@@ -134,8 +124,8 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
         executor.emitOrdered(
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .merchantLevel(level)
                         .tradeGroup(TradeGroup.GLOBAL_POOL)
+                        .noMerchantLevel()
                         .weight(1)
                         .maxUses(5)
                         .dwarfXp(dwarfXp)

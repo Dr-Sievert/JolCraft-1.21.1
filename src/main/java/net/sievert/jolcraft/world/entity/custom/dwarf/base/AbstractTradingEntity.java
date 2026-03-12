@@ -111,16 +111,13 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
         compound.putInt(NBT_XP, this.dwarfXp);
 
-        if (!this.level().isClientSide) {
-            DwarfMerchantOffers merchantOffers = this.getOffers();
-            if (!merchantOffers.isEmpty()) {
-                compound.put(
-                        NBT_OFFERS,
-                        DwarfMerchantOffers.CODEC
-                                .encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), merchantOffers)
-                                .getOrThrow()
-                );
-            }
+        if (!this.level().isClientSide && this.offers != null && !this.offers.isEmpty()) {
+            compound.put(
+                    NBT_OFFERS,
+                    DwarfMerchantOffers.CODEC
+                            .encodeStart(this.registryAccess().createSerializationContext(NbtOps.INSTANCE), this.offers)
+                            .getOrThrow()
+            );
         }
     }
 
@@ -161,8 +158,9 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         return DwarfProfessionTraits.canReroll(this.getTradeProfession());
     }
 
-    public void crateRestock() {
-        restock();
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean crateRestock() {
+        return restock();
     }
 
     @Override
@@ -281,17 +279,27 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
         var recipes = DwarfTrades.getTradeRecipesForMode(serverLevel, profession, level, this.random, mode);
 
-        JolCraftLogs.info(JolCraftLogTags.ENTITY,
+        JolCraftLogs.info(
+                JolCraftLogTags.ENTITY,
                 "Rebuilding dwarf trades for profession={} level={} mode={} recipeCount={}",
-                profession, level, mode, recipes.size());
+                profession,
+                level,
+                mode,
+                recipes.size()
+        );
 
         for (var holder : recipes) {
             addOfferFromRecipe(rebuilt, holder.value());
         }
 
-        JolCraftLogs.info(JolCraftLogTags.ENTITY,
+        JolCraftLogs.info(
+                JolCraftLogTags.ENTITY,
                 "Finished rebuilding dwarf trades for profession={} level={} mode={} offerCount={}",
-                profession, level, mode, rebuilt.size());
+                profession,
+                level,
+                mode,
+                rebuilt.size()
+        );
 
         this.offers = rebuilt;
     }
@@ -333,10 +341,14 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     }
 
     private boolean rerollsOnRestock(@Nullable DwarfTradeRecipe.TradeGroup group) {
-        if (group == null) return false;
+        if (group == null) {
+            return false;
+        }
 
         DwarfProfessionConfig.PoolType type = group.poolType();
-        if (type == null) return false;
+        if (type == null) {
+            return false;
+        }
 
         return DwarfProfessionTraits.config(this.getTradeProfession())
                 .tradePools()
@@ -345,38 +357,70 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                 .orElse(false);
     }
 
-    public void restock() {
+    private boolean isRestockRerollOffer(@Nullable DwarfMerchantOffer offer) {
+        if (offer == null) {
+            return false;
+        }
+        return rerollsOnRestock(offer.getTradeGroup());
+    }
+
+    private boolean hasAnyOfferNeedingUseReset(DwarfMerchantOffers currentOffers) {
+        for (DwarfMerchantOffer offer : currentOffers) {
+            if (offer.needsRestock() && !isRestockRerollOffer(offer)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasAnyRestockRerollOffer(DwarfMerchantOffers currentOffers) {
+        for (DwarfMerchantOffer offer : currentOffers) {
+            if (isRestockRerollOffer(offer)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean restock() {
         if (!(this.level() instanceof ServerLevel serverLevel)) {
-            return;
+            return false;
         }
 
         DwarfMerchantOffers currentOffers = this.getOffers();
         if (currentOffers.isEmpty()) {
-            return;
+            return false;
         }
 
-        boolean didAnything = false;
-        boolean needsRestockReroll = false;
+        boolean canResetAny = hasAnyOfferNeedingUseReset(currentOffers);
+        boolean canRerollAnyPool = hasAnyRestockRerollOffer(currentOffers);
+
+        if (!canResetAny && !canRerollAnyPool) {
+            return false;
+        }
+
+        boolean resetAnyOffer = false;
 
         for (DwarfMerchantOffer offer : currentOffers) {
             if (!offer.needsRestock()) {
                 continue;
             }
 
-            if (rerollsOnRestock(offer.getTradeGroup())) {
-                needsRestockReroll = true;
+            if (isRestockRerollOffer(offer)) {
                 continue;
             }
 
             offer.resetUses();
-            didAnything = true;
+            resetAnyOffer = true;
         }
 
-        if (needsRestockReroll) {
+        boolean rebuiltAnyPool = false;
+
+        if (canRerollAnyPool) {
             List<DwarfMerchantOffer> preserved = new ArrayList<>();
 
             for (DwarfMerchantOffer offer : currentOffers) {
-                if (rerollsOnRestock(offer.getTradeGroup())) {
+                if (isRestockRerollOffer(offer)) {
                     continue;
                 }
                 preserved.add(offer.copy());
@@ -400,16 +444,17 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                 addOfferFromRecipe(currentOffers, holder.value());
             }
 
-            didAnything = true;
+            rebuiltAnyPool = true;
         }
 
-        if (!didAnything) {
-            return;
+        if (!resetAnyOffer && !rebuiltAnyPool) {
+            return false;
         }
 
         this.lastRestockGameTime = serverLevel.getGameTime();
         JolCraftSoundHelper.entity(this, Objects.requireNonNull(getRestockSound()));
         this.resendOffersToTradingPlayer();
+        return true;
     }
 
     public void restockBountiesOnly() {
@@ -583,5 +628,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     public void overrideOffers(DwarfMerchantOffers offers) {}
 
     @Override
-    public void overrideXp(int xp) {}
+    public void overrideXp(int xp) {
+        this.dwarfXp = Math.max(0, xp);
+    }
 }

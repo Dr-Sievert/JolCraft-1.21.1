@@ -79,6 +79,10 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         return new ItemTransforms(List.of(), List.of());
     }
 
+    private boolean isGlobalPool() {
+        return pool.group() == TradeGroup.GLOBAL_POOL;
+    }
+
     @Override
     public int order() {
         return this.order;
@@ -92,8 +96,12 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     @Override
     public @NotNull String orderKey() {
         DwarfProfession prof = profession != null ? profession : DwarfProfession.NONE;
+        if (isGlobalPool()) {
+            return "dwarf_trade:" + prof.getId() + ":global_pool";
+        }
+
         DwarfMerchantData.Level lvl = merchantLevel != null ? merchantLevel : DwarfMerchantData.Level.NOVICE;
-        return "dwarf_trade:" + prof.getId() + ":" + lvl.getId();
+        return "dwarf_trade:" + prof.getId() + ":" + pool.group().name().toLowerCase(Locale.ROOT) + ":" + lvl.getId();
     }
 
     public @NotNull DwarfTradeRecipeBuilder profession(@Nullable DwarfProfession p) {
@@ -107,12 +115,12 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     public @NotNull DwarfTradeRecipeBuilder merchantLevel(@Nullable DwarfMerchantData.Level lvl) {
-        if (lvl == null) {
-            errors.add("level is null");
-            this.merchantLevel = null;
-            return this;
-        }
         this.merchantLevel = lvl;
+        return this;
+    }
+
+    public @NotNull DwarfTradeRecipeBuilder noMerchantLevel() {
+        this.merchantLevel = null;
         return this;
     }
 
@@ -134,6 +142,9 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         }
 
         this.pool = new TradePoolEntry(group, pool.weight());
+        if (group == TradeGroup.GLOBAL_POOL) {
+            this.merchantLevel = null;
+        }
         return this;
     }
 
@@ -512,8 +523,12 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
             errors.add("profession is required");
         }
 
-        if (merchantLevel == null) {
-            errors.add("merchantLevel is required");
+        if (!isGlobalPool() && merchantLevel == null) {
+            errors.add("merchantLevel is required for non-global trades");
+        }
+
+        if (isGlobalPool() && merchantLevel != null) {
+            errors.add("global_pool trades must not define merchantLevel");
         }
 
         if (costA == null) {
@@ -582,7 +597,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
             nameBuilt = DataResult.error(() -> msg, partial);
         }
 
-        if (profession == null || merchantLevel == null || costA == null || result == null) {
+        if (profession == null || costA == null || result == null) {
             return nameBuilt.flatMap(name ->
                     DataResult.error(() -> "builder: missing required fields")
             );
@@ -657,6 +672,9 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     private String levelNameSafe() {
+        if (isGlobalPool()) {
+            return JolCraftDictionary.GLOBAL;
+        }
         if (merchantLevel == null) {
             return JolCraftDictionary.UNKNOWN;
         }
@@ -704,14 +722,10 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         }
 
         ItemSpec spec = out.result();
-        if (spec != null) {
-            ItemProducer producer = spec.producer();
-            if (producer != null) {
-                Optional<String> tok = producer.mapFileNameTokenOpt();
-                if (tok.isPresent()) {
-                    return tok.get();
-                }
-            }
+        ItemProducer producer = spec.producer();
+        Optional<String> tok = producer.mapFileNameTokenOpt();
+        if (tok.isPresent()) {
+            return tok.get();
         }
 
         Optional<Holder<Item>> h = out.singleConcrete(Registries.ITEM);

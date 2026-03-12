@@ -21,6 +21,7 @@ import net.sievert.jolcraft.util.JolCraftLogTags;
 import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public final class DwarfTrades {
             if (recipe == null) {
                 return null;
             }
+
             if (!(trader.level() instanceof ServerLevel serverLevel)) {
                 return null;
             }
@@ -59,9 +61,14 @@ public final class DwarfTrades {
 
             ItemStack costAStack = materializeCost(recipe.costA(), ctx);
             if (costAStack.isEmpty()) {
-                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                        "Dwarf trade offer failed: costA empty for recipe profession={} level={} order={}",
-                        recipe.profession(), recipe.merchantLevel(), recipe.order());
+                JolCraftLogs.warn(
+                        JolCraftLogTags.ENTITY,
+                        "Dwarf trade offer failed: costA empty for recipe profession={} level={} order={} group={}",
+                        recipe.profession(),
+                        recipe.merchantLevel(),
+                        recipe.order(),
+                        groupOf(recipe)
+                );
                 return null;
             }
 
@@ -71,28 +78,43 @@ public final class DwarfTrades {
             if (recipe.costB() != null) {
                 costBConcrete = materializeCost(recipe.costB(), ctx);
                 if (costBConcrete.isEmpty()) {
-                    JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                            "Dwarf trade offer failed: costB empty for recipe profession={} level={} order={}",
-                            recipe.profession(), recipe.merchantLevel(), recipe.order());
+                    JolCraftLogs.warn(
+                            JolCraftLogTags.ENTITY,
+                            "Dwarf trade offer failed: costB empty for recipe profession={} level={} order={} group={}",
+                            recipe.profession(),
+                            recipe.merchantLevel(),
+                            recipe.order(),
+                            groupOf(recipe)
+                    );
                     return null;
                 }
                 costBStack = Optional.of(costBConcrete);
             }
 
+            DwarfMerchantData.Level previewLevel = recipe.merchantLevel() != null
+                    ? recipe.merchantLevel()
+                    : DwarfMerchantData.Level.NOVICE;
+
             DwarfTradeRecipeInput input = new DwarfTradeRecipeInput(
                     ctx,
                     trader.getTradeProfession(),
-                    DwarfMerchantData.Level.fromId(trader.getMerchantLevel()),
+                    previewLevel,
                     costAStack.copy(),
                     costBConcrete.copy()
             );
 
             ItemStack out = recipe.assemble(input, serverLevel.registryAccess());
             if (out.isEmpty()) {
-                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                        "Dwarf trade offer failed: assembled result empty for recipe profession={} level={} order={} traderProfession={} traderLevel={}",
-                        recipe.profession(), recipe.merchantLevel(), recipe.order(),
-                        trader.getTradeProfession(), trader.getMerchantLevel());
+                JolCraftLogs.warn(
+                        JolCraftLogTags.ENTITY,
+                        "Dwarf trade offer failed: assembled result empty for recipe profession={} level={} order={} group={} traderProfession={} traderLevel={}",
+                        recipe.profession(),
+                        recipe.merchantLevel(),
+                        recipe.order(),
+                        groupOf(recipe),
+                        trader.getTradeProfession(),
+                        trader.getMerchantLevel()
+                );
                 return null;
             }
 
@@ -100,9 +122,6 @@ public final class DwarfTrades {
 
             DwarfItemCost costA = new DwarfItemCost(costAStack.getItem(), costAStack.getCount());
             Optional<DwarfItemCost> costB = costBStack.map(s -> new DwarfItemCost(s.getItem(), s.getCount()));
-
-            TradePoolEntry pool = recipe.pool();
-            TradeGroup group = pool != null && pool.group() != null ? pool.group() : TradeGroup.MAIN;
 
             return new DwarfMerchantOffer(
                     costA,
@@ -113,19 +132,21 @@ public final class DwarfTrades {
                     stats.dwarfXp(),
                     stats.priceMultiplier(),
                     0,
-                    group
+                    groupOf(recipe)
             );
         }
 
-        private static ItemStack materializeCost(@Nullable ItemInput in, WorldContext ctx) {
+        private static @NotNull ItemStack materializeCost(@Nullable ItemInput in, @NotNull WorldContext ctx) {
             if (in == null) {
                 return ItemStack.EMPTY;
             }
 
             Holder<Item> holder = resolveCostItem(in, ctx);
             if (holder == null) {
-                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                        "Dwarf trade cost materialization failed: no resolvable item");
+                JolCraftLogs.warn(
+                        JolCraftLogTags.ENTITY,
+                        "Dwarf trade cost materialization failed: no resolvable item"
+                );
                 return ItemStack.EMPTY;
             }
 
@@ -135,17 +156,22 @@ public final class DwarfTrades {
             }
 
             if (rolled < 1) {
-                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                JolCraftLogs.warn(
+                        JolCraftLogTags.ENTITY,
                         "Dwarf trade cost materialization failed: rolled < 1 for item {}",
-                        holder.getRegisteredName());
+                        holder.getRegisteredName()
+                );
                 return ItemStack.EMPTY;
             }
 
             ItemStack stack = new ItemStack(holder.value(), rolled);
             if (!in.matches(ctx, stack)) {
-                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                JolCraftLogs.warn(
+                        JolCraftLogTags.ENTITY,
                         "Dwarf trade cost materialization failed: generated stack {} x{} does not match ItemInput",
-                        stack.getItem(), stack.getCount());
+                        stack.getItem(),
+                        stack.getCount()
+                );
                 return ItemStack.EMPTY;
             }
 
@@ -153,7 +179,7 @@ public final class DwarfTrades {
         }
 
         @Nullable
-        private static Holder<Item> resolveCostItem(ItemInput in, WorldContext ctx) {
+        private static Holder<Item> resolveCostItem(@NotNull ItemInput in, @NotNull WorldContext ctx) {
             Optional<Holder<Item>> concrete = in.singleConcrete(Registries.ITEM);
             if (concrete.isPresent()) {
                 return concrete.get();
@@ -191,7 +217,7 @@ public final class DwarfTrades {
         }
     }
 
-    public static List<RecipeHolder<DwarfTradeRecipe>> getTradeRecipesForMode(
+    public static @NotNull List<RecipeHolder<DwarfTradeRecipe>> getTradeRecipesForMode(
             Level level,
             DwarfProfession profession,
             DwarfMerchantData.Level merchantLevel,
@@ -213,9 +239,9 @@ public final class DwarfTrades {
         }
 
         List<RecipeHolder<DwarfTradeRecipe>> main = new ArrayList<>();
-        List<RecipeHolder<DwarfTradeRecipe>> globalPool = new ArrayList<>();
-        List<RecipeHolder<DwarfTradeRecipe>> cumulativePool = new ArrayList<>();
         List<RecipeHolder<DwarfTradeRecipe>> exactLevelPool = new ArrayList<>();
+        List<RecipeHolder<DwarfTradeRecipe>> cumulativePool = new ArrayList<>();
+        List<RecipeHolder<DwarfTradeRecipe>> globalPool = new ArrayList<>();
 
         for (RecipeHolder<DwarfTradeRecipe> holder : all) {
             DwarfTradeRecipe recipe = holder.value();
@@ -223,27 +249,12 @@ public final class DwarfTrades {
                 continue;
             }
 
-            TradePoolEntry pool = recipe.pool();
-            TradeGroup group = pool != null ? pool.group() : TradeGroup.MAIN;
-            if (group == null) {
-                group = TradeGroup.MAIN;
-            }
+            TradeGroup group = groupOf(recipe);
 
             switch (group) {
                 case MAIN -> {
                     if (includeMainForMode(refreshMode) && isUnlocked(recipe, lvl)) {
                         main.add(holder);
-                    }
-                }
-                case GLOBAL_POOL -> {
-                    if (includePoolForMode(prof, DwarfProfessionConfig.PoolType.GLOBAL, refreshMode)) {
-                        globalPool.add(holder);
-                    }
-                }
-                case CUMULATIVE_POOL -> {
-                    if (includePoolForMode(prof, DwarfProfessionConfig.PoolType.CUMULATIVE, refreshMode)
-                            && isUnlocked(recipe, lvl)) {
-                        cumulativePool.add(holder);
                     }
                 }
                 case EXACT_LEVEL_POOL -> {
@@ -252,41 +263,50 @@ public final class DwarfTrades {
                         exactLevelPool.add(holder);
                     }
                 }
+                case CUMULATIVE_POOL -> {
+                    if (includePoolForMode(prof, DwarfProfessionConfig.PoolType.CUMULATIVE, refreshMode)
+                            && isUnlocked(recipe, lvl)) {
+                        cumulativePool.add(holder);
+                    }
+                }
+                case GLOBAL_POOL -> {
+                    if (includePoolForMode(prof, DwarfProfessionConfig.PoolType.GLOBAL, refreshMode)) {
+                        globalPool.add(holder);
+                    }
+                }
             }
         }
-
-        sortByOrderThenId(main);
 
         DwarfProfessionConfig cfg = DwarfProfessionConfigManager.INSTANCE.get(prof);
         DwarfProfessionConfig.TradePools pools = cfg.tradePools();
 
-        int globalRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.GLOBAL, lvl, refreshMode);
-        int cumulativeRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.CUMULATIVE, lvl, refreshMode);
         int exactLevelRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.EXACT_LEVEL, lvl, refreshMode);
-
-        List<RecipeHolder<DwarfTradeRecipe>> selectedGlobal =
-                pickWeightedWithoutReplacement(globalPool, globalRolls, rng);
-
-        List<RecipeHolder<DwarfTradeRecipe>> selectedCumulative =
-                pickWeightedWithoutReplacement(cumulativePool, cumulativeRolls, rng);
+        int cumulativeRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.CUMULATIVE, lvl, refreshMode);
+        int globalRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.GLOBAL, lvl, refreshMode);
 
         List<RecipeHolder<DwarfTradeRecipe>> selectedExactLevel =
                 pickWeightedWithoutReplacement(exactLevelPool, exactLevelRolls, rng);
 
+        List<RecipeHolder<DwarfTradeRecipe>> selectedCumulative =
+                pickWeightedWithoutReplacement(cumulativePool, cumulativeRolls, rng);
+
+        List<RecipeHolder<DwarfTradeRecipe>> selectedGlobal =
+                pickWeightedWithoutReplacement(globalPool, globalRolls, rng);
+
         List<RecipeHolder<DwarfTradeRecipe>> out = new ArrayList<>(
-                main.size() + selectedGlobal.size() + selectedCumulative.size() + selectedExactLevel.size()
+                main.size() + selectedExactLevel.size() + selectedCumulative.size() + selectedGlobal.size()
         );
 
         out.addAll(main);
-        out.addAll(selectedGlobal);
-        out.addAll(selectedCumulative);
         out.addAll(selectedExactLevel);
+        out.addAll(selectedCumulative);
+        out.addAll(selectedGlobal);
 
-        sortByOrderThenId(out);
+        sortByPoolThenOrderThenId(out);
         return List.copyOf(out);
     }
 
-    public static List<RecipeHolder<DwarfTradeRecipe>> getTradeRecipesAtLevel(
+    public static @NotNull List<RecipeHolder<DwarfTradeRecipe>> getTradeRecipesAtLevel(
             Level level,
             DwarfProfession profession,
             DwarfMerchantData.Level merchantLevel
@@ -294,14 +314,14 @@ public final class DwarfTrades {
         return findTradeRecipesAtLevel(level, profession, merchantLevel);
     }
 
-    private static boolean includeMainForMode(RefreshMode mode) {
+    private static boolean includeMainForMode(@NotNull RefreshMode mode) {
         return mode == RefreshMode.FULL || mode == RefreshMode.REROLL;
     }
 
     private static boolean includePoolForMode(
-            DwarfProfession profession,
-            DwarfProfessionConfig.PoolType type,
-            RefreshMode mode
+            @Nullable DwarfProfession profession,
+            @Nullable DwarfProfessionConfig.PoolType type,
+            @NotNull RefreshMode mode
     ) {
         if (mode == RefreshMode.FULL || mode == RefreshMode.REROLL) {
             return true;
@@ -319,46 +339,62 @@ public final class DwarfTrades {
     }
 
     private static int rollsForMode(
-            DwarfProfessionConfig.TradePools pools,
-            DwarfProfessionConfig.PoolType type,
-            DwarfMerchantData.Level level,
-            RefreshMode mode
+            @Nullable DwarfProfessionConfig.TradePools pools,
+            @Nullable DwarfProfessionConfig.PoolType type,
+            @Nullable DwarfMerchantData.Level level,
+            @NotNull RefreshMode mode
     ) {
-        if (pools == null || type == null) {
+        if (pools == null || type == null || level == null) {
             return 0;
         }
 
         return switch (mode) {
-            case FULL, REROLL -> pools.get(type).map(cfg -> cfg.rolls().rollsFor(level)).orElse(0);
+            case FULL, REROLL -> pools.get(type)
+                    .map(cfg -> cfg.rollsFor(type, level))
+                    .orElse(0);
             case RESTOCK -> pools.get(type)
                     .filter(DwarfProfessionConfig.PoolConfig::rerollsOnRestock)
-                    .map(cfg -> cfg.rolls().rollsFor(level))
+                    .map(cfg -> cfg.rollsFor(type, level))
                     .orElse(0);
         };
     }
 
-    private static boolean isUnlocked(DwarfTradeRecipe recipe, DwarfMerchantData.Level merchantLevel) {
-        int want = merchantLevel != null ? merchantLevel.getId() : 0;
-        DwarfMerchantData.Level req = recipe.merchantLevel();
-        int reqId = req != null ? req.getId() : 0;
-        return reqId <= want;
+    private static @NotNull TradeGroup groupOf(@NotNull DwarfTradeRecipe recipe) {
+        TradePoolEntry pool = recipe.pool();
+        if (pool == null || pool.group() == null) {
+            return TradeGroup.MAIN;
+        }
+        return pool.group();
     }
 
-    private static boolean isExactLevel(DwarfTradeRecipe recipe, DwarfMerchantData.Level merchantLevel) {
-        int want = merchantLevel != null ? merchantLevel.getId() : 0;
-        DwarfMerchantData.Level req = recipe.merchantLevel();
-        int reqId = req != null ? req.getId() : 0;
-        return reqId == want;
+    private static boolean isUnlocked(@NotNull DwarfTradeRecipe recipe, @Nullable DwarfMerchantData.Level merchantLevel) {
+        if (recipe.merchantLevel() == null) {
+            return false;
+        }
+
+        int currentId = merchantLevel != null ? merchantLevel.getId() : 0;
+        return recipe.merchantLevel().getId() <= currentId;
     }
 
-    private static List<RecipeHolder<DwarfTradeRecipe>> pickWeightedWithoutReplacement(
-            List<RecipeHolder<DwarfTradeRecipe>> candidates,
+    private static boolean isExactLevel(@NotNull DwarfTradeRecipe recipe, @Nullable DwarfMerchantData.Level merchantLevel) {
+        if (recipe.merchantLevel() == null) {
+            return false;
+        }
+
+        int currentId = merchantLevel != null ? merchantLevel.getId() : 0;
+        return recipe.merchantLevel().getId() == currentId;
+    }
+
+    private static @NotNull List<RecipeHolder<DwarfTradeRecipe>> pickWeightedWithoutReplacement(
+            @NotNull List<RecipeHolder<DwarfTradeRecipe>> candidates,
             int rolls,
-            RandomSource random
+            @Nullable RandomSource random
     ) {
         if (candidates.isEmpty() || rolls <= 0) {
             return List.of();
         }
+
+        RandomSource rng = random != null ? random : RandomSource.create();
 
         List<RecipeHolder<DwarfTradeRecipe>> pool = new ArrayList<>(candidates);
         List<RecipeHolder<DwarfTradeRecipe>> selected = new ArrayList<>(Math.min(rolls, pool.size()));
@@ -370,7 +406,7 @@ public final class DwarfTrades {
                 break;
             }
 
-            int pick = random.nextInt(totalWeight);
+            int pick = rng.nextInt(totalWeight);
             int cursor = 0;
             int chosenIndex = -1;
 
@@ -395,11 +431,11 @@ public final class DwarfTrades {
             selected.add(pool.remove(chosenIndex));
         }
 
-        sortByOrderThenId(selected);
+        sortByPoolThenOrderThenId(selected);
         return List.copyOf(selected);
     }
 
-    private static int totalWeight(List<RecipeHolder<DwarfTradeRecipe>> recipes) {
+    private static int totalWeight(@NotNull List<RecipeHolder<DwarfTradeRecipe>> recipes) {
         int total = 0;
         for (RecipeHolder<DwarfTradeRecipe> holder : recipes) {
             total += safeWeight(holder.value());
@@ -407,7 +443,7 @@ public final class DwarfTrades {
         return Math.max(0, total);
     }
 
-    private static int safeWeight(DwarfTradeRecipe recipe) {
+    private static int safeWeight(@Nullable DwarfTradeRecipe recipe) {
         if (recipe == null) {
             return 1;
         }
@@ -420,50 +456,70 @@ public final class DwarfTrades {
         return Math.max(0, pool.weight().value());
     }
 
-    private static List<RecipeHolder<DwarfTradeRecipe>> findTradeRecipesAtLevel(
+    private static @NotNull List<RecipeHolder<DwarfTradeRecipe>> findTradeRecipesAtLevel(
             Level level,
             DwarfProfession profession,
             DwarfMerchantData.Level merchantLevel
     ) {
         List<RecipeHolder<DwarfTradeRecipe>> all = getAllTradeRecipes(level);
-        List<RecipeHolder<DwarfTradeRecipe>> filtered = new ArrayList<>();
+        if (all.isEmpty()) {
+            return List.of();
+        }
 
+        List<RecipeHolder<DwarfTradeRecipe>> filtered = new ArrayList<>();
         int want = merchantLevel != null ? merchantLevel.getId() : 0;
 
         for (RecipeHolder<DwarfTradeRecipe> holder : all) {
-            DwarfTradeRecipe r = holder.value();
+            DwarfTradeRecipe recipe = holder.value();
 
-            if (r.profession() != profession) {
+            if (recipe.profession() != profession) {
                 continue;
             }
 
-            DwarfMerchantData.Level req = r.merchantLevel();
-            int reqId = req != null ? req.getId() : 0;
+            if (recipe.merchantLevel() == null) {
+                continue;
+            }
 
-            if (reqId != want) {
+            if (recipe.merchantLevel().getId() != want) {
                 continue;
             }
 
             filtered.add(holder);
         }
 
-        sortByOrderThenId(filtered);
+        sortByPoolThenOrderThenId(filtered);
         return List.copyOf(filtered);
     }
 
-    private static void sortByOrderThenId(List<RecipeHolder<DwarfTradeRecipe>> recipes) {
+    private static int poolPriority(@NotNull DwarfTradeRecipe recipe) {
+        return switch (groupOf(recipe)) {
+            case MAIN -> 0;
+            case EXACT_LEVEL_POOL -> 1;
+            case CUMULATIVE_POOL -> 2;
+            case GLOBAL_POOL -> 3;
+        };
+    }
+
+    private static int levelSortKey(@NotNull DwarfTradeRecipe recipe) {
+        if (groupOf(recipe) == TradeGroup.GLOBAL_POOL) {
+            return 0;
+        }
+
+        DwarfMerchantData.Level level = recipe.merchantLevel();
+        return level != null ? level.getId() : Integer.MAX_VALUE;
+    }
+
+    private static void sortByPoolThenOrderThenId(@NotNull List<RecipeHolder<DwarfTradeRecipe>> recipes) {
         recipes.sort(
                 Comparator
-                        .comparingInt((RecipeHolder<DwarfTradeRecipe> h) -> {
-                            DwarfMerchantData.Level lvl = h.value().merchantLevel();
-                            return lvl != null ? lvl.getId() : 0;
-                        })
-                        .thenComparingInt(h -> h.value().order())
+                        .comparingInt((RecipeHolder<DwarfTradeRecipe> holder) -> poolPriority(holder.value()))
+                        .thenComparingInt(holder -> levelSortKey(holder.value()))
+                        .thenComparingInt(holder -> holder.value().order())
                         .thenComparing(RecipeHolder::id)
         );
     }
 
-    private static List<RecipeHolder<DwarfTradeRecipe>> getAllTradeRecipes(Level level) {
+    private static @NotNull List<RecipeHolder<DwarfTradeRecipe>> getAllTradeRecipes(Level level) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return List.of();
         }

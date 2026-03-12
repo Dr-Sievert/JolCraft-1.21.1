@@ -2,20 +2,16 @@ package net.sievert.jolcraft.datagen.recipe.subprovider;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
-import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +35,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
             @NotNull RecipeOutput output,
             @NotNull HolderGetter<Item> items
     ) {
-
         toolSet(
                 items,
                 output,
@@ -163,7 +158,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(outItem));
+                .save(out, FOLDER, outItem);
     }
 
     private static void pickaxe(
@@ -182,7 +177,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(outItem));
+                .save(out, FOLDER, outItem);
     }
 
     private static void shovel(
@@ -201,7 +196,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(outItem));
+                .save(out, FOLDER, outItem);
     }
 
     private static void axe(
@@ -222,7 +217,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_left"));
+                .save(out, FOLDER, baseId + "_left");
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
@@ -233,7 +228,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_right"));
+                .save(out, FOLDER, baseId + "_right");
     }
 
     private static void hoe(
@@ -254,7 +249,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_left"));
+                .save(out, FOLDER, baseId + "_left");
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
@@ -265,7 +260,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_right"));
+                .save(out, FOLDER, baseId + "_right");
     }
 
     private static void warhammer(
@@ -286,7 +281,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_left"));
+                .save(out, FOLDER, baseId + "_left");
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, outItem)
@@ -297,7 +292,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_right"));
+                .save(out, FOLDER, baseId + "_right");
     }
 
     private static void artisanHammer(
@@ -315,7 +310,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(outItem));
+                .save(out, FOLDER, outItem);
     }
 
     private static void chisel(
@@ -335,7 +330,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_right"));
+                .save(out, FOLDER, baseId + "_right");
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
@@ -345,7 +340,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_left"));
+                .save(out, FOLDER, baseId + "_left");
     }
 
     private static void pestle(
@@ -365,7 +360,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_right"));
+                .save(out, FOLDER, baseId + "_right");
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
@@ -375,23 +370,10 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
-                .save(out, id(baseId + "_left"));
+                .save(out, FOLDER, baseId + "_left");
     }
 
-    private static String itemName(ItemLike item) {
+    private static @NotNull String itemName(ItemLike item) {
         return item.asItem().builtInRegistryHolder().key().location().getPath();
-    }
-
-    private static ResourceKey<Recipe<?>> id(ItemLike item) {
-        return id(itemName(item));
-    }
-
-    private static ResourceKey<Recipe<?>> id(String path) {
-        return ResourceKey.create(
-                Registries.RECIPE,
-                net.sievert.jolcraft.JolCraft.location(
-                        JolCraftStrings.slashed(FOLDER, path)
-                )
-        );
     }
 }

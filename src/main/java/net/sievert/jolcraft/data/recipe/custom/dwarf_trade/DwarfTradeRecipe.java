@@ -48,7 +48,7 @@ import java.util.Optional;
 
 public record DwarfTradeRecipe(
         DwarfProfession profession,
-        DwarfMerchantData.Level merchantLevel,
+        @Nullable DwarfMerchantData.Level merchantLevel,
         TradePoolEntry pool,
         int order,
         ItemInput costA,
@@ -96,9 +96,6 @@ public record DwarfTradeRecipe(
     public DwarfTradeRecipe {
         if (profession == null) {
             throw new IllegalArgumentException("profession is required");
-        }
-        if (merchantLevel == null) {
-            throw new IllegalArgumentException("merchantLevel is required");
         }
 
         pool = pool != null ? pool : TradePoolEntry.MAIN;
@@ -294,43 +291,59 @@ public record DwarfTradeRecipe(
         }
 
         if (in.profession() != profession) {
-            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ENTITY,
                     "DwarfTradeRecipe.matches failed: profession mismatch recipe={} input={}",
-                    profession, in.profession());
+                    profession,
+                    in.profession()
+            );
             return false;
         }
 
-        if (in.merchantLevel().getId() < merchantLevel.getId()) {
-            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                    "DwarfTradeRecipe.matches failed: level mismatch recipe={} input={}",
-                    merchantLevel, in.merchantLevel());
+        if (!passesLevelRequirement(in.merchantLevel())) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.matches failed: level mismatch recipeLevel={} inputLevel={} group={}",
+                    merchantLevel,
+                    in.merchantLevel(),
+                    tradeGroup()
+            );
             return false;
         }
 
         WorldContext ctx = in.ctx();
 
         if (!costA.matches(ctx, in.costA())) {
-            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ENTITY,
                     "DwarfTradeRecipe.matches failed: costA mismatch stack={} x{}",
-                    in.costA().getItem(), in.costA().getCount());
+                    in.costA().getItem(),
+                    in.costA().getCount()
+            );
             return false;
         }
 
         if (costB != null) {
             boolean ok = costB.matches(ctx, in.costB());
             if (!ok) {
-                JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+                JolCraftLogs.warn(
+                        JolCraftLogTags.ENTITY,
                         "DwarfTradeRecipe.matches failed: costB mismatch stack={} x{}",
-                        in.costB().getItem(), in.costB().getCount());
+                        in.costB().getItem(),
+                        in.costB().getCount()
+                );
             }
             return ok;
         }
 
         boolean ok = in.costB().isEmpty();
         if (!ok) {
-            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ENTITY,
                     "DwarfTradeRecipe.matches failed: expected empty costB but got stack={} x{}",
-                    in.costB().getItem(), in.costB().getCount());
+                    in.costB().getItem(),
+                    in.costB().getCount()
+            );
         }
         return ok;
     }
@@ -344,17 +357,25 @@ public record DwarfTradeRecipe(
         }
 
         if (!matches(in, ctx.level())) {
-            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                    "DwarfTradeRecipe.assemble failed: matches returned false for profession={} level={}",
-                    profession, merchantLevel);
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.assemble failed: matches returned false for profession={} level={} group={}",
+                    profession,
+                    merchantLevel,
+                    tradeGroup()
+            );
             return ItemStack.EMPTY;
         }
 
         List<Output> generated = result.generateResolved(ctx, in);
         if (generated.isEmpty()) {
-            JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                    "DwarfTradeRecipe.assemble failed: generated outputs empty for profession={} level={}",
-                    profession, merchantLevel);
+            JolCraftLogs.warn(
+                    JolCraftLogTags.ENTITY,
+                    "DwarfTradeRecipe.assemble failed: generated outputs empty for profession={} level={} group={}",
+                    profession,
+                    merchantLevel,
+                    tradeGroup()
+            );
             return ItemStack.EMPTY;
         }
 
@@ -364,8 +385,10 @@ public record DwarfTradeRecipe(
                 if (!stacks.isEmpty()) {
                     ItemStack stack = stacks.getFirst();
                     if (stack.isEmpty()) {
-                        JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                                "DwarfTradeRecipe.assemble failed: first generated item stack empty");
+                        JolCraftLogs.warn(
+                                JolCraftLogTags.ENTITY,
+                                "DwarfTradeRecipe.assemble failed: first generated item stack empty"
+                        );
                         return ItemStack.EMPTY;
                     }
                     return stack;
@@ -373,8 +396,10 @@ public record DwarfTradeRecipe(
             }
         }
 
-        JolCraftLogs.warn(JolCraftLogTags.ENTITY,
-                "DwarfTradeRecipe.assemble failed: no Output.Items found in generated outputs");
+        JolCraftLogs.warn(
+                JolCraftLogTags.ENTITY,
+                "DwarfTradeRecipe.assemble failed: no Output.Items found in generated outputs"
+        );
         return ItemStack.EMPTY;
     }
 
@@ -386,6 +411,30 @@ public record DwarfTradeRecipe(
     @Override
     public @NotNull RecipeType<? extends Recipe<DwarfTradeRecipeInput>> getType() {
         return JolCraftRecipes.DWARF_TRADE_TYPE.get();
+    }
+
+    public @NotNull TradeGroup tradeGroup() {
+        if (pool == null || pool.group() == null) {
+            return TradeGroup.MAIN;
+        }
+        return pool.group();
+    }
+
+    public boolean requiresLevel() {
+        return tradeGroup() != TradeGroup.GLOBAL_POOL;
+    }
+
+    private boolean passesLevelRequirement(@Nullable DwarfMerchantData.Level inputLevel) {
+        if (!requiresLevel()) {
+            return true;
+        }
+
+        if (merchantLevel == null) {
+            return false;
+        }
+
+        int inputId = inputLevel != null ? inputLevel.getId() : 0;
+        return inputId >= merchantLevel.getId();
     }
 
     public static final class Serializer implements RecipeSerializer<DwarfTradeRecipe> {
@@ -437,8 +486,8 @@ public record DwarfTradeRecipe(
                                 PROFESSION_CODEC.fieldOf(JolCraftDictionary.PROFESSION)
                                         .forGetter(DwarfTradeRecipe::profession),
 
-                                LEVEL_CODEC.fieldOf(JolCraftDictionary.LEVEL)
-                                        .forGetter(DwarfTradeRecipe::merchantLevel),
+                                LEVEL_CODEC.optionalFieldOf(JolCraftDictionary.LEVEL)
+                                        .forGetter(recipe -> Optional.ofNullable(recipe.merchantLevel())),
 
                                 TradePoolEntry.CODEC.optionalFieldOf(KEY_POOL, TradePoolEntry.MAIN)
                                         .forGetter(DwarfTradeRecipe::pool),
@@ -468,7 +517,7 @@ public record DwarfTradeRecipe(
                                        maxUses, dwarfXp, priceMultiplier) ->
                                 new DwarfTradeRecipe(
                                         profession,
-                                        merchantLevel,
+                                        merchantLevel.orElse(null),
                                         pool,
                                         order,
                                         costA,
@@ -482,7 +531,12 @@ public record DwarfTradeRecipe(
                 StreamCodec.of(
                         (buf, recipe) -> {
                             buf.writeUtf(recipe.profession().getId());
-                            buf.writeVarInt(recipe.merchantLevel().getId());
+
+                            buf.writeBoolean(recipe.merchantLevel() != null);
+                            if (recipe.merchantLevel() != null) {
+                                buf.writeVarInt(recipe.merchantLevel().getId());
+                            }
+
                             TradePoolEntry.STREAM_CODEC.encode(buf, recipe.pool());
                             buf.writeVarInt(recipe.order());
                             ItemInput.STREAM_CODEC.encode(buf, recipe.costA());
@@ -501,7 +555,12 @@ public record DwarfTradeRecipe(
                         },
                         buf -> {
                             DwarfProfession profession = decodeProfession(buf.readUtf());
-                            DwarfMerchantData.Level merchantLevel = decodeMerchantLevel(buf.readVarInt());
+
+                            DwarfMerchantData.Level merchantLevel = null;
+                            if (buf.readBoolean()) {
+                                merchantLevel = decodeMerchantLevel(buf.readVarInt());
+                            }
+
                             TradePoolEntry pool = TradePoolEntry.STREAM_CODEC.decode(buf);
                             int order = buf.readVarInt();
                             ItemInput costA = ItemInput.STREAM_CODEC.decode(buf);
@@ -630,15 +689,21 @@ public record DwarfTradeRecipe(
             return DataResult.error(() -> "profession is required");
         }
 
-        if (recipe.merchantLevel() == null) {
-            return DataResult.error(() -> "level is required");
-        }
-
         {
             DataResult<TradePoolEntry> poolValidation = TradePoolEntry.validate(recipe.pool());
             var poolErr = poolValidation.error();
             if (poolErr.isPresent()) {
                 return DataResult.error(() -> poolErr.get().message());
+            }
+        }
+
+        if (recipe.requiresLevel()) {
+            if (recipe.merchantLevel() == null) {
+                return DataResult.error(() -> "level is required for non-global dwarf trades");
+            }
+        } else {
+            if (recipe.merchantLevel() != null) {
+                return DataResult.error(() -> "global_pool trades must not define level");
             }
         }
 
@@ -699,14 +764,8 @@ public record DwarfTradeRecipe(
         }
 
         ItemSpec spec = out.result();
-        if (spec == null) {
-            return DataResult.error(() -> "result.result is required");
-        }
 
         ItemProducer producer = spec.producer();
-        if (producer == null) {
-            return DataResult.error(() -> "result.result.producer is required");
-        }
 
         if (!producer.isItemSelection()) {
             return DataResult.error(() -> "result.result.producer must be item-based for dwarf trades");

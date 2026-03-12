@@ -7,12 +7,12 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +25,28 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public final class VanillaRecipeBuilder {
 
     private VanillaRecipeBuilder() {}
+
+    private static @NotNull String itemPath(ItemLike item) {
+        return item.asItem().builtInRegistryHolder().key().location().getPath();
+    }
+
+    private static @NotNull ResourceKey<Recipe<?>> recipeId(@NotNull String folder, @NotNull String path) {
+        return ResourceKey.create(
+                Registries.RECIPE,
+                JolCraft.location(JolCraftStrings.slashed(folder, path))
+        );
+    }
+
+    private static @NotNull ResourceKey<Recipe<?>> recipeId(@NotNull String path) {
+        return ResourceKey.create(
+                Registries.RECIPE,
+                JolCraft.location(path)
+        );
+    }
+
+    private static @NotNull ResourceKey<Recipe<?>> recipeId(@NotNull String folder, @NotNull ItemLike item) {
+        return recipeId(folder, itemPath(item));
+    }
 
     // ---------------------------------------------------------------------
     // SHAPED
@@ -75,7 +97,7 @@ public final class VanillaRecipeBuilder {
 
         public @NotNull Shaped unlockedByHas(ItemLike item) {
             builder.unlockedBy(
-                    JolCraftStrings.underscored(JolCraftDictionary.HAS, item.asItem().builtInRegistryHolder().key().location().getPath()),
+                    JolCraftStrings.underscored(JolCraftDictionary.HAS, itemPath(item)),
                     InventoryChangeTrigger.TriggerInstance.hasItems(item)
             );
             return this;
@@ -87,6 +109,14 @@ public final class VanillaRecipeBuilder {
 
         public void save(RecipeOutput out, ResourceKey<Recipe<?>> id) {
             builder.save(out, id);
+        }
+
+        public void save(RecipeOutput out, String folder, ItemLike result) {
+            builder.save(out, recipeId(folder, result));
+        }
+
+        public void save(RecipeOutput out, String folder, String path) {
+            builder.save(out, recipeId(folder, path));
         }
     }
 
@@ -129,10 +159,7 @@ public final class VanillaRecipeBuilder {
 
         public @NotNull Shapeless unlockedByHas(ItemLike item) {
             builder.unlockedBy(
-                    JolCraftStrings.underscored(
-                            JolCraftDictionary.HAS,
-                            item.asItem().builtInRegistryHolder().key().location().getPath()
-                    ),
+                    JolCraftStrings.underscored(JolCraftDictionary.HAS, itemPath(item)),
                     InventoryChangeTrigger.TriggerInstance.hasItems(item)
             );
             return this;
@@ -149,6 +176,14 @@ public final class VanillaRecipeBuilder {
 
         public void save(RecipeOutput out, ResourceKey<Recipe<?>> id) {
             builder.save(out, id);
+        }
+
+        public void save(RecipeOutput out, String folder, ItemLike result) {
+            builder.save(out, recipeId(folder, result));
+        }
+
+        public void save(RecipeOutput out, String folder, String path) {
+            builder.save(out, recipeId(folder, path));
         }
     }
 
@@ -170,7 +205,6 @@ public final class VanillaRecipeBuilder {
                 ResourceKey<Recipe<?>> packedId,
                 ResourceKey<Recipe<?>> unpackedId
         ) {
-
             VanillaRecipeBuilder.shapeless(
                             ShapelessRecipeBuilder.shapeless(items, unpackedCategory, unpacked, 9)
                     )
@@ -187,6 +221,33 @@ public final class VanillaRecipeBuilder {
                     .pattern("###")
                     .unlockedByHas(unpacked)
                     .save(out, packedId);
+        }
+
+        public static void nineBlock(
+                HolderGetter<Item> items,
+                RecipeOutput out,
+                String folder,
+                RecipeCategory unpackedCategory,
+                ItemLike unpacked,
+                RecipeCategory packedCategory,
+                ItemLike packed
+        ) {
+            VanillaRecipeBuilder.shapeless(
+                            ShapelessRecipeBuilder.shapeless(items, unpackedCategory, unpacked, 9)
+                    )
+                    .requires(packed)
+                    .unlockedByHas(packed)
+                    .save(out, folder, unpacked);
+
+            VanillaRecipeBuilder.shaped(
+                            ShapedRecipeBuilder.shaped(items, packedCategory, packed)
+                    )
+                    .define('#', unpacked)
+                    .pattern("###")
+                    .pattern("###")
+                    .pattern("###")
+                    .unlockedByHas(unpacked)
+                    .save(out, folder, packed);
         }
     }
 
@@ -304,10 +365,7 @@ public final class VanillaRecipeBuilder {
 
         public @NotNull Cooking unlockedByHas(ItemLike item) {
             builder.unlockedBy(
-                    JolCraftStrings.underscored(
-                            JolCraftDictionary.HAS,
-                            item.asItem().builtInRegistryHolder().key().location().getPath()
-                    ),
+                    JolCraftStrings.underscored(JolCraftDictionary.HAS, itemPath(item)),
                     InventoryChangeTrigger.TriggerInstance.hasItems(item)
             );
             return this;
@@ -321,20 +379,23 @@ public final class VanillaRecipeBuilder {
         public void save(RecipeOutput out) {
             builder.save(
                     out,
-                    ResourceKey.create(
-                            Registries.RECIPE,
-                            ResourceLocation.parse(
-                                    result.asItem().builtInRegistryHolder().key().location().getPath()
-                                            + suffix
-                                            + "_"
-                                            + input.asItem().builtInRegistryHolder().key().location().getPath()
-                            )
-                    )
+                    recipeId(itemPath(result) + suffix + "_" + itemPath(input))
             );
         }
 
         public void save(RecipeOutput out, ResourceKey<Recipe<?>> id) {
             builder.save(out, id);
+        }
+
+        public void save(RecipeOutput out, String folder) {
+            builder.save(
+                    out,
+                    recipeId(folder, itemPath(result) + suffix + "_" + itemPath(input))
+            );
+        }
+
+        public void save(RecipeOutput out, String folder, String path) {
+            builder.save(out, recipeId(folder, path));
         }
     }
 

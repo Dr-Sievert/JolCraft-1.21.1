@@ -70,7 +70,7 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
                 .pattern(" B ")
                 .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
                 .unlockedByHas(JolCraftItems.DEEPSLATE_PLATE.get())
-                .save(output);
+                .save(output, folder(), JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
 
         for (var r : DyeColorRecipeBuilder.buildAll(
                 CraftingBookCategory.MISC,
@@ -79,8 +79,6 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
         )) {
             r.builder().save(output, recipeKey(r.file()));
         }
-
-
 
         // =========================================================
         // DEEPSLATE COMPASS
@@ -168,7 +166,7 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
         );
     }
 
-    private ResourceKey<Recipe<?>> recipeKey(String file) {
+    private @NotNull ResourceKey<Recipe<?>> recipeKey(@NotNull String file) {
         return ResourceKey.create(
                 Registries.RECIPE,
                 JolCraft.location(
