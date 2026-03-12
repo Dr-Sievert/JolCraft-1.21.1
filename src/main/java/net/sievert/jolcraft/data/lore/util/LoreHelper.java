@@ -3,7 +3,7 @@ package net.sievert.jolcraft.data.lore.util;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.component.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.data.lore.LoreAge;

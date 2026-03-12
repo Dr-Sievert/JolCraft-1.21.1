@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.data.component.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;

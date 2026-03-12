@@ -15,8 +15,8 @@ import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemT
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.ItemInputBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.selector.ItemIngredientBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.base.OutputsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;

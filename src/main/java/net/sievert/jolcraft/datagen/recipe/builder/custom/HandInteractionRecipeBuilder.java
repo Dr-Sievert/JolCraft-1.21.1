@@ -20,7 +20,7 @@ import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.ItemInputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -162,6 +162,12 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             return this;
         }
 
+        if (!out.hasAnyEntries()) {
+            errors.add("output must contain at least one output entry");
+            this.output = out;
+            return this;
+        }
+
         this.output = out;
         return this;
     }
@@ -207,9 +213,9 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
         String bAct = actionToken(actionB);
 
         RecipeFileNameBuilder builder = RecipeFileNameBuilder.create()
-                .word(JolCraftRecipeIds.HAND_INTERACTION)
                 .word(aAct)
                 .word(aTok)
+                .word(JolCraftDictionary.AND)
                 .word(bAct)
                 .word(bTok);
 

@@ -32,6 +32,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -136,6 +137,10 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
             errors.add("sound is required");
         }
 
+        if (rewardEntries.isEmpty()) {
+            errors.add("at least one reward is required");
+        }
+
         Outputs rewards = rewardEntries.isEmpty()
                 ? Outputs.EMPTY
                 : new Outputs(new Pools(List.of(
@@ -144,6 +149,7 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
 
         DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
                 .word(tierNameSafe())
+                .word(Objects.requireNonNull(bountyType).professionName())
                 .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_REWARD))
                 .build();
 

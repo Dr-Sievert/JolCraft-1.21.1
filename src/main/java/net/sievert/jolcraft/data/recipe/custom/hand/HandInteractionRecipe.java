@@ -91,7 +91,7 @@ public record HandInteractionRecipe(
     }
 
     public static @NotNull DataResult<HandInteractionRecipe> validateRecipe(HandInteractionRecipe recipe) {
-        return RecipeValidation.validate(recipe)
+        DataResult<HandInteractionRecipe> base = RecipeValidation.validate(recipe)
                 .requireValid(recipe.ingredientA(), SOURCE_INGREDIENT_A)
                 .require(recipe.actionA(), JolCraftStrings.underscored(JolCraftDictionary.ACTION, "a"))
                 .requireValid(recipe.ingredientB(), SOURCE_INGREDIENT_B)
@@ -106,6 +106,18 @@ public record HandInteractionRecipe(
                         JolCraftStrings.underscored(JolCraftDictionary.FAIL, JolCraftDictionary.SOUND)
                 )
                 .done();
+
+        if (base.error().isPresent()) {
+            return base;
+        }
+
+        if (!recipe.output().hasAnyEntries()) {
+            return DataResult.error(() ->
+                    JolCraftStrings.plural(JolCraftDictionary.RESULT) + " must contain at least one output entry"
+            );
+        }
+
+        return DataResult.success(recipe);
     }
 
     public static final class Serializer implements RecipeSerializer<HandInteractionRecipe> {

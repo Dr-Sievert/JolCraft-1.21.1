@@ -19,7 +19,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.component.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructures;
 import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;

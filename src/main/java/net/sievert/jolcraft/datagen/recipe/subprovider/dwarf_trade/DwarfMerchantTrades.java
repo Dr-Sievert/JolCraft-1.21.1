@@ -59,7 +59,6 @@ public final class DwarfMerchantTrades implements RecipeSubProvider {
         pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.GUNPOWDER, 1, 2, 2);
         pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.BONE, 1, 2, 3);
         pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.INK_SAC, 1, 2, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.QUILL_EMPTY.get(), 1, 2, 1);
         pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_BLANK.get(), 1, 2, 1);
 
         pooledBuy(executor, DwarfMerchantData.Level.EXPERT, Items.GOLDEN_APPLE, 4, 6, 1);

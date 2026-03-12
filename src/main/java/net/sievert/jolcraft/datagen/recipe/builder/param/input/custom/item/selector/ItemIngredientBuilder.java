@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -18,13 +19,10 @@ import java.util.List;
  * - Targets are either concrete item holder or item tag.
  *
  * Policy:
- * - Never throws during mutation
+ * - Never throws
  * - Ignores nulls
  * - Deterministic build
- *
- * Note:
- * - Since runtime no longer uses EMPTY sentinels, build() now fails fast
- *   if no valid targets were provided.
+ * - Leaves strict validation to {@link ItemIngredient#validate()}
  */
 public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient> {
 
@@ -80,7 +78,7 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
 
     public ItemIngredientBuilder item(Holder<Item> holder) {
         if (holder == null) return this;
-        return item(holder.value());
+        return target(new ItemIngredient.Target(Either.left(holder)));
     }
 
     public ItemIngredientBuilder tag(TagKey<Item> tag) {
@@ -96,16 +94,12 @@ public final class ItemIngredientBuilder implements ParamBuilder<ItemIngredient>
     public ItemIngredient build() {
         List<ItemIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
-            throw new IllegalStateException("ItemIngredient requires at least one target");
+            return ItemIngredient.ofTargets(List.of());
         }
 
         ArrayList<ItemIngredient.Target> safe = new ArrayList<>(list.size());
         for (ItemIngredient.Target t : list) {
             if (t != null) safe.add(t);
-        }
-
-        if (safe.isEmpty()) {
-            throw new IllegalStateException("ItemIngredient requires at least one target");
         }
 
         return ItemIngredient.ofTargets(safe);

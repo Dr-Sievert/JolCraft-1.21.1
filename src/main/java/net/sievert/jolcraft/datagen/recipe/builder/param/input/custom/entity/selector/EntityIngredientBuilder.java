@@ -18,13 +18,10 @@ import java.util.List;
  * - No gating/conditions here (that belongs to higher-level selectors/inputs).
  *
  * Policy:
- * - Never throws during mutation
+ * - Never throws
  * - Ignores nulls
  * - Deterministic build
- *
- * Note:
- * - Since runtime no longer uses EMPTY sentinels, build() now fails fast
- *   if no valid targets were provided.
+ * - Leaves strict validation to {@link EntityIngredient#validate()}
  */
 public final class EntityIngredientBuilder implements ParamBuilder<EntityIngredient> {
 
@@ -91,16 +88,12 @@ public final class EntityIngredientBuilder implements ParamBuilder<EntityIngredi
     public EntityIngredient build() {
         List<EntityIngredient.Target> list = this.targets;
         if (list == null || list.isEmpty()) {
-            throw new IllegalStateException("EntityIngredient requires at least one target");
+            return EntityIngredient.ofTargets(List.of());
         }
 
         ArrayList<EntityIngredient.Target> safe = new ArrayList<>(list.size());
         for (EntityIngredient.Target t : list) {
             if (t != null) safe.add(t);
-        }
-
-        if (safe.isEmpty()) {
-            throw new IllegalStateException("EntityIngredient requires at least one target");
         }
 
         return EntityIngredient.ofTargets(safe);

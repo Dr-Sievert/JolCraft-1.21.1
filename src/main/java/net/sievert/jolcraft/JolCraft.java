@@ -16,7 +16,7 @@ import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.data.component.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.JolCraftStats;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;

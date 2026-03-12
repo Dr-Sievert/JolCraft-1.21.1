@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity;
 
+import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.input.custom.entity.EntityInput;
 import net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement.EntityRequirements;
@@ -9,28 +10,26 @@ import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.requirement.EntityRequirementsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.selector.EntitySelectorBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Datagen builder for {@link EntityInput}.
  *
  * Policy:
+ * - Mutation methods never throw
+ * - Ignores null builders
  * - Deterministic build
- * - Optional layers may be omitted
- * - selector is required
- * - count defaults to {@link IntRange#ONE}
+ * - Leaves domain validation to {@link EntityInput#validate()}
  */
 public final class EntityInputBuilder implements ParamBuilder<EntityInput> {
 
-    private @Nullable Conditions conditions;
+    private Conditions conditions;
     private EntitySelector selector;
-    private IntRange count = IntRange.ONE;
-    private @Nullable EntityRequirements requirements;
+    private IntRange count;
+    private EntityRequirements requirements;
 
     private EntityInputBuilder() {}
 
-    public static @NotNull EntityInputBuilder create() {
+    public static EntityInputBuilder create() {
         return new EntityInputBuilder();
     }
 
@@ -38,12 +37,12 @@ public final class EntityInputBuilder implements ParamBuilder<EntityInput> {
     // CONDITIONS
     // ---------------------------------------------------------------------
 
-    public @NotNull EntityInputBuilder conditions(@Nullable Conditions conditions) {
+    public EntityInputBuilder conditions(Conditions conditions) {
         this.conditions = conditions;
         return this;
     }
 
-    public @NotNull EntityInputBuilder conditions(@Nullable ConditionsBuilder builder) {
+    public EntityInputBuilder conditions(ConditionsBuilder builder) {
         this.conditions = builder != null ? builder.build() : null;
         return this;
     }
@@ -52,13 +51,13 @@ public final class EntityInputBuilder implements ParamBuilder<EntityInput> {
     // SELECTOR
     // ---------------------------------------------------------------------
 
-    public @NotNull EntityInputBuilder selector(@NotNull EntitySelector selector) {
+    public EntityInputBuilder selector(EntitySelector selector) {
         this.selector = selector;
         return this;
     }
 
-    public @NotNull EntityInputBuilder selector(@NotNull EntitySelectorBuilder builder) {
-        this.selector = builder.build();
+    public EntityInputBuilder selector(EntitySelectorBuilder builder) {
+        this.selector = builder != null ? builder.build() : null;
         return this;
     }
 
@@ -66,7 +65,7 @@ public final class EntityInputBuilder implements ParamBuilder<EntityInput> {
     // COUNT
     // ---------------------------------------------------------------------
 
-    public @NotNull EntityInputBuilder count(@NotNull IntRange count) {
+    public EntityInputBuilder count(IntRange count) {
         this.count = count;
         return this;
     }
@@ -75,12 +74,12 @@ public final class EntityInputBuilder implements ParamBuilder<EntityInput> {
     // REQUIREMENTS
     // ---------------------------------------------------------------------
 
-    public @NotNull EntityInputBuilder requirements(@Nullable EntityRequirements requirements) {
+    public EntityInputBuilder requirements(EntityRequirements requirements) {
         this.requirements = requirements;
         return this;
     }
 
-    public @NotNull EntityInputBuilder requirements(@Nullable EntityRequirementsBuilder builder) {
+    public EntityInputBuilder requirements(EntityRequirementsBuilder builder) {
         this.requirements = builder != null ? builder.build() : null;
         return this;
     }
@@ -90,16 +89,15 @@ public final class EntityInputBuilder implements ParamBuilder<EntityInput> {
     // ---------------------------------------------------------------------
 
     @Override
-    public @NotNull EntityInput build() {
+    public EntityInput build() {
+        Conditions c = conditions != null ? conditions : Conditions.EMPTY;
+        IntRange n = count != null ? count : IntRange.ONE;
+        EntityRequirements r = requirements != null ? requirements : EntityRequirements.EMPTY;
+
         if (selector == null) {
-            throw new IllegalStateException("EntityInputBuilder: selector is required");
+            throw new IllegalStateException("Missing required field '" + JolCraftParameterIds.SELECTOR + "'");
         }
 
-        return new EntityInput(
-                conditions,
-                selector,
-                count,
-                requirements
-        );
+        return new EntityInput(c, selector, n, r);
     }
 }

@@ -43,7 +43,7 @@ public record Hook(ResourceLocation id) implements SelfValidating<Hook> {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Hook> STREAM_CODEC =
             StreamCodec.of(
-                    (buf, v) -> buf.writeResourceLocation(v.id()),
+                    (buf, value) -> buf.writeResourceLocation(value.id()),
                     buf -> new Hook(buf.readResourceLocation())
             );
 
@@ -55,6 +55,9 @@ public record Hook(ResourceLocation id) implements SelfValidating<Hook> {
 
     @Override
     public @NotNull DataResult<Hook> validate() {
+        if (!Hooks.isRegistered(id)) {
+            return DataResult.error(() -> Hooks.unknownHookError(id));
+        }
         return SelfValidating.ok(this);
     }
 

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.data.component;
+package net.sievert.jolcraft.data;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.GlobalPos;

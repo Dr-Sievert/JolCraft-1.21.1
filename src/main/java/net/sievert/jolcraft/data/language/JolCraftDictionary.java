@@ -11,7 +11,6 @@ public final class JolCraftDictionary extends JolCraftIds {
      * ===================================================================== */
 
     public static final String AND = "and";
-    public static final String ANY = "any";
     public static final String CAN = "can";
     public static final String FOR = "for";
     public static final String FROM = "from";
@@ -144,7 +143,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MAIN = "main";
     public static final String MANAGED = "managed";
     public static final String MEDIUM = "medium";
-    public static final String MISSING = "missing";
     public static final String NONE = "none";
     public static final String NEVER = "never";
     public static final String OLD = "old";
@@ -189,7 +187,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String AMOUNT = "amount";
     public static final String AMPLIFIER = "amplifier";
     public static final String AMULET = "amulet";
-    public static final String ANCHOR = "anchor";
     public static final String ARCANIST = "arcanist";
     public static final String ARCHAEOLOGY = "archaeology";
     public static final String ARM = "arm";
@@ -231,6 +228,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BROW = "brow";
     public static final String BUBBLE = "bubble";
     public static final String BUCKET = "bucket";
+    public static final String BUILDER = "builder";
     public static final String BULB = "bulb";
     public static final String BUSY = "busy";
     public static final String CATALYST = "catalyst";
@@ -392,7 +390,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MEMORY = "memory";
     public static final String MENU = "menu";
     public static final String MERCHANT = "merchant";
-    public static final String MESSAGE = "message";
     public static final String MISC = "misc";
     public static final String MILK = "milk";
     public static final String MIN = "min";
@@ -500,7 +497,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SOURCE = "source";
     public static final String SPANNER = "spanner";
     public static final String SPEED = "speed";
-    public static final String SPREAD = "spread";
     public static final String STACK = "stack";
     public static final String START = "start";
     public static final String STAT = "stat";

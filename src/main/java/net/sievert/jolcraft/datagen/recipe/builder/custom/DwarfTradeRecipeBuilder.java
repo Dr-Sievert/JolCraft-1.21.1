@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.component.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
@@ -30,8 +30,8 @@ import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.base.OrderedBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.ItemInputBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.selector.ItemIngredientBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.transform.ComponentTransformBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.transform.ItemTransformsBuilder;
@@ -43,10 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -461,6 +458,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
 
             String override = RecipeFileNameBuilder.create()
                     .word(level.name().toLowerCase(Locale.ROOT))
+                    .word(Objects.requireNonNull(profession).professionName())
                     .word(JolCraftDictionary.BOUNTY)
                     .build()
                     .result()

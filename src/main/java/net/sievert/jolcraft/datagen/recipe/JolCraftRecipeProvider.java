@@ -129,6 +129,7 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
         private final Map<RecipeSerializer<?>, String> serializerIds = new java.util.IdentityHashMap<>();
         private final Map<String, Integer> perType = new HashMap<>();
         private final Map<ResourceKey<Recipe<?>>, Recipe<?>> seen = new HashMap<>();
+        private final Map<String, ResourceKey<Recipe<?>>> seenFileNames = new HashMap<>();
 
         private int total = 0;
 
@@ -158,6 +159,21 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
         ) {
             if (seen.containsKey(key)) {
                 throw new IllegalStateException("Duplicate recipe id detected: " + key.location());
+            }
+
+            String path = key.location().getPath();
+            String fileName = path;
+            int slash = path.lastIndexOf('/');
+            if (slash >= 0) {
+                fileName = path.substring(slash + 1);
+            }
+
+            ResourceKey<Recipe<?>> existing = seenFileNames.putIfAbsent(fileName, key);
+            if (existing != null) {
+                throw new IllegalStateException(
+                        "Duplicate recipe file name detected: '" + fileName + "' for ids '"
+                                + existing.location() + "' and '" + key.location() + "'"
+                );
             }
 
             seen.put(key, recipe);

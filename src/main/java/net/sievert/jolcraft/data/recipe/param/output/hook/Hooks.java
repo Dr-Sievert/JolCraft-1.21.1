@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public final class Hooks {
 
@@ -23,8 +26,6 @@ public final class Hooks {
         );
     }
 
-    private static final Operation NOOP = (ctx, resolver, outputs) -> {};
-
     public static final ResourceLocation DEEPSLATE_COMPASS_ID =
             JolCraft.location(JolCraftRecipeHookIds.DEEPSLATE_COMPASS);
 
@@ -34,8 +35,31 @@ public final class Hooks {
 
     private Hooks() {}
 
+    public static boolean isRegistered(@NotNull ResourceLocation id) {
+        return REGISTRY.containsKey(id);
+    }
+
+    public static @NotNull Set<ResourceLocation> ids() {
+        return Set.copyOf(REGISTRY.keySet());
+    }
+
+    public static @NotNull String knownIds() {
+        return REGISTRY.keySet().stream()
+                .map(ResourceLocation::toString)
+                .collect(Collectors.toCollection(TreeSet::new))
+                .toString();
+    }
+
+    public static @NotNull String unknownHookError(@NotNull ResourceLocation id) {
+        return "unknown hook id '" + id + "', expected one of: " + knownIds();
+    }
+
     public static @NotNull Operation resolve(@NotNull ResourceLocation id) {
-        return REGISTRY.getOrDefault(id, NOOP);
+        Operation operation = REGISTRY.get(id);
+        if (operation == null) {
+            throw new IllegalArgumentException(unknownHookError(id));
+        }
+        return operation;
     }
 
     public static void apply(

@@ -169,6 +169,26 @@ public record Outputs(Pools pools)
         return pools != null ? pools : EMPTY_POOLS;
     }
 
+    public boolean isEmpty() {
+        return poolsSafe().pools().isEmpty();
+    }
+
+    public int poolCount() {
+        return poolsSafe().pools().size();
+    }
+
+    public int entryCount() {
+        int total = 0;
+        for (Pool pool : poolsSafe().pools()) {
+            total += pool.entries().size();
+        }
+        return total;
+    }
+
+    public boolean hasAnyEntries() {
+        return entryCount() > 0;
+    }
+
     public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
         return generateResolved(ctx, null);
     }

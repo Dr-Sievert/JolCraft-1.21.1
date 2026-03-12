@@ -7,6 +7,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeHookIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
@@ -14,7 +15,7 @@ import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.item.ItemInputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.base.OutputsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
@@ -30,7 +31,7 @@ public final class CompassHandInteractions implements RecipeSubProvider {
 
     @Override
     public @NotNull String folder() {
-        return JolCraftDictionary.MISC;
+        return JolCraftItemIds.DEEPSLATE_COMPASS;
     }
 
     @Override
@@ -84,11 +85,13 @@ public final class CompassHandInteractions implements RecipeSubProvider {
                                         .pitch(1.4F)
                                         .build()
                         )
-                        .failSound(SoundOutputBuilder.create()
-                                .sound(SoundEvents.METAL_HIT)
-                                .volume(0.4F)
-                                .pitch(1.6F)
-                                .build())
+                        .failSound(
+                                SoundOutputBuilder.create()
+                                        .sound(SoundEvents.METAL_HIT)
+                                        .volume(0.4F)
+                                        .pitch(1.6F)
+                                        .build()
+                        )
                         .requireSneaking(false)
                         .buildValidated()
         );

@@ -137,12 +137,12 @@ public record IntRange(int min, int max) implements SelfValidating<IntRange> {
                         buf.writeVarInt(range.min());
                         buf.writeVarInt(range.max());
                     },
-                    (buf) -> {
+                    buf -> {
                         int min = buf.readVarInt();
                         int max = buf.readVarInt();
 
                         IntRange raw = new IntRange(min, max);
-                        return validateRange(raw).result().orElse(ONE);
+                        return validateRange(raw).getOrThrow(IllegalArgumentException::new);
                     }
             );
 }

@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.world.item.util.coin;
 
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.component.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 
 public class CoinPouchHelper {
 

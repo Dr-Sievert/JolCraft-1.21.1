@@ -45,6 +45,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -352,6 +353,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
 
         DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
                 .word(bountyTierNameSafe())
+                .word(Objects.requireNonNull(bountyType).professionName())
                 .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_TASK))
                 .build();
 

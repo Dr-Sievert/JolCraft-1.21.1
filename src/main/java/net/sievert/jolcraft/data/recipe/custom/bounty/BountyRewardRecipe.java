@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.data.component.JolCraftDataComponents;
+import net.sievert.jolcraft.data.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomOutputRecipe;
@@ -220,6 +220,12 @@ public record BountyRewardRecipe(
 
         Outputs rewards = recipe.rewards();
         Pools pools = rewards.pools();
+
+        if (!rewards.hasAnyEntries()) {
+            return DataResult.error(() ->
+                    "rewards must contain at least one output entry"
+            );
+        }
 
         for (Pool pool : pools.pools()) {
             for (PoolEntry entry : pool.entries()) {

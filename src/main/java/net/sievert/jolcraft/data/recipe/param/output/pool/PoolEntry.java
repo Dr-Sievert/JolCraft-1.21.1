@@ -19,6 +19,8 @@ import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemT
 import net.sievert.jolcraft.data.recipe.param.quantity.DrawRule;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,7 +184,8 @@ public record PoolEntry(
             return output instanceof ResolvedOutputParam resolved
                     ? resolved.generateResolved(ctx, resolver)
                     : output.generate(ctx);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            JolCraftLogs.warn(JolCraftLogTags.RECIPE, "Pool entry output generation failed", e);
             return List.of();
         }
     }
