@@ -22,6 +22,7 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.AttributeSmithingTrimRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -77,12 +78,12 @@ public final class TrimRecipesSubProvider implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
 
         templateDuplication(
                 output,
-                items,
+                lookups.items(),
                 JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE.get(),
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.DIAMOND
@@ -92,15 +93,15 @@ public final class TrimRecipesSubProvider implements RecipeSubProvider {
             ResourceKey<Recipe<?>> normalKey = trimRecipeKey(template);
             ResourceKey<Recipe<?>> attributeKey = attributeTrimRecipeKey(template);
 
-            trimSmithing(output, items, template, normalKey);
-            attributeTrimSmithing(output, items, template, attributeKey);
+            trimSmithing(output, lookups.items(), template, normalKey);
+            attributeTrimSmithing(output, lookups.items(), template, attributeKey);
         }
 
         VanillaRecipeProvider.smithingTrims().forEach(vanillaTrim -> {
             String basePath = vanillaTrim.id().location().getPath();
             attributeTrimSmithing(
                     output,
-                    items,
+                    lookups.items(),
                     vanillaTrim.template(),
                     recipeKey(ATTRIBUTE_PREFIX + basePath)
             );

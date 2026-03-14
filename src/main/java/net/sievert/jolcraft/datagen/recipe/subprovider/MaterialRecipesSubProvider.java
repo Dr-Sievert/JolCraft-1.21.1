@@ -10,6 +10,7 @@ import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -28,10 +29,10 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(items, RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PLATE.get())
+                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.DEEPSLATE_PLATE.get())
                 )
                 .requires(JolCraftItems.DEEPSLATE_BULBS.get())
                 .requires(Items.IRON_INGOT)
@@ -39,7 +40,7 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.DEEPSLATE_PLATE.getId().getPath() + "_from_bulbs");
 
         VanillaRecipeBuilder.Storage.nineBlock(
-                items,
+                lookups.items(),
                 output,
                 folder(),
                 RecipeCategory.MISC,
@@ -49,7 +50,7 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
         );
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.MISC, JolCraftItems.DEEPSLATE_ROD.get(), 4)
+                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.DEEPSLATE_ROD.get(), 4)
                 )
                 .pattern("B")
                 .pattern("B")
@@ -58,7 +59,7 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.DEEPSLATE_ROD.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.MISC, JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get())
+                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get())
                 )
                 .pattern("BBB")
                 .pattern("BBB")
@@ -68,7 +69,7 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get());
 
         VanillaRecipeBuilder.Storage.nineBlock(
-                items,
+                lookups.items(),
                 output,
                 folder(),
                 RecipeCategory.MISC,
@@ -78,7 +79,7 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
         );
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.MISC, JolCraftItems.MITHRIL_INGOT.get())
+                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.MITHRIL_INGOT.get())
                 )
                 .pattern("BBB")
                 .pattern("BBB")
@@ -88,14 +89,14 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.MITHRIL_INGOT.getId().getPath() + "_from_nuggets");
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(items, RecipeCategory.MISC, JolCraftItems.MITHRIL_NUGGET.get(), 9)
+                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.MITHRIL_NUGGET.get(), 9)
                 )
                 .requires(JolCraftItems.MITHRIL_INGOT.get())
                 .unlockedByHas(JolCraftItems.MITHRIL_INGOT.get())
                 .save(output, folder(), JolCraftItems.MITHRIL_NUGGET.getId().getPath() + "s_from_ingot");
 
         VanillaRecipeBuilder.Storage.nineBlock(
-                items,
+                lookups.items(),
                 output,
                 folder(),
                 RecipeCategory.MISC,
@@ -145,7 +146,7 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.MISC, JolCraftItems.MITHRIL_CHAINWEAVE.get())
+                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.MITHRIL_CHAINWEAVE.get())
                 )
                 .pattern("BB")
                 .pattern("BB")
@@ -155,7 +156,7 @@ public final class MaterialRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.MITHRIL_CHAINWEAVE.get());
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(items, RecipeCategory.MISC, JolCraftItems.MITHRIL_NUGGET.get(), 6)
+                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.MITHRIL_NUGGET.get(), 6)
                 )
                 .requires(JolCraftItems.MITHRIL_CHAINWEAVE.get())
                 .unlockedByHas(JolCraftItems.MITHRIL_NUGGET.get())

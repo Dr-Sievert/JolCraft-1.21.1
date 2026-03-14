@@ -15,6 +15,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.subprovider.CompassRecipesSubProvider;
 import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfBountyRecipesSubProvider;
 import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfTradeRecipesSubProvider;
@@ -94,13 +95,13 @@ public final class JolCraftRecipeProvider extends RecipeProvider {
         subs.add(new ToolRecipesSubProvider());
         subs.add(new TrimRecipesSubProvider());
 
-        HolderGetter<Item> items = this.registries.lookupOrThrow(Registries.ITEM);
+        RecipeLookups lookups = new RecipeLookups(this.registries);
 
         for (RecipeSubProvider sub : subs) {
-            sub.registerRecipes(
-                    root.scoped(sub.folder()),
+            sub.register(
+                    root,
                     this.output,
-                    items
+                    lookups
             );
         }
 

@@ -65,6 +65,10 @@ public record LapidaryBenchRecipe(
         boolean isChisel = toolStack.is(JolCraftTags.Items.CHISELS);
 
         if (isChisel) {
+            if (ctx.player() == null) {
+                return false;
+            }
+
             if (!DwarfTomeUnlockHelper.hasUnlock(ctx.player(), DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 return false;
             }

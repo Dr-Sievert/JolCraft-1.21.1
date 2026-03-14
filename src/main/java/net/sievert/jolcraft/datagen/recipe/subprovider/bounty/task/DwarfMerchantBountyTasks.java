@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyTaskRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -18,7 +19,7 @@ import java.util.function.Consumer;
 public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
 
     @Override
-    public String folder() {
+    public @NotNull String folder() {
         return DwarfProfession.MERCHANT.professionName();
     }
 
@@ -26,7 +27,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
 
         emitTier(executor, DwarfMerchantData.Level.NOVICE, b -> {

@@ -98,7 +98,7 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
             return this;
         }
 
-        rewardEntries.add(new PoolEntry(param, null, builtWeight));
+        rewardEntries.add(new PoolEntry(param, Conditions.EMPTY, IntRange.ONE, builtWeight));
         return this;
     }
 
@@ -143,9 +143,12 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
 
         Outputs rewards = rewardEntries.isEmpty()
                 ? Outputs.EMPTY
-                : new Outputs(new Pools(List.of(
-                new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(rewardEntries))
-        )));
+                : new Outputs(
+                Conditions.EMPTY,
+                new Pools(List.of(
+                        new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(rewardEntries))
+                ))
+        );
 
         DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
                 .word(tierNameSafe())

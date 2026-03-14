@@ -9,6 +9,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -29,7 +30,7 @@ public final class DwarfArtisanTrades implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
 
         sellGem(executor, JolCraftItems.AEGISCORE.get());

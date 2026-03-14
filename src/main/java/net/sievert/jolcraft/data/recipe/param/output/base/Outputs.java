@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.data.recipe.param.output.base;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,21 +25,87 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public record Outputs(Pools pools)
+public record Outputs(Conditions conditions, Pools pools)
         implements ResolvedOutputParam, SelfValidating<Outputs>, RegistryIntrospectionSource {
 
     public static final Pools EMPTY_POOLS = new Pools(List.of());
-    public static final Outputs EMPTY = new Outputs(EMPTY_POOLS);
+    public static final Outputs EMPTY = new Outputs(Conditions.EMPTY, EMPTY_POOLS);
+
+    private static final Set<String> RESERVED_KEYS = Set.of(
+            JolCraftParameterIds.CONDITIONS,
+            JolCraftParameterIds.POOLS
+    );
+
+    private record RawObject(
+            Conditions conditions,
+            Pools pools
+    ) {}
+
+    private static final Codec<RawObject> RAW_OBJECT_CODEC =
+            RecordCodecBuilder.create(instance -> instance.group(
+                    Conditions.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.CONDITIONS, Conditions.EMPTY)
+                            .forGetter(RawObject::conditions),
+                    Pools.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.POOLS, EMPTY_POOLS)
+                            .forGetter(RawObject::pools)
+            ).apply(instance, RawObject::new));
+
+    private static final Codec<Outputs> RAW_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<com.mojang.datafixers.util.Pair<Outputs, T>> decode(DynamicOps<T> ops, T input) {
+            return Conditions.extractInlineConditions(ops, input, RESERVED_KEYS).flatMap(extracted ->
+                    RAW_OBJECT_CODEC.decode(ops, extracted.strippedInput()).flatMap(pair ->
+                            Conditions.mergeExplicitAndInline(pair.getFirst().conditions(), extracted.conditions())
+                                    .map(merged -> com.mojang.datafixers.util.Pair.of(
+                                            new Outputs(merged, pair.getFirst().pools()),
+                                            pair.getSecond()
+                                    ))
+                    )
+            );
+        }
+
+        @Override
+        public <T> DataResult<T> encode(Outputs input, DynamicOps<T> ops, T prefix) {
+            T base = RAW_OBJECT_CODEC.encodeStart(
+                    ops,
+                    new RawObject(
+                            input.conditions().isEmpty() ? Conditions.EMPTY : input.conditions(),
+                            input.poolsSafe()
+                    )
+            ).result().orElse(prefix);
+
+            if (input.conditions().isEmpty()) {
+                return DataResult.success(base);
+            }
+
+            T noExplicit = ops.remove(base, JolCraftParameterIds.CONDITIONS);
+            DataResult<T> flattened = Conditions.encodeInlineConditions(ops, input.conditions(), noExplicit, RESERVED_KEYS);
+            return flattened.error().isPresent()
+                    ? DataResult.success(base)
+                    : flattened;
+        }
+    };
+
+    public static final Codec<Outputs> CODEC = ParamCodecs.validated(RAW_CODEC);
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, Outputs> STREAM_CODEC =
+            StreamCodec.composite(
+                    Conditions.STREAM_CODEC, Outputs::conditions,
+                    Pools.STREAM_CODEC, Outputs::poolsSafe,
+                    Outputs::new
+            );
 
     public static @NotNull Outputs empty() {
         return EMPTY;
     }
 
     public static @NotNull Outputs wrapSingle(@NotNull OutputParam out) {
-        PoolEntry entry = new PoolEntry(out, null, WeightParam.ONE);
+        PoolEntry entry = new PoolEntry(out, Conditions.EMPTY, IntRange.ONE, WeightParam.ONE);
         Pool pool = new Pool(IntRange.ONE, Conditions.EMPTY, List.of(entry));
-        return new Outputs(new Pools(List.of(pool)));
+        return new Outputs(Conditions.EMPTY, new Pools(List.of(pool)));
     }
 
     private static @NotNull Outputs wrapBareList(@NotNull List<OutputParam> outputs) {
@@ -50,7 +116,7 @@ public record Outputs(Pools pools)
         ArrayList<PoolEntry> entries = new ArrayList<>(outputs.size());
         for (OutputParam output : outputs) {
             if (output != null) {
-                entries.add(new PoolEntry(output, null, WeightParam.ONE));
+                entries.add(new PoolEntry(output, Conditions.EMPTY, IntRange.ONE, WeightParam.ONE));
             }
         }
 
@@ -58,12 +124,17 @@ public record Outputs(Pools pools)
             return EMPTY;
         }
 
-        return new Outputs(new Pools(List.of(
-                new Pool(IntRange.ONE, Conditions.EMPTY, entries)
-        )));
+        return new Outputs(
+                Conditions.EMPTY,
+                new Pools(List.of(new Pool(IntRange.ONE, Conditions.EMPTY, entries)))
+        );
     }
 
     private boolean isSingleBareOutput() {
+        if (hasTopLevelConditions()) {
+            return false;
+        }
+
         List<Pool> ps = poolsSafe().pools();
         if (ps.size() != 1) return false;
 
@@ -74,8 +145,16 @@ public record Outputs(Pools pools)
     }
 
     private boolean isSingleBarePoolList() {
+        if (hasTopLevelConditions()) {
+            return false;
+        }
+
         List<Pool> ps = poolsSafe().pools();
         return ps.size() == 1 && ps.getFirst().isBareEntryList();
+    }
+
+    private boolean hasTopLevelConditions() {
+        return !conditions().isEmpty();
     }
 
     private @Nullable OutputParam singleBareOutputOrNull() {
@@ -92,9 +171,18 @@ public record Outputs(Pools pools)
         ArrayList<OutputParam> out = new ArrayList<>(entries.size());
         for (PoolEntry entry : entries) {
             OutputParam output = entry.output();
-            if (output != null) out.add(output);
+            if (output != null) {
+                out.add(output);
+            }
         }
         return out.isEmpty() ? List.of() : List.copyOf(out);
+    }
+
+    private static <T> boolean looksExplicitOutputsObject(@NotNull DynamicOps<T> ops, T input) {
+        return ops.getMap(input).result().map(map ->
+                map.get(ops.createString(JolCraftParameterIds.CONDITIONS)) != null ||
+                        map.get(ops.createString(JolCraftParameterIds.POOLS)) != null
+        ).orElse(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -104,9 +192,25 @@ public record Outputs(Pools pools)
         Codec<OutputParam> leaf = (Codec<OutputParam>) singleParamCodec;
         Codec<List<OutputParam>> leafList = leaf.listOf();
 
-        return Codec.either(
-                leaf,
-                Codec.either(
+        return new Codec<>() {
+            @Override
+            public <T> DataResult<com.mojang.datafixers.util.Pair<Outputs, T>> decode(DynamicOps<T> ops, T input) {
+                boolean mapLike = ops.getMap(input).result().isPresent();
+
+                if (mapLike && looksExplicitOutputsObject(ops, input)) {
+                    return Outputs.CODEC.decode(ops, input);
+                }
+
+                DataResult<com.mojang.datafixers.util.Pair<OutputParam, T>> directLeaf = leaf.decode(ops, input);
+                if (directLeaf.result().isPresent()) {
+                    var pair = directLeaf.result().orElseThrow();
+                    return DataResult.success(com.mojang.datafixers.util.Pair.of(
+                            Outputs.wrapSingle(pair.getFirst()),
+                            pair.getSecond()
+                    ));
+                }
+
+                return Codec.either(
                         leafList,
                         Codec.either(
                                 Outputs.CODEC,
@@ -115,53 +219,44 @@ public record Outputs(Pools pools)
                                         Pool.CODEC.listOf()
                                 )
                         )
-                )
-        ).xmap(
-                either -> either.map(
-                        Outputs::wrapSingle,
-                        rest -> rest.map(
+                ).decode(ops, input).map(pair -> com.mojang.datafixers.util.Pair.of(
+                        pair.getFirst().map(
                                 Outputs::wrapBareList,
                                 outputsOrPools -> outputsOrPools.map(
                                         o -> o,
                                         poolsOrList -> poolsOrList.map(
-                                                Outputs::new,
-                                                list -> new Outputs(new Pools(list))
+                                                pools -> new Outputs(Conditions.EMPTY, pools),
+                                                list -> new Outputs(Conditions.EMPTY, new Pools(list))
                                         )
                                 )
-                        )
-                ),
-                outputs -> {
-                    OutputParam single = outputs.singleBareOutputOrNull();
-                    if (single != null) {
-                        return Either.left(single);
-                    }
+                        ),
+                        pair.getSecond()
+                ));
+            }
 
-                    List<OutputParam> list = outputs.bareOutputsOrEmpty();
-                    if (!list.isEmpty()) {
-                        return Either.right(Either.left(list));
-                    }
-
-                    return Either.right(Either.right(Either.right(Either.right(outputs.poolsSafe().pools()))));
+            @Override
+            public <T> DataResult<T> encode(Outputs outputs, DynamicOps<T> ops, T prefix) {
+                if (outputs.hasTopLevelConditions()) {
+                    return Outputs.CODEC.encode(outputs, ops, prefix);
                 }
-        );
+
+                OutputParam single = outputs.singleBareOutputOrNull();
+                if (single != null) {
+                    return leaf.encode(single, ops, prefix);
+                }
+
+                List<OutputParam> list = outputs.bareOutputsOrEmpty();
+                if (!list.isEmpty()) {
+                    return leafList.encode(list, ops, prefix);
+                }
+
+                return Pool.CODEC.listOf().encode(outputs.poolsSafe().pools(), ops, prefix);
+            }
+        };
     }
 
-    private static final Codec<Outputs> RAW_CODEC =
-            RecordCodecBuilder.create(instance -> instance.group(
-                    Pools.CODEC
-                            .optionalFieldOf(JolCraftParameterIds.POOLS, EMPTY_POOLS)
-                            .forGetter(Outputs::poolsSafe)
-            ).apply(instance, Outputs::new));
-
-    public static final Codec<Outputs> CODEC = ParamCodecs.validated(RAW_CODEC);
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, Outputs> STREAM_CODEC =
-            StreamCodec.composite(
-                    Pools.STREAM_CODEC, Outputs::poolsSafe,
-                    Outputs::new
-            );
-
-    public Outputs(Pools pools) {
+    public Outputs(Conditions conditions, Pools pools) {
+        this.conditions = conditions != null ? conditions : Conditions.EMPTY;
         this.pools = pools != null ? pools : EMPTY_POOLS;
     }
 
@@ -185,6 +280,7 @@ public record Outputs(Pools pools)
         return total;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasAnyEntries() {
         return entryCount() > 0;
     }
@@ -198,30 +294,49 @@ public record Outputs(Pools pools)
             @NotNull WorldContext ctx,
             @Nullable ItemTransformSourceResolver resolver
     ) {
+        if (!conditions().test(ctx)) {
+            return List.of();
+        }
+
         return poolsSafe().generateResolved(ctx, resolver);
     }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        return poolsSafe().introspections();
+        return RegistryIntrospectionSource.mergeByRegistry(List.of(
+                conditions(),
+                poolsSafe()
+        ));
     }
 
     @Override
     public @NotNull DataResult<Outputs> validate() {
-        return poolsSafe().validate()
-                .mapError(msg -> JolCraftParameterIds.POOLS + " invalid: " + msg)
+        return conditions().validate()
+                .mapError(msg -> JolCraftParameterIds.CONDITIONS + " invalid: " + msg)
+                .flatMap(ignored -> poolsSafe().validate()
+                        .mapError(msg -> JolCraftParameterIds.POOLS + " invalid: " + msg))
                 .map(ignored -> this);
     }
 
     public @NotNull Outputs merge(@NotNull Outputs other) {
-        if (other == EMPTY || other.poolsSafe().pools().isEmpty()) return this;
-        if (this == EMPTY || this.poolsSafe().pools().isEmpty()) return other;
+        if (other == EMPTY || (!other.hasTopLevelConditions() && other.poolsSafe().pools().isEmpty())) {
+            return this;
+        }
+        if (this == EMPTY || (!this.hasTopLevelConditions() && this.poolsSafe().pools().isEmpty())) {
+            return other;
+        }
 
-        ArrayList<Pool> merged = new ArrayList<>(this.poolsSafe().pools().size() + other.poolsSafe().pools().size());
-        merged.addAll(this.poolsSafe().pools());
-        merged.addAll(other.poolsSafe().pools());
+        ArrayList<net.sievert.jolcraft.data.recipe.param.condition.Condition> mergedConditions =
+                new ArrayList<>(this.conditions().conditions().size() + other.conditions().conditions().size());
+        mergedConditions.addAll(this.conditions().conditions());
+        mergedConditions.addAll(other.conditions().conditions());
 
-        return new Outputs(new Pools(merged));
+        ArrayList<Pool> mergedPools =
+                new ArrayList<>(this.poolsSafe().pools().size() + other.poolsSafe().pools().size());
+        mergedPools.addAll(this.poolsSafe().pools());
+        mergedPools.addAll(other.poolsSafe().pools());
+
+        return new Outputs(new Conditions(mergedConditions), new Pools(mergedPools));
     }
 
     public static boolean anyItemOutputRequiresInputSource(@NotNull Outputs outputs) {

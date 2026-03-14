@@ -14,6 +14,7 @@ import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
@@ -37,7 +38,7 @@ public final class SpannerHandInteractions implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         salvagePool(executor, JolCraftTags.Items.GENERAL_SALVAGE,   SoundEvents.ITEM_BREAK,            0.75F, 1.25F);
         salvagePool(executor, JolCraftTags.Items.TEXTILE_SALVAGE,   SoundEvents.WOOL_BREAK,            0.75F, 1.25F);

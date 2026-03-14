@@ -14,6 +14,7 @@ import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
 import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.base.OutputsBuilder;
@@ -38,7 +39,7 @@ public final class CompassHandInteractions implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         executor.emit(
                 HandInteractionRecipeBuilder.create()

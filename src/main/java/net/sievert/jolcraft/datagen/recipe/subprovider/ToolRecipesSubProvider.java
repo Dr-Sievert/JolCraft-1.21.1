@@ -11,6 +11,7 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
@@ -33,10 +34,10 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         toolSet(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -48,7 +49,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         warhammer(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -56,7 +57,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         toolSet(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -68,7 +69,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         warhammer(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -76,7 +77,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         artisanHammer(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -84,7 +85,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         artisanHammer(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -92,7 +93,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         chisel(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -100,7 +101,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         chisel(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -108,7 +109,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         pestle(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -116,7 +117,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         pestle(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),

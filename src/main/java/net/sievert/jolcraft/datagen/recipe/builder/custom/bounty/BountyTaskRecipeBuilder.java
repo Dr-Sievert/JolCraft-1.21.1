@@ -188,7 +188,9 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             return;
         }
 
-        objectiveEntries.add(new PoolEntry(next, null, builtWeight));
+        objectiveEntries.add(
+                new PoolEntry(next, Conditions.EMPTY, IntRange.ONE, builtWeight)
+        );
     }
 
     private boolean hasObjectives() {
@@ -377,9 +379,12 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             return DataResult.error(() -> "builder: missing required fields");
         }
 
-        Outputs finalObjective = new Outputs(new Pools(List.of(
-                new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(objectiveEntries))
-        )));
+        Outputs finalObjective = new Outputs(
+                Conditions.EMPTY,
+                new Pools(List.of(
+                        new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(objectiveEntries))
+                ))
+        );
 
         BountyTaskRecipe recipe = new BountyTaskRecipe(
                 finalType,

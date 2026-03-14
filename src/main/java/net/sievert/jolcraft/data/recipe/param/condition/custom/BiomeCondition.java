@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.data.recipe.param.condition.custom;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -65,9 +64,9 @@ public record BiomeCondition(
                 ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, id);
                 var holderOpt = lookupOpt.get().getter().get(key);
 
-                return holderOpt.<DataResult<Pair<Holder<Biome>, T>>>map(biomeReference ->
-                        DataResult.success(Pair.of(biomeReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown biome '" + id + "'"));
-
+                return holderOpt.<DataResult<Pair<Holder<Biome>, T>>>map(holder ->
+                        DataResult.success(Pair.of(holder, rest))
+                ).orElseGet(() -> DataResult.error(() -> "unknown biome '" + id + "'"));
             });
         }
 
@@ -100,30 +99,16 @@ public record BiomeCondition(
     }
 
     private static final Codec<Raw> RAW_CODEC =
-            Codec.either(
-                    BIOME_HOLDER_CODEC,
-                    RecordCodecBuilder.<Raw>create(instance -> instance.group(
-                            BIOME_HOLDER_CODEC.optionalFieldOf(JolCraftParameterIds.BIOME).forGetter(Raw::biome),
-                            TagKey.codec(Registries.BIOME).optionalFieldOf(JolCraftParameterIds.TAG).forGetter(Raw::tag),
-                            Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(Raw::invert)
-                    ).apply(instance, Raw::new))
-            ).xmap(
-                    either -> either.map(
-                            biome -> new Raw(Optional.of(biome), Optional.empty(), false),
-                            raw -> raw
-                    ),
-                    raw -> {
-                        if (raw.biome().isPresent() && raw.tag().isEmpty() && !raw.invert()) {
-                            return Either.left(raw.biome().orElseThrow());
-                        }
-                        return Either.right(raw);
-                    }
-            );
+            RecordCodecBuilder.create(instance -> instance.group(
+                    BIOME_HOLDER_CODEC.optionalFieldOf(JolCraftParameterIds.BIOME).forGetter(Raw::biome),
+                    TagKey.codec(Registries.BIOME).optionalFieldOf(JolCraftParameterIds.TAG).forGetter(Raw::tag),
+                    Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(Raw::invert)
+            ).apply(instance, Raw::new));
 
     public static final Codec<BiomeCondition> CODEC =
             RAW_CODEC.flatXmap(
                     BiomeCondition::fromRaw,
-                    value -> DataResult.success(BiomeCondition.toRaw(value))
+                    value -> DataResult.success(toRaw(value))
             );
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Optional<ResourceLocation>> OPTIONAL_RL_STREAM =
@@ -152,17 +137,16 @@ public record BiomeCondition(
     }
 
     private static @NotNull DataResult<BiomeCondition> fromRaw(@NotNull Raw raw) {
-        BiomeCondition c = new BiomeCondition(raw.biome(), raw.tag(), raw.invert());
-        return validateDecoded(c);
+        return validateDecoded(new BiomeCondition(raw.biome(), raw.tag(), raw.invert()));
     }
 
-    private static @NotNull Raw toRaw(@NotNull BiomeCondition c) {
-        return new Raw(c.biome(), c.tag(), c.invert());
+    private static @NotNull Raw toRaw(@NotNull BiomeCondition value) {
+        return new Raw(value.biome(), value.tag(), value.invert());
     }
 
-    private static @NotNull DataResult<BiomeCondition> validateDecoded(@NotNull BiomeCondition c) {
-        boolean hasBiome = c.biome().isPresent();
-        boolean hasTag = c.tag().isPresent();
+    private static @NotNull DataResult<BiomeCondition> validateDecoded(@NotNull BiomeCondition value) {
+        boolean hasBiome = value.biome().isPresent();
+        boolean hasTag = value.tag().isPresent();
 
         if (hasBiome == hasTag) {
             return DataResult.error(() ->
@@ -171,7 +155,7 @@ public record BiomeCondition(
             );
         }
 
-        return DataResult.success(c);
+        return DataResult.success(value);
     }
 
     private static @NotNull BiomeCondition fromStreamFields(

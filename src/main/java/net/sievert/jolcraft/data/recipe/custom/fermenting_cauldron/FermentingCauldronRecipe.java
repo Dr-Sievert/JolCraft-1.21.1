@@ -64,6 +64,10 @@ public record FermentingCauldronRecipe(
 
     @Override
     public boolean matches(@NotNull FermentingCauldronRecipeInput in, @NotNull Level level) {
+        if (level.isClientSide) {
+            return false;
+        }
+
         WorldContext ctx = in.ctx();
 
         if (!ingredient.matches(ctx, in.ingredient())) {

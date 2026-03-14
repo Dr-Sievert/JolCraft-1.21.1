@@ -2,11 +2,15 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom;
 
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.sievert.jolcraft.data.recipe.param.condition.Condition;
 import net.sievert.jolcraft.data.recipe.param.condition.custom.BiomeCondition;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -22,53 +26,80 @@ import java.util.Optional;
  * Validation:
  * - Delegates to {@link BiomeCondition#validate()} to enforce the param invariants (exactly one of biome/tag).
  */
-public final class BiomeConditionBuilder extends AbstractConditionBuilder<BiomeConditionBuilder> implements ValidatedBuilder<Condition> {
+public final class BiomeConditionBuilder extends AbstractConditionBuilder<BiomeConditionBuilder>
+        implements ValidatedBuilder<Condition> {
 
     private enum Kind { BIOME, TAG }
 
-    private Kind kind;
+    private @Nullable Kind kind;
 
-    private Holder<Biome> biome;
-    private TagKey<Biome> tag;
+    private @Nullable Holder<Biome> biome;
+    private @Nullable ResourceKey<Biome> biomeKey;
+    private @Nullable RecipeLookups lookups;
+    private @Nullable TagKey<Biome> tag;
 
     private BiomeConditionBuilder() {}
 
-    public static BiomeConditionBuilder create() {
+    public static @NotNull BiomeConditionBuilder create() {
         return new BiomeConditionBuilder();
     }
 
-    // ---------------------------------------------------------------------
-    // MODE SELECTION
-    // ---------------------------------------------------------------------
+    public @NotNull BiomeConditionBuilder lookups(@Nullable RecipeLookups lookups) {
+        this.lookups = lookups;
+        return this;
+    }
 
-    public BiomeConditionBuilder biome(Holder<Biome> biome) {
+    public @NotNull BiomeConditionBuilder biome(@Nullable Holder<Biome> biome) {
         if (this.kind != null) return this;
         this.kind = Kind.BIOME;
         this.biome = biome;
         return this;
     }
 
-    public BiomeConditionBuilder tag(TagKey<Biome> tag) {
+    public @NotNull BiomeConditionBuilder biome(@Nullable ResourceKey<Biome> biomeKey) {
+        if (this.kind != null) return this;
+        this.kind = Kind.BIOME;
+        this.biomeKey = biomeKey;
+        return this;
+    }
+
+    public @NotNull BiomeConditionBuilder tag(@Nullable TagKey<Biome> tag) {
         if (this.kind != null) return this;
         this.kind = Kind.TAG;
         this.tag = tag;
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // BUILD
-    // ---------------------------------------------------------------------
-
     @Override
-    public DataResult<Condition> buildValidated() {
-        Optional<Holder<Biome>> b =
-                (kind == Kind.BIOME && biome != null) ? Optional.of(biome) : Optional.empty();
+    public @NotNull DataResult<Condition> buildValidated() {
+        Optional<Holder<Biome>> b = Optional.empty();
+
+        if (kind == Kind.BIOME) {
+            if (biome != null) {
+                b = Optional.of(biome);
+            } else if (biomeKey != null) {
+                if (lookups == null) {
+                    return DataResult.error(() ->
+                            "BiomeConditionBuilder requires recipe lookups to resolve biome key '" +
+                                    biomeKey.location() + "'"
+                    );
+                }
+
+                Optional<Holder.Reference<Biome>> resolved = lookups.biomes().get(biomeKey);
+                if (resolved.isEmpty()) {
+                    return DataResult.error(() ->
+                            "Unknown biome '" + biomeKey.location() + "'"
+                    );
+                }
+
+                b = Optional.of(resolved.get());
+            }
+        }
 
         Optional<TagKey<Biome>> t =
                 (kind == Kind.TAG && tag != null) ? Optional.of(tag) : Optional.empty();
 
         BiomeCondition built = new BiomeCondition(b, t, invert());
-
         return built.validate();
     }
 }

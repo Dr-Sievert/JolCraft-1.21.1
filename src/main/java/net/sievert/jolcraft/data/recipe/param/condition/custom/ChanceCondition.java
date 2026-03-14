@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.data.recipe.param.condition.custom;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -23,33 +22,22 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
     private record Raw(double chance, boolean invert) {}
 
     private static final Codec<Raw> RAW_CODEC =
-            Codec.either(
-                    Codec.DOUBLE,
-                    RecordCodecBuilder.<Raw>create(inst -> inst.group(
-                            Codec.DOUBLE.fieldOf(JolCraftParameterIds.CHANCE).forGetter(Raw::chance),
-                            Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(Raw::invert)
-                    ).apply(inst, Raw::new))
-            ).xmap(
-                    either -> either.map(
-                            chance -> new Raw(chance, false),
-                            raw -> raw
-                    ),
-                    raw -> !raw.invert()
-                            ? Either.left(raw.chance())
-                            : Either.right(raw)
-            );
+            RecordCodecBuilder.create(inst -> inst.group(
+                    Codec.DOUBLE.fieldOf(JolCraftParameterIds.CHANCE).forGetter(Raw::chance),
+                    Codec.BOOL.optionalFieldOf(JolCraftParameterIds.INVERT, false).forGetter(Raw::invert)
+            ).apply(inst, Raw::new));
 
     public static final Codec<ChanceCondition> CODEC =
             RAW_CODEC.flatXmap(
                     ChanceCondition::fromRaw,
-                    value -> DataResult.success(ChanceCondition.toRaw(value))
+                    value -> DataResult.success(toRaw(value))
             );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ChanceCondition> STREAM_CODEC =
             StreamCodec.of(
-                    (buf, c) -> {
-                        buf.writeDouble(c.chance());
-                        buf.writeBoolean(c.invert());
+                    (buf, value) -> {
+                        buf.writeDouble(value.chance());
+                        buf.writeBoolean(value.invert());
                     },
                     buf -> new ChanceCondition(buf.readDouble(), buf.readBoolean())
             );
@@ -61,18 +49,22 @@ public record ChanceCondition(double chance, boolean invert) implements Conditio
         return validateDecoded(new ChanceCondition(raw.chance(), raw.invert()));
     }
 
-    private static @NotNull Raw toRaw(@NotNull ChanceCondition c) {
-        return new Raw(c.chance(), c.invert());
+    private static @NotNull Raw toRaw(@NotNull ChanceCondition value) {
+        return new Raw(value.chance(), value.invert());
     }
 
-    private static @NotNull DataResult<ChanceCondition> validateDecoded(@NotNull ChanceCondition c) {
-        double v = c.chance();
-        if (Double.isNaN(v)) return DataResult.error(() -> "chance must not be NaN");
-        if (Double.isInfinite(v)) return DataResult.error(() -> "chance must be finite");
-        if (v < 0.0D || v > 1.0D) {
-            return DataResult.error(() -> "chance must be in range [0.0, 1.0] (got " + v + ")");
+    private static @NotNull DataResult<ChanceCondition> validateDecoded(@NotNull ChanceCondition value) {
+        double chance = value.chance();
+        if (Double.isNaN(chance)) {
+            return DataResult.error(() -> "chance must not be NaN");
         }
-        return DataResult.success(c);
+        if (Double.isInfinite(chance)) {
+            return DataResult.error(() -> "chance must be finite");
+        }
+        if (chance < 0.0D || chance > 1.0D) {
+            return DataResult.error(() -> "chance must be in range [0.0, 1.0] (got " + chance + ")");
+        }
+        return DataResult.success(value);
     }
 
     @Override

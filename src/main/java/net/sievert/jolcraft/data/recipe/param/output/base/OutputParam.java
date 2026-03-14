@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
 import net.sievert.jolcraft.data.recipe.param.base.Param;
 import net.sievert.jolcraft.data.recipe.param.base.ParamTypeRegistry;
+import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
@@ -24,22 +25,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-/**
- * Polymorphic atomic output contract (data-layer).
- *
- * Strict polymorphic dispatch:
- * - no sentinels
- * - unknown JSON type ids fail decode
- * - unknown stream discriminators fail decode
- *
- * IMPORTANT:
- * - This family is leaf-only.
- * - Composite wrappers such as {@link Outputs} are NOT variants of OutputParam.
- *
- * Hooks remain an outer sidecar around the strict base payload.
- */
 public interface OutputParam extends Param {
+
+    Set<String> DECORATION_RESERVED_KEYS = Set.of(
+            JolCraftParameterIds.CONDITIONS,
+            JolCraftParameterIds.HOOKS
+    );
 
     ParamTypeRegistry<OutputParam> REGISTRY =
             ParamTypeRegistry.<OutputParam>builder()
@@ -60,12 +53,44 @@ public interface OutputParam extends Param {
     Codec<OutputParam> CODEC = new Codec<>() {
         @Override
         public <T> DataResult<Pair<OutputParam, T>> decode(DynamicOps<T> ops, T input) {
-            return BASE_CODEC.decode(ops, input).flatMap(basePair -> {
-                OutputParam base = basePair.getFirst();
-                T rest = basePair.getSecond();
-                return attachHooks(base, decodeHooks(ops, input))
-                        .map(wrapped -> Pair.of(wrapped, rest));
-            });
+            DataResult<Conditions.Extracted<T>> extracted =
+                    Conditions.extractInlineConditions(ops, input, DECORATION_RESERVED_KEYS);
+
+            if (extracted.error().isPresent()) {
+                return DataResult.error(() ->
+                        extracted.error().map(DataResult.Error::message).orElse("invalid output param conditions")
+                );
+            }
+
+            Conditions.Extracted<T> ex = extracted.result().orElseThrow();
+            T stripped = ex.strippedInput();
+
+            DataResult<Conditions> explicitConditions = decodeExplicitConditions(ops, stripped);
+            if (explicitConditions.error().isPresent()) {
+                return DataResult.error(() ->
+                        explicitConditions.error().map(DataResult.Error::message).orElse("invalid output param conditions")
+                );
+            }
+
+            DataResult<Conditions> mergedConditions =
+                    Conditions.mergeExplicitAndInline(explicitConditions.result().orElse(Conditions.EMPTY), ex.conditions());
+
+            if (mergedConditions.error().isPresent()) {
+                return DataResult.error(() ->
+                        mergedConditions.error().map(DataResult.Error::message).orElse("invalid output param conditions")
+                );
+            }
+
+            List<Hook> hooks = decodeHooks(ops, stripped);
+            T baseInput = stripDecorationFields(ops, stripped);
+
+            return BASE_CODEC.decode(ops, baseInput).flatMap(basePair ->
+                    attachDecorations(
+                            basePair.getFirst(),
+                            mergedConditions.result().orElse(Conditions.EMPTY),
+                            hooks
+                    ).map(wrapped -> Pair.of(wrapped, basePair.getSecond()))
+            );
         }
 
         @Override
@@ -79,24 +104,60 @@ public interface OutputParam extends Param {
                 return DataResult.error(() -> "missing required output param");
             }
 
-            DataResult<T> baseEncoded = BASE_CODEC.encode(base, ops, prefix);
-
+            Conditions conditions = sanitizeConditions(input.conditions());
             List<Hook> hooks = sanitizeHooks(input.hooks());
-            if (hooks.isEmpty()) {
-                return baseEncoded;
+
+            DataResult<T> encodedBase = BASE_CODEC.encode(base, ops, prefix);
+            if (encodedBase.error().isPresent()) {
+                return encodedBase;
             }
 
-            return baseEncoded.flatMap(obj ->
-                    Hook.CODEC.listOf()
-                            .encodeStart(ops, hooks)
-                            .flatMap(listValue ->
-                                    ops.mergeToMap(
-                                            obj,
-                                            ops.createString(JolCraftParameterIds.HOOKS),
-                                            listValue
-                                    )
-                            )
+            T result = encodedBase.result().orElse(prefix);
+
+            if (!hooks.isEmpty()) {
+                DataResult<T> hooksValue = Hook.CODEC.listOf().encodeStart(ops, hooks);
+                if (hooksValue.error().isPresent()) {
+                    return DataResult.error(() ->
+                            hooksValue.error().map(DataResult.Error::message).orElse("invalid hooks")
+                    );
+                }
+
+                result = ops.mergeToMap(
+                        result,
+                        ops.createString(JolCraftParameterIds.HOOKS),
+                        hooksValue.result().orElseThrow()
+                ).result().orElse(result);
+            }
+
+            if (conditions.isEmpty()) {
+                return DataResult.success(result);
+            }
+
+            DataResult<T> flattened = Conditions.encodeInlineConditions(
+                    ops,
+                    conditions,
+                    result,
+                    DECORATION_RESERVED_KEYS
             );
+
+            if (flattened.error().isEmpty()) {
+                return flattened;
+            }
+
+            DataResult<T> explicitConditions = Conditions.CODEC.encodeStart(ops, conditions);
+            if (explicitConditions.error().isPresent()) {
+                return DataResult.error(() ->
+                        explicitConditions.error().map(DataResult.Error::message).orElse("invalid output param conditions")
+                );
+            }
+
+            result = ops.mergeToMap(
+                    result,
+                    ops.createString(JolCraftParameterIds.CONDITIONS),
+                    explicitConditions.result().orElseThrow()
+            ).result().orElse(result);
+
+            return DataResult.success(result);
         }
     };
 
@@ -109,6 +170,7 @@ public interface OutputParam extends Param {
                         }
 
                         BASE_STREAM_CODEC.encode(buf, base);
+                        Conditions.STREAM_CODEC.encode(buf, sanitizeConditions(value.conditions()));
 
                         List<Hook> hooks = sanitizeHooks(value.hooks());
                         int size = hooks.size();
@@ -125,15 +187,13 @@ public interface OutputParam extends Param {
                     },
                     buf -> {
                         OutputParam base = BASE_STREAM_CODEC.decode(buf);
+                        Conditions conditions = Conditions.STREAM_CODEC.decode(buf);
 
                         int size = buf.readVarInt();
                         if (size < 0) {
                             throw new IllegalArgumentException(
                                     JolCraftParameterIds.HOOKS + " size must be >= 0 (got " + size + ")"
                             );
-                        }
-                        if (size == 0) {
-                            return base;
                         }
                         if (size > 256) {
                             throw new IllegalArgumentException(
@@ -146,7 +206,7 @@ public interface OutputParam extends Param {
                             hooks.add(Hook.STREAM_CODEC.decode(buf));
                         }
 
-                        return attachHooks(base, List.copyOf(hooks))
+                        return attachDecorations(base, conditions, List.copyOf(hooks))
                                 .getOrThrow(IllegalArgumentException::new);
                     }
             );
@@ -155,8 +215,26 @@ public interface OutputParam extends Param {
 
     @NotNull List<Output> generate(@NotNull WorldContext ctx);
 
+    default @NotNull Conditions conditions() {
+        return Conditions.EMPTY;
+    }
+
     default @NotNull List<Hook> hooks() {
         return List.of();
+    }
+
+    default @NotNull OutputParam withConditions(@Nullable Conditions conditions) {
+        Conditions safe = sanitizeConditions(conditions);
+        if (safe.isEmpty()) {
+            return this;
+        }
+
+        if (this instanceof Decorated(OutputParam base, Conditions c, List<Hook> hooks)) {
+            Conditions merged = Conditions.merge(c, safe);
+            return new Decorated(base, merged, hooks);
+        }
+
+        return new Decorated(this, safe, List.of());
     }
 
     default @NotNull OutputParam withHooks(@Nullable List<Hook> hooks) {
@@ -165,26 +243,30 @@ public interface OutputParam extends Param {
             return this;
         }
 
-        if (this instanceof Hooked(OutputParam base, List<Hook> hooks1)) {
-            if (hooks1.isEmpty()) {
-                return new Hooked(base, safe);
+        if (this instanceof Decorated(OutputParam base, Conditions conditions, List<Hook> existing)) {
+            if (existing.isEmpty()) {
+                return new Decorated(base, conditions, safe);
             }
 
-            ArrayList<Hook> merged = new ArrayList<>(hooks1.size() + safe.size());
-            merged.addAll(hooks1);
+            ArrayList<Hook> merged = new ArrayList<>(existing.size() + safe.size());
+            merged.addAll(existing);
             merged.addAll(safe);
-            return new Hooked(base, List.copyOf(merged));
+            return new Decorated(base, conditions, List.copyOf(merged));
         }
 
-        return new Hooked(this, safe);
+        return new Decorated(this, Conditions.EMPTY, safe);
     }
 
     static @Nullable OutputParam unwrap(@Nullable OutputParam p) {
         OutputParam cur = p;
-        while (cur instanceof Hooked hooked) {
-            cur = hooked.base;
+        while (cur instanceof Decorated decorated) {
+            cur = decorated.base;
         }
         return cur;
+    }
+
+    private static @NotNull Conditions sanitizeConditions(@Nullable Conditions in) {
+        return in != null ? in : Conditions.EMPTY;
     }
 
     private static @NotNull List<Hook> sanitizeHooks(@Nullable List<Hook> in) {
@@ -202,6 +284,21 @@ public interface OutputParam extends Param {
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 
+    private static <T> @NotNull DataResult<Conditions> decodeExplicitConditions(
+            @NotNull DynamicOps<T> ops,
+            T input
+    ) {
+        return ops.getMap(input).result()
+                .map(mapLike -> {
+                    T value = mapLike.get(ops.createString(JolCraftParameterIds.CONDITIONS));
+                    if (value == null) {
+                        return DataResult.success(Conditions.EMPTY);
+                    }
+                    return Conditions.CODEC.parse(ops, value);
+                })
+                .orElse(DataResult.success(Conditions.EMPTY));
+    }
+
     private static <T> @NotNull List<Hook> decodeHooks(DynamicOps<T> ops, T input) {
         return ops.getMap(input).result()
                 .map(mapLike -> {
@@ -217,15 +314,27 @@ public interface OutputParam extends Param {
                 .orElse(List.of());
     }
 
-    private static @NotNull DataResult<OutputParam> attachHooks(
+    private static <T> T stripDecorationFields(@NotNull DynamicOps<T> ops, T input) {
+        T stripped = ops.remove(input, JolCraftParameterIds.CONDITIONS);
+        return ops.remove(stripped, JolCraftParameterIds.HOOKS);
+    }
+
+    private static @NotNull DataResult<OutputParam> attachDecorations(
             @NotNull OutputParam base,
+            @NotNull Conditions conditions,
             @NotNull List<Hook> hooks
     ) {
-        OutputParam wrapped;
+        OutputParam wrapped = base;
+
         try {
-            wrapped = base.withHooks(hooks);
+            if (!conditions.isEmpty()) {
+                wrapped = wrapped.withConditions(conditions);
+            }
+            if (!hooks.isEmpty()) {
+                wrapped = wrapped.withHooks(hooks);
+            }
         } catch (Exception e) {
-            return DataResult.error(() -> "output param invalid: withHooks threw: " + e.getMessage());
+            return DataResult.error(() -> "output param invalid: decoration attach threw: " + e.getMessage());
         }
 
         DataResult<?> validation;
@@ -248,12 +357,17 @@ public interface OutputParam extends Param {
         return DataResult.success(this);
     }
 
-    record Hooked(OutputParam base, List<Hook> hooks) implements OutputParam, ResolvedOutputParam {
+    record Decorated(
+            OutputParam base,
+            Conditions conditions,
+            List<Hook> hooks
+    ) implements OutputParam, ResolvedOutputParam {
 
-        public Hooked {
+        public Decorated {
             if (base == null) {
-                throw new IllegalArgumentException("hooked output base cannot be null");
+                throw new IllegalArgumentException("decorated output base cannot be null");
             }
+            conditions = sanitizeConditions(conditions);
             hooks = sanitizeHooks(hooks);
         }
 
@@ -321,6 +435,10 @@ public interface OutputParam extends Param {
                 @NotNull WorldContext ctx,
                 @Nullable ItemTransformSourceResolver resolver
         ) {
+            if (!conditions.test(ctx)) {
+                return List.of();
+            }
+
             List<Output> out;
             try {
                 out = base instanceof ResolvedOutputParam resolved
@@ -334,8 +452,23 @@ public interface OutputParam extends Param {
         }
 
         @Override
+        public @NotNull Conditions conditions() {
+            return conditions;
+        }
+
+        @Override
         public @NotNull List<Hook> hooks() {
             return hooks;
+        }
+
+        @Override
+        public @NotNull OutputParam withConditions(@Nullable Conditions additionalConditions) {
+            Conditions safeAdditional = sanitizeConditions(additionalConditions);
+            if (safeAdditional.isEmpty()) {
+                return this;
+            }
+
+            return new Decorated(base, Conditions.merge(conditions, safeAdditional), hooks);
         }
 
         @Override
@@ -346,13 +479,13 @@ public interface OutputParam extends Param {
             }
 
             if (hooks.isEmpty()) {
-                return new Hooked(base, safeAdditional);
+                return new Decorated(base, conditions, safeAdditional);
             }
 
             ArrayList<Hook> merged = new ArrayList<>(hooks.size() + safeAdditional.size());
             merged.addAll(hooks);
             merged.addAll(safeAdditional);
-            return new Hooked(base, List.copyOf(merged));
+            return new Decorated(base, conditions, List.copyOf(merged));
         }
 
         @Override
@@ -366,6 +499,17 @@ public interface OutputParam extends Param {
 
             if (baseValidation.error().isPresent()) {
                 return baseValidation;
+            }
+
+            DataResult<Conditions> conditionsValidation;
+            try {
+                conditionsValidation = conditions.validate();
+            } catch (Exception e) {
+                return DataResult.error(() -> "output conditions validation threw: " + e.getMessage());
+            }
+
+            if (conditionsValidation.error().isPresent()) {
+                return conditionsValidation;
             }
 
             for (Hook hook : hooks) {

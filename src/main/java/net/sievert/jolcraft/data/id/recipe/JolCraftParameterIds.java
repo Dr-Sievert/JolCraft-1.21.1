@@ -80,7 +80,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String RANGE = JolCraftDictionary.RANGE;
     public static final String SOURCE = JolCraftDictionary.SOURCE;
     public static final String TARGET = JolCraftDictionary.TARGET;
-    public static final String NAME = JolCraftDictionary.NAME;
     public static final String KEY = JolCraftDictionary.KEY;
 
     // ---------------------------------------------------------------------
@@ -94,7 +93,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String COMPONENTS = plural(COMPONENT);
 
     public static final String PREDICATES = plural(JolCraftDictionary.PREDICATE);
-    public static final String PATCH = JolCraftDictionary.PATCH;
     public static final String KEEP = JolCraftDictionary.KEEP;
     public static final String REMOVE = JolCraftDictionary.REMOVE;
 
@@ -147,7 +145,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
     // Runtime
     // ---------------------------------------------------------------------
 
-    public static final String SOUND = JolCraftDictionary.SOUND;
     public static final String VOLUME = JolCraftDictionary.VOLUME;
     public static final String PITCH = JolCraftDictionary.PITCH;
 

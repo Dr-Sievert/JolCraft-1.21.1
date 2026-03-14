@@ -18,6 +18,7 @@ import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.ComponentPreservingShapelessRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.DyeColorRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
@@ -36,7 +37,7 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
 
         // =========================================================
@@ -44,7 +45,7 @@ public final class CompassRecipesSubProvider implements RecipeSubProvider {
         // =========================================================
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
+                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.TOOLS, JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
                 )
                 .pattern(" B ")
                 .pattern("B B")

@@ -5,6 +5,7 @@ import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
 import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,11 @@ public final class PoolBuilder implements ParamBuilder<Pool> {
         return this;
     }
 
+    public PoolBuilder conditions(ConditionsBuilder builder) {
+        this.conditions = builder != null ? builder.build() : null;
+        return this;
+    }
+
     public PoolBuilder entry(PoolEntry entry) {
         if (entry != null) entries.add(entry);
         return this;
@@ -50,7 +56,9 @@ public final class PoolBuilder implements ParamBuilder<Pool> {
 
     public PoolBuilder entries(List<PoolEntry> list) {
         if (list == null || list.isEmpty()) return this;
-        for (PoolEntry e : list) if (e != null) entries.add(e);
+        for (PoolEntry e : list) {
+            if (e != null) entries.add(e);
+        }
         return this;
     }
 

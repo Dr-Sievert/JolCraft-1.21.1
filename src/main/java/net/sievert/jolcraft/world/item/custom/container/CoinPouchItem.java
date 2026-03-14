@@ -47,8 +47,11 @@ public class CoinPouchItem extends Item {
                 pouch.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), current - toGive);
                 access.set(out);
 
-                if (toGive == 1) playSingleSound(player);
-                else playStackSound(player);
+                if (current == 1) {
+                    playPouchInsertSound(player);
+                } else {
+                    playStackSound(player);
+                }
 
                 broadcastChangesOnContainerMenu(player);
                 player.awardStat(Stats.ITEM_USED.get(this));
@@ -102,14 +105,16 @@ public class CoinPouchItem extends Item {
 
                 ItemStack out = new ItemStack(JolCraftItems.GOLD_COIN.get(), toGive);
 
-                // Try insert; drop any leftover (full inv or partial insert)
                 player.getInventory().add(out);
                 if (!out.isEmpty()) {
                     player.drop(out, false);
                 }
 
-                if (toGive == 1) playSingleSound(player);
-                else playStackSound(player);
+                if (current == 1) {
+                    playPouchInsertSound(player);
+                } else {
+                    playStackSound(player);
+                }
 
                 broadcastChangesOnContainerMenu(player);
                 player.awardStat(Stats.ITEM_USED.get(this));
@@ -213,7 +218,7 @@ public class CoinPouchItem extends Item {
     }
 
     private void playInsertFailSound(Player player) {
-        JolCraftSoundHelper.player(player, SoundEvents.BUNDLE_INSERT_FAIL, 0.6F, 1.3F);
+        JolCraftSoundHelper.player(player, SoundEvents.BUNDLE_INSERT_FAIL, 0.4F, 1.3F);
     }
 
 

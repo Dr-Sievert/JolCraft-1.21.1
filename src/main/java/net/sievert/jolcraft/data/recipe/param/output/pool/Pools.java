@@ -32,7 +32,7 @@ public record Pools(List<Pool> pools)
     private record FullRaw(List<Pool> pools) {}
 
     private static final Codec<FullRaw> FULL_CODEC =
-            RecordCodecBuilder.<FullRaw>create(instance -> instance.group(
+            RecordCodecBuilder.create(instance -> instance.group(
                     Pool.CODEC.listOf()
                             .optionalFieldOf(JolCraftParameterIds.POOLS, List.of())
                             .forGetter(FullRaw::pools)

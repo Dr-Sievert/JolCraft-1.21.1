@@ -3,6 +3,7 @@ package net.sievert.jolcraft.data.recipe.param.output.pool;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,13 +19,13 @@ import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.ResolvedOutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
-import net.sievert.jolcraft.data.recipe.param.quantity.DrawRule;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public record Pool(
         IntRange rolls,
@@ -34,6 +35,12 @@ public record Pool(
 
     private static final int MAX_TOTAL_OUTPUTS = 4096;
     private static final int MAX_ENTRIES_STREAM = 2048;
+
+    private static final Set<String> RESERVED_KEYS = Set.of(
+            JolCraftParameterIds.ROLLS,
+            JolCraftParameterIds.CONDITIONS,
+            JolCraftParameterIds.ENTRIES
+    );
 
     private record FullRaw(
             IntRange rolls,
@@ -55,7 +62,37 @@ public record Pool(
             ).apply(instance, FullRaw::new));
 
     private static final Codec<Either<List<PoolEntry>, FullRaw>> RAW_CODEC =
-            Codec.either(PoolEntry.CODEC.listOf(), FULL_CODEC);
+            Codec.either(PoolEntry.CODEC.listOf(), new Codec<>() {
+                @Override
+                public <T> DataResult<com.mojang.datafixers.util.Pair<FullRaw, T>> decode(DynamicOps<T> ops, T input) {
+                    return Conditions.extractInlineConditions(ops, input, RESERVED_KEYS).flatMap(extracted ->
+                            FULL_CODEC.decode(ops, extracted.strippedInput()).flatMap(pair ->
+                                    Conditions.mergeExplicitAndInline(pair.getFirst().conditions(), extracted.conditions())
+                                            .map(merged -> com.mojang.datafixers.util.Pair.of(
+                                                    new FullRaw(
+                                                            pair.getFirst().rolls(),
+                                                            merged,
+                                                            pair.getFirst().entries()
+                                                    ),
+                                                    pair.getSecond()
+                                            ))
+                            )
+                    );
+                }
+
+                @Override
+                public <T> DataResult<T> encode(FullRaw input, DynamicOps<T> ops, T prefix) {
+                    T base = FULL_CODEC.encodeStart(ops, input).result().orElse(prefix);
+
+                    if (input.conditions() == null || input.conditions().isEmpty()) {
+                        return DataResult.success(base);
+                    }
+
+                    T noExplicit = ops.remove(base, JolCraftParameterIds.CONDITIONS);
+                    DataResult<T> flattened = Conditions.encodeInlineConditions(ops, input.conditions(), noExplicit, RESERVED_KEYS);
+                    return flattened.error().isPresent() ? DataResult.success(base) : flattened;
+                }
+            });
 
     public static final Codec<Pool> CODEC =
             ParamCodecContract.create(RAW_CODEC, Pool::fromRaw, Pool::toRaw);
@@ -145,7 +182,7 @@ public record Pool(
 
     public boolean isBareEntryList() {
         if (!rolls.isOne()) return false;
-        if (conditions != Conditions.EMPTY) return false;
+        if (!conditions.isEmpty()) return false;
         for (PoolEntry entry : entries) {
             if (!entry.isBareOutput()) return false;
         }
@@ -157,7 +194,7 @@ public record Pool(
         if (entries.isEmpty()) return List.of();
 
         ArrayList<RegistryIntrospectionSource> src = new ArrayList<>(entries.size() + 1);
-        if (conditions != Conditions.EMPTY) {
+        if (!conditions.isEmpty()) {
             src.add(conditions);
         }
         src.addAll(entries);
@@ -252,13 +289,9 @@ public record Pool(
             @NotNull PoolEntry entry,
             @NotNull RandomSource random
     ) {
-        DrawRule rule = entry.pool();
-        IntRange r = (rule != null) ? rule.rolls() : IntRange.ONE;
-
-        int execs = Math.max(0, r.roll(random));
+        int execs = Math.max(0, entry.rollExecutions(random));
         if (execs == 0) return 0;
         if (execs > MAX_TOTAL_OUTPUTS) execs = MAX_TOTAL_OUTPUTS;
-
         return execs;
     }
 
@@ -267,36 +300,35 @@ public record Pool(
             @NotNull WorldContext ctx,
             @NotNull RandomSource random
     ) {
+        ArrayList<PoolEntry> eligible = new ArrayList<>(list.size());
         long total = 0L;
 
         for (PoolEntry e : list) {
-            DrawRule rule = e.pool();
-            Conditions entryCond = (rule != null) ? rule.conditions() : Conditions.EMPTY;
-            if (!entryCond.test(ctx)) continue;
+            if (!e.gatePasses(ctx)) continue;
 
+            eligible.add(e);
             total += e.weight().value();
+
             if (total >= Integer.MAX_VALUE) {
                 total = Integer.MAX_VALUE;
                 break;
             }
         }
 
-        if (total <= 0L) return null;
+        if (eligible.isEmpty() || total <= 0L) {
+            return null;
+        }
 
         int roll = random.nextInt((int) total);
         long acc = 0L;
 
-        for (PoolEntry e : list) {
-            DrawRule rule = e.pool();
-            Conditions entryCond = (rule != null) ? rule.conditions() : Conditions.EMPTY;
-            if (!entryCond.test(ctx)) continue;
-
+        for (PoolEntry e : eligible) {
             acc += e.weight().value();
             if ((long) roll < acc) {
                 return e;
             }
         }
 
-        return null;
+        return eligible.getLast();
     }
 }

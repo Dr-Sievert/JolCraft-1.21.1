@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.DwarfBountyRewardSubProvider;
 import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.DwarfBountyTaskSubProvider;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public final class DwarfBountyRecipesSubProvider implements RecipeSubProvider {
     );
 
     @Override
-    public String folder() {
+    public @NotNull String folder() {
         return JolCraftDictionary.BOUNTY;
     }
 
@@ -32,10 +33,10 @@ public final class DwarfBountyRecipesSubProvider implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         for (RecipeSubProvider sub : SUBS) {
-            sub.register(executor, output, items);
+            sub.register(executor, output, lookups);
         }
     }
 }

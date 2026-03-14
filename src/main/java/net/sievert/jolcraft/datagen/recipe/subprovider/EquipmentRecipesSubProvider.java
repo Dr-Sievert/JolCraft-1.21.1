@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
@@ -34,10 +35,10 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         armorSetSimple(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 JolCraftItems.DEEPSLATE_ARMOR_SET,
@@ -45,7 +46,7 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
         );
 
         armorSetWithLining(
-                items,
+                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.MITHRIL_CHAINWEAVE.get(),

@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyRewardRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -22,7 +23,7 @@ import java.util.function.Consumer;
 public final class DwarfMerchantBountyRewards implements RecipeSubProvider {
 
     @Override
-    public String folder() {
+    public @NotNull String folder() {
         return DwarfProfession.MERCHANT.professionName();
     }
 
@@ -30,7 +31,7 @@ public final class DwarfMerchantBountyRewards implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         emitTier(executor, DwarfMerchantData.Level.NOVICE, b -> {
             b.reward(ItemOutputBuilder.create()

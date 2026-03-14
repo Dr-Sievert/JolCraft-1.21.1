@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,10 +44,10 @@ public final class DwarfTradeRecipesSubProvider implements RecipeSubProvider {
     public void registerRecipes(
             @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull HolderGetter<Item> items
+            @NotNull RecipeLookups lookups
     ) {
         for (RecipeSubProvider sub : SUBS) {
-            sub.register(executor, output, items);
+            sub.register(executor, output, lookups);
         }
     }
 }

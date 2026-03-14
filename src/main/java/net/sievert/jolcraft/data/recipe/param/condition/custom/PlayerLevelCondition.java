@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.data.recipe.param.condition.Condition;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
@@ -21,9 +20,9 @@ import java.util.Optional;
 
 public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boolean invert) implements Condition {
 
-    public static final ResourceLocation TYPE_ID = JolCraft.location(
-            JolCraftStrings.underscored(JolCraftDictionary.PLAYER, JolCraftDictionary.LEVEL)
-    );
+    public static final String KEY_PLAYER_LEVEL = JolCraftStrings.underscored(JolCraftParameterIds.PLAYER, JolCraftParameterIds.LEVEL);
+
+    public static final ResourceLocation TYPE_ID = JolCraft.location(KEY_PLAYER_LEVEL);
     public static final byte DISC = 6;
 
     private static final Codec<PlayerLevelCondition> RAW_CODEC =
@@ -63,7 +62,8 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
     private static @NotNull DataResult<PlayerLevelCondition> validateDecoded(@NotNull PlayerLevelCondition c) {
         if (c.minLevel() < 0) {
             return DataResult.error(() ->
-                    "player_level." + JolCraftParameterIds.MIN_LEVEL + " must be >= 0 (got " + c.minLevel() + ")"
+                    KEY_PLAYER_LEVEL + "." + JolCraftParameterIds.MIN_LEVEL +
+                            " must be >= 0 (got " + c.minLevel() + ")"
             );
         }
 
@@ -72,14 +72,16 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
 
             if (max < 0) {
                 return DataResult.error(() ->
-                        "player_level." + JolCraftParameterIds.MAX_LEVEL + " must be >= 0 (got " + max + ")"
+                        KEY_PLAYER_LEVEL + "." + JolCraftParameterIds.MAX_LEVEL +
+                                " must be >= 0 (got " + max + ")"
                 );
             }
 
             if (c.minLevel() > max) {
                 return DataResult.error(() ->
-                        "player_level." + JolCraftParameterIds.MIN_LEVEL + " must be <= " +
-                                JolCraftParameterIds.MAX_LEVEL + " (got " + c.minLevel() + " > " + max + ")"
+                        KEY_PLAYER_LEVEL + "." + JolCraftParameterIds.MIN_LEVEL +
+                                " must be <= " + JolCraftParameterIds.MAX_LEVEL +
+                                " (got " + c.minLevel() + " > " + max + ")"
                 );
             }
         }
@@ -96,6 +98,7 @@ public record PlayerLevelCondition(int minLevel, Optional<Integer> maxLevel, boo
     public boolean test(@NotNull WorldContext ctx) {
         Player player = ctx.player();
         if (player == null) return false;
+        if (player.isCreative()) return true;
 
         int lvl = player.experienceLevel;
 

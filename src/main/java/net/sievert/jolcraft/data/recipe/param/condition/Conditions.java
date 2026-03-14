@@ -1,7 +1,9 @@
 package net.sievert.jolcraft.data.recipe.param.condition;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
@@ -14,7 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public record Conditions(List<Condition> conditions)
         implements SelfValidating<Conditions>, RegistryIntrospectionSource {
@@ -65,6 +70,93 @@ public record Conditions(List<Condition> conditions)
         this.conditions = sanitize(conditions);
     }
 
+    public boolean isEmpty() {
+        return conditions.isEmpty();
+    }
+
+    public static @NotNull Conditions merge(
+            @Nullable Conditions a,
+            @Nullable Conditions b
+    ) {
+        if (a == null || a.isEmpty()) return b != null ? b : EMPTY;
+        if (b == null || b.isEmpty()) return a;
+
+        ArrayList<Condition> merged = new ArrayList<>(a.conditions().size() + b.conditions().size());
+        merged.addAll(a.conditions());
+        merged.addAll(b.conditions());
+        return new Conditions(merged);
+    }
+
+    public static @NotNull DataResult<Conditions> mergeExplicitAndInline(
+            @Nullable Conditions explicit,
+            @Nullable Conditions inline
+    ) {
+        if ((explicit == null || explicit.isEmpty()) && (inline == null || inline.isEmpty())) {
+            return DataResult.success(EMPTY);
+        }
+        if (explicit == null || explicit.isEmpty()) {
+            return normalizeInlineCompatible(inline);
+        }
+        if (inline == null || inline.isEmpty()) {
+            return normalizeInlineCompatible(explicit);
+        }
+
+        ArrayList<Condition> merged = new ArrayList<>(explicit.conditions().size() + inline.conditions().size());
+        merged.addAll(explicit.conditions());
+        merged.addAll(inline.conditions());
+        return normalizeInlineCompatible(new Conditions(merged));
+    }
+
+    public @NotNull Conditions merged(@Nullable Conditions other) {
+        return merge(this, other);
+    }
+
+    private static @Nullable String inlineKeyOrNull(@NotNull Condition condition) {
+        try {
+            return Condition.inlineKey(condition);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    private static @NotNull DataResult<Conditions> normalizeInlineCompatible(@NotNull Conditions input) {
+        if (input.isEmpty()) {
+            return DataResult.success(EMPTY);
+        }
+
+        ArrayList<Condition> normalized = new ArrayList<>(input.conditions().size());
+
+        for (Condition condition : input.conditions()) {
+            String key = inlineKeyOrNull(condition);
+            if (key == null) {
+                normalized.add(condition);
+                continue;
+            }
+
+            Condition existing = null;
+            for (Condition already : normalized) {
+                String existingKey = inlineKeyOrNull(already);
+                if (key.equals(existingKey)) {
+                    existing = already;
+                    break;
+                }
+            }
+
+            if (existing == null) {
+                normalized.add(condition);
+                continue;
+            }
+
+            if (!existing.equals(condition)) {
+                return DataResult.error(() ->
+                        "conflicting condition definitions for inline key '" + key + "'"
+                );
+            }
+        }
+
+        return DataResult.success(normalized.isEmpty() ? EMPTY : new Conditions(normalized));
+    }
+
     private static @NotNull List<Condition> sanitize(@Nullable List<Condition> in) {
         if (in == null || in.isEmpty()) {
             return List.of();
@@ -79,8 +171,138 @@ public record Conditions(List<Condition> conditions)
         return safe.isEmpty() ? List.of() : List.copyOf(safe);
     }
 
+    public record Extracted<T>(Conditions conditions, T strippedInput) {}
+
+    public static <T> boolean hasInlineConditionKeys(
+            @NotNull DynamicOps<T> ops,
+            T input
+    ) {
+        var mapResult = ops.getMapValues(input);
+        if (mapResult.result().isEmpty()) {
+            return false;
+        }
+
+        for (Pair<T, T> pair : mapResult.result().orElse(Stream.empty()).toList()) {
+            var keyResult = ops.getStringValue(pair.getFirst());
+            if (keyResult.result().isPresent() && Condition.isInlineConditionKey(keyResult.result().get())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static <T> @NotNull DataResult<Extracted<T>> extractInlineConditions(
+            @NotNull DynamicOps<T> ops,
+            T input,
+            @NotNull Set<String> reservedKeys
+    ) {
+        var mapResult = ops.getMapValues(input);
+        if (mapResult.result().isEmpty()) {
+            return DataResult.success(new Extracted<>(EMPTY, input));
+        }
+
+        ArrayList<Condition> found = new ArrayList<>();
+        ArrayList<Pair<T, T>> kept = new ArrayList<>();
+        Set<String> seenInlineKeys = new LinkedHashSet<>();
+
+        for (Pair<T, T> pair : mapResult.result().orElse(Stream.empty()).toList()) {
+            var keyResult = ops.getStringValue(pair.getFirst());
+            if (keyResult.result().isEmpty()) {
+                kept.add(pair);
+                continue;
+            }
+
+            String key = keyResult.result().get();
+
+            if (reservedKeys.contains(key)) {
+                kept.add(pair);
+                continue;
+            }
+
+            if (!Condition.isInlineConditionKey(key)) {
+                kept.add(pair);
+                continue;
+            }
+
+            if (!seenInlineKeys.add(key)) {
+                return DataResult.error(() -> "duplicate inline condition key '" + key + "'");
+            }
+
+            DataResult<Condition> decoded = Condition.decodeInlineField(ops, key, pair.getSecond());
+            if (decoded.error().isPresent()) {
+                String msg = decoded.error().map(DataResult.Error::message).orElse("invalid inline condition");
+                return DataResult.error(() -> "invalid inline condition '" + key + "': " + msg);
+            }
+
+            found.add(decoded.result().orElseThrow());
+        }
+
+        T stripped = ops.createMap(kept.stream());
+
+        Conditions extracted = found.isEmpty() ? EMPTY : new Conditions(found);
+        return normalizeInlineCompatible(extracted).map(normalized ->
+                new Extracted<>(normalized, stripped)
+        );
+    }
+
+    public static <T> @NotNull DataResult<T> encodeInlineConditions(
+            @NotNull DynamicOps<T> ops,
+            @NotNull Conditions conditions,
+            T base,
+            @NotNull Set<String> disallowedKeys
+    ) {
+        if (conditions.isEmpty()) {
+            return DataResult.success(base);
+        }
+
+        DataResult<Conditions> normalizedResult = normalizeInlineCompatible(conditions);
+        if (normalizedResult.error().isPresent()) {
+            return DataResult.error(() ->
+                    normalizedResult.error().map(DataResult.Error::message).orElse("invalid inline conditions")
+            );
+        }
+
+        Conditions normalized = normalizedResult.result().orElse(EMPTY);
+        Set<String> seenKeys = new LinkedHashSet<>();
+        T result = base;
+
+        for (Condition condition : normalized.conditions()) {
+            String key = Condition.inlineKey(condition);
+
+            if (disallowedKeys.contains(key)) {
+                return DataResult.error(() ->
+                        "cannot inline condition '" + key + "' because that key is reserved in this scope");
+            }
+            if (!seenKeys.add(key)) {
+                return DataResult.error(() ->
+                        "cannot inline duplicate condition key '" + key + "'");
+            }
+
+            DataResult<T> encodedValue = Condition.encodeInlineField(ops, condition);
+            if (encodedValue.error().isPresent()) {
+                return DataResult.error(() ->
+                        encodedValue.error().map(DataResult.Error::message).orElse("failed to encode inline condition")
+                );
+            }
+
+            result = ops.mergeToMap(result, ops.createString(key), encodedValue.result().orElseThrow())
+                    .result()
+                    .orElse(result);
+        }
+
+        return DataResult.success(result);
+    }
+
     @Override
     public @NotNull DataResult<Conditions> validate() {
+        DataResult<Conditions> normalized = normalizeInlineCompatible(this);
+        if (normalized.error().isPresent()) {
+            return DataResult.error(() ->
+                    JolCraftParameterIds.CONDITIONS + " invalid: " +
+                            normalized.error().map(DataResult.Error::message).orElse("invalid")
+            );
+        }
+
         for (int i = 0; i < conditions.size(); i++) {
             Condition condition = conditions.get(i);
             DataResult<Condition> child = condition.validate();

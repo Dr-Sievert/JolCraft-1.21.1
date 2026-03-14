@@ -57,6 +57,11 @@ public record BountyTaskRecipe(
         @NotNull SoundOutput sound2
 ) implements CustomRecipe<BountyRecipeInput> {
 
+    private static final String SOUND_1_KEY =
+            JolCraftStrings.underscored(JolCraftDictionary.SOUND, "1");
+    private static final String SOUND_2_KEY =
+            JolCraftStrings.underscored(JolCraftDictionary.SOUND, "2");
+
     private static final Codec<Holder<Item>> ITEM_HOLDER_CODEC = new Codec<>() {
         @Override
         public <T> DataResult<Pair<Holder<Item>, T>> decode(
@@ -83,9 +88,10 @@ public record BountyTaskRecipe(
                 ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
                 var holderOpt = lookupOpt.get().getter().get(key);
 
-                return holderOpt.<DataResult<Pair<Holder<Item>, T>>>map(itemReference ->
-                        DataResult.success(Pair.of(itemReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown item '" + id + "'"));
-
+                return holderOpt
+                        .<DataResult<Pair<Holder<Item>, T>>>map(itemReference ->
+                                DataResult.success(Pair.of(itemReference, rest)))
+                        .orElseGet(() -> DataResult.error(() -> "unknown item '" + id + "'"));
             });
         }
 
@@ -137,11 +143,10 @@ public record BountyTaskRecipe(
         if (item != bountyItem && item != crateItem) return ItemStack.EMPTY;
 
         WorldContext ctx = in.ctx();
-        Pools pools = objective.pools();
 
         BountyData.BountyObjective resolved = null;
 
-        for (Output o : pools.generate(ctx)) {
+        for (Output o : objective.generate(ctx)) {
             if (o instanceof Output.Items items) {
                 var stacks = items.stacksSafe();
                 if (!stacks.isEmpty()) {
@@ -288,11 +293,11 @@ public record BountyTaskRecipe(
                                 .forGetter(BountyTaskRecipe::objective),
 
                         SoundOutput.CODEC
-                                .fieldOf(JolCraftStrings.underscored(JolCraftDictionary.SOUND, "1"))
+                                .fieldOf(SOUND_1_KEY)
                                 .forGetter(BountyTaskRecipe::sound1),
 
                         SoundOutput.CODEC
-                                .fieldOf(JolCraftStrings.underscored(JolCraftDictionary.SOUND, "2"))
+                                .fieldOf(SOUND_2_KEY)
                                 .forGetter(BountyTaskRecipe::sound2)
                 ).apply(inst, BountyTaskRecipe::new)).validate(BountyTaskRecipe::validateRecipe);
 
@@ -319,16 +324,13 @@ public record BountyTaskRecipe(
     }
 
     public static @NotNull DataResult<BountyTaskRecipe> validateRecipe(BountyTaskRecipe r) {
-        var sound1Key = JolCraftStrings.underscored(JolCraftDictionary.SOUND, "1");
-        var sound2Key = JolCraftStrings.underscored(JolCraftDictionary.SOUND, "2");
-
         var base = RecipeValidation.validate(r)
                 .require(r.bountyType(), BountyRecipe.TYPE_KEY)
                 .require(r.tier(), BountyRecipe.TIER_KEY)
                 .requireValid(r.bounty(), JolCraftParameterIds.RESULT)
                 .requireValid(r.objective(), JolCraftDictionary.OBJECTIVE)
-                .requireValid(r.sound1(), sound1Key)
-                .requireValid(r.sound2(), sound2Key)
+                .requireValid(r.sound1(), SOUND_1_KEY)
+                .requireValid(r.sound2(), SOUND_2_KEY)
                 .done();
 
         if (base.error().isPresent()) return base;
@@ -362,7 +364,9 @@ public record BountyTaskRecipe(
         }
 
         Item item = itemHolderOpt.get().value();
-        if (item == Items.AIR) return DataResult.error(() -> "result item must not be air");
+        if (item == Items.AIR) {
+            return DataResult.error(() -> "result item must not be air");
+        }
 
         if (item != JolCraftItems.BOUNTY.get() && item != JolCraftItems.BOUNTY_CRATE.get()) {
             return DataResult.error(() -> "result must be jolcraft:bounty or jolcraft:bounty_crate");
@@ -370,8 +374,16 @@ public record BountyTaskRecipe(
 
         Outputs obj = r.objective();
         Pools pools = obj.pools();
-
         List<Pool> poolList = pools.pools();
+
+        if (poolList.isEmpty()) {
+            return DataResult.error(() -> "objective.pools must contain exactly one pool");
+        }
+
+        if (poolList.size() != 1) {
+            return DataResult.error(() -> "objective.pools must contain exactly one pool");
+        }
+
         Pool pool = poolList.getFirst();
 
         if (!pool.isSingleRoll()) {
@@ -394,8 +406,8 @@ public record BountyTaskRecipe(
             }
 
             OutputParam op = entry.output();
-
             var tid = op.typeId();
+
             if (!tid.equals(ItemOutput.TYPE_ID) && !tid.equals(EntityOutput.TYPE_ID)) {
                 int eIdx = ei;
                 return DataResult.error(() ->
@@ -409,6 +421,13 @@ public record BountyTaskRecipe(
                     int eIdx = ei;
                     return DataResult.error(() ->
                             "objective item_output.transforms must be empty (entries[" + eIdx + "])"
+                    );
+                }
+
+                if (io.transforms().requiresInputSource()) {
+                    int eIdx = ei;
+                    return DataResult.error(() ->
+                            "objective item_output must not require input source (entries[" + eIdx + "])"
                     );
                 }
             }

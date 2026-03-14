@@ -40,6 +40,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BREAK = "break";
     public static final String BREW = "brew";
     public static final String BUY = "buy";
+    public static final String CLEAR = "clear";
     public static final String CLOSE = "close";
     public static final String COLLECT = "collect";
     public static final String COMPLETE = "complete";
@@ -68,6 +69,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PLAY = "play";
     public static final String PROMOTE = "promote";
     public static final String READ = "read";
+    public static final String RAIN = "rain";
     public static final String REMOVE = "remove";
     public static final String REPAIR = "repair";
     public static final String REQUIRE = "require";
@@ -87,6 +89,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SPAWN = "spawn";
     public static final String SYNC = "sync";
     public static final String TALK = "talk";
+    public static final String TEST = "test";
     public static final String TRADE = "trade";
     public static final String TRANSFORM = "transform";
     public static final String UNLOCK = "unlock";
@@ -457,7 +460,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String QUILL = "quill";
     public static final String RADIANT = "radiant";
     public static final String RADIUS = "radius";
-    public static final String RAIN = "rain";
     public static final String RANGE = "range";
     public static final String RECIPE = "recipe";
     public static final String REDSTONE = "redstone";

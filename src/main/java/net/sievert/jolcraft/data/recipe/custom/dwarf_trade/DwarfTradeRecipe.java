@@ -429,12 +429,15 @@ public record DwarfTradeRecipe(
             return true;
         }
 
-        if (merchantLevel == null) {
+        if (merchantLevel == null || inputLevel == null) {
             return false;
         }
 
-        int inputId = inputLevel != null ? inputLevel.getId() : 0;
-        return inputId >= merchantLevel.getId();
+        return switch (tradeGroup()) {
+            case GLOBAL_POOL -> true;
+            case EXACT_LEVEL_POOL -> inputLevel == merchantLevel;
+            case MAIN, CUMULATIVE_POOL -> inputLevel.getId() >= merchantLevel.getId();
+        };
     }
 
     public static final class Serializer implements RecipeSerializer<DwarfTradeRecipe> {

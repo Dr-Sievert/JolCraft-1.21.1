@@ -6,11 +6,15 @@ import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 /**
  * Param-specific builder contract.
  *
- * Param semantics:
- * - build() assembles the param object (no domain checks)
- * - buildValidated() may delegate to Validatable#validate()
+ * Build targets may be:
+ * - concrete self-validating params
+ * - polymorphic param interfaces such as OutputParam
+ *
+ * Contract:
+ * - build() assembles the value
+ * - buildValidated() validates when the built value implements SelfValidating
  */
-public interface ParamBuilder<T extends SelfValidating<T>> extends ValidatedBuilder<T> {
+public interface ParamBuilder<T> extends ValidatedBuilder<T> {
 
     /**
      * Assemble without validation.
@@ -20,9 +24,21 @@ public interface ParamBuilder<T extends SelfValidating<T>> extends ValidatedBuil
     @Override
     default DataResult<T> buildValidated() {
         T built = build();
+
         if (built == null) {
             return DataResult.error(() -> "builder produced null");
         }
-        return built.validate();
+
+        if (built instanceof SelfValidating<?> validating) {
+            DataResult<?> validated = validating.validate();
+
+            if (validated.error().isPresent()) {
+                return DataResult.error(() ->
+                        validated.error().map(DataResult.Error::message).orElse("invalid")
+                );
+            }
+        }
+
+        return DataResult.success(built);
     }
 }

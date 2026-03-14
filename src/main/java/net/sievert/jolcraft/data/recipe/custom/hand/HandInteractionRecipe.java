@@ -8,16 +8,17 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.data.recipe.custom.base.CustomOutputRecipe;
 import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
+import net.sievert.jolcraft.data.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
@@ -49,6 +50,24 @@ public record HandInteractionRecipe(
     public static final String SOURCE_INGREDIENT_B =
             JolCraftStrings.underscored(JolCraftDictionary.INGREDIENT, "b");
 
+    public static final String ACTION_A =
+            JolCraftStrings.underscored(JolCraftDictionary.ACTION, "a");
+
+    public static final String ACTION_B =
+            JolCraftStrings.underscored(JolCraftDictionary.ACTION, "b");
+
+    public static final String RESULTS_KEY =
+            JolCraftStrings.plural(JolCraftDictionary.RESULT);
+
+    public static final String SUCCESS_SOUND_KEY =
+            JolCraftStrings.underscored(JolCraftDictionary.SUCCESS, JolCraftDictionary.SOUND);
+
+    public static final String FAIL_SOUND_KEY =
+            JolCraftStrings.underscored(JolCraftDictionary.FAIL, JolCraftDictionary.SOUND);
+
+    public static final String REQUIRE_SNEAKING_KEY =
+            JolCraftStrings.underscored(JolCraftDictionary.REQUIRE, JolCraftDictionary.SNEAK);
+
     @Override
     public boolean matches(@NotNull HandInteractionRecipeInput in, Level level) {
         if (level.isClientSide) {
@@ -56,6 +75,14 @@ public record HandInteractionRecipe(
         }
 
         WorldContext ctx = in.ctx();
+
+        if (requireSneaking) {
+            Player player = ctx.player();
+            if (player == null || !player.isShiftKeyDown()) {
+                return false;
+            }
+        }
+
         ItemStack a = in.ingredientA();
         ItemStack b = in.ingredientB();
 
@@ -93,18 +120,12 @@ public record HandInteractionRecipe(
     public static @NotNull DataResult<HandInteractionRecipe> validateRecipe(HandInteractionRecipe recipe) {
         DataResult<HandInteractionRecipe> base = RecipeValidation.validate(recipe)
                 .requireValid(recipe.ingredientA(), SOURCE_INGREDIENT_A)
-                .require(recipe.actionA(), JolCraftStrings.underscored(JolCraftDictionary.ACTION, "a"))
+                .require(recipe.actionA(), ACTION_A)
                 .requireValid(recipe.ingredientB(), SOURCE_INGREDIENT_B)
-                .require(recipe.actionB(), JolCraftStrings.underscored(JolCraftDictionary.ACTION, "b"))
-                .requireValid(recipe.output(), JolCraftStrings.plural(JolCraftDictionary.RESULT))
-                .requireValid(
-                        recipe.successSound(),
-                        JolCraftStrings.underscored(JolCraftDictionary.SUCCESS, JolCraftDictionary.SOUND)
-                )
-                .requireValid(
-                        recipe.failSound(),
-                        JolCraftStrings.underscored(JolCraftDictionary.FAIL, JolCraftDictionary.SOUND)
-                )
+                .require(recipe.actionB(), ACTION_B)
+                .requireValid(recipe.output(), RESULTS_KEY)
+                .requireValid(recipe.successSound(), SUCCESS_SOUND_KEY)
+                .requireValid(recipe.failSound(), FAIL_SOUND_KEY)
                 .done();
 
         if (base.error().isPresent()) {
@@ -113,7 +134,7 @@ public record HandInteractionRecipe(
 
         if (!recipe.output().hasAnyEntries()) {
             return DataResult.error(() ->
-                    JolCraftStrings.plural(JolCraftDictionary.RESULT) + " must contain at least one output entry"
+                    RESULTS_KEY + " must contain at least one output entry"
             );
         }
 
@@ -130,51 +151,35 @@ public record HandInteractionRecipe(
                         (RecordCodecBuilder.Instance<HandInteractionRecipe> inst) ->
                                 inst.group(
                                         ItemInput.CODEC
-                                                .fieldOf(JolCraftStrings.underscored(
-                                                        JolCraftDictionary.INGREDIENT, "a"))
+                                                .fieldOf(SOURCE_INGREDIENT_A)
                                                 .forGetter(HandInteractionRecipe::ingredientA),
 
                                         ItemIngredientAction.CODEC
-                                                .optionalFieldOf(
-                                                        JolCraftStrings.underscored(
-                                                                JolCraftDictionary.ACTION, "a"),
-                                                        ItemIngredientAction.CATALYST)
+                                                .optionalFieldOf(ACTION_A, ItemIngredientAction.CATALYST)
                                                 .forGetter(HandInteractionRecipe::actionA),
 
                                         ItemInput.CODEC
-                                                .fieldOf(JolCraftStrings.underscored(
-                                                        JolCraftDictionary.INGREDIENT, "b"))
+                                                .fieldOf(SOURCE_INGREDIENT_B)
                                                 .forGetter(HandInteractionRecipe::ingredientB),
 
                                         ItemIngredientAction.CODEC
-                                                .optionalFieldOf(
-                                                        JolCraftStrings.underscored(
-                                                                JolCraftDictionary.ACTION, "b"),
-                                                        ItemIngredientAction.CATALYST)
+                                                .optionalFieldOf(ACTION_B, ItemIngredientAction.CATALYST)
                                                 .forGetter(HandInteractionRecipe::actionB),
 
                                         OUTPUT_CODEC
-                                                .fieldOf(JolCraftStrings.plural(JolCraftDictionary.RESULT))
+                                                .fieldOf(RESULTS_KEY)
                                                 .forGetter(HandInteractionRecipe::output),
 
                                         SoundOutput.CODEC
-                                                .fieldOf(JolCraftStrings.underscored(
-                                                        JolCraftDictionary.SUCCESS,
-                                                        JolCraftDictionary.SOUND))
+                                                .fieldOf(SUCCESS_SOUND_KEY)
                                                 .forGetter(HandInteractionRecipe::successSound),
 
                                         SoundOutput.CODEC
-                                                .fieldOf(JolCraftStrings.underscored(
-                                                        JolCraftDictionary.FAIL,
-                                                        JolCraftDictionary.SOUND))
+                                                .fieldOf(FAIL_SOUND_KEY)
                                                 .forGetter(HandInteractionRecipe::failSound),
 
                                         Codec.BOOL
-                                                .optionalFieldOf(
-                                                        JolCraftStrings.underscored(
-                                                                JolCraftDictionary.REQUIRE,
-                                                                JolCraftDictionary.SNEAK),
-                                                        false)
+                                                .optionalFieldOf(REQUIRE_SNEAKING_KEY, false)
                                                 .forGetter(HandInteractionRecipe::requireSneaking)
                                 ).apply(inst, HandInteractionRecipe::new)
                 ).validate(HandInteractionRecipe::validateRecipe);

@@ -197,12 +197,10 @@ public record BountyRewardRecipe(
     }
 
     public static @NotNull DataResult<BountyRewardRecipe> validateRecipe(BountyRewardRecipe recipe) {
-        String rewardsKey = JolCraftStrings.plural(JolCraftDictionary.REWARD);
-
         DataResult<BountyRewardRecipe> base = RecipeValidation.validate(recipe)
                 .require(recipe.bountyType(), BountyRecipe.TYPE_KEY)
                 .require(recipe.tier(), BountyRecipe.TIER_KEY)
-                .requireValid(recipe.rewards(), rewardsKey)
+                .requireValid(recipe.rewards(), Serializer.REWARDS_KEY)
                 .requireValid(recipe.sound(), JolCraftDictionary.SOUND)
                 .done();
 
@@ -239,7 +237,7 @@ public record BountyRewardRecipe(
             }
         }
 
-        if (Outputs.anyItemOutputRequiresInputSource(recipe.rewards())) {
+        if (Outputs.anyItemOutputRequiresInputSource(rewards)) {
             return DataResult.error(() ->
                     "bounty reward recipes do not support input-sourced item transforms"
             );

@@ -30,23 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Datagen-only fluent builder for {@link HandInteractionRecipe}.
- *
- * Contract:
- * - never throws
- * - never saves
- * - name via {@link RecipeFileNameBuilder}
- * - validation via {@link HandInteractionRecipe#validateRecipe(HandInteractionRecipe)}
- *
- * Naming policy (deterministic, fail-closed):
- * hand_interaction_<a>_<actionA>__<b>_<actionB>[_sneak]
- *
- * Notes:
- * - For naming, ingredientA/ingredientB must each be exactly one concrete item
- *   or one single tag.
- * - Actions are always included for deterministic names.
- */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("UnusedReturnValue")
@@ -164,11 +147,11 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
 
         if (!out.hasAnyEntries()) {
             errors.add("output must contain at least one output entry");
-            this.output = out;
+            this.output = this.output == null ? out : this.output.merge(out);
             return this;
         }
 
-        this.output = out;
+        this.output = this.output == null ? out : this.output.merge(out);
         return this;
     }
 
