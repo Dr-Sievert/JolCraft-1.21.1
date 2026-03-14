@@ -2,10 +2,12 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity;
 
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
+import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityAttributes;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityProducer;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpec;
@@ -26,7 +28,9 @@ public final class EntitySpecBuilder {
     private Holder<EntityType<?>> entity;
     private TagKey<EntityType<?>> tag;
     private IntRange count = IntRange.ONE;
-    private @Nullable CompoundTag nbt;
+    private @Nullable Component name;
+    private boolean nameVisible;
+    private final EntityAttributesBuilder attributes = EntityAttributesBuilder.builder();
     private @Nullable EntitySpawnConfig spawn;
 
     private EntitySpecBuilder() {}
@@ -79,8 +83,33 @@ public final class EntitySpecBuilder {
         return this;
     }
 
-    public @NotNull EntitySpecBuilder nbt(@Nullable CompoundTag nbt) {
-        this.nbt = (nbt != null && nbt.isEmpty()) ? null : nbt;
+    public @NotNull EntitySpecBuilder name(@Nullable Component name) {
+        this.name = name;
+        return this;
+    }
+
+    public @NotNull EntitySpecBuilder clearName() {
+        this.name = null;
+        return this;
+    }
+
+    public @NotNull EntitySpecBuilder nameVisible(boolean nameVisible) {
+        this.nameVisible = nameVisible;
+        return this;
+    }
+
+    public @NotNull EntitySpecBuilder attributes(@Nullable EntityAttributes attributes) {
+        this.attributes.attributes(attributes);
+        return this;
+    }
+
+    public @NotNull EntitySpecBuilder attribute(@Nullable Holder<Attribute> attribute, double value) {
+        this.attributes.attribute(attribute, value);
+        return this;
+    }
+
+    public @NotNull EntitySpecBuilder clearAttributes() {
+        this.attributes.clear();
         return this;
     }
 
@@ -105,7 +134,18 @@ public final class EntitySpecBuilder {
                 ? EntityProducer.entity(entity)
                 : EntityProducer.tag(tag);
 
-        return new EntitySpec(producer, count, nbt, spawn).validate();
+        DataResult<EntityAttributes> attributesResult = attributes.build();
+        var attributesError = attributesResult.error();
+        return attributesError.<DataResult<EntitySpec>>map(entityAttributesError -> DataResult.error(() ->
+                JolCraftParameterIds.ATTRIBUTES + " invalid: " + entityAttributesError.message())).orElseGet(() -> new EntitySpec(
+                producer,
+                count,
+                name,
+                nameVisible,
+                attributesResult.result().orElse(EntityAttributes.EMPTY),
+                spawn
+        ).validate());
+
     }
 
     public @Nullable EntitySpec buildOrNull() {

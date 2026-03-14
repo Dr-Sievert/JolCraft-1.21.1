@@ -65,9 +65,9 @@ public record EffectOutput(
                 ResourceKey<MobEffect> key = ResourceKey.create(Registries.MOB_EFFECT, id);
                 var holderOpt = lookupOpt.get().getter().get(key);
 
-                return holderOpt.<DataResult<Pair<Holder<MobEffect>, T>>>map(mobEffectReference ->
-                        DataResult.success(Pair.of(mobEffectReference, rest))).orElseGet(() -> DataResult.error(() -> "unknown mob effect '" + id + "'"));
-
+                return holderOpt.<DataResult<Pair<Holder<MobEffect>, T>>>map(ref ->
+                                DataResult.success(Pair.of(ref, rest)))
+                        .orElseGet(() -> DataResult.error(() -> "unknown mob effect '" + id + "'"));
             });
         }
 
@@ -101,7 +101,7 @@ public record EffectOutput(
     private static final Codec<EffectOutput> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     EFFECT_CODEC
-                            .fieldOf(JolCraftParameterIds.ID)
+                            .fieldOf(JolCraftDictionary.EFFECT)
                             .forGetter(EffectOutput::id),
 
                     Codec.INT
@@ -157,7 +157,7 @@ public record EffectOutput(
             new ParamTypeDef<>(TYPE_ID, DISC, CODEC, STREAM_CODEC);
 
     public EffectOutput {
-        Objects.requireNonNull(id, JolCraftParameterIds.ID);
+        Objects.requireNonNull(id, JolCraftDictionary.EFFECT);
         Objects.requireNonNull(target, JolCraftParameterIds.TARGET);
     }
 

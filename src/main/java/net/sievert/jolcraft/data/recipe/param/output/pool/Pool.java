@@ -20,6 +20,8 @@ import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.ResolvedOutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -246,43 +248,66 @@ public record Pool(
             @NotNull WorldContext ctx,
             @Nullable ItemTransformSourceResolver resolver
     ) {
-        if (!gatePasses(ctx)) return List.of();
-        if (entries.isEmpty()) return List.of();
+        try {
+            if (!gatePasses(ctx)) {
+                return List.of();
+            }
+            if (entries.isEmpty()) {
+                return List.of();
+            }
 
-        RandomSource random = ctx.random();
+            RandomSource random = ctx.random();
 
-        int poolRolls = Math.max(0, rolls.roll(random));
-        if (poolRolls == 0) return List.of();
-        if (poolRolls > MAX_TOTAL_OUTPUTS) poolRolls = MAX_TOTAL_OUTPUTS;
+            int poolRolls = Math.max(0, rolls.roll(random));
+            if (poolRolls == 0) {
+                return List.of();
+            }
+            if (poolRolls > MAX_TOTAL_OUTPUTS) {
+                poolRolls = MAX_TOTAL_OUTPUTS;
+            }
 
-        ArrayList<Output> out = new ArrayList<>(Math.min(poolRolls, 64));
+            ArrayList<Output> out = new ArrayList<>(Math.min(poolRolls, 64));
 
-        for (int i = 0; i < poolRolls; i++) {
-            if (out.size() >= MAX_TOTAL_OUTPUTS) break;
-
-            PoolEntry chosen = pickWeighted(entries, ctx, random);
-            if (chosen == null) break;
-
-            int execs = rollEntryExecs(chosen, random);
-            if (execs <= 0) continue;
-
-            for (int r = 0; r < execs; r++) {
-                if (out.size() >= MAX_TOTAL_OUTPUTS) break;
-
-                List<Output> gen = chosen.generateResolved(ctx, resolver);
-                if (gen.isEmpty()) continue;
-
-                int remaining = MAX_TOTAL_OUTPUTS - out.size();
-                if (gen.size() <= remaining) {
-                    out.addAll(gen);
-                } else {
-                    out.addAll(gen.subList(0, remaining));
+            for (int i = 0; i < poolRolls; i++) {
+                if (out.size() >= MAX_TOTAL_OUTPUTS) {
                     break;
                 }
-            }
-        }
 
-        return out.isEmpty() ? List.of() : List.copyOf(out);
+                PoolEntry chosen = pickWeighted(entries, ctx, random);
+                if (chosen == null) {
+                    break;
+                }
+
+                int execs = rollEntryExecs(chosen, random);
+                if (execs <= 0) {
+                    continue;
+                }
+
+                for (int r = 0; r < execs; r++) {
+                    if (out.size() >= MAX_TOTAL_OUTPUTS) {
+                        break;
+                    }
+
+                    List<Output> gen = chosen.generateResolved(ctx, resolver);
+                    if (gen.isEmpty()) {
+                        continue;
+                    }
+
+                    int remaining = MAX_TOTAL_OUTPUTS - out.size();
+                    if (gen.size() <= remaining) {
+                        out.addAll(gen);
+                    } else {
+                        out.addAll(gen.subList(0, remaining));
+                        break;
+                    }
+                }
+            }
+
+            return out.isEmpty() ? List.of() : List.copyOf(out);
+        } catch (Exception e) {
+            JolCraftLogs.error(JolCraftLogTags.RECIPE, "Pool.generateResolved failed", e);
+            return List.of();
+        }
     }
 
     private static int rollEntryExecs(

@@ -53,42 +53,27 @@ public interface OutputParam extends Param {
     Codec<OutputParam> CODEC = new Codec<>() {
         @Override
         public <T> DataResult<Pair<OutputParam, T>> decode(DynamicOps<T> ops, T input) {
-            DataResult<Conditions.Extracted<T>> extracted =
-                    Conditions.extractInlineConditions(ops, input, DECORATION_RESERVED_KEYS);
-
-            if (extracted.error().isPresent()) {
-                return DataResult.error(() ->
-                        extracted.error().map(DataResult.Error::message).orElse("invalid output param conditions")
-                );
-            }
-
-            Conditions.Extracted<T> ex = extracted.result().orElseThrow();
-            T stripped = ex.strippedInput();
-
-            DataResult<Conditions> explicitConditions = decodeExplicitConditions(ops, stripped);
+            DataResult<Conditions> explicitConditions = decodeExplicitConditions(ops, input);
             if (explicitConditions.error().isPresent()) {
                 return DataResult.error(() ->
                         explicitConditions.error().map(DataResult.Error::message).orElse("invalid output param conditions")
                 );
             }
 
-            DataResult<Conditions> mergedConditions =
-                    Conditions.mergeExplicitAndInline(explicitConditions.result().orElse(Conditions.EMPTY), ex.conditions());
-
-            if (mergedConditions.error().isPresent()) {
+            DataResult<List<Hook>> hooksResult = decodeHooks(ops, input);
+            if (hooksResult.error().isPresent()) {
                 return DataResult.error(() ->
-                        mergedConditions.error().map(DataResult.Error::message).orElse("invalid output param conditions")
+                        hooksResult.error().map(DataResult.Error::message).orElse("invalid output param hooks")
                 );
             }
 
-            List<Hook> hooks = decodeHooks(ops, stripped);
-            T baseInput = stripDecorationFields(ops, stripped);
+            T baseInput = stripDecorationFields(ops, input);
 
             return BASE_CODEC.decode(ops, baseInput).flatMap(basePair ->
                     attachDecorations(
                             basePair.getFirst(),
-                            mergedConditions.result().orElse(Conditions.EMPTY),
-                            hooks
+                            explicitConditions.result().orElse(Conditions.EMPTY),
+                            hooksResult.result().orElse(List.of())
                     ).map(wrapped -> Pair.of(wrapped, basePair.getSecond()))
             );
         }
@@ -129,33 +114,20 @@ public interface OutputParam extends Param {
                 ).result().orElse(result);
             }
 
-            if (conditions.isEmpty()) {
-                return DataResult.success(result);
+            if (!conditions.isEmpty()) {
+                DataResult<T> explicitConditions = Conditions.CODEC.encodeStart(ops, conditions);
+                if (explicitConditions.error().isPresent()) {
+                    return DataResult.error(() ->
+                            explicitConditions.error().map(DataResult.Error::message).orElse("invalid output param conditions")
+                    );
+                }
+
+                result = ops.mergeToMap(
+                        result,
+                        ops.createString(JolCraftParameterIds.CONDITIONS),
+                        explicitConditions.result().orElseThrow()
+                ).result().orElse(result);
             }
-
-            DataResult<T> flattened = Conditions.encodeInlineConditions(
-                    ops,
-                    conditions,
-                    result,
-                    DECORATION_RESERVED_KEYS
-            );
-
-            if (flattened.error().isEmpty()) {
-                return flattened;
-            }
-
-            DataResult<T> explicitConditions = Conditions.CODEC.encodeStart(ops, conditions);
-            if (explicitConditions.error().isPresent()) {
-                return DataResult.error(() ->
-                        explicitConditions.error().map(DataResult.Error::message).orElse("invalid output param conditions")
-                );
-            }
-
-            result = ops.mergeToMap(
-                    result,
-                    ops.createString(JolCraftParameterIds.CONDITIONS),
-                    explicitConditions.result().orElseThrow()
-            ).result().orElse(result);
 
             return DataResult.success(result);
         }
@@ -299,19 +271,22 @@ public interface OutputParam extends Param {
                 .orElse(DataResult.success(Conditions.EMPTY));
     }
 
-    private static <T> @NotNull List<Hook> decodeHooks(DynamicOps<T> ops, T input) {
+    private static <T> @NotNull DataResult<List<Hook>> decodeHooks(
+            @NotNull DynamicOps<T> ops,
+            T input
+    ) {
         return ops.getMap(input).result()
                 .map(mapLike -> {
                     T value = mapLike.get(ops.createString(JolCraftParameterIds.HOOKS));
-                    if (value == null) return List.<Hook>of();
+                    if (value == null) {
+                        return DataResult.success(List.<Hook>of());
+                    }
 
-                    return sanitizeHooks(
-                            Hook.CODEC.listOf()
-                                    .parse(ops, value)
-                                    .getOrThrow(IllegalArgumentException::new)
-                    );
+                    return Hook.CODEC.listOf()
+                            .parse(ops, value)
+                            .map(OutputParam::sanitizeHooks);
                 })
-                .orElse(List.of());
+                .orElse(DataResult.success(List.<Hook>of()));
     }
 
     private static <T> T stripDecorationFields(@NotNull DynamicOps<T> ops, T input) {

@@ -4,12 +4,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
+import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityAttributes;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
 import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import org.jetbrains.annotations.NotNull;
@@ -151,12 +152,19 @@ public sealed interface Output permits
     /**
      * Single particle payload.
      *
-     * Position and spread are caller-owned.
+     * Position is caller-owned.
+     * Offsets/spread/speed are already resolved runtime values.
      */
     record Particle(
-            ParticleOptions particle,
+            @NotNull ParticleOptions particle,
             int count,
-            float speed
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double spreadX,
+            double spreadY,
+            double spreadZ,
+            double speed
     ) {}
 
     /**
@@ -196,10 +204,12 @@ public sealed interface Output permits
      * Single entity instruction.
      */
     record EntitySpec(
-            Holder<EntityType<?>> type,
+            @NotNull Holder<EntityType<?>> type,
             int count,
             @Nullable BlockPos pos,
-            @Nullable CompoundTag nbt,
+            @Nullable Component name,
+            boolean nameVisible,
+            @NotNull EntityAttributes attributes,
             @Nullable EntitySpawnConfig spawnConfig
     ) {}
 

@@ -1,75 +1,63 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom.particle;
 
-import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public record ParticleSpec(
         @NotNull ParticleProducer producer,
         @NotNull ParticleOptions particle
 ) implements SelfValidating<ParticleSpec>, RegistryIntrospectionSource {
 
-    private record CanonicalRaw(
-            @NotNull ResourceLocation id,
-            @NotNull ParticleOptions particle
-    ) {}
+    public static final Codec<ParticleSpec> CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<ParticleSpec, T>> decode(DynamicOps<T> ops, T input) {
+            return extractParticleId(ops, input).flatMap(id -> {
+                T normalizedInput = normalizeForParticleCodec(ops, input, id);
 
-    private record VerboseRaw(
-            @NotNull ParticleProducer producer,
-            @NotNull ParticleOptions particle
-    ) {}
+                return ParticleTypes.CODEC.decode(ops, normalizedInput).flatMap(pair ->
+                        ParticleProducer.of(id)
+                                .map(producer -> new ParticleSpec(producer, pair.getFirst()))
+                                .flatMap(ParticleSpec::validate)
+                                .map(spec -> Pair.of(spec, pair.getSecond()))
+                );
+            });
+        }
 
-    private static final Codec<CanonicalRaw> CANONICAL_RAW_CODEC =
-            RecordCodecBuilder.create(inst -> inst.group(
-                    ResourceLocation.CODEC
-                            .fieldOf(JolCraftParameterIds.ID)
-                            .forGetter(CanonicalRaw::id),
+        @Override
+        public <T> DataResult<T> encode(ParticleSpec input, DynamicOps<T> ops, T prefix) {
+            if (input.particle() instanceof SimpleParticleType) {
+                return ResourceLocation.CODEC.encode(input.producer().particleId(), ops, prefix);
+            }
 
-                    net.minecraft.core.particles.ParticleTypes.CODEC
-                            .fieldOf(JolCraftParameterIds.PARTICLE)
-                            .forGetter(CanonicalRaw::particle)
-            ).apply(inst, CanonicalRaw::new));
-
-    private static final Codec<VerboseRaw> VERBOSE_RAW_CODEC =
-            RecordCodecBuilder.create(inst -> inst.group(
-                    ParticleProducer.CODEC
-                            .fieldOf(JolCraftParameterIds.PRODUCER)
-                            .forGetter(VerboseRaw::producer),
-
-                    net.minecraft.core.particles.ParticleTypes.CODEC
-                            .fieldOf(JolCraftParameterIds.PARTICLE)
-                            .forGetter(VerboseRaw::particle)
-            ).apply(inst, VerboseRaw::new));
-
-    public static final Codec<ParticleSpec> CODEC =
-            ParamCodecContract.create(
-                    Codec.either(CANONICAL_RAW_CODEC, VERBOSE_RAW_CODEC),
-                    ParticleSpec::fromRaw,
-                    ParticleSpec::toRaw
-            );
+            return ParticleTypes.CODEC.encode(input.particle(), ops, prefix);
+        }
+    };
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ParticleSpec> STREAM_CODEC =
             StreamCodec.of(
                     (buf, value) -> {
                         ParticleProducer.STREAM_CODEC.encode(buf, value.producer());
-                        net.minecraft.core.particles.ParticleTypes.STREAM_CODEC.encode(buf, value.particle());
+                        ParticleTypes.STREAM_CODEC.encode(buf, value.particle());
                     },
                     buf -> new ParticleSpec(
                             ParticleProducer.STREAM_CODEC.decode(buf),
-                            net.minecraft.core.particles.ParticleTypes.STREAM_CODEC.decode(buf)
+                            ParticleTypes.STREAM_CODEC.decode(buf)
                     )
             );
 
@@ -81,25 +69,39 @@ public record ParticleSpec(
                 .map(producer -> new ParticleSpec(producer, particle));
     }
 
-    private static @NotNull DataResult<ParticleSpec> fromRaw(
-            @NotNull Either<CanonicalRaw, VerboseRaw> raw
+    private static <T> @NotNull DataResult<ResourceLocation> extractParticleId(
+            @NotNull DynamicOps<T> ops,
+            T input
     ) {
-        if (raw.left().isPresent()) {
-            CanonicalRaw canonical = raw.left().orElseThrow();
-            return of(canonical.id(), canonical.particle());
+        DataResult<ResourceLocation> direct = ResourceLocation.CODEC.parse(ops, input);
+        if (direct.result().isPresent()) {
+            return direct;
         }
 
-        VerboseRaw verbose = raw.right().orElseThrow();
-        return DataResult.success(new ParticleSpec(
-                verbose.producer(),
-                verbose.particle()
-        ));
+        return ops.getMap(input).flatMap(map -> {
+            T typeValue = map.get(ops.createString(JolCraftParameterIds.TYPE));
+            if (typeValue == null) {
+                return DataResult.error(() -> "Missing required field: '" + JolCraftParameterIds.TYPE + "'");
+            }
+            return ResourceLocation.CODEC.parse(ops, typeValue);
+        });
     }
 
-    private static @NotNull Either<CanonicalRaw, VerboseRaw> toRaw(@NotNull ParticleSpec spec) {
-        return Either.left(new CanonicalRaw(
-                spec.producer().particleId(),
-                spec.particle()
+    private static <T> @NotNull T normalizeForParticleCodec(
+            @NotNull DynamicOps<T> ops,
+            T input,
+            @NotNull ResourceLocation particleId
+    ) {
+        if (ops.getMap(input).result().isPresent()) {
+            return input;
+        }
+
+        T encodedId = ResourceLocation.CODEC.encodeStart(ops, particleId)
+                .result()
+                .orElseGet(() -> ops.createString(particleId.toString()));
+
+        return ops.createMap(Stream.of(
+                Pair.of(ops.createString(JolCraftParameterIds.TYPE), encodedId)
         ));
     }
 

@@ -21,6 +21,8 @@ import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputHandler;
 import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,8 +67,17 @@ public final class JolCraftHandInteractionEvents {
 
         ResolvedRecipe resolved = findResolvedRecipe(level, player, rawInput);
         if (resolved == null) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.RECIPE,
+                    "Hand interaction resolved no recipe for main=" + main + " off=" + off
+            );
             return;
         }
+
+        JolCraftLogs.info(
+                JolCraftLogTags.RECIPE,
+                "Hand interaction resolved recipe: " + resolved.recipe()
+        );
 
         HandInteractionRecipe recipe = resolved.recipe();
         HandMapping mapping = resolved.mapping();
@@ -109,17 +120,40 @@ public final class JolCraftHandInteractionEvents {
                 .getRecipesFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level)
                 .toList();
 
+        JolCraftLogs.error(
+                JolCraftLogTags.RECIPE,
+                "Hand interaction candidate recipe count=" + recipes.size()
+        );
+
         for (RecipeHolder<HandInteractionRecipe> holder : recipes) {
             HandInteractionRecipe recipe = holder.value();
 
+            JolCraftLogs.error(
+                    JolCraftLogTags.RECIPE,
+                    "Checking hand recipe id=" + holder.id()
+            );
+
             if (recipe.requireSneaking() && !player.isShiftKeyDown()) {
+                JolCraftLogs.error(
+                        JolCraftLogTags.RECIPE,
+                        "Skipped hand recipe due to sneaking requirement: " + holder.id()
+                );
                 continue;
             }
 
             HandMapping mapping = resolveMapping(recipe, rawInput);
             if (mapping != null) {
+                JolCraftLogs.error(
+                        JolCraftLogTags.RECIPE,
+                        "Resolved hand recipe: " + holder.id()
+                );
                 return new ResolvedRecipe(recipe, mapping);
             }
+
+            JolCraftLogs.error(
+                    JolCraftLogTags.RECIPE,
+                    "Mapping failed for hand recipe: " + holder.id()
+            );
         }
 
         return null;

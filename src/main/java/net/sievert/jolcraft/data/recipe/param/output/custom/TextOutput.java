@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.recipe.param.output.custom;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -60,13 +61,22 @@ public record TextOutput(
                     ChatFormatting::getName
             );
 
+    private static final Codec<List<ChatFormatting>> STYLE_CODEC =
+            Codec.either(FORMATTING_CODEC, FORMATTING_CODEC.listOf())
+                    .xmap(
+                            either -> sanitizeList(either.map(List::of, list -> list)),
+                            style -> style.size() == 1
+                                    ? Either.left(style.getFirst())
+                                    : Either.right(style)
+                    );
+
     private static final Codec<TextOutput> RAW_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING
                             .fieldOf(JolCraftParameterIds.TEXT)
                             .forGetter(TextOutput::text),
 
-                    FORMATTING_CODEC.listOf()
+                    STYLE_CODEC
                             .optionalFieldOf(JolCraftParameterIds.STYLE, List.of())
                             .forGetter(TextOutput::style),
 

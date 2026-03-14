@@ -1,7 +1,13 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.hand;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biomes;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -14,12 +20,22 @@ import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBui
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom.*;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.base.OutputsBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.EffectOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.TextOutputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity.EntityOutputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity.EntitySpawnConfigBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity.EntitySpecBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.particle.ParticleOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.pool.PoolBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.pool.PoolEntryBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.param.quantity.IntRangeBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
+@SuppressWarnings("deprecation")
 public final class TestHandInteractions implements RecipeSubProvider {
 
     @Override
@@ -33,7 +49,7 @@ public final class TestHandInteractions implements RecipeSubProvider {
             @NotNull RecipeOutput output,
             @NotNull RecipeLookups lookups
     ) {
-        
+
         ConditionsBuilder condition = ConditionsBuilder.create().condition(
                 BiomeConditionBuilder.create().lookups(lookups).biome(Biomes.PLAINS)
         );
@@ -82,6 +98,11 @@ public final class TestHandInteractions implements RecipeSubProvider {
                         .output(
                                 OutputsBuilder.create()
                                         .conditions(condition)
+
+                                        // -------------------------
+                                        // ITEM OUTPUTS
+                                        // -------------------------
+
                                         .wrapSingle(
                                                 ItemOutputBuilder.create()
                                                         .result(Items.DIAMOND, 1)
@@ -92,6 +113,76 @@ public final class TestHandInteractions implements RecipeSubProvider {
                                                         .result(Items.EMERALD, 1)
                                                         .build()
                                         )
+
+                                        // -------------------------
+                                        // ENTITY OUTPUT
+                                        // -------------------------
+
+                                        .wrapSingle(
+                                                EntityOutputBuilder.builder()
+                                                        .result(
+                                                                Objects.requireNonNull(
+                                                                        EntitySpecBuilder.builder()
+                                                                                .entity(EntityType.COW.builtInRegistryHolder())
+                                                                                .countFixed(1)
+                                                                                .name(
+                                                                                        Component.literal("Half Moo")
+                                                                                                .withStyle(ChatFormatting.GOLD)
+                                                                                )
+                                                                                .nameVisible(true)
+                                                                                .attribute(Attributes.MAX_HEALTH, 10.0)
+                                                                                .spawn(
+                                                                                        EntitySpawnConfigBuilder.builder()
+                                                                                                .offset(0, 1, 0)
+                                                                                                .persistent(true)
+                                                                                                .buildOrNull()
+                                                                                )
+                                                                                .buildOrNull()
+                                                                )
+                                                        )
+                                                        .buildOrNull()
+                                        )
+
+                                        // -------------------------
+                                        // PARTICLE OUTPUT
+                                        // -------------------------
+
+                                        .wrapSingle(
+                                                ParticleOutputBuilder.builder()
+                                                        .lookups(lookups)
+                                                        .particle(ParticleTypes.HAPPY_VILLAGER)
+                                                        .count(IntRangeBuilder.between(4, 8))
+                                                        .speed(0.2)
+                                                        .offset(0.0, 2.5, 0.0)
+                                                        .spread(0.25, 0.05, 0.25)
+                                                        .build()
+                                        )
+
+                                        // -------------------------
+                                        // EFFECT OUTPUT
+                                        // -------------------------
+
+                                        .wrapSingle(
+                                                EffectOutputBuilder.builder()
+                                                        .id(MobEffects.REGENERATION)
+                                                        .duration(200)
+                                                        .amplifier(0)
+                                                        .targetPlayer()
+                                                        .build()
+                                        )
+
+                                        // -------------------------
+                                        // TEXT OUTPUT
+                                        // -------------------------
+
+                                        .wrapSingle(
+                                                TextOutputBuilder.builder()
+                                                        .text("Test success")
+                                                        .addStyle(ChatFormatting.GREEN)
+                                                        .build()
+                                                        .getOrThrow()
+                                        )
+
                                         .build()
                         )
                         .successSound(

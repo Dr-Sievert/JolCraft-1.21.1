@@ -12,11 +12,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityAttributes;
 import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import net.sievert.jolcraft.world.inventory.ItemInsertionHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -25,48 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/**
- * Output interpretation contract with overridable defaults.
- *
- * Implementors may override only the output types they care about.
- * The default behavior follows safe, vanilla-like semantics and
- * resolves spatial outputs through {@link WorldAnchor} or the
- * provided manual position.
- *
- * Default policies:
- *
- * • Items
- *   Attempts to give items to the player (ctx.player()).
- *   If the inventory is full or no player exists, items are dropped.
- *
- * • Sounds
- *   Played at the resolved position:
- *   manualPos → anchor → ctx.pos().
- *   Uses the provided SoundSource or a reasonable default.
- *
- * • Particles
- *   Spawned at the resolved position:
- *   manualPos → anchor → ctx.pos().
- *
- * • Effects
- *   Applied to the player (ctx.player()) if present.
- *
- * • Text
- *   Sent to the player (ctx.player()) if present.
- *
- * • Entities
- *   Spawned on the server at the resolved position:
- *   manualPos → anchor → ctx.pos().
- *
- * The dispatch entrypoints are:
- *
- *     handle(ctx, output)
- *     handle(ctx, output, manualPos)
- *     handle(ctx, output, manualPos, anchor)
- *     handle(ctx, output, manualPos, anchor, soundSource)
- *
- * The full signature exposes all spatial and sound controls.
- */
 @SuppressWarnings("unused")
 public interface OutputHandler {
 
@@ -135,7 +97,7 @@ public interface OutputHandler {
             @Nullable WorldAnchor anchor
     ) {
         for (Output.Particle p : particles.particlesSafe()) {
-            if (p == null || p.particle() == null) continue;
+            if (p == null) continue;
 
             int count = Math.max(0, p.count());
             if (count == 0) continue;
@@ -143,15 +105,30 @@ public interface OutputHandler {
             double speed = p.speed();
             if (!Double.isFinite(speed) || speed < 0.0D) continue;
 
+            double spreadX = p.spreadX();
+            double spreadY = p.spreadY();
+            double spreadZ = p.spreadZ();
+            if (!Double.isFinite(spreadX) || spreadX < 0.0D) continue;
+            if (!Double.isFinite(spreadY) || spreadY < 0.0D) continue;
+            if (!Double.isFinite(spreadZ) || spreadZ < 0.0D) continue;
+
             BlockPos pos = WorldAnchor.resolve(ctx, manualPos, anchor);
             if (pos == null) continue;
+
+            double x = pos.getX() + 0.5D + p.offsetX();
+            double y = pos.getY() + 0.5D + p.offsetY();
+            double z = pos.getZ() + 0.5D + p.offsetZ();
 
             JolCraftParticleHelper.spawn(
                     ctx.level(),
                     p.particle(),
-                    pos,
+                    x,
+                    y,
+                    z,
                     count,
-                    0.0D, 0.0D, 0.0D,
+                    spreadX,
+                    spreadY,
+                    spreadZ,
                     speed
             );
         }
@@ -209,29 +186,46 @@ public interface OutputHandler {
             @Nullable BlockPos manualPos,
             @Nullable WorldAnchor anchor
     ) {
-        if (entitySpec.type() == null) return;
 
         int count = Math.max(0, entitySpec.count());
         if (count == 0) return;
 
-        BlockPos pos = WorldAnchor.resolve(
-                ctx,
-                manualPos != null ? manualPos : entitySpec.pos(),
-                anchor
-        );
-        if (pos == null) return;
-
         ServerLevel serverLevel = ctx.level();
-
         EntitySpawnConfig spawn = entitySpec.spawnConfig();
 
+        BlockPos explicitPos = manualPos != null ? manualPos : entitySpec.pos();
+
+        BlockPos basePos;
+        if (spawn != null && spawn.forced()) {
+            if (anchor != null) {
+                basePos = WorldAnchor.forced(ctx, explicitPos, anchor);
+            } else {
+                basePos = explicitPos;
+            }
+        } else {
+            basePos = WorldAnchor.resolve(ctx, explicitPos, anchor);
+        }
+
+        if (basePos == null) {
+            return;
+        }
+
+        int radius = spawn != null ? Math.max(0, spawn.radius()) : 0;
         int offsetX = spawn != null ? spawn.offsetX() : 0;
         int offsetY = spawn != null ? spawn.offsetY() : 0;
         int offsetZ = spawn != null ? spawn.offsetZ() : 0;
 
-        BlockPos spawnPos = pos.offset(offsetX, offsetY, offsetZ);
-
         for (int i = 0; i < count; i++) {
+            BlockPos spawnPos = basePos;
+
+            if (radius > 0) {
+                int dx = ctx.random().nextInt(radius * 2 + 1) - radius;
+                int dz = ctx.random().nextInt(radius * 2 + 1) - radius;
+                spawnPos = spawnPos.offset(dx, 0, dz);
+            }
+
+            spawnPos = spawnPos.offset(offsetX, offsetY, offsetZ);
+
             Entity entity = entitySpec.type().value().spawn(
                     serverLevel,
                     spawnPos,
@@ -239,16 +233,34 @@ public interface OutputHandler {
             );
             if (entity == null) continue;
 
-            CompoundTag nbt = entitySpec.nbt();
-            if (nbt != null && !nbt.isEmpty()) {
-                entity.load(nbt);
-                entity.moveTo(
-                        spawnPos.getX() + 0.5D,
-                        spawnPos.getY(),
-                        spawnPos.getZ() + 0.5D,
-                        entity.getYRot(),
-                        entity.getXRot()
-                );
+            entity.moveTo(
+                    spawnPos.getX() + 0.5D,
+                    spawnPos.getY(),
+                    spawnPos.getZ() + 0.5D,
+                    entity.getYRot(),
+                    entity.getXRot()
+            );
+
+            if (entitySpec.name() != null) {
+                entity.setCustomName(entitySpec.name());
+            }
+            entity.setCustomNameVisible(entitySpec.nameVisible());
+
+            EntityAttributes attributes = entitySpec.attributes();
+            if (!attributes.isEmpty() && entity instanceof LivingEntity living) {
+                for (EntityAttributes.Entry entry : attributes.entries()) {
+                    if (entry == null) {
+                        continue;
+                    }
+
+                    AttributeInstance instance = living.getAttribute(entry.attribute());
+                    if (instance == null) {
+                        continue;
+                    }
+
+                    double sanitized = entry.attribute().value().sanitizeValue(entry.value());
+                    instance.setBaseValue(sanitized);
+                }
             }
 
             if (spawn != null && entity instanceof Mob mob) {
@@ -269,8 +281,22 @@ public interface OutputHandler {
             @Nullable WorldAnchor anchor
     ) {
         for (Output.EntitySpec e : entities.entitiesSafe()) {
-            if (e != null) {
+            if (e == null) continue;
+
+            try {
                 handleEntity(ctx, e, manualPos, anchor);
+            } catch (Exception ex) {
+                JolCraftLogs.error(
+                        JolCraftLogTags.RECIPE,
+                        "Failed handling entity output type={} count={} pos={} name={} nameVisible={} spawn={}",
+                        e.type(),
+                        e.count(),
+                        e.pos(),
+                        e.name(),
+                        e.nameVisible(),
+                        e.spawnConfig(),
+                        ex
+                );
             }
         }
     }
@@ -328,8 +354,19 @@ public interface OutputHandler {
         if (outputs.isEmpty()) return;
 
         for (Output o : outputs) {
-            if (o != null) {
+            if (o == null) continue;
+
+            try {
                 handle(ctx, o, manualPos, anchor, soundSource);
+            } catch (Exception ex) {
+                JolCraftLogs.error(
+                        JolCraftLogTags.RECIPE,
+                        " Failed handling output class={} manualPos={} anchor={}",
+                        o.getClass().getName(),
+                        manualPos,
+                        anchor,
+                        ex
+                );
             }
         }
     }

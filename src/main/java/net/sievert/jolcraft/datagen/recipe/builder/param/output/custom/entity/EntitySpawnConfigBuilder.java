@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class EntitySpawnConfigBuilder {
 
-    private BlockPos pos = BlockPos.ZERO;
+    private @Nullable BlockPos pos = null;
     private int offsetX = 0;
     private int offsetY = 0;
     private int offsetZ = 0;
@@ -30,10 +30,6 @@ public final class EntitySpawnConfigBuilder {
         return new EntitySpawnConfigBuilder();
     }
 
-    // ---------------------------------------------------------------------
-    // Fields
-    // ---------------------------------------------------------------------
-
     public @NotNull EntitySpawnConfigBuilder pos(@NotNull BlockPos pos) {
         this.pos = pos;
         return this;
@@ -41,6 +37,11 @@ public final class EntitySpawnConfigBuilder {
 
     public @NotNull EntitySpawnConfigBuilder pos(int x, int y, int z) {
         this.pos = new BlockPos(x, y, z);
+        return this;
+    }
+
+    public @NotNull EntitySpawnConfigBuilder clearPos() {
+        this.pos = null;
         return this;
     }
 
@@ -85,10 +86,6 @@ public final class EntitySpawnConfigBuilder {
         this.noAi = noAi;
         return this;
     }
-
-    // ---------------------------------------------------------------------
-    // Build
-    // ---------------------------------------------------------------------
 
     public @NotNull DataResult<EntitySpawnConfig> build() {
         return new EntitySpawnConfig(

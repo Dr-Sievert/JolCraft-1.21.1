@@ -6,9 +6,12 @@ import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 /**
  * Datagen builder for {@link EntityOutput}.
  *
+ * S+:
  * - no throwing
  * - fail-closed
  * - minimal surface
@@ -27,8 +30,23 @@ public final class EntityOutputBuilder {
     // Result
     // ---------------------------------------------------------------------
 
-    public @NotNull EntityOutputBuilder result(@NotNull EntitySpec result) {
+    public @NotNull EntityOutputBuilder result(@Nullable EntitySpec result) {
         this.result = result;
+        return this;
+    }
+
+    /**
+     * Inline spec builder convenience.
+     */
+    public @NotNull EntityOutputBuilder result(@NotNull Consumer<EntitySpecBuilder> spec) {
+        EntitySpecBuilder builder = EntitySpecBuilder.builder();
+        spec.accept(builder);
+        this.result = builder.buildOrNull();
+        return this;
+    }
+
+    public @NotNull EntityOutputBuilder clearResult() {
+        this.result = null;
         return this;
     }
 

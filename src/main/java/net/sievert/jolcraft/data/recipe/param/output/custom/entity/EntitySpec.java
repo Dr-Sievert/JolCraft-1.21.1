@@ -5,30 +5,37 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
 import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public record EntitySpec(
-        EntityProducer producer,
-        IntRange count,
-        @Nullable CompoundTag nbt,
+        @NotNull EntityProducer producer,
+        @NotNull IntRange count,
+        @Nullable Component name,
+        boolean nameVisible,
+        @NotNull EntityAttributes attributes,
         @Nullable EntitySpawnConfig spawn
 ) implements SelfValidating<EntitySpec>, RegistryIntrospectionSource {
 
@@ -36,14 +43,17 @@ public record EntitySpec(
             Optional<Holder<EntityType<?>>> entity,
             Optional<TagKey<EntityType<?>>> tag,
             IntRange count,
-            Optional<CompoundTag> nbt,
+            Optional<Component> name,
+            boolean nameVisible,
+            EntityAttributes attributes,
             Optional<EntitySpawnConfig> spawn
     ) {
         private CanonicalRaw {
             entity = entity != null ? entity : Optional.empty();
             tag = tag != null ? tag : Optional.empty();
             count = count != null ? count : IntRange.ONE;
-            nbt = nbt != null ? nbt : Optional.empty();
+            name = name != null ? name : Optional.empty();
+            attributes = attributes != null ? attributes : EntityAttributes.EMPTY;
             spawn = spawn != null ? spawn : Optional.empty();
         }
     }
@@ -51,12 +61,15 @@ public record EntitySpec(
     private record VerboseRaw(
             EntityProducer producer,
             IntRange count,
-            Optional<CompoundTag> nbt,
+            Optional<Component> name,
+            boolean nameVisible,
+            EntityAttributes attributes,
             Optional<EntitySpawnConfig> spawn
     ) {
         private VerboseRaw {
             count = count != null ? count : IntRange.ONE;
-            nbt = nbt != null ? nbt : Optional.empty();
+            name = name != null ? name : Optional.empty();
+            attributes = attributes != null ? attributes : EntityAttributes.EMPTY;
             spawn = spawn != null ? spawn : Optional.empty();
         }
     }
@@ -75,9 +88,17 @@ public record EntitySpec(
                             .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
                             .forGetter(CanonicalRaw::count),
 
-                    CompoundTag.CODEC
-                            .optionalFieldOf(JolCraftParameterIds.NBT)
-                            .forGetter(CanonicalRaw::nbt),
+                    ComponentSerialization.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.NAME)
+                            .forGetter(CanonicalRaw::name),
+
+                    Codec.BOOL
+                            .optionalFieldOf(JolCraftStrings.underscored(JolCraftParameterIds.NAME, JolCraftDictionary.VISIBLE), false)
+                            .forGetter(CanonicalRaw::nameVisible),
+
+                    EntityAttributes.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.ATTRIBUTES, EntityAttributes.EMPTY)
+                            .forGetter(CanonicalRaw::attributes),
 
                     EntitySpawnConfig.CODEC
                             .optionalFieldOf(JolCraftParameterIds.SPAWN)
@@ -94,9 +115,17 @@ public record EntitySpec(
                             .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
                             .forGetter(VerboseRaw::count),
 
-                    CompoundTag.CODEC
-                            .optionalFieldOf(JolCraftParameterIds.NBT)
-                            .forGetter(VerboseRaw::nbt),
+                    ComponentSerialization.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.NAME)
+                            .forGetter(VerboseRaw::name),
+
+                    Codec.BOOL
+                            .optionalFieldOf(JolCraftStrings.underscored(JolCraftParameterIds.NAME, JolCraftDictionary.VISIBLE), false)
+                            .forGetter(VerboseRaw::nameVisible),
+
+                    EntityAttributes.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.ATTRIBUTES, EntityAttributes.EMPTY)
+                            .forGetter(VerboseRaw::attributes),
 
                     EntitySpawnConfig.CODEC
                             .optionalFieldOf(JolCraftParameterIds.SPAWN)
@@ -110,17 +139,17 @@ public record EntitySpec(
                     EntitySpec::toRaw
             );
 
-    private static final StreamCodec<RegistryFriendlyByteBuf, Optional<CompoundTag>> OPTIONAL_NBT_STREAM =
+    private static final StreamCodec<RegistryFriendlyByteBuf, Optional<Component>> OPTIONAL_COMPONENT_STREAM =
             StreamCodec.of(
                     (buf, opt) -> {
                         buf.writeBoolean(opt.isPresent());
-                        opt.ifPresent(buf::writeNbt);
+                        opt.ifPresent(component -> ComponentSerialization.STREAM_CODEC.encode(buf, component));
                     },
                     buf -> {
                         if (!buf.readBoolean()) {
                             return Optional.empty();
                         }
-                        return Optional.ofNullable(buf.readNbt());
+                        return Optional.of(ComponentSerialization.STREAM_CODEC.decode(buf));
                     }
             );
 
@@ -142,38 +171,36 @@ public record EntitySpec(
             StreamCodec.composite(
                     EntityProducer.STREAM_CODEC, EntitySpec::producer,
                     IntRange.STREAM_CODEC, EntitySpec::count,
-                    OPTIONAL_NBT_STREAM, spec -> Optional.ofNullable(spec.nbt()),
+                    OPTIONAL_COMPONENT_STREAM, spec -> Optional.ofNullable(spec.name()),
+                    ByteBufCodecs.BOOL, EntitySpec::nameVisible,
+                    EntityAttributes.STREAM_CODEC, EntitySpec::attributes,
                     OPTIONAL_SPAWN_STREAM, spec -> Optional.ofNullable(spec.spawn()),
-                    (producer, count, nbt, spawn) -> new EntitySpec(
+                    (producer, count, name, nameVisible, attributes, spawn) -> new EntitySpec(
                             producer,
                             count,
-                            nbt.orElse(null),
+                            name.orElse(null),
+                            nameVisible,
+                            attributes,
                             spawn.orElse(null)
                     )
             );
-
-    public EntitySpec {
-        if (producer == null) {
-            throw new IllegalArgumentException("'" + JolCraftParameterIds.PRODUCER + "' is required");
-        }
-        count = count != null ? count : IntRange.ONE;
-        if (nbt != null && nbt.isEmpty()) {
-            nbt = null;
-        }
-    }
 
     public static @NotNull DataResult<EntitySpec> fromSelection(
             @NotNull Optional<Holder<EntityType<?>>> entity,
             @NotNull Optional<TagKey<EntityType<?>>> tag,
             @NotNull IntRange count,
-            @Nullable CompoundTag nbt,
+            @Nullable Component name,
+            boolean nameVisible,
+            @Nullable EntityAttributes attributes,
             @Nullable EntitySpawnConfig spawn
     ) {
         return EntityProducer.fromSelection(entity, tag)
                 .map(producer -> new EntitySpec(
                         producer,
                         count,
-                        nbt != null && nbt.isEmpty() ? null : nbt,
+                        name,
+                        nameVisible,
+                        attributes != null ? attributes : EntityAttributes.EMPTY,
                         spawn
                 ));
     }
@@ -187,7 +214,9 @@ public record EntitySpec(
                     canonical.entity(),
                     canonical.tag(),
                     canonical.count(),
-                    canonical.nbt().orElse(null),
+                    canonical.name().orElse(null),
+                    canonical.nameVisible(),
+                    canonical.attributes(),
                     canonical.spawn().orElse(null)
             );
         }
@@ -200,7 +229,9 @@ public record EntitySpec(
         return DataResult.success(new EntitySpec(
                 verbose.producer(),
                 verbose.count(),
-                verbose.nbt().orElse(null),
+                verbose.name().orElse(null),
+                verbose.nameVisible(),
+                verbose.attributes(),
                 verbose.spawn().orElse(null)
         ));
     }
@@ -210,14 +241,30 @@ public record EntitySpec(
                 spec.producer().entityOpt(),
                 spec.producer().tagOpt(),
                 spec.count(),
-                Optional.ofNullable(spec.nbt()),
+                Optional.ofNullable(spec.name()),
+                spec.nameVisible(),
+                spec.attributes(),
                 Optional.ofNullable(spec.spawn())
         ));
     }
 
     @Override
     public @NotNull List<RegistryIntrospection> introspections() {
-        return producer.introspections();
+        List<RegistryIntrospection> producerIntrospections = producer.introspections();
+        List<RegistryIntrospection> attributeIntrospections = attributes.introspections();
+
+        if (attributeIntrospections.isEmpty()) {
+            return producerIntrospections;
+        }
+        if (producerIntrospections.isEmpty()) {
+            return attributeIntrospections;
+        }
+
+        List<RegistryIntrospection> merged =
+                new ArrayList<>(producerIntrospections.size() + attributeIntrospections.size());
+        merged.addAll(producerIntrospections);
+        merged.addAll(attributeIntrospections);
+        return List.copyOf(merged);
     }
 
     @Override
@@ -241,6 +288,13 @@ public record EntitySpec(
                     JolCraftParameterIds.COUNT + ".min must be >= 1 (got " + count.min() + ")");
         }
 
+        DataResult<EntityAttributes> attributesValidation = attributes.validate();
+        var attributesError = attributesValidation.error();
+        if (attributesError.isPresent()) {
+            return DataResult.error(() ->
+                    JolCraftParameterIds.ATTRIBUTES + " invalid: " + attributesError.get().message());
+        }
+
         if (spawn != null) {
             DataResult<EntitySpawnConfig> spawnValidation = spawn.validate();
             var spawnError = spawnValidation.error();
@@ -255,19 +309,32 @@ public record EntitySpec(
 
     public Optional<RolledEntity> roll(@NotNull WorldContext ctx) {
         Optional<Holder<EntityType<?>>> typeOpt = producer.select(ctx);
-        if (typeOpt.isEmpty()) return Optional.empty();
+        if (typeOpt.isEmpty()) {
+            return Optional.empty();
+        }
 
         RandomSource random = ctx.random();
         int rolled = count.roll(random);
-        if (rolled <= 0) return Optional.empty();
+        if (rolled <= 0) {
+            return Optional.empty();
+        }
 
-        return Optional.of(new RolledEntity(typeOpt.get(), rolled, nbt, spawn));
+        return Optional.of(new RolledEntity(
+                typeOpt.get(),
+                rolled,
+                name,
+                nameVisible,
+                attributes,
+                spawn
+        ));
     }
 
     public record RolledEntity(
             Holder<EntityType<?>> type,
             int count,
-            @Nullable CompoundTag nbt,
+            @Nullable Component name,
+            boolean nameVisible,
+            @NotNull EntityAttributes attributes,
             @Nullable EntitySpawnConfig spawn
     ) {}
 }

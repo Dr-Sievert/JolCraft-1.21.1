@@ -16,6 +16,8 @@ import net.sievert.jolcraft.data.recipe.param.output.base.Output;
 import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.base.ResolvedOutputParam;
 import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,26 +140,41 @@ public record Pools(List<Pool> pools)
             @NotNull WorldContext ctx,
             @Nullable ItemTransformSourceResolver resolver
     ) {
-        if (pools.isEmpty()) return List.of();
-
-        ArrayList<Output> out = new ArrayList<>(64);
-
-        for (Pool p : pools) {
-            List<Output> gen = p.generateResolved(ctx, resolver);
-            if (gen.isEmpty()) continue;
-
-            int remaining = MAX_TOTAL_OUTPUTS - out.size();
-            if (remaining <= 0) break;
-
-            if (gen.size() <= remaining) {
-                out.addAll(gen);
-            } else {
-                out.addAll(gen.subList(0, remaining));
-                break;
+        try {
+            if (pools.isEmpty()) {
+                return List.of();
             }
-        }
 
-        return out.isEmpty() ? List.of() : List.copyOf(out);
+            ArrayList<Output> out = new ArrayList<>(64);
+
+            for (Pool p : pools) {
+                if (p == null) {
+                    continue;
+                }
+
+                List<Output> gen = p.generateResolved(ctx, resolver);
+                if (gen.isEmpty()) {
+                    continue;
+                }
+
+                int remaining = MAX_TOTAL_OUTPUTS - out.size();
+                if (remaining <= 0) {
+                    break;
+                }
+
+                if (gen.size() <= remaining) {
+                    out.addAll(gen);
+                } else {
+                    out.addAll(gen.subList(0, remaining));
+                    break;
+                }
+            }
+
+            return out.isEmpty() ? List.of() : List.copyOf(out);
+        } catch (Exception e) {
+            JolCraftLogs.error(JolCraftLogTags.RECIPE, "Pools.generateResolved failed", e);
+            return List.of();
+        }
     }
 
     public boolean anyParam(@NotNull Predicate<OutputParam> test) {

@@ -12,11 +12,12 @@ import net.sievert.jolcraft.data.recipe.param.base.ParamCodecs;
 import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.util.Optional;
 
 public record EntitySpawnConfig(
-        @NotNull BlockPos pos,
+        @Nullable BlockPos pos,
         int offsetX,
         int offsetY,
         int offsetZ,
@@ -29,8 +30,8 @@ public record EntitySpawnConfig(
     private static final Codec<EntitySpawnConfig> RAW_CODEC =
             RecordCodecBuilder.create(inst -> inst.group(
                     BlockPos.CODEC
-                            .fieldOf(JolCraftParameterIds.POSITION)
-                            .forGetter(EntitySpawnConfig::pos),
+                            .optionalFieldOf(JolCraftParameterIds.POSITION)
+                            .forGetter(cfg -> Optional.ofNullable(cfg.pos())),
 
                     Codec.INT.optionalFieldOf(
                             JolCraftStrings.underscored(JolCraftDictionary.OFFSET, "x"), 0
@@ -57,7 +58,17 @@ public record EntitySpawnConfig(
                             JolCraftStrings.underscored(JolCraftDictionary.NO, JolCraftDictionary.AI),
                             false
                     ).forGetter(EntitySpawnConfig::noAi)
-            ).apply(inst, EntitySpawnConfig::new));
+            ).apply(inst, (pos, offsetX, offsetY, offsetZ, radius, forced, persistent, noAi) ->
+                    new EntitySpawnConfig(
+                            pos.orElse(null),
+                            offsetX,
+                            offsetY,
+                            offsetZ,
+                            radius,
+                            forced,
+                            persistent,
+                            noAi
+                    )));
 
     public static final Codec<EntitySpawnConfig> CODEC =
             ParamCodecs.validated(RAW_CODEC);
@@ -74,9 +85,20 @@ public record EntitySpawnConfig(
                     RegistryFriendlyByteBuf::readBoolean
             );
 
+    private static final StreamCodec<RegistryFriendlyByteBuf, Optional<BlockPos>> OPTIONAL_BLOCK_POS =
+            StreamCodec.of(
+                    (buf, opt) -> {
+                        buf.writeBoolean(opt.isPresent());
+                        opt.ifPresent(pos -> BlockPos.STREAM_CODEC.encode(buf, pos));
+                    },
+                    buf -> buf.readBoolean()
+                            ? Optional.of(BlockPos.STREAM_CODEC.decode(buf))
+                            : Optional.empty()
+            );
+
     public static final StreamCodec<RegistryFriendlyByteBuf, EntitySpawnConfig> STREAM_CODEC =
             StreamCodec.composite(
-                    BlockPos.STREAM_CODEC, EntitySpawnConfig::pos,
+                    OPTIONAL_BLOCK_POS, cfg -> Optional.ofNullable(cfg.pos()),
                     VAR_INT, EntitySpawnConfig::offsetX,
                     VAR_INT, EntitySpawnConfig::offsetY,
                     VAR_INT, EntitySpawnConfig::offsetZ,
@@ -84,12 +106,18 @@ public record EntitySpawnConfig(
                     BOOL, EntitySpawnConfig::forced,
                     BOOL, EntitySpawnConfig::persistent,
                     BOOL, EntitySpawnConfig::noAi,
-                    EntitySpawnConfig::new
+                    (pos, offsetX, offsetY, offsetZ, radius, forced, persistent, noAi) ->
+                            new EntitySpawnConfig(
+                                    pos.orElse(null),
+                                    offsetX,
+                                    offsetY,
+                                    offsetZ,
+                                    radius,
+                                    forced,
+                                    persistent,
+                                    noAi
+                            )
             );
-
-    public EntitySpawnConfig {
-        Objects.requireNonNull(pos, JolCraftParameterIds.POSITION);
-    }
 
     @Override
     public @NotNull DataResult<EntitySpawnConfig> validate() {

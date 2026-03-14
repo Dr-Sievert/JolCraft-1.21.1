@@ -20,6 +20,8 @@ import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
 import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
 import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
+import net.sievert.jolcraft.util.JolCraftLogTags;
+import net.sievert.jolcraft.util.JolCraftLogs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -294,11 +296,16 @@ public record Outputs(Conditions conditions, Pools pools)
             @NotNull WorldContext ctx,
             @Nullable ItemTransformSourceResolver resolver
     ) {
-        if (!conditions().test(ctx)) {
+        try {
+            if (!conditions().test(ctx)) {
+                return List.of();
+            }
+
+            return poolsSafe().generateResolved(ctx, resolver);
+        } catch (Exception e) {
+            JolCraftLogs.error(JolCraftLogTags.RECIPE, "Outputs.generateResolved failed", e);
             return List.of();
         }
-
-        return poolsSafe().generateResolved(ctx, resolver);
     }
 
     @Override

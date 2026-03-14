@@ -302,7 +302,7 @@ public record PoolEntry(
                     ? resolved.generateResolved(ctx, resolver)
                     : output.generate(ctx);
         } catch (Exception e) {
-            JolCraftLogs.warn(JolCraftLogTags.RECIPE, "Pool entry output generation failed", e);
+            JolCraftLogs.error(JolCraftLogTags.RECIPE, "PoolEntry.generateResolved failed", e);
             return List.of();
         }
     }

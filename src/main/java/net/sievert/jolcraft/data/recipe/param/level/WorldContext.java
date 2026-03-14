@@ -10,9 +10,14 @@ import org.jetbrains.annotations.Nullable;
 public record WorldContext(
         @NotNull ServerLevel level,
         @Nullable Player player,
-        @Nullable Entity entity
+        @Nullable Entity entity,
+        @NotNull RandomSource random
 ) {
-    public @NotNull RandomSource random() {
-        return level.getRandom();
+    public WorldContext(
+            @NotNull ServerLevel level,
+            @Nullable Player player,
+            @Nullable Entity entity
+    ) {
+        this(level, player, entity, RandomSource.create());
     }
 }

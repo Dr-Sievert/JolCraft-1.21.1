@@ -5,8 +5,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -46,14 +47,17 @@ public record EntityOutput(
             Optional<Holder<EntityType<?>>> entity,
             Optional<TagKey<EntityType<?>>> tag,
             IntRange count,
-            Optional<CompoundTag> nbt,
+            Optional<Component> name,
+            boolean nameVisible,
+            EntityAttributes attributes,
             Optional<EntitySpawnConfig> spawn
     ) {
         private CanonicalRaw {
             entity = entity != null ? entity : Optional.empty();
             tag = tag != null ? tag : Optional.empty();
             count = count != null ? count : IntRange.ONE;
-            nbt = nbt != null ? nbt : Optional.empty();
+            name = name != null ? name : Optional.empty();
+            attributes = attributes != null ? attributes : EntityAttributes.EMPTY;
             spawn = spawn != null ? spawn : Optional.empty();
         }
     }
@@ -74,9 +78,20 @@ public record EntityOutput(
                             .optionalFieldOf(JolCraftParameterIds.COUNT, IntRange.ONE)
                             .forGetter(CanonicalRaw::count),
 
-                    CompoundTag.CODEC
-                            .optionalFieldOf(JolCraftParameterIds.NBT)
-                            .forGetter(CanonicalRaw::nbt),
+                    ComponentSerialization.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.NAME)
+                            .forGetter(CanonicalRaw::name),
+
+                    Codec.BOOL
+                            .optionalFieldOf(
+                                    JolCraftStrings.underscored(JolCraftParameterIds.NAME, JolCraftDictionary.VISIBLE),
+                                    false
+                            )
+                            .forGetter(CanonicalRaw::nameVisible),
+
+                    EntityAttributes.CODEC
+                            .optionalFieldOf(JolCraftParameterIds.ATTRIBUTES, EntityAttributes.EMPTY)
+                            .forGetter(CanonicalRaw::attributes),
 
                     EntitySpawnConfig.CODEC
                             .optionalFieldOf(JolCraftParameterIds.SPAWN)
@@ -115,11 +130,13 @@ public record EntityOutput(
             CanonicalRaw canonical = raw.left().orElseThrow();
 
             return EntitySpec.fromSelection(
-                    canonical.entity() != null ? canonical.entity() : Optional.empty(),
-                    canonical.tag() != null ? canonical.tag() : Optional.empty(),
-                    canonical.count() != null ? canonical.count() : IntRange.ONE,
-                    canonical.nbt() != null ? canonical.nbt().orElse(null) : null,
-                    canonical.spawn() != null ? canonical.spawn().orElse(null) : null
+                    canonical.entity(),
+                    canonical.tag(),
+                    canonical.count(),
+                    canonical.name().orElse(null),
+                    canonical.nameVisible(),
+                    canonical.attributes(),
+                    canonical.spawn().orElse(null)
             ).map(EntityOutput::new);
         }
 
@@ -138,8 +155,10 @@ public record EntityOutput(
         return Either.left(new CanonicalRaw(
                 producer.entityOpt(),
                 producer.tagOpt(),
-                spec.count() != null ? spec.count() : IntRange.ONE,
-                Optional.ofNullable(spec.nbt()),
+                spec.count(),
+                Optional.ofNullable(spec.name()),
+                spec.nameVisible(),
+                spec.attributes(),
                 Optional.ofNullable(spec.spawn())
         ));
     }
@@ -156,7 +175,7 @@ public record EntityOutput(
 
     @Override
     public @NotNull List<Output> generate(@NotNull WorldContext ctx) {
-        var rolledOpt = result.roll(ctx);
+        Optional<EntitySpec.RolledEntity> rolledOpt = result.roll(ctx);
         if (rolledOpt.isEmpty()) {
             return List.of();
         }
@@ -168,7 +187,9 @@ public record EntityOutput(
                 rolled.type(),
                 rolled.count(),
                 pos,
-                rolled.nbt(),
+                rolled.name(),
+                rolled.nameVisible(),
+                rolled.attributes(),
                 rolled.spawn()
         );
 
@@ -183,6 +204,5 @@ public record EntityOutput(
         return error.<DataResult<EntityOutput>>map(entitySpecError -> DataResult.error(() ->
                 "'" + JolCraftParameterIds.RESULT + "' invalid: " + entitySpecError.message()
         )).orElseGet(() -> SelfValidating.ok(this));
-
     }
 }

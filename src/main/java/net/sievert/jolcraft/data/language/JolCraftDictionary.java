@@ -87,6 +87,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SLOW = "slow";
     public static final String SNEAK = "sneak";
     public static final String SPAWN = "spawn";
+    public static final String SPREAD = "spread";
     public static final String SYNC = "sync";
     public static final String TALK = "talk";
     public static final String TEST = "test";
@@ -173,6 +174,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String UNIDENTIFIED = "unidentified";
     public static final String UNLOCKED = "unlocked";
     public static final String UNKNOWN = "unknown";
+    public static final String VISIBLE = "visible";
     public static final String WRONG = "wrong";
     public static final String WRITTEN = "written";
 
