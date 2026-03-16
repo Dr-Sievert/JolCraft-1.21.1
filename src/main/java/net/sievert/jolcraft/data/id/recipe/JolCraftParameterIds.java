@@ -82,6 +82,10 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String TARGET = JolCraftDictionary.TARGET;
     public static final String KEY = JolCraftDictionary.KEY;
     public static final String NAME = JolCraftDictionary.NAME;
+    public static final String HOLDER = JolCraftDictionary.HOLDER;
+    public static final String STATE = JolCraftDictionary.STATE;
+    public static final String IDENTITY = JolCraftDictionary.IDENTITY;
+    public static final String CONTEXT = JolCraftDictionary.CONTEXT;
 
     // ---------------------------------------------------------------------
     // Item requirements / transforms fields
@@ -113,7 +117,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
 
     public static final String EQUIPMENT = JolCraftDictionary.EQUIPMENT;
     public static final String SLOT = JolCraftDictionary.SLOT;
-    public static final String NBT = JolCraftDictionary.NBT;
     public static final String SPAWN = JolCraftDictionary.SPAWN;
 
     // ---------------------------------------------------------------------
