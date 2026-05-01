@@ -1,20 +1,18 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.hand;
 
-import net.minecraft.core.HolderGetter;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.Item;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeHookIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
-import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
+import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.base.OutputsBuilder;
@@ -28,7 +26,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public final class CompassHandInteractions implements RecipeSubProvider {
+public record CompassHandInteractions(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public CompassHandInteractions(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -37,11 +49,11 @@ public final class CompassHandInteractions implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
-        executor.emit(
+        emit(output, tracking,
                 HandInteractionRecipeBuilder.create()
                         .ingredientA(
                                 ItemInputBuilder.create()

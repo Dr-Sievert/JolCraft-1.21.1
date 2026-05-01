@@ -7,11 +7,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
+import net.sievert.jolcraft.world.item.component.custom.BountyData;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -86,7 +86,7 @@ public class BountyItem extends AbstractBountyTaskItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Player player = JolCraftProxy.access().getLocalPlayer();
-        if (!DwarvenLanguageHelper.knowsDwarvish(player)) {
+        if (!LanguageAttachmentHelper.knowsDwarvish(player)) {
             super.appendHoverText(stack, context, tooltip, flag);
             return;
         }

@@ -1,21 +1,34 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-public final class DwarfGuildmasterTrades implements RecipeSubProvider {
+public record DwarfGuildmasterTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public DwarfGuildmasterTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
 
     private static final DwarfProfession PROFESSION = DwarfProfession.GUILDMASTER;
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -24,12 +37,12 @@ public final class DwarfGuildmasterTrades implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.NOVICE)
@@ -41,34 +54,35 @@ public final class DwarfGuildmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.0F)
         );
 
-        addContractTrade(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.CONTRACT_HISTORIAN.get());
-        addContractTrade(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.CONTRACT_MERCHANT.get());
-        addContractTrade(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.CONTRACT_SCRAPPER.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.NOVICE, JolCraftItems.CONTRACT_HISTORIAN.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.NOVICE, JolCraftItems.CONTRACT_MERCHANT.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.NOVICE, JolCraftItems.CONTRACT_SCRAPPER.get());
 
-        addContractTrade(executor, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.CONTRACT_BREWMASTER.get());
-        addContractTrade(executor, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.CONTRACT_GUARD.get());
-        addContractTrade(executor, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.CONTRACT_KEEPER.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.CONTRACT_BREWMASTER.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.CONTRACT_GUARD.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.CONTRACT_KEEPER.get());
 
-        addContractTrade(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_ARTISAN.get());
-        addContractTrade(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_EXPLORER.get());
-        addContractTrade(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_MINER.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_ARTISAN.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_EXPLORER.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_MINER.get());
 
-        addContractTrade(executor, DwarfMerchantData.Level.EXPERT, JolCraftItems.CONTRACT_ARCANIST.get());
-        addContractTrade(executor, DwarfMerchantData.Level.EXPERT, JolCraftItems.CONTRACT_ALCHEMIST.get());
-        addContractTrade(executor, DwarfMerchantData.Level.EXPERT, JolCraftItems.CONTRACT_PRIEST.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.EXPERT, JolCraftItems.CONTRACT_ARCANIST.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.EXPERT, JolCraftItems.CONTRACT_ALCHEMIST.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.EXPERT, JolCraftItems.CONTRACT_PRIEST.get());
 
-        addContractTrade(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.CONTRACT_BLACKSMITH.get());
-        addContractTrade(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.CONTRACT_CHAMPION.get());
-        addContractTrade(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.CONTRACT_SMELTER.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.MASTER, JolCraftItems.CONTRACT_BLACKSMITH.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.MASTER, JolCraftItems.CONTRACT_CHAMPION.get());
+        addContractTrade(output, tracking, DwarfMerchantData.Level.MASTER, JolCraftItems.CONTRACT_SMELTER.get());
     }
 
-    private static void addContractTrade(
-            @NotNull RecipeEmissionExecutor executor,
+    private void addContractTrade(
+            @NotNull RecipeOutput output,
+            JolCraftDataTracking tracking,
             @NotNull DwarfMerchantData.Level level,
             @NotNull ItemLike contract
     ) {
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(level)

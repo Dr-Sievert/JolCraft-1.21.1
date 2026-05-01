@@ -6,15 +6,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipeInput;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyTaskRecipe;
+import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -118,11 +117,7 @@ public final class BountyInteractionHandler implements DwarfInteractions.CoreInt
             ServerLevel level,
             BountyRecipeInput input
     ) {
-        return manager.recipeMap()
-                .getRecipesFor(JolCraftRecipes.BOUNTY_REWARD_TYPE.get(), input, level)
-                .map(RecipeHolder::value)
-                .findFirst()
-                .isPresent();
+        return manager.getRecipeFor(JolCraftRecipes.BOUNTY_REWARD_TYPE.get(), input, level).isPresent();
     }
 
     private static boolean hasAnyTaskRecipe(
@@ -130,10 +125,6 @@ public final class BountyInteractionHandler implements DwarfInteractions.CoreInt
             ServerLevel level,
             BountyRecipeInput input
     ) {
-        return manager.recipeMap()
-                .getRecipesFor(JolCraftRecipes.BOUNTY_TASK_TYPE.get(), input, level)
-                .map(RecipeHolder::value)
-                .findFirst()
-                .isPresent();
+        return manager.getRecipeFor(JolCraftRecipes.BOUNTY_TASK_TYPE.get(), input, level).isPresent();
     }
 }

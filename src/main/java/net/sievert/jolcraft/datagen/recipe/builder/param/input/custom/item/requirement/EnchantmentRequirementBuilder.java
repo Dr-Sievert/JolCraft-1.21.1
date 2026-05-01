@@ -3,7 +3,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.requ
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.requirement.EnchantmentRequirement;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.requirement.EnchantmentRequirement;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 import java.util.Optional;

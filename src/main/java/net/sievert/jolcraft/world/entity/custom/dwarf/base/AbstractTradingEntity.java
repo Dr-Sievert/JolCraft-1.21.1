@@ -15,22 +15,21 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.TeleportTransition;
-import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfig;
-import net.sievert.jolcraft.data.JolCraftStats;
-import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.config.custom.dwarf.trade.DwarfProfessionTradePoolConfig;
+import net.sievert.jolcraft.config.custom.dwarf.trade.TradePoolType;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionTraits;
@@ -39,8 +38,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfTrades;
-import net.sievert.jolcraft.world.entity.util.EntityData;
-import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -54,7 +52,7 @@ import java.util.OptionalInt;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AbstractTradingEntity extends AbstractBreedingEntity implements DwarfMerchant, EntityData {
+public class AbstractTradingEntity extends AbstractBreedingEntity implements DwarfMerchant {
 
     private static final String NBT_XP = JolCraftDictionary.XP;
     private static final String NBT_OFFERS = JolCraftStrings.plural(JolCraftDictionary.OFFER);
@@ -201,13 +199,6 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         return this.level().isClientSide;
     }
 
-    @Nullable
-    @Override
-    public Entity teleport(TeleportTransition teleportTransition) {
-        this.stopTrading();
-        return super.teleport(teleportTransition);
-    }
-
     @Override
     public void die(DamageSource cause) {
         if (!this.level().isClientSide) {
@@ -345,7 +336,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             return false;
         }
 
-        DwarfProfessionConfig.PoolType type = group.poolType();
+        TradePoolType type = group.poolType();
         if (type == null) {
             return false;
         }
@@ -353,7 +344,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         return DwarfProfessionTraits.config(this.getTradeProfession())
                 .tradePools()
                 .get(type)
-                .map(DwarfProfessionConfig.PoolConfig::rerollsOnRestock)
+                .map(DwarfProfessionTradePoolConfig::rerollsOnRestock)
                 .orElse(false);
     }
 

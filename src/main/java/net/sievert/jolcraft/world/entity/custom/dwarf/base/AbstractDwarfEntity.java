@@ -39,7 +39,6 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
-import net.sievert.jolcraft.world.entity.util.EntityData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchant;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -49,12 +48,23 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
+import org.joml.Vector3f;
 
 import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant, EntityData {
+public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant {
+
+    public DwarfActionType getCurrentActionType() {
+        return DwarfActionType.values()[this.getData(CURRENT_ACTION)];
+    }
+
+    @Nullable
+    public DwarfActionType.Subtype getCurrentActionSubtype() {
+        int index = this.getData(CURRENT_ACTION_SUBTYPE);
+        return index >= 0 ? DwarfActionType.Subtype.values()[index] : null;
+    }
 
     private static final String NBT_PROFESSION = JolCraftDictionary.PROFESSION;
 
@@ -69,7 +79,6 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     private static final String NBT_PAID_CAUSE =
             JolCraftStrings.underscored(JolCraftDictionary.PAID, JolCraftDictionary.CAUSE);
-
 
     public AbstractDwarfEntity(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);
@@ -129,11 +138,6 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     }
 
     @Override
-    protected int getBaseExperienceReward(ServerLevel level) {
-        return 1 + this.random.nextInt(3);
-    }
-
-    @Override
     public boolean canBeLeashed() {
         return false;
     }
@@ -163,6 +167,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         builder.define(CURRENT_ACTION, DwarfActionType.IDLE.ordinal());
         builder.define(CURRENT_ACTION_SUBTYPE, -1);
     }
+
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -227,6 +232,11 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     public void tick() {
         super.tick();
         actionHelper.tick(this);
+
+        if (actionHelper.blocksMovement()){
+            this.navigation.stop();
+        }
+
         if (blockCooldownTicks > 0) blockCooldownTicks--;
     }
 
@@ -282,11 +292,11 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     }
 
     @Override
-    protected void customServerAiStep(ServerLevel serverlevel) {
-
+    protected void customServerAiStep() {
         if (this.getAge() != 0) {
             this.inLove = 0;
         }
+
         if (!this.isTrading() && this.updateMerchantTimer > 0) {
             this.updateMerchantTimer--;
             if (this.updateMerchantTimer <= 0) {
@@ -296,15 +306,18 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
                     }
                     this.increaseProfessionLevelOnUpdate = false;
                 }
+
                 this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
                 PlaySound.dwarfYes(this);
             }
         }
+
         if (this.shouldRestock()) {
             this.restock();
-            lastRestockGameTime = this.level().getGameTime();
+            this.lastRestockGameTime = this.level().getGameTime();
         }
-        super.customServerAiStep(serverlevel);
+
+        super.customServerAiStep();
     }
 
     //Combat
@@ -400,8 +413,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
         if (id == 19) {
             if (this.level().isClientSide) {
-                int rgb = ((int)(1.0F * 255) << 16) | ((int)(0.84F * 255) << 8) | (int)(0.0F * 255);
-                DustParticleOptions dust = new DustParticleOptions(rgb, 1.0F);
+                DustParticleOptions dust = new DustParticleOptions(new Vector3f(1.0F, 0.84F, 0.0F), 1.0F);
 
                 Vec3 forward = this.getLookAngle().normalize();
                 double baseX = this.getX() + forward.x * 0.6;
@@ -431,8 +443,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     public void spawnColoredParticles(float r, float g, float b, float scale, int count, double scatter) {
 
-        int rgb = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255);
-        DustParticleOptions dust = new DustParticleOptions(rgb, scale);
+        DustParticleOptions dust = new DustParticleOptions(new Vector3f(r, g, b), scale);
 
         Vec3 forward = this.getLookAngle().normalize();
         double baseX = this.getX() + forward.x * 0.6;
@@ -480,9 +491,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
         if (!mainHand.isEmpty()) {
             if (isSpecialDropItem(mainHand)) {
-                this.spawnAtLocation(level, mainHand);
+                this.spawnAtLocation(mainHand);
             } else if (shouldDropEquipment(mainHand)) {
-                this.spawnAtLocation(level, mainHand);
+                this.spawnAtLocation(mainHand);
             }
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
@@ -531,7 +542,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     public SpawnGroupData finalizeSpawn(
             ServerLevelAccessor level,
             DifficultyInstance difficulty,
-            EntitySpawnReason spawnType,
+            MobSpawnType spawnType,
             @Nullable SpawnGroupData spawnGroupData
     ) {
         if (!level.isClientSide()) {
@@ -551,7 +562,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         SpawnGroupData out = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
 
         if (!level.isClientSide()) {
-            DwarfLoadouts.applySpawnLoadout(this, level, difficulty, spawnType, out);
+            DwarfLoadouts.applySpawnLoadout(this, level, difficulty, out);
         }
 
         return out;

@@ -7,7 +7,8 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -17,12 +18,12 @@ import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
 @JeiPlugin
+@SuppressWarnings("removal")
 public final class JolCraftJeiPlugin implements IModPlugin {
 
     private static final ResourceLocation ID = JolCraft.location(JolCraftJeiIds.JEI_PLUGIN);
@@ -73,8 +74,8 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                         group = group.toLowerCase(Locale.ROOT);
                     }
 
-                    DialItemColor color = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get());
-                    String rgb = color != null ? Integer.toString(color.rgb()) : JolCraftDictionary.DEFAULT;
+                    DeepslateCompassDialColor compassColor = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get());
+                    String rgb = compassColor != null ? Integer.toString(compassColor.color()) : JolCraftDictionary.DEFAULT;
 
                     return JolCraftStrings.underscored(group, rgb);
                 }

@@ -8,7 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.world.item.client.tooltip.util.JolCraftTooltipHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -22,7 +22,7 @@ public class RerollCrateItem extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        TooltipHelper.addAltTooltip(
+        JolCraftTooltipHelper.addAltTooltip(
                 tooltip,
                 Component.translatable(JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE).withStyle(ChatFormatting.GRAY),
                 List.of()

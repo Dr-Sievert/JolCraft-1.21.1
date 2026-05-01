@@ -15,11 +15,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
@@ -129,7 +125,7 @@ public class MuffhornEntity extends Animal implements IShearable {
     }
 
     @Override
-    public boolean isShearable(Player player, ItemStack shears, Level level, BlockPos pos) {
+    public boolean isShearable(@Nullable Player player, ItemStack shears, Level level, BlockPos pos) {
         return !this.isSheared() && !this.isBaby();
     }
 
@@ -151,11 +147,11 @@ public class MuffhornEntity extends Animal implements IShearable {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Animal.createAnimalAttributes()
+        return Animal.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.2F)
                 .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.TEMPT_RANGE, 16d);
+                .add(Attributes.FOLLOW_RANGE, 16d);
     }
 
     @Override
@@ -183,7 +179,6 @@ public class MuffhornEntity extends Animal implements IShearable {
         );
     }
 
-    @Override
     protected void playEatingSound() {
         JolCraftSoundHelper.entity(
                 this,
@@ -240,7 +235,7 @@ public class MuffhornEntity extends Animal implements IShearable {
 
     @Nullable
     public MuffhornEntity getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
-        return JolCraftEntities.MUFFHORN.get().create(serverLevel, EntitySpawnReason.BREEDING);
+        return JolCraftEntities.MUFFHORN.get().create(serverLevel);
     }
 
     @Override

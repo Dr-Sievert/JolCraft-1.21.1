@@ -3,7 +3,13 @@
   "package": "net.sievert.jolcraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "StructurePoolMixin"
+    "AnvilMenuMixin",
+    "BrushableBlockEntityMixin",
+    "BrushItemMixin",
+    "MeleeAttackGoalMixin",
+    "RangedBowAttackGoalMixin",
+    "RangedCrossbowAttackGoalMixin",
+    "SpellcasterUseSpellGoalMixin"
   ],
   "client": [
   ],

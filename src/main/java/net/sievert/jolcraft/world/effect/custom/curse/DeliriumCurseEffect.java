@@ -5,7 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -25,13 +24,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class DeliriumCurseEffect extends MobEffect {
+public class DeliriumCurseEffect extends AbstractCurseEffect {
 
     public static final int EPISODE_TICKS = 200;
 
+    private static final int MIN_INITIAL_DELAY = 100;
+    private static final int INITIAL_DELAY_RANGE = 400;
+    private static final int MIN_REPEAT_DELAY = 400;
+    private static final int REPEAT_DELAY_RANGE = 400;
+
     private static final Map<UUID, Integer> EPISODE_TIMERS = new ConcurrentHashMap<>();
 
-    private static final String NBT_EPISODE_END = JolCraftStrings.underscored(JolCraftDictionary.DELIRIUM, JolCraftDictionary.END);
+    private static final String NBT_EPISODE_END = JolCraftStrings.underscored(
+            JolCraftDictionary.DELIRIUM,
+            JolCraftDictionary.END
+    );
 
     public DeliriumCurseEffect(MobEffectCategory category, int color) {
         super(category, color);
@@ -39,67 +46,46 @@ public class DeliriumCurseEffect extends MobEffect {
 
     public static void cleanupRuntime(ServerPlayer player) {
         EPISODE_TIMERS.remove(player.getUUID());
+        clearEpisodeEnd(player);
     }
 
     @Override
     public void onEffectAdded(LivingEntity entity, int amplifier) {
-        if (!(entity instanceof Player player)) return;
+        super.onEffectAdded(entity, amplifier);
 
-        EPISODE_TIMERS.computeIfAbsent(player.getUUID(), id ->
-                100 + player.getRandom().nextInt(400)
-        );
+        if (!(entity instanceof Player player)) {
+            return;
+        }
+
+        EPISODE_TIMERS.put(player.getUUID(), createInitialDelay(player));
     }
 
     @Override
-    public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
-        if (!(entity instanceof Player player)) return false;
-
-        var effect = player.getEffect(JolCraftEffects.DELIRIUM_CURSE);
-        if (effect == null || effect.getDuration() <= 1) {
-            EPISODE_TIMERS.remove(player.getUUID());
-            clearEpisodeEnd(player);
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+        if (!(entity instanceof ServerPlayer player)) {
             return true;
         }
 
-        UUID id = player.getUUID();
-
-        int timer = EPISODE_TIMERS.computeIfAbsent(id, __ ->
-                100 + level.random.nextInt(400)
-        );
-
-        if (timer <= 0) {
-
-            // Episode fires: apply effects
-            player.addEffect(new MobEffectInstance(
-                    MobEffects.BLINDNESS, EPISODE_TICKS, 0, false, false, false
-            ));
-
-            player.addEffect(new MobEffectInstance(
-                    MobEffects.CONFUSION, EPISODE_TICKS, 0, false, false, false
-            ));
-
-            long endTick = level.getGameTime() + EPISODE_TICKS;
-            setEpisodeEnd(player, endTick);
-
-            if (player instanceof ServerPlayer serverPlayer) {
-                JolCraftNetworking.sendToClient(serverPlayer, new ClientboundDeliriumCursePacket(EPISODE_TICKS));
-            }
-
-            JolCraftSoundHelper.playLocal(
-                    player,
-                    SoundEvents.AMBIENT_CAVE.value(),
-                    player.getSoundSource(),
-                    player.getX(), player.getY(), player.getZ(),
-                    0.7F + level.random.nextFloat() * 0.4F,
-                    0.8F + level.random.nextFloat() * 0.4F
-            );
-
-            int next = 400 + level.random.nextInt(400);
-            EPISODE_TIMERS.put(id, next);
-        } else {
-            EPISODE_TIMERS.put(id, timer - 1);
+        if (!(player.level() instanceof ServerLevel level)) {
+            return true;
         }
 
+        MobEffectInstance effect = player.getEffect(JolCraftEffects.DELIRIUM_CURSE);
+        if (effect == null || effect.getDuration() <= 1) {
+            cleanupRuntime(player);
+            return true;
+        }
+
+        UUID playerId = player.getUUID();
+        int timer = EPISODE_TIMERS.computeIfAbsent(playerId, __ -> createInitialDelay(level));
+
+        if (timer > 0) {
+            EPISODE_TIMERS.put(playerId, timer - 1);
+            return true;
+        }
+
+        triggerEpisode(player, level);
+        EPISODE_TIMERS.put(playerId, createRepeatDelay(level));
         return true;
     }
 
@@ -112,6 +98,53 @@ public class DeliriumCurseEffect extends MobEffect {
         long now = player.level().getGameTime();
         long end = getEpisodeEnd(player);
         return (int) Math.max(0L, end - now);
+    }
+
+    private static void triggerEpisode(ServerPlayer player, ServerLevel level) {
+        player.addEffect(new MobEffectInstance(
+                MobEffects.BLINDNESS,
+                EPISODE_TICKS,
+                0,
+                false,
+                false,
+                false
+        ));
+
+        player.addEffect(new MobEffectInstance(
+                MobEffects.CONFUSION,
+                EPISODE_TICKS,
+                0,
+                false,
+                false,
+                false
+        ));
+
+        setEpisodeEnd(player, level.getGameTime() + EPISODE_TICKS);
+
+        JolCraftNetworking.sendToClient(player, new ClientboundDeliriumCursePacket(EPISODE_TICKS));
+
+        JolCraftSoundHelper.playLocal(
+                player,
+                SoundEvents.AMBIENT_CAVE.value(),
+                player.getSoundSource(),
+                player.getX(),
+                player.getY(),
+                player.getZ(),
+                0.7F + level.random.nextFloat() * 0.4F,
+                0.8F + level.random.nextFloat() * 0.4F
+        );
+    }
+
+    private static int createInitialDelay(Player player) {
+        return MIN_INITIAL_DELAY + player.getRandom().nextInt(INITIAL_DELAY_RANGE);
+    }
+
+    private static int createInitialDelay(ServerLevel level) {
+        return MIN_INITIAL_DELAY + level.random.nextInt(INITIAL_DELAY_RANGE);
+    }
+
+    private static int createRepeatDelay(ServerLevel level) {
+        return MIN_REPEAT_DELAY + level.random.nextInt(REPEAT_DELAY_RANGE);
     }
 
     private static long getEpisodeEnd(Player player) {

@@ -4,13 +4,15 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.recipes.*;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -30,21 +32,15 @@ public final class VanillaRecipeBuilder {
         return item.asItem().builtInRegistryHolder().key().location().getPath();
     }
 
-    private static @NotNull ResourceKey<Recipe<?>> recipeId(@NotNull String folder, @NotNull String path) {
-        return ResourceKey.create(
-                Registries.RECIPE,
-                JolCraft.location(JolCraftStrings.slashed(folder, path))
-        );
+    private static @NotNull ResourceLocation recipeId(@NotNull String folder, @NotNull String path) {
+        return JolCraft.location(JolCraftStrings.slashed(folder, path));
     }
 
-    private static @NotNull ResourceKey<Recipe<?>> recipeId(@NotNull String path) {
-        return ResourceKey.create(
-                Registries.RECIPE,
-                JolCraft.location(path)
-        );
+    private static @NotNull ResourceLocation recipeId(@NotNull String path) {
+        return JolCraft.location(path);
     }
 
-    private static @NotNull ResourceKey<Recipe<?>> recipeId(@NotNull String folder, @NotNull ItemLike item) {
+    private static @NotNull ResourceLocation recipeId(@NotNull String folder, @NotNull ItemLike item) {
         return recipeId(folder, itemPath(item));
     }
 
@@ -107,7 +103,7 @@ public final class VanillaRecipeBuilder {
             builder.save(out);
         }
 
-        public void save(RecipeOutput out, ResourceKey<Recipe<?>> id) {
+        public void save(RecipeOutput out, ResourceLocation id) {
             builder.save(out, id);
         }
 
@@ -174,7 +170,7 @@ public final class VanillaRecipeBuilder {
             builder.save(out);
         }
 
-        public void save(RecipeOutput out, ResourceKey<Recipe<?>> id) {
+        public void save(RecipeOutput out, ResourceLocation id) {
             builder.save(out, id);
         }
 
@@ -202,18 +198,18 @@ public final class VanillaRecipeBuilder {
                 ItemLike unpacked,
                 RecipeCategory packedCategory,
                 ItemLike packed,
-                ResourceKey<Recipe<?>> packedId,
-                ResourceKey<Recipe<?>> unpackedId
+                ResourceLocation packedId,
+                ResourceLocation unpackedId
         ) {
             VanillaRecipeBuilder.shapeless(
-                            ShapelessRecipeBuilder.shapeless(items, unpackedCategory, unpacked, 9)
+                            ShapelessRecipeBuilder.shapeless(unpackedCategory, unpacked, 9)
                     )
                     .requires(packed)
                     .unlockedByHas(packed)
                     .save(out, unpackedId);
 
             VanillaRecipeBuilder.shaped(
-                            ShapedRecipeBuilder.shaped(items, packedCategory, packed)
+                            ShapedRecipeBuilder.shaped(packedCategory, packed)
                     )
                     .define('#', unpacked)
                     .pattern("###")
@@ -233,14 +229,14 @@ public final class VanillaRecipeBuilder {
                 ItemLike packed
         ) {
             VanillaRecipeBuilder.shapeless(
-                            ShapelessRecipeBuilder.shapeless(items, unpackedCategory, unpacked, 9)
+                            ShapelessRecipeBuilder.shapeless(unpackedCategory, unpacked, 9)
                     )
                     .requires(packed)
                     .unlockedByHas(packed)
                     .save(out, folder, unpacked);
 
             VanillaRecipeBuilder.shaped(
-                            ShapedRecipeBuilder.shaped(items, packedCategory, packed)
+                            ShapedRecipeBuilder.shaped(packedCategory, packed)
                     )
                     .define('#', unpacked)
                     .pattern("###")
@@ -383,7 +379,7 @@ public final class VanillaRecipeBuilder {
             );
         }
 
-        public void save(RecipeOutput out, ResourceKey<Recipe<?>> id) {
+        public void save(RecipeOutput out, ResourceLocation id) {
             builder.save(out, id);
         }
 

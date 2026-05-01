@@ -10,15 +10,18 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfig;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigManager;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.config.custom.dwarf.trade.DwarfProfessionTradePoolConfig;
+import net.sievert.jolcraft.config.custom.dwarf.trade.DwarfProfessionTradePoolsConfig;
+import net.sievert.jolcraft.config.custom.dwarf.trade.TradePoolType;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
@@ -258,19 +261,19 @@ public final class DwarfTrades {
                     }
                 }
                 case EXACT_LEVEL_POOL -> {
-                    if (includePoolForMode(prof, DwarfProfessionConfig.PoolType.EXACT_LEVEL, refreshMode)
+                    if (includePoolForMode(prof, TradePoolType.EXACT_LEVEL, refreshMode)
                             && isExactLevel(recipe, lvl)) {
                         exactLevelPool.add(holder);
                     }
                 }
                 case CUMULATIVE_POOL -> {
-                    if (includePoolForMode(prof, DwarfProfessionConfig.PoolType.CUMULATIVE, refreshMode)
+                    if (includePoolForMode(prof, TradePoolType.CUMULATIVE, refreshMode)
                             && isUnlocked(recipe, lvl)) {
                         cumulativePool.add(holder);
                     }
                 }
                 case GLOBAL_POOL -> {
-                    if (includePoolForMode(prof, DwarfProfessionConfig.PoolType.GLOBAL, refreshMode)) {
+                    if (includePoolForMode(prof, TradePoolType.GLOBAL, refreshMode)) {
                         globalPool.add(holder);
                     }
                 }
@@ -278,11 +281,11 @@ public final class DwarfTrades {
         }
 
         DwarfProfessionConfig cfg = DwarfProfessionConfigManager.INSTANCE.get(prof);
-        DwarfProfessionConfig.TradePools pools = cfg.tradePools();
+        DwarfProfessionTradePoolsConfig pools = cfg.tradePools();
 
-        int exactLevelRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.EXACT_LEVEL, lvl, refreshMode);
-        int cumulativeRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.CUMULATIVE, lvl, refreshMode);
-        int globalRolls = rollsForMode(pools, DwarfProfessionConfig.PoolType.GLOBAL, lvl, refreshMode);
+        int exactLevelRolls = rollsForMode(pools, TradePoolType.EXACT_LEVEL, lvl, refreshMode);
+        int cumulativeRolls = rollsForMode(pools, TradePoolType.CUMULATIVE, lvl, refreshMode);
+        int globalRolls = rollsForMode(pools, TradePoolType.GLOBAL, lvl, refreshMode);
 
         List<RecipeHolder<DwarfTradeRecipe>> selectedExactLevel =
                 pickWeightedWithoutReplacement(exactLevelPool, exactLevelRolls, rng);
@@ -320,7 +323,7 @@ public final class DwarfTrades {
 
     private static boolean includePoolForMode(
             @Nullable DwarfProfession profession,
-            @Nullable DwarfProfessionConfig.PoolType type,
+            @Nullable TradePoolType type,
             @NotNull RefreshMode mode
     ) {
         if (mode == RefreshMode.FULL || mode == RefreshMode.REROLL) {
@@ -334,13 +337,13 @@ public final class DwarfTrades {
         DwarfProfessionConfig cfg = DwarfProfessionConfigManager.INSTANCE.get(profession);
         return cfg.tradePools()
                 .get(type)
-                .map(DwarfProfessionConfig.PoolConfig::rerollsOnRestock)
+                .map(DwarfProfessionTradePoolConfig::rerollsOnRestock)
                 .orElse(false);
     }
 
     private static int rollsForMode(
-            @Nullable DwarfProfessionConfig.TradePools pools,
-            @Nullable DwarfProfessionConfig.PoolType type,
+            @Nullable DwarfProfessionTradePoolsConfig pools,
+            @Nullable TradePoolType type,
             @Nullable DwarfMerchantData.Level level,
             @NotNull RefreshMode mode
     ) {
@@ -353,7 +356,7 @@ public final class DwarfTrades {
                     .map(cfg -> cfg.rollsFor(type, level))
                     .orElse(0);
             case RESTOCK -> pools.get(type)
-                    .filter(DwarfProfessionConfig.PoolConfig::rerollsOnRestock)
+                    .filter(DwarfProfessionTradePoolConfig::rerollsOnRestock)
                     .map(cfg -> cfg.rollsFor(type, level))
                     .orElse(0);
         };

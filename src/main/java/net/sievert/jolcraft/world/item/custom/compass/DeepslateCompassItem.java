@@ -11,6 +11,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +20,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
@@ -37,9 +38,10 @@ public class DeepslateCompassItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+
         if (!level.isClientSide && player.isCreative() && player instanceof ServerPlayer serverPlayer) {
-            ItemStack stack = player.getItemInHand(hand);
             GlobalPos tracked = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
             if (tracked != null) {
                 BlockPos pos = tracked.pos();
@@ -79,12 +81,12 @@ public class DeepslateCompassItem extends Item {
                         )
                 );
 
-                return InteractionResult.SUCCESS;
+                return InteractionResultHolder.success(stack);
             }
         }
+
         return super.use(level, player, hand);
     }
-
 
     @Override
     public boolean isFoil(ItemStack stack) {

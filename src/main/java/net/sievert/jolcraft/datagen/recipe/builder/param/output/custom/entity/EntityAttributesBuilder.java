@@ -3,7 +3,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity;
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityAttributes;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

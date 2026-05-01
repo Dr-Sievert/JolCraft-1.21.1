@@ -180,7 +180,7 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
 
     @SuppressWarnings("deprecation")
     @Override
-    protected ItemStack getCloneItemStack(LevelReader p_304482_, BlockPos p_52255_, BlockState p_52256_, boolean p_387989_) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(this.getBaseSeedId());
     }
 }

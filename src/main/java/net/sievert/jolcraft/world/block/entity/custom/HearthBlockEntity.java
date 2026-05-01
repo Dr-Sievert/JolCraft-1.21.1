@@ -1,245 +1,303 @@
 package net.sievert.jolcraft.world.block.entity.custom;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.common.Tags;
+import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.custom.HearthBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.item.inventory.JolCraftItemHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.UUID;
 
-public class HearthBlockEntity extends BlockEntity {
+public class HearthBlockEntity extends BlockEntity implements TickingBlockEntity {
 
-    private static final String NBT_ACTIVE_PLAYERS = JolCraftStrings.underscored(JolCraftDictionary.ACTIVE, JolCraftStrings.plural(JolCraftDictionary.PLAYER));
+    private static final String NBT_OWNER = JolCraftDictionary.OWNER;
+    private static final String NBT_LIT_CREATIVE = JolCraftStrings.underscored(JolCraftDictionary.LIT, JolCraftDictionary.CREATIVE);
 
-    private static final int TICK_INTERVAL = 200;
+    @Nullable private UUID owner;
+    private boolean litCreative = false;
 
-    private static final int EFFECT_DURATION = 300;
+    private static final int RADIUS = 16;
+    public static final int RADIUS_SQ = RADIUS * RADIUS;
+
+    private static final int EFFECT_DURATION = MobEffectInstance.INFINITE_DURATION;
     private static final int EFFECT_AMPLIFIER = 0;
-    private static final int RANGE = 10; // blocks
-    private static final int RANGE_SQ = RANGE * RANGE;
-
-    private final Set<UUID> activePlayers = new HashSet<>();
 
     public HearthBlockEntity(BlockPos pos, BlockState state) {
         super(JolCraftBlockEntities.HEARTH.get(), pos, state);
+    }
+
+    public ItemInteractionResult handleUse(
+            @NotNull ItemStack stack,
+            @NotNull BlockState state,
+            @NotNull ServerPlayer player,
+            @NotNull InteractionHand hand
+    ) {
+        if (state.getValue(HearthBlock.LIT)) {
+            if (player.isCreative()){
+                deactivate();
+            }
+            if (player.getItemInHand(hand).is(Tags.Items.BUCKETS_WATER)){
+                JolCraftItemHelper.consume(player, hand);
+                deactivate();
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (this.owner != null && !isOwner(player)){
+            player.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_OWNER)
+                            .withStyle(ChatFormatting.RED),
+                    true
+            );
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (player.isCreative()) {
+            activate(player);
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (isUnsafeArea(player)) {
+            player.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NOT_SAFE)
+                            .withStyle(ChatFormatting.RED),
+                    true
+            );
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (hasNoNearbyBed(player)) {
+            player.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NO_BED_NEARBY)
+                            .withStyle(ChatFormatting.RED),
+                    true
+            );
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (!isFuel(stack)){
+            player.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_NEED_FUEL)
+                            .withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (HearthAttachmentHelper.hasLitToday(player)) {
+            player.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HEARTH_COOLDOWN)
+                            .withStyle(ChatFormatting.GRAY),
+                    true
+            );
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        player.awardStat(Stats.ITEM_USED.get(player.getItemInHand(hand).getItem()));
+        JolCraftItemHelper.consume(player, hand);
+        activate(player);
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void tickServer() {
+        if (!(this.level instanceof ServerLevel serverLevel) || this.owner == null) return;
+
+        BlockState state = this.getBlockState();
+        ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(this.owner);
+
+        if (player == null) {
+            if (state.getValue(HearthBlock.LIT) && !this.litCreative) {
+                setLitOff();
+            }
+            return;
+        }
+
+        if (this.litCreative) {
+            if (!state.getValue(HearthBlock.LIT)) setLit();
+            applyHomesteadEffect(player);
+            return;
+        }
+
+        if (hasNoNearbyBed(player)
+                || !HearthAttachmentHelper.isActiveHearth(player, this.worldPosition)) {
+            deactivate();
+            return;
+        }
+
+        if (!state.getValue(HearthBlock.LIT)) {
+            setLit();
+        }
+
+        applyHomesteadEffect(player);
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         super.saveAdditional(tag, provider);
 
-        ListTag uuidList = new ListTag();
-        for (UUID uuid : activePlayers) {
-            uuidList.add(StringTag.valueOf(uuid.toString()));
+        if (this.owner != null) {
+            tag.putUUID(NBT_OWNER, this.owner);
         }
-        tag.put(NBT_ACTIVE_PLAYERS, uuidList);
+
+        if (this.litCreative) {
+            tag.putBoolean(NBT_LIT_CREATIVE, true);
+        }
     }
 
     @Override
     protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         super.loadAdditional(tag, provider);
 
-        activePlayers.clear();
+        this.owner = tag.hasUUID(NBT_OWNER) ? tag.getUUID(NBT_OWNER) : null;
+        this.litCreative = tag.getBoolean(NBT_LIT_CREATIVE);
+    }
 
-        ListTag uuidList = tag.getList(NBT_ACTIVE_PLAYERS, 8); // 8 = String
-        for (int i = 0; i < uuidList.size(); i++) {
-            String raw = tag.getString(JolCraftDictionary.PLAYER);
-            try {
-                activePlayers.add(UUID.fromString(raw));
-            } catch (IllegalArgumentException e) {
-                JolCraftLogs.warn(
-                        JolCraftLogTags.BLOCK_ENTITY,
-                        "Hearth at {} contains invalid player UUID '{}' (skipping)",
-                        JolCraftLogs.roundedPos(this),
-                        raw
-                );
-            }
+    private boolean isFuel(ItemStack stack){
+        return stack.getBurnTime(null ) > 10000;
+    }
+
+    public @Nullable UUID getOwner() {
+        return this.owner;
+    }
+
+    private boolean isOwner(ServerPlayer player) {
+        return this.owner != null && this.owner.equals(player.getUUID());
+    }
+
+    private void setOwner(ServerPlayer player){
+        this.owner = player.getUUID();
+        HearthAttachmentHelper.setActiveHearthPos(player, this.worldPosition);
+    }
+
+    private void clearOwner(){
+        this.owner = null;
+    }
+
+    private void setLit() {
+        setLit(true);
+    }
+
+    private void setLitOff() {
+        setLit(false);
+    }
+
+    private void setLit(boolean lit) {
+        if (this.level == null) return;
+
+        BlockPos pos = this.worldPosition;
+        BlockState lower = this.level.getBlockState(pos);
+
+        if (!(lower.getBlock() instanceof HearthBlock)) return;
+        if (lower.getValue(HearthBlock.HALF) != DoubleBlockHalf.LOWER) return;
+
+        setLitState(pos, lower, lit);
+
+        BlockPos upperPos = pos.above();
+        BlockState upper = this.level.getBlockState(upperPos);
+        if (upper.is(lower.getBlock()) && upper.getValue(HearthBlock.HALF) == DoubleBlockHalf.UPPER) {
+            setLitState(upperPos, upper, lit);
+        }
+
+        if(lit){
+            JolCraftSoundHelper.block(this.level, this.worldPosition, SoundEvents.BLAZE_SHOOT, 1.0F, 0.8F);
+        } else{
+            JolCraftSoundHelper.block(this.level, this.worldPosition, SoundEvents.GENERIC_EXTINGUISH_FIRE, 1.0F, 0.8F);
         }
     }
 
-    public boolean activateFor(UUID playerId) {
-        boolean wasAdded = activePlayers.add(playerId);
-        if (wasAdded) setChanged();
-        return wasAdded;
+    private void setLitState(BlockPos pos, BlockState state, boolean lit) {
+        if (this.level == null) return;
+        if (state.getValue(HearthBlock.LIT) != lit) {
+            this.level.setBlock(pos, state.setValue(HearthBlock.LIT, lit), Block.UPDATE_ALL);
+        }
     }
 
-    public void tick() {
-        if (!(this.level instanceof ServerLevel serverlevel)) return;
-        if ((serverlevel.getGameTime() % TICK_INTERVAL) != 0L) return;
-
-        boolean pruned = pruneInactive(serverlevel);
-        if (pruned) setChanged();
-
-        boolean anyValidBed = hasAnyValidBed(serverlevel);
-
-        BlockPos pos = this.getBlockPos();
-        BlockState state = this.getBlockState();
-        boolean lit = state.getValue(HearthBlock.LIT);
-
-        // Turn off if no valid beds remain.
-        if (!anyValidBed) {
-            if (lit) {
-                setLitBoth(serverlevel, pos, false);
-                JolCraftSoundHelper.block(
-                        serverlevel,
-                        pos,
-                        SoundEvents.FIRE_EXTINGUISH,
-                        1.0F,
-                        0.8F
-                );
-            }
+    private void activate(ServerPlayer player) {
+        setLit();
+        setOwner(player);
+        if (player.isCreative()){
+            this.litCreative = true;
             return;
         }
-
-        // Turn on if at least one valid bed exists.
-        if (!lit) {
-            setLitBoth(serverlevel, pos, true);
-            JolCraftSoundHelper.block(
-                    level,
-                    pos,
-                    SoundEvents.BLAZE_SHOOT,
-                    1.0F,
-                    0.8F
-            );
-        }
-
-        // Refresh state after potential changes above.
-        state = serverlevel.getBlockState(pos);
-        if (state.is(this.getBlockState().getBlock()) && state.getValue(HearthBlock.LIT)) {
-            applyHomesteadEffect(serverlevel);
-        }
+        HearthAttachmentHelper.setLastLitToday(player);
+        this.litCreative = false;
     }
 
-    private static void setLitBoth(ServerLevel level, BlockPos lowerPos, boolean lit) {
-        BlockState lower = level.getBlockState(lowerPos);
-        if (!(lower.getBlock() instanceof HearthBlock)) return;
-
-        if (lower.getValue(HearthBlock.LIT) != lit) {
-            level.setBlock(lowerPos, lower.setValue(HearthBlock.LIT, lit), 3);
-        }
-
-        BlockPos upperPos = lowerPos.above();
-        BlockState upper = level.getBlockState(upperPos);
-        if (upper.is(lower.getBlock()) && upper.hasProperty(HearthBlock.HALF) && upper.getValue(HearthBlock.HALF) == DoubleBlockHalf.UPPER) {
-            if (upper.getValue(HearthBlock.LIT) != lit) {
-                level.setBlock(upperPos, upper.setValue(HearthBlock.LIT, lit), 3);
+    private void deactivate() {
+        if (this.level instanceof ServerLevel serverLevel && this.owner != null) {
+            ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(this.owner);
+            if (HearthAttachmentHelper.isActiveHearth(player, this.worldPosition)) {
+                HearthAttachmentHelper.clearActiveHearthPos(player);
             }
         }
+
+        setLitOff();
+        clearOwner();
+        this.litCreative = false;
     }
 
-    private void applyHomesteadEffect(ServerLevel level) {
-        MinecraftServer server = level.getServer();
+    private boolean isUnsafeArea(ServerPlayer player) {
+        if (this.level == null) return true;
 
-        BlockPos hearthPos = this.getBlockPos();
+        AABB area = new AABB(this.worldPosition).inflate(8, 5, 8);
 
-        for (UUID uuid : activePlayers) {
-            ServerPlayer player = server.getPlayerList().getPlayer(uuid);
-            if (player == null) continue; // only online players receive effect
-            if (player.level() != level) continue;
-
-            if (player.blockPosition().distSqr(hearthPos) <= RANGE_SQ) {
-                player.addEffect(new MobEffectInstance(
-                        JolCraftEffects.HOMESTEAD,
-                        EFFECT_DURATION,
-                        EFFECT_AMPLIFIER,
-                        true,
-                        true
-                ));
-            }
-        }
+        return !this.level.getEntitiesOfClass(
+                Monster.class,
+                area,
+                mob -> mob.isPreventingPlayerRest(player)
+        ).isEmpty();
     }
 
-    private boolean hasAnyValidBed(ServerLevel level) {
-        BlockPos hearthPos = this.getBlockPos();
+    private boolean hasNoNearbyBed(ServerPlayer player) {
+        if (this.level == null) return true;
 
-        for (UUID uuid : activePlayers) {
-            Player player = level.getPlayerByUUID(uuid);
-            if (!(player instanceof ServerPlayer sp)) continue;
-
-            BlockPos bedPos = sp.getRespawnPosition();
-            if (bedPos == null) continue;
-            if (!sp.getRespawnDimension().equals(level.dimension())) continue;
-
-            BlockState bedState = level.getBlockState(bedPos);
-            if (!(bedState.getBlock() instanceof BedBlock)) continue;
-
-            if (bedPos.distSqr(hearthPos) <= RANGE_SQ) {
-                return true;
-            }
-        }
-
-        return false;
+        BlockPos bedPos = player.getRespawnPosition();
+        return bedPos == null
+                || !player.getRespawnDimension().equals(this.level.dimension())
+                || !(this.level.getBlockState(bedPos).getBlock() instanceof BedBlock)
+                || !(bedPos.distSqr(this.worldPosition) <= RADIUS_SQ);
     }
 
-    /**
-     * Removes entries that no longer have a valid bed position in this dimension within range.
-     * This prevents the persisted UUID list from growing forever.
-     */
-    private boolean pruneInactive(ServerLevel level) {
-        if (activePlayers.isEmpty()) return false;
+    private void applyHomesteadEffect(ServerPlayer player) {
+        if (player.hasEffect(JolCraftEffects.HOMESTEAD)) return;
+        if (player.blockPosition().distSqr(this.worldPosition) > RADIUS_SQ) return;
 
-        boolean changed = false;
-        BlockPos hearthPos = this.getBlockPos();
-
-        for (Iterator<UUID> it = activePlayers.iterator(); it.hasNext(); ) {
-            UUID uuid = it.next();
-
-            Player p = level.getPlayerByUUID(uuid);
-            if (!(p instanceof ServerPlayer sp)) {
-                it.remove();
-                changed = true;
-                continue;
-            }
-
-            BlockPos bedPos = sp.getRespawnPosition();
-            if (bedPos == null) {
-                it.remove();
-                changed = true;
-                continue;
-            }
-
-            if (!sp.getRespawnDimension().equals(level.dimension())) {
-                it.remove();
-                changed = true;
-                continue;
-            }
-
-            BlockState bedState = level.getBlockState(bedPos);
-            if (!(bedState.getBlock() instanceof BedBlock)) {
-                it.remove();
-                changed = true;
-                continue;
-            }
-
-            if (bedPos.distSqr(hearthPos) > RANGE_SQ) {
-                it.remove();
-                changed = true;
-            }
-        }
-
-        return changed;
+        player.addEffect(new MobEffectInstance(
+                JolCraftEffects.HOMESTEAD,
+                EFFECT_DURATION,
+                EFFECT_AMPLIFIER,
+                false,
+                false,
+                true
+        ));
     }
 }

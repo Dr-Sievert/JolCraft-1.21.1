@@ -65,11 +65,6 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state) {
-        return true;
-    }
-
-    @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         BlockState below = level.getBlockState(pos.below());
         if (!below.is(JolCraftTags.Blocks.HOPS_BOTTOM) || below.getValue(HopsCropBottomBlock.AGE) < 5) {
@@ -86,19 +81,19 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
     @Override
     protected BlockState updateShape(
             BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticker,
-            BlockPos pos,
             Direction direction,
-            BlockPos neighborPos,
             BlockState neighborState,
-            RandomSource random
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos neighborPos
     ) {
-        if (direction == Direction.DOWN &&
-                (!neighborState.is(JolCraftTags.Blocks.HOPS_BOTTOM) || neighborState.getValue(HopsCropBottomBlock.AGE) < 5)) {
-            ticker.scheduleTick(pos, this, 1);
+        if (direction == Direction.DOWN
+                && (!neighborState.is(JolCraftTags.Blocks.HOPS_BOTTOM)
+                || neighborState.getValue(HopsCropBottomBlock.AGE) < 5)) {
+            level.scheduleTick(pos, this, 1);
         }
-        return super.updateShape(state, level, ticker, pos, direction, neighborPos, neighborState, random);
+
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override

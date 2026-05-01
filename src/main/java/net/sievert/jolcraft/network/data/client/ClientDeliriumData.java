@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.network.data.client;
 
 import net.minecraft.client.Minecraft;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 public final class ClientDeliriumData {
 
@@ -31,10 +31,22 @@ public final class ClientDeliriumData {
         }
     }
 
-    public static boolean isActive() {
-        var mc = Minecraft.getInstance();
-        if (mc.level == null) return false;
+    public static void clear() {
+        endGameTime = 0L;
+    }
 
-        return mc.level.getGameTime() < endGameTime;
+    public static boolean isInactive() {
+        var mc = Minecraft.getInstance();
+        if (mc.level == null) {
+            clear();
+            return true;
+        }
+
+        if (mc.level.getGameTime() >= endGameTime) {
+            clear();
+            return true;
+        }
+
+        return false;
     }
 }

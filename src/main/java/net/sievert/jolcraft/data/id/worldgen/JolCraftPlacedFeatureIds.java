@@ -22,17 +22,20 @@ public final class JolCraftPlacedFeatureIds extends JolCraftIds {
     // Ores
     // ---------------------------------------------------------------------
 
-    public static final String SMALL_MITHRIL_ORE_PLACED =
-            placed(JolCraftConfiguredFeatureIds.SMALL_MITHRIL_ORE);
+    public static final String ORE_MITHRIL_SMALL_PLACED =
+            placed(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SMALL);
 
-    public static final String MEDIUM_MITHRIL_ORE_PLACED =
-            placed(JolCraftConfiguredFeatureIds.MEDIUM_MITHRIL_ORE);
+    public static final String ORE_MITHRIL_MEDIUM_PLACED =
+            placed(JolCraftConfiguredFeatureIds.ORE_MITHRIL_MEDIUM);
 
-    public static final String LARGE_MITHRIL_ORE_PLACED =
-            placed(JolCraftConfiguredFeatureIds.LARGE_MITHRIL_ORE);
+    public static final String ORE_MITHRIL_LARGE_PLACED =
+            placed(JolCraftConfiguredFeatureIds.ORE_MITHRIL_LARGE);
 
-    public static final String SPECIAL_MITHRIL_ORE_PLACED =
-            placed(JolCraftConfiguredFeatureIds.SPECIAL_MITHRIL_ORE);
+    public static final String ORE_MITHRIL_SPECIAL_PLACED =
+            placed(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SPECIAL);
+
+    public static final String ORE_MITHRIL_BURIED_PLACED =
+            placed(JolCraftConfiguredFeatureIds.ORE_MITHRIL_BURIED);
 
     // ---------------------------------------------------------------------
     // Geodes

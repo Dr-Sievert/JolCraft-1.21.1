@@ -1,9 +1,10 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.custom.PlayerLevelCondition;
-import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.custom.PlayerLevelCondition;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ import java.util.Optional;
  */
 public final class PlayerLevelConditionBuilder
         extends AbstractConditionBuilder<PlayerLevelConditionBuilder>
-        implements ValidatedBuilder<Condition> {
+        implements JolCraftValidatedBuilder<Condition> {
 
     private Integer minLevel;
     private Integer maxLevel;
@@ -67,7 +68,7 @@ public final class PlayerLevelConditionBuilder
     // ---------------------------------------------------------------------
 
     @Override
-    public DataResult<Condition> buildValidated() {
+    public @NotNull DataResult<Condition> buildValidated() {
         int min = (minLevel != null) ? minLevel : 0;
 
         Optional<Integer> max =

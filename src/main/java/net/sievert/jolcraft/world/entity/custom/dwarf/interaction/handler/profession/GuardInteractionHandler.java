@@ -3,10 +3,11 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.profe
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
+import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -22,11 +23,13 @@ public final class GuardInteractionHandler implements DwarfInteractions.Professi
         var hand = ctx.hand();
         var stack = ctx.stack();
 
-        EquipmentSlot slot = JolCraftEquipmentHelper.slotIfMatches(stack, JolCraftItems.DEEPSLATE_ARMOR_SET);
+        ArmorItem.Type type = JolCraftEquipmentHelper.armorType(stack);
 
-        if (slot == null) {
+        if (type == null || !stack.is(JolCraftItems.DEEPSLATE_ARMOR_SET.get(type).get())) {
             return InteractionResult.PASS;
         }
+
+        EquipmentSlot slot = type.getSlot();
 
         if (!dwarf.getItemBySlot(slot).isEmpty()) {
             PlaySound.dwarfNo(dwarf);

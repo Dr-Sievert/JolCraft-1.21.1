@@ -51,4 +51,11 @@ public interface DwarfAction {
      * Use for timer expiration, completion conditions, etc.
      */
     default boolean isStopped() { return false; }
+
+    /**
+     * Should return true when this action stops dwarf movement.
+     */
+    default boolean blocksMovement() {
+        return false;
+    }
 }

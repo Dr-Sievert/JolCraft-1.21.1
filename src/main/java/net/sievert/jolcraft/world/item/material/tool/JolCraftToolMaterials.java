@@ -1,16 +1,20 @@
 package net.sievert.jolcraft.world.item.material.tool;
 
-import net.minecraft.tags.TagKey;
+import com.google.common.base.Suppliers;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class JolCraftToolMaterials {
 
@@ -26,15 +30,52 @@ public final class JolCraftToolMaterials {
             float attackDamageBonus,
             int enchantmentValue
     ) {
-        public ToolMaterial build() {
-            return new ToolMaterial(
-                    incorrectForTag,
-                    durability,
-                    speed,
-                    attackDamageBonus,
-                    enchantmentValue,
-                    repairTag
-            );
+        public Tier build() {
+            return new Tier() {
+                private final Supplier<Ingredient> repairIngredient =
+                        Suppliers.memoize(() -> Ingredient.of(repairTag));
+
+                @Override
+                public int getUses() {
+                    return durability;
+                }
+
+                @Override
+                public float getSpeed() {
+                    return speed;
+                }
+
+                @Override
+                public float getAttackDamageBonus() {
+                    return attackDamageBonus;
+                }
+
+                @Override
+                public @NotNull TagKey<Block> getIncorrectBlocksForDrops() {
+                    return incorrectForTag;
+                }
+
+                @Override
+                public int getEnchantmentValue() {
+                    return enchantmentValue;
+                }
+
+                @Override
+                public @NotNull Ingredient getRepairIngredient() {
+                    return repairIngredient.get();
+                }
+            };
+        }
+
+        public Tier asTier() {
+            return new Tier() {
+                @Override public int getUses() { return durability; }
+                @Override public float getSpeed() { return speed; }
+                @Override public float getAttackDamageBonus() { return attackDamageBonus; }
+                @Override public @NotNull TagKey<Block> getIncorrectBlocksForDrops() { return incorrectForTag; }
+                @Override public int getEnchantmentValue() { return enchantmentValue; }
+                @Override public @NotNull Ingredient getRepairIngredient() { return Ingredient.of(repairTag); }
+            };
         }
     }
 
@@ -59,14 +100,14 @@ public final class JolCraftToolMaterials {
             )
     );
 
-    private static final Map<JolCraftMaterials.Material, ToolMaterial> BY_MATERIAL = buildAll();
+    private static final Map<JolCraftMaterials.Material, Tier> BY_MATERIAL = buildAll();
 
-    private static Map<JolCraftMaterials.Material, ToolMaterial> buildAll() {
-        Map<JolCraftMaterials.Material, ToolMaterial> out =
+    private static Map<JolCraftMaterials.Material, Tier> buildAll() {
+        Map<JolCraftMaterials.Material, Tier> out =
                 new EnumMap<>(JolCraftMaterials.Material.class);
 
         for (Entry entry : ENTRIES) {
-            ToolMaterial previous = out.put(entry.material(), entry.build());
+            Tier previous = out.put(entry.material(), entry.build());
             if (previous != null) {
                 throw new IllegalStateException("Duplicate tool material entry for: " + entry.material());
             }
@@ -75,15 +116,15 @@ public final class JolCraftToolMaterials {
         return Map.copyOf(out);
     }
 
-    public static ToolMaterial toolMaterial(JolCraftMaterials.Material material) {
-        ToolMaterial mat = BY_MATERIAL.get(material);
+    public static Tier toolMaterial(JolCraftMaterials.Material material) {
+        Tier mat = BY_MATERIAL.get(material);
         if (mat == null) {
             throw new IllegalStateException("Missing tool material entry for: " + material);
         }
         return mat;
     }
 
-    public static Map<JolCraftMaterials.Material, ToolMaterial> all() {
+    public static Map<JolCraftMaterials.Material, Tier> all() {
         return BY_MATERIAL;
     }
 }

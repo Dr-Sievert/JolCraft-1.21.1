@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.quantity;
 
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 /**

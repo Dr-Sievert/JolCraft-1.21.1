@@ -10,19 +10,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
+import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
+import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -162,7 +161,6 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
 
     public @NotNull FermentingCauldronRecipeBuilder noEffect() {
         this.effect = Optional.empty();
-        this.brewColor = FermentingCauldronRecipe.DEFAULT_BREW_COLOR;
         return this;
     }
 
@@ -189,7 +187,7 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     public @NotNull FermentingCauldronRecipeBuilder noBubbleTicks() {
-        this.bubbleTicks = FermentingCauldronRecipe.DEFAULT_BREW_COLOR;
+        this.bubbleTicks = FermentingCauldronRecipe.DEFAULT_BUBBLE_TICKS;
         return this;
     }
 
@@ -209,7 +207,7 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
     }
 
     @Override
-    public @NotNull DataResult<RecipeEmission> buildValidated() {
+    public @NotNull DataResult<JolCraftDataEmission<RecipeOutput>> buildValidated() {
         if (ingredient == null) {
             errors.add("ingredient is required");
         }
@@ -239,54 +237,54 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
             errors.add("extract requires lastIngredient (cannot extract from water cauldron)");
         }
 
-        RecipeFileNameBuilder nb = RecipeFileNameBuilder.create();
+        JolCraftFileNameBuilder nb = JolCraftFileNameBuilder.create();
 
         if (hasExtract) {
-            nb.word(JolCraftDictionary.EXTRACT)
-                    .word(extractTok);
+            nb.token(JolCraftDictionary.EXTRACT)
+                    .token(extractTok);
 
             if (hasEffect) {
-                nb.word(JolCraftDictionary.WITH)
-                        .word(effectTok)
-                        .word(JolCraftDictionary.EFFECT);
+                nb.token(JolCraftDictionary.WITH)
+                        .token(effectTok)
+                        .token(JolCraftDictionary.EFFECT);
             }
 
-            nb.word(JolCraftDictionary.FROM)
-                    .word(cauldronTok);
+            nb.token(JolCraftDictionary.FROM)
+                    .token(cauldronTok);
 
         } else if (finalizeBrew) {
-            nb.word(JolCraftDictionary.BREW)
-                    .word(ingredientTok);
+            nb.token(JolCraftDictionary.BREW)
+                    .token(ingredientTok);
 
             if (hasEffect) {
-                nb.word(JolCraftDictionary.WITH)
-                        .word(effectTok)
-                        .word(JolCraftDictionary.EFFECT);
+                nb.token(JolCraftDictionary.WITH)
+                        .token(effectTok)
+                        .token(JolCraftDictionary.EFFECT);
             }
 
-            nb.word(JolCraftDictionary.IN)
-                    .word(cauldronTok);
+            nb.token(JolCraftDictionary.IN)
+                    .token(cauldronTok);
 
         } else {
-            nb.word(JolCraftDictionary.ADD)
-                    .word(ingredientTok);
+            nb.token(JolCraftDictionary.ADD)
+                    .token(ingredientTok);
 
             if (hasEffect) {
-                nb.word(JolCraftDictionary.WITH)
-                        .word(effectTok)
-                        .word(JolCraftDictionary.EFFECT);
+                nb.token(JolCraftDictionary.WITH)
+                        .token(effectTok)
+                        .token(JolCraftDictionary.EFFECT);
             }
 
-            nb.word(JolCraftDictionary.TO)
-                    .word(cauldronTok);
+            nb.token(JolCraftDictionary.TO)
+                    .token(cauldronTok);
         }
 
         DataResult<String> nameBuilt = nb.build();
 
         if (!errors.isEmpty()) {
             String partial = nameBuilt.result().orElse("");
-            String msg = "recipeName: " + String.join("; ", errors) +
-                    (nameBuilt.error().isPresent() ? ("; " + nameBuilt.error().get().message()) : "");
+            String msg = "recipeName: " + String.join("; ", errors)
+                    + (nameBuilt.error().isPresent() ? "; " + nameBuilt.error().get().message() : "");
             nameBuilt = DataResult.error(() -> msg, partial);
         }
 
@@ -311,17 +309,15 @@ public final class FermentingCauldronRecipeBuilder implements RecipeBuilder {
                 FermentingCauldronRecipe.validateRecipe(recipe);
 
         DataResult<FermentingCauldronRecipe> recipeResult =
-                (!errors.isEmpty() && validated.error().isEmpty())
+                !errors.isEmpty() && validated.error().isEmpty()
                         ? DataResult.error(() -> "builder: " + String.join("; ", errors), recipe)
                         : validated;
 
         return nameBuilt.flatMap(name ->
-                recipeResult.flatMap(validRecipe ->
-                        RecipeEmission.of(
-                                JolCraftRecipeIds.FERMENTING_CAULDRON,
+                recipeResult.map(validRecipe ->
+                        new JolCraftDataEmission<>(
                                 name,
-                                (RecipeOutput outAccept, ResourceKey<Recipe<?>> id) ->
-                                        outAccept.accept(id, validRecipe, null)
+                                (outAccept, path) -> outAccept.accept(JolCraft.location(path), validRecipe, null)
                         )
                 )
         );

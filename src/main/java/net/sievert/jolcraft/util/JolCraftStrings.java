@@ -2,6 +2,10 @@ package net.sievert.jolcraft.util;
 
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 public final class JolCraftStrings {
 
@@ -26,9 +30,14 @@ public final class JolCraftStrings {
         return join('_', parts);
     }
 
-    /** Join non-empty parts with '/' (textures, folders, resource paths) */
+    /** Join non-empty parts with '/' */
     public static String slashed(String... parts) {
         return join('/', parts);
+    }
+
+    /** Join non-empty parts with ' ' */
+    public static String spaced(String... parts) {
+        return join(' ', parts);
     }
 
     private static String join(char separator, String... parts) {
@@ -50,14 +59,27 @@ public final class JolCraftStrings {
         return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
-    public static String toTitleCase(String path) {
-        if (path == null || path.isEmpty()) return "";
-        String[] words = path.split("_");
-        StringBuilder result = new StringBuilder();
-        for (String w : words) {
-            if (!w.isEmpty()) result.append(capitalize(w)).append(" ");
+    public static String toTitleCase(String input) {
+        if (input == null || input.isBlank()) {
+            return input;
         }
-        return result.toString().trim();
+
+        String[] parts = input.split("[._/\\s]+");
+
+        StringBuilder result = new StringBuilder();
+
+        for (String part : parts) {
+            if (part.isEmpty()) continue;
+
+            if (!result.isEmpty()) {
+                result.append(" ");
+            }
+
+            result.append(Character.toUpperCase(part.charAt(0)))
+                    .append(part.substring(1).toLowerCase());
+        }
+
+        return result.toString();
     }
 
     /** Two-word flip: "contract_blank" -> "Blank Contract", else title-case. */
@@ -68,6 +90,64 @@ public final class JolCraftStrings {
             return capitalize(words[1]) + " " + capitalize(words[0]);
         }
         return toTitleCase(path);
+    }
+
+    // ---------------------------------------------------------------------
+    // Datagen normalization helpers
+    // ---------------------------------------------------------------------
+
+    @NotNull
+    public static String normalizeUnderscored(@Nullable String raw) {
+        String s = raw == null ? "" : raw.trim().toLowerCase(Locale.ROOT);
+        if (s.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder out = new StringBuilder(s.length());
+        boolean lastUnderscore = false;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            boolean ok =
+                    (c >= 'a' && c <= 'z') ||
+                            (c >= '0' && c <= '9');
+
+            if (ok) {
+                out.append(c);
+                lastUnderscore = false;
+            } else if (!lastUnderscore) {
+                out.append('_');
+                lastUnderscore = true;
+            }
+        }
+
+        int start = 0;
+        int end = out.length();
+
+        while (start < end && out.charAt(start) == '_') {
+            start++;
+        }
+        while (end > start && out.charAt(end - 1) == '_') {
+            end--;
+        }
+
+        return start >= end ? "" : out.substring(start, end);
+    }
+
+    @NotNull
+    public static String normalizeExtension(@Nullable String raw) {
+        String s = raw == null ? "" : raw.trim().toLowerCase(Locale.ROOT);
+        if (s.isEmpty()) {
+            return "";
+        }
+
+        if (s.startsWith(".")) {
+            s = s.substring(1);
+        }
+
+        String normalized = normalizeUnderscored(s).replace('_', '.');
+        return normalized.isEmpty() ? "" : "." + normalized;
     }
 
     // ---------------------------------------------------------------------

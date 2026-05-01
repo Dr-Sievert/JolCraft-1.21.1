@@ -2,7 +2,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.re
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
-import net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement.EffectRequirement;
+import net.sievert.jolcraft.world.recipe.param.input.custom.entity.requirement.EffectRequirement;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 /**

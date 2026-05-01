@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.data.language;
 
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationTier;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
 import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
@@ -15,7 +15,6 @@ import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 
 public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
@@ -92,6 +91,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_STRUCTURE_DISCOVERED =
             tooltip(JolCraftDictionary.STRUCTURE, JolCraftDictionary.DISCOVERED);
 
+    public static final String TOOLTIP_STRUCTURE_ALREADY_DISCOVERED =
+            tooltip(JolCraftDictionary.STRUCTURE, us(JolCraftDictionary.ALREADY, JolCraftDictionary.DISCOVERED));
+
     public static final String TOOLTIP_DEEPSLATE_COMPASS_TRACKING =
             category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.DEEPSLATE_COMPASS);
 
@@ -159,11 +161,14 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_STRONGBOX_BUSY =
             tooltip(JolCraftDictionary.STRONGBOX, JolCraftDictionary.BUSY);
 
+    public static final String TOOLTIP_HEARTH_OWNER =
+            tooltip(JolCraftDictionary.HEARTH, JolCraftDictionary.OWNER);
+
     public static final String TOOLTIP_HEARTH_COOLDOWN =
             tooltip(JolCraftDictionary.HEARTH, JolCraftDictionary.COOLDOWN);
 
-    public static final String TOOLTIP_HEARTH_NEED_COAL =
-            tooltip(JolCraftDictionary.HEARTH, us(JolCraftDictionary.NEED, JolCraftDictionary.COAL));
+    public static final String TOOLTIP_HEARTH_NEED_FUEL =
+            tooltip(JolCraftDictionary.HEARTH, us(JolCraftDictionary.NEED, JolCraftDictionary.FUEL));
 
     public static final String TOOLTIP_HEARTH_NOT_SAFE =
             tooltip(JolCraftDictionary.HEARTH, us(JolCraftDictionary.NOT, JolCraftDictionary.SAFE));
@@ -176,10 +181,10 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // ---------------------------------------------------------------------
 
     public static final String TOOLTIP_NEED_DWARVEN_LANGUAGE =
-            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.NEED, JolCraftAttachmentIds.DWARVEN_LANGUAGE));
+            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.NEED, JolCraftDictionary.DWARVEN, JolCraftAttachmentIds.LANGUAGE));
 
     public static final String TOOLTIP_NEED_ANCIENT_DWARVEN_LANGUAGE =
-            category(JolCraftDictionary.TOOLTIP, JolCraftAttachmentIds.ANCIENT_DWARVEN_LANGUAGE);
+            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.NEED, JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftAttachmentIds.LANGUAGE));
 
     public static final String TOOLTIP_ANCIENT_MEMORY =
             category(JolCraftDictionary.TOOLTIP, JolCraftEffectIds.ANCIENT_MEMORY);
@@ -239,7 +244,7 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
             tooltip(JolCraftItemIds.DWARVEN_LEXICON, JolCraftDictionary.USE);
 
     public static final String TOOLTIP_DWARVEN_LEXICON_KNOWS_DWARVEN_LANGUAGE =
-            tooltip(JolCraftItemIds.DWARVEN_LEXICON, us(JolCraftDictionary.KNOWS, JolCraftAttachmentIds.DWARVEN_LANGUAGE));
+            tooltip(JolCraftItemIds.DWARVEN_LEXICON, us(JolCraftDictionary.KNOWS, JolCraftDictionary.DWARVEN, JolCraftAttachmentIds.LANGUAGE));
 
     public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_LOCKED =
             tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, JolCraftDictionary.LOCKED);
@@ -257,16 +262,16 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
             tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.CANNOT, JolCraftDictionary.USE));
 
     public static final String TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE =
-            tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.KNOWS, JolCraftAttachmentIds.ANCIENT_DWARVEN_LANGUAGE));
+            tooltip(JolCraftItemIds.ANCIENT_DWARVEN_LEXICON, us(JolCraftDictionary.KNOWS, JolCraftDictionary.ANCIENT, JolCraftDictionary.DWARVEN, JolCraftAttachmentIds.LANGUAGE));
 
     public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_EMPTY =
-            tooltip(JolCraftAttachmentIds.DWARF_TOME_UNLOCKS, JolCraftDictionary.EMPTY);
+            tooltip(JolCraftAttachmentIds.DWARF_LORE, JolCraftDictionary.EMPTY);
 
     public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_BREW =
-            tooltip(JolCraftAttachmentIds.DWARF_TOME_UNLOCKS, JolCraftDictionary.BREW);
+            tooltip(JolCraftAttachmentIds.DWARF_LORE, JolCraftDictionary.BREW);
 
     public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS =
-            tooltip(JolCraftAttachmentIds.DWARF_TOME_UNLOCKS, pl(JolCraftDictionary.GEM));
+            tooltip(JolCraftAttachmentIds.DWARF_LORE, pl(JolCraftDictionary.GEM));
 
     public static final String TOOLTIP_WRITTEN_CONTRACT =
             tooltip(JolCraftDictionary.CONTRACT, JolCraftDictionary.WRITTEN);
@@ -333,11 +338,20 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // DwarvenReputationLangSubProvider
     // ---------------------------------------------------------------------
 
-    public static final String DWARVEN_REPUTATION_TIER_0 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.STRANGER.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_1 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.KNOWN_FACE.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_2 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.TRUSTED.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_3 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.RESPECTED.idToString()));
-    public static final String DWARVEN_REPUTATION_TIER_4 = mod(dot(us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER), DwarvenReputationTier.BLOOD_KIN.idToString()));
+    private static String reputationTier(int tierId) {
+        return mod(
+                dot(
+                        us(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.TIER),
+                        String.valueOf(tierId)
+                )
+        );
+    }
+
+    public static final String DWARVEN_REPUTATION_TIER_STRANGER = reputationTier(DwarvenReputationAttachment.Tier.STRANGER.getId());
+    public static final String DWARVEN_REPUTATION_TIER_KNOWN_FACE = reputationTier(DwarvenReputationAttachment.Tier.KNOWN_FACE.getId());
+    public static final String DWARVEN_REPUTATION_TIER_TRUSTED = reputationTier(DwarvenReputationAttachment.Tier.TRUSTED.getId());
+    public static final String DWARVEN_REPUTATION_TIER_RESPECTED = reputationTier(DwarvenReputationAttachment.Tier.RESPECTED.getId());
+    public static final String DWARVEN_REPUTATION_TIER_BLOOD_KIN = reputationTier(DwarvenReputationAttachment.Tier.BLOOD_KIN.getId());
 
     public static final String TOOLTIP_DWARVEN_REPUTATION_LOCKED =
             tooltip(JolCraftAttachmentIds.DWARVEN_REPUTATION, JolCraftDictionary.LOCKED);

@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.hand;
 
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -10,11 +11,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biomes;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom.*;
@@ -36,7 +37,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 @SuppressWarnings("deprecation")
-public final class TestHandInteractions implements RecipeSubProvider {
+public record TestHandInteractions(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public TestHandInteractions(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -45,9 +60,9 @@ public final class TestHandInteractions implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
 
         ConditionsBuilder condition = ConditionsBuilder.create().condition(
@@ -81,7 +96,7 @@ public final class TestHandInteractions implements RecipeSubProvider {
         //   ...
         // }
         // -----------------------------------------------------------------
-        executor.emit(
+        emit(output, tracking,
                 HandInteractionRecipeBuilder.create()
                         .ingredientA(
                                 ItemInputBuilder.create()
@@ -215,7 +230,7 @@ public final class TestHandInteractions implements RecipeSubProvider {
         //
         // Added emerald as a second pool with no gate.
         // -----------------------------------------------------------------
-        executor.emit(
+        emit(output, tracking,
                 HandInteractionRecipeBuilder.create()
                         .ingredientA(
                                 ItemInputBuilder.create()
@@ -293,7 +308,7 @@ public final class TestHandInteractions implements RecipeSubProvider {
         //
         // Diamond entry is gated. Emerald entry is always present in same pool.
         // -----------------------------------------------------------------
-        executor.emit(
+        emit(output, tracking,
                 HandInteractionRecipeBuilder.create()
                         .ingredientA(
                                 ItemInputBuilder.create()
@@ -354,7 +369,7 @@ public final class TestHandInteractions implements RecipeSubProvider {
 // Shape goal:
 // diamond is leaf-gated, emerald is ungated in the same pool
 // -----------------------------------------------------------------
-        executor.emit(
+        emit(output, tracking,
                 HandInteractionRecipeBuilder.create()
                         .ingredientA(
                                 ItemInputBuilder.create()

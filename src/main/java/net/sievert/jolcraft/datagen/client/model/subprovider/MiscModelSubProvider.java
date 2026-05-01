@@ -1,18 +1,16 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
-import net.minecraft.client.data.models.model.ItemModelUtils;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.renderer.item.SelectItemModel;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.PropertyDispatch;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -20,88 +18,101 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.client.coin.CoinPouchAmountProperty;
+import net.sievert.jolcraft.world.item.client.property.custom.CoinPouchAmount;
+import net.sievert.jolcraft.world.item.client.property.JolCraftItemProperties;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
-public final class MiscModelSubProvider implements AbstractModelProvider.ModelSubProvider {
+public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
 
-    private static final String SUB_COIN = "coin";
+    private static final String SUB_COIN = JolCraftDictionary.COIN;
 
     @Override
-    public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
-
-        /* ---------------------------- */
-        /* Core / misc items            */
-        /* ---------------------------- */
-
-        items.generateFlatItem(JolCraftItems.DEV_KEY.get(), ModelTemplates.FLAT_ITEM);
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.GOLD_COIN.get(), ModelTemplates.FLAT_ITEM, SUB_COIN);
-        generateCoinPouchModel(items);
-
-        items.generateFlatItem(JolCraftItems.LOCKPICK.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-
-        /* ---------------------------- */
-        /* Alchemy                      */
-        /* ---------------------------- */
-
-        items.generateFlatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), ModelTemplates.FLAT_ITEM);
-        items.generateFlatItem(JolCraftItems.DEEPSLATE_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-        items.generateFlatItem(JolCraftItems.MITHRIL_PESTLE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-        items.generateFlatItem(JolCraftItems.INVERIX.get(), ModelTemplates.FLAT_ITEM);
-
-        /* ---------------------------- */
-        /* Bounty                        */
-        /* ---------------------------- */
-
-        items.generateFlatItem(JolCraftItems.BOUNTY.get(), ModelTemplates.FLAT_ITEM);
-        items.generateFlatItem(JolCraftItems.BOUNTY_CRATE.get(), ModelTemplates.FLAT_ITEM);
-        items.generateFlatItem(JolCraftItems.RESTOCK_CRATE.get(), ModelTemplates.FLAT_ITEM);
-        items.generateFlatItem(JolCraftItems.REROLL_CRATE.get(), ModelTemplates.FLAT_ITEM);
-
-        /* ---------------------------- */
-        /* Blocks                        */
-        /* ---------------------------- */
-
-        createHearth(blocks, JolCraftBlocks.HEARTH.get());
-        createManagedLight(blocks, JolCraftBlocks.MANAGED_LIGHT.get());
+    public @NotNull String id() {
+        return JolCraftDictionary.MISC;
     }
 
-    public static void generateCoinPouchModel(ItemModelGenerators itemModels) {
-        Item pouch = JolCraftItems.COIN_POUCH.get();
+    @Override
+    public void registerModels(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull JolCraftDataTracking tracking
+    ) {
+        builder.flatItem(JolCraftItems.DEV_KEY.get());
 
-        ResourceLocation small = JolCraft.location("item/coin/coin_pouch_small");
-        ResourceLocation large = JolCraft.location("item/coin/coin_pouch_large");
-        ResourceLocation full  = JolCraft.location("item/coin/coin_pouch_full");
+        builder.flatItem(JolCraftItems.GOLD_COIN.get(), SUB_COIN);
+        generateCoinPouchModel(builder);
 
-        ModelTemplates.FLAT_ITEM.create(small, TextureMapping.layer0(small), itemModels.modelOutput);
-        ModelTemplates.FLAT_ITEM.create(large,  TextureMapping.layer0(large),  itemModels.modelOutput);
-        ModelTemplates.FLAT_ITEM.create(full,  TextureMapping.layer0(full),  itemModels.modelOutput);
+        builder.handheldItem(JolCraftItems.LOCKPICK.get());
 
-        List<SelectItemModel.SwitchCase<Integer>> cases = List.of(
-                ItemModelUtils.when(0,   ItemModelUtils.plainModel(small)),
-                ItemModelUtils.when(1,   ItemModelUtils.plainModel(large)),
-                ItemModelUtils.when(2,   ItemModelUtils.plainModel(full))
-        );
+        builder.flatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
+        builder.handheldItem(JolCraftItems.DEEPSLATE_PESTLE.get());
+        builder.handheldItem(JolCraftItems.MITHRIL_PESTLE.get());
+        builder.flatItem(JolCraftItems.INVERIX.get());
 
-        itemModels.itemModelOutput.accept(
-                pouch,
-                new SelectItemModel.Unbaked(
-                        new SelectItemModel.UnbakedSwitch<>(CoinPouchAmountProperty.INSTANCE, cases),
-                        Optional.of(ItemModelUtils.plainModel(small))
-                )
-        );
+        builder.flatItem(JolCraftItems.BOUNTY.get());
+        builder.flatItem(JolCraftItems.BOUNTY_CRATE.get());
+        builder.flatItem(JolCraftItems.RESTOCK_CRATE.get());
+        builder.flatItem(JolCraftItems.REROLL_CRATE.get());
+
+        createHearth(builder, JolCraftBlocks.HEARTH.get());
+        createManagedLight(builder, JolCraftBlocks.MANAGED_LIGHT.get());
     }
 
-    public static void createHearth(BlockModelGenerators blockModels, Block hearthBlock) {
+    private static void generateCoinPouchModel(@NotNull JolCraftModelBuilder builder) {
+        ResourceLocation empty = JolCraft.location("item/coin/coin_pouch");
+        ResourceLocation medium = JolCraft.location("item/coin/coin_pouch_medium");
+        ResourceLocation full = JolCraft.location("item/coin/coin_pouch_full");
+
+        ModelTemplates.FLAT_ITEM.create(empty, TextureMapping.layer0(empty), builder::addModel);
+        ModelTemplates.FLAT_ITEM.create(medium, TextureMapping.layer0(medium), builder::addModel);
+        ModelTemplates.FLAT_ITEM.create(full, TextureMapping.layer0(full), builder::addModel);
+
+        new CoinPouchAmount().bootstrap();
+
+        JsonArray overrides = new JsonArray();
+        overrides.add(coinPouchOverride(JolCraftDictionary.EMPTY, empty));
+        overrides.add(coinPouchOverride(JolCraftDictionary.MEDIUM, medium));
+        overrides.add(coinPouchOverride(JolCraftDictionary.FULL, full));
+
+        builder.addModel(ModelLocationUtils.getModelLocation(JolCraftItems.COIN_POUCH.get()), () -> {
+            JsonObject json = new JsonObject();
+            json.addProperty("parent", "minecraft:item/generated");
+
+            JsonObject textures = new JsonObject();
+            textures.addProperty("layer0", empty.toString());
+            json.add("textures", textures);
+
+            json.add("overrides", overrides);
+            return json;
+        });
+    }
+
+    private static @NotNull JsonObject coinPouchOverride(
+            @NotNull String valueKey,
+            @NotNull ResourceLocation modelLocation
+    ) {
+        JsonObject predicate = new JsonObject();
+        predicate.addProperty(
+                CoinPouchAmount.KEY.toString(),
+                JolCraftItemProperties.value(CoinPouchAmount.KEY, valueKey)
+        );
+
+        JsonObject override = new JsonObject();
+        override.add("predicate", predicate);
+        override.addProperty("model", modelLocation.toString());
+        return override;
+    }
+
+    public static void createHearth(@NotNull JolCraftModelBuilder builder, @NotNull Block hearthBlock) {
         TextureMapping baseMapping = new TextureMapping()
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(hearthBlock, "_side"))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(hearthBlock, "_top"))
@@ -112,7 +123,7 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
         ResourceLocation hearthModel = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(
                 hearthBlock,
                 baseMapping,
-                blockModels.modelOutput
+                builder::addModel
         );
 
         TextureMapping litMapping = new TextureMapping()
@@ -126,12 +137,12 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
                 hearthBlock,
                 "_on",
                 litMapping,
-                blockModels.modelOutput
+                builder::addModel
         );
 
         ResourceLocation chimney = JolCraft.location("block/hearth_chimney");
 
-        blockModels.blockStateOutput.accept(
+        builder.addBlockState(
                 MultiVariantGenerator.multiVariant(hearthBlock)
                         .with(
                                 PropertyDispatch
@@ -142,7 +153,12 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
                                         )
                                         .generate((half, lit, facing) -> {
                                             VariantProperties.Rotation xRot = VariantProperties.Rotation.R0;
-                                            VariantProperties.Rotation yRot = AbstractModelProvider.rotFromDegrees(AbstractModelProvider.vanillaFacingY(facing));
+                                            VariantProperties.Rotation yRot = switch (facing) {
+                                                case EAST -> VariantProperties.Rotation.R90;
+                                                case SOUTH -> VariantProperties.Rotation.R180;
+                                                case WEST -> VariantProperties.Rotation.R270;
+                                                default -> VariantProperties.Rotation.R0;
+                                            };
 
                                             if (half == DoubleBlockHalf.LOWER) {
                                                 return Variant.variant()
@@ -158,14 +174,15 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
                                         })
                         )
         );
+
+        builder.delegateItemToBlockModel(hearthBlock);
     }
 
-    public static void createManagedLight(BlockModelGenerators blockModels, Block block) {
+    public static void createManagedLight(@NotNull JolCraftModelBuilder builder, @NotNull Block block) {
         PropertyDispatch.C1<Integer> dispatch = PropertyDispatch.property(BlockStateProperties.LEVEL);
 
         for (int i = 0; i <= 15; i++) {
             String suffix = String.format(Locale.ROOT, "_%02d", i);
-
             ResourceLocation particleTex = TextureMapping.getItemTexture(Items.LIGHT, suffix);
 
             dispatch.select(
@@ -176,13 +193,13 @@ public final class MiscModelSubProvider implements AbstractModelProvider.ModelSu
                                     block,
                                     suffix,
                                     TextureMapping.particle(particleTex),
-                                    blockModels.modelOutput
+                                    builder::addModel
                             )
                     )
             );
         }
 
-        blockModels.blockStateOutput.accept(
+        builder.addBlockState(
                 MultiVariantGenerator.multiVariant(block).with(dispatch)
         );
     }

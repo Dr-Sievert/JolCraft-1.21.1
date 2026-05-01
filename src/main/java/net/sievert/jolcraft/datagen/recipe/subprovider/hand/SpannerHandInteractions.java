@@ -1,20 +1,20 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.hand;
 
-import net.minecraft.core.HolderGetter;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
-import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
+import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
@@ -27,7 +27,21 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
-public final class SpannerHandInteractions implements RecipeSubProvider {
+public record SpannerHandInteractions(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public SpannerHandInteractions(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -36,27 +50,28 @@ public final class SpannerHandInteractions implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
-        salvagePool(executor, JolCraftTags.Items.GENERAL_SALVAGE,   SoundEvents.ITEM_BREAK,            0.75F, 1.25F);
-        salvagePool(executor, JolCraftTags.Items.TEXTILE_SALVAGE,   SoundEvents.WOOL_BREAK,            0.75F, 1.25F);
-        salvagePool(executor, JolCraftTags.Items.REDSTONE_SALVAGE,  SoundEvents.ITEM_BREAK,            0.75F, 1.45F);
-        salvagePool(executor, JolCraftTags.Items.IRON_SALVAGE,      SoundEvents.METAL_BREAK,           0.75F, 1.60F);
-        salvagePool(executor, JolCraftTags.Items.DEEPSLATE_SALVAGE, SoundEvents.DEEPSLATE_BREAK,       0.75F, 1.25F);
-        salvagePool(executor, JolCraftTags.Items.GOLD_SALVAGE,      SoundEvents.METAL_BREAK,           0.75F, 1.70F);
-        salvagePool(executor, JolCraftTags.Items.MITHRIL_SALVAGE,   SoundEvents.NETHERITE_BLOCK_BREAK, 0.75F, 1.25F);
+        salvagePool(output, tracking, JolCraftTags.Items.GENERAL_SALVAGE, SoundEvents.ITEM_BREAK, 0.75F, 1.25F);
+        salvagePool(output, tracking, JolCraftTags.Items.TEXTILE_SALVAGE, SoundEvents.WOOL_BREAK, 0.75F, 1.25F);
+        salvagePool(output, tracking, JolCraftTags.Items.REDSTONE_SALVAGE, SoundEvents.ITEM_BREAK, 0.75F, 1.45F);
+        salvagePool(output, tracking, JolCraftTags.Items.IRON_SALVAGE, SoundEvents.METAL_BREAK, 0.75F, 1.60F);
+        salvagePool(output, tracking, JolCraftTags.Items.DEEPSLATE_SALVAGE, SoundEvents.DEEPSLATE_BREAK, 0.75F, 1.25F);
+        salvagePool(output, tracking, JolCraftTags.Items.GOLD_SALVAGE, SoundEvents.METAL_BREAK, 0.75F, 1.70F);
+        salvagePool(output, tracking, JolCraftTags.Items.MITHRIL_SALVAGE, SoundEvents.NETHERITE_BLOCK_BREAK, 0.75F, 1.25F);
     }
 
     private void salvagePool(
-            @NotNull RecipeEmissionExecutor executor,
+            @NotNull RecipeOutput output,
+            JolCraftDataTracking tracking,
             @NotNull TagKey<Item> salvageTag,
             @NotNull SoundEvent successEvent,
             float successVolume,
             float successPitch
     ) {
-        executor.emit(
+        emit(output, tracking,
                 HandInteractionRecipeBuilder.create()
                         .ingredientA(
                                 ItemInputBuilder.create()

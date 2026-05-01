@@ -1,14 +1,15 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.transform.ComponentTransformBuilder;
@@ -16,14 +17,25 @@ import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.tran
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
-import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
-import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import org.jetbrains.annotations.NotNull;
 
-public final class DwarfExplorerTrades implements RecipeSubProvider {
+public record DwarfExplorerTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
     private static final DwarfProfession PROFESSION = DwarfProfession.EXPLORER;
+
+    public DwarfExplorerTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -32,12 +44,11 @@ public final class DwarfExplorerTrades implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
-
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.NOVICE)
@@ -49,18 +60,16 @@ public final class DwarfExplorerTrades implements RecipeSubProvider {
                         .priceMultiplier(0.0F)
         );
 
-        addDialTrade(executor, DwarfMerchantData.Level.NOVICE, StructureGroup.DWARVEN);
-        addDialTrade(executor, DwarfMerchantData.Level.APPRENTICE, StructureGroup.ANCIENT);
+        addDialTrade(output, tracking, DwarfMerchantData.Level.NOVICE, DeepslateCompassStructureGroup.SURFACE);
+        addDialTrade(output, tracking, DwarfMerchantData.Level.APPRENTICE, DeepslateCompassStructureGroup.VILLAGES);
     }
 
-    private static void addDialTrade(
-            @NotNull RecipeEmissionExecutor executor,
+    private void addDialTrade(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
             @NotNull DwarfMerchantData.Level level,
-            @NotNull StructureGroup group
+            @NotNull DeepslateCompassStructureGroup group
     ) {
-
-        int color = DeepslateCompassHelper.getColor(group);
-
         ItemOutput out = ItemOutputBuilder.create()
                 .result(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get().asItem())
                 .transforms(
@@ -68,12 +77,15 @@ public final class DwarfExplorerTrades implements RecipeSubProvider {
                                 .component(
                                         ComponentTransformBuilder.create()
                                                 .set(JolCraftDataComponents.STRUCTURE_GROUP.get(), group.getId())
-                                                .set(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(), new DialItemColor(color))
+                                                .set(
+                                                        JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(),
+                                                        new DeepslateCompassDialColor(group.color())
+                                                )
                                 )
                 )
                 .build();
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(level)

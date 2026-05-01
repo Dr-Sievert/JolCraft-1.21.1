@@ -1,21 +1,23 @@
 package net.sievert.jolcraft.world.item.custom.armor;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.Holder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorType;
-import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
-import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
+import net.sievert.jolcraft.world.item.material.armor.JolCraftArmorMaterials;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -24,32 +26,50 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 public abstract class ArmorSetItem extends ArmorItem {
 
-    private static final int DEFAULT_EFFECT_DURATION_TICKS = 300;
+    private static final String NBT_ARMOR_SET_EFFECTS = JolCraftStrings.underscored(
+            JolCraft.MOD_ID,
+            JolCraftDictionary.ARMOR,
+            JolCraftDictionary.SET,
+            JolCraftStrings.plural(JolCraftDictionary.EFFECT)
+    );
+
+    private static final int EFFECT_DURATION = MobEffectInstance.INFINITE_DURATION;
+    private static final boolean EFFECT_AMBIENT = false;
+    private static final boolean EFFECT_PARTICLES = false;
+    private static final boolean EFFECT_ICON = true;
 
     protected ArmorSetItem(
-            ArmorMaterial material,
-            ArmorType armorType,
+            Holder<ArmorMaterial> material,
+            ArmorItem.Type type,
             Properties properties
     ) {
-        super(material, armorType, material.humanoidProperties(properties, armorType));
+        super(material, type, properties);
     }
 
-    /**
-     * The JolCraft material that must be worn as a full suit for effects to apply.
-     */
-    protected abstract @NotNull JolCraftMaterials.Material targetMaterial();
+    protected abstract @NotNull JolCraftMaterials.Material material();
+    protected abstract @NotNull List<ArmorSetEffect> effects();
 
-    /**
-     * Effects to apply while the full suit is worn.
-     * The duration field is ignored; {@link #effectDurationTicks()} is used.
-     */
-    protected abstract @NotNull List<MobEffectInstance> effects();
+    protected record ArmorSetEffect(
+            Holder<MobEffect> effect,
+            int amplifier
+    ) {
+        private MobEffectInstance createInstance() {
+            return new MobEffectInstance(
+                    this.effect,
+                    EFFECT_DURATION,
+                    this.amplifier,
+                    EFFECT_AMBIENT,
+                    EFFECT_PARTICLES,
+                    EFFECT_ICON
+            );
+        }
 
-    /**
-     * Duration for effects applied by this set.
-     */
-    protected int effectDurationTicks() {
-        return DEFAULT_EFFECT_DURATION_TICKS;
+        private String id() {
+            return this.effect.unwrapKey()
+                    .orElseThrow()
+                    .location()
+                    .toString();
+        }
     }
 
     @Override
@@ -57,65 +77,77 @@ public abstract class ArmorSetItem extends ArmorItem {
         if (level.isClientSide) return;
         if (!(entity instanceof Player player)) return;
 
-        if (fullSuitMaterial(player) != targetMaterial()) return;
-
-        applyEffects(player);
+        updateSetEffects(player, hasFullSet(player));
     }
 
-    private void applyEffects(Player player) {
-        int duration = effectDurationTicks();
+    private boolean hasFullSet(Player player) {
+        for (ArmorItem.Type type : JolCraftEquipmentHelper.PLAYER_ARMOR_TYPES) {
+            ItemStack stack = player.getItemBySlot(type.getSlot());
 
-        for (MobEffectInstance template : effects()) {
-            if (player.hasEffect(template.getEffect())) continue;
+            if (stack.isEmpty()) return false;
 
-            player.addEffect(new MobEffectInstance(
-                    template.getEffect(),
-                    duration,
-                    template.getAmplifier(),
-                    template.isAmbient(),
-                    template.isVisible()
-            ));
-        }
-    }
-
-    /**
-     * Returns the JolCraft material iff the player is wearing a full suit of that material,
-     * based on EQUIPPABLE.assetId (EquipmentAsset key). Otherwise returns null.
-     */
-    protected static @Nullable JolCraftMaterials.Material fullSuitMaterial(Player player) {
-        JolCraftMaterials.Material head = materialFromStack(player.getItemBySlot(EquipmentSlot.HEAD));
-        if (head == null) return null;
-
-        JolCraftMaterials.Material chest = materialFromStack(player.getItemBySlot(EquipmentSlot.CHEST));
-        if (chest != head) return null;
-
-        JolCraftMaterials.Material legs = materialFromStack(player.getItemBySlot(EquipmentSlot.LEGS));
-        if (legs != head) return null;
-
-        JolCraftMaterials.Material feet = materialFromStack(player.getItemBySlot(EquipmentSlot.FEET));
-        if (feet != head) return null;
-
-        return head;
-    }
-
-    protected static @Nullable JolCraftMaterials.Material materialFromStack(ItemStack stack) {
-        if (stack.isEmpty()) return null;
-
-        if (!JolCraftEquipmentHelper.isArmor(stack)) return null;
-
-        Equippable equip = stack.get(DataComponents.EQUIPPABLE);
-        if (equip == null) return null;
-
-        if (equip.assetId().isEmpty()) return null;
-
-        Object assetId = equip.assetId().get();
-
-        for (JolCraftMaterials.Material material : JolCraftMaterials.Material.values()) {
-            if (assetId.equals(material.equipmentAssetKey())) {
-                return material;
+            var mat = JolCraftEquipmentHelper.armorMaterial(stack);
+            if (mat == null || mat != JolCraftArmorMaterials.armorMaterial(material())) {
+                return false;
             }
         }
 
-        return null;
+        return true;
+    }
+
+    private void updateSetEffects(Player player, boolean hasFullSet) {
+        for (ArmorSetEffect effect : effects()) {
+            String id = effect.id();
+            MobEffectInstance instance = player.getEffect(effect.effect());
+            boolean hasEffect = instance != null;
+            boolean owned = hasAppliedArmorSetEffect(player, id);
+
+            if (hasFullSet) {
+                if (!hasEffect) {
+                    player.addEffect(effect.createInstance());
+                }
+
+                setAppliedArmorSetEffect(player, id);
+                continue;
+            }
+
+            if (owned && hasEffect) {
+                if (instance.getDuration() == EFFECT_DURATION && instance.getAmplifier() == effect.amplifier()) {
+                    player.removeEffect(effect.effect());
+                    clearAppliedArmorSetEffect(player, id);
+                }
+
+                continue;
+            }
+
+            clearAppliedArmorSetEffect(player, id);
+        }
+    }
+
+    private static CompoundTag getArmorSetEffects(Player player) {
+        CompoundTag data = player.getPersistentData();
+
+        if (!data.contains(NBT_ARMOR_SET_EFFECTS)) {
+            data.put(NBT_ARMOR_SET_EFFECTS, new CompoundTag());
+        }
+
+        return data.getCompound(NBT_ARMOR_SET_EFFECTS);
+    }
+
+    private static boolean hasAppliedArmorSetEffect(Player player, String id) {
+        return getArmorSetEffects(player).getBoolean(id);
+    }
+
+    private static void setAppliedArmorSetEffect(Player player, String id) {
+        getArmorSetEffects(player).putBoolean(id, true);
+    }
+
+    private static void clearAppliedArmorSetEffect(Player player, String id) {
+        CompoundTag effects = getArmorSetEffects(player);
+        effects.remove(id);
+
+        if (effects.isEmpty()) {
+            player.getPersistentData().remove(NBT_ARMOR_SET_EFFECTS);
+        }
     }
 }

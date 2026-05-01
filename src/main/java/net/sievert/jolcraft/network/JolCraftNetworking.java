@@ -14,8 +14,8 @@ import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket
 import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
 import net.sievert.jolcraft.network.packet.s2c.*;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.JolCraft;
 
 public final class JolCraftNetworking {
@@ -34,11 +34,6 @@ public final class JolCraftNetworking {
 
         registrar
                 .playToClient(ClientboundDeliriumCursePacket.TYPE, ClientboundDeliriumCursePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDelirium)
-                .playToClient(ClientboundDwarvenLanguagePacket.TYPE, ClientboundDwarvenLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLanguage)
-                .playToClient(ClientboundAncientDwarvenLanguagePacket.TYPE, ClientboundAncientDwarvenLanguagePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundAncientLanguage)
-                .playToClient(ClientboundDwarvenReputationPacket.TYPE, ClientboundDwarvenReputationPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundReputation)
-                .playToClient(ClientboundDwarvenEndorsementsPacket.TYPE, ClientboundDwarvenEndorsementsPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundEndorsements)
-                .playToClient(ClientboundDwarfTomeUnlocksPacket.TYPE, ClientboundDwarfTomeUnlocksPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundLoreUnlocks)
                 .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers);
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,
@@ -61,10 +56,6 @@ public final class JolCraftNetworking {
                 payload.type().id(),
                 player.getGameProfile().getName()
         );
-    }
-
-    public static void sendToNearbyClients(Level world, BlockPos pos, CustomPacketPayload payload) {
-        sendToNearbyClients(world, pos, DEFAULT_RADIUS, payload);
     }
 
     public static void sendToNearbyClients(Level world, BlockPos pos, double radius, CustomPacketPayload payload) {

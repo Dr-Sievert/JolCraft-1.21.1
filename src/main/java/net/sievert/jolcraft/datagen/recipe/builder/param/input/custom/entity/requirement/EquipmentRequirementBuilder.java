@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.requirement;
 
 import net.minecraft.world.entity.EquipmentSlot;
-import net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement.EquipmentRequirement;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.world.recipe.param.input.custom.entity.requirement.EquipmentRequirement;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 

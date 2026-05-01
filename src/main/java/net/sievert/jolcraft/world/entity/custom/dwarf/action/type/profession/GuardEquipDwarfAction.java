@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -12,7 +13,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
+import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -45,24 +46,27 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
 
     @Override
     public void stop() {
-        EquipmentSlot slot = JolCraftEquipmentHelper.slotIfMatches(itemstack, JolCraftItems.DEEPSLATE_ARMOR_SET);
-        if (slot == null) {
-            if (dwarf.level().isClientSide()) {
-                dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
-                this.previousMainHandItem = ItemStack.EMPTY;
-            }
-            return;
-        }
-
-        dwarf.setItemSlot(slot, itemstack);
-        JolCraftSoundHelper.entity(dwarf, JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get());
-        dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        ArmorItem.Type type = JolCraftEquipmentHelper.armorType(itemstack);
 
         if (dwarf.level().isClientSide()) {
             dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
             this.previousMainHandItem = ItemStack.EMPTY;
             return;
         }
+
+        if (type == null || !itemstack.is(JolCraftItems.DEEPSLATE_ARMOR_SET.get(type).get())) {
+            dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
+            this.previousMainHandItem = ItemStack.EMPTY;
+            return;
+        }
+
+        EquipmentSlot slot = type.getSlot();
+
+        dwarf.setItemSlot(slot, itemstack.copyWithCount(1));
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
+        this.previousMainHandItem = ItemStack.EMPTY;
+
+        JolCraftSoundHelper.entity(dwarf, JolCraftSounds.ARMOR_EQUIP_DEEPSLATE.get());
 
         dwarf.increaseMerchantCareer();
         dwarf.updateMerchantTimer = 40;
@@ -77,5 +81,4 @@ public class GuardEquipDwarfAction extends InspectDwarfAction {
             );
         }
     }
-
 }

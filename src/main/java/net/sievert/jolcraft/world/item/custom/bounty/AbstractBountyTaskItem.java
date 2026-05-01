@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ARGB;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,14 +15,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
-import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.world.item.component.custom.BountyData;
+import net.sievert.jolcraft.world.item.client.tooltip.util.JolCraftTooltipHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -32,8 +32,8 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 public abstract class AbstractBountyTaskItem extends Item implements IItemExtension {
 
-    private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.0F, 1.0F, 0.0F);  // Green (Completed)
-    private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);     // Red (In Progress)
+    private static final int FULL_BAR_COLOR = FastColor.ARGB32.color(255, 0, 255, 0); //Green
+    private static final int BAR_COLOR = FastColor.ARGB32.color(255, 255, 84, 84);    //Red
 
     protected AbstractBountyTaskItem(Properties properties) {
         super(properties);
@@ -142,7 +142,7 @@ public abstract class AbstractBountyTaskItem extends Item implements IItemExtens
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Player player = JolCraftProxy.access().getLocalPlayer();
-        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(player);
+        boolean knowsLanguage = LanguageAttachmentHelper.knowsDwarvish(player);
 
         if (!knowsLanguage) {
             tooltip.add(Component.translatable(lockedTooltipKey()).withStyle(ChatFormatting.GRAY));
@@ -165,7 +165,7 @@ public abstract class AbstractBountyTaskItem extends Item implements IItemExtens
             appendInvalidLines(stack, context, tooltip, flag);
 
             if (showHoldKeyHint(stack)) {
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
+                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
                         .withStyle(ChatFormatting.DARK_GRAY));
             }
 
@@ -204,7 +204,7 @@ public abstract class AbstractBountyTaskItem extends Item implements IItemExtens
         }
 
         if (showHoldKeyHint(stack)) {
-            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 

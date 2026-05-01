@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfig;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigManager;
+import net.sievert.jolcraft.config.custom.dwarf.rule.DwarfProfessionRule;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 
 import javax.annotation.Nullable;
@@ -17,17 +18,9 @@ public final class DwarfProfessionTraits {
 
     private DwarfProfessionTraits() {}
 
-    // ---------------------------------------------------------
-    // Config access
-    // ---------------------------------------------------------
-
     public static DwarfProfessionConfig config(DwarfProfession profession) {
         return DwarfProfessionConfigManager.INSTANCE.get(profession);
     }
-
-    // ---------------------------------------------------------
-    // Simple fields
-    // ---------------------------------------------------------
 
     public static int requiredTier(DwarfProfession profession) {
         return config(profession).requiredTier();
@@ -57,11 +50,6 @@ public final class DwarfProfessionTraits {
         return config(profession).showLevel();
     }
 
-
-    // ---------------------------------------------------------
-    // Rules
-    // ---------------------------------------------------------
-
     public static boolean canSign(AbstractDwarfEntity dwarf) {
         DwarfProfessionConfig cfg = config(dwarf.getProfession());
         return eval(cfg.rules().canSign(), dwarf);
@@ -72,29 +60,20 @@ public final class DwarfProfessionTraits {
         return eval(cfg.rules().canTrade(), dwarf);
     }
 
-    /**
-     * Uses BOTH:
-     * - the boolean gate (canEndorse)
-     * - the rule gate (rules.canEndorse)
-     */
     public static boolean canEndorse(AbstractDwarfEntity dwarf) {
         DwarfProfessionConfig cfg = config(dwarf.getProfession());
         return cfg.canEndorse() && eval(cfg.rules().canEndorse(), dwarf);
     }
 
-    private static boolean eval(DwarfProfessionConfig.Rule rule, AbstractDwarfEntity dwarf) {
-        if (rule instanceof DwarfProfessionConfig.Rule.Always) {
+    private static boolean eval(DwarfProfessionRule rule, AbstractDwarfEntity dwarf) {
+        if (rule instanceof DwarfProfessionRule.Always) {
             return true;
         }
-        if (rule instanceof DwarfProfessionConfig.Rule.MinMerchantLevel(int level)) {
+        if (rule instanceof DwarfProfessionRule.MinMerchantLevel(int level)) {
             return dwarf.getMerchantLevel() >= level;
         }
         throw new IllegalStateException("Unhandled rule type: " + rule.getClass().getName());
     }
-
-    // ---------------------------------------------------------
-    // Sounds
-    // ---------------------------------------------------------
 
     @Nullable
     public static SoundEvent restockSound(AbstractDwarfEntity dwarf) {
@@ -113,7 +92,8 @@ public final class DwarfProfessionTraits {
     private static SoundEvent resolveSound(AbstractDwarfEntity dwarf, Optional<ResourceLocation> idOpt) {
         if (idOpt.isEmpty()) return null;
 
-        HolderLookup.RegistryLookup<SoundEvent> lookup = dwarf.level().registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
+        HolderLookup.RegistryLookup<SoundEvent> lookup =
+                dwarf.level().registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
 
         ResourceKey<SoundEvent> key = ResourceKey.create(Registries.SOUND_EVENT, idOpt.get());
         return lookup.get(key).map(Holder::value).orElse(null);

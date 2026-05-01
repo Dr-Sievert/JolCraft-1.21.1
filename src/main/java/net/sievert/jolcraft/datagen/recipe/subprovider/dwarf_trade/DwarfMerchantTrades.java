@@ -1,13 +1,12 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.minecraft.core.HolderGetter;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -16,9 +15,23 @@ import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
-public final class DwarfMerchantTrades implements RecipeSubProvider {
+public record DwarfMerchantTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public DwarfMerchantTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
 
     private static final DwarfProfession PROFESSION = DwarfProfession.MERCHANT;
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -27,60 +40,65 @@ public final class DwarfMerchantTrades implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
 
-        DwarfTradeRecipeBuilder.addBountyTrades(executor, PROFESSION);
+        java.util.List<DwarfTradeRecipeBuilder> bountyTrades = new java.util.ArrayList<>();
+        DwarfTradeRecipeBuilder.addBountyTrades(bountyTrades, PROFESSION);
+        for (var trade : bountyTrades) {
+            emitOrdered(output, tracking, trade);
+        }
 
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.TORCH, 1, 2, 12);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.COAL, 1, 2, 5);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.FLINT, 1, 2, 5);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.COPPER_INGOT, 1, 2, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.COBBLED_DEEPSLATE, 1, 2, 12);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.IRON_NUGGET, 1, 2, 12);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.BRICK, 1, 2, 4);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, Items.STRING, 1, 2, 3);
-        pooledBuy(executor, DwarfMerchantData.Level.NOVICE, JolCraftItems.DEEPSLATE_MUG.get(), 1, 2, 3);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.TORCH, 1, 2, 12);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.COAL, 1, 2, 5);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.FLINT, 1, 2, 5);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.COPPER_INGOT, 1, 2, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.COBBLED_DEEPSLATE, 1, 2, 12);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.IRON_NUGGET, 1, 2, 12);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.BRICK, 1, 2, 4);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.STRING, 1, 2, 3);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, JolCraftItems.DEEPSLATE_MUG.get(), 1, 2, 3);
 
-        pooledBuy(executor, DwarfMerchantData.Level.APPRENTICE, Items.IRON_INGOT, 2, 3, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.APPRENTICE, Items.LAPIS_LAZULI, 1, 2, 6);
-        pooledBuy(executor, DwarfMerchantData.Level.APPRENTICE, Items.REDSTONE, 1, 2, 6);
-        pooledBuy(executor, DwarfMerchantData.Level.APPRENTICE, Items.FEATHER, 1, 2, 3);
-        pooledBuy(executor, DwarfMerchantData.Level.APPRENTICE, Items.LEATHER, 1, 2, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.APPRENTICE, Items.WHITE_WOOL, 1, 2, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.PARCHMENT.get(), 1, 2, 3);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE, Items.IRON_INGOT, 2, 3, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE, Items.LAPIS_LAZULI, 1, 2, 6);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE, Items.REDSTONE, 1, 2, 6);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE, Items.FEATHER, 1, 2, 3);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE, Items.LEATHER, 1, 2, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE, Items.WHITE_WOOL, 1, 2, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE, JolCraftItems.PARCHMENT.get(), 1, 2, 3);
 
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.GOLD_INGOT, 5, 7, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.EMERALD, 2, 4, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.AMETHYST_SHARD, 1, 2, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.BLAZE_POWDER, 1, 2, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.SPIDER_EYE, 1, 2, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.GUNPOWDER, 1, 2, 2);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.BONE, 1, 2, 3);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, Items.INK_SAC, 1, 2, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_BLANK.get(), 1, 2, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.GOLD_INGOT, 5, 7, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.EMERALD, 2, 4, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.AMETHYST_SHARD, 1, 2, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.BLAZE_POWDER, 1, 2, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.SPIDER_EYE, 1, 2, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.GUNPOWDER, 1, 2, 2);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.BONE, 1, 2, 3);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, Items.INK_SAC, 1, 2, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, JolCraftItems.CONTRACT_BLANK.get(), 1, 2, 1);
 
-        pooledBuy(executor, DwarfMerchantData.Level.EXPERT, Items.GOLDEN_APPLE, 4, 6, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.EXPERT, Items.BOOK, 1, 2, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.EXPERT, Items.CAULDRON, 10, 14, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.EXPERT, Items.ITEM_FRAME, 1, 2, 1);
-        pooledBuy(executor, DwarfMerchantData.Level.EXPERT, Items.ENDER_PEARL, 2, 4, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT, Items.GOLDEN_APPLE, 4, 6, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT, Items.BOOK, 1, 2, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT, Items.CAULDRON, 10, 14, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT, Items.ITEM_FRAME, 1, 2, 1);
+        pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT, Items.ENDER_PEARL, 2, 4, 1);
 
-        pooledCrate(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.RESTOCK_CRATE.get());
-        pooledCrate(executor, DwarfMerchantData.Level.MASTER, JolCraftItems.REROLL_CRATE.get());
+        pooledCrate(output, tracking, DwarfMerchantData.Level.MASTER, JolCraftItems.RESTOCK_CRATE.get());
+        pooledCrate(output, tracking, DwarfMerchantData.Level.MASTER, JolCraftItems.REROLL_CRATE.get());
     }
 
     private void pooledBuy(
-            RecipeEmissionExecutor executor,
+            RecipeOutput output,
+            JolCraftDataTracking tracking,
             DwarfMerchantData.Level level,
             ItemLike result,
             int minCoins,
             int maxCoins,
             int count
     ) {
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(level)
@@ -96,11 +114,12 @@ public final class DwarfMerchantTrades implements RecipeSubProvider {
     }
 
     private void pooledCrate(
-            RecipeEmissionExecutor executor,
+            RecipeOutput output,
+            JolCraftDataTracking tracking,
             DwarfMerchantData.Level level,
             ItemLike crate
     ) {
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(level)

@@ -7,19 +7,19 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
 import net.sievert.jolcraft.data.id.item.JolCraftCreativeTabIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.data.lore.util.LoreHelper;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.world.item.util.compass.DialItemColor;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.compass.DeepslateCompassHelper;
-import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public final class JolCraftCreativeModeTabs {
 
     private JolCraftCreativeModeTabs(){}
@@ -50,8 +50,8 @@ public final class JolCraftCreativeModeTabs {
 
                         pOutput.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
 
-                        for (StructureGroup group : StructureGroup.values()) {
-                            addCompassDialVariant(pOutput, group.getId());
+                        for (DeepslateCompassStructureGroup group : DeepslateCompassStructureGroup.values()) {
+                            addCompassDialVariant(pOutput, group);
                         }
 
                         pOutput.accept(JolCraftBlocks.HEARTH);
@@ -287,10 +287,19 @@ public final class JolCraftCreativeModeTabs {
 
                     }).build());
 
-    private static void addCompassDialVariant(CreativeModeTab.Output output, String group) {
+    private static void addCompassDialVariant(
+            CreativeModeTab.Output output,
+            DeepslateCompassStructureGroup group
+    ) {
         ItemStack stack = new ItemStack(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get());
-        stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group);
-        stack.set(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR, new DialItemColor(DeepslateCompassHelper.getColor(group)));
+
+        stack.set(JolCraftDataComponents.STRUCTURE_GROUP, group.getId());
+
+        stack.set(
+                JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(),
+                new DeepslateCompassDialColor(group.color())
+        );
+
         output.accept(stack);
     }
 

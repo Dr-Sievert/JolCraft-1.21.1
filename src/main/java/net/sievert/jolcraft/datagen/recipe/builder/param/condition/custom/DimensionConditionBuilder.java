@@ -4,9 +4,10 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.custom.DimensionCondition;
-import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.custom.DimensionCondition;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -20,9 +21,9 @@ import java.util.Optional;
  * - invert(boolean) is always allowed (inherited).
  *
  * Validation:
- * - Delegates to {@link DimensionCondition#validate()} (enforces exactly one of id/tag).
+ * - Delegates to {@link DimensionCondition#validate()} (enforces exactly one of name/tag).
  */
-public final class DimensionConditionBuilder extends AbstractConditionBuilder<DimensionConditionBuilder> implements ValidatedBuilder<Condition> {
+public final class DimensionConditionBuilder extends AbstractConditionBuilder<DimensionConditionBuilder> implements JolCraftValidatedBuilder<Condition> {
 
     private enum Kind { ID, TAG }
 
@@ -60,7 +61,7 @@ public final class DimensionConditionBuilder extends AbstractConditionBuilder<Di
     // ---------------------------------------------------------------------
 
     @Override
-    public DataResult<Condition> buildValidated() {
+    public @NotNull DataResult<Condition> buildValidated() {
         Optional<ResourceKey<Level>> d =
                 (kind == Kind.ID && dimension != null) ? Optional.of(dimension) : Optional.empty();
 

@@ -1,13 +1,10 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.model.ItemModelUtils;
-import net.minecraft.client.data.models.model.ModelLocationUtils;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.SelectItemModel;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
@@ -15,20 +12,25 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.lore.LoreRarity;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreEntries;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelSubProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.item.client.LoreKey;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreEntries;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.client.property.custom.LoreKey;
+import net.sievert.jolcraft.world.item.client.property.JolCraftItemProperties;
+import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.Locale;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public final class DwarfModelSubProvider implements AbstractModelProvider.ModelSubProvider {
+public record DwarfModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
 
     private static final String SUB_BOOK = JolCraftDictionary.BOOK;
 
@@ -41,100 +43,120 @@ public final class DwarfModelSubProvider implements AbstractModelProvider.ModelS
 
     private static final String SUB_CONTRACT = JolCraftDictionary.CONTRACT;
 
-
     @Override
-    public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DWARVEN_LEXICON.get(), ModelTemplates.FLAT_ITEM, SUB_BOOK);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_LEXICON.get(), ModelTemplates.FLAT_ITEM, SUB_BOOK);
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.REPUTATION_TABLET_0.get(), ModelTemplates.FLAT_ITEM, SUB_TABLET);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.REPUTATION_TABLET_1.get(), ModelTemplates.FLAT_ITEM, SUB_TABLET);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.REPUTATION_TABLET_2.get(), ModelTemplates.FLAT_ITEM, SUB_TABLET);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.REPUTATION_TABLET_3.get(), ModelTemplates.FLAT_ITEM, SUB_TABLET);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.REPUTATION_TABLET_4.get(), ModelTemplates.FLAT_ITEM, SUB_TABLET);
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_BLANK.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_WRITTEN.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_SIGNED.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.GUILD_SIGIL.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_GUILDMASTER.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_MERCHANT.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_HISTORIAN.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_SCRAPPER.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_GUARD.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_BREWMASTER.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_KEEPER.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_MINER.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_EXPLORER.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_ALCHEMIST.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_ARCANIST.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_PRIEST.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_ARTISAN.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_CHAMPION.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_BLACKSMITH.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.CONTRACT_SMELTER.get(), ModelTemplates.FLAT_ITEM, SUB_CONTRACT);
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get(), JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DWARVEN_TOME_COMMON.get(), JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DWARVEN_TOME_UNCOMMON.get(), JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DWARVEN_TOME_RARE.get(), JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DWARVEN_TOME_EPIC.get(), JolCraftItems.DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), ModelTemplates.FLAT_ITEM, SUB_TOME);
-        generateLegendaryTomeModels(items);
+    public @NotNull String id() {
+        return JolCraftDictionary.DWARF;
     }
 
-    public static void generateLegendaryTomeModels(ItemModelGenerators itemModels) {
+    @Override
+    public void registerModels(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull JolCraftDataTracking tracking
+    ) {
+        builder.flatItem(JolCraftItems.DWARVEN_LEXICON.get(), SUB_BOOK);
+        builder.flatItem(JolCraftItems.ANCIENT_DWARVEN_LEXICON.get(), SUB_BOOK);
+
+        builder.flatItem(JolCraftItems.REPUTATION_TABLET_0.get(), SUB_TABLET);
+        builder.flatItem(JolCraftItems.REPUTATION_TABLET_1.get(), SUB_TABLET);
+        builder.flatItem(JolCraftItems.REPUTATION_TABLET_2.get(), SUB_TABLET);
+        builder.flatItem(JolCraftItems.REPUTATION_TABLET_3.get(), SUB_TABLET);
+        builder.flatItem(JolCraftItems.REPUTATION_TABLET_4.get(), SUB_TABLET);
+
+        builder.flatItem(JolCraftItems.CONTRACT_BLANK.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_WRITTEN.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_SIGNED.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.GUILD_SIGIL.get(), SUB_CONTRACT);
+
+        builder.flatItem(JolCraftItems.CONTRACT_GUILDMASTER.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_MERCHANT.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_HISTORIAN.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_SCRAPPER.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_GUARD.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_BREWMASTER.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_KEEPER.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_MINER.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_EXPLORER.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_ALCHEMIST.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_ARCANIST.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_PRIEST.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_ARTISAN.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_CHAMPION.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_BLACKSMITH.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.CONTRACT_SMELTER.get(), SUB_CONTRACT);
+
+        builder.flatItem(JolCraftItems.DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get(), JolCraftItems.DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.DWARVEN_TOME_COMMON.get(), JolCraftItems.DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.DWARVEN_TOME_UNCOMMON.get(), JolCraftItems.DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.DWARVEN_TOME_RARE.get(), JolCraftItems.DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.DWARVEN_TOME_EPIC.get(), JolCraftItems.DWARVEN_TOME.get(), SUB_TOME);
+
+        builder.flatItem(JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
+        builder.flatItem(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
+
+        builder.flatItem(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
+
+        generateLegendaryTomeModels(builder);
+    }
+
+    private static void generateLegendaryTomeModels(@NotNull JolCraftModelBuilder builder) {
         Item tomeItem = JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get();
         ResourceLocation baseModelLoc = ModelLocationUtils.getModelLocation(tomeItem);
 
-        ResourceLocation baseTexture = JolCraft.location("item/" + SUB_TOME + "/ancient_dwarven_tome");
-        ModelTemplates.FLAT_ITEM.create(baseModelLoc, TextureMapping.layer0(baseTexture), itemModels.modelOutput);
+        JsonArray overrides = new JsonArray();
 
-        ItemModel.Unbaked fallbackModel = ItemModelUtils.plainModel(baseModelLoc);
+        DwarfLoreEntries.ALL.entrySet().stream()
+                .filter(entry -> entry.getValue().rarity() == JolCraftEnumExtensions.Rarity.LEGENDARY.getValue())
+                .sorted(Map.Entry.comparingByKey(Comparator.comparing(Enum::name)))
+                .forEach(entry -> {
+                    DwarfLoreKey loreKey = entry.getKey();
+                    String keyString = loreKey.name().toLowerCase(Locale.ROOT);
 
-        Set<DwarfLoreKey> legendaryLoreKeys = DwarfLoreEntries.ALL.entrySet().stream()
-                .filter(e -> e.getValue().rarity() == LoreRarity.LEGENDARY)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
+                    JolCraftItemProperties.registerKey(LoreKey.KEY, keyString);
 
-        List<SelectItemModel.SwitchCase<String>> switchCases = new ArrayList<>();
+                    ResourceLocation variantModelLoc = JolCraft.location(JolCraftStrings.slashed(
+                            JolCraftDictionary.ITEM,
+                            JolCraftDictionary.BOOK,
+                            JolCraftDictionary.TOME,
+                            JolCraftStrings.underscored(
+                                    JolCraftItemIds.ANCIENT_DWARVEN_TOME_LEGENDARY,
+                                    keyString
+                            )
+                    ));
 
-        for (DwarfLoreKey loreKey : legendaryLoreKeys) {
-            String keyString = loreKey.name().toLowerCase(Locale.ROOT);
-            String modelName = JolCraftStrings.slashed(
-                    JolCraftDictionary.ITEM,
-                    JolCraftDictionary.BOOK,
-                    JolCraftDictionary.TOME,
-                    JolCraftStrings.underscored(
-                            JolCraftItemIds.ANCIENT_DWARVEN_TOME_LEGENDARY,
-                            keyString
-                    )
-            );
-            ResourceLocation modelLoc = JolCraft.location(modelName);
+                    ModelTemplates.FLAT_ITEM.create(
+                            variantModelLoc,
+                            TextureMapping.layer0(variantModelLoc),
+                            builder::addModel
+                    );
 
-            ModelTemplates.FLAT_ITEM.create(modelLoc, TextureMapping.layer0(modelLoc), itemModels.modelOutput);
-            ItemModel.Unbaked model = ItemModelUtils.plainModel(modelLoc);
+                    JsonObject predicate = new JsonObject();
+                    predicate.addProperty(
+                            LoreKey.KEY.toString(),
+                            JolCraftItemProperties.value(LoreKey.KEY, keyString)
+                    );
 
-            switchCases.add(ItemModelUtils.when(keyString, model));
-        }
+                    JsonObject override = new JsonObject();
+                    override.add("predicate", predicate);
+                    override.addProperty("model", variantModelLoc.toString());
 
-        itemModels.itemModelOutput.accept(
-                tomeItem,
-                new SelectItemModel.Unbaked(
-                        new SelectItemModel.UnbakedSwitch<>(LoreKey.INSTANCE, switchCases),
-                        Optional.of(fallbackModel)
-                )
-        );
+                    overrides.add(override);
+                });
+
+        builder.addModel(baseModelLoc, () -> {
+            JsonObject json = new JsonObject();
+            json.addProperty("parent", "minecraft:item/generated");
+
+            JsonObject textures = new JsonObject();
+            textures.addProperty("layer0", JolCraft.location("item/" + SUB_TOME + "/ancient_dwarven_tome").toString());
+            json.add("textures", textures);
+
+            json.add("overrides", overrides);
+            return json;
+        });
     }
 }

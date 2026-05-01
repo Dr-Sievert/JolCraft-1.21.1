@@ -40,43 +40,43 @@ public abstract class AbstractLanguageKeys {
     // Specific categories
     // ---------------------------------------------------------------------
 
-    /** "tooltip.<modid>.<category>.<id>" */
+    /** "tooltip.<modid>.<category>.<name>" */
     public static String tooltip(String category, String id) { return category(JolCraftDictionary.TOOLTIP, JolCraftStrings.dotted(category, id)); }
 
-    /** "tooltip.<modid>.structure.<id>" */
+    /** "tooltip.<modid>.structure.<name>" */
     public static String tooltipStructure(String id) {
         return tooltip(JolCraftDictionary.STRUCTURE, id);
     }
 
-    /** "block.<modid>.<id>" */
+    /** "block.<modid>.<name>" */
     public static String block(String id) {
         return category(JolCraftDictionary.BLOCK, id);
     }
 
-    /** "item.<modid>.<id>" */
+    /** "item.<modid>.<name>" */
     public static String item(String id) {
         return category(JolCraftDictionary.ITEM, id);
     }
 
-    /** "effect.<modid>.<id>" */
+    /** "effect.<modid>.<name>" */
     public static String effect(String id) {
         return category(JolCraftDictionary.EFFECT, id);
     }
 
-    /** "entity.<modid>.<id>" */
+    /** "entity.<modid>.<name>" */
     public static String entity(String id) {
         return category(JolCraftDictionary.ENTITY, id);
     }
 
-    /** "itemGroup.<modid>.<id>" */
+    /** "itemGroup.<modid>.<name>" */
     public static String itemGroup(String id) { return category(JolCraftStrings.underscored(JolCraftDictionary.ITEM, JolCraftDictionary.GROUP), id); }
 
-    /** "attribute.<modid>.<id>" */
+    /** "attribute.<modid>.<name>" */
     public static String attribute(String id) {
         return category(JolCraftDictionary.ATTRIBUTE, id);
     }
 
-    /** "subtitle.<modid>.<id>" */
+    /** "subtitle.<modid>.<name>" */
     public static String subtitle(String id) {
         return category(JolCraftDictionary.SUBTITLE, id);
     }

@@ -3,7 +3,7 @@ package net.sievert.jolcraft.world.item.custom.tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -20,10 +20,11 @@ public abstract class AncientUnidentifiedItem extends AncientItemBase {
     }
 
     @Override
-    public @NotNull InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             if (canIdentify(serverPlayer)) {
-                ItemStack stack = player.getItemInHand(hand);
                 ItemStack identified = getRandomIdentifiedItem(serverPlayer, stack);
 
                 if (!identified.isEmpty()) {
@@ -41,6 +42,7 @@ public abstract class AncientUnidentifiedItem extends AncientItemBase {
                     } else {
                         if (stack.getCount() == 1) {
                             player.setItemInHand(hand, identified);
+                            stack = identified;
                         } else {
                             stack.shrink(1);
                             boolean added = player.addItem(identified);
@@ -49,6 +51,7 @@ public abstract class AncientUnidentifiedItem extends AncientItemBase {
                             }
                         }
                     }
+
                     playIdentifySuccessSound(level, player);
                     serverPlayer.displayClientMessage(getIdentifySuccessMessage(serverPlayer, identified), true);
                 }
@@ -61,7 +64,8 @@ public abstract class AncientUnidentifiedItem extends AncientItemBase {
                 }
             }
         }
-        return InteractionResult.SUCCESS;
+
+        return InteractionResultHolder.success(stack);
     }
 
     /** Determines whether this player can identify the item. */

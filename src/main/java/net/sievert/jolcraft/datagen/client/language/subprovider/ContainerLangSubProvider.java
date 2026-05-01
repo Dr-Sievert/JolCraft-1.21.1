@@ -2,55 +2,74 @@ package net.sievert.jolcraft.datagen.client.language.subprovider;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+
+import net.sievert.jolcraft.util.JolCraftStrings;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 
 @OnlyIn(Dist.CLIENT)
-public final class ContainerLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class ContainerLangSubProvider implements LanguageSubProvider {
 
     @Override
-    public void addTranslations(AbstractLanguageProvider p) {
+    public @NotNull String id() {
+        return JolCraftStrings.plural(JolCraftDictionary.CONTAINER);
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<Map<String, String>> parent() {
+        return languageProvider();
+    }
+
+
+    @Override
+    public void addTranslations(@NotNull Map<String, String> translations) {
 
         // -----------------------------------------------------------------
         // Lapidary Bench
         // -----------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.CONTAINER_LAPIDARY_BENCH, "Lapidary Bench");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED, "You have no idea how to cut this gem without breaking it.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_GEODE, "Can be broken into dust using an artisan hammer at a lapidary bench.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_UNCUT_GEM, "Can be broken into dust using an artisan hammer or cut using a chisel at a lapidary bench.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_ARTISAN_HAMMER, "Can be used to break geodes and gems at a lapidary bench.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_CHISEL, "Can be used to cut gems at a lapidary bench.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED, "You have not learned how to cut gems!");
+        putManual(translations, JolCraftLanguageKeys.CONTAINER_LAPIDARY_BENCH, "Lapidary Bench");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED, "You have no idea how to cut this gem without breaking it.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_GEODE, "Can be broken into dust using an artisan hammer at a lapidary bench.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_UNCUT_GEM, "Can be broken into dust using an artisan hammer or cut using a chisel at a lapidary bench.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_ARTISAN_HAMMER, "Can be used to break geodes and gems at a lapidary bench.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_CHISEL, "Can be used to cut gems at a lapidary bench.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED, "You have not learned how to cut gems!");
 
         // -----------------------------------------------------------------
         // Fermenting Cauldron
         // -----------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX, "You already added the max amount of this ingredient to the brew.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI, "Adding more ingredients without proper knowledge would ruin the brew.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX, "You already added the max amount of this ingredient to the brew.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI, "Adding more ingredients without proper knowledge would ruin the brew.");
 
         // -----------------------------------------------------------------
         // Strongbox / Locks
         // -----------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.CONTAINER_STRONGBOX, "Strongbox");
-        p.putManual(JolCraftLanguageKeys.CONTAINER_STRONGBOX_LOCKED, "Locked Strongbox");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_LOCKPICK, "Used to pick locks. Will break on failure. Lockpicking is easier when using potions.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_NOT_EMPTY, "This strongbox has items inside.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOOT, "This strongbox has loot inside.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_LOCKED, "You have locked this strongbox.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_UNLOCKED, "You have unlocked this strongbox.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOCKED, "This strongbox is locked.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRONGBOX_BUSY, "Someone else is trying to pick this lock.");
+        putManual(translations, JolCraftLanguageKeys.CONTAINER_STRONGBOX, "Strongbox");
+        putManual(translations, JolCraftLanguageKeys.CONTAINER_STRONGBOX_LOCKED, "Locked Strongbox");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_LOCKPICK, "Used to pick locks. Will break on failure. Lockpicking is easier when using potions.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_NOT_EMPTY, "This strongbox has items inside.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOOT, "This strongbox has loot inside.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_LOCKED, "You have locked this strongbox.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_UNLOCKED, "You have unlocked this strongbox.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOCKED, "This strongbox is locked.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_BUSY, "Someone else is trying to pick this lock.");
 
         // -----------------------------------------------------------------
         // Hearth
         // -----------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_HEARTH_COOLDOWN, "You must rest before light a hearth.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_HEARTH_NEED_COAL, "You need coal to light this.");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_HEARTH_NOT_SAFE, "Cannot light with monsters nearby!");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_HEARTH_NO_BED_NEARBY, "No claimed bed nearby.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HEARTH_OWNER, "You are not the owner of this hearth.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HEARTH_COOLDOWN, "You can only light a hearth once per day.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HEARTH_NEED_FUEL, "You need fuel with a long burn time to light this.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HEARTH_NOT_SAFE, "You cannot light this with monsters nearby!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HEARTH_NO_BED_NEARBY, "You need a claimed bed nearby to light this.");
     }
 }

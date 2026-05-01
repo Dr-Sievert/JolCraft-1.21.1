@@ -1,62 +1,106 @@
 package net.sievert.jolcraft.datagen.recipe;
 
+import com.mojang.serialization.DataResult;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftOrderedEmissionBuilder;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataExecutor;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-/**
- * Datagen recipe sub-provider contract.
- *
- * Design goals:
- * - Single entry point for all JolCraft recipe emission.
- * - One registry lookup surface ({@link RecipeLookups}) for all registry-backed params.
- * - Supports hierarchical subproviders through {@link #children()}.
- *
- * Parameters:
- * executor → JolCraft custom recipe emission
- * output   → vanilla recipe builders
- * lookups  → unified registry lookup context (items, biomes, blocks, etc.)
- */
-public interface RecipeSubProvider {
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public interface RecipeSubProvider extends JolCraftSubDataProvider<RecipeOutput> {
 
-    /**
-     * Folder name under this recipe type.
-     */
-    @NotNull
-    String folder();
-
-    /**
-     * Main recipe registration entry point.
-     */
-    void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
+    default void registerRecipes(
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
-    );
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
+    ) {}
 
-    /**
-     * Scoped registration wrapper.
-     */
-    default void register(
-            @NotNull RecipeEmissionExecutor executor,
-            @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+    @Override
+    default void run(
+            @NotNull RecipeOutput target,
+            @Nullable PackOutput packOutput,
+            @Nullable CompletableFuture<HolderLookup.Provider> lookupProvider,
+            @Nullable ExistingFileHelper existingFileHelper,
+            @NotNull JolCraftDataTracking tracking
     ) {
-        RecipeEmissionExecutor scoped = executor.scoped(folder());
-        registerRecipes(scoped, output, lookups);
+        RecipeOutput trackedOutput = new RecipeOutput() {
+            @Override
+            public void accept(
+                    @NotNull ResourceLocation id,
+                    @NotNull Recipe<?> recipe,
+                    @Nullable AdvancementHolder advancement,
+                    @NotNull ICondition... conditions
+            ) {
+                target.accept(id, recipe, advancement, conditions);
+                tracking.record(RecipeSubProvider.this, id.getPath());
+            }
 
-        for (RecipeSubProvider child : children()) {
-            child.register(scoped, output, lookups);
-        }
+            @Override
+            public @NotNull Advancement.Builder advancement() {
+                return target.advancement();
+            }
+        };
+
+        registerRecipes(
+                trackedOutput,
+                recipeProvider().lookups(),
+                tracking
+        );
     }
 
-    /**
-     * Optional composite providers.
-     */
-    default @NotNull List<? extends RecipeSubProvider> children() {
-        return List.of();
+    default void emit(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull DataResult<JolCraftDataEmission<RecipeOutput>> built
+    ) {
+        JolCraftDataExecutor.execute(
+                output,
+                this,
+                List.of(built.getOrThrow(IllegalStateException::new)),
+                tracking
+        );
+    }
+
+    default void emitOrdered(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull JolCraftOrderedEmissionBuilder<RecipeOutput> builder
+    ) {
+        JolCraftDataExecutor.executeOrdered(
+                output,
+                this,
+                List.of(builder),
+                tracking
+        );
+    }
+
+    default @NotNull JolCraftRecipeProvider recipeProvider() {
+        for (JolCraftDataProvider<?> current : chain()) {
+            if (current instanceof JolCraftRecipeProvider recipeProvider) {
+                return recipeProvider;
+            }
+        }
+
+        throw new IllegalStateException("No JolCraftRecipeProvider found in provider chain: " + name());
     }
 }

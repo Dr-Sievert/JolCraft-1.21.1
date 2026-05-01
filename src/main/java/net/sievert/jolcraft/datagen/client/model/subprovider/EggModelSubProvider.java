@@ -1,67 +1,47 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.world.item.Item;
+import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public final class EggModelSubProvider implements AbstractModelProvider.ModelSubProvider {
+public record EggModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
 
-    private static final String DWARF_EGG_PRIMARY = "aa7d66";
+    private static final ResourceLocation SPAWN_EGG_MODEL = ModelLocationUtils.decorateItemModelLocation("template_spawn_egg");
 
     @Override
-    public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
-
-        generateSpawnEgg(items, JolCraftItems.DWARF_SPAWN_EGG.get(),             DWARF_EGG_PRIMARY, "4a342c");
-        generateSpawnEgg(items, JolCraftItems.DWARF_GUILDMASTER_SPAWN_EGG.get(), DWARF_EGG_PRIMARY, "4f2144");
-        generateSpawnEgg(items, JolCraftItems.DWARF_HISTORIAN_SPAWN_EGG.get(),   DWARF_EGG_PRIMARY, "49652d");
-        generateSpawnEgg(items, JolCraftItems.DWARF_MERCHANT_SPAWN_EGG.get(),    DWARF_EGG_PRIMARY, "842610");
-        generateSpawnEgg(items, JolCraftItems.DWARF_SCRAPPER_SPAWN_EGG.get(),    DWARF_EGG_PRIMARY, "764721");
-        generateSpawnEgg(items, JolCraftItems.DWARF_BREWMASTER_SPAWN_EGG.get(),  DWARF_EGG_PRIMARY, "806723");
-        generateSpawnEgg(items, JolCraftItems.DWARF_GUARD_SPAWN_EGG.get(),       DWARF_EGG_PRIMARY, "333232");
-        generateSpawnEgg(items, JolCraftItems.DWARF_KEEPER_SPAWN_EGG.get(),      DWARF_EGG_PRIMARY, "166b11");
-        generateSpawnEgg(items, JolCraftItems.DWARF_ARTISAN_SPAWN_EGG.get(),     DWARF_EGG_PRIMARY, "2f286c");
-        generateSpawnEgg(items, JolCraftItems.DWARF_EXPLORER_SPAWN_EGG.get(),    DWARF_EGG_PRIMARY, "0089a0");
-        generateSpawnEgg(items, JolCraftItems.DWARF_MINER_SPAWN_EGG.get(),       DWARF_EGG_PRIMARY, "28351c");
-        generateSpawnEgg(items, JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG.get(),   DWARF_EGG_PRIMARY, "89435e");
-        generateSpawnEgg(items, JolCraftItems.DWARF_ARCANIST_SPAWN_EGG.get(),    DWARF_EGG_PRIMARY, "1e6c6a");
-        generateSpawnEgg(items, JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get(),      DWARF_EGG_PRIMARY, "fff05a");
-
-        generateSpawnEgg(items, JolCraftItems.MUFFHORN_SPAWN_EGG.get(), "723119", "4b1f12");
+    public @NotNull String id() {
+        return JolCraftDictionary.EGG;
     }
 
-    public static void generateSpawnEgg(
-            ItemModelGenerators itemModels,
-            Item eggItem,
-            String primaryHex,
-            String secondaryHex
+    @Override
+    public void registerModels(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull JolCraftDataTracking tracking
     ) {
-        int primaryColor = eggColorPrimary(primaryHex);
-        int secondaryColor = eggColorSecondary(secondaryHex);
-        itemModels.generateSpawnEgg(eggItem, primaryColor, secondaryColor);
-    }
+        builder.delegateItemModel(JolCraftItems.DWARF_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_GUILDMASTER_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_HISTORIAN_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_MERCHANT_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_SCRAPPER_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_BREWMASTER_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_GUARD_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_KEEPER_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_ARTISAN_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_EXPLORER_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_MINER_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_ARCANIST_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
 
-    private static int eggColor(String hex, int mask) {
-        String s = hex.trim();
-        if (s.startsWith("#")) s = s.substring(1);
-        else if (s.startsWith("0x") || s.startsWith("0X")) s = s.substring(2);
-        int rgb = Integer.parseInt(s, 16) & 0xFFFFFF;
-        int r = Math.min(255, (((rgb >> 16) & 0xFF) * 255 + mask) / mask);
-        int g = Math.min(255, (((rgb >> 8)  & 0xFF) * 255 + mask) / mask);
-        int b = Math.min(255, (( rgb        & 0xFF) * 255 + mask) / mask);
-        return (int)(0xFF000000L | (r << 16) | (g << 8) | b);
-    }
-
-    private static int eggColorPrimary(String hex) {
-        return eggColor(hex, 232);
-    }
-
-    private static int eggColorSecondary(String hex) {
-        return eggColor(hex, 222);
+        builder.delegateItemModel(JolCraftItems.MUFFHORN_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
     }
 }

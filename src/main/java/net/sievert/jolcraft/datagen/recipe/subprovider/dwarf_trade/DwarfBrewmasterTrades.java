@@ -1,24 +1,37 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
-import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
+import net.minecraft.world.item.Items;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-public final class DwarfBrewmasterTrades implements RecipeSubProvider {
+public record DwarfBrewmasterTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public DwarfBrewmasterTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
 
     private static final DwarfProfession PROFESSION = DwarfProfession.BREWMASTER;
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -27,12 +40,12 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.NOVICE)
@@ -43,7 +56,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.NOVICE)
@@ -55,7 +68,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
@@ -67,7 +80,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
@@ -78,7 +91,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
@@ -89,7 +102,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
@@ -100,7 +113,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
@@ -111,7 +124,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
@@ -122,7 +135,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.EXPERT)
@@ -133,7 +146,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.EXPERT)
@@ -145,7 +158,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
                         DwarfMerchantData.Level.MASTER,
                         PROFESSION,
@@ -155,7 +168,7 @@ public final class DwarfBrewmasterTrades implements RecipeSubProvider {
                 )
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.MASTER)

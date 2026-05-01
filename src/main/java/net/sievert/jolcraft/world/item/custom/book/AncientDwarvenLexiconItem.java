@@ -6,15 +6,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageType;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.custom.tooltip.AncientItemBase;
-import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
-import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -30,15 +31,16 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide) {
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
         if (!(player instanceof ServerPlayer serverPlayer)) {
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
-        boolean knowsDwarvish = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
+        boolean knowsDwarvish = LanguageAttachmentHelper.knowsDwarvish(serverPlayer);
         if (!knowsDwarvish) {
             serverPlayer.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_CANNOT_READ)
@@ -46,20 +48,22 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
                     true
             );
             PlaySound.bookPut(player);
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
-        if (AncientDwarvenLanguageHelper.knowsAncientDwarvish(serverPlayer)) {
+        if (LanguageAttachmentHelper.knowsAncientDwarvishBypassCreative(serverPlayer)) {
             serverPlayer.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_LEXICON_KNOWS_ANCIENT_DWARVEN_LANGUAGE)
                             .withStyle(ChatFormatting.GRAY),
                     true
             );
             PlaySound.bookPut(player);
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
-        AncientDwarvenLanguageHelper.setKnowsAncientDwarvish(serverPlayer, true);
+
+        LanguageAttachmentHelper.grantAncientDwarvish(serverPlayer);
+        JolCraftCriteriaTriggers.KNOWS_LANGUAGE.trigger(serverPlayer, LanguageType.ANCIENT_DWARVEN);
 
         JolCraftSoundHelper.player(player, SoundEvents.BOOK_PAGE_TURN, 2.0F, 0.7F);
         PlaySound.levelUp(player);
@@ -69,7 +73,7 @@ public class AncientDwarvenLexiconItem extends AncientItemBase {
                 true
         );
 
-        return InteractionResult.SUCCESS;
+        return InteractionResultHolder.success(stack);
     }
 
     @Override

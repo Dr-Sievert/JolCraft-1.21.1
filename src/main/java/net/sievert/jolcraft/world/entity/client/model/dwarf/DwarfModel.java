@@ -1,16 +1,14 @@
 package net.sievert.jolcraft.world.entity.client.model.dwarf;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -19,18 +17,18 @@ import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfModelHelper;
-import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.animation.DwarfAnimationHelper;
 import net.sievert.jolcraft.world.entity.client.util.dwarf.animation.DwarfAnimations;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfModel extends HumanoidModel<DwarfRenderState> {
+public class DwarfModel<T extends AbstractDwarfEntity> extends AbstractHumanoidHierarchicalModel<T> {
 
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(JolCraft.location(JolCraftDwarfIds.DWARF), JolCraftDictionary.MAIN);
+    public static final ModelLayerLocation LAYER_LOCATION =
+            new ModelLayerLocation(JolCraft.location(JolCraftDwarfIds.DWARF), JolCraftDictionary.MAIN);
 
-    public final ModelPart body;
     public final ModelPart right_arm;
     public final ModelPart left_arm;
     public final ModelPart right_leg;
@@ -43,11 +41,9 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState> {
     public final ModelPart right_footwear;
     public final ModelPart left_footwear;
 
-    public final ModelPart head;
     public final ModelPart beard;
     public final ModelPart right_eyebrow;
     public final ModelPart left_eyebrow;
-    public final ModelPart hat;
     public final ModelPart right_eye;
     public final ModelPart left_eye;
 
@@ -65,12 +61,10 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState> {
     public DwarfModel(ModelPart root) {
         super(root);
 
-        this.body = root.getChild(DwarfModelHelper.PART_BODY);
-        this.right_arm = root.getChild(DwarfModelHelper.PART_RIGHT_ARM);
-        this.left_arm = root.getChild(DwarfModelHelper.PART_LEFT_ARM);
-        this.right_leg = root.getChild(DwarfModelHelper.PART_RIGHT_LEG);
-        this.left_leg = root.getChild(DwarfModelHelper.PART_LEFT_LEG);
-        this.head = root.getChild(DwarfModelHelper.PART_HEAD);
+        this.right_arm = this.rightArm;
+        this.left_arm = this.leftArm;
+        this.right_leg = this.rightLeg;
+        this.left_leg = this.leftLeg;
 
         this.bodywear = this.body.getChild(DwarfModelHelper.PART_BODYWEAR);
         this.legwear = this.body.getChild(DwarfModelHelper.PART_LEGWEAR);
@@ -82,7 +76,6 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState> {
         this.beard = this.head.getChild(DwarfModelHelper.PART_BEARD);
         this.right_eyebrow = this.head.getChild(DwarfModelHelper.PART_RIGHT_EYEBROW);
         this.left_eyebrow = this.head.getChild(DwarfModelHelper.PART_LEFT_EYEBROW);
-        this.hat = this.head.getChild(DwarfModelHelper.PART_HAT);
         this.right_eye = this.head.getChild(DwarfModelHelper.PART_RIGHT_EYE);
         this.left_eye = this.head.getChild(DwarfModelHelper.PART_LEFT_EYE);
 
@@ -106,33 +99,29 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState> {
     }
 
     @Override
-    public void setupAnim(DwarfRenderState state) {
-        this.activeType = (state.dwarf == null) ? null : state.dwarf.getType();
+    public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.activeType = entity.getType();
 
-        this.root().getAllParts().forEach(ModelPart::resetPose);
-        this.applyHeadRotation(state.yRot, state.xRot);
+        this.root.getAllParts().forEach(ModelPart::resetPose);
+        this.applyHeadRotation(netHeadYaw, headPitch);
 
-        this.animateWalk(DwarfAnimations.WALK, state.walkAnimationPos, state.walkAnimationSpeed, 2f, 2.5f);
-        DwarfAnimationHelper.animate(state, this);
+        this.animateWalk(DwarfAnimations.WALK, limbSwing, limbSwingAmount, 2.0F, 2.5F);
+        DwarfAnimationHelper.animate(entity, this, ageInTicks);
 
-        this.hat.visible = !state.headEquipment.isEmpty();
+        this.hat.visible = !entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
 
-        boolean hasChest = !state.chestEquipment.isEmpty();
+        boolean hasChest = !entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
         this.bodywear.visible = hasChest;
         this.right_armwear.visible = hasChest;
         this.left_armwear.visible = hasChest;
 
-        this.legwear.visible = !state.legsEquipment.isEmpty();
+        this.legwear.visible = !entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty();
 
-        boolean hasBoots = !state.feetEquipment.isEmpty();
+        boolean hasBoots = !entity.getItemBySlot(EquipmentSlot.FEET).isEmpty();
         this.right_footwear.visible = hasBoots;
         this.left_footwear.visible = hasBoots;
 
-        setProfessionExtrasVisible(false);
-
-        if (this.activeType == null) {
-            return;
-        }
+        this.setProfessionExtrasVisible(false);
 
         if (this.activeType == JolCraftEntities.DWARF_GUARD.get()) {
             setVisible(this.shield, true);
@@ -144,14 +133,12 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState> {
             this.bodywear.visible = true;
             this.right_armwear.visible = true;
             this.left_armwear.visible = true;
-
             setVisible(this.explorerHatExtra, true);
             return;
         }
 
         if (this.activeType == JolCraftEntities.DWARF_KEEPER.get()) {
             DwarfModelHelper.visibleOuterLayer(this);
-
             this.hat.visible = false;
             setVisible(this.keeperHat, true);
             setVisible(this.sack, true);
@@ -220,20 +207,17 @@ public class DwarfModel extends HumanoidModel<DwarfRenderState> {
         poseStack.translate(x, y, z);
     }
 
+    @Override
     protected @NotNull ModelPart getArm(@NotNull HumanoidArm side) {
         return side == HumanoidArm.RIGHT ? this.right_arm : this.left_arm;
     }
 
     protected void applyHeadRotation(float headYaw, float headPitch) {
-        headYaw = Mth.clamp(headYaw, -12.5f, 12.5f);
-        headPitch = Mth.clamp(headPitch, -5f, 30f);
+        headYaw = Mth.clamp(headYaw, -12.5F, 12.5F);
+        headPitch = Mth.clamp(headPitch, -5.0F, 30.0F);
 
-        this.head.yRot = headYaw * ((float) Math.PI / 180f);
-        this.head.xRot = headPitch * ((float) Math.PI / 180f);
-    }
-
-    public void forwardAnimation(AnimationState state, AnimationDefinition def, float ageInTicks, float speed) {
-        this.animate(state, def, ageInTicks, speed);
+        this.head.yRot = headYaw * ((float) Math.PI / 180.0F);
+        this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
     }
 
     private void setProfessionExtrasVisible(boolean visible) {

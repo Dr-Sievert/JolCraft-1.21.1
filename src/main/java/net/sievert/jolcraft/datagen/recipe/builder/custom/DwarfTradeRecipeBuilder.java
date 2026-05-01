@@ -8,28 +8,27 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.lore.util.LoreHelper;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeStats;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.OrderedBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeStats;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemProducer;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemSpec;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.world.recipe.param.quantity.WeightParam;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftOrderedEmissionBuilder;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
@@ -48,7 +47,7 @@ import java.util.*;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("UnusedReturnValue")
-public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
+public final class DwarfTradeRecipeBuilder implements RecipeBuilder, JolCraftOrderedEmissionBuilder<RecipeOutput> {
 
     private final List<String> errors = new ArrayList<>();
 
@@ -63,8 +62,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
 
     private TradeStats stats = TradeStats.DEFAULT;
 
-    @Nullable
-    private String fileNameOverride;
+    private @Nullable String fileNameOverride;
 
     private DwarfTradeRecipeBuilder() {}
 
@@ -408,11 +406,11 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
                 )
                 .build();
 
-        String override = RecipeFileNameBuilder.create()
-                .word(lvl.name().toLowerCase(Locale.ROOT))
-                .word(JolCraftDictionary.BUY)
-                .word(LoreHelper.toLoreKeyString(loreKey))
-                .word(JolCraftDictionary.TOME)
+        String override = JolCraftFileNameBuilder.create()
+                .token(lvl.name().toLowerCase(Locale.ROOT))
+                .token(JolCraftDictionary.BUY)
+                .token(LoreHelper.toLoreKeyString(loreKey))
+                .token(JolCraftDictionary.TOME)
                 .build()
                 .result()
                 .orElse(null);
@@ -429,9 +427,11 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     public static void addBountyTrades(
-            @NotNull RecipeEmissionExecutor executor,
+            @NotNull Collection<? super DwarfTradeRecipeBuilder> orderedEmissionBuilders,
             @Nullable DwarfProfession profession
     ) {
+        Objects.requireNonNull(orderedEmissionBuilders, "orderedEmissionBuilders");
+
         DwarfProfession prof = profession != null ? profession : DwarfProfession.NONE;
         if (prof == DwarfProfession.NONE) {
             return;
@@ -456,15 +456,15 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
                     )
                     .build();
 
-            String override = RecipeFileNameBuilder.create()
-                    .word(level.name().toLowerCase(Locale.ROOT))
-                    .word(Objects.requireNonNull(profession).professionName())
-                    .word(JolCraftDictionary.BOUNTY)
+            String override = JolCraftFileNameBuilder.create()
+                    .token(level.name().toLowerCase(Locale.ROOT))
+                    .token(prof.professionName())
+                    .token(JolCraftDictionary.BOUNTY)
                     .build()
                     .result()
                     .orElse(null);
 
-            executor.emitOrdered(
+            orderedEmissionBuilders.add(
                     DwarfTradeRecipeBuilder.create()
                             .profession(prof)
                             .merchantLevel(level)
@@ -516,7 +516,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
     }
 
     @Override
-    public @NotNull DataResult<RecipeEmission> buildValidated() {
+    public @NotNull DataResult<JolCraftDataEmission<RecipeOutput>> buildValidated() {
         if (profession == null) {
             errors.add("profession is required");
         }
@@ -546,52 +546,49 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
                 JolCraftStrings.underscored(JolCraftDictionary.COST, "a")
         );
 
-        String b = (costB != null)
-                ? tokenFromCostFailClosed(
-                costB,
-                JolCraftStrings.underscored(JolCraftDictionary.COST, "b")
-        )
+        String b = costB != null
+                ? tokenFromCostFailClosed(costB, JolCraftStrings.underscored(JolCraftDictionary.COST, "b"))
                 : null;
 
-        RecipeFileNameBuilder nb = RecipeFileNameBuilder.create()
-                .word(lvl);
+        JolCraftFileNameBuilder nb = JolCraftFileNameBuilder.create()
+                .token(lvl);
 
         if (kind == TradeKind.BUY) {
             String res = tokenFromResultFailClosed(result);
 
-            nb.word(JolCraftDictionary.BUY)
-                    .word(res)
-                    .word(JolCraftDictionary.FOR)
-                    .word(a);
+            nb.token(JolCraftDictionary.BUY)
+                    .token(res)
+                    .token(JolCraftDictionary.FOR)
+                    .token(a);
 
             if (b != null) {
-                nb.word(JolCraftDictionary.AND).word(b);
+                nb.token(JolCraftDictionary.AND).token(b);
             }
         } else if (kind == TradeKind.SELL) {
-            nb.word(JolCraftDictionary.SELL)
-                    .word(a);
+            nb.token(JolCraftDictionary.SELL)
+                    .token(a);
 
             if (b != null) {
-                nb.word(JolCraftDictionary.AND).word(b);
+                nb.token(JolCraftDictionary.AND).token(b);
             }
         } else {
             String res = tokenFromResultFailClosed(result);
 
-            nb.word(a);
+            nb.token(a);
             if (b != null) {
-                nb.word(JolCraftDictionary.AND).word(b);
+                nb.token(JolCraftDictionary.AND).token(b);
             }
-            nb.word(JolCraftDictionary.FOR).word(res);
+            nb.token(JolCraftDictionary.FOR).token(res);
         }
 
         DataResult<String> nameBuilt = fileNameOverride != null
-                ? DataResult.success(fileNameOverride)
+                ? JolCraftFileNameBuilder.validateFileName(fileNameOverride)
                 : nb.build();
 
         if (!errors.isEmpty()) {
             String partial = nameBuilt.result().orElse("");
-            String msg = "recipeName: " + String.join("; ", errors) +
-                    (nameBuilt.error().isPresent() ? ("; " + nameBuilt.error().get().message()) : "");
+            String msg = "recipeName: " + String.join("; ", errors)
+                    + (nameBuilt.error().isPresent() ? "; " + nameBuilt.error().get().message() : "");
             nameBuilt = DataResult.error(() -> msg, partial);
         }
 
@@ -615,17 +612,15 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         DataResult<DwarfTradeRecipe> validated = DwarfTradeRecipe.validateRecipe(recipe);
 
         DataResult<DwarfTradeRecipe> recipeResult =
-                (!errors.isEmpty() && validated.error().isEmpty())
+                !errors.isEmpty() && validated.error().isEmpty()
                         ? DataResult.error(() -> "builder: " + String.join("; ", errors), recipe)
                         : validated;
 
         return nameBuilt.flatMap(name ->
-                recipeResult.flatMap(validRecipe ->
-                        RecipeEmission.of(
-                                JolCraftRecipeIds.DWARF_TRADE,
+                recipeResult.map(validRecipe ->
+                        new JolCraftDataEmission<>(
                                 name,
-                                (RecipeOutput outAccept, ResourceKey<Recipe<?>> id) ->
-                                        outAccept.accept(id, validRecipe, null)
+                                (outAccept, path) -> outAccept.accept(JolCraft.location(path), validRecipe, null)
                         )
                 )
         );
@@ -669,7 +664,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         return h.isPresent() && h.get().is(DwarfTradeRecipe.COINS_TAG);
     }
 
-    private String levelNameSafe() {
+    private @NotNull String levelNameSafe() {
         if (isGlobalPool()) {
             return JolCraftDictionary.GLOBAL;
         }
@@ -679,7 +674,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         return merchantLevel.name().toLowerCase(Locale.ROOT);
     }
 
-    private String tokenFromCostFailClosed(@Nullable ItemInput in, @NotNull String label) {
+    private @NotNull String tokenFromCostFailClosed(@Nullable ItemInput in, @NotNull String label) {
         if (in == null) {
             errors.add(label + " is missing");
             return JolCraftDictionary.UNKNOWN;
@@ -713,7 +708,7 @@ public final class DwarfTradeRecipeBuilder implements OrderedBuilder {
         return JolCraftDictionary.UNKNOWN;
     }
 
-    private String tokenFromResultFailClosed(@Nullable ItemOutput out) {
+    private @NotNull String tokenFromResultFailClosed(@Nullable ItemOutput out) {
         if (out == null) {
             errors.add("result is missing (for naming)");
             return JolCraftDictionary.UNKNOWN;

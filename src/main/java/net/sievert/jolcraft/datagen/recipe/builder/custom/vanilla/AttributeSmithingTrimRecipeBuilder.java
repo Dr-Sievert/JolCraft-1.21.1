@@ -8,18 +8,16 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.vanilla.AttributeSmithingTrimRecipe;
+import net.sievert.jolcraft.world.recipe.custom.vanilla.AttributeSmithingTrimRecipe;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Atomic datagen builder for {@link AttributeSmithingTrimRecipe}.
@@ -72,11 +70,11 @@ public final class AttributeSmithingTrimRecipeBuilder {
         return this;
     }
 
-    public void save(RecipeOutput output, ResourceKey<Recipe<?>> id) {
+    public void save(RecipeOutput output, ResourceLocation id) {
         AttributeSmithingTrimRecipe recipe = new AttributeSmithingTrimRecipe(
-                Optional.of(this.template),
-                Optional.of(this.base),
-                Optional.of(this.addition)
+                this.template,
+                this.base,
+                this.addition
         );
 
         if (this.criteria.isEmpty()) {
@@ -86,7 +84,11 @@ public final class AttributeSmithingTrimRecipeBuilder {
 
         Advancement.Builder advancement = output.advancement()
                 .addCriterion(
-                        JolCraftStrings.underscored(JolCraftDictionary.HAS, JolCraftDictionary.THE, JolCraftDictionary.RECIPE),
+                        JolCraftStrings.underscored(
+                                JolCraftDictionary.HAS,
+                                JolCraftDictionary.THE,
+                                JolCraftDictionary.RECIPE
+                        ),
                         RecipeUnlockedTrigger.unlocked(id)
                 )
                 .rewards(AdvancementRewards.Builder.recipe(id))
@@ -98,7 +100,7 @@ public final class AttributeSmithingTrimRecipeBuilder {
                 id,
                 recipe,
                 advancement.build(
-                        id.location().withPrefix(
+                        id.withPrefix(
                                 JolCraftStrings.slashed(
                                         JolCraftStrings.plural(JolCraftDictionary.RECIPE),
                                         this.category.getFolderName()

@@ -52,6 +52,10 @@ public final class JolCraftPotions {
 
     // Harmful
 
+    public static final Holder<Potion> ATAXIA_CURSE = POTIONS.register(JolCraftPotionIds.ATAXIA_CURSE,
+            () -> new Potion(JolCraftPotionIds.ATAXIA_CURSE,
+                    new MobEffectInstance(JolCraftEffects.ATAXIA_CURSE, 3000, 0)));
+
     public static final Holder<Potion> CURSED_WOUND = POTIONS.register(JolCraftPotionIds.CURSED_WOUND,
             () -> new Potion(JolCraftPotionIds.CURSED_WOUND,
                     new MobEffectInstance(JolCraftEffects.CURSED_WOUND, 600, 0)));
@@ -59,6 +63,40 @@ public final class JolCraftPotions {
     public static final Holder<Potion> DELIRIUM_CURSE = POTIONS.register(JolCraftPotionIds.DELIRIUM_CURSE,
             () -> new Potion(JolCraftPotionIds.DELIRIUM_CURSE,
                     new MobEffectInstance(JolCraftEffects.DELIRIUM_CURSE, 3000, 0)));
+
+    public static final Holder<Potion> FAMINE_CURSE = POTIONS.register(JolCraftPotionIds.FAMINE_CURSE,
+            () -> new Potion(JolCraftPotionIds.FAMINE_CURSE,
+                    new MobEffectInstance(JolCraftEffects.FAMINE_CURSE, 3000, 0)));
+
+    public static final Holder<Potion> FRAILTY_CURSE = POTIONS.register(JolCraftPotionIds.FRAILTY_CURSE,
+            () -> new Potion(JolCraftPotionIds.FRAILTY_CURSE,
+                    new MobEffectInstance(JolCraftEffects.FRAILTY_CURSE, 3000, 0)));
+
+    public static final Holder<Potion> HEX = POTIONS.register(JolCraftPotionIds.HEX,
+            () -> new Potion(JolCraftPotionIds.HEX,
+                    new MobEffectInstance(JolCraftEffects.HEX, 1200, 0)));
+
+    public static final Holder<Potion> VITALITY_CURSE = POTIONS.register(JolCraftPotionIds.VITALITY_CURSE,
+            () -> new Potion(JolCraftPotionIds.VITALITY_CURSE,
+                    new MobEffectInstance(JolCraftEffects.VITALITY_CURSE, 3000, 0)));
+
+
+
+    public static final Holder<Potion> DISARMED = POTIONS.register(JolCraftPotionIds.DISARMED,
+            () -> new Potion(JolCraftPotionIds.DISARMED,
+                    new MobEffectInstance(JolCraftEffects.DISARMED, 200, 0)));
+
+    public static final Holder<Potion> STUNNED = POTIONS.register(JolCraftPotionIds.STUNNED,
+            () -> new Potion(JolCraftPotionIds.STUNNED,
+                    new MobEffectInstance(JolCraftEffects.STUNNED, 200, 0)));
+
+    public static final Holder<Potion> ROOTED = POTIONS.register(JolCraftPotionIds.ROOTED,
+            () -> new Potion(JolCraftPotionIds.ROOTED,
+                    new MobEffectInstance(JolCraftEffects.ROOTED, 200, 0)));
+
+    public static final Holder<Potion> SUPPRESSED = POTIONS.register(JolCraftPotionIds.SUPPRESSED,
+            () -> new Potion(JolCraftPotionIds.SUPPRESSED,
+                    new MobEffectInstance(JolCraftEffects.SUPPRESSED, 200, 0)));
 
     public static final Holder<Potion> CORROSION = POTIONS.register(JolCraftPotionIds.CORROSION,
             () -> new Potion(JolCraftPotionIds.CORROSION,

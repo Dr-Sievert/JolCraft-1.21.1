@@ -4,48 +4,65 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
-import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 
 @OnlyIn(Dist.CLIENT)
-public final class BlockLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class BlockLangSubProvider implements LanguageSubProvider {
 
     @Override
-    public void addTranslations(AbstractLanguageProvider p) {
+    public @NotNull String id() {
+        return JolCraftStrings.plural(JolCraftDictionary.BLOCK);
+    }
 
-        p.putManual(JolCraftBlocks.BARLEY_CROP, "Barley Crops");
-        p.putManual(JolCraftBlocks.BARLEY_BLOCK, "Barley Hay Bale");
+    @Override
+    public @NotNull JolCraftDataProvider<Map<String, String>> parent() {
+        return languageProvider();
+    }
 
-        p.putSame("Asgarnian Hops",
+
+    @Override
+    public void addTranslations(@NotNull Map<String, String> translations) {
+
+        putManual(translations, JolCraftBlocks.BARLEY_CROP, "Barley Crops");
+        putManual(translations, JolCraftBlocks.BARLEY_BLOCK, "Barley Hay Bale");
+
+        putSame(translations, "Asgarnian Hops",
                 JolCraftBlocks.ASGARNIAN_CROP_BOTTOM,
                 JolCraftBlocks.ASGARNIAN_CROP_TOP
         );
-        p.putSame("Duskhold Hops",
+        putSame(translations, "Duskhold Hops",
                 JolCraftBlocks.DUSKHOLD_CROP_BOTTOM,
                 JolCraftBlocks.DUSKHOLD_CROP_TOP
         );
-        p.putSame("Krandonian Hops",
+        putSame(translations, "Krandonian Hops",
                 JolCraftBlocks.KRANDONIAN_CROP_BOTTOM,
                 JolCraftBlocks.KRANDONIAN_CROP_TOP
         );
-        p.putSame("Yanillian Hops",
+        putSame(translations, "Yanillian Hops",
                 JolCraftBlocks.YANILLIAN_CROP_BOTTOM,
                 JolCraftBlocks.YANILLIAN_CROP_TOP
         );
 
-        p.putManual(JolCraftBlocks.DEEPSLATE_BULBS_CROP, "Deepslate Bulbs");
-        p.putManual(JolCraftBlocks.FESTERLING_CROP, "Cultivated Festerling");
-        p.putManual(JolCraftBlocks.MUFFHORN_FUR_BLOCK, "Muffhorn Fur Bundle");
-        p.putManual(JolCraftBlocks.GEODE_BLOCK, "Basalt Geode Cluster");
+        putManual(translations, JolCraftBlocks.DEEPSLATE_BULBS_CROP, "Deepslate Bulbs");
+        putManual(translations, JolCraftBlocks.FESTERLING_CROP, "Cultivated Festerling");
+        putManual(translations, JolCraftBlocks.MUFFHORN_FUR_BLOCK, "Muffhorn Fur Bundle");
+        putManual(translations, JolCraftBlocks.GEODE_BLOCK, "Basalt Geode Cluster");
 
         for (DeferredHolder<?, ?> holder : JolCraftBlocks.BLOCKS.getEntries()) {
             ResourceLocation id = holder.getId();
             String key = AbstractLanguageKeys.block(id.getPath());
-            if (p.hasKey(key)) continue;
+            if (hasKey(translations, key)) continue;
 
-            p.put(key, JolCraftStrings.toTitleCase(id.getPath()));
+            put(translations, key, JolCraftStrings.toTitleCase(id.getPath()));
         }
     }
 }

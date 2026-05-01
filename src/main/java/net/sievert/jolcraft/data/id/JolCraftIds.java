@@ -6,7 +6,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 /**
- * Base class for all JolCraft id holders.
+ * Base class for all JolCraft name holders.
  * Subclasses store path strings only (e.g. "dwarven_lexicon").
  * This class provides helper methods for converting them.
  */
@@ -19,7 +19,7 @@ public abstract class JolCraftIds {
         return JolCraftStrings.plural(singular);
     }
 
-    /** Create a vanilla (minecraft namespace) id. */
+    /** Create a vanilla (minecraft namespace) name. */
     public static ResourceLocation vanilla(String path) {
         return ResourceLocation.withDefaultNamespace(path);
     }

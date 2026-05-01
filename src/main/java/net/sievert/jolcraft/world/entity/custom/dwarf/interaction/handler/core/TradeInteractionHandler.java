@@ -3,7 +3,7 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 
 import javax.annotation.ParametersAreNonnullByDefault;

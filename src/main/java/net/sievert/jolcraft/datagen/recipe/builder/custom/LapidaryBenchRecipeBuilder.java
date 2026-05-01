@@ -9,20 +9,19 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.Recipe;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.data.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
+import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
+import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
+import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,9 +37,9 @@ import java.util.Optional;
  * Contract:
  * - never throws
  * - never saves
- * - name via {@link RecipeFileNameBuilder}
+ * - name via {@link JolCraftFileNameBuilder}
  * - validation mirrors recipe serializer validation: params validate + IntRange checks
- * - returns {@link RecipeEmission} (fileName + deferred save action)
+ * - returns {@link JolCraftDataEmission}
  *
  * Naming policy (deterministic, fail-closed):
  * <tool>_<input>_into_<result>
@@ -67,10 +66,6 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
     public static @NotNull LapidaryBenchRecipeBuilder create() {
         return new LapidaryBenchRecipeBuilder();
     }
-
-    // ---------------------------------------------------------------------
-    // Fields
-    // ---------------------------------------------------------------------
 
     public @NotNull LapidaryBenchRecipeBuilder input(@Nullable ItemInput in) {
         if (in == null) {
@@ -138,21 +133,17 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // Build + validate -> emission
-    // ---------------------------------------------------------------------
-
     @Override
-    public @NotNull DataResult<RecipeEmission> buildValidated() {
+    public @NotNull DataResult<JolCraftDataEmission<RecipeOutput>> buildValidated() {
         String toolToken = toolTokenFailClosed(tool);
         String inputToken = tokenFromItemSourceFailClosed(input, JolCraftDictionary.INPUT);
         String resultToken = tokenFromItemSourceFailClosed(result, JolCraftDictionary.RESULT);
 
-        DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
-                .word(toolToken)
-                .word(inputToken)
-                .word(JolCraftDictionary.INTO)
-                .word(resultToken)
+        DataResult<String> nameBuilt = JolCraftFileNameBuilder.create()
+                .token(toolToken)
+                .token(inputToken)
+                .token(JolCraftDictionary.INTO)
+                .token(resultToken)
                 .build();
 
         if (input == null) {
@@ -172,9 +163,9 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
         }
 
         if (!errors.isEmpty()) {
-            String msg = "builder: " + String.join("; ", errors) +
-                    (nameBuilt.error().isPresent() ? ("; " + nameBuilt.error().get().message()) : "");
-            return DataResult.error(() -> msg, null);
+            String msg = "builder: " + String.join("; ", errors)
+                    + (nameBuilt.error().isPresent() ? "; " + nameBuilt.error().get().message() : "");
+            return DataResult.error(() -> msg);
         }
 
         LapidaryBenchRecipe recipe = new LapidaryBenchRecipe(
@@ -187,20 +178,14 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
         );
 
         return nameBuilt.flatMap(name ->
-                validateRecipeLikeSerializer(recipe).flatMap(validRecipe ->
-                        RecipeEmission.of(
-                                JolCraftRecipeIds.LAPIDARY_BENCH,
+                validateRecipeLikeSerializer(recipe).map(validRecipe ->
+                        new JolCraftDataEmission<>(
                                 name,
-                                (RecipeOutput outAccept, ResourceKey<Recipe<?>> id) ->
-                                        outAccept.accept(id, validRecipe, null)
+                                (outAccept, path) -> outAccept.accept(JolCraft.location(path), validRecipe, null)
                         )
                 )
         );
     }
-
-    // ---------------------------------------------------------------------
-    // Validation
-    // ---------------------------------------------------------------------
 
     private @NotNull DataResult<LapidaryBenchRecipe> validateRecipeLikeSerializer(@NotNull LapidaryBenchRecipe recipe) {
         DataResult<LapidaryBenchRecipe> resultValidation = recipe.input().validate().map(x -> recipe);
@@ -240,10 +225,6 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
 
         return DataResult.success(recipe);
     }
-
-    // ---------------------------------------------------------------------
-    // Naming helpers
-    // ---------------------------------------------------------------------
 
     private @NotNull String tokenFromItemSourceFailClosed(
             @Nullable RegistryIntrospectionSource source,
@@ -313,7 +294,7 @@ public final class LapidaryBenchRecipeBuilder implements RecipeBuilder {
                     .map(ResourceKey::location)
                     .orElse(null);
 
-            return (id != null) ? id.getPath() : JolCraftDictionary.TOOL;
+            return id != null ? id.getPath() : JolCraftDictionary.TOOL;
         }
 
         errors.add("tool must be exactly one item or exactly one tag (for naming)");

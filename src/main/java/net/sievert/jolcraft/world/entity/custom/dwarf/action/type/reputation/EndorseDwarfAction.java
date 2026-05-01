@@ -5,13 +5,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputation;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.world.player.attachment.JolCraftAttachments;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
@@ -57,7 +56,7 @@ public class EndorseDwarfAction extends InspectDwarfAction {
 
         DwarfProfession profession = dwarf.getProfession();
 
-        DwarvenReputationHelper.addEndorsement(player, profession);
+        DwarvenReputationAttachmentHelper.addEndorsement(player, profession);
 
         int total = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get()).getEndorsementCount();
 
@@ -77,9 +76,12 @@ public class EndorseDwarfAction extends InspectDwarfAction {
         }
 
         ItemStack updatedTablet = tablet;
-        DwarvenReputation rep = player.getData(JolCraftAttachments.DWARVEN_REPUTATION.get());
-        updatedTablet.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), rep.getEndorsementCount());
-        updatedTablet.set(JolCraftDataComponents.REPUTATION_TIER.get(), rep.getTierId());
+
+        int endorsements = DwarvenReputationAttachmentHelper.getEndorsementCount(player);
+        int tier = DwarvenReputationAttachmentHelper.getTier(player);
+
+        updatedTablet.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), endorsements);
+        updatedTablet.set(JolCraftDataComponents.REPUTATION_TIER.get(), tier);
         updatedTablet.set(JolCraftDataComponents.REPUTATION_OWNER.get(), player.getName().getString());
 
         throwItem(dwarf, player, updatedTablet);

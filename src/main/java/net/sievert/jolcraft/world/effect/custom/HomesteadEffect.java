@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.world.effect.custom;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,11 +12,10 @@ public class HomesteadEffect extends MobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull ServerLevel serverLevel, LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
         if (entity.getHealth() < entity.getMaxHealth()) {
             entity.heal(1.0F);
         }
-
         return true;
     }
 
@@ -27,4 +25,3 @@ public class HomesteadEffect extends MobEffect {
         return i == 0 || duration % i == 0;
     }
 }
-

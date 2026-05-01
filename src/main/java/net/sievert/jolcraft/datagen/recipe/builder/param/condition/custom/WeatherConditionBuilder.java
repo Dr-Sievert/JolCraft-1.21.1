@@ -1,9 +1,9 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.custom.WeatherCondition;
-import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.custom.WeatherCondition;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * - Later calls overwrite earlier ones.
  * - Validation delegated to WeatherCondition.
  */
-public final class WeatherConditionBuilder implements ValidatedBuilder<Condition> {
+public final class WeatherConditionBuilder implements JolCraftValidatedBuilder<Condition> {
 
     private Boolean rain;
     private Boolean thunder;

@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.event.game.recipe;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -12,23 +13,24 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
-import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
-import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipeInput;
-import net.sievert.jolcraft.data.recipe.param.level.WorldAnchor;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputHandler;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
+import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
+import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipeInput;
+import net.sievert.jolcraft.world.recipe.param.level.WorldAnchor;
+import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.world.recipe.param.output.base.Output;
+import net.sievert.jolcraft.world.recipe.param.output.base.OutputHandler;
+import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class JolCraftHandInteractionEvents {
 
@@ -55,10 +57,10 @@ public final class JolCraftHandInteractionEvents {
             return;
         }
 
-        if (player.getCooldowns().isOnCooldown(main)) {
+        if (player.getCooldowns().isOnCooldown(main.getItem())) {
             return;
         }
-        if (player.getCooldowns().isOnCooldown(off)) {
+        if (player.getCooldowns().isOnCooldown(off.getItem())) {
             return;
         }
 
@@ -76,7 +78,8 @@ public final class JolCraftHandInteractionEvents {
 
         JolCraftLogs.info(
                 JolCraftLogTags.RECIPE,
-                "Hand interaction resolved recipe: " + resolved.recipe()
+                "Hand interaction resolved recipe={}",
+                resolved.id()
         );
 
         HandInteractionRecipe recipe = resolved.recipe();
@@ -103,8 +106,8 @@ public final class JolCraftHandInteractionEvents {
         ItemIngredientAction.apply(ctx, mapping.stackA(), recipe.actionA());
         ItemIngredientAction.apply(ctx, mapping.stackB(), recipe.actionB());
 
-        player.getCooldowns().addCooldown(main, HAND_INTERACTION_COOLDOWN_TICKS);
-        player.getCooldowns().addCooldown(off, HAND_INTERACTION_COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(main.getItem(), HAND_INTERACTION_COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(off.getItem(), HAND_INTERACTION_COOLDOWN_TICKS);
 
         player.swing(mapping.swingHand(), true);
     }
@@ -116,9 +119,7 @@ public final class JolCraftHandInteractionEvents {
     ) {
         List<RecipeHolder<HandInteractionRecipe>> recipes = level.getServer()
                 .getRecipeManager()
-                .recipeMap()
-                .getRecipesFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level)
-                .toList();
+                .getRecipesFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level);
 
         JolCraftLogs.error(
                 JolCraftLogTags.RECIPE,
@@ -130,7 +131,7 @@ public final class JolCraftHandInteractionEvents {
 
             JolCraftLogs.error(
                     JolCraftLogTags.RECIPE,
-                    "Checking hand recipe id=" + holder.id()
+                    "Checking hand recipe name=" + holder.id()
             );
 
             if (recipe.requireSneaking() && !player.isShiftKeyDown()) {
@@ -147,7 +148,7 @@ public final class JolCraftHandInteractionEvents {
                         JolCraftLogTags.RECIPE,
                         "Resolved hand recipe: " + holder.id()
                 );
-                return new ResolvedRecipe(recipe, mapping);
+                return new ResolvedRecipe(holder.id(), recipe, mapping);
             }
 
             JolCraftLogs.error(
@@ -206,6 +207,7 @@ public final class JolCraftHandInteractionEvents {
     ) {}
 
     private record ResolvedRecipe(
+            ResourceLocation id,
             HandInteractionRecipe recipe,
             HandMapping mapping
     ) {}

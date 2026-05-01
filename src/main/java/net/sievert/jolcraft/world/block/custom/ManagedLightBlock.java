@@ -4,14 +4,11 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -29,6 +26,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.ManagedLightBlockEntity;
+import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,17 +61,12 @@ public final class ManagedLightBlock extends BaseEntityBlock implements SimpleWa
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
-    }
-
-    @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         return Shapes.empty();
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state) {
+    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return state.getFluidState().isEmpty();
     }
 
@@ -85,18 +78,17 @@ public final class ManagedLightBlock extends BaseEntityBlock implements SimpleWa
     @Override
     protected BlockState updateShape(
             BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
             Direction dir,
-            BlockPos fromPos,
             BlockState fromState,
-            RandomSource random
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos fromPos
     ) {
         if (state.getValue(WATERLOGGED)) {
-            ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        return super.updateShape(state, level, ticks, pos, dir, fromPos, fromState, random);
+
+        return super.updateShape(state, dir, fromState, level, pos, fromPos);
     }
 
     @Override
@@ -111,9 +103,6 @@ public final class ManagedLightBlock extends BaseEntityBlock implements SimpleWa
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide) return null;
-        return type == JolCraftBlockEntities.MANAGED_LIGHT.get()
-                ? (lvl, p, st, be) -> ((ManagedLightBlockEntity) be).serverTick()
-                : null;
+        return createTickerHelper(type, JolCraftBlockEntities.MANAGED_LIGHT.get(), TickingBlockEntity.tickOnServer());
     }
 }

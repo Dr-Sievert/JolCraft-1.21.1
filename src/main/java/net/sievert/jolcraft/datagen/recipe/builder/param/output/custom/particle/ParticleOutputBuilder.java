@@ -6,18 +6,18 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
-import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleProducer;
-import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleSpec;
-import net.sievert.jolcraft.data.recipe.param.quantity.DoubleRange;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleProducer;
+import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleSpec;
+import net.sievert.jolcraft.world.recipe.param.quantity.DoubleRange;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class ParticleOutputBuilder {
 
-    private @Nullable RecipeLookups lookups;
+    private @Nullable JolCraftDataLookups lookups;
     private @Nullable ParticleSpec spec;
     private @Nullable IntRange count = IntRange.ONE;
     private @NotNull DoubleRange speed = DoubleRange.ZERO;
@@ -34,7 +34,7 @@ public final class ParticleOutputBuilder {
         return new ParticleOutputBuilder();
     }
 
-    public @NotNull ParticleOutputBuilder lookups(@Nullable RecipeLookups lookups) {
+    public @NotNull ParticleOutputBuilder lookups(@Nullable JolCraftDataLookups lookups) {
         this.lookups = lookups;
         return this;
     }

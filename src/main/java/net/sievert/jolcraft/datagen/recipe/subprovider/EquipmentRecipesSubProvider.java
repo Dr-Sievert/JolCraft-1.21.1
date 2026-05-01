@@ -1,30 +1,38 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentHelper;
+import net.sievert.jolcraft.world.item.equipment.JolCraftArmorItemSet;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@SuppressWarnings({"SameParameterValue"})
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
+@SuppressWarnings("SameParameterValue")
+public record EquipmentRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
     private static final String FOLDER = JolCraftDictionary.EQUIPMENT;
+
+    public EquipmentRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -33,12 +41,11 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
         armorSetSimple(
-                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 JolCraftItems.DEEPSLATE_ARMOR_SET,
@@ -46,7 +53,6 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
         );
 
         armorSetWithLining(
-                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.MITHRIL_CHAINWEAVE.get(),
@@ -56,19 +62,18 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void armorSetSimple(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike material,
-            JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
+            JolCraftArmorItemSet set,
             ItemLike unlockItem
     ) {
-        ItemLike helmet = set.get(JolCraftEquipmentHelper.ArmorPiece.HELMET).get();
-        ItemLike chestplate = set.get(JolCraftEquipmentHelper.ArmorPiece.CHESTPLATE).get();
-        ItemLike leggings = set.get(JolCraftEquipmentHelper.ArmorPiece.LEGGINGS).get();
-        ItemLike boots = set.get(JolCraftEquipmentHelper.ArmorPiece.BOOTS).get();
+        ItemLike helmet = set.get(ArmorItem.Type.HELMET).get();
+        ItemLike chestplate = set.get(ArmorItem.Type.CHESTPLATE).get();
+        ItemLike leggings = set.get(ArmorItem.Type.LEGGINGS).get();
+        ItemLike boots = set.get(ArmorItem.Type.BOOTS).get();
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, helmet)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, helmet)
                 )
                 .pattern("BBB")
                 .pattern("B B")
@@ -77,7 +82,7 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, helmet);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, chestplate)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, chestplate)
                 )
                 .pattern("B B")
                 .pattern("BBB")
@@ -87,7 +92,7 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, chestplate);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, leggings)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, leggings)
                 )
                 .pattern("BBB")
                 .pattern("B B")
@@ -97,7 +102,7 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, leggings);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, boots)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, boots)
                 )
                 .pattern("B B")
                 .pattern("B B")
@@ -107,20 +112,19 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void armorSetWithLining(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike ingot,
             ItemLike lining,
-            JolCraftEquipmentHelper.ArmorSet<DeferredItem<Item>> set,
+            JolCraftArmorItemSet set,
             ItemLike unlockItem
     ) {
-        ItemLike helmet = set.get(JolCraftEquipmentHelper.ArmorPiece.HELMET).get();
-        ItemLike chestplate = set.get(JolCraftEquipmentHelper.ArmorPiece.CHESTPLATE).get();
-        ItemLike leggings = set.get(JolCraftEquipmentHelper.ArmorPiece.LEGGINGS).get();
-        ItemLike boots = set.get(JolCraftEquipmentHelper.ArmorPiece.BOOTS).get();
+        ItemLike helmet = set.get(ArmorItem.Type.HELMET).get();
+        ItemLike chestplate = set.get(ArmorItem.Type.CHESTPLATE).get();
+        ItemLike leggings = set.get(ArmorItem.Type.LEGGINGS).get();
+        ItemLike boots = set.get(ArmorItem.Type.BOOTS).get();
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, helmet)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, helmet)
                 )
                 .pattern("BBB")
                 .pattern("X X")
@@ -130,7 +134,7 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, helmet);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, chestplate)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, chestplate)
                 )
                 .pattern("B B")
                 .pattern("XXX")
@@ -141,7 +145,7 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, chestplate);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, leggings)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, leggings)
                 )
                 .pattern("BBB")
                 .pattern("X X")
@@ -152,7 +156,7 @@ public final class EquipmentRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, leggings);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, boots)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, boots)
                 )
                 .pattern("B B")
                 .pattern("B B")

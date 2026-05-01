@@ -1,22 +1,35 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.minecraft.core.HolderGetter;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-public final class DwarfScrapperTrades implements RecipeSubProvider {
+public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public DwarfScrapperTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
 
     private static final DwarfProfession PROFESSION = DwarfProfession.SCRAPPER;
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -25,11 +38,11 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.NOVICE)
@@ -42,7 +55,7 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
@@ -55,7 +68,7 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
@@ -68,7 +81,7 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.EXPERT)
@@ -81,7 +94,7 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.MASTER)
@@ -94,35 +107,36 @@ public final class DwarfScrapperTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        pooledSalvage(executor, JolCraftItems.EXPIRED_POTION.get(), 1, 3, 1);
-        pooledSalvage(executor, JolCraftItems.OLD_FABRIC.get(), 1, 3, 1);
-        pooledSalvage(executor, JolCraftItems.BROKEN_PICKAXE.get(), 1, 4, 1);
-        pooledSalvage(executor, JolCraftItems.BROKEN_AMULET.get(), 1, 4, 1);
-        pooledSalvage(executor, JolCraftItems.BROKEN_BELT.get(), 1, 4, 1);
-        pooledSalvage(executor, JolCraftItems.BROKEN_COINS.get(), 1, 4, 1);
-        pooledSalvage(executor, JolCraftItems.RUSTY_TONGS.get(), 1, 4, 1);
-        pooledSalvage(executor, JolCraftItems.INGOT_MOULD.get(), 1, 4, 1);
+        pooledSalvage(output, tracking, JolCraftItems.EXPIRED_POTION.get(), 1, 3, 1);
+        pooledSalvage(output, tracking, JolCraftItems.OLD_FABRIC.get(), 1, 3, 1);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_PICKAXE.get(), 1, 4, 1);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_AMULET.get(), 1, 4, 1);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_BELT.get(), 1, 4, 1);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_COINS.get(), 1, 4, 1);
+        pooledSalvage(output, tracking, JolCraftItems.RUSTY_TONGS.get(), 1, 4, 1);
+        pooledSalvage(output, tracking, JolCraftItems.INGOT_MOULD.get(), 1, 4, 1);
 
-        pooledSalvage(executor, JolCraftItems.DEEPSLATE_MUG.get(), 3, 5, 3);
-        pooledSalvage(executor, JolCraftItems.BROKEN_TABLET.get(), 3, 5, 3);
+        pooledSalvage(output, tracking, JolCraftItems.DEEPSLATE_MUG.get(), 3, 5, 3);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_TABLET.get(), 3, 5, 3);
 
-        pooledSalvage(executor, JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), 3, 5, 3);
-        pooledSalvage(executor, JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), 3, 5, 3);
-        pooledSalvage(executor, JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), 3, 5, 3);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), 3, 5, 3);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), 3, 5, 3);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), 3, 5, 3);
 
-        pooledSalvage(executor, JolCraftItems.MITHRIL_SCRAP.get(), 5, 10, 5);
-        pooledSalvage(executor, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), 5, 10, 5);
-        pooledSalvage(executor, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), 5, 10, 5);
+        pooledSalvage(output, tracking, JolCraftItems.MITHRIL_SCRAP.get(), 5, 10, 5);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), 5, 10, 5);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), 5, 10, 5);
     }
 
-    private static void pooledSalvage(
-            RecipeEmissionExecutor executor,
+    private void pooledSalvage(
+            RecipeOutput output,
+            JolCraftDataTracking tracking,
             ItemLike item,
             int minGold,
             int maxGold,
             int dwarfXp
     ) {
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .tradeGroup(TradeGroup.GLOBAL_POOL)

@@ -4,14 +4,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class LanguageGateInteractionHandler implements DwarfInteractions.CoreInteraction {
 
@@ -24,7 +21,7 @@ public final class LanguageGateInteractionHandler implements DwarfInteractions.C
         var dwarf = ctx.dwarf();
         var player = ctx.player();
 
-        if (!DwarvenLanguageHelper.knowsDwarvish(player)) {
+        if (!LanguageAttachmentHelper.knowsDwarvish(player)) {
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_LOCKED).withStyle(ChatFormatting.RED),
                     true

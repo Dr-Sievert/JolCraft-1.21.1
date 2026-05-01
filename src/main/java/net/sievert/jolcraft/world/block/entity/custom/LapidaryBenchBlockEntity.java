@@ -11,21 +11,22 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
-import net.sievert.jolcraft.data.recipe.custom.lapidary_bench.LapidaryRecipeInput;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
+import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryRecipeInput;
+import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
-import net.sievert.jolcraft.world.inventory.ItemInsertionHelper;
+import net.sievert.jolcraft.world.gui.menu.LapidaryBenchMenu;
+import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -41,6 +42,8 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
     public static final int SLOT_TOOL = 1;
     public static final int SLOT_OUTPUT = 2;
     private static final int SLOT_COUNT = 3;
+    private boolean recipeValid;
+    private int actionId = -1;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
 
@@ -61,7 +64,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
 
         Resolved r = resolved.get();
 
-        ItemInsertionHelper.tryInsertIntoSlotInventoryOrDrop(
+        JolCraftItemInsertionHelper.tryInsertIntoSlotInventoryOrDrop(
                 this,
                 SLOT_OUTPUT,
                 player.getInventory(),
@@ -74,6 +77,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
         }
 
         this.setChanged();
+        refreshCachedState(player);
 
         if (r.wasGeode) {
             player.awardStat(JolCraftStats.GEODES_CRACKED.get());
@@ -115,32 +119,62 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
     }
 
     // ---------------------------------------------------------------------
+    // MENU SYNC
+    // ---------------------------------------------------------------------
+
+    private final ContainerData containerData = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0 -> recipeValid ? 1 : 0;
+                case 1 -> actionId;
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0 -> recipeValid = value != 0;
+                case 1 -> actionId = value;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    };
+
+    public ContainerData getContainerData() {
+        return this.containerData;
+    }
+
+
+    // ---------------------------------------------------------------------
     // VALIDATION / UI GATING
     // ---------------------------------------------------------------------
 
-    public boolean isRecipeValid(ServerPlayer player) {
-        Level level = this.getLevel();
-        if (level == null || level.isClientSide) return false;
+    public void refreshCachedState(ServerPlayer player) {
+        int nextActionId = computeActionId();
+        boolean nextRecipeValid = resolveValidRecipe(player).isPresent();
 
-        ItemStack input = this.items.getFirst();
+        if (this.actionId == nextActionId && this.recipeValid == nextRecipeValid) {
+            return;
+        }
+
+        this.actionId = nextActionId;
+        this.recipeValid = nextRecipeValid;
+        setChanged();
+    }
+
+    private int computeActionId() {
         ItemStack tool = this.items.get(SLOT_TOOL);
-        if (input.isEmpty() || tool.isEmpty()) return false;
 
-        WorldContext ctx = new WorldContext(
-                player.serverLevel(),
-                player,
-                null
-        );
+        if (tool.is(JolCraftTags.Items.ARTISAN_HAMMERS)) return 0;
+        if (tool.is(JolCraftTags.Items.CHISELS)) return 1;
 
-        LapidaryRecipeInput in = new LapidaryRecipeInput(ctx, input, tool);
-
-        var opt = player.serverLevel().recipeAccess().getRecipeFor(
-                JolCraftRecipes.LAPIDARY_BENCH_TYPE.get(),
-                in,
-                level
-        );
-
-        return opt.isPresent() && opt.get().value().matches(in, level);
+        return -1;
     }
 
     // ---------------------------------------------------------------------
@@ -172,11 +206,12 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
 
         LapidaryRecipeInput in = new LapidaryRecipeInput(ctx, input, tool);
 
-        var opt = player.serverLevel().recipeAccess().getRecipeFor(
+        var opt = player.serverLevel().getRecipeManager().getRecipeFor(
                 JolCraftRecipes.LAPIDARY_BENCH_TYPE.get(),
                 in,
                 level
         );
+
         if (opt.isEmpty()) return Optional.empty();
 
         LapidaryBenchRecipe recipe = opt.get().value();

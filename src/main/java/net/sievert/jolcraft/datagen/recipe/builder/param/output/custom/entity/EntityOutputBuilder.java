@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpec;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntitySpec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

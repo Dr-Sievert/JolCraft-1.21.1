@@ -5,10 +5,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.custom.BiomeCondition;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
-import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.custom.BiomeCondition;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ import java.util.Optional;
  * - Delegates to {@link BiomeCondition#validate()} to enforce the param invariants (exactly one of biome/tag).
  */
 public final class BiomeConditionBuilder extends AbstractConditionBuilder<BiomeConditionBuilder>
-        implements ValidatedBuilder<Condition> {
+        implements JolCraftValidatedBuilder<Condition> {
 
     private enum Kind { BIOME, TAG }
 
@@ -35,7 +35,7 @@ public final class BiomeConditionBuilder extends AbstractConditionBuilder<BiomeC
 
     private @Nullable Holder<Biome> biome;
     private @Nullable ResourceKey<Biome> biomeKey;
-    private @Nullable RecipeLookups lookups;
+    private @Nullable JolCraftDataLookups lookups;
     private @Nullable TagKey<Biome> tag;
 
     private BiomeConditionBuilder() {}
@@ -44,7 +44,7 @@ public final class BiomeConditionBuilder extends AbstractConditionBuilder<BiomeC
         return new BiomeConditionBuilder();
     }
 
-    public @NotNull BiomeConditionBuilder lookups(@Nullable RecipeLookups lookups) {
+    public @NotNull BiomeConditionBuilder lookups(@Nullable JolCraftDataLookups lookups) {
         this.lookups = lookups;
         return this;
     }

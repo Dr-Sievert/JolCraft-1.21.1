@@ -1,39 +1,43 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
-import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
-import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.*;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfAlchemistTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfArcanistTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfArtisanTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfBaseTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfBrewmasterTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfExplorerTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfGuardTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfGuildmasterTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfHistorianTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfKeeperTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfMerchantTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfMinerTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfPriestTrades;
+import net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade.DwarfScrapperTrades;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public final class DwarfTradeRecipesSubProvider implements RecipeSubProvider {
+public record DwarfTradeRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
-    private static final List<RecipeSubProvider> SUBS = List.of(
-            new DwarfBaseTrades(),
-            new DwarfAlchemistTrades(),
-            new DwarfArcanistTrades(),
-            new DwarfArtisanTrades(),
-            new DwarfBrewmasterTrades(),
-            new DwarfExplorerTrades(),
-            new DwarfGuardTrades(),
-            new DwarfGuildmasterTrades(),
-            new DwarfHistorianTrades(),
-            new DwarfKeeperTrades(),
-            new DwarfMerchantTrades(),
-            new DwarfMinerTrades(),
-            new DwarfPriestTrades(),
-            new DwarfScrapperTrades()
-    );
+    public DwarfTradeRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -41,13 +45,22 @@ public final class DwarfTradeRecipesSubProvider implements RecipeSubProvider {
     }
 
     @Override
-    public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
-            @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
-    ) {
-        for (RecipeSubProvider sub : SUBS) {
-            sub.register(executor, output, lookups);
-        }
+    public @NotNull List<? extends JolCraftSubDataProvider<RecipeOutput>> subProviders() {
+        return List.of(
+                new DwarfBaseTrades(this),
+                new DwarfAlchemistTrades(this),
+                new DwarfArcanistTrades(this),
+                new DwarfArtisanTrades(this),
+                new DwarfBrewmasterTrades(this),
+                new DwarfExplorerTrades(this),
+                new DwarfGuardTrades(this),
+                new DwarfGuildmasterTrades(this),
+                new DwarfHistorianTrades(this),
+                new DwarfKeeperTrades(this),
+                new DwarfMerchantTrades(this),
+                new DwarfMinerTrades(this),
+                new DwarfPriestTrades(this),
+                new DwarfScrapperTrades(this)
+        );
     }
 }

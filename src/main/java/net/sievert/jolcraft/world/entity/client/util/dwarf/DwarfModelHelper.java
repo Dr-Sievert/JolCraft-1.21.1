@@ -73,7 +73,7 @@ public final class DwarfModelHelper {
             JolCraftModelPartIds.Creature.Humanoid.LEFT_EYE;
 
 
-    // Profession extras (dwarf-only)
+    // Profession extras
     public static final String PART_SHIELD =
             JolCraftModelPartIds.Creature.Humanoid.Dwarf.SHIELD;
 
@@ -130,7 +130,7 @@ public final class DwarfModelHelper {
                 PartPose.offset(-3.0F, 17.0F, 0.0F));
 
         rightLeg.addOrReplaceChild(PART_RIGHT_FOOTWEAR,
-                CubeListBuilder.create().texOffs(109, 54).addBox(-2.0F, -0.5F, -2.0F, 5.0F, 7.0F, 4.0F, new CubeDeformation(0.25F)),
+                CubeListBuilder.create().texOffs(109, 54).addBox(-2.01F, -0.5F, -2.0F, 5.0F, 7.0F, 4.0F, new CubeDeformation(0.25F)),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition leftLeg = root.addOrReplaceChild(PART_LEFT_LEG,
@@ -192,6 +192,7 @@ public final class DwarfModelHelper {
         addGuardShield(leftArm);
     }
 
+    @SuppressWarnings("rawtypes")
     public static void visibleOuterLayer(DwarfModel model) {
         model.hat.visible = true;
         model.bodywear.visible = true;
@@ -221,15 +222,15 @@ public final class DwarfModelHelper {
     private static void addMerchantGlasses(PartDefinition head) {
         head.addOrReplaceChild(PART_GLASSES_MERCHANT,
                 CubeListBuilder.create()
-                        .texOffs(80, 10).addBox(0.0F, -4.75F, -4.76F, 4.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)),
+                        .texOffs(80, 10).addBox(0.0F, -4.75F, -4.76F, 4.0F, 5.0F, 0.01F, new CubeDeformation(0.0F)),
                 PartPose.offset(0.0F, 2.0F, 2.0F));
     }
 
     private static void addHistorianGlasses(PartDefinition head) {
         head.addOrReplaceChild(PART_GLASSES_HISTORIAN,
                 CubeListBuilder.create()
-                        .texOffs(76, 10).addBox(-3.0F, -3.75F, -4.76F, 2.0F, 1.0F, 0.01F, new CubeDeformation(0.0F))
-                        .texOffs(78, 10).addBox(1.0F, -3.75F, -4.76F, 2.0F, 1.0F, 0.0F, new CubeDeformation(0.0F)),
+                        .texOffs(80, 10).addBox(-3.0F, -3.75F, -4.76F, 2.0F, 1.0F, 0.01F, new CubeDeformation(0.0F))
+                        .texOffs(84, 10).addBox( 1.0F, -3.75F, -4.76F, 2.0F, 1.0F, 0.01F, new CubeDeformation(0.0F)),
                 PartPose.offset(0.0F, 2.0F, 2.0F));
     }
 

@@ -25,6 +25,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftConfiguredFeatureIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.crop.DeepslateBulbsCropBlock;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -38,17 +39,20 @@ public class JolCraftConfiguredFeatures {
             registerKey(JolCraftConfiguredFeatureIds.DEEPSLATE_BULBS_PATCH);
 
     // Ores
-    public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_MITHRIL_ORE_KEY =
-            registerKey(JolCraftConfiguredFeatureIds.SMALL_MITHRIL_ORE);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_MITHRIL_SMALL_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SMALL);
 
-    public static final ResourceKey<ConfiguredFeature<?, ?>> MEDIUM_MITHRIL_ORE_KEY =
-            registerKey(JolCraftConfiguredFeatureIds.MEDIUM_MITHRIL_ORE);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_MITHRIL_MEDIUM_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.ORE_MITHRIL_MEDIUM);
 
-    public static final ResourceKey<ConfiguredFeature<?, ?>> LARGE_MITHRIL_ORE_KEY =
-            registerKey(JolCraftConfiguredFeatureIds.LARGE_MITHRIL_ORE);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_MITHRIL_LARGE_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.ORE_MITHRIL_LARGE);
 
-    public static final ResourceKey<ConfiguredFeature<?, ?>> SPECIAL_MITHRIL_ORE_KEY =
-            registerKey(JolCraftConfiguredFeatureIds.SPECIAL_MITHRIL_ORE);
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_MITHRIL_SPECIAL_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SPECIAL);
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_MITHRIL_BURIED_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.ORE_MITHRIL_BURIED);
 
     // Geodes
     public static final ResourceKey<ConfiguredFeature<?, ?>> BASALT_GEODE_KEY =
@@ -105,10 +109,11 @@ public class JolCraftConfiguredFeatures {
         List<OreConfiguration.TargetBlockState> overworldMithrilOres = List.of(
                 OreConfiguration.target(deepslateReplaceables, JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get().defaultBlockState()));
 
-        register(context, SMALL_MITHRIL_ORE_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 1));
-        register(context, MEDIUM_MITHRIL_ORE_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 3));
-        register(context, LARGE_MITHRIL_ORE_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5));
-        register(context, SPECIAL_MITHRIL_ORE_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5));
+        register(context, ORE_MITHRIL_SMALL_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 1, 0.5F));
+        register(context, ORE_MITHRIL_MEDIUM_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 3, 0.6F));
+        register(context, ORE_MITHRIL_LARGE_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5, 0.7F));
+        register(context, ORE_MITHRIL_SPECIAL_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5));
+        register(context, ORE_MITHRIL_BURIED_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5, 1.0F));
 
         //Geodes
         GeodeBlockSettings basaltGeodeBlocks = new GeodeBlockSettings(
@@ -122,6 +127,12 @@ public class JolCraftConfiguredFeatures {
                 BlockTags.GEODE_INVALID_BLOCKS
         );
 
+        GeodeConfiguration basaltGeodeConfig = getGeodeConfiguration(basaltGeodeBlocks);
+
+        register(context, BASALT_GEODE_KEY, JolCraftFeatures.BASALT_GEODE.get(), basaltGeodeConfig);
+    }
+
+    private static @NotNull GeodeConfiguration getGeodeConfiguration(GeodeBlockSettings basaltGeodeBlocks) {
         GeodeLayerSettings basaltGeodeLayers = new GeodeLayerSettings(
                 0.5,  // filling radius (center)
                 0.7,  // inner shell radius (where budding/geode block can appear)
@@ -130,12 +141,12 @@ public class JolCraftConfiguredFeatures {
         );
 
         GeodeCrackSettings basaltGeodeCrack = new GeodeCrackSettings(
-                0.98, // crack chance (almost always cracked)
+                0.8, // crack chance
                 2.0,  // base crack size
                 2     // crack point offset
         );
 
-        GeodeConfiguration basaltGeodeConfig = new GeodeConfiguration(
+        return new GeodeConfiguration(
                 basaltGeodeBlocks,
                 basaltGeodeLayers,
                 basaltGeodeCrack,
@@ -150,16 +161,15 @@ public class JolCraftConfiguredFeatures {
                 0.05, // noiseMultiplier
                 1     // invalidBlocksThreshold
         );
-
-        register(context, BASALT_GEODE_KEY, Feature.GEODE, basaltGeodeConfig);
     }
 
     public static ResourceKey<ConfiguredFeature<?, ?>> registerKey(String name) {
         return ResourceKey.create(Registries.CONFIGURED_FEATURE, JolCraft.location(name));
     }
 
-    private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(BootstrapContext<ConfiguredFeature<?, ?>> context,
-                                                                                          ResourceKey<ConfiguredFeature<?, ?>> key, F feature, FC configuration) {
+    private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(
+            BootstrapContext<ConfiguredFeature<?, ?>> context, ResourceKey<ConfiguredFeature<?, ?>> key, F feature, FC configuration
+    ) {
         context.register(key, new ConfiguredFeature<>(feature, configuration));
     }
 }

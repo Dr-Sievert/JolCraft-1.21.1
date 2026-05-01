@@ -1,15 +1,14 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.minecraft.core.HolderGetter;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -17,9 +16,23 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
-public final class DwarfHistorianTrades implements RecipeSubProvider {
+public record DwarfHistorianTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public DwarfHistorianTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
 
     private static final DwarfProfession PROFESSION = DwarfProfession.HISTORIAN;
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -28,21 +41,16 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
 
         // =========================================================
         // NOVICE
         // =========================================================
 
-        executor.emitOrdered(trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_COMMON.get(), 3, 10, 5));
-        executor.emitOrdered(trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_UNCOMMON.get(), 6, 10, 35));
-        executor.emitOrdered(trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_RARE.get(), 10, 10, 75));
-        executor.emitOrdered(trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_EPIC.get(), 22, 10, 125));
-
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.NOVICE)
@@ -54,17 +62,16 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_COMMON.get(), 3, 10, 5));
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_UNCOMMON.get(), 6, 10, 35));
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_RARE.get(), 10, 10, 75));
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.NOVICE, JolCraftItems.DWARVEN_TOME_EPIC.get(), 22, 10, 125));
+
         // =========================================================
         // APPRENTICE
         // =========================================================
 
-        executor.emitOrdered(trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), 6, 10, 5));
-        executor.emitOrdered(trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), 8, 10, 35));
-        executor.emitOrdered(trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get(), 14, 10, 75));
-        executor.emitOrdered(trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), 28, 10, 125));
-        executor.emitOrdered(trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 35, 10, 250));
-
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
@@ -76,23 +83,17 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get(), 6, 10, 5));
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get(), 8, 10, 35));
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get(), 14, 10, 75));
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get(), 28, 10, 125));
+        emitOrdered(output, tracking, trade(DwarfMerchantData.Level.APPRENTICE, JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(), 35, 10, 250));
+
         // =========================================================
         // JOURNEYMAN
         // =========================================================
 
-        executor.emitOrdered(
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
-                        .costACoins(8)
-                        .noCostB()
-                        .result(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get().asItem(), 1)
-                        .maxUses(3)
-                        .dwarfXp(1)
-                        .priceMultiplier(0.05F)
-        );
-
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
@@ -104,23 +105,23 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        // =========================================================
-        // EXPERT
-        // =========================================================
-
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
-                        .costACoins(13)
+                        .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
+                        .costACoins(8)
                         .noCostB()
-                        .result(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get().asItem(), 1)
+                        .result(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get().asItem(), 1)
                         .maxUses(3)
                         .dwarfXp(1)
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        // =========================================================
+        // EXPERT
+        // =========================================================
+
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.EXPERT)
@@ -132,17 +133,29 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
+        emitOrdered(output, tracking,
+                DwarfTradeRecipeBuilder.create()
+                        .profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .costACoins(13)
+                        .noCostB()
+                        .result(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get().asItem(), 1)
+                        .maxUses(3)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
+        );
+
         // =========================================================
         // MASTER
         // =========================================================
 
-        buyLegendaryPages(executor, 1, JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get());
-        buyLegendaryPages(executor, 2, JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get());
-        buyLegendaryPages(executor, 3, JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get());
-        buyLegendaryPages(executor, 4, JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get());
-        buyLegendaryPages(executor, 5, JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
+        buyLegendaryPages(output, tracking, 1, JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get());
+        buyLegendaryPages(output, tracking, 2, JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get());
+        buyLegendaryPages(output, tracking, 3, JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get());
+        buyLegendaryPages(output, tracking, 4, JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get());
+        buyLegendaryPages(output, tracking, 5, JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.MASTER)
@@ -154,7 +167,7 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
                         .priceMultiplier(0.05F)
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
                         DwarfMerchantData.Level.MASTER,
                         PROFESSION,
@@ -164,7 +177,7 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
                 )
         );
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
                         DwarfMerchantData.Level.MASTER,
                         PROFESSION,
@@ -192,13 +205,14 @@ public final class DwarfHistorianTrades implements RecipeSubProvider {
                 .priceMultiplier(0.05F);
     }
 
-    private static void buyLegendaryPages(
-            @NotNull RecipeEmissionExecutor executor,
+    private void buyLegendaryPages(
+            @NotNull RecipeOutput output,
+            JolCraftDataTracking tracking,
             int pages,
             @NotNull ItemLike ancientTome
     ) {
 
-        executor.emitOrdered(
+        emitOrdered(output, tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.MASTER)

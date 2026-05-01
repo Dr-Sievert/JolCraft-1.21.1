@@ -2,7 +2,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom;
 
 import com.mojang.serialization.DataResult;
 import net.minecraft.ChatFormatting;
-import net.sievert.jolcraft.data.recipe.param.output.custom.TextOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.TextOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

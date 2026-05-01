@@ -1,13 +1,12 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task;
 
-import net.minecraft.core.HolderGetter;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyTaskRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -16,7 +15,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
+public record DwarfMerchantBountyTasks(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+
+    public DwarfMerchantBountyTasks(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -25,12 +38,12 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
 
-        emitTier(executor, DwarfMerchantData.Level.NOVICE, b -> {
+        emitTier(output, tracking, DwarfMerchantData.Level.NOVICE, b -> {
             b.collectWeighted(Items.COAL, 5, 12, 4);
             b.collectWeighted(Items.FLINT, 5, 12, 4);
             b.collectWeighted(Items.COPPER_INGOT, 5, 12, 3);
@@ -40,7 +53,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collectWeighted(Items.IRON_NUGGET, 5, 12, 2);
         });
 
-        emitTier(executor, DwarfMerchantData.Level.APPRENTICE, b -> {
+        emitTier(output, tracking, DwarfMerchantData.Level.APPRENTICE, b -> {
             b.collectWeighted(Items.IRON_INGOT, 4, 8, 4);
             b.collectWeighted(Items.LAPIS_LAZULI, 4, 8, 3);
             b.collectWeighted(Items.REDSTONE, 4, 8, 3);
@@ -50,7 +63,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collectWeighted(Items.BONE, 5, 9, 3);
         });
 
-        emitTier(executor, DwarfMerchantData.Level.JOURNEYMAN, b -> {
+        emitTier(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, b -> {
             b.collectWeighted(Items.GOLD_INGOT, 3, 6, 3);
             b.collectWeighted(Items.EMERALD, 2, 5, 2);
             b.collectWeighted(Items.AMETHYST_SHARD, 3, 6, 3);
@@ -58,7 +71,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collectWeighted(Items.INK_SAC, 3, 6, 2);
         });
 
-        emitTier(executor, DwarfMerchantData.Level.EXPERT, b -> {
+        emitTier(output, tracking, DwarfMerchantData.Level.EXPERT, b -> {
             b.collectWeighted(Items.ANVIL, 1, 1, 1);
             b.collectWeighted(Items.GOLDEN_APPLE, 1, 2, 2);
             b.collectWeighted(Items.BOOK, 1, 2, 3);
@@ -67,7 +80,7 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
             b.collectWeighted(Items.ENDER_PEARL, 1, 1, 1);
         });
 
-        emitTier(executor, DwarfMerchantData.Level.MASTER, b -> {
+        emitTier(output, tracking, DwarfMerchantData.Level.MASTER, b -> {
             b.collectWeighted(Items.NETHERITE_SCRAP, 1, 2, 2);
             b.collectWeighted(Items.HEART_OF_THE_SEA, 1, 1, 1);
             b.collectWeighted(Items.DRAGON_BREATH, 1, 2, 2);
@@ -75,7 +88,8 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
     }
 
     private void emitTier(
-            RecipeEmissionExecutor executor,
+            RecipeOutput output,
+            JolCraftDataTracking tracking,
             DwarfMerchantData.Level tier,
             Consumer<BountyTaskRecipeBuilder> objectives
     ) {
@@ -89,6 +103,6 @@ public final class DwarfMerchantBountyTasks implements RecipeSubProvider {
 
         objectives.accept(b);
 
-        executor.emit(b.buildValidated());
+        emit(output, tracking, b.buildValidated());
     }
 }

@@ -15,11 +15,12 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.BountyData;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class JolCraftBountyEvents {
 
@@ -68,9 +69,6 @@ public final class JolCraftBountyEvents {
         }
     }
 
-    /**
-     * Returns the slay objective if this stack is a valid in-progress slay bounty for the given target.
-     */
     @SuppressWarnings("DeconstructionCanBeUsed")
     private static BountyData.BountyObjective.EntityObjective getValidSlayObjective(ItemStack stack, LivingEntity target) {
         if (stack.isEmpty()) return null;

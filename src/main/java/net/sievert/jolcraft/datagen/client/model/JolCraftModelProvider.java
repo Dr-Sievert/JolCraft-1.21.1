@@ -1,83 +1,126 @@
 package net.sievert.jolcraft.datagen.client.model;
 
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.client.model.subprovider.*;
-import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
-import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
+import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.client.model.subprovider.ArtisanModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.BrewingModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.CropModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.DwarfModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.EggModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.MaterialModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.MiscModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.ScrapperModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.ToolModelSubProvider;
+import net.sievert.jolcraft.datagen.client.model.subprovider.TrimModelSubProvider;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
-@SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
-public final class JolCraftModelProvider extends AbstractModelProvider {
+public final class JolCraftModelProvider implements DataProvider, JolCraftMainDataProvider<JolCraftModelProvider> {
 
-    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
+    private final @NotNull PackOutput packOutput;
+    private final @NotNull CompletableFuture<HolderLookup.Provider> lookupProvider;
+    private final @Nullable ExistingFileHelper existingFileHelper;
+    private final @NotNull List<JolCraftSubDataProvider<JolCraftModelProvider>> subProviders;
 
-    public JolCraftModelProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(output, JolCraft.MOD_ID);
+    private @Nullable JolCraftDataLookups lookups;
+    private @Nullable JolCraftModelBuilder builder;
+
+    public JolCraftModelProvider(
+            @NotNull PackOutput packOutput,
+            @NotNull CompletableFuture<HolderLookup.Provider> lookupProvider,
+            @Nullable ExistingFileHelper existingFileHelper
+    ) {
+        this.packOutput = packOutput;
         this.lookupProvider = lookupProvider;
-    }
-
-
-    @Override
-    protected void registerModels(@NotNull BlockModelGenerators blockModels, @NotNull ItemModelGenerators itemModels) {
-        HolderLookup.Provider registries = lookupProvider.join();
-        runAll(blockModels, itemModels, subProviders(registries));
-    }
-
-    private static @NotNull List<? extends ModelSubProvider> subProviders(HolderLookup.Provider registries) {
-        return List.of(
-                new ArtisanModelSubProvider(),
-                new BrewingModelSubProvider(),
-                new CropModelSubProvider(),
-                new DwarfModelSubProvider(),
-                new EggModelSubProvider(),
-                new MaterialModelSubProvider(),
-                new MiscModelSubProvider(),
-                new ScrapperModelSubProvider(),
-                new ToolModelSubProvider(),
-                new TrimModelSubProvider(registries)
+        this.existingFileHelper = existingFileHelper;
+        this.subProviders = List.of(
+                new ArtisanModelSubProvider(this),
+                new BrewingModelSubProvider(this),
+                new CropModelSubProvider(this),
+                new DwarfModelSubProvider(this),
+                new EggModelSubProvider(this),
+                new MaterialModelSubProvider(this),
+                new MiscModelSubProvider(this),
+                new ScrapperModelSubProvider(this),
+                new ToolModelSubProvider(this),
+                new TrimModelSubProvider(this)
         );
     }
 
     @Override
-    protected @NotNull Stream<? extends Holder<Block>> getKnownBlocks() {
-        return JolCraftBlocks.BLOCKS.getEntries().stream()
-                .map(DeferredHolder::get)
-                .filter(block -> block != JolCraftBlocks.DEEPSLATE_MORTAR.get())
-                .filter(block -> block != JolCraftBlocks.STRONGBOX.get())
-                .filter(block -> block != JolCraftBlocks.STRONGBOX_DUMMY.get())
-                .map(Block::builtInRegistryHolder);
+    public @NotNull JolCraftDataDomain domain() {
+        return JolCraftDataDomain.MODEL;
     }
 
     @Override
-    protected @NotNull Stream<? extends Holder<Item>> getKnownItems() {
-        return JolCraftItems.ITEMS.getEntries().stream()
-                .map(DeferredHolder::get)
-                .filter(item -> item != JolCraftItems.STRONGBOX_ITEM.get())
-                .filter(item -> item != JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
-                .filter(item -> item != JolCraftItems.DEEPSLATE_COMPASS.get())
-                .filter(item -> item != JolCraftItems.DEEPSLATE_COMPASS_DIAL.get())
-                .filter(item -> item != JolCraftItems.DWARVEN_BREW.get())
-                .map(Item::builtInRegistryHolder);
+    public @NotNull String id() {
+        return domain().getId();
     }
 
     @Override
     public @NotNull String getName() {
-        return "JolCraft Models";
+        return name();
+    }
+
+    @Override
+    public @NotNull List<? extends JolCraftSubDataProvider<JolCraftModelProvider>> subProviders() {
+        return subProviders;
+    }
+
+    public @NotNull PackOutput packOutput() {
+        return packOutput;
+    }
+
+    public @NotNull CompletableFuture<HolderLookup.Provider> lookupProvider() {
+        return lookupProvider;
+    }
+
+    public @Nullable ExistingFileHelper existingFileHelper() {
+        return existingFileHelper;
+    }
+
+    public @NotNull JolCraftDataLookups lookups() {
+        if (lookups == null) {
+            lookups = new JolCraftDataLookups(lookupProvider.join());
+        }
+        return lookups;
+    }
+
+    public @NotNull JolCraftModelBuilder builder() {
+        if (builder == null) {
+            builder = new JolCraftModelBuilder(this);
+        }
+        return builder;
+    }
+
+    @Override
+    public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cachedOutput) {
+        this.lookups = new JolCraftDataLookups(lookupProvider.join());
+        this.builder = new JolCraftModelBuilder(this);
+
+        generate(this, packOutput, lookupProvider, existingFileHelper);
+
+        return builder().save(cachedOutput)
+                .thenRun(() -> JolCraftDataTracking.logExplicitCount(
+                        this,
+                        builder().totalCount(),
+                        JolCraftStrings.plural(JolCraftDictionary.MODEL)
+                ));
     }
 }

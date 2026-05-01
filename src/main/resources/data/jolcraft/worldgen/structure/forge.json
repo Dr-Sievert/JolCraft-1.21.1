@@ -1,7 +1,7 @@
 {
   "type": "jolcraft:forge",
 
-  "biomes": "#jolcraft:has_structure/forge",
+  "biomes": "#jolcraft:dwarven",
 
   "start_pool": "jolcraft:forge/entrance_pool",
 

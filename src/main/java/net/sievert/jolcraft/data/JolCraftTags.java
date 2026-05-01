@@ -10,13 +10,47 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
-import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 import static net.sievert.jolcraft.JolCraft.location;
 
 public final class JolCraftTags {
 
     private JolCraftTags() {}
+
+    public static final class Biomes {
+
+        public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_HILLS);
+        public static final TagKey<Biome> DWARVEN = create(JolCraftTagIds.DWARVEN);
+
+        private static TagKey<Biome> create(String id) {
+            return TagKey.create(Registries.BIOME, JolCraft.location(id));
+        }
+
+        private static TagKey<Biome> hasStructure(String structurePath) {
+            if (structurePath == null || structurePath.isEmpty()) {
+                throw new IllegalArgumentException("Structure name path must not be null/empty for has_structure biome tag.");
+            }
+
+            int colon = structurePath.indexOf(':');
+            if (colon >= 0) structurePath = structurePath.substring(colon + 1);
+
+            String tagPath = JolCraftStrings.slashed(JolCraftTagIds.HAS_STRUCTURE, structurePath);
+            return TagKey.create(Registries.BIOME, JolCraft.location(tagPath));
+        }
+    }
+
+    public static final class Blocks {
+
+        public static final TagKey<Block> DEEPSLATE_BULBS_PLANTABLE = createTag(JolCraftTagIds.DEEPSLATE_BULBS_PLANTABLE);
+        public static final TagKey<Block> VERDANT = createTag(JolCraftTagIds.VERDANT);
+        public static final TagKey<Block> HOPS_BOTTOM = createTag(JolCraftTagIds.HOPS_BOTTOM);
+        public static final TagKey<Block> HOPS_TOP = createTag(JolCraftTagIds.HOPS_TOP);
+
+        private static TagKey<Block> createTag(String id) {
+            return BlockTags.create(JolCraft.location(id));
+        }
+    }
 
     public static final class Items {
 
@@ -61,52 +95,22 @@ public final class JolCraftTags {
         }
     }
 
-    public static final class Blocks {
-
-        public static final TagKey<Block> DEEPSLATE_BULBS_PLANTABLE = createTag(JolCraftTagIds.DEEPSLATE_BULBS_PLANTABLE);
-        public static final TagKey<Block> VERDANT = createTag(JolCraftTagIds.VERDANT);
-        public static final TagKey<Block> HOPS_BOTTOM = createTag(JolCraftTagIds.HOPS_BOTTOM);
-        public static final TagKey<Block> HOPS_TOP = createTag(JolCraftTagIds.HOPS_TOP);
-
-        private static TagKey<Block> createTag(String id) {
-            return BlockTags.create(JolCraft.location(id));
-        }
-    }
-
     public interface Structures {
 
         TagKey<Structure> ON_FORGE_EXPLORER_MAPS = create(JolCraftTagIds.ON_FORGE_EXPLORER_MAPS);
-        TagKey<Structure> DWARVEN_STRUCTURES = create(JolCraftTagIds.DWARVEN_STRUCTURES);
-        TagKey<Structure> ANCIENT_STRUCTURES = create(JolCraftTagIds.ANCIENT_STRUCTURES);
+
+        TagKey<Structure> VILLAGES = create(JolCraftTagIds.VILLAGES);
+        TagKey<Structure> PILLAGERS = create(JolCraftTagIds.PILLAGERS);
+        TagKey<Structure> SURFACE = create(JolCraftTagIds.SURFACE);
+        TagKey<Structure> DWARVEN = create(JolCraftTagIds.DWARVEN);
+        TagKey<Structure> RUINS = create(JolCraftTagIds.RUINS);
+        TagKey<Structure> OCEAN = create(JolCraftTagIds.OCEAN);
+        TagKey<Structure> UNDERGROUND = create(JolCraftTagIds.UNDERGROUND);
+        TagKey<Structure> NETHER_PORTALS = create(JolCraftTagIds.NETHER_PORTALS);
+
 
         private static TagKey<Structure> create(String id) {
             return TagKey.create(Registries.STRUCTURE, location(id));
-        }
-    }
-
-    public static final class Biomes {
-
-        // General
-        public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_HILLS);
-        public static final TagKey<Biome> DWARVEN = create(JolCraftTagIds.DWARVEN);
-
-        public static final TagKey<Biome> HAS_FORGE = hasStructure(JolCraftStructureIds.FORGE);
-        public static final TagKey<Biome> HAS_DWARVEN_TRAIL_RUIN = hasStructure(JolCraftStructureIds.DWARVEN_TRAIL_RUIN);
-
-        private static TagKey<Biome> create(String id) {
-            return TagKey.create(Registries.BIOME, JolCraft.location(id));
-        }
-
-        private static TagKey<Biome> hasStructure(String structurePath) {
-            if (structurePath == null || structurePath.isEmpty()) {
-                throw new IllegalArgumentException("Structure id path must not be null/empty for has_structure biome tag.");
-            }
-
-            int colon = structurePath.indexOf(':');
-            if (colon >= 0) structurePath = structurePath.substring(colon + 1);
-
-            String tagPath = JolCraftTagIds.HAS_STRUCTURE + "/" + structurePath;
-            return TagKey.create(Registries.BIOME, JolCraft.location(tagPath));
         }
     }
 }

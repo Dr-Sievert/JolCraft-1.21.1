@@ -5,7 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
@@ -46,7 +46,7 @@ public final class EndorseInteractionHandler implements DwarfInteractions.CoreIn
             return InteractionResult.SUCCESS;
         }
 
-        if (DwarvenReputationHelper.hasEndorsementBypassCreative(player, dwarf.getProfession())) {
+        if (DwarvenReputationAttachmentHelper.hasEndorsementBypassCreative(player, dwarf.getProfession())) {
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_ALREADY_ENDORSED).withStyle(ChatFormatting.GRAY),
                     true

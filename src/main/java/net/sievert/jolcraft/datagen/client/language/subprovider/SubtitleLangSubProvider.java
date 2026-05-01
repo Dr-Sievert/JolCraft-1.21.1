@@ -2,50 +2,68 @@ package net.sievert.jolcraft.datagen.client.language.subprovider;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+
+import net.sievert.jolcraft.util.JolCraftStrings;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public final class SubtitleLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class SubtitleLangSubProvider implements LanguageSubProvider {
 
     @Override
-    public void addTranslations(AbstractLanguageProvider p) {
+    public @NotNull String id() {
+        return JolCraftStrings.plural(JolCraftDictionary.SUBTITLE);
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<Map<String, String>> parent() {
+        return languageProvider();
+    }
+
+
+    @Override
+    public void addTranslations(@NotNull Map<String, String> translations) {
 
         // ------------------------------------------------------------------
         // Dwarf
         // ------------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_DWARF_AMBIENT, "Dwarf mumbles");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_DWARF_HIT, "Dwarf hurts");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_DWARF_DEATH, "Dwarf dies");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_DWARF_YES, "Dwarf agrees");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_DWARF_NO, "Dwarf disagrees");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_DWARF_TRADE, "Dwarf haggles");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_DWARF_AMBIENT, "Dwarf mumbles");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_DWARF_HIT, "Dwarf hurts");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_DWARF_DEATH, "Dwarf dies");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_DWARF_YES, "Dwarf agrees");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_DWARF_NO, "Dwarf disagrees");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_DWARF_TRADE, "Dwarf haggles");
 
         // ------------------------------------------------------------------
         // Misc
         // ------------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_LEVEL_UP, "Celebration");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_ARMOR_EQUIP_DEEPSLATE, "Deepslate armor rumbles");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_GEM_CUT, "Gem cut");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_CURSE, "Curse");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_LEVEL_UP, "Celebration");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_ARMOR_EQUIP_DEEPSLATE, "Deepslate armor rumbles");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_GEM_CUT, "Gem cut");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_CURSE, "Curse");
 
         // ------------------------------------------------------------------
         // Strongbox
         // ------------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_STRONGBOX_OPEN, "Strongbox opens");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_STRONGBOX_CLOSE, "Strongbox closes");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_STRONGBOX_LOCKPICK, "Lock being picked");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_STRONGBOX_LOCKPICK_BREAK, "Lockpick breaks");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_STRONGBOX_UNLOCK, "Strongbox unlocked");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_OPEN, "Strongbox opens");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_CLOSE, "Strongbox closes");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_LOCKPICK, "Lock being picked");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_LOCKPICK_BREAK, "Lockpick breaks");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_UNLOCK, "Strongbox unlocked");
 
         // ------------------------------------------------------------------
         // Coins
         // ------------------------------------------------------------------
 
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_COIN_STACK, "Coins clink");
-        p.putManual(JolCraftLanguageKeys.SUBTITLE_COIN_SINGLE, "Coin clinks");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_COIN_STACK, "Coins clink");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_COIN_SINGLE, "Coin clinks");
     }
 }

@@ -2,25 +2,27 @@ package net.sievert.jolcraft.datagen.recipe.builder.custom.bounty;
 
 import com.mojang.serialization.DataResult;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.crafting.Recipe;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
-import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
-import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
-import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
+import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
+import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;
+import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.world.recipe.param.output.pool.Pool;
+import net.sievert.jolcraft.world.recipe.param.output.pool.PoolEntry;
+import net.sievert.jolcraft.world.recipe.param.output.pool.Pools;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.world.recipe.param.quantity.WeightParam;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -32,7 +34,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -109,7 +110,7 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
             return this;
         }
 
-        var built = SoundOutputBuilder.create()
+        DataResult<SoundOutput> built = SoundOutputBuilder.create()
                 .sound(sound)
                 .buildValidated();
 
@@ -124,7 +125,7 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
     }
 
     @Override
-    public @NotNull DataResult<RecipeEmission> buildValidated() {
+    public @NotNull DataResult<JolCraftDataEmission<RecipeOutput>> buildValidated() {
         if (bountyType == null) {
             errors.add("bountyType is required");
         }
@@ -141,19 +142,10 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
             errors.add("at least one reward is required");
         }
 
-        Outputs rewards = rewardEntries.isEmpty()
-                ? Outputs.EMPTY
-                : new Outputs(
-                Conditions.EMPTY,
-                new Pools(List.of(
-                        new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(rewardEntries))
-                ))
-        );
-
-        DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
-                .word(tierNameSafe())
-                .word(Objects.requireNonNull(bountyType).professionName())
-                .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_REWARD))
+        DataResult<String> nameBuilt = JolCraftFileNameBuilder.create()
+                .token(tierNameSafe())
+                .token(bountyType == null ? JolCraftDictionary.UNKNOWN : bountyType.professionName())
+                .token(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_REWARD))
                 .build();
 
         if (!errors.isEmpty()) {
@@ -170,6 +162,13 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
             return DataResult.error(() -> "builder: missing required fields");
         }
 
+        Outputs rewards = new Outputs(
+                Conditions.EMPTY,
+                new Pools(List.of(
+                        new Pool(IntRange.ONE, Conditions.EMPTY, List.copyOf(rewardEntries))
+                ))
+        );
+
         BountyRewardRecipe recipe = new BountyRewardRecipe(
                 finalType,
                 finalTier,
@@ -178,15 +177,17 @@ public final class BountyRewardRecipeBuilder implements RecipeBuilder {
         );
 
         return nameBuilt.flatMap(name ->
-                BountyRewardRecipe.validateRecipe(recipe).flatMap(validRecipe ->
-                        RecipeEmission.of(
-                                JolCraftRecipeIds.BOUNTY_REWARD,
+                BountyRewardRecipe.validateRecipe(recipe).map(validRecipe ->
+                        new JolCraftDataEmission<>(
                                 name,
-                                (RecipeOutput out, ResourceKey<Recipe<?>> id) ->
-                                        out.accept(id, validRecipe, null)
+                                (out, path) -> out.accept(JolCraft.location(path), validRecipe, null)
                         )
                 )
         );
+    }
+
+    private static @NotNull ResourceKey<Recipe<?>> recipeId(@NotNull String path) {
+        return ResourceKey.create(Registries.RECIPE, JolCraft.location(path));
     }
 
     private @NotNull String tierNameSafe() {

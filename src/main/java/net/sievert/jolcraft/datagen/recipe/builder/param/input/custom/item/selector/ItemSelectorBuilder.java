@@ -2,9 +2,9 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.sele
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemIngredient;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
+import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemIngredient;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 

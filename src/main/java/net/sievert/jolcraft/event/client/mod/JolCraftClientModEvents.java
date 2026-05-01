@@ -4,22 +4,20 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
-import net.sievert.jolcraft.world.item.client.BrewColor;
-import net.sievert.jolcraft.world.item.client.coin.CoinPouchTooltipRenderer;
-import net.sievert.jolcraft.world.item.client.compass.DialColor;
-import net.sievert.jolcraft.world.item.util.coin.CoinPouchTooltip;
+import net.sievert.jolcraft.world.item.client.color.JolCraftItemColors;
+import net.sievert.jolcraft.world.item.client.property.JolCraftItemProperties;
+import net.sievert.jolcraft.world.item.client.tooltip.JolCraftTooltipRenderers;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.client.model.creature.MuffhornModel;
 import net.sievert.jolcraft.world.block.entity.custom.client.model.StrongboxModel;
@@ -30,15 +28,13 @@ import net.sievert.jolcraft.world.block.entity.custom.client.render.StrongboxRen
 import net.sievert.jolcraft.world.entity.client.render.dwarf.*;
 import net.sievert.jolcraft.world.entity.client.render.object.RadiantRenderer;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.world.gui.custom.client.screen.DwarfMerchantScreen;
-import net.sievert.jolcraft.world.gui.custom.client.screen.LapidaryBenchScreen;
-import net.sievert.jolcraft.world.gui.custom.client.screen.LockScreen;
-import net.sievert.jolcraft.world.gui.custom.client.screen.StrongboxScreen;
-import net.sievert.jolcraft.world.item.client.coin.CoinPouchAmountProperty;
-import net.sievert.jolcraft.world.item.client.LoreKey;
-import net.sievert.jolcraft.world.item.client.compass.DeepslateCompassAngle;
+import net.sievert.jolcraft.world.gui.client.screen.DwarfMerchantScreen;
+import net.sievert.jolcraft.world.gui.client.screen.LapidaryBenchScreen;
+import net.sievert.jolcraft.world.gui.client.screen.LockScreen;
+import net.sievert.jolcraft.world.gui.client.screen.StrongboxScreen;
 
 @OnlyIn(Dist.CLIENT)
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class JolCraftClientModEvents {
 
@@ -70,7 +66,7 @@ public final class JolCraftClientModEvents {
         // Objects
         EntityRenderers.register(JolCraftEntities.RADIANT.get(), RadiantRenderer::new); entityRenderers++;
 
-        // Blocks (cutout layers)
+        // Blocks
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.VERDANT_FARMLAND.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.BARLEY_CROP.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.DEEPSLATE_BULBS_CROP.get(), RenderType.cutout()); itemBlockRenderTypes++;
@@ -92,28 +88,39 @@ public final class JolCraftClientModEvents {
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.FESTERLING.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.POTTED_FESTERLING.get(), RenderType.cutout()); itemBlockRenderTypes++;
 
-        JolCraftLogs.info(JolCraftLogTags.INIT,
-                "Registered {} entity renderers and {} item/block render types",
-                entityRenderers, itemBlockRenderTypes);
+        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} entity renderers and {} item/block render types", entityRenderers, itemBlockRenderTypes);
+
+        event.enqueueWork(JolCraftItemProperties::register);
     }
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         int layers = 0;
 
+        // Entity
+
         event.registerLayerDefinition(DwarfModel.LAYER_LOCATION, DwarfModel::createBodyLayer); layers++;
 
         event.registerLayerDefinition(MuffhornModel.LAYER_LOCATION, MuffhornModel::createBodyLayer); layers++;
-        event.registerLayerDefinition(MuffhornModel.BABY_LAYER_LOCATION,
-                () -> MuffhornModel.createBodyLayer().apply(MuffhornModel.BABY_TRANSFORMER)); layers++;
 
         event.registerLayerDefinition(RadiantModel.LAYER_LOCATION, RadiantModel::createBodyLayer); layers++;
+
+        // BlockEntity
 
         event.registerLayerDefinition(StrongboxModel.LAYER_LOCATION, StrongboxModel::createBodyLayer); layers++;
 
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} layer definitions", layers);
     }
 
+    @SubscribeEvent
+    public static void registerTooltipFactories(RegisterClientTooltipComponentFactoriesEvent event) {
+        JolCraftTooltipRenderers.register(event);
+    }
+
+    @SubscribeEvent
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        JolCraftItemColors.register(event);
+    }
 
     @SubscribeEvent
     public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
@@ -135,35 +142,5 @@ public final class JolCraftClientModEvents {
         event.register(JolCraftMenuTypes.LAPIDARY_BENCH_MENU.get(), LapidaryBenchScreen::new); screens++;
 
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} menu screens", screens);
-    }
-
-    @SubscribeEvent
-    public static void registerTooltipFactories(RegisterClientTooltipComponentFactoriesEvent event) {
-        int tooltips = 0;
-        event.register(CoinPouchTooltip.class, CoinPouchTooltipRenderer::new); tooltips++;
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} tooltip factories", tooltips);
-    }
-
-    @SubscribeEvent
-    public static void onRegisterSelectItemModelProperty(RegisterSelectItemModelPropertyEvent event) {
-        int props = 0;
-        event.register(LoreKey.KEY, LoreKey.TYPE); props++;
-        event.register(CoinPouchAmountProperty.KEY, CoinPouchAmountProperty.TYPE); props++;
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} select item properties", props);
-    }
-
-    @SubscribeEvent
-    public static void onRegisterRangeSelectItemModelProperty(RegisterRangeSelectItemModelPropertyEvent event) {
-        int props = 0;
-        event.register(DeepslateCompassAngle.KEY, DeepslateCompassAngle.MAP_CODEC); props++;
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} range select item properties", props);
-    }
-
-    @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void onRegisterTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
-        int tints = 0;
-        event.register(DialColor.KEY, DialColor.MAP_CODEC); tints++;
-        event.register(BrewColor.KEY, BrewColor.MAP_CODEC); tints++;
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} item tint sources", tints);
     }
 }

@@ -14,10 +14,10 @@ public final class JolCraftEnumHelper {
     private JolCraftEnumHelper() {}
 
     /* ======================================================================
-     * String id enums
+     * String name enums
      * ====================================================================== */
 
-    /** Contract: enum has a stable String id. Keep ids as constants to avoid <clinit> coupling. */
+    /** Contract: enum has a stable String name. Keep ids as constants to avoid <clinit> coupling. */
     public interface StringId {
         String getId();
     }
@@ -25,7 +25,7 @@ public final class JolCraftEnumHelper {
     private static final Map<Class<?>, Map<String, ?>> STRING_ID_CACHES = new ConcurrentHashMap<>();
 
     /**
-     * Lookup by string id with a non-null fallback.
+     * Lookup by string name with a non-null fallback.
      * Use this when callers require a valid enum value.
      */
     public static <E extends Enum<E> & StringId> E byStringId(Class<E> type, @Nullable String id, E fallback) {
@@ -37,7 +37,7 @@ public final class JolCraftEnumHelper {
     }
 
     /**
-     * Lookup by string id with an optional (nullable) fallback.
+     * Lookup by string name with an optional (nullable) fallback.
      * Use this for "parse" APIs that legitimately return null.
      */
     public static <E extends Enum<E> & StringId> @Nullable E byStringIdNullable(
@@ -82,7 +82,7 @@ public final class JolCraftEnumHelper {
             E prev = map.put(key, e);
             if (prev != null) {
                 throw new IllegalStateException(
-                        "Duplicate id '" + key + "' in enum " + type.getName()
+                        "Duplicate name '" + key + "' in enum " + type.getName()
                                 + ": " + prev.name() + " vs " + e.name()
                 );
             }
@@ -92,10 +92,10 @@ public final class JolCraftEnumHelper {
     }
 
     /* ======================================================================
-     * Int id enums
+     * Int name enums
      * ====================================================================== */
 
-    /** Contract: enum has a stable int id (used for modulo lookups). */
+    /** Contract: enum has a stable int name (used for modulo lookups). */
     public interface IntId {
         int getId();
     }
@@ -128,7 +128,7 @@ public final class JolCraftEnumHelper {
     }
 
     /* ======================================================================
-     * Int id enums (exact lookup)
+     * Int name enums (exact lookup)
      * ====================================================================== */
 
     private static final Map<Class<?>, Map<Integer, ?>> INT_ID_EXACT_CACHES = new ConcurrentHashMap<>();
@@ -153,7 +153,7 @@ public final class JolCraftEnumHelper {
             E prev = map.put(key, e);
             if (prev != null) {
                 throw new IllegalStateException(
-                        "Duplicate int id '" + key + "' in enum " + type.getName()
+                        "Duplicate int name '" + key + "' in enum " + type.getName()
                                 + ": " + prev.name() + " vs " + e.name()
                 );
             }

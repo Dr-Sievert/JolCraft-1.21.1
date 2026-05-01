@@ -6,154 +6,184 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.StructureManager;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructures;
-import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.JolCraftRuntime;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class JolCraftCompassEvents {
 
-    private static final Map<UUID, BlockPos> LAST_COMPASS_POS = new HashMap<>();
-    private static final Map<UUID, Integer> LAST_COMPASS_SLOT = new HashMap<>();
-    private static final Map<UUID, Integer> NEXT_FULL_SCAN_TICK = new HashMap<>();
+    private record Compass(@NotNull ItemStack stack, @NotNull InteractionHand hand, @NotNull CompassData data) {}
+    private record CompassData(@NotNull GlobalPos target, @NotNull ResourceLocation structureKey) {}
+    private static final JolCraftRuntime.StateCache<BlockPos> LAST_PLAYER_POS = new JolCraftRuntime.StateCache<>();
 
-    @SubscribeEvent
-    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        Player player = event.getEntity();
-        UUID id = player.getUUID();
-        LAST_COMPASS_POS.remove(id);
-        LAST_COMPASS_SLOT.remove(id);
-        NEXT_FULL_SCAN_TICK.remove(id);
+    public static void cleanupPlayer(ServerPlayer player) {
+        LAST_PLAYER_POS.clear(player);
     }
 
     @SubscribeEvent
     public static void onCompassTick(PlayerTickEvent.Post event) {
-        Player player = event.getEntity();
-        if (!(player.level() instanceof ServerLevel serverLevel)) return;
-        if (player.tickCount % 5 != 0) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (player.tickCount % 20 != 0) return;
 
+        ItemStack main = player.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
+        Item compassItem = JolCraftItems.DEEPSLATE_COMPASS.asItem();
 
-        BlockPos currentPos = player.blockPosition();
-        BlockPos lastPos = LAST_COMPASS_POS.get(player.getUUID());
-        if (currentPos.equals(lastPos)) return;
-        LAST_COMPASS_POS.put(player.getUUID(), currentPos);
-
-        var inv = player.getInventory();
-        var items = inv.items;
-
-        UUID id = player.getUUID();
-
-        int nextScan = NEXT_FULL_SCAN_TICK.getOrDefault(id, 0);
-        int slot = LAST_COMPASS_SLOT.getOrDefault(id, -1);
-
-        boolean needScan = player.tickCount >= nextScan;
-
-        if (!needScan) {
-            if (slot < 0 || slot >= items.size() || !items.get(slot).is(JolCraftItems.DEEPSLATE_COMPASS.get())) {
-                needScan = true;
-            }
+        if (!main.is(compassItem) && !off.is(compassItem)) {
+            cleanupPlayer(player);
+            return;
         }
 
-        if (needScan) {
-            int found = -1;
-            for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).is(JolCraftItems.DEEPSLATE_COMPASS.get())) {
-                    found = i;
-                    break;
-                }
-            }
-            if (found < 0) {
-                LAST_COMPASS_SLOT.remove(id);
-                NEXT_FULL_SCAN_TICK.put(id, player.tickCount + 20);
-                return;
-            }
-            slot = found;
-            LAST_COMPASS_SLOT.put(id, slot);
-            NEXT_FULL_SCAN_TICK.put(id, player.tickCount + 20);
+        Compass compass = findActiveCompass(player);
+        if (compass == null) {
+            cleanupPlayer(player);
+            return;
         }
 
-        ItemStack stack = items.get(slot);
-        if (!stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) return;
+        BlockPos playerPos = player.blockPosition();
 
-        GlobalPos tracked = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
-        String trackedStructureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
-        if (tracked == null || trackedStructureId == null || trackedStructureId.isEmpty()) return;
-        if (!player.level().dimension().equals(tracked.dimension())) return;
+        if (!LAST_PLAYER_POS.hasChanged(player, playerPos)) return;
+        LAST_PLAYER_POS.set(player, playerPos);
 
-        var structureRegistry = serverLevel.registryAccess().lookupOrThrow(Registries.STRUCTURE);
-        ResourceLocation trackedStructureKey = ResourceLocation.tryParse(trackedStructureId);
-        if (trackedStructureKey == null) return;
-        var trackedStructureHolder = structureRegistry.get(trackedStructureKey).orElse(null);
-        if (trackedStructureHolder == null) return;
+        if (isInsidePlayerStructure(player, compass)) {
+            completeDiscovery(player, compass);
+        }
+    }
 
-        BlockPos trackedPosXZ = BlockPos.containing(tracked.pos().getX(), player.blockPosition().getY(), tracked.pos().getZ());
-        StructureManager structureManager = serverLevel.structureManager();
-        StructureStart start = structureManager.getStructureAt(trackedPosXZ, trackedStructureHolder.value());
-        if (!start.isValid()) return;
+    @Nullable
+    private static Compass findActiveCompass(ServerPlayer player) {
 
-        BoundingBox box = start.getBoundingBox();
-        if (!box.isInside(player.blockPosition())) return;
+        ItemStack main = player.getMainHandItem();
+        CompassData data = getCompassData(main);
+        if (data != null) {
+            return new Compass(main, InteractionHand.MAIN_HAND, data);
+        }
 
-        BlockPos patchedEntrance = BlockPos.containing(tracked.pos().getX(), box.getCenter().getY(), tracked.pos().getZ());
+        ItemStack off = player.getOffhandItem();
+        data = getCompassData(off);
+        if (data != null) {
+            return new Compass(off, InteractionHand.OFF_HAND, data);
+        }
 
-        // Avoid stream allocs every tick: plain loop
-        GlobalPos entrancePos = GlobalPos.of(tracked.dimension(), patchedEntrance);
-        if (DiscoveredStructures.get(player).isDiscovered(entrancePos)) return;
+        return null;
+    }
 
-        // --- Discovery action ---
-        DiscoveredStructuresHelper.addDiscoveredStructureServer(
+    @Nullable
+    private static CompassData getCompassData(@NotNull ItemStack stack) {
+        if (!stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) return null;
+
+        GlobalPos target = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
+        String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
+
+        if (target == null || structureId == null || structureId.isEmpty()) return null;
+
+        ResourceLocation structureKey = ResourceLocation.tryParse(structureId);
+        if (structureKey == null) return null;
+
+        return new CompassData(target, structureKey);
+    }
+
+    private static boolean isInsidePlayerStructure(
+            ServerPlayer player,
+            @NotNull Compass compass
+    ) {
+        if (!(player.level() instanceof ServerLevel level)) return false;
+
+        CompassData data = compass.data();
+        GlobalPos target = data.target();
+        ResourceLocation structureKey = data.structureKey();
+
+        if (!level.dimension().equals(target.dimension())) return false;
+
+        var registry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
+        var holder = registry.get(ResourceKey.create(Registries.STRUCTURE, structureKey)).orElse(null);
+        if (holder == null) return false;
+
+        var manager = level.structureManager();
+
+        BlockPos playerPos = player.blockPosition();
+
+        var start = manager.getStructureWithPieceAt(playerPos, holder.value());
+        return start.isValid();
+    }
+
+    private static void completeDiscovery(ServerPlayer player, @NotNull Compass compass) {
+        CompassData data = compass.data();
+        GlobalPos target = data.target();
+        ResourceLocation structureKey = data.structureKey();
+        String structureId = structureKey.toString();
+
+        if (DiscoveredStructuresAttachmentHelper.get(player).isDiscovered(target)) {
+            player.displayClientMessage(
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_ALREADY_DISCOVERED).withStyle(ChatFormatting.RED),
+                    true
+            );
+            replaceWithEmptyCompass(player, compass);
+            JolCraftSoundHelper.player(player, SoundEvents.ITEM_BREAK, 1.0F, 1.5F);
+            return;
+        }
+
+        DiscoveredStructuresAttachmentHelper.addDiscoveredStructureServer(
                 player,
-                GlobalPos.of(tracked.dimension(), patchedEntrance),
-                trackedStructureKey
+                target,
+                structureKey
         );
 
-        ItemStack emptyCompass = new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
-        var dye = stack.get(DataComponents.DYED_COLOR);
-        if (dye != null) emptyCompass.set(DataComponents.DYED_COLOR, dye);
-
-        items.set(slot, emptyCompass);
-        inv.setChanged();
+        replaceWithEmptyCompass(player, compass);
 
         player.displayClientMessage(
-                Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_DISCOVERED)
-                        .withStyle(ChatFormatting.GRAY)
-                        .append(Component.translatable(JolCraftLanguageKeys.tooltipStructure(trackedStructureId)).withStyle(ChatFormatting.BLUE)),
+                Component.translatable(
+                        JolCraftLanguageKeys.TOOLTIP_STRUCTURE_DISCOVERED,
+                        Component.translatable(JolCraftLanguageKeys.tooltipStructure(structureId)).withStyle(ChatFormatting.BLUE)
+                ).withStyle(ChatFormatting.GRAY),
                 true
         );
 
         JolCraftLogs.info(
                 JolCraftLogTags.PLAYER,
                 "Structure discovered: player={}, structure={}, pos={}, dimension={}",
-                player.getUUID(),
-                trackedStructureKey,
-                JolCraftLogs.roundedPos(entrancePos.pos()),
-                entrancePos.dimension().location()
+                player.getDisplayName(),
+                structureKey,
+                JolCraftLogs.roundedPos(target.pos()),
+                target.dimension().location()
         );
 
         JolCraftSoundHelper.player(player, SoundEvents.ITEM_BREAK, 1.0F, 1.5F);
         PlaySound.levelUp(player);
+    }
+
+    private static void replaceWithEmptyCompass(ServerPlayer player, Compass compass) {
+        ItemStack original = compass.stack();
+
+        ItemStack empty = new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
+
+        var dye = original.get(DataComponents.DYED_COLOR);
+        if (dye != null) {
+            empty.set(DataComponents.DYED_COLOR, dye);
+        }
+
+        player.setItemInHand(compass.hand(), empty);
     }
 }

@@ -10,7 +10,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     private JolCraftTagIds() {}
 
     // ---------------------------------------------------------------------
-    // Item tags
+    // Item
     // ---------------------------------------------------------------------
 
     public static final String COINS = plural(JolCraftDictionary.COIN);
@@ -45,7 +45,6 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String REPAIRS_MITHRIL = join(plural(JolCraftDictionary.REPAIR), JolCraftDictionary.MITHRIL);
     public static final String MITHRIL_ITEMS = join(JolCraftDictionary.MITHRIL, plural(JolCraftDictionary.ITEM));
 
-    // Salvage
     public static final String SALVAGE = join(JolCraftDictionary.SALVAGE);
     public static final String GENERAL_SALVAGE = join(JolCraftDictionary.GENERAL, JolCraftDictionary.SALVAGE);
     public static final String DEEPSLATE_SALVAGE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.SALVAGE);
@@ -56,7 +55,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String MITHRIL_SALVAGE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.SALVAGE);
 
     // ---------------------------------------------------------------------
-    // Block tags
+    // Block
     // ---------------------------------------------------------------------
 
     public static final String DEEPSLATE_BULBS_PLANTABLE = join(
@@ -71,7 +70,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String HOPS_BOTTOM = join(plural(JolCraftDictionary.HOP), JolCraftDictionary.BOTTOM);
 
     // ---------------------------------------------------------------------
-    // Structure tags
+    // Structure
     // ---------------------------------------------------------------------
 
     public static final String ON_FORGE_EXPLORER_MAPS = join(
@@ -81,15 +80,22 @@ public final class JolCraftTagIds extends JolCraftIds {
             plural(JolCraftDictionary.MAP)
     );
 
-    public static final String DWARVEN_STRUCTURES = join(JolCraftDictionary.DWARVEN, plural(JolCraftDictionary.STRUCTURE));
-    public static final String ANCIENT_STRUCTURES = join(JolCraftDictionary.ANCIENT, plural(JolCraftDictionary.STRUCTURE));
+
+    public static final String DWARVEN = JolCraftDictionary.DWARVEN;
+    public static final String VILLAGES = plural(JolCraftDictionary.VILLAGE);
+    public static final String PILLAGERS = plural(JolCraftDictionary.PILLAGER);
+    public static final String SURFACE = JolCraftDictionary.SURFACE;
+    public static final String RUINS = plural(JolCraftDictionary.RUIN);
+    public static final String OCEAN = JolCraftDictionary.OCEAN;
+    public static final String UNDERGROUND = JolCraftDictionary.UNDERGROUND;
+    public static final String NETHER_PORTALS = join(JolCraftDictionary.NETHER, plural(JolCraftDictionary.PORTAL));
+
 
     // ---------------------------------------------------------------------
-    // Biome tags
+    // Biome
     // ---------------------------------------------------------------------
 
     public static final String HAS_STRUCTURE = JolCraftStrings.underscored(JolCraftDictionary.HAS, JolCraftDictionary.STRUCTURE);
 
     public static final String MOUNTAINS_HILLS = join(plural(JolCraftDictionary.MOUNTAIN), plural(JolCraftDictionary.HILL));
-    public static final String DWARVEN = JolCraftDictionary.DWARVEN;
 }

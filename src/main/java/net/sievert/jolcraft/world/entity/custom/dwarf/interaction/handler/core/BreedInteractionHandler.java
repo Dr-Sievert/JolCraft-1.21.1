@@ -33,7 +33,7 @@ public final class BreedInteractionHandler implements DwarfInteractions.CoreInte
             dwarf.usePlayerItem(player, hand, stack);
             dwarf.setInLove(player);
             dwarf.playEatingSound();
-            return InteractionResult.SUCCESS_SERVER;
+            return InteractionResult.SUCCESS;
         }
 
         if (dwarf.isBaby()) {

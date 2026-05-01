@@ -2,13 +2,13 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
-import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -35,16 +35,18 @@ public final class PayCoinInteractionHandler implements DwarfInteractions.CoreIn
 
         // Coin pouch payment (consume exactly 1 internal coin, do NOT consume pouch item)
         if (stack.getItem() instanceof CoinPouchItem) {
-            int coins = CoinPouchHelper.getCoins(stack);
+            int coins = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
             if (coins <= 0) {
                 return InteractionResult.PASS;
             }
 
             dwarf.setPaid(player);
             playSingleCoinSound(dwarf);
-            if(!player.isCreative()){
-                CoinPouchHelper.setCoins(stack, coins - 1);
+
+            if (!player.isCreative()) {
+                stack.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), coins - 1);
             }
+
             player.setItemInHand(hand, stack);
             player.awardStat(JolCraftStats.COINS_SPENT.get(), 1);
 

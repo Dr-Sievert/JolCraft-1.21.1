@@ -7,10 +7,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipeInput;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
+import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -78,10 +78,8 @@ public final class BountyTaskAction extends InspectDwarfAction {
         if (input == null) return;
 
         level.getServer().getRecipeManager()
-                .recipeMap()
-                .getRecipesFor(JolCraftRecipes.BOUNTY_TASK_TYPE.get(), input, level)
+                .getRecipeFor(JolCraftRecipes.BOUNTY_TASK_TYPE.get(), input, level)
                 .map(RecipeHolder::value)
-                .findFirst()
                 .ifPresent(r -> {
                     this.sound1 = r.sound1();
                     this.sound2 = r.sound2();

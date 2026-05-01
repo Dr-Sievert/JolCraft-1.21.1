@@ -5,7 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemIngredient;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemIngredient;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 import java.util.ArrayList;

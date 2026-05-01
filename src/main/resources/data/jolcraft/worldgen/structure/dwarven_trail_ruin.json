@@ -1,7 +1,7 @@
 {
   "type": "jolcraft:dwarven_trail_ruin",
 
-  "biomes": "#jolcraft:has_structure/dwarven_trail_ruin",
+  "biomes": "#jolcraft:dwarven",
 
   "start_pool": "jolcraft:dwarven_trail_ruin/base_pool",
 

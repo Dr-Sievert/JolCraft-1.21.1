@@ -2,7 +2,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity;
 
 import com.mojang.serialization.DataResult;
 import net.minecraft.core.BlockPos;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntitySpawnConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

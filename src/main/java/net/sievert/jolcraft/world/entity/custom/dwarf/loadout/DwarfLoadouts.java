@@ -2,7 +2,6 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.loadout;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +27,6 @@ public final class DwarfLoadouts {
         void apply(AbstractDwarfEntity dwarf,
                    ServerLevelAccessor level,
                    DifficultyInstance difficulty,
-                   EntitySpawnReason spawnReason,
                    @Nullable SpawnGroupData spawnGroupData);
     }
 
@@ -69,7 +67,6 @@ public final class DwarfLoadouts {
     public static void applySpawnLoadout(AbstractDwarfEntity dwarf,
                                          ServerLevelAccessor level,
                                          DifficultyInstance difficulty,
-                                         EntitySpawnReason spawnReason,
                                          @Nullable SpawnGroupData spawnGroupData) {
 
         Provider provider = PROVIDERS.get(dwarf.getProfession());
@@ -79,24 +76,18 @@ public final class DwarfLoadouts {
             );
         }
 
-        provider.apply(dwarf, level, difficulty, spawnReason, spawnGroupData);
+        provider.apply(dwarf, level, difficulty, spawnGroupData);
     }
-
-    // -------------------------------------------------------------------------
-    // Profession implementations (hands + armor only)
-    // -------------------------------------------------------------------------
 
     private static void applyNone(AbstractDwarfEntity dwarf,
                                   ServerLevelAccessor level,
                                   DifficultyInstance difficulty,
-                                  EntitySpawnReason spawnReason,
                                   @Nullable SpawnGroupData spawnGroupData) {
     }
 
     private static void applyAlchemist(AbstractDwarfEntity dwarf,
                                        ServerLevelAccessor level,
                                        DifficultyInstance difficulty,
-                                       EntitySpawnReason spawnReason,
                                        @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.GLASS_BOTTLE));
     }
@@ -104,7 +95,6 @@ public final class DwarfLoadouts {
     private static void applyArcanist(AbstractDwarfEntity dwarf,
                                       ServerLevelAccessor level,
                                       DifficultyInstance difficulty,
-                                      EntitySpawnReason spawnReason,
                                       @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.WOECRYSTAL.get()));
     }
@@ -112,7 +102,6 @@ public final class DwarfLoadouts {
     private static void applyArtisan(AbstractDwarfEntity dwarf,
                                      ServerLevelAccessor level,
                                      DifficultyInstance difficulty,
-                                     EntitySpawnReason spawnReason,
                                      @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DEEPSLATE_CHISEL.get()));
     }
@@ -120,7 +109,6 @@ public final class DwarfLoadouts {
     private static void applyBrewmaster(AbstractDwarfEntity dwarf,
                                         ServerLevelAccessor level,
                                         DifficultyInstance difficulty,
-                                        EntitySpawnReason spawnReason,
                                         @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.GLASS_MUG.get()));
     }
@@ -128,7 +116,6 @@ public final class DwarfLoadouts {
     private static void applyExplorer(AbstractDwarfEntity dwarf,
                                       ServerLevelAccessor level,
                                       DifficultyInstance difficulty,
-                                      EntitySpawnReason spawnReason,
                                       @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()));
         dwarf.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
@@ -138,7 +125,6 @@ public final class DwarfLoadouts {
     private static void applyGuard(AbstractDwarfEntity dwarf,
                                    ServerLevelAccessor level,
                                    DifficultyInstance difficulty,
-                                   EntitySpawnReason spawnReason,
                                    @Nullable SpawnGroupData spawnGroupData) {
         ItemStack weapon = dwarf.getRandom().nextBoolean()
                 ? new ItemStack(JolCraftItems.DEEPSLATE_AXE.get())
@@ -150,7 +136,6 @@ public final class DwarfLoadouts {
     private static void applyGuildmaster(AbstractDwarfEntity dwarf,
                                          ServerLevelAccessor level,
                                          DifficultyInstance difficulty,
-                                         EntitySpawnReason spawnReason,
                                          @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()));
     }
@@ -158,7 +143,6 @@ public final class DwarfLoadouts {
     private static void applyHistorian(AbstractDwarfEntity dwarf,
                                        ServerLevelAccessor level,
                                        DifficultyInstance difficulty,
-                                       EntitySpawnReason spawnReason,
                                        @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DWARVEN_TOME.get()));
     }
@@ -166,7 +150,6 @@ public final class DwarfLoadouts {
     private static void applyKeeper(AbstractDwarfEntity dwarf,
                                     ServerLevelAccessor level,
                                     DifficultyInstance difficulty,
-                                    EntitySpawnReason spawnReason,
                                     @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.BARLEY.get()));
     }
@@ -174,7 +157,6 @@ public final class DwarfLoadouts {
     private static void applyMerchant(AbstractDwarfEntity dwarf,
                                       ServerLevelAccessor level,
                                       DifficultyInstance difficulty,
-                                      EntitySpawnReason spawnReason,
                                       @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COIN_POUCH.get()));
     }
@@ -182,7 +164,6 @@ public final class DwarfLoadouts {
     private static void applyMiner(AbstractDwarfEntity dwarf,
                                    ServerLevelAccessor level,
                                    DifficultyInstance difficulty,
-                                   EntitySpawnReason spawnReason,
                                    @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_PICKAXE.get()));
     }
@@ -190,7 +171,6 @@ public final class DwarfLoadouts {
     private static void applyPriest(AbstractDwarfEntity dwarf,
                                     ServerLevelAccessor level,
                                     DifficultyInstance difficulty,
-                                    EntitySpawnReason spawnReason,
                                     @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.SUNGLEAM.get()));
     }
@@ -198,7 +178,6 @@ public final class DwarfLoadouts {
     private static void applyScrapper(AbstractDwarfEntity dwarf,
                                       ServerLevelAccessor level,
                                       DifficultyInstance difficulty,
-                                      EntitySpawnReason spawnReason,
                                       @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
     }

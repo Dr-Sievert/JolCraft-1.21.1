@@ -5,18 +5,17 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.language.ancient.AncientDwarvenLanguageHelper;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
-import net.sievert.jolcraft.data.lore.util.LoreHelper;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
+import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -30,17 +29,19 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+
         if (level.isClientSide) {
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
         if (!(player instanceof ServerPlayer serverPlayer)) {
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
-        boolean knowsLanguage = DwarvenLanguageHelper.knowsDwarvish(serverPlayer);
-        boolean knowsAncientLanguage = AncientDwarvenLanguageHelper.knowsAncientDwarvish(serverPlayer);
+        boolean knowsLanguage = LanguageAttachmentHelper.knowsDwarvish(serverPlayer);
+        boolean knowsAncientLanguage = LanguageAttachmentHelper.knowsAncientDwarvish(serverPlayer);
 
         if (!knowsLanguage) {
             playIdentifyFailSound(player);
@@ -48,7 +49,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_IDENTIFY_FAIL).withStyle(ChatFormatting.RED),
                     true
             );
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
         if (!knowsAncientLanguage) {
@@ -57,25 +58,24 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING).withStyle(ChatFormatting.RED),
                     true
             );
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
-        ItemStack stack = player.getItemInHand(hand);
         DwarfLoreKey key = LoreHelper.getLoreKey(stack, DwarfLoreKey.class);
 
         if (key == null) {
             showEmptyUnlockMessage(player);
             playIdentifyFailSound(player);
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
 
         switch (key) {
             case FORGOTTEN_BREW_FORMULAS -> {
-                if (DwarfTomeUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+                if (DwarfLoreAttachmentHelper.hasUnlockBypassCreative(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                     showEmptyUnlockMessage(player);
                     playIdentifyFailSound(player);
                 } else {
-                    DwarfTomeUnlockHelper.addUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
+                    DwarfLoreAttachmentHelper.addUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
                     player.displayClientMessage(
                             Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_BREW).withStyle(ChatFormatting.GREEN),
                             true
@@ -84,11 +84,11 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                 }
             }
             case ANCIENT_GEMCRAFT -> {
-                if (DwarfTomeUnlockHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+                if (DwarfLoreAttachmentHelper.hasUnlockBypassCreative(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                     showEmptyUnlockMessage(player);
                     playIdentifyFailSound(player);
                 } else {
-                    DwarfTomeUnlockHelper.addUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
+                    DwarfLoreAttachmentHelper.addUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT);
                     player.displayClientMessage(
                             Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS).withStyle(ChatFormatting.GREEN),
                             true
@@ -102,7 +102,7 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
             }
         }
 
-        return InteractionResult.SUCCESS;
+        return InteractionResultHolder.success(stack);
     }
 
     public static void showEmptyUnlockMessage(Player player) {

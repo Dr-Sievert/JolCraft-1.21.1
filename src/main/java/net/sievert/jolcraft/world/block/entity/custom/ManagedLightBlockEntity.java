@@ -12,11 +12,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.ManagedLightBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class ManagedLightBlockEntity extends BlockEntity {
+public final class ManagedLightBlockEntity extends BlockEntity implements TickingBlockEntity {
 
     private static final String TAG_OWNER = JolCraftDictionary.OWNER;
 
@@ -48,26 +49,29 @@ public final class ManagedLightBlockEntity extends BlockEntity {
         return owner;
     }
 
-    public void serverTick() {
-        if (!(level instanceof ServerLevel serverLevel)) return;
-
-        if (tickCooldown > 0) {
-            tickCooldown--;
+    public void tickServer() {
+        if (!(this.level instanceof ServerLevel serverLevel)) {
             return;
         }
-        tickCooldown = 20;
 
-        if (owner == null) {
+        if (--this.tickCooldown > 0) {
+            return;
+        }
+        this.tickCooldown = 20;
+
+        if (this.owner == null) {
             cleanupSelf(serverLevel, "no_owner");
             return;
         }
 
-        AABB box = AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(worldPosition)).inflate(0.25);
+        BlockPos pos = this.getBlockPos();
+
+        AABB box = AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(pos)).inflate(0.25D);
 
         boolean valid = !serverLevel.getEntitiesOfClass(
                 RadiantEntity.class,
                 box,
-                e -> owner.equals(e.getUUID()) && e.blockPosition().equals(worldPosition)
+                entity -> this.owner.equals(entity.getUUID()) && entity.blockPosition().equals(pos)
         ).isEmpty();
 
         if (!valid) {

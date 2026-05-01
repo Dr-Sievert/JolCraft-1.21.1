@@ -22,8 +22,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.TriState;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

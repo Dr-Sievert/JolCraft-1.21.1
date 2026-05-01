@@ -9,13 +9,15 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.world.entity.damage.JolCraftDamageTypes;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
-import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
+import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimPatterns;
 import net.sievert.jolcraft.world.worldgen.biome.JolCraftBiomeModifiers;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftConfiguredFeatures;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftPlacedFeatures;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +31,18 @@ public final class JolCraftDatapackProvider extends DatapackBuiltinEntriesProvid
         private final RegistrySetBuilder builder = new RegistrySetBuilder();
         private final List<ResourceKey<? extends Registry<?>>> keys = new ArrayList<>();
 
-        private <T> BuilderSpec add(ResourceKey<? extends Registry<T>> key, RegistrySetBuilder.RegistryBootstrap<T> bootstrap) {
-            builder.add(key, bootstrap);
-            keys.add(key);
+        private <T> @NotNull BuilderSpec add(
+                @NotNull ResourceKey<? extends Registry<T>> key,
+                @NotNull RegistrySetBuilder.RegistryBootstrap<T> bootstrap
+        ) {
+            this.builder.add(key, bootstrap);
+            this.keys.add(key);
             return this;
         }
 
-        private String keyListString() {
-            return keys.stream()
-                    .map(k -> k.location().getPath().toUpperCase())
+        private @NotNull String keyListString() {
+            return this.keys.stream()
+                    .map(key -> key.location().getPath().toUpperCase())
                     .collect(Collectors.joining(", "));
         }
     }
@@ -47,13 +52,19 @@ public final class JolCraftDatapackProvider extends DatapackBuiltinEntriesProvid
             .add(Registries.TRIM_PATTERN, JolCraftTrimPatterns::bootstrap)
             .add(Registries.CONFIGURED_FEATURE, JolCraftConfiguredFeatures::bootstrap)
             .add(Registries.PLACED_FEATURE, JolCraftPlacedFeatures::bootstrap)
-            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, JolCraftBiomeModifiers::bootstrap);
+            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, JolCraftBiomeModifiers::bootstrap)
+            .add(Registries.DAMAGE_TYPE, JolCraftDamageTypes::bootstrap);
 
     public static final RegistrySetBuilder BUILDER = SPEC.builder;
 
-    public JolCraftDatapackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    public JolCraftDatapackProvider(
+            @NotNull PackOutput output,
+            @NotNull CompletableFuture<HolderLookup.Provider> registries
+    ) {
         super(output, registries, BUILDER, Set.of(JolCraft.MOD_ID));
-        JolCraftLogs.debug(JolCraftLogTags.DATAGEN,
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.DATAGEN,
                 "Registering builtin datapack entries for registries: {}",
                 SPEC.keyListString()
         );

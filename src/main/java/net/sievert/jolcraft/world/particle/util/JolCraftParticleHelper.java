@@ -53,8 +53,6 @@ public final class JolCraftParticleHelper {
 
             serverLevel.sendParticles(
                     particle,
-                    overrideLimiter,
-                    alwaysShow,
                     x, y, z,
                     count,
                     xDist, yDist, zDist,
@@ -141,11 +139,13 @@ public final class JolCraftParticleHelper {
             Player local = JolCraftProxy.access().getLocalPlayer();
             if (local != player) return;
 
+            boolean forceAlwaysRender = overrideLimiter || alwaysShow;
+
             if (count == 0) {
-                level.addParticle(particle, overrideLimiter, alwaysShow, x, y, z, xDist, yDist, zDist);
+                level.addParticle(particle, forceAlwaysRender, x, y, z, xDist, yDist, zDist);
             } else {
                 for (int i = 0; i < count; i++) {
-                    level.addParticle(particle, overrideLimiter, alwaysShow, x, y, z, xDist, yDist, zDist);
+                    level.addParticle(particle, forceAlwaysRender, x, y, z, xDist, yDist, zDist);
                 }
             }
             return;
@@ -154,8 +154,7 @@ public final class JolCraftParticleHelper {
         if (player instanceof ServerPlayer sp) {
             sp.connection.send(new ClientboundLevelParticlesPacket(
                     particle,
-                    overrideLimiter,
-                    alwaysShow,
+                    overrideLimiter || alwaysShow,
                     x, y, z,
                     (float) xDist,
                     (float) yDist,

@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
@@ -25,7 +25,7 @@ public final class ReputationGateInteractionHandler implements DwarfInteractions
         var player = ctx.player();
 
         int requiredTier = dwarf.getRequiredTier();
-        if (requiredTier > 0 && !DwarvenReputationHelper.hasTier(player, requiredTier)) {
+        if (requiredTier > 0 && !DwarvenReputationAttachmentHelper.hasTier(player, requiredTier)) {
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LOCKED, requiredTier)
                             .withStyle(ChatFormatting.RED),

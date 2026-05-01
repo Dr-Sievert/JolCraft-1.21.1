@@ -1,56 +1,94 @@
 package net.sievert.jolcraft.datagen.client.sound;
 
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
+import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
-public class JolCraftSoundProvider extends SoundDefinitionsProvider {
+public final class JolCraftSoundProvider extends SoundDefinitionsProvider
+        implements JolCraftMainDataProvider<JolCraftSoundProvider> {
 
     private static final char UNDERSCORE = '_';
 
-    /** Count of SoundEvents added (not variants). */
     private int addedSoundEvents;
+    private @Nullable JolCraftDataTracking tracking;
 
-    public JolCraftSoundProvider(PackOutput output) {
-        super(output, JolCraft.MOD_ID);
+    public JolCraftSoundProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+        super(output, JolCraft.MOD_ID, existingFileHelper);
+    }
+
+    @Override
+    public @NotNull JolCraftDataDomain domain() {
+        return JolCraftDataDomain.SOUND;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return domain().getId();
+    }
+
+    @Override
+    public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cache) {
+        this.addedSoundEvents = 0;
+        this.tracking = null;
+
+        generate(this, null, null, null);
+
+        return super.run(cache).whenComplete((unused, throwable) -> {
+            if (throwable == null) {
+                JolCraftDataTracking.logExplicitCount(
+                        this,
+                        this.addedSoundEvents,
+                        JolCraftStrings.spaced(this.id(), JolCraftStrings.plural(JolCraftDictionary.EVENT))
+                );
+            }
+            this.tracking = null;
+        });
+    }
+
+    @Override
+    public void run(
+            @NotNull JolCraftSoundProvider target,
+            @Nullable PackOutput packOutput,
+            @Nullable CompletableFuture<net.minecraft.core.HolderLookup.Provider> lookupProvider,
+            @Nullable ExistingFileHelper existingFileHelper,
+            @NotNull JolCraftDataTracking tracking
+    ) {
+        this.tracking = tracking;
+        tracking.record(this, "sounds.json");
     }
 
     @Override
     public void registerSounds() {
-
-        /* ------------------------------------------------------------------
-         * Dwarf
-         * ------------------------------------------------------------------ */
-
         addDwarfVariants(JolCraftSounds.DWARF_AMBIENT, JolCraftLanguageKeys.SUBTITLE_DWARF_AMBIENT, 3);
-        addDwarfVariants(JolCraftSounds.DWARF_HURT,    JolCraftLanguageKeys.SUBTITLE_DWARF_HIT,     4);
-        addDwarfSingle  (JolCraftSounds.DWARF_DEATH,   JolCraftLanguageKeys.SUBTITLE_DWARF_DEATH);
+        addDwarfVariants(JolCraftSounds.DWARF_HURT, JolCraftLanguageKeys.SUBTITLE_DWARF_HIT, 4);
+        addDwarfSingle(JolCraftSounds.DWARF_DEATH, JolCraftLanguageKeys.SUBTITLE_DWARF_DEATH);
 
-        addDwarfVariants(JolCraftSounds.DWARF_YES,   JolCraftLanguageKeys.SUBTITLE_DWARF_YES,   3);
-        addDwarfVariants(JolCraftSounds.DWARF_NO,    JolCraftLanguageKeys.SUBTITLE_DWARF_NO,    3);
+        addDwarfVariants(JolCraftSounds.DWARF_YES, JolCraftLanguageKeys.SUBTITLE_DWARF_YES, 3);
+        addDwarfVariants(JolCraftSounds.DWARF_NO, JolCraftLanguageKeys.SUBTITLE_DWARF_NO, 3);
         addDwarfVariants(JolCraftSounds.DWARF_TRADE, JolCraftLanguageKeys.SUBTITLE_DWARF_TRADE, 3);
-
-        /* ------------------------------------------------------------------
-         * Misc
-         * ------------------------------------------------------------------ */
 
         addRandomSingle(JolCraftSounds.LEVEL_UP, JolCraftLanguageKeys.SUBTITLE_LEVEL_UP);
 
@@ -62,26 +100,14 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
                 6
         );
 
-        /* ------------------------------------------------------------------
-         * Strongbox
-         * ------------------------------------------------------------------ */
-
-        addStrongboxRange(JolCraftSounds.STRONGBOX_OPEN,           JolCraftLanguageKeys.SUBTITLE_STRONGBOX_OPEN,           1, 2);
-        addStrongboxRange(JolCraftSounds.STRONGBOX_CLOSE,          JolCraftLanguageKeys.SUBTITLE_STRONGBOX_CLOSE,          1, 2);
-        addStrongboxRange(JolCraftSounds.STRONGBOX_LOCKPICK,       JolCraftLanguageKeys.SUBTITLE_STRONGBOX_LOCKPICK,       1, 4);
+        addStrongboxRange(JolCraftSounds.STRONGBOX_OPEN, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_OPEN, 1, 2);
+        addStrongboxRange(JolCraftSounds.STRONGBOX_CLOSE, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_CLOSE, 1, 2);
+        addStrongboxRange(JolCraftSounds.STRONGBOX_LOCKPICK, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_LOCKPICK, 1, 4);
         addStrongboxRange(JolCraftSounds.STRONGBOX_LOCKPICK_BREAK, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_LOCKPICK_BREAK, 1, 3);
-        addStrongboxRange(JolCraftSounds.STRONGBOX_UNLOCK,         JolCraftLanguageKeys.SUBTITLE_STRONGBOX_UNLOCK,         1, 1);
+        addStrongboxRange(JolCraftSounds.STRONGBOX_UNLOCK, JolCraftLanguageKeys.SUBTITLE_STRONGBOX_UNLOCK, 1, 1);
 
-        /* ------------------------------------------------------------------
-         * Coins
-         * ------------------------------------------------------------------ */
-
-        addCoinRange(JolCraftSounds.COIN_STACK,  JolCraftLanguageKeys.SUBTITLE_COIN_STACK,  1, 4);
+        addCoinRange(JolCraftSounds.COIN_STACK, JolCraftLanguageKeys.SUBTITLE_COIN_STACK, 1, 4);
         addCoinRange(JolCraftSounds.COIN_SINGLE, JolCraftLanguageKeys.SUBTITLE_COIN_SINGLE, 1, 4);
-
-        /* ------------------------------------------------------------------
-         * Gem / Curse
-         * ------------------------------------------------------------------ */
 
         addVanillaList(
                 JolCraftSounds.GEM_CUT,
@@ -90,24 +116,7 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         );
 
         addCurseRange(JolCraftSounds.CURSE, JolCraftLanguageKeys.SUBTITLE_CURSE, 1, 10);
-
-        JolCraftLogs.debug(
-                JolCraftLogTags.DATAGEN,
-                "Sound provider: +{} sound events",
-                this.addedSoundEvents
-        );
-
-        if (this.addedSoundEvents == 0) {
-            JolCraftLogs.warn(
-                    JolCraftLogTags.DATAGEN,
-                    "Sound provider added 0 sound events."
-            );
-        }
     }
-
-    /* ======================================================================
-     * Holder-derived helpers (call sites pass only JolCraftSounds.*)
-     * ====================================================================== */
 
     private void addDwarfVariants(Supplier<SoundEvent> event, String subtitleKey, int count) {
         String id = idPath(event);
@@ -137,10 +146,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         String leaf = removeChar(idPath(event), UNDERSCORE);
         addSingle(event, subtitleKey, randomSingle(leaf));
     }
-
-    /* ======================================================================
-     * Core provider glue (counts SoundEvents, not variants)
-     * ====================================================================== */
 
     private void addSingle(Supplier<SoundEvent> event, String subtitleKey, ResourceLocation soundName) {
         this.addedSoundEvents++;
@@ -179,10 +184,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         return id.toString();
     }
 
-    /* ======================================================================
-     * ResourceLocation builders
-     * ====================================================================== */
-
     private static ResourceLocation mod(String path) {
         return JolCraft.location(path);
     }
@@ -191,7 +192,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         return ResourceLocation.withDefaultNamespace(path);
     }
 
-    // Dwarf
     private static String dwarfPrefix() {
         return JolCraftDictionary.DWARF + UNDERSCORE;
     }
@@ -204,7 +204,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         return dwarfBase(leaf);
     }
 
-    // Strongbox / Coin / Curse / Random
     private static ResourceLocation strongboxBase(String id) {
         return mod(JolCraftStrings.slashed(JolCraftDictionary.BLOCK, JolCraftDictionary.STRONGBOX, id));
     }
@@ -239,13 +238,9 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
         return out;
     }
 
-    /* ======================================================================
-     * Id extraction + tiny string utils
-     * ====================================================================== */
-
     private static String idPath(Supplier<SoundEvent> event) {
         DeferredHolder<SoundEvent, SoundEvent> holder = asDeferredHolder(event);
-        ResourceLocation id = holder.getId(); // jolcraft:<path>
+        ResourceLocation id = holder.getId();
         return id.getPath();
     }
 
@@ -255,7 +250,7 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
             return (DeferredHolder<SoundEvent, SoundEvent>) deferred;
         }
         throw new IllegalArgumentException(
-                "Sound supplier must be DeferredHolder to derive id (got: " + event.getClass().getName() + ")"
+                "Sound supplier must be DeferredHolder to derive name (got: " + event.getClass().getName() + ")"
         );
     }
 
@@ -277,6 +272,6 @@ public class JolCraftSoundProvider extends SoundDefinitionsProvider {
 
     @Override
     public @NotNull String getName() {
-        return "JolCraft Sounds";
+        return name();
     }
 }

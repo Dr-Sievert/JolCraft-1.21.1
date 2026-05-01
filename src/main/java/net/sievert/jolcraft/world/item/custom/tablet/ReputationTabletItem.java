@@ -5,7 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,16 +15,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
 import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenEndorsementsPacket;
-import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarvenReputationPacket;
-import net.sievert.jolcraft.data.attachment.custom.language.DwarvenLanguageHelper;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -40,21 +37,23 @@ public class ReputationTabletItem extends Item {
         super(properties);
     }
 
-    private static final int[] ENDORSEMENT_THRESHOLDS = DwarvenReputationImpl.ENDORSEMENT_THRESHOLDS;
+    private static final int[] ENDORSEMENT_THRESHOLDS = DwarvenReputationAttachment.ENDORSEMENT_THRESHOLDS;
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            if (!DwarvenLanguageHelper.knowsDwarvish(serverPlayer)) {
+            if (!LanguageAttachmentHelper.knowsDwarvish(serverPlayer)) {
                 serverPlayer.displayClientMessage(
                         Component.translatable(JolCraftLanguageKeys.TOOLTIP_STONE_LOCKED).withStyle(ChatFormatting.GRAY),
                         true
                 );
-                return InteractionResult.SUCCESS;
+                return InteractionResultHolder.success(stack);
             }
 
-            int currentTier = DwarvenReputationHelper.getTier(serverPlayer);
-            int endorsements = DwarvenReputationHelper.getEndorsementCount(serverPlayer);
+            int currentTier = DwarvenReputationAttachmentHelper.getTier(serverPlayer);
+            int endorsements = DwarvenReputationAttachmentHelper.getEndorsementCount(serverPlayer);
 
             if (currentTier >= ENDORSEMENT_THRESHOLDS.length) {
                 serverPlayer.displayClientMessage(
@@ -73,26 +72,18 @@ public class ReputationTabletItem extends Item {
             JolCraftSoundHelper.player(player, SoundEvents.CHISELED_BOOKSHELF_INSERT, 1.0F, 0.5F);
         }
 
-        return InteractionResult.SUCCESS;
+        return InteractionResultHolder.success(stack);
     }
-
 
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            int tier = DwarvenReputationHelper.getTier(serverPlayer);
-            int endorsements = DwarvenReputationHelper.getEndorsementCount(serverPlayer);
+            int tier = DwarvenReputationAttachmentHelper.getTier(serverPlayer);
+            int endorsements = DwarvenReputationAttachmentHelper.getEndorsementCount(serverPlayer);
 
             stack.set(JolCraftDataComponents.REPUTATION_OWNER.get(), serverPlayer.getName().getString());
             stack.set(JolCraftDataComponents.REPUTATION_TIER.get(), tier);
             stack.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), endorsements);
-
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundDwarvenEndorsementsPacket(DwarvenReputationHelper.getAllEndorsements(serverPlayer))
-            );
-            JolCraftNetworking.sendToClient(serverPlayer,
-                    new ClientboundDwarvenReputationPacket(tier)
-            );
         }
         super.onCraftedBy(stack, level, player);
     }
@@ -101,8 +92,8 @@ public class ReputationTabletItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Player player = JolCraftProxy.access().getLocalPlayer();
-        if (DwarvenLanguageHelper.knowsDwarvish(player)) {
-            String ownerName = stack.getOrDefault(JolCraftDataComponents.REPUTATION_OWNER.get(), "Unknown");
+        if (LanguageAttachmentHelper.knowsDwarvish(player)) {
+            String ownerName = stack.getOrDefault(JolCraftDataComponents.REPUTATION_OWNER.get(), JolCraftDictionary.UNKNOWN);
             int statictier = stack.getOrDefault(JolCraftDataComponents.REPUTATION_TIER.get(), 0);
             int staticendorsements = stack.getOrDefault(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), 0);
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_TABLET_OWNER, ownerName)
@@ -120,5 +111,4 @@ public class ReputationTabletItem extends Item {
         }
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
 }

@@ -11,13 +11,12 @@ import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -37,7 +36,8 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRecipe> {
-    public static final IRecipeType<JeiInfoPageRecipe> RECIPE_TYPE = IRecipeType.create(JolCraft.MOD_ID, JolCraftJeiIds.INFO_PAGE, JeiInfoPageRecipe.class);
+
+    public static final RecipeType<JeiInfoPageRecipe> RECIPE_TYPE = RecipeType.create(JolCraft.MOD_ID, JolCraftJeiIds.INFO_PAGE, JeiInfoPageRecipe.class);
 
     private final int textStartY = 32;
     private final int textHeight = getHeight() - textStartY - 8;
@@ -51,11 +51,14 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
 
     public JeiInfoPageCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createBlankDrawable(150, 100);
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(JolCraftItems.DWARVEN_TOME.get()));
+        this.icon = guiHelper.createDrawableIngredient(
+                VanillaTypes.ITEM_STACK,
+                new ItemStack(JolCraftItems.DWARVEN_TOME.get())
+        );
     }
 
     @Override
-    public IRecipeType<JeiInfoPageRecipe> getRecipeType() {
+    public RecipeType<JeiInfoPageRecipe> getRecipeType() {
         return RECIPE_TYPE;
     }
 
@@ -81,7 +84,9 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
         int lineHeight = 10;
         int maxLines = Math.max(1, textHeight / lineHeight);
 
-        List<FormattedCharSequence> lines = Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16);
+        List<FormattedCharSequence> lines =
+                Minecraft.getInstance().font.split(recipe.getContent(), getWidth() - 16);
+
         int totalLines = lines.size();
         int maxScroll = Math.max(0, totalLines - maxLines);
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
@@ -104,10 +109,11 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
             int barHeight = textHeight;
 
             graphics.fill(barX, barY, barX + barWidth, barY + barHeight, 0x66BBBBBB);
+
             float ratio = maxLines / (float) totalLines;
             int thumbHeight = Math.max(12, Math.round(barHeight * ratio));
             int maxThumbMove = barHeight - thumbHeight;
-            int thumbY = barY + (maxScroll == 0 ? 0 : Math.round(maxThumbMove * (scrollOffset / (float)maxScroll)));
+            int thumbY = barY + (maxScroll == 0 ? 0 : Math.round(maxThumbMove * (scrollOffset / (float) maxScroll)));
 
             graphics.fill(barX, thumbY, barX + barWidth, thumbY + thumbHeight, 0xFF888888);
             graphics.fill(barX + 1, thumbY + 1, barX + barWidth - 1, thumbY + thumbHeight - 1, 0xFF666666);
@@ -116,12 +122,12 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, JeiInfoPageRecipe recipe, IFocusGroup focuses) {
-
         builder.addInputHandler(new IJeiInputHandler() {
             @Override
             public ScreenRectangle getArea() {
                 return new ScreenRectangle(0, 0, getWidth(), getHeight());
             }
+
             @Override
             public boolean handleMouseScrolled(double mouseX, double mouseY, double scrollDeltaX, double scrollDeltaY) {
                 int sign = (int) Math.signum(scrollDeltaY);
@@ -134,7 +140,6 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
         });
 
         builder.addInputHandler(new IJeiInputHandler() {
-
             @Override
             public ScreenRectangle getArea() {
                 int barX = getWidth() - 8;
@@ -155,7 +160,7 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
                     int maxScroll = Math.max(0, totalLines - maxLines);
                     int thumbHeight = Math.max(12, Math.round(textHeight * (maxLines / (float) totalLines)));
                     int maxThumbMove = textHeight - thumbHeight;
-                    int thumbY = (maxScroll == 0 ? 0 : Math.round(maxThumbMove * (scrollOffset / (float) maxScroll)));
+                    int thumbY = textStartY + (maxScroll == 0 ? 0 : Math.round(maxThumbMove * (scrollOffset / (float) maxScroll)));
 
                     if (input.isSimulate()) {
                         if (mouseY >= thumbY && mouseY < (thumbY + thumbHeight)) {
@@ -195,7 +200,6 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
                 return false;
             }
         });
-
     }
 
     @Override
@@ -204,22 +208,20 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
         int slotY = 8;
 
         Minecraft mc = Minecraft.getInstance();
-        RegistryAccess registryAccess = (mc.level != null) ? mc.level.registryAccess() : null;
+        RegistryAccess registryAccess = mc.level != null ? mc.level.registryAccess() : null;
 
-        // ---------------------------------------------------------------------
-        // Group (explicit list OR block-tag-backed group)
-        // ---------------------------------------------------------------------
         if (recipe.isGroup() || recipe.isBlockTag()) {
             if (recipe.isBlockTag() && registryAccess == null) {
-                // Can't expand block tags without registries.
                 return;
             }
 
-            List<ItemStack> group = (registryAccess != null)
+            List<ItemStack> group = registryAccess != null
                     ? recipe.getGroupStacks(registryAccess)
                     : recipe.getGroupStacks();
 
-            if (group.isEmpty()) return;
+            if (group.isEmpty()) {
+                return;
+            }
 
             int slotSpacing = 20;
             int totalWidth = slotSpacing * (group.size() - 1);
@@ -227,54 +229,67 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
 
             for (int i = 0; i < group.size(); i++) {
                 ItemStack stack = group.get(i);
-                if (stack == null || stack.isEmpty()) continue;
+                if (stack == null || stack.isEmpty()) {
+                    continue;
+                }
 
                 int x = startX + i * slotSpacing;
-                builder.addSlot(RecipeIngredientRole.INPUT, x, slotY).add(stack);
-                builder.addSlot(RecipeIngredientRole.OUTPUT, x, slotY).add(stack);
+                builder.addSlot(RecipeIngredientRole.INPUT, x, slotY).addItemStack(stack);
+                builder.addSlot(RecipeIngredientRole.OUTPUT, x, slotY).addItemStack(stack);
             }
             return;
         }
 
-        // ---------------------------------------------------------------------
-        // Item tag
-        // ---------------------------------------------------------------------
         if (recipe.isTag()) {
-            if (registryAccess == null) return;
+            if (registryAccess == null) {
+                return;
+            }
 
             TagKey<Item> tag = recipe.getFocusTag();
-            if (tag == null) return;
+            if (tag == null) {
+                return;
+            }
 
             List<ItemStack> stacks = stacksForItemTag(registryAccess, tag);
-            if (stacks.isEmpty()) return;
+            if (stacks.isEmpty()) {
+                return;
+            }
 
             var in = builder.addSlot(RecipeIngredientRole.INPUT, slotX - 10, slotY);
             var out = builder.addSlot(RecipeIngredientRole.OUTPUT, slotX + 10, slotY);
+
             for (ItemStack stack : stacks) {
-                if (stack == null || stack.isEmpty()) continue;
-                in.add(stack);
-                out.add(stack);
+                if (stack == null || stack.isEmpty()) {
+                    continue;
+                }
+                in.addItemStack(stack);
+                out.addItemStack(stack);
             }
             return;
         }
 
-        // ---------------------------------------------------------------------
-        // Single stack
-        // ---------------------------------------------------------------------
         ItemStack focus = recipe.getFocusStack();
-        if (focus == null || focus.isEmpty()) return;
+        if (focus == null || focus.isEmpty()) {
+            return;
+        }
 
-        builder.addSlot(RecipeIngredientRole.INPUT, slotX, slotY).add(focus);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, slotX, slotY).add(focus);
+        builder.addSlot(RecipeIngredientRole.INPUT, slotX, slotY).addItemStack(focus);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, slotX, slotY).addItemStack(focus);
     }
 
     private static List<ItemStack> stacksForItemTag(RegistryAccess registryAccess, TagKey<Item> tag) {
-        Registry<Item> items = registryAccess.lookupOrThrow(Registries.ITEM);
+        var items = registryAccess.lookupOrThrow(Registries.ITEM);
+        var named = items.get(tag).orElse(null);
 
         List<ItemStack> stacks = new ArrayList<>();
-        for (var holder : items.getTagOrEmpty(tag)) {
+        if (named == null) {
+            return stacks;
+        }
+
+        for (var holder : named) {
             stacks.add(new ItemStack(holder.value()));
         }
+
         return stacks;
     }
 

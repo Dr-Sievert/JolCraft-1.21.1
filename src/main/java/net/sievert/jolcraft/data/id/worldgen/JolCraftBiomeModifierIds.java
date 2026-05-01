@@ -22,17 +22,20 @@ public final class JolCraftBiomeModifierIds extends JolCraftIds {
     // Ores
     // ---------------------------------------------------------------------
 
-    public static final String ADD_SMALL_MITHRIL_ORE =
-            add(JolCraftConfiguredFeatureIds.SMALL_MITHRIL_ORE);
+    public static final String ADD_ORE_MITHRIL_SMALL =
+            add(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SMALL);
 
-    public static final String ADD_MEDIUM_MITHRIL_ORE =
-            add(JolCraftConfiguredFeatureIds.MEDIUM_MITHRIL_ORE);
+    public static final String ADD_ORE_MITHRIL_MEDIUM =
+            add(JolCraftConfiguredFeatureIds.ORE_MITHRIL_MEDIUM);
 
-    public static final String ADD_LARGE_MITHRIL_ORE =
-            add(JolCraftConfiguredFeatureIds.LARGE_MITHRIL_ORE);
+    public static final String ADD_ORE_MITHRIL_LARGE =
+            add(JolCraftConfiguredFeatureIds.ORE_MITHRIL_LARGE);
 
-    public static final String ADD_SPECIAL_MITHRIL_ORE =
-            add(JolCraftConfiguredFeatureIds.SPECIAL_MITHRIL_ORE);
+    public static final String ADD_ORE_MITHRIL_SPECIAL =
+            add(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SPECIAL);
+
+    public static final String ADD_ORE_MITHRIL_BURIED =
+            add(JolCraftConfiguredFeatureIds.ORE_MITHRIL_BURIED);
 
     // ---------------------------------------------------------------------
     // Geodes

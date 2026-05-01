@@ -26,17 +26,20 @@ public class JolCraftPlacedFeatures {
             registerKey(JolCraftPlacedFeatureIds.DEEPSLATE_BULBS_PATCH_PLACED);
 
     // Ores
-    public static final ResourceKey<PlacedFeature> SMALL_MITHRIL_ORE_PLACED_KEY =
-            registerKey(JolCraftPlacedFeatureIds.SMALL_MITHRIL_ORE_PLACED);
+    public static final ResourceKey<PlacedFeature> ORE_MITHRIL_SMALL_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.ORE_MITHRIL_SMALL_PLACED);
 
-    public static final ResourceKey<PlacedFeature> MEDIUM_MITHRIL_ORE_PLACED_KEY =
-            registerKey(JolCraftPlacedFeatureIds.MEDIUM_MITHRIL_ORE_PLACED);
+    public static final ResourceKey<PlacedFeature> ORE_MITHRIL_MEDIUM_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.ORE_MITHRIL_MEDIUM_PLACED);
 
-    public static final ResourceKey<PlacedFeature> LARGE_MITHRIL_ORE_PLACED_KEY =
-            registerKey(JolCraftPlacedFeatureIds.LARGE_MITHRIL_ORE_PLACED);
+    public static final ResourceKey<PlacedFeature> ORE_MITHRIL_LARGE_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.ORE_MITHRIL_LARGE_PLACED);
 
-    public static final ResourceKey<PlacedFeature> SPECIAL_MITHRIL_ORE_PLACED_KEY =
-            registerKey(JolCraftPlacedFeatureIds.SPECIAL_MITHRIL_ORE_PLACED);
+    public static final ResourceKey<PlacedFeature> ORE_MITHRIL_SPECIAL_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.ORE_MITHRIL_SPECIAL_PLACED);
+
+    public static final ResourceKey<PlacedFeature> ORE_MITHRIL_BURIED_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.ORE_MITHRIL_BURIED_PLACED);
 
     // Geodes
     public static final ResourceKey<PlacedFeature> BASALT_GEODE_PLACED_KEY =
@@ -83,13 +86,19 @@ public class JolCraftPlacedFeatures {
         );
 
         //Ores
-        register(context, SMALL_MITHRIL_ORE_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.SMALL_MITHRIL_ORE_KEY),
+        register(context, ORE_MITHRIL_SMALL_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.ORE_MITHRIL_SMALL_KEY),
+                JolCraftOreReplacement.rareOrePlacement(1, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0))));
+
+        register(context, ORE_MITHRIL_MEDIUM_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.ORE_MITHRIL_MEDIUM_KEY),
                 JolCraftOreReplacement.rareOrePlacement(2, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0))));
-        register(context, MEDIUM_MITHRIL_ORE_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.MEDIUM_MITHRIL_ORE_KEY),
+
+        register(context, ORE_MITHRIL_LARGE_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.ORE_MITHRIL_LARGE_KEY),
                 JolCraftOreReplacement.rareOrePlacement(3, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0))));
-        register(context, LARGE_MITHRIL_ORE_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.LARGE_MITHRIL_ORE_KEY),
-                JolCraftOreReplacement.rareOrePlacement(4, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0))));
-        register(context, SPECIAL_MITHRIL_ORE_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.SPECIAL_MITHRIL_ORE_KEY),
+
+        register(context, ORE_MITHRIL_SPECIAL_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.ORE_MITHRIL_SPECIAL_KEY),
+                JolCraftOreReplacement.rareOrePlacement(1, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0))));
+
+        register(context, ORE_MITHRIL_BURIED_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.ORE_MITHRIL_BURIED_KEY),
                 JolCraftOreReplacement.rareOrePlacement(1, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0))));
 
         //Geodes

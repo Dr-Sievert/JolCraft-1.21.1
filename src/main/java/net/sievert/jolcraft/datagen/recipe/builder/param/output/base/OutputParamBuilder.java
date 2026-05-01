@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.base;
 
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
-import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
+import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
+import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

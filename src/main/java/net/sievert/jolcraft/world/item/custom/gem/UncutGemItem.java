@@ -8,10 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.world.item.client.tooltip.util.JolCraftTooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -34,13 +34,13 @@ public class UncutGemItem extends Item {
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_UNCUT_GEM)
                     .withStyle(ChatFormatting.GRAY));
 
-            if (player != null && !DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (player != null && !DwarfLoreAttachmentHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED)
                         .withStyle(ChatFormatting.RED));
             }
         } else {
             tooltip.add(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
                             .withStyle(ChatFormatting.DARK_GRAY)
             );
         }

@@ -5,14 +5,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.util.tooltip.TooltipHelper;
+import net.sievert.jolcraft.world.item.client.tooltip.util.JolCraftTooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,8 +21,8 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class ChiselItem extends ToolItem {
 
-    public ChiselItem(ToolMaterial material, Item.Properties properties) {
-        super(material, properties);
+    public ChiselItem(Tier tier, Item.Properties properties) {
+        super(tier, properties);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -31,7 +31,7 @@ public class ChiselItem extends ToolItem {
         Player player = JolCraftProxy.access().getLocalPlayer();
 
         if (JolCraftProxy.access().isAltDown()) {
-            if (DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            if (DwarfLoreAttachmentHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
                 tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CHISEL)
                         .withStyle(ChatFormatting.GRAY));
             } else {
@@ -39,7 +39,7 @@ public class ChiselItem extends ToolItem {
                         .withStyle(ChatFormatting.RED));
             }
         } else {
-            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, TooltipHelper.altKey())
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 

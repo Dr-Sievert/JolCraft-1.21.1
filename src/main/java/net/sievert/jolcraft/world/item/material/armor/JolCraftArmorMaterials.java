@@ -1,84 +1,112 @@
 package net.sievert.jolcraft.world.item.material.armor;
 
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 public final class JolCraftArmorMaterials {
 
-    private JolCraftArmorMaterials() {
-    }
+    private JolCraftArmorMaterials() {}
 
-    private static final Map<JolCraftMaterials.Material, ArmorMaterial> BY_MATERIAL = buildAll();
+    private static final Map<JolCraftMaterials.Material, Holder<ArmorMaterial>> BY_MATERIAL = buildAll();
 
-    private static Map<JolCraftMaterials.Material, ArmorMaterial> buildAll() {
-        Map<JolCraftMaterials.Material, ArmorMaterial> out =
-                new EnumMap<>(JolCraftMaterials.Material.class);
+    private static Map<JolCraftMaterials.Material, Holder<ArmorMaterial>> buildAll() {
+        Map<JolCraftMaterials.Material, Holder<ArmorMaterial>> out = new EnumMap<>(JolCraftMaterials.Material.class);
 
-        put(out, JolCraftMaterials.Material.DEEPSLATE, new ArmorMaterial(
-                24,
-                Util.make(new EnumMap<>(ArmorType.class), map -> {
-                    map.put(ArmorType.BOOTS, 2);
-                    map.put(ArmorType.LEGGINGS, 5);
-                    map.put(ArmorType.CHESTPLATE, 6);
-                    map.put(ArmorType.HELMET, 2);
-                    map.put(ArmorType.BODY, 5);
+        put(out, JolCraftMaterials.Material.DEEPSLATE, register(
+                JolCraftDictionary.DEEPSLATE,
+                Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
+                    m.put(ArmorItem.Type.BOOTS, 2);
+                    m.put(ArmorItem.Type.LEGGINGS, 5);
+                    m.put(ArmorItem.Type.CHESTPLATE, 6);
+                    m.put(ArmorItem.Type.HELMET, 2);
+                    m.put(ArmorItem.Type.BODY, 5);
                 }),
                 10,
                 JolCraftSounds.ARMOR_EQUIP_DEEPSLATE,
                 1.0F,
                 0.1F,
-                JolCraftTags.Items.REPAIRS_DEEPSLATE,
-                JolCraftMaterials.Material.DEEPSLATE.equipmentAssetKey()
+                () -> Ingredient.of(JolCraftTags.Items.REPAIRS_DEEPSLATE),
+                layers(JolCraftDictionary.DEEPSLATE)
         ));
 
-        put(out, JolCraftMaterials.Material.MITHRIL, new ArmorMaterial(
-                100,
-                Util.make(new EnumMap<>(ArmorType.class), map -> {
-                    map.put(ArmorType.BOOTS, 3);
-                    map.put(ArmorType.LEGGINGS, 6);
-                    map.put(ArmorType.CHESTPLATE, 8);
-                    map.put(ArmorType.HELMET, 3);
-                    map.put(ArmorType.BODY, 11);
+        put(out, JolCraftMaterials.Material.MITHRIL, register(
+                JolCraftDictionary.MITHRIL,
+                Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
+                    m.put(ArmorItem.Type.BOOTS, 3);
+                    m.put(ArmorItem.Type.LEGGINGS, 6);
+                    m.put(ArmorItem.Type.CHESTPLATE, 8);
+                    m.put(ArmorItem.Type.HELMET, 3);
+                    m.put(ArmorItem.Type.BODY, 11);
                 }),
                 20,
                 SoundEvents.ARMOR_EQUIP_NETHERITE,
                 4.0F,
                 0.0F,
-                JolCraftTags.Items.REPAIRS_MITHRIL,
-                JolCraftMaterials.Material.MITHRIL.equipmentAssetKey()
+                () -> Ingredient.of(JolCraftTags.Items.REPAIRS_MITHRIL),
+                layers(JolCraftDictionary.MITHRIL)
         ));
 
         return Map.copyOf(out);
     }
 
-    private static void put(
-            Map<JolCraftMaterials.Material, ArmorMaterial> map,
-            JolCraftMaterials.Material material,
-            ArmorMaterial armorMaterial
+    private static List<ArmorMaterial.Layer> layers(String name) {
+        return List.of(new ArmorMaterial.Layer(JolCraft.location(name)));
+    }
+
+    private static Holder<ArmorMaterial> register(
+            String name,
+            EnumMap<ArmorItem.Type, Integer> defense,
+            int enchantmentValue,
+            Holder<net.minecraft.sounds.SoundEvent> equipSound,
+            float toughness,
+            float knockbackResistance,
+            java.util.function.Supplier<Ingredient> repairIngredient,
+            List<ArmorMaterial.Layer> layers
     ) {
-        ArmorMaterial previous = map.put(material, armorMaterial);
-        if (previous != null) {
-            throw new IllegalStateException("Duplicate armor material entry for: " + material);
-        }
+        return Registry.registerForHolder(
+                BuiltInRegistries.ARMOR_MATERIAL,
+                JolCraft.location(name),
+                new ArmorMaterial(defense, enchantmentValue, equipSound, repairIngredient, layers, toughness, knockbackResistance)
+        );
     }
 
-    public static ArmorMaterial armorMaterial(JolCraftMaterials.Material material) {
-        ArmorMaterial mat = BY_MATERIAL.get(material);
-        if (mat == null) {
-            throw new IllegalStateException("Missing armor material entry for: " + material);
-        }
-        return mat;
+    private static void put(Map<JolCraftMaterials.Material, Holder<ArmorMaterial>> map,
+                            JolCraftMaterials.Material material,
+                            Holder<ArmorMaterial> armorMaterial) {
+        map.put(material, armorMaterial);
     }
 
-    public static Map<JolCraftMaterials.Material, ArmorMaterial> all() {
-        return BY_MATERIAL;
+    public static Holder<ArmorMaterial> armorMaterial(JolCraftMaterials.Material material) {
+        Holder<ArmorMaterial> holder = BY_MATERIAL.get(material);
+        if (holder == null) {
+            throw new IllegalStateException("No armor material registered for " + material.getId());
+        }
+        return holder;
+    }
+
+    private static final Map<JolCraftMaterials.Material, Integer> DURABILITY_MULTIPLIER = Map.of(
+            JolCraftMaterials.Material.DEEPSLATE, 24,
+            JolCraftMaterials.Material.MITHRIL, 100
+    );
+
+    public static int durability(JolCraftMaterials.Material material, ArmorItem.Type type) {
+        Integer multiplier = DURABILITY_MULTIPLIER.get(material);
+        if (multiplier == null) {
+            throw new IllegalStateException("Missing armor durability multiplier for " + material.getId());
+        }
+        return type.getDurability(multiplier);
     }
 }

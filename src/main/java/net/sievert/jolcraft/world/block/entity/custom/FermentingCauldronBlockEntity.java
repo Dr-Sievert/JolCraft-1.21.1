@@ -5,6 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -16,9 +17,11 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -29,27 +32,30 @@ import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.sievert.jolcraft.data.JolCraftStats;
-import net.sievert.jolcraft.data.attachment.custom.lore.DwarfTomeUnlockHelper;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.data.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
-import net.sievert.jolcraft.data.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
+import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
+import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.world.recipe.param.output.base.Output;
+import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.world.block.entity.custom.base.SyncingBlockEntity;
+import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -60,17 +66,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class FermentingCauldronBlockEntity extends BlockEntity {
-
-    // =====================================================================
-    // NBT keys
-    // =====================================================================
+public final class FermentingCauldronBlockEntity extends BlockEntity
+        implements TickingBlockEntity, SyncingBlockEntity {
 
     private static final String NBT_BREW_START_TIME =
             JolCraftStrings.underscored(
@@ -142,10 +147,6 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
 
     private static final int MAX_INGREDIENT_STACK = 3;
 
-    // =====================================================================
-    // Gameplay state
-    // =====================================================================
-
     private ItemStack lastIngredient = ItemStack.EMPTY;
 
     private final HashMap<Item, IngredientData> ingredients = new HashMap<>();
@@ -155,16 +156,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
     private boolean finalize;
     private boolean extractable;
 
-    // =====================================================================
-    // Server-only visuals
-    // =====================================================================
-
     private int bubbleTicks = 0;
     private int bubbleDelay = 0;
-
-    // =====================================================================
-    // Synced render state
-    // =====================================================================
 
     private int currentColor = FermentingCauldronColorHelper.UNSET_COLOR;
     private int startColor = FermentingCauldronColorHelper.UNSET_COLOR;
@@ -176,18 +169,24 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         super(JolCraftBlockEntities.FERMENTING_CAULDRON.get(), pos, state);
     }
 
-    // =====================================================================
-    // Interaction
-    // =====================================================================
-
-    public InteractionResult handleInteraction(Player player, InteractionHand hand, ItemStack usedItem) {
-        if (level == null || level.isClientSide) return InteractionResult.FAIL;
-        if (hand != InteractionHand.MAIN_HAND) return InteractionResult.FAIL;
-        if (isBrewing()) return InteractionResult.FAIL;
-        if (usedItem.isEmpty()) return InteractionResult.FAIL;
+    public ItemInteractionResult handleInteraction(Player player, InteractionHand hand, ItemStack usedItem) {
+        if (level == null || level.isClientSide) {
+            return ItemInteractionResult.FAIL;
+        }
+        if (hand != InteractionHand.MAIN_HAND) {
+            return ItemInteractionResult.FAIL;
+        }
+        if (isBrewing()) {
+            return ItemInteractionResult.FAIL;
+        }
+        if (usedItem.isEmpty()) {
+            return ItemInteractionResult.FAIL;
+        }
 
         FermentingCauldronRecipe recipe = findRecipe(player, usedItem);
-        if (recipe == null) return InteractionResult.FAIL;
+        if (recipe == null) {
+            return ItemInteractionResult.FAIL;
+        }
 
         if (extractable) {
             return tryExtract(player, usedItem, recipe);
@@ -196,14 +195,18 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         return tryInsert(player, usedItem, recipe);
     }
 
-    private InteractionResult tryExtract(Player player, ItemStack usedItem, FermentingCauldronRecipe recipe) {
-        if (level == null || level.isClientSide) return InteractionResult.FAIL;
+    private ItemInteractionResult tryExtract(Player player, ItemStack usedItem, FermentingCauldronRecipe recipe) {
+        if (level == null || level.isClientSide) {
+            return ItemInteractionResult.FAIL;
+        }
 
         ItemStack extract = rollExtract(recipe, player, usedItem);
-        if (extract.isEmpty()) return InteractionResult.FAIL;
+        if (extract.isEmpty()) {
+            return ItemInteractionResult.FAIL;
+        }
 
         extractBrew(player, usedItem, extract);
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     private @NotNull ItemStack rollExtract(
@@ -211,9 +214,15 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             Player player,
             ItemStack usedItem
     ) {
-        if (level == null || level.isClientSide) return ItemStack.EMPTY;
-        if (!(level instanceof ServerLevel serverLevel)) return ItemStack.EMPTY;
-        if (recipe.extract().isEmpty()) return ItemStack.EMPTY;
+        if (level == null || level.isClientSide) {
+            return ItemStack.EMPTY;
+        }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return ItemStack.EMPTY;
+        }
+        if (recipe.extract().isEmpty()) {
+            return ItemStack.EMPTY;
+        }
 
         WorldContext ctx = new WorldContext(serverLevel, player, null);
 
@@ -225,8 +234,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         return out.isEmpty() ? ItemStack.EMPTY : out;
     }
 
-    private InteractionResult tryInsert(Player player, ItemStack usedItem, FermentingCauldronRecipe recipe) {
-        if (level == null || level.isClientSide) return InteractionResult.FAIL;
+    private ItemInteractionResult tryInsert(Player player, ItemStack usedItem, FermentingCauldronRecipe recipe) {
+        if (level == null || level.isClientSide) {
+            return ItemInteractionResult.FAIL;
+        }
 
         Item itemKey = usedItem.getItem();
         ItemStack ingredientKey = usedItem.copyWithCount(1);
@@ -240,27 +251,27 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                             .withStyle(ChatFormatting.GRAY),
                     true
             );
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
 
         Optional<EffectOutput> recipeEffect = recipe.effect();
         boolean hasRecipeEffect = recipeEffect.isPresent();
 
         if (hasRecipeEffect && !ingredients.isEmpty() && !ingredients.containsKey(itemKey)) {
-            if (!DwarfTomeUnlockHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
+            if (!DwarfLoreAttachmentHelper.hasUnlock(player, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)) {
                 player.displayClientMessage(
                         Component.translatable(JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI)
                                 .withStyle(ChatFormatting.RED),
                         true
                 );
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
 
         return applyInsert(player, usedItem, ingredientKey, itemKey, count, recipe);
     }
 
-    private InteractionResult applyInsert(
+    private ItemInteractionResult applyInsert(
             Player player,
             ItemStack usedItem,
             ItemStack ingredientKey,
@@ -268,7 +279,11 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             int oldCount,
             FermentingCauldronRecipe recipe
     ) {
-        if (level == null || level.isClientSide) return InteractionResult.FAIL;
+        if (level == null || level.isClientSide) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        player.awardStat(Stats.ITEM_USED.get(usedItem.getItem()));
 
         if (!player.isCreative()) {
             usedItem.shrink(1);
@@ -286,23 +301,23 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         ingredients.put(itemKey, new IngredientData(newCount, recipe.brewColor()));
 
         finalize = recipe.finalizeBrew();
-
         recipe.effect().ifPresent(this::upsertEffect);
 
         setLastIngredient(ingredientKey);
         startBrew(recipe.brewTicks(), recipe.bubbleTicks());
 
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     private void upsertEffect(EffectOutput effect) {
-        ResourceKey<MobEffect> key = effect.id() != null ? effect.id().unwrapKey().orElse(null) : null;
-        if (key == null) return;
+        ResourceKey<MobEffect> key = effect.id().unwrapKey().orElse(null);
+        if (key == null) {
+            return;
+        }
 
         for (int i = 0; i < effects.size(); i++) {
             EffectOutput existing = effects.get(i);
-            ResourceKey<MobEffect> existingKey =
-                    existing.id() != null ? existing.id().unwrapKey().orElse(null) : null;
+            ResourceKey<MobEffect> existingKey = existing.id().unwrapKey().orElse(null);
 
             if (key.equals(existingKey)) {
                 effects.set(i, effect);
@@ -317,16 +332,14 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         lastIngredient = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
     }
 
-    // =====================================================================
-    // Brewing
-    // =====================================================================
-
     public boolean isBrewing() {
         return brewStartTime > 0L;
     }
 
     private void startBrew(int recipeBlendTicks, int recipeBubbleTicks) {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
 
         currentColor = FermentingCauldronColorHelper.resolveBaseWaterColor(level, worldPosition, currentColor);
 
@@ -338,7 +351,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         targetColor = FermentingCauldronColorHelper.computeMixedIngredientColor(ingredients.values(), currentColor);
 
         brewStartTime = level.getGameTime();
-        sync();
+        syncClient();
     }
 
     private void finalizeBrew() {
@@ -352,14 +365,21 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
 
         startColor = currentColor;
 
-        if (finalize) extractable = true;
+        if (finalize) {
+            extractable = true;
+        }
 
-        sync();
+        syncClient();
     }
 
-    public void tick() {
-        if (level == null || level.isClientSide) return;
-        if (!isBrewing()) return;
+    @Override
+    public void tickServer() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        if (!isBrewing()) {
+            return;
+        }
 
         doBubbleEffects();
 
@@ -368,10 +388,53 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
+    public static void handleSleepFinished(ServerLevel level, long newTime) {
+        long skipped = newTime - level.getDayTime();
+        if (skipped <= 0L) {
+            return;
+        }
+
+        Set<BlockPos> seen = new HashSet<>();
+
+        for (ServerPlayer player : level.players()) {
+            int centerChunkX = SectionPos.blockToSectionCoord(player.blockPosition().getX());
+            int centerChunkZ = SectionPos.blockToSectionCoord(player.blockPosition().getZ());
+
+            for (int dx = -4; dx <= 4; dx++) {
+                for (int dz = -4; dz <= 4; dz++) {
+                    var chunk = level.getChunk(centerChunkX + dx, centerChunkZ + dz, ChunkStatus.FULL, false);
+                    if (!(chunk instanceof LevelChunk levelChunk)) {
+                        continue;
+                    }
+
+                    for (BlockEntity blockEntity : levelChunk.getBlockEntities().values()) {
+                        if (!(blockEntity instanceof FermentingCauldronBlockEntity cauldron)) {
+                            continue;
+                        }
+                        if (!cauldron.isBrewing()) {
+                            continue;
+                        }
+                        if (!seen.add(blockEntity.getBlockPos())) {
+                            continue;
+                        }
+
+                        cauldron.fastForwardBrew(skipped);
+                    }
+                }
+            }
+        }
+    }
+
     public void fastForwardBrew(long skippedTicks) {
-        if (level == null || level.isClientSide) return;
-        if (skippedTicks <= 0L) return;
-        if (!isBrewing()) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        if (skippedTicks <= 0L) {
+            return;
+        }
+        if (!isBrewing()) {
+            return;
+        }
 
         long newStart = FermentingCauldronColorHelper.fastForwardStartTime(
                 level,
@@ -386,15 +449,13 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
 
         brewStartTime = newStart;
         bubbleDelay = 0;
-        sync();
+        syncClient();
     }
-
-    // =====================================================================
-    // Extraction
-    // =====================================================================
 
     private void extractBrew(Player player, ItemStack usedItem, ItemStack result) {
         ItemStack out = createBrewStack(result.copy());
+
+        player.awardStat(Stats.ITEM_USED.get(usedItem.getItem()));
 
         if (!player.isCreative()) {
             usedItem.shrink(1);
@@ -415,7 +476,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
     }
 
     private ItemStack createBrewStack(ItemStack out) {
-        if (level == null) return out;
+        if (level == null) {
+            return out;
+        }
 
         out.set(JolCraftDataComponents.BREW_COLOR.get(), currentColor);
 
@@ -425,9 +488,12 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
 
         List<MobEffectInstance> customEffects = new ArrayList<>(effects.size());
         for (EffectOutput e : effects) {
-            if (e.id() == null) continue;
-            if (e.duration() < 1) continue;
-            if (e.amplifier() < 0) continue;
+            if (e.duration() < 1) {
+                continue;
+            }
+            if (e.amplifier() < 0) {
+                continue;
+            }
 
             customEffects.add(new MobEffectInstance(e.id(), e.duration(), e.amplifier()));
         }
@@ -437,22 +503,21 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 new PotionContents(
                         Optional.empty(),
                         Optional.empty(),
-                        List.copyOf(customEffects),
-                        Optional.empty()
+                        List.copyOf(customEffects)
                 )
         );
 
         return out;
     }
 
-    // =====================================================================
-    // Recipes
-    // =====================================================================
-
     @Nullable
     private FermentingCauldronRecipe findRecipe(Player player, ItemStack usedItem) {
-        if (level == null || level.isClientSide) return null;
-        if (!(level instanceof ServerLevel serverLevel)) return null;
+        if (level == null || level.isClientSide) {
+            return null;
+        }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return null;
+        }
 
         ItemStack ingredient = usedItem.copyWithCount(1);
         ItemStack last = lastIngredient.isEmpty() ? ItemStack.EMPTY : lastIngredient.copyWithCount(1);
@@ -460,15 +525,11 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         WorldContext ctx = new WorldContext(serverLevel, player, null);
         FermentingCauldronRecipeInput input = new FermentingCauldronRecipeInput(ctx, ingredient, last);
 
-        return serverLevel.recipeAccess()
+        return serverLevel.getRecipeManager()
                 .getRecipeFor(JolCraftRecipes.FERMENTING_CAULDRON_TYPE.get(), input, level)
                 .map(RecipeHolder::value)
                 .orElse(null);
     }
-
-    // =====================================================================
-    // Level hooks / sync
-    // =====================================================================
 
     @Override
     public void setLevel(Level level) {
@@ -483,40 +544,46 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
 
     @Override
     public @NotNull ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
+        return defaultUpdatePacket();
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt(NBT_CURRENT_COLOR, currentColor);
-        tag.putInt(NBT_START_COLOR, startColor);
-        tag.putInt(NBT_TARGET_COLOR, targetColor);
-        tag.putLong(NBT_BREW_START_TIME, brewStartTime);
-        tag.putInt(NBT_BLEND_TOTAL_TICKS, blendTotalTicks);
+        writeClientData(tag);
         return tag;
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        if (tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT)) currentColor = tag.getInt(NBT_CURRENT_COLOR);
-        if (tag.contains(NBT_START_COLOR, Tag.TAG_INT)) startColor = tag.getInt(NBT_START_COLOR);
-        if (tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT)) targetColor = tag.getInt(NBT_TARGET_COLOR);
-        if (tag.contains(NBT_BREW_START_TIME, Tag.TAG_LONG)) brewStartTime = tag.getLong(NBT_BREW_START_TIME);
-        if (tag.contains(NBT_BLEND_TOTAL_TICKS, Tag.TAG_INT)) blendTotalTicks = Math.max(1, tag.getInt(NBT_BLEND_TOTAL_TICKS));
+        readClientData(tag);
     }
 
-    private void sync() {
-        setChanged();
-        if (level != null && !level.isClientSide) {
-            BlockState state = getBlockState();
-            level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
+    private void writeClientData(CompoundTag tag) {
+        tag.putInt(NBT_CURRENT_COLOR, currentColor);
+        tag.putInt(NBT_START_COLOR, startColor);
+        tag.putInt(NBT_TARGET_COLOR, targetColor);
+        tag.putLong(NBT_BREW_START_TIME, brewStartTime);
+        tag.putInt(NBT_BLEND_TOTAL_TICKS, blendTotalTicks);
+    }
+
+    private void readClientData(CompoundTag tag) {
+        if (tag.contains(NBT_CURRENT_COLOR, Tag.TAG_INT)) {
+            currentColor = tag.getInt(NBT_CURRENT_COLOR);
+        }
+        if (tag.contains(NBT_START_COLOR, Tag.TAG_INT)) {
+            startColor = tag.getInt(NBT_START_COLOR);
+        }
+        if (tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT)) {
+            targetColor = tag.getInt(NBT_TARGET_COLOR);
+        }
+        if (tag.contains(NBT_BREW_START_TIME, Tag.TAG_LONG)) {
+            brewStartTime = tag.getLong(NBT_BREW_START_TIME);
+        }
+        if (tag.contains(NBT_BLEND_TOTAL_TICKS, Tag.TAG_INT)) {
+            blendTotalTicks = Math.max(1, tag.getInt(NBT_BLEND_TOTAL_TICKS));
         }
     }
-
-    // =====================================================================
-    // Persistence
-    // =====================================================================
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -538,21 +605,29 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             for (var e : ingredients.entrySet()) {
                 Item item = e.getKey();
                 IngredientData data = e.getValue();
-                if (item == Items.AIR || data == null) continue;
+                if (item == Items.AIR || data == null) {
+                    continue;
+                }
 
                 int count = data.count();
-                if (count <= 0) continue;
+                if (count <= 0) {
+                    continue;
+                }
 
                 ResourceLocation id = item.builtInRegistryHolder().key().location();
 
                 CompoundTag one = new CompoundTag();
                 one.putString(NBT_ITEM, id.toString());
-                if (count != 1) one.putInt(NBT_COUNT, count);
+                if (count != 1) {
+                    one.putInt(NBT_COUNT, count);
+                }
                 one.putInt(NBT_COLOR, data.color());
 
                 list.add(one);
             }
-            if (!list.isEmpty()) tag.put(NBT_INGREDIENTS, list);
+            if (!list.isEmpty()) {
+                tag.put(NBT_INGREDIENTS, list);
+            }
         }
 
         tag.putInt(NBT_CURRENT_COLOR, currentColor);
@@ -560,23 +635,29 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         tag.putInt(NBT_TARGET_COLOR, targetColor);
 
         tag.putBoolean(NBT_FINALIZE, finalize);
-        if (extractable) tag.putBoolean(NBT_EXTRACTABLE, true);
+        if (extractable) {
+            tag.putBoolean(NBT_EXTRACTABLE, true);
+        }
 
         if (!effects.isEmpty()) {
             ListTag list = new ListTag();
             for (EffectOutput eff : effects) {
-                if (eff.id() == null) continue;
-
                 ResourceKey<MobEffect> key = eff.id().unwrapKey().orElse(null);
-                if (key == null) continue;
+                if (key == null) {
+                    continue;
+                }
 
                 CompoundTag one = new CompoundTag();
                 one.putString(NBT_EFFECT_ID, key.location().toString());
                 one.putInt(NBT_EFFECT_DURATION, eff.duration());
-                if (eff.amplifier() != 0) one.putInt(NBT_EFFECT_AMPLIFIER, eff.amplifier());
+                if (eff.amplifier() != 0) {
+                    one.putInt(NBT_EFFECT_AMPLIFIER, eff.amplifier());
+                }
                 list.add(one);
             }
-            if (!list.isEmpty()) tag.put(NBT_EFFECTS, list);
+            if (!list.isEmpty()) {
+                tag.put(NBT_EFFECTS, list);
+            }
         }
     }
 
@@ -600,7 +681,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             if (id == null) {
                 JolCraftLogs.warn(
                         JolCraftLogTags.BLOCK_ENTITY,
-                        "FermentingCauldron at {} has malformed lastIngredient id '{}' (clearing)",
+                        "FermentingCauldron at {} has malformed lastIngredient name '{}' (clearing)",
                         JolCraftLogs.roundedPos(this),
                         raw
                 );
@@ -633,14 +714,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag one = list.getCompound(i);
 
-                if (!one.contains(NBT_ITEM, Tag.TAG_STRING)) continue;
+                if (!one.contains(NBT_ITEM, Tag.TAG_STRING)) {
+                    continue;
+                }
                 String raw = one.getString(NBT_ITEM);
 
                 ResourceLocation id = ResourceLocation.tryParse(raw);
                 if (id == null) {
                     JolCraftLogs.warn(
                             JolCraftLogTags.BLOCK_ENTITY,
-                            "FermentingCauldron at {} has malformed ingredient id '{}' (skipping)",
+                            "FermentingCauldron at {} has malformed ingredient name '{}' (skipping)",
                             JolCraftLogs.roundedPos(this),
                             raw
                     );
@@ -663,7 +746,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 }
 
                 int count = one.contains(NBT_COUNT, Tag.TAG_INT) ? one.getInt(NBT_COUNT) : 1;
-                if (count <= 0) continue;
+                if (count <= 0) {
+                    continue;
+                }
                 count = Math.min(MAX_INGREDIENT_STACK, count);
 
                 int color = one.contains(NBT_COLOR, Tag.TAG_INT) ? one.getInt(NBT_COLOR) : 0xFFFFFFFF;
@@ -678,8 +763,13 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 ? tag.getInt(NBT_CURRENT_COLOR)
                 : FermentingCauldronColorHelper.UNSET_COLOR;
 
-        startColor = tag.contains(NBT_START_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_START_COLOR) : currentColor;
-        targetColor = tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT) ? tag.getInt(NBT_TARGET_COLOR) : currentColor;
+        startColor = tag.contains(NBT_START_COLOR, Tag.TAG_INT)
+                ? tag.getInt(NBT_START_COLOR)
+                : currentColor;
+
+        targetColor = tag.contains(NBT_TARGET_COLOR, Tag.TAG_INT)
+                ? tag.getInt(NBT_TARGET_COLOR)
+                : currentColor;
 
         effects.clear();
         if (tag.contains(NBT_EFFECTS, Tag.TAG_LIST)) {
@@ -687,14 +777,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag one = list.getCompound(i);
 
-                if (!one.contains(NBT_EFFECT_ID, Tag.TAG_STRING)) continue;
+                if (!one.contains(NBT_EFFECT_ID, Tag.TAG_STRING)) {
+                    continue;
+                }
                 String raw = one.getString(NBT_EFFECT_ID);
 
                 ResourceLocation idLoc = ResourceLocation.tryParse(raw);
                 if (idLoc == null) {
                     JolCraftLogs.warn(
                             JolCraftLogTags.BLOCK_ENTITY,
-                            "FermentingCauldron at {} has malformed effect id '{}' (skipping)",
+                            "FermentingCauldron at {} has malformed effect name '{}' (skipping)",
                             JolCraftLogs.roundedPos(worldPosition),
                             raw
                     );
@@ -714,27 +806,33 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
                 }
 
                 int duration = one.getInt(NBT_EFFECT_DURATION);
-                if (duration < 1) continue;
+                if (duration < 1) {
+                    continue;
+                }
 
                 int amplifier = one.contains(NBT_EFFECT_AMPLIFIER, Tag.TAG_INT)
                         ? one.getInt(NBT_EFFECT_AMPLIFIER)
                         : 0;
-                if (amplifier < 0) amplifier = 0;
+                if (amplifier < 0) {
+                    amplifier = 0;
+                }
 
                 effects.add(new EffectOutput(holder, duration, amplifier, Output.EffectTarget.PLAYER));
             }
         }
     }
 
-    // =====================================================================
-    // Server visuals / misc
-    // =====================================================================
-
     private void doBubbleEffects() {
-        if (level == null || level.isClientSide) return;
-        if (!isBrewing()) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        if (!isBrewing()) {
+            return;
+        }
 
-        if (bubbleTicks <= 0) return;
+        if (bubbleTicks <= 0) {
+            return;
+        }
         if (bubbleDelay > 0) {
             bubbleDelay--;
             return;
@@ -756,7 +854,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         JolCraftSoundHelper.block(
                 level,
                 BlockPos.containing(x, y, z),
-                SoundEvents.BUBBLE_POP,
+                SoundEvents.BUBBLE_COLUMN_BUBBLE_POP,
                 0.3F,
                 1.4F
         );
@@ -765,10 +863,14 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
     }
 
     private void lowerFillLevel() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) {
+            return;
+        }
 
         BlockState state = level.getBlockState(worldPosition);
-        if (!state.hasProperty(LayeredCauldronBlock.LEVEL)) return;
+        if (!state.hasProperty(LayeredCauldronBlock.LEVEL)) {
+            return;
+        }
 
         int levelValue = state.getValue(LayeredCauldronBlock.LEVEL);
 
@@ -779,13 +881,23 @@ public final class FermentingCauldronBlockEntity extends BlockEntity {
         }
     }
 
-    // =====================================================================
-    // Getters
-    // =====================================================================
+    public int getCurrentColor() {
+        return currentColor;
+    }
 
-    public int getCurrentColor() { return currentColor; }
-    public int getStartColor() { return startColor; }
-    public int getTargetColor() { return targetColor; }
-    public long getBrewStartTime() { return brewStartTime; }
-    public int getBlendTotalTicks() { return blendTotalTicks; }
+    public int getStartColor() {
+        return startColor;
+    }
+
+    public int getTargetColor() {
+        return targetColor;
+    }
+
+    public long getBrewStartTime() {
+        return brewStartTime;
+    }
+
+    public int getBlendTotalTicks() {
+        return blendTotalTicks;
+    }
 }

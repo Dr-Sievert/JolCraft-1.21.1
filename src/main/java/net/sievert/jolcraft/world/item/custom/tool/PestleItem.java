@@ -1,14 +1,14 @@
 package net.sievert.jolcraft.world.item.custom.tool;
 
-import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.Tier;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class PestleItem extends ToolItem {
 
-    public PestleItem(ToolMaterial material, Properties properties) {
-        super(material, properties);
+    public PestleItem(Tier tier, Properties properties) {
+        super(tier, properties);
     }
 
     /*

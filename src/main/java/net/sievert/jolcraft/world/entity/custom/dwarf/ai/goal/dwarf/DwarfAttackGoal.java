@@ -144,7 +144,7 @@ public class DwarfAttackGoal extends MeleeAttackGoal {
             this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
             if (canPerformAttack(livingentity)) {
                 chooseAndSetAttackAction(dwarf, dwarf.getActionHelper());
-                this.dwarf.doHurtTarget(getServerLevel(this.dwarf), livingentity);
+                this.dwarf.doHurtTarget(livingentity);
                 this.resetAttackCooldown();
             }
         }

@@ -1,29 +1,37 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 @SuppressWarnings({"SameParameterValue", "deprecation"})
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public final class ToolRecipesSubProvider implements RecipeSubProvider {
+public record ToolRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
     private static final String FOLDER = JolCraftDictionary.TOOL;
+
+    public ToolRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -32,12 +40,11 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
         toolSet(
-                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -49,7 +56,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         warhammer(
-                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -57,7 +63,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         toolSet(
-                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -69,7 +74,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         warhammer(
-                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -77,7 +81,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         artisanHammer(
-                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -85,7 +88,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         artisanHammer(
-                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -93,7 +95,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         chisel(
-                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 Items.STICK,
@@ -101,7 +102,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         chisel(
-                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -109,7 +109,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         pestle(
-                lookups.items(),
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -117,7 +116,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         );
 
         pestle(
-                lookups.items(),
                 output,
                 JolCraftItems.MITHRIL_INGOT.get(),
                 JolCraftItems.DEEPSLATE_ROD.get(),
@@ -126,7 +124,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void toolSet(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
@@ -136,22 +133,21 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
             ItemLike shovel,
             ItemLike hoe
     ) {
-        sword(items, out, head, rod, sword);
-        pickaxe(items, out, head, rod, pickaxe);
-        axe(items, out, head, rod, axe);
-        shovel(items, out, head, rod, shovel);
-        hoe(items, out, head, rod, hoe);
+        sword(out, head, rod, sword);
+        pickaxe(out, head, rod, pickaxe);
+        axe(out, head, rod, axe);
+        shovel(out, head, rod, shovel);
+        hoe(out, head, rod, hoe);
     }
 
     private static void sword(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
             ItemLike outItem
     ) {
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, outItem)
                 )
                 .pattern("B")
                 .pattern("B")
@@ -163,14 +159,13 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void pickaxe(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
             ItemLike outItem
     ) {
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("BBB")
                 .pattern(" X ")
@@ -182,14 +177,13 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void shovel(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
             ItemLike outItem
     ) {
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("B")
                 .pattern("X")
@@ -201,7 +195,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void axe(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
@@ -210,7 +203,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         String baseId = itemName(outItem);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("BB")
                 .pattern("BX")
@@ -221,7 +214,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, baseId + "_left");
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("BB")
                 .pattern("XB")
@@ -233,7 +226,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void hoe(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
@@ -242,7 +234,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         String baseId = itemName(outItem);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("BB")
                 .pattern(" X")
@@ -253,7 +245,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, baseId + "_left");
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("BB")
                 .pattern("X ")
@@ -265,7 +257,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void warhammer(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
@@ -274,7 +265,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         String baseId = itemName(outItem);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, outItem)
                 )
                 .pattern("BB")
                 .pattern("BB")
@@ -285,7 +276,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, baseId + "_left");
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.COMBAT, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, outItem)
                 )
                 .pattern("BB")
                 .pattern("BB")
@@ -297,14 +288,13 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void artisanHammer(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
             ItemLike outItem
     ) {
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("B")
                 .pattern("X")
@@ -315,7 +305,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void chisel(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
@@ -324,7 +313,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         String baseId = itemName(outItem);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern(" B")
                 .pattern("X ")
@@ -334,7 +323,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, baseId + "_right");
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("B ")
                 .pattern(" X")
@@ -345,7 +334,6 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
     }
 
     private static void pestle(
-            HolderGetter<Item> items,
             RecipeOutput out,
             ItemLike head,
             ItemLike rod,
@@ -354,7 +342,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
         String baseId = itemName(outItem);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern("X ")
                 .pattern(" B")
@@ -364,7 +352,7 @@ public final class ToolRecipesSubProvider implements RecipeSubProvider {
                 .save(out, FOLDER, baseId + "_right");
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, outItem)
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
                 )
                 .pattern(" X")
                 .pattern("B ")

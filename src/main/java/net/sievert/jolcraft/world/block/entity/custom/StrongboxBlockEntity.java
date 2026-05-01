@@ -6,7 +6,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -22,13 +21,14 @@ import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
+import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
-import net.sievert.jolcraft.world.gui.custom.menu.LockMenu;
-import net.sievert.jolcraft.world.gui.custom.menu.StrongboxMenu;
+import net.sievert.jolcraft.world.gui.menu.LockMenu;
+import net.sievert.jolcraft.world.gui.menu.StrongboxMenu;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
@@ -37,28 +37,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class StrongboxBlockEntity extends RandomizableContainerBlockEntity implements LidBlockEntity, MenuProvider {
-
-    // ---------------------------------------------------------------------
-    // Constants
-    // ---------------------------------------------------------------------
+public class StrongboxBlockEntity extends RandomizableContainerBlockEntity implements TickingBlockEntity, LidBlockEntity, MenuProvider {
 
     private static final int CONTAINER_SIZE = 18;
-
     private static final int LOCK_MAX_PROGRESS = 130;
     private static final int REROLL_MIN_TICKS = 40;
-    private static final int REROLL_EXTRA_TICKS = 61; // 40..100
-
-    // ---------------------------------------------------------------------
-    // Vanilla container / lid state
-    // ---------------------------------------------------------------------
+    private static final int REROLL_EXTRA_TICKS = 61;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(CONTAINER_SIZE, ItemStack.EMPTY);
 
     @Nullable
     private Player currentInteractingPlayer;
-
-    private boolean allowLootUnpack = false;
 
     private final ChestLidController lidController = new ChestLidController();
 
@@ -95,50 +84,37 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
         @Override
         protected boolean isOwnContainer(Player player) {
-            // StrongboxMenu counts as "owning" the open count.
-            // LockMenu is a session UI; it should NOT affect lid open count.
             return player.containerMenu instanceof StrongboxMenu menu
                     && menu.getBlockEntity() == StrongboxBlockEntity.this;
         }
     };
 
-    // ---------------------------------------------------------------------
-    // Lockpicking session state (server-authoritative, NOT persisted)
-    // ---------------------------------------------------------------------
-
-    // session guards
+    // Session guards
     private boolean lockSessionClearedWhileUnlocked = true;
     private boolean hasLockpickInserted = false;
 
-    // synced-to-UI values (mirrored into LockMenu ContainerData on server)
-    private int lockProgress = 0;        // 0..LOCK_MAX_PROGRESS
-    private int correctButtonId = 0;     // 0..2, or 3 = "unlock mode"
-    private int unlockSlotId = -1;       // 0..2 if unlock mode, else -1
-    private int buttonLayerPulse = 0;    // increment to refresh client layer randomization
+    // Menu-synced lock UI state
+    private int lockProgress = 0;
+    private int correctButtonId = 0;
+    private int unlockSlotId = -1;
+    private int buttonLayerPulse = 0;
 
-    // gameplay tuning (derived from player effects during server tick)
-    private int decayTicks = 1;          // >= 1
-    private int progressBoost = 0;       // >= 0
+    // Derived server-side tuning, exposed to menu
+    private int decayTicks = 1;
+    private int progressBoost = 0;
 
-    // timers/counters (server-only)
+    // Server-only timers/counters
     private int rerollCounter = 0;
     private int rerollTargetTicks = rollNextRerollTicks(null);
     private int decayCounter = 0;
-
-    // ---------------------------------------------------------------------
-    // Construction
-    // ---------------------------------------------------------------------
 
     public StrongboxBlockEntity(BlockPos pos, BlockState state) {
         super(JolCraftBlockEntities.STRONGBOX.get(), pos, state);
     }
 
-    // ---------------------------------------------------------------------
-    // Public hooks (menu -> BE)
-    // ---------------------------------------------------------------------
-
     public void clearCurrentInteractingPlayer(Player player) {
-        if (this.currentInteractingPlayer == player) {
+        if (this.currentInteractingPlayer != null
+                && this.currentInteractingPlayer.getUUID().equals(player.getUUID())) {
             this.currentInteractingPlayer = null;
         }
     }
@@ -148,33 +124,43 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     }
 
     public void setHasLockpickInserted(boolean value) {
-        if (this.hasLockpickInserted == value) return;
+        if (this.hasLockpickInserted == value) {
+            return;
+        }
 
         this.hasLockpickInserted = value;
 
         if (!value) {
             resetLockSession();
-            setChanged();
             return;
         }
 
         forceImmediateReroll();
     }
 
-    // ---------------------------------------------------------------------
-    // Lock session getters (mirrored into menu ContainerData)
-    // ---------------------------------------------------------------------
+    public int getLockpickProgress() {
+        return this.lockProgress;
+    }
 
-    public int getLockpickProgress()       { return this.lockProgress; }
-    public int getCorrectButtonId()        { return this.correctButtonId; }
-    public int getUnlockSlotId()           { return this.unlockSlotId; }
-    public int getButtonLayerUpdatePulse() { return this.buttonLayerPulse; }
-    public int getDecayTicks()             { return this.decayTicks; }
-    public int getProgressBoost()          { return this.progressBoost; }
+    public int getCorrectButtonId() {
+        return this.correctButtonId;
+    }
 
-    // ---------------------------------------------------------------------
-    // Lock session core
-    // ---------------------------------------------------------------------
+    public int getUnlockSlotId() {
+        return this.unlockSlotId;
+    }
+
+    public int getButtonLayerUpdatePulse() {
+        return this.buttonLayerPulse;
+    }
+
+    public int getDecayTicks() {
+        return this.decayTicks;
+    }
+
+    public int getProgressBoost() {
+        return this.progressBoost;
+    }
 
     public void resetLockSession() {
         this.lockProgress = 0;
@@ -204,7 +190,9 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     }
 
     private static int clampProgress(int value) {
-        if (value <= 0) return 0;
+        if (value <= 0) {
+            return 0;
+        }
         return Math.min(value, LOCK_MAX_PROGRESS);
     }
 
@@ -229,18 +217,16 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
         this.rerollTargetTicks = rollNextRerollTicks(this.level);
         rerollButtons();
         bumpVisualPulse();
-        setChanged();
     }
 
     private void rerollButtons() {
-        if (this.level == null) return;
+        if (this.level == null) {
+            return;
+        }
 
         int decay = Math.max(1, this.decayTicks);
-
-        // IMPORTANT: guard against 101/decay becoming 0 (would crash nextInt(0)).
         int denom = Math.max(1, 101 / decay);
 
-        // decay-scaled chance to enter "unlock mode"
         if (this.level.random.nextInt(denom) == 0) {
             this.correctButtonId = 3;
             this.unlockSlotId = this.level.random.nextInt(3);
@@ -250,73 +236,27 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
         }
     }
 
-    private void serverTickLockSession() {
-        if (!isLockSessionActive()) {
-            // If anything is mid-session but not active anymore, wipe it.
-            if (this.lockProgress != 0 || this.rerollCounter != 0 || this.decayCounter != 0) {
-                resetLockSession();
-                setChanged();
-            }
-            return;
-        }
-
-        Player player = this.currentInteractingPlayer;
-        if (player == null) return;
-
-        var effect = player.getEffect(JolCraftEffects.LOCKPICKING);
-        if (effect != null) {
-            setDecayTicks(2 + effect.getAmplifier());
-            setProgressBoost(10 + (effect.getAmplifier() * 10));
-        } else {
-            setDecayTicks(1);
-            setProgressBoost(0);
-        }
-
-        // Button reroll cadence (40..100 ticks)
-        this.rerollCounter++;
-        if (this.rerollCounter >= this.rerollTargetTicks) {
-            this.rerollCounter = 0;
-            this.rerollTargetTicks = rollNextRerollTicks(this.level);
-            rerollButtons();
-            bumpVisualPulse();
-            setChanged();
-        }
-
-        // Progress decay
-        if (this.lockProgress > 0) {
-            this.decayCounter++;
-            if (this.decayCounter >= this.decayTicks) {
-                this.decayCounter = 0;
-                setLockpickProgress(this.lockProgress - 1);
-                setChanged();
-            }
-        } else {
-            this.decayCounter = 0;
-        }
-    }
-
-    // ---------------------------------------------------------------------
-    // Server-authoritative click handling (menu forwards clicks here)
-    // ---------------------------------------------------------------------
-
     public boolean handleLockButtonPress(ServerPlayer player, int buttonId, ItemStack lockpickSlot) {
-        if (this.level == null || this.level.isClientSide) return false;
+        if (this.level == null || this.level.isClientSide) {
+            return false;
+        }
 
         if (!this.isLocked()) {
             debugReject(player, "not_locked", buttonId);
             return false;
         }
 
-        if (this.currentInteractingPlayer != player) {
+        if (this.currentInteractingPlayer == null
+                || !this.currentInteractingPlayer.getUUID().equals(player.getUUID())) {
             debugReject(player, "wrong_player", buttonId);
             return false;
         }
+
         if (!this.hasLockpickInserted || lockpickSlot.isEmpty()) {
             debugReject(player, "no_lockpick", buttonId);
             return false;
         }
 
-        // --- Unlock mode ---
         boolean unlockMode = (this.correctButtonId == 3);
         if (unlockMode) {
             if (buttonId == this.unlockSlotId) {
@@ -324,33 +264,30 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
                 PlaySound.strongboxUnlock(this.level, this.getBlockPos());
 
-                BlockState oldState = getBlockState();
-                BlockState newState = oldState.setValue(StrongboxBlock.LOCKED, false);
-
-                this.level.setBlock(this.worldPosition, newState, Block.UPDATE_ALL);
-                this.level.sendBlockUpdated(this.worldPosition, oldState, newState, Block.UPDATE_ALL);
-
                 this.hasLockpickInserted = false;
                 resetLockSession();
-                syncToClient();
+
+                this.level.setBlock(
+                        this.getBlockPos(),
+                        this.getBlockState().setValue(StrongboxBlock.LOCKED, false),
+                        Block.UPDATE_ALL
+                );
+
                 return true;
             }
 
-            // Wrong in unlock mode
             if (!player.isCreative()) {
                 lockpickSlot.shrink(1);
             }
+
             setLockpickProgress(0);
-
             PlaySound.strongboxLockpickBreak(this.level, this.getBlockPos());
-
             forceImmediateReroll();
             return true;
         }
 
-        // --- Normal mode ---
         if (buttonId == this.correctButtonId) {
-            int gain = 10 + this.level.random.nextInt(11) + this.progressBoost; // 10..20 + boost
+            int gain = 10 + this.level.random.nextInt(11) + this.progressBoost;
             setLockpickProgress(this.lockProgress + gain);
 
             PlaySound.strongboxLockpick(this.level, this.getBlockPos());
@@ -360,20 +297,23 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
                 PlaySound.strongboxUnlock(this.level, this.getBlockPos());
 
-                this.level.setBlock(this.worldPosition,
-                        this.getBlockState().setValue(StrongboxBlock.LOCKED, false), 3);
-
                 this.hasLockpickInserted = false;
                 resetLockSession();
-                setChanged();
+
+                this.level.setBlock(
+                        this.getBlockPos(),
+                        this.getBlockState().setValue(StrongboxBlock.LOCKED, false),
+                        Block.UPDATE_ALL
+                );
+
                 return true;
             }
         } else {
             if (!player.isCreative()) {
                 lockpickSlot.shrink(1);
             }
-            setLockpickProgress(0);
 
+            setLockpickProgress(0);
             PlaySound.strongboxLockpickBreak(this.level, this.getBlockPos());
         }
 
@@ -401,16 +341,12 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
         );
     }
 
-    // ---------------------------------------------------------------------
-    // Lid / openers behavior
-    // ---------------------------------------------------------------------
-
     @Override
     public float getOpenNess(float partialTicks) {
         return lidController.getOpenness(partialTicks);
     }
 
-    public static void lidAnimateTick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity be) {
+    public static void lidAnimateTick(StrongboxBlockEntity be) {
         be.lidController.tickLid();
     }
 
@@ -425,20 +361,28 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
     @Override
     public void startOpen(Player player) {
-        if (this.remove || player.isSpectator()) return;
+        if (this.remove || player.isSpectator()) {
+            return;
+        }
 
-        var level = this.getLevel();
-        if (level == null) return;
+        Level level = this.getLevel();
+        if (level == null) {
+            return;
+        }
 
         this.openersCounter.incrementOpeners(player, level, this.getBlockPos(), this.getBlockState());
     }
 
     @Override
     public void stopOpen(Player player) {
-        if (this.remove || player.isSpectator()) return;
+        if (this.remove || player.isSpectator()) {
+            return;
+        }
 
-        var level = this.getLevel();
-        if (level == null) return;
+        Level level = this.getLevel();
+        if (level == null) {
+            return;
+        }
 
         this.openersCounter.decrementOpeners(player, level, this.getBlockPos(), this.getBlockState());
     }
@@ -448,21 +392,20 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     }
 
     public void recheckOpen() {
-        if (this.remove || this.level == null || this.level.isClientSide) return;
+        if (this.remove || this.level == null || this.level.isClientSide) {
+            return;
+        }
 
         this.openersCounter.recheckOpeners(this.level, this.getBlockPos(), this.getBlockState());
     }
 
-    // ---------------------------------------------------------------------
-    // Container / loot behavior
-    // ---------------------------------------------------------------------
-
     @Override
     public void unpackLootTable(@Nullable Player player) {
-        if (this.isLocked()) return;
-        if (this.allowLootUnpack) {
-            super.unpackLootTable(player);
+        if (this.isLocked()) {
+            return;
         }
+
+        super.unpackLootTable(player);
     }
 
     @Override
@@ -482,7 +425,7 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     @Override
     public void clearContent() {
         if (this.isLocked()) {
-            for (int i = 1; i < this.getContainerSize(); i++) {
+            for (int i = 0; i < this.getContainerSize(); i++) {
                 this.setItem(i, ItemStack.EMPTY);
             }
         } else {
@@ -499,10 +442,6 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
     protected Component getDefaultName() {
         return Component.translatable(JolCraftLanguageKeys.CONTAINER_STRONGBOX);
     }
-
-    // ---------------------------------------------------------------------
-    // NBT persistence (inventory + loot table only)
-    // ---------------------------------------------------------------------
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
@@ -521,10 +460,6 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
         }
     }
 
-    // ---------------------------------------------------------------------
-    // Menu creation / display name
-    // ---------------------------------------------------------------------
-
     @Override
     protected AbstractContainerMenu createMenu(int id, Inventory inv) {
         this.currentInteractingPlayer = inv.player;
@@ -533,7 +468,6 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
             return new LockMenu(id, inv, this);
         }
 
-        this.allowLootUnpack = true;
         return new StrongboxMenu(id, inv, this);
     }
 
@@ -544,43 +478,79 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
                 : Component.translatable(JolCraftLanguageKeys.CONTAINER_STRONGBOX);
     }
 
-    // ---------------------------------------------------------------------
-    // Tick entrypoint + lock state
-    // ---------------------------------------------------------------------
-
     public boolean isLocked() {
         return this.getBlockState().getValue(StrongboxBlock.LOCKED);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity strongbox) {
-        if (level.isClientSide) return;
-
-        if (!state.getValue(StrongboxBlock.LOCKED)) {
-            if (!strongbox.lockSessionClearedWhileUnlocked) {
-                strongbox.resetLockSession();
-                strongbox.lockSessionClearedWhileUnlocked = true;
-                strongbox.setChanged();
+    private void serverTickLockSession() {
+        if (!isLockSessionActive()) {
+            if (this.lockProgress != 0 || this.rerollCounter != 0 || this.decayCounter != 0) {
+                resetLockSession();
             }
             return;
         }
 
-        strongbox.lockSessionClearedWhileUnlocked = false;
-        strongbox.serverTickLockSession();
-    }
+        Player player = this.currentInteractingPlayer;
+        if (player == null) {
+            return;
+        }
 
-    // ---------------------------------------------------------------------
-    // Networking / misc
-    // ---------------------------------------------------------------------
+        var effect = player.getEffect(JolCraftEffects.LOCKPICKING);
+        if (effect != null) {
+            setDecayTicks(2 + effect.getAmplifier());
+            setProgressBoost(10 + (effect.getAmplifier() * 10));
+        } else {
+            setDecayTicks(1);
+            setProgressBoost(0);
+        }
+
+        this.rerollCounter++;
+        if (this.rerollCounter >= this.rerollTargetTicks) {
+            this.rerollCounter = 0;
+            this.rerollTargetTicks = rollNextRerollTicks(this.level);
+            rerollButtons();
+            bumpVisualPulse();
+        }
+
+        if (this.lockProgress > 0) {
+            this.decayCounter++;
+            if (this.decayCounter >= this.decayTicks) {
+                this.decayCounter = 0;
+                setLockpickProgress(this.lockProgress - 1);
+            }
+        } else {
+            this.decayCounter = 0;
+        }
+    }
 
     @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+    public void tickServer() {
+        if (this.level == null) {
+            return;
+        }
+
+        this.recheckOpen();
+
+        BlockState state = this.level.getBlockState(this.getBlockPos());
+
+        if (!state.getValue(StrongboxBlock.LOCKED)) {
+            if (!this.lockSessionClearedWhileUnlocked) {
+                this.resetLockSession();
+                this.lockSessionClearedWhileUnlocked = true;
+            }
+            return;
+        }
+
+        this.lockSessionClearedWhileUnlocked = false;
+        this.serverTickLockSession();
     }
 
-    private void syncToClient() {
-        setChanged();
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    @Override
+    public void tickClient() {
+        if (this.level == null) {
+            return;
         }
+
+        lidAnimateTick(this);
     }
 }

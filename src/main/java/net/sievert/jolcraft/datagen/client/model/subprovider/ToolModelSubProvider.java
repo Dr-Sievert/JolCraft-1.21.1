@@ -1,125 +1,60 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelSubProvider;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public final class ToolModelSubProvider implements AbstractModelProvider.ModelSubProvider {
+public record ToolModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
 
-    // Root folders
     private static final String TOOL = "tool";
     private static final String WEAPON = "weapon";
 
-    // Materials
     private static final String DEEPSLATE = "deepslate";
     private static final String MITHRIL = "mithril";
 
+    private static final String WEAPON_DEEPSLATE = WEAPON + "/" + DEEPSLATE;
+    private static final String WEAPON_MITHRIL = WEAPON + "/" + MITHRIL;
+    private static final String TOOL_DEEPSLATE = TOOL + "/" + DEEPSLATE;
+    private static final String TOOL_MITHRIL = TOOL + "/" + MITHRIL;
+
     @Override
-    public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
+    public @NotNull String id() {
+        return JolCraftDictionary.TOOL;
+    }
 
-        // Weapons — deepslate
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_SWORD.get(),
-                AbstractModelProvider.subFolder(WEAPON, DEEPSLATE)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_WARHAMMER.get(),
-                AbstractModelProvider.subFolder(WEAPON, DEEPSLATE)
-        );
+    @Override
+    public void registerModels(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull JolCraftDataTracking tracking
+    ) {
+        builder.handheldItem(JolCraftItems.DEEPSLATE_SWORD.get(), WEAPON_DEEPSLATE);
+        builder.handheldItem(JolCraftItems.DEEPSLATE_WARHAMMER.get(), WEAPON_DEEPSLATE);
 
-        // Weapons — mithril
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_SWORD.get(),
-                AbstractModelProvider.subFolder(WEAPON, MITHRIL)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_WARHAMMER.get(),
-                AbstractModelProvider.subFolder(WEAPON, MITHRIL)
-        );
+        builder.handheldItem(JolCraftItems.MITHRIL_SWORD.get(), WEAPON_MITHRIL);
+        builder.handheldItem(JolCraftItems.MITHRIL_WARHAMMER.get(), WEAPON_MITHRIL);
 
-        // Tools — deepslate
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_PICKAXE.get(),
-                AbstractModelProvider.subFolder(TOOL, DEEPSLATE)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_SHOVEL.get(),
-                AbstractModelProvider.subFolder(TOOL, DEEPSLATE)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_AXE.get(),
-                AbstractModelProvider.subFolder(TOOL, DEEPSLATE)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_HOE.get(),
-                AbstractModelProvider.subFolder(TOOL, DEEPSLATE)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get(),
-                AbstractModelProvider.subFolder(TOOL, DEEPSLATE)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.DEEPSLATE_CHISEL.get(),
-                AbstractModelProvider.subFolder(TOOL, DEEPSLATE)
-        );
+        builder.handheldItem(JolCraftItems.DEEPSLATE_PICKAXE.get(), TOOL_DEEPSLATE);
+        builder.handheldItem(JolCraftItems.DEEPSLATE_SHOVEL.get(), TOOL_DEEPSLATE);
+        builder.handheldItem(JolCraftItems.DEEPSLATE_AXE.get(), TOOL_DEEPSLATE);
+        builder.handheldItem(JolCraftItems.DEEPSLATE_HOE.get(), TOOL_DEEPSLATE);
+        builder.handheldItem(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get(), TOOL_DEEPSLATE);
+        builder.handheldItem(JolCraftItems.DEEPSLATE_CHISEL.get(), TOOL_DEEPSLATE);
 
-        // Tools — mithril
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_PICKAXE.get(),
-                AbstractModelProvider.subFolder(TOOL, MITHRIL)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_SHOVEL.get(),
-                AbstractModelProvider.subFolder(TOOL, MITHRIL)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_AXE.get(),
-                AbstractModelProvider.subFolder(TOOL, MITHRIL)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_HOE.get(),
-                AbstractModelProvider.subFolder(TOOL, MITHRIL)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_ARTISAN_HAMMER.get(),
-                AbstractModelProvider.subFolder(TOOL, MITHRIL)
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.MITHRIL_CHISEL.get(),
-                AbstractModelProvider.subFolder(TOOL, MITHRIL)
-        );
+        builder.handheldItem(JolCraftItems.MITHRIL_PICKAXE.get(), TOOL_MITHRIL);
+        builder.handheldItem(JolCraftItems.MITHRIL_SHOVEL.get(), TOOL_MITHRIL);
+        builder.handheldItem(JolCraftItems.MITHRIL_AXE.get(), TOOL_MITHRIL);
+        builder.handheldItem(JolCraftItems.MITHRIL_HOE.get(), TOOL_MITHRIL);
+        builder.handheldItem(JolCraftItems.MITHRIL_ARTISAN_HAMMER.get(), TOOL_MITHRIL);
+        builder.handheldItem(JolCraftItems.MITHRIL_CHISEL.get(), TOOL_MITHRIL);
 
-        // Spanners (no material subfolder)
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.COPPER_SPANNER.get(),
-                TOOL
-        );
-        AbstractModelProvider.generateHandheldItem(
-                items,
-                JolCraftItems.IRON_SPANNER.get(),
-                TOOL
-        );
+        builder.handheldItem(JolCraftItems.COPPER_SPANNER.get(), TOOL);
+        builder.handheldItem(JolCraftItems.IRON_SPANNER.get(), TOOL);
     }
 }

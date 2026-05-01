@@ -1,31 +1,39 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla.VanillaRecipeBuilder;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public final class MiscRecipesSubProvider implements RecipeSubProvider {
+public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
     private static final String FOLDER = JolCraftDictionary.MISC;
+
+    public MiscRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -34,12 +42,12 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
                 )
                 .pattern("B B")
                 .pattern(" B ")
@@ -48,7 +56,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.PARCHMENT.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.PARCHMENT.get())
                 )
                 .pattern("B")
                 .pattern("B")
@@ -58,7 +66,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.PARCHMENT.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.CONTRACT_BLANK.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.CONTRACT_BLANK.get())
                 )
                 .pattern("BB")
                 .pattern("BB")
@@ -68,7 +76,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.CONTRACT_BLANK.get());
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.CONTRACT_WRITTEN.get())
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.CONTRACT_WRITTEN.get())
                 )
                 .requires(JolCraftItems.CONTRACT_BLANK.get())
                 .requires(JolCraftTags.Items.INK_AND_QUILLS)
@@ -76,7 +84,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.CONTRACT_WRITTEN.get());
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.CONTRACT_GUILDMASTER.get())
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.CONTRACT_GUILDMASTER.get())
                 )
                 .requires(JolCraftItems.GUILD_SIGIL.get())
                 .requires(JolCraftItems.CONTRACT_SIGNED.get())
@@ -84,7 +92,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.CONTRACT_GUILDMASTER.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.GLASS_MUG.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.GLASS_MUG.get())
                 )
                 .pattern("B ")
                 .pattern("BB")
@@ -94,7 +102,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.GLASS_MUG.get());
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.QUILL_EMPTY.get())
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.QUILL_EMPTY.get())
                 )
                 .requires(Items.GLASS)
                 .requires(Items.FEATHER)
@@ -102,7 +110,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.QUILL_EMPTY.get());
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.QUILL_FULL.get())
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.QUILL_FULL.get())
                 )
                 .requires(Items.GLASS)
                 .requires(Items.FEATHER)
@@ -111,7 +119,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.QUILL_FULL.getId().getPath() + "_from_glass_feather_ink");
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.QUILL_FULL.get())
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.QUILL_FULL.get())
                 )
                 .requires(JolCraftItems.QUILL_EMPTY.get())
                 .requires(Items.INK_SAC)
@@ -119,7 +127,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.QUILL_FULL.getId().getPath() + "_refill");
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.COIN_POUCH.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.COIN_POUCH.get())
                 )
                 .pattern("XBX")
                 .pattern("B B")
@@ -130,7 +138,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.COIN_POUCH.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.STRONGBOX_ITEM.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.STRONGBOX_ITEM.get())
                 )
                 .pattern("BXB")
                 .pattern("X X")
@@ -141,7 +149,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.STRONGBOX_ITEM.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.LOCKPICK.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.LOCKPICK.get())
                 )
                 .pattern("  B")
                 .pattern(" B ")
@@ -151,7 +159,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.LOCKPICK.getId().getPath() + "_right");
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftItems.LOCKPICK.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.LOCKPICK.get())
                 )
                 .pattern("B  ")
                 .pattern(" B ")
@@ -181,7 +189,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
         );
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(lookups.items(), RecipeCategory.MISC, JolCraftBlocks.MUFFHORN_FUR_BLOCK.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftBlocks.MUFFHORN_FUR_BLOCK.get())
                 )
                 .pattern("BB")
                 .pattern("BB")
@@ -190,14 +198,14 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftBlocks.MUFFHORN_FUR_BLOCK.get());
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.MUFFHORN_FUR.get(), 4)
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.MUFFHORN_FUR.get(), 4)
                 )
                 .requires(JolCraftBlocks.MUFFHORN_FUR_BLOCK.get())
                 .unlockedByHas(JolCraftItems.MUFFHORN_FUR.get())
                 .save(output, folder(), JolCraftItems.MUFFHORN_FUR.getId().getPath() + "s_from_block");
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftBlocks.VERDANT_SOIL.get())
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftBlocks.VERDANT_SOIL.get())
                 )
                 .requires(Blocks.MUD)
                 .requires(JolCraftItems.VERDANITE_DUST.get())
@@ -205,7 +213,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftBlocks.VERDANT_SOIL.get());
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.INVERIX.get(), 3)
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.INVERIX.get(), 3)
                 )
                 .requires(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
                 .requires(Items.COAL)
@@ -213,7 +221,7 @@ public final class MiscRecipesSubProvider implements RecipeSubProvider {
                 .save(output, folder(), JolCraftItems.INVERIX.getId().getPath() + "_coal");
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(lookups.items(), RecipeCategory.MISC, JolCraftItems.INVERIX.get(), 3)
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.INVERIX.get(), 3)
                 )
                 .requires(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
                 .requires(Items.CHARCOAL)

@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.sievert.jolcraft.data.recipe.param.input.custom.entity.selector.EntityIngredient;
+import net.sievert.jolcraft.world.recipe.param.input.custom.entity.selector.EntityIngredient;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 import java.util.ArrayList;

@@ -34,7 +34,7 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
             return InteractionResult.PASS;
         }
 
-        if (player.getCooldowns().isOnCooldown(stack)) {
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) {
             player.displayClientMessage(
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_CRATE_COOLDOWN).withStyle(ChatFormatting.GRAY),
                     true
@@ -85,7 +85,7 @@ public final class TradeCrateInteractionHandler implements DwarfInteractions.Cor
             PlaySound.dwarfYes(dwarf);
         }
 
-        player.getCooldowns().addCooldown(stack, CRATE_COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(stack.getItem(), CRATE_COOLDOWN_TICKS);
 
         if (!player.isCreative()) {
             stack.shrink(1);

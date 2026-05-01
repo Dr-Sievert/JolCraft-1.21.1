@@ -1,9 +1,10 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.custom.TimeCondition;
-import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.custom.TimeCondition;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Datagen-only builder for {@link TimeCondition}.
@@ -20,7 +21,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
  * Validation:
  * - Delegates to {@link TimeCondition#validate()}.
  */
-public final class TimeConditionBuilder extends AbstractConditionBuilder<TimeConditionBuilder> implements ValidatedBuilder<Condition> {
+public final class TimeConditionBuilder extends AbstractConditionBuilder<TimeConditionBuilder> implements JolCraftValidatedBuilder<Condition> {
 
     private enum Kind { RANGE, DAY, NIGHT }
 
@@ -64,7 +65,7 @@ public final class TimeConditionBuilder extends AbstractConditionBuilder<TimeCon
     // ---------------------------------------------------------------------
 
     @Override
-    public DataResult<Condition> buildValidated() {
+    public @NotNull DataResult<Condition> buildValidated() {
         TimeCondition built;
 
         if (kind == Kind.DAY) {

@@ -8,7 +8,6 @@ public class AncientMemoryEffect extends MobEffect {
     public AncientMemoryEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
-
 }
 
 

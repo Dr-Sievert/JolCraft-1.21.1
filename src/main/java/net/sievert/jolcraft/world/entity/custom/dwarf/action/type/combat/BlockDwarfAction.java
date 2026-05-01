@@ -9,6 +9,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfAction;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import org.joml.Vector3f;
 
 /**
  * Action for handling dwarf blocking behavior and associated particle effects.
@@ -55,7 +56,13 @@ public class BlockDwarfAction implements DwarfAction {
         double py = dwarf.getY() + 1.2D;
         double pz = dwarf.getZ() + forward.z + left.z * (-0.4D);
 
-        DustParticleOptions dust = new DustParticleOptions(-2233622, 0.5F);
+        int color = -2233622;
+
+        float r = ((color >> 16) & 0xFF) / 255.0F;
+        float g = ((color >> 8) & 0xFF) / 255.0F;
+        float b = (color & 0xFF) / 255.0F;
+
+        DustParticleOptions dust = new DustParticleOptions(new Vector3f(r, g, b), 0.5F);
 
         for (int i = 0; i < 5; i++) {
             double scatter = 0.15D;

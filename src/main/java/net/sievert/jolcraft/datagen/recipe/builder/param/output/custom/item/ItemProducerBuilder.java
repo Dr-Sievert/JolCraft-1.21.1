@@ -5,8 +5,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
-import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
+import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemProducer;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 /**

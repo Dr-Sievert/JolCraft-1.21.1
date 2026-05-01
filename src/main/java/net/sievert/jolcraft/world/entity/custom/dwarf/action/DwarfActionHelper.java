@@ -162,4 +162,8 @@ public class DwarfActionHelper {
         int stored = entity.getEntityData().get(AbstractDwarfEntity.CURRENT_ACTION_SUBTYPE);
         return stored == subtype.ordinal();
     }
+
+    public boolean blocksMovement() {
+        return activeAction != null && activeAction.blocksMovement();
+    }
 }

@@ -6,12 +6,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityAttributes;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityProducer;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpawnConfig;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpec;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityAttributes;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityProducer;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntitySpawnConfig;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntitySpec;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

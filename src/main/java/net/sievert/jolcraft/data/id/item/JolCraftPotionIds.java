@@ -21,8 +21,18 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String STRONG_DWARVEN_HASTE = strongPotion(DWARVEN_HASTE);
 
     // Harmful
+    public static final String ATAXIA_CURSE = JolCraftEffectIds.ATAXIA_CURSE;
     public static final String CURSED_WOUND = JolCraftEffectIds.CURSED_WOUND;
     public static final String DELIRIUM_CURSE = JolCraftEffectIds.DELIRIUM_CURSE;
+    public static final String FAMINE_CURSE = JolCraftEffectIds.FAMINE_CURSE;
+    public static final String FRAILTY_CURSE = JolCraftEffectIds.FRAILTY_CURSE;
+    public static final String HEX = JolCraftEffectIds.HEX;
+    public static final String VITALITY_CURSE = JolCraftEffectIds.VITALITY_CURSE;
+
+    public static final String DISARMED = JolCraftEffectIds.DISARMED;
+    public static final String ROOTED = JolCraftEffectIds.ROOTED;
+    public static final String STUNNED = JolCraftEffectIds.STUNNED;
+    public static final String SUPPRESSED = JolCraftEffectIds.SUPPRESSED;
 
     public static final String CORROSION = JolCraftEffectIds.CORROSION;
     public static final String LONG_CORROSION = longPotion(CORROSION);

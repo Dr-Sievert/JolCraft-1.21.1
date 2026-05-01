@@ -22,6 +22,10 @@ public class InspectDwarfAction implements DwarfAction {
     protected final ItemStack itemstack;
     protected ItemStack previousMainHandItem = ItemStack.EMPTY;
 
+    @Override
+    public boolean blocksMovement() {
+        return true;
+    }
 
     public InspectDwarfAction (AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack){
         this.dwarf = dwarf;
@@ -33,10 +37,11 @@ public class InspectDwarfAction implements DwarfAction {
     @Override public DwarfActionType getType() { return DwarfActionType.INSPECT; }
 
     protected void startInspect(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
-        dwarf.usePlayerItem(player, hand, itemstack);
-        PlaySound.dwarfYes(dwarf);
         previousMainHandItem = dwarf.getMainHandItem().copy();
-        dwarf.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
+        ItemStack heldForInspect = itemstack.copyWithCount(1);
+        dwarf.usePlayerItem(player, hand, itemstack);
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, heldForInspect);
+        PlaySound.dwarfYes(dwarf);
     }
 
     protected static void throwStack(ServerLevel level, Vec3 start, Vec3 velocity, ItemStack stack) {

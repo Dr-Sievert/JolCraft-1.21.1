@@ -14,7 +14,7 @@ public final class JolCraftDataComponentIds extends JolCraftIds {
     // Lore
     // -----------------
 
-    public static final String DWARF_LORE_KEY = join(JolCraftDwarfIds.DWARF, JolCraftDictionary.LORE + JolCraftDictionary.KEY);
+    public static final String DWARF_LORE_KEY = join(JolCraftDwarfIds.DWARF, JolCraftDictionary.LORE, JolCraftDictionary.KEY);
 
     // -----------------
     // Reputation

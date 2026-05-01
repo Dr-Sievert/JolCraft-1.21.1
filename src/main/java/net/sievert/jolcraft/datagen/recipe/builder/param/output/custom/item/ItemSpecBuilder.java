@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item;
 
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemProducer;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemSpec;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 /**

@@ -10,12 +10,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.data.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.world.recipe.param.output.base.Output;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +37,12 @@ public record JeiDwarfTrade(
     }
 
     public ItemStack inputAExample() {
-        return normalizeForJei(materializeInput(recipe.costA(), previewRandom()));
+        WorldContext ctx = resolveJeiWorldContext();
+        if (ctx == null) {
+            return ItemStack.EMPTY;
+        }
+
+        return normalizeForJei(materializeInput(recipe.costA(), ctx, previewRandom()));
     }
 
     public @Nullable ItemStack inputBExample() {
@@ -46,12 +51,21 @@ public record JeiDwarfTrade(
             return null;
         }
 
-        ItemStack stack = materializeInput(costB, previewRandom());
+        WorldContext ctx = resolveJeiWorldContext();
+        if (ctx == null) {
+            return null;
+        }
+
+        ItemStack stack = materializeInput(costB, ctx, previewRandom());
         return stack.isEmpty() ? null : normalizeForJei(stack);
     }
 
     public boolean costAItemIs(TagKey<Item> tag) {
-        return singleConcrete(recipe.costA()).map(holder -> holder.is(tag)).orElse(false);
+        WorldContext ctx = resolveJeiWorldContext();
+        if (ctx == null) {
+            return false;
+        }
+        return inputUsesTag(recipe.costA(), ctx, tag);
     }
 
     public boolean costBItemIs(TagKey<Item> tag) {
@@ -60,7 +74,12 @@ public record JeiDwarfTrade(
             return false;
         }
 
-        return singleConcrete(costB).map(holder -> holder.is(tag)).orElse(false);
+        WorldContext ctx = resolveJeiWorldContext();
+        if (ctx == null) {
+            return false;
+        }
+
+        return inputUsesTag(costB, ctx, tag);
     }
 
     public ItemStack outputExample() {
@@ -110,21 +129,13 @@ public record JeiDwarfTrade(
         return IntRange.fixed(Math.max(1, preview.getCount()));
     }
 
-    private static Optional<Holder<Item>> singleConcrete(@Nullable ItemInput input) {
-        if (input == null) {
-            return Optional.empty();
-        }
-
-        return input.singleConcrete(Registries.ITEM);
-    }
-
-    private static ItemStack materializeInput(@Nullable ItemInput input, RandomSource random) {
+    private static ItemStack materializeInput(@Nullable ItemInput input, WorldContext ctx, RandomSource random) {
         if (input == null) {
             return ItemStack.EMPTY;
         }
 
-        Optional<Holder<Item>> itemOpt = input.singleConcrete(Registries.ITEM);
-        if (itemOpt.isEmpty()) {
+        Holder<Item> holder = resolvePreviewItem(input, ctx);
+        if (holder == null) {
             return ItemStack.EMPTY;
         }
 
@@ -133,15 +144,88 @@ public record JeiDwarfTrade(
             return ItemStack.EMPTY;
         }
 
-        return new ItemStack(itemOpt.get().value(), rolled);
+        ItemStack stack = new ItemStack(holder.value(), rolled);
+        return input.matches(ctx, stack) ? stack : ItemStack.EMPTY;
+    }
+
+    private static boolean inputUsesTag(@Nullable ItemInput input, WorldContext ctx, TagKey<Item> wantedTag) {
+        if (input == null) {
+            return false;
+        }
+
+        Optional<Holder<Item>> concrete = input.singleConcrete(Registries.ITEM);
+        if (concrete.isPresent()) {
+            return concrete.get().is(wantedTag);
+        }
+
+        for (var introspection : input.introspections()) {
+            if (!Registries.ITEM.equals(introspection.registryKey())) {
+                continue;
+            }
+
+            var tagOpt = introspection.singleTagOpt();
+            if (tagOpt.isEmpty()) {
+                continue;
+            }
+
+            @SuppressWarnings("unchecked")
+            TagKey<Item> actualTag = (TagKey<Item>) tagOpt.get();
+
+            if (actualTag.equals(wantedTag)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static @Nullable Holder<Item> resolvePreviewItem(@Nullable ItemInput input, WorldContext ctx) {
+        if (input == null) {
+            return null;
+        }
+
+        Optional<Holder<Item>> concrete = input.singleConcrete(Registries.ITEM);
+        if (concrete.isPresent()) {
+            return concrete.get();
+        }
+
+        var lookup = ctx.level().registryAccess().lookupOrThrow(Registries.ITEM);
+
+        for (var introspection : input.introspections()) {
+            if (!Registries.ITEM.equals(introspection.registryKey())) {
+                continue;
+            }
+
+            var tagOpt = introspection.singleTagOpt();
+            if (tagOpt.isEmpty()) {
+                continue;
+            }
+
+            @SuppressWarnings("unchecked")
+            TagKey<Item> tag = (TagKey<Item>) tagOpt.get();
+
+            var namedOpt = lookup.get(tag);
+            if (namedOpt.isEmpty()) {
+                continue;
+            }
+
+            var named = namedOpt.get();
+            if (named.size() == 0) {
+                continue;
+            }
+
+            return named.get(0);
+        }
+
+        return null;
     }
 
     private DwarfTradeRecipeInput buildPreviewInput(WorldContext ctx, RandomSource random) {
-        ItemStack costA = materializeInput(recipe.costA(), random);
+        ItemStack costA = materializeInput(recipe.costA(), ctx, random);
 
         ItemStack costB = ItemStack.EMPTY;
         if (recipe.costB() != null) {
-            costB = materializeInput(recipe.costB(), random);
+            costB = materializeInput(recipe.costB(), ctx, random);
         }
 
         DwarfMerchantData.Level previewLevel = recipe.merchantLevel() != null

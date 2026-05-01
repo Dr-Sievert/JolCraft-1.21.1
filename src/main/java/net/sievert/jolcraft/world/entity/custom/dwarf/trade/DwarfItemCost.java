@@ -8,30 +8,57 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
-import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
 import java.util.Optional;
 
 public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate components, ItemStack itemStack) {
 
-    public static final Codec<DwarfItemCost> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(
-                    Item.CODEC.fieldOf(JolCraftDictionary.ID).forGetter(DwarfItemCost::item),
-                    ExtraCodecs.POSITIVE_INT.optionalFieldOf(JolCraftDictionary.AMOUNT, 1).forGetter(DwarfItemCost::count),
-                    DataComponentPredicate.CODEC.optionalFieldOf(JolCraftStrings.plural(JolCraftDictionary.COMPONENT), DataComponentPredicate.EMPTY).forGetter(DwarfItemCost::components)
-            ).apply(instance, DwarfItemCost::new)
-    );
+    private static final Codec<Holder<Item>> ITEM_HOLDER_CODEC =
+            RegistryFixedCodec.create(Registries.ITEM);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, DwarfItemCost> STREAM_CODEC;
-    public static final StreamCodec<RegistryFriendlyByteBuf, Optional<DwarfItemCost>> OPTIONAL_STREAM_CODEC;
+    public static final Codec<DwarfItemCost> CODEC =
+            RecordCodecBuilder.create(instance ->
+                    instance.group(
+                            ITEM_HOLDER_CODEC
+                                    .fieldOf(JolCraftDictionary.ID)
+                                    .forGetter(DwarfItemCost::item),
+
+                            ExtraCodecs.POSITIVE_INT
+                                    .optionalFieldOf(JolCraftDictionary.AMOUNT, 1)
+                                    .forGetter(DwarfItemCost::count),
+
+                            DataComponentPredicate.CODEC
+                                    .optionalFieldOf(
+                                            JolCraftStrings.plural(JolCraftDictionary.COMPONENT),
+                                            DataComponentPredicate.EMPTY
+                                    )
+                                    .forGetter(DwarfItemCost::components)
+                    ).apply(instance, DwarfItemCost::new)
+            );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, DwarfItemCost> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.holderRegistry(Registries.ITEM),
+                    DwarfItemCost::item,
+                    ByteBufCodecs.VAR_INT,
+                    DwarfItemCost::count,
+                    DataComponentPredicate.STREAM_CODEC,
+                    DwarfItemCost::components,
+                    DwarfItemCost::new
+            );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, Optional<DwarfItemCost>> OPTIONAL_STREAM_CODEC =
+            STREAM_CODEC.apply(ByteBufCodecs::optional);
 
     @SuppressWarnings("deprecation")
     public DwarfItemCost(ItemLike itemLike, int count) {
@@ -56,10 +83,6 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
         return this.item.is(JolCraftTags.Items.COINS);
     }
 
-    // ---------------------------------------------------------------------
-    // Matching / payment (single source of truth)
-    // ---------------------------------------------------------------------
-
     public boolean test(ItemStack stack) {
         return test(stack, this.count);
     }
@@ -67,9 +90,8 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
     public boolean test(ItemStack stack, int requiredCount) {
         if (requiredCount <= 0) return true;
 
-        // Coin pouch can pay for any COINS-tagged cost.
         if (isCoinCost() && stack.getItem() instanceof CoinPouchItem) {
-            return CoinPouchHelper.getCoins(stack) >= requiredCount;
+            return stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0) >= requiredCount;
         }
 
         return stack.is(this.item) && stack.getCount() >= requiredCount && this.components.test(stack);
@@ -85,28 +107,14 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
             return false;
         }
 
-        // Coin pouch can pay for any COINS-tagged cost.
         if (isCoinCost() && stack.getItem() instanceof CoinPouchItem) {
-            int coins = CoinPouchHelper.getCoins(stack);
+            int coins = stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
             int remaining = Math.max(0, coins - requiredCount);
-            CoinPouchHelper.setCoins(stack, remaining);
+            stack.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), remaining);
             return true;
         }
 
         stack.shrink(requiredCount);
         return true;
-    }
-
-    static {
-        STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.holderRegistry(Registries.ITEM),
-                DwarfItemCost::item,
-                ByteBufCodecs.VAR_INT,
-                DwarfItemCost::count,
-                DataComponentPredicate.STREAM_CODEC,
-                DwarfItemCost::components,
-                DwarfItemCost::new
-        );
-        OPTIONAL_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs::optional);
     }
 }

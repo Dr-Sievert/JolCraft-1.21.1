@@ -11,10 +11,10 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.menu.JolCraftMenuIds;
-import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
-import net.sievert.jolcraft.world.gui.custom.menu.LapidaryBenchMenu;
-import net.sievert.jolcraft.world.gui.custom.menu.LockMenu;
-import net.sievert.jolcraft.world.gui.custom.menu.StrongboxMenu;
+import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.world.gui.menu.LapidaryBenchMenu;
+import net.sievert.jolcraft.world.gui.menu.LockMenu;
+import net.sievert.jolcraft.world.gui.menu.StrongboxMenu;
 
 public final class JolCraftMenuTypes {
 

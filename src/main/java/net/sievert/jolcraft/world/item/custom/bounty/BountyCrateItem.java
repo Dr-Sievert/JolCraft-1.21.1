@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -16,11 +16,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyData;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyRecipe;
+import net.sievert.jolcraft.world.item.component.custom.BountyData;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
@@ -162,24 +162,24 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
     }
 
     @Override
-    public @NotNull InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack crate = player.getItemInHand(hand);
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide) return InteractionResultHolder.success(crate);
 
         BountyData data = crate.get(JolCraftDataComponents.BOUNTY_DATA.get());
-        if (data == null) return InteractionResult.PASS;
+        if (data == null) return InteractionResultHolder.pass(crate);
 
         if (player.isShiftKeyDown()) {
             boolean ok = shiftExtractToInventoryOrDrop(player, crate, data);
             if (ok) {
                 player.containerMenu.broadcastChanges();
-                return InteractionResult.SUCCESS;
+                return InteractionResultHolder.success(crate);
             }
-            return InteractionResult.PASS;
+            return InteractionResultHolder.pass(crate);
         }
 
         if (!(data.objective() instanceof BountyData.BountyObjective.ItemObjective(Holder<Item> item, int required))) {
-            return InteractionResult.PASS;
+            return InteractionResultHolder.pass(crate);
         }
 
         int currentFilled = crate.getOrDefault(JolCraftDataComponents.BOUNTY_FILL.get(), 0);
@@ -191,7 +191,7 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
                     Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED).withStyle(ChatFormatting.GRAY),
                     true
             );
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(crate);
         }
 
         Inventory inv = player.getInventory();
@@ -236,7 +236,7 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
             );
         }
 
-        return InteractionResult.SUCCESS;
+        return InteractionResultHolder.success(crate);
     }
 
     private static boolean shiftExtractToInventoryOrDrop(Player player, ItemStack crate, BountyData data) {

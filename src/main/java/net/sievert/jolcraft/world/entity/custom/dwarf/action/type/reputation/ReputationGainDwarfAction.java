@@ -7,12 +7,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
@@ -55,14 +55,14 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
     @Override
     public void stop() {
 
-        int rep = DwarvenReputationHelper.getTier(player);
+        int rep = DwarvenReputationAttachmentHelper.getTier(player);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            DwarvenReputationHelper.setReputationTier(serverPlayer, rep + 1);
+            DwarvenReputationAttachmentHelper.setReputationTier(serverPlayer, rep + 1);
             JolCraftCriteriaTriggers.REPUTATION_GAIN.trigger(serverPlayer);
         }
 
-        int newRep = DwarvenReputationHelper.getTier(player);
+        int newRep = DwarvenReputationAttachmentHelper.getTier(player);
 
         if (!dwarf.level().isClientSide) {
             JolCraftLogs.info(
@@ -72,11 +72,15 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
                     JolCraftLogs.roundedPos(dwarf),
                     dwarf.level().dimension().location(),
                     player.getDisplayName().getString(),
-                    Component.translatable(DwarvenReputationHelper.getTierLangKey(newRep)).getString()
+                    Component.translatable(DwarvenReputationAttachmentHelper.getTierLangKey(newRep)).getString()
             );
         }
 
-        player.displayClientMessage(Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LEVEL_UP).withStyle(ChatFormatting.DARK_PURPLE), true);
+        player.displayClientMessage(
+                Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LEVEL_UP)
+                        .withStyle(ChatFormatting.DARK_PURPLE),
+                true
+        );
 
         ItemStack nextTablet = switch (newRep) {
             case 1 -> new ItemStack(JolCraftItems.REPUTATION_TABLET_1.get());
@@ -86,9 +90,13 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
             default -> ItemStack.EMPTY;
         };
 
-        nextTablet.set(JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(), DwarvenReputationHelper.getEndorsementCount(player));
+        nextTablet.set(
+                JolCraftDataComponents.REPUTATION_ENDORSEMENTS.get(),
+                DwarvenReputationAttachmentHelper.getEndorsementCount(player)
+        );
         nextTablet.set(JolCraftDataComponents.REPUTATION_TIER.get(), newRep);
         nextTablet.set(JolCraftDataComponents.REPUTATION_OWNER.get(), player.getName().getString());
+
         throwItem(dwarf, player, nextTablet);
         PlaySound.levelUp(player);
         dwarf.spawnColoredParticles(0.4F, 0.0F, 0.5F, 1.25F, 64, 2.5D);

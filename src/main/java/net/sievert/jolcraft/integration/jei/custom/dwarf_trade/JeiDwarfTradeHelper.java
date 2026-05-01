@@ -3,7 +3,7 @@ package net.sievert.jolcraft.integration.jei.custom.dwarf_trade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;

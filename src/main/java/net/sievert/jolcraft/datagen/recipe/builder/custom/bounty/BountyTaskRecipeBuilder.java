@@ -3,33 +3,32 @@ package net.sievert.jolcraft.datagen.recipe.builder.custom.bounty;
 import com.mojang.serialization.DataResult;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.bounty.BountyTaskRecipe;
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
-import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntitySpec;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
-import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
-import net.sievert.jolcraft.data.recipe.param.output.pool.PoolEntry;
-import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.data.recipe.param.quantity.WeightParam;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyTaskRecipe;
+import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
+import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;
+import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntitySpec;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.world.recipe.param.output.pool.Pool;
+import net.sievert.jolcraft.world.recipe.param.output.pool.PoolEntry;
+import net.sievert.jolcraft.world.recipe.param.output.pool.Pools;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.world.recipe.param.quantity.WeightParam;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity.EntityOutputBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.entity.EntitySpecBuilder;
@@ -45,7 +44,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -152,7 +150,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             return null;
         }
 
-        var built = SoundOutputBuilder.create()
+        DataResult<SoundOutput> built = SoundOutputBuilder.create()
                 .sound(sound)
                 .buildValidated();
 
@@ -328,7 +326,7 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
     }
 
     @Override
-    public @NotNull DataResult<RecipeEmission> buildValidated() {
+    public @NotNull DataResult<JolCraftDataEmission<RecipeOutput>> buildValidated() {
         if (bountyType == null) {
             errors.add("bountyType is required");
         }
@@ -353,10 +351,10 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
             errors.add("sound2 is required");
         }
 
-        DataResult<String> nameBuilt = RecipeFileNameBuilder.create()
-                .word(bountyTierNameSafe())
-                .word(Objects.requireNonNull(bountyType).professionName())
-                .word(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_TASK))
+        DataResult<String> nameBuilt = JolCraftFileNameBuilder.create()
+                .token(bountyTierNameSafe())
+                .token(bountyType == null ? JolCraftDictionary.UNKNOWN : bountyType.professionName())
+                .token(JolCraftStrings.plural(JolCraftRecipeIds.BOUNTY_TASK))
                 .build();
 
         if (!errors.isEmpty()) {
@@ -396,12 +394,10 @@ public final class BountyTaskRecipeBuilder implements RecipeBuilder {
         );
 
         return nameBuilt.flatMap(name ->
-                BountyTaskRecipe.validateRecipe(recipe).flatMap(validRecipe ->
-                        RecipeEmission.of(
-                                JolCraftRecipeIds.BOUNTY_TASK,
+                BountyTaskRecipe.validateRecipe(recipe).map(validRecipe ->
+                        new JolCraftDataEmission<>(
                                 name,
-                                (RecipeOutput outAccept, ResourceKey<Recipe<?>> id) ->
-                                        outAccept.accept(id, validRecipe, null)
+                                (out, path) -> out.accept(JolCraft.location(path), validRecipe, null)
                         )
                 )
         );

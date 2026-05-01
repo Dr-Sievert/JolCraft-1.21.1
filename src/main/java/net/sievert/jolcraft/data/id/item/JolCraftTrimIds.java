@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.data.id.item;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftTrimIds extends JolCraftIds {
@@ -14,7 +15,7 @@ public final class JolCraftTrimIds extends JolCraftIds {
 
     //Patterns
 
-    public static final String FORGE = JolCraftDictionary.FORGE;
+    public static final String FORGE = JolCraftStructureIds.FORGE;
 
     //Materials
 

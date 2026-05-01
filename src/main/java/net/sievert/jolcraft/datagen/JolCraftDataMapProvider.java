@@ -32,6 +32,5 @@ public final class JolCraftDataMapProvider extends DataMapProvider {
                 .add(JolCraftItems.YANILLIAN_HOPS.getId(), new Compostable(0.45f), false)
                 .add(JolCraftBlocks.DUSKCAP.getId(), new Compostable(0.65f), false)
                 .add(JolCraftBlocks.FESTERLING.getId(), new Compostable(0.65f), false);
-
     }
 }

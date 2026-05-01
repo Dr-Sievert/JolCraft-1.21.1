@@ -4,8 +4,8 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.output.custom.entity.EntityProducer;
+import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

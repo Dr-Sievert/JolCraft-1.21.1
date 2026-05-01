@@ -24,17 +24,20 @@ public class JolCraftBiomeModifiers {
             registerKey(JolCraftBiomeModifierIds.ADD_DEEPSLATE_BULBS_PATCH);
 
     // Ores
-    public static final ResourceKey<BiomeModifier> ADD_SMALL_MITHRIL_ORE =
-            registerKey(JolCraftBiomeModifierIds.ADD_SMALL_MITHRIL_ORE);
+    public static final ResourceKey<BiomeModifier> ADD_ORE_MITHRIL_SMALL =
+            registerKey(JolCraftBiomeModifierIds.ADD_ORE_MITHRIL_SMALL);
 
-    public static final ResourceKey<BiomeModifier> ADD_MEDIUM_MITHRIL_ORE =
-            registerKey(JolCraftBiomeModifierIds.ADD_MEDIUM_MITHRIL_ORE);
+    public static final ResourceKey<BiomeModifier> ADD_ORE_MITHRIL_MEDIUM =
+            registerKey(JolCraftBiomeModifierIds.ADD_ORE_MITHRIL_MEDIUM);
 
-    public static final ResourceKey<BiomeModifier> ADD_LARGE_MITHRIL_ORE =
-            registerKey(JolCraftBiomeModifierIds.ADD_LARGE_MITHRIL_ORE);
+    public static final ResourceKey<BiomeModifier> ADD_ORE_MITHRIL_LARGE =
+            registerKey(JolCraftBiomeModifierIds.ADD_ORE_MITHRIL_LARGE);
 
-    public static final ResourceKey<BiomeModifier> ADD_SPECIAL_MITHRIL_ORE =
-            registerKey(JolCraftBiomeModifierIds.ADD_SPECIAL_MITHRIL_ORE);
+    public static final ResourceKey<BiomeModifier> ADD_ORE_MITHRIL_SPECIAL =
+            registerKey(JolCraftBiomeModifierIds.ADD_ORE_MITHRIL_SPECIAL);
+
+    public static final ResourceKey<BiomeModifier> ADD_ORE_MITHRIL_BURIED =
+            registerKey(JolCraftBiomeModifierIds.ADD_ORE_MITHRIL_BURIED);
 
     // Geodes
     public static final ResourceKey<BiomeModifier> ADD_BASALT_GEODE =
@@ -64,24 +67,29 @@ public class JolCraftBiomeModifiers {
         );
 
         //Ores
-        context.register(ADD_SMALL_MITHRIL_ORE, new BiomeModifiers.AddFeaturesBiomeModifier(
+        context.register(ADD_ORE_MITHRIL_SMALL, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
-                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.SMALL_MITHRIL_ORE_PLACED_KEY)),
+                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_SMALL_PLACED_KEY)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 
-        context.register(ADD_MEDIUM_MITHRIL_ORE, new BiomeModifiers.AddFeaturesBiomeModifier(
+        context.register(ADD_ORE_MITHRIL_MEDIUM, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
-                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.MEDIUM_MITHRIL_ORE_PLACED_KEY)),
+                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_MEDIUM_PLACED_KEY)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 
-        context.register(ADD_LARGE_MITHRIL_ORE, new BiomeModifiers.AddFeaturesBiomeModifier(
+        context.register(ADD_ORE_MITHRIL_LARGE, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
-                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.LARGE_MITHRIL_ORE_PLACED_KEY)),
+                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_LARGE_PLACED_KEY)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 
-        context.register(ADD_SPECIAL_MITHRIL_ORE, new BiomeModifiers.AddFeaturesBiomeModifier(
+        context.register(ADD_ORE_MITHRIL_SPECIAL, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS),
-                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.SPECIAL_MITHRIL_ORE_PLACED_KEY)),
+                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_SPECIAL_PLACED_KEY)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+
+        context.register(ADD_ORE_MITHRIL_BURIED, new BiomeModifiers.AddFeaturesBiomeModifier(
+                biomes.getOrThrow(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS),
+                HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_BURIED_PLACED_KEY)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 
         //Geodes

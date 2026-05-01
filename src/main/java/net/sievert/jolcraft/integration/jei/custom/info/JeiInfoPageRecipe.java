@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.integration.jei.custom.info;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -129,13 +128,19 @@ public final class JeiInfoPageRecipe {
      * ------------------------------------------------------------------ */
 
     public static List<ItemStack> blocksToItemStacks(RegistryAccess registryAccess, TagKey<Block> blockTag) {
-        Registry<Block> blocks = registryAccess.lookupOrThrow(Registries.BLOCK);
+        var blocks = registryAccess.lookupOrThrow(Registries.BLOCK);
+        var named = blocks.get(blockTag).orElse(null);
 
         List<ItemStack> stacks = new ArrayList<>();
-        for (var holder : blocks.getTagOrEmpty(blockTag)) {
+        if (named == null) {
+            return stacks;
+        }
+
+        for (var holder : named) {
             Item asItem = holder.value().asItem();
             stacks.add(new ItemStack(asItem));
         }
+
         return stacks;
     }
 }

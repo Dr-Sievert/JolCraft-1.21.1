@@ -1,21 +1,19 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TexturedModel;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelSubProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
-
 @OnlyIn(Dist.CLIENT)
-public final class MaterialModelSubProvider implements AbstractModelProvider.ModelSubProvider {
+public record MaterialModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
 
     private static final String SUB_PAPER = JolCraftStrings.slashed(
             JolCraftDictionary.MATERIAL,
@@ -42,61 +40,47 @@ public final class MaterialModelSubProvider implements AbstractModelProvider.Mod
             JolCraftDictionary.MITHRIL
     );
 
+    @Override
+    public @NotNull String id() {
+        return JolCraftDictionary.MATERIAL;
+    }
 
     @Override
-    public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
+    public void registerModels(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull JolCraftDataTracking tracking
+    ) {
+        builder.flatItem(JolCraftItems.PARCHMENT.get(), SUB_PAPER);
+        builder.flatItem(JolCraftItems.QUILL_EMPTY.get(), SUB_PAPER);
+        builder.flatItem(JolCraftItems.QUILL_SMALL.get(), SUB_PAPER);
+        builder.flatItem(JolCraftItems.QUILL_HALF.get(), SUB_PAPER);
+        builder.flatItem(JolCraftItems.QUILL_FULL.get(), SUB_PAPER);
+        builder.flatItem(JolCraftItems.LEGENDARY_PAGE.get(), SUB_PAPER);
 
-        /* ---------------------------- */
-        /* Paper / writing materials    */
-        /* ---------------------------- */
+        builder.handheldItem(JolCraftItems.MUFFHORN_MILK_BUCKET.get(), SUB_ENTITY);
+        builder.handheldItem(JolCraftItems.MUFFHORN_FUR.get(), SUB_ENTITY);
 
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.PARCHMENT.get(), ModelTemplates.FLAT_ITEM, SUB_PAPER);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.QUILL_EMPTY.get(), ModelTemplates.FLAT_ITEM, SUB_PAPER);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.QUILL_SMALL.get(), ModelTemplates.FLAT_ITEM, SUB_PAPER);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.QUILL_HALF.get(), ModelTemplates.FLAT_ITEM, SUB_PAPER);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.QUILL_FULL.get(), ModelTemplates.FLAT_ITEM, SUB_PAPER);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.LEGENDARY_PAGE.get(), ModelTemplates.FLAT_ITEM, SUB_PAPER);
+        builder.cubeAllWithItem(JolCraftBlocks.MUFFHORN_FUR_BLOCK.get(), SUB_ENTITY);
 
-        /* ---------------------------- */
-        /* Entity-derived materials     */
-        /* ---------------------------- */
+        builder.flatItem(JolCraftItems.GEODE_SMALL.get(), SUB_GEODE);
+        builder.flatItem(JolCraftItems.GEODE_MEDIUM.get(), SUB_GEODE);
+        builder.flatItem(JolCraftItems.GEODE_LARGE.get(), SUB_GEODE);
 
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.MUFFHORN_MILK_BUCKET.get(), ModelTemplates.FLAT_HANDHELD_ITEM, SUB_ENTITY);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.MUFFHORN_FUR.get(), ModelTemplates.FLAT_HANDHELD_ITEM, SUB_ENTITY);
+        builder.cubeAllWithItem(JolCraftBlocks.GEODE_BLOCK.get(), SUB_GEODE);
 
-        AbstractModelProvider.createTrivialCube(blocks, JolCraftBlocks.MUFFHORN_FUR_BLOCK.get(), SUB_ENTITY);
+        builder.flatItem(JolCraftItems.DEEPSLATE_PLATE.get(), SUB_DEEPSLATE);
+        builder.flatItem(JolCraftItems.DEEPSLATE_ROD.get(), SUB_DEEPSLATE);
 
-        /* ---------------------------- */
-        /* Geodes                       */
-        /* ---------------------------- */
+        builder.cubeAllWithItem(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get(), SUB_DEEPSLATE);
 
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.GEODE_SMALL.get(), ModelTemplates.FLAT_ITEM, SUB_GEODE);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.GEODE_MEDIUM.get(), ModelTemplates.FLAT_ITEM, SUB_GEODE);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.GEODE_LARGE.get(), ModelTemplates.FLAT_ITEM, SUB_GEODE);
+        builder.flatItem(JolCraftItems.IMPURE_MITHRIL.get(), SUB_MITHRIL);
+        builder.flatItem(JolCraftItems.PURE_MITHRIL.get(), SUB_MITHRIL);
+        builder.flatItem(JolCraftItems.MITHRIL_INGOT.get(), SUB_MITHRIL);
+        builder.flatItem(JolCraftItems.MITHRIL_NUGGET.get(), SUB_MITHRIL);
+        builder.flatItem(JolCraftItems.MITHRIL_CHAINWEAVE.get(), SUB_MITHRIL);
 
-        AbstractModelProvider.createTrivialCube(blocks, JolCraftBlocks.GEODE_BLOCK.get(), SUB_GEODE);
-
-        /* ---------------------------- */
-        /* Deepslate materials          */
-        /* ---------------------------- */
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DEEPSLATE_PLATE.get(), ModelTemplates.FLAT_ITEM, SUB_DEEPSLATE);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.DEEPSLATE_ROD.get(), ModelTemplates.FLAT_ITEM, SUB_DEEPSLATE);
-
-        AbstractModelProvider.createTrivialCube(blocks, JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get(), SUB_DEEPSLATE);
-
-        /* ---------------------------- */
-        /* Mithril materials            */
-        /* ---------------------------- */
-
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.IMPURE_MITHRIL.get(), ModelTemplates.FLAT_ITEM, SUB_MITHRIL);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.PURE_MITHRIL.get(), ModelTemplates.FLAT_ITEM, SUB_MITHRIL);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.MITHRIL_INGOT.get(), ModelTemplates.FLAT_ITEM, SUB_MITHRIL);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.MITHRIL_NUGGET.get(), ModelTemplates.FLAT_ITEM, SUB_MITHRIL);
-        AbstractModelProvider.generateFlatItem(items, JolCraftItems.MITHRIL_CHAINWEAVE.get(), ModelTemplates.FLAT_ITEM, SUB_MITHRIL);
-
-        blocks.createRotatedPillarWithHorizontalVariant(JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get(), TexturedModel.COLUMN, TexturedModel.COLUMN_HORIZONTAL);
-        AbstractModelProvider.createTrivialCube(blocks, JolCraftBlocks.PURE_MITHRIL_BLOCK.get(), SUB_MITHRIL);
-        AbstractModelProvider.createTrivialCube(blocks, JolCraftBlocks.MITHRIL_BLOCK.get(), SUB_MITHRIL);
+        builder.rotatedPillarWithHorizontalVariantAndItem(JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get());
+        builder.cubeAllWithItem(JolCraftBlocks.PURE_MITHRIL_BLOCK.get(), SUB_MITHRIL);
+        builder.cubeAllWithItem(JolCraftBlocks.MITHRIL_BLOCK.get(), SUB_MITHRIL);
     }
 }

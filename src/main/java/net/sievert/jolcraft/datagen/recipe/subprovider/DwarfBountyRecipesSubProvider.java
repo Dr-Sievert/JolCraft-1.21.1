@@ -1,28 +1,31 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Item;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
 import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.DwarfBountyRewardSubProvider;
 import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.DwarfBountyTaskSubProvider;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public final class DwarfBountyRecipesSubProvider implements RecipeSubProvider {
+public record DwarfBountyRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
-    private static final List<RecipeSubProvider> SUBS = List.of(
-            new DwarfBountyTaskSubProvider(),
-            new DwarfBountyRewardSubProvider()
-    );
+    public DwarfBountyRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -30,13 +33,10 @@ public final class DwarfBountyRecipesSubProvider implements RecipeSubProvider {
     }
 
     @Override
-    public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
-            @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
-    ) {
-        for (RecipeSubProvider sub : SUBS) {
-            sub.register(executor, output, lookups);
-        }
+    public @NotNull List<? extends JolCraftSubDataProvider<RecipeOutput>> subProviders() {
+        return List.of(
+                new DwarfBountyTaskSubProvider(this),
+                new DwarfBountyRewardSubProvider(this)
+        );
     }
 }

@@ -1,13 +1,10 @@
 package net.sievert.jolcraft.data.id.loot;
 
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.item.JolCraftRarityIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.util.JolCraftStrings;
 
 public final class JolCraftLootTableIds extends JolCraftIds {
 
@@ -16,18 +13,6 @@ public final class JolCraftLootTableIds extends JolCraftIds {
     /* ---------------------------------------------------------------------
      * Chests
      * ------------------------------------------------------------------ */
-
-    public static final String DWARVEN_LEXICON_IN_STRONGHOLD_LIBRARY = JolCraftStrings.underscored(
-            JolCraftItemIds.DWARVEN_LEXICON,
-            JolCraftDictionary.IN,
-            lastPathSegment(BuiltInLootTables.STRONGHOLD_LIBRARY)
-    );
-
-    public static final String DWARVEN_LEXICON_IN_ABANDONED_MINESHAFT = JolCraftStrings.underscored(
-            JolCraftItemIds.DWARVEN_LEXICON,
-            JolCraftDictionary.IN,
-            lastPathSegment(BuiltInLootTables.ABANDONED_MINESHAFT)
-    );
 
     public static final String UNCUT_GEMS = JolCraftTagIds.UNCUT_GEMS;
     public static final String SALVAGE = JolCraftTagIds.SALVAGE;

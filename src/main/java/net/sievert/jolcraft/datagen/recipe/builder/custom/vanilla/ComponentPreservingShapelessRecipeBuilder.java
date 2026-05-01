@@ -1,7 +1,9 @@
 package net.sievert.jolcraft.datagen.recipe.builder.custom.vanilla;
 
+import com.mojang.serialization.DataResult;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
@@ -9,13 +11,12 @@ import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.vanilla.ComponentPreservingShapelessRecipe;
+import net.sievert.jolcraft.world.recipe.custom.vanilla.ComponentPreservingShapelessRecipe;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +34,7 @@ import java.util.Map;
  * - Does not generate ids.
  * - Does not decide folder conventions beyond vanilla recipe-book folder structure.
  *
- * - No throws (fail-closed): invalid inputs => save() no-op.
+ * No throws (fail-closed): invalid inputs => save() no-op.
  *
  * If no criteria are supplied, the recipe is still written, but no advancement is emitted.
  * Unlock policy is handled by the outer plan layer.
@@ -73,16 +74,11 @@ public final class ComponentPreservingShapelessRecipeBuilder {
         return new ComponentPreservingShapelessRecipeBuilder(category, base);
     }
 
-    // ---------------------------------------------------------------------
-    // Fluent API
-    // ---------------------------------------------------------------------
-
     public @NotNull ComponentPreservingShapelessRecipeBuilder group(String group) {
         this.group = group;
         return this;
     }
 
-    /** Output override (count forced to 1). Null/empty clears. */
     public @NotNull ComponentPreservingShapelessRecipeBuilder result(ItemStack stack) {
         if (stack.isEmpty()) {
             this.result = ItemStack.EMPTY;
@@ -101,7 +97,9 @@ public final class ComponentPreservingShapelessRecipeBuilder {
     }
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder ingredients(List<Ingredient> list) {
-        if (list.isEmpty()) return this;
+        if (list.isEmpty()) {
+            return this;
+        }
 
         for (Ingredient ing : list) {
             if (ing != null && !ing.isEmpty()) {
@@ -117,11 +115,13 @@ public final class ComponentPreservingShapelessRecipeBuilder {
     }
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder keepAll(List<DataComponentType<?>> types) {
-        if (types.isEmpty()) return this;
+        if (types.isEmpty()) {
+            return this;
+        }
 
-        for (DataComponentType<?> t : types) {
-            if (t != null) {
-                this.keep.add(t);
+        for (DataComponentType<?> type : types) {
+            if (type != null) {
+                this.keep.add(type);
             }
         }
         return this;
@@ -133,11 +133,13 @@ public final class ComponentPreservingShapelessRecipeBuilder {
     }
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder removeAll(List<DataComponentType<?>> types) {
-        if (types.isEmpty()) return this;
+        if (types.isEmpty()) {
+            return this;
+        }
 
-        for (DataComponentType<?> t : types) {
-            if (t != null) {
-                this.remove.add(t);
+        for (DataComponentType<?> type : types) {
+            if (type != null) {
+                this.remove.add(type);
             }
         }
         return this;
@@ -159,11 +161,13 @@ public final class ComponentPreservingShapelessRecipeBuilder {
     }
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder requireBaseHasAll(List<DataComponentType<?>> types) {
-        if (types.isEmpty()) return this;
+        if (types.isEmpty()) {
+            return this;
+        }
 
-        for (DataComponentType<?> t : types) {
-            if (t != null) {
-                this.baseRequire.add(t);
+        for (DataComponentType<?> type : types) {
+            if (type != null) {
+                this.baseRequire.add(type);
             }
         }
         return this;
@@ -172,11 +176,6 @@ public final class ComponentPreservingShapelessRecipeBuilder {
     public @NotNull ComponentPreservingShapelessRecipeBuilder set(DataComponentPatch set) {
         this.set = set;
         return this;
-    }
-
-    /** Backwards-compat convenience alias. */
-    public @NotNull ComponentPreservingShapelessRecipeBuilder patch(DataComponentPatch patch) {
-        return set(patch);
     }
 
     public @NotNull ComponentPreservingShapelessRecipeBuilder unlocks(String key, Criterion<?> criterion) {
@@ -188,16 +187,29 @@ public final class ComponentPreservingShapelessRecipeBuilder {
         return this;
     }
 
-    // ---------------------------------------------------------------------
-    // Save
-    // ---------------------------------------------------------------------
-
-    public void save(RecipeOutput output, ResourceKey<Recipe<?>> id) {
-        if (!isEnabled()) return;
+    public @NotNull DataResult<ComponentPreservingShapelessRecipe> buildValidated() {
+        if (!isEnabled()) {
+            return DataResult.error(() -> "builder: base and result must be non-empty");
+        }
 
         ComponentPreservingShapelessRecipe recipe = buildRecipe();
+        return ComponentPreservingShapelessRecipe.Serializer.validate(recipe);
+    }
 
-        if (ComponentPreservingShapelessRecipe.Serializer.validate(recipe).error().isPresent()) return;
+    public void save(RecipeOutput output, ResourceLocation id) {
+        if (!isEnabled()) {
+            return;
+        }
+
+        DataResult<ComponentPreservingShapelessRecipe> built = buildValidated();
+        if (built.error().isPresent()) {
+            return;
+        }
+
+        ComponentPreservingShapelessRecipe recipe = built.result().orElse(null);
+        if (recipe == null) {
+            return;
+        }
 
         if (this.criteria.isEmpty()) {
             output.accept(id, recipe, null);
@@ -218,26 +230,21 @@ public final class ComponentPreservingShapelessRecipeBuilder {
 
         this.criteria.forEach(advancement::addCriterion);
 
-        output.accept(
-                id,
-                recipe,
-                advancement.build(
-                        id.location().withPrefix(
-                                JolCraftStrings.slashed(
-                                        JolCraftStrings.plural(JolCraftDictionary.RECIPE),
-                                        this.category.getSerializedName()
-                                ) + "/"
-                        )
+        AdvancementHolder holder = advancement.build(
+                id.withPrefix(
+                        JolCraftStrings.slashed(
+                                JolCraftStrings.plural(JolCraftDictionary.RECIPE),
+                                this.category.getSerializedName()
+                        ) + "/"
                 )
         );
+
+        output.accept(id, recipe, holder);
     }
 
-    // ---------------------------------------------------------------------
-    // Internal
-    // ---------------------------------------------------------------------
-
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isEnabled() {
-        return !this.base.isEmpty() && this.result != null && !this.result.isEmpty();
+        return !this.base.isEmpty() && !this.result.isEmpty();
     }
 
     private @NotNull ComponentPreservingShapelessRecipe buildRecipe() {

@@ -1,9 +1,9 @@
 package net.sievert.jolcraft.world.item.custom.container;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.util.ARGB;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -15,8 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.util.coin.CoinPouchTooltip;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.client.tooltip.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
@@ -30,7 +30,7 @@ public class CoinPouchItem extends Item {
 
     public static final int MAX_COINS = 999;
 
-    private static final int BAR_COLOR = ARGB.color(255, 232, 193, 67);
+    private static final int BAR_COLOR = FastColor.ARGB32.color(255, 232, 193, 67);
 
     public CoinPouchItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -93,7 +93,7 @@ public class CoinPouchItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack pouch = player.getItemInHand(hand);
 
         if (player.isShiftKeyDown()) {
@@ -119,11 +119,11 @@ public class CoinPouchItem extends Item {
                 broadcastChangesOnContainerMenu(player);
                 player.awardStat(Stats.ITEM_USED.get(this));
 
-                return InteractionResult.SUCCESS;
+                return InteractionResultHolder.success(pouch);
             }
 
             playInsertFailSound(player);
-            return InteractionResult.PASS;
+            return InteractionResultHolder.pass(pouch);
         }
 
         int current = pouch.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
@@ -144,12 +144,12 @@ public class CoinPouchItem extends Item {
 
                 broadcastChangesOnContainerMenu(player);
                 player.awardStat(Stats.ITEM_USED.get(this));
-                return InteractionResult.SUCCESS;
+                return InteractionResultHolder.success(pouch);
             }
         }
 
         playInsertFailSound(player);
-        return InteractionResult.PASS;
+        return InteractionResultHolder.pass(pouch);
     }
 
     private boolean isGoldCoin(ItemStack stack) {
@@ -218,7 +218,7 @@ public class CoinPouchItem extends Item {
     }
 
     private void playInsertFailSound(Player player) {
-        JolCraftSoundHelper.player(player, SoundEvents.BUNDLE_INSERT_FAIL, 0.4F, 1.3F);
+        JolCraftSoundHelper.player(player, SoundEvents.BOOK_PUT, 0.4F, 1.3F);
     }
 
 

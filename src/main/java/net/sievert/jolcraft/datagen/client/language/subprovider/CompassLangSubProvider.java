@@ -6,12 +6,17 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.item.util.compass.StructureGroup;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 
 import java.lang.reflect.Field;
@@ -20,43 +25,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public final class CompassLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class CompassLangSubProvider implements LanguageSubProvider {
 
     @Override
-    public void addTranslations(AbstractLanguageProvider p) {
+    public @NotNull String id() {
+        return JolCraftStrings.plural(JolCraftDictionary.COMPASS);
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<Map<String, String>> parent() {
+        return languageProvider();
+    }
+
+
+    @Override
+    public void addTranslations(@NotNull Map<String, String> translations) {
 
         // Structure fixed strings
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_DISCOVERED, "Discovered: ");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRUCTURE_DISCOVERED, "Discovered: %s");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRUCTURE_ALREADY_DISCOVERED, "You already discovered this structure!");
 
         // Deepslate Compass fixed strings
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_TRACKING, "Currently tracking: ");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE, "No structures found!");
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_LOCATE, "The tracked %s is at %s (%s blocks away)");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_TRACKING, "Currently tracking: ");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE, "No structures found!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_LOCATE, "The tracked %s is at %s (%s blocks away)");
 
         // Dial labels
-        for (StructureGroup group : StructureGroup.values()) {
-            String key = JolCraftLanguageKeys.tooltip(JolCraftItemIds.DEEPSLATE_COMPASS_DIAL, group.getId());
-            if (p.hasKey(key)) continue;
-            p.putManual(key, JolCraftStrings.toTitleCase(group.getId()));
+        for (DeepslateCompassStructureGroup group : DeepslateCompassStructureGroup.values()) {
+            String key = JolCraftLanguageKeys.tooltip(
+                    JolCraftItemIds.DEEPSLATE_COMPASS_DIAL,
+                    group.getId()
+            );
+
+            if (hasKey(translations, key)) continue;
+
+            putManual(translations, key, JolCraftStrings.toTitleCase(group.getId()));
         }
 
         // Vanilla structures
         for (ResourceLocation id : reflectStructureIds()) {
-            putStructureNameIfMissing(p, id);
+            putStructureNameIfMissing(translations,  id);
         }
 
         // JolCraft structures
         for (ResourceLocation id : reflectRegisteredStructureIds()) {
-            putStructureNameIfMissing(p, id);
+            putStructureNameIfMissing(translations,  id);
         }
     }
 
-    private static void putStructureNameIfMissing(AbstractLanguageProvider p, ResourceLocation structureId) {
+    private void putStructureNameIfMissing(Map<String, String> translations, ResourceLocation structureId) {
         String key = JolCraftLanguageKeys.tooltip(JolCraftDictionary.STRUCTURE, structureId.toString());
-        if (p.hasKey(key)) return;
+        if (hasKey(translations, key)) return;
 
         String english = JolCraftStrings.toTitleCase(structureId.getPath());
-        p.putManual(key, english);
+        putManual(translations, key, english);
     }
 
     private static List<ResourceLocation> reflectStructureIds() {

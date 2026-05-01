@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.transform;
 
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ComponentTransform;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.EnchantmentTransform;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ComponentTransform;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.EnchantmentTransform;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 import java.util.ArrayList;

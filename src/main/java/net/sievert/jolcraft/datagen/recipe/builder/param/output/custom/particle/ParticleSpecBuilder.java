@@ -6,15 +6,15 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
-import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleProducer;
-import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleSpec;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleProducer;
+import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleSpec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class ParticleSpecBuilder {
 
-    private @Nullable RecipeLookups lookups;
+    private @Nullable JolCraftDataLookups lookups;
     private @Nullable ParticleProducer producer;
     private @Nullable ParticleOptions particle;
 
@@ -24,7 +24,7 @@ public final class ParticleSpecBuilder {
         return new ParticleSpecBuilder();
     }
 
-    public @NotNull ParticleSpecBuilder lookups(@Nullable RecipeLookups lookups) {
+    public @NotNull ParticleSpecBuilder lookups(@Nullable JolCraftDataLookups lookups) {
         this.lookups = lookups;
         return this;
     }
@@ -47,14 +47,14 @@ public final class ParticleSpecBuilder {
 
         ParticleProducer resolvedProducer = this.producer;
         if (resolvedProducer == null) {
-            RecipeLookups recipeLookups = this.lookups;
-            if (recipeLookups == null) {
+            JolCraftDataLookups jolCraftDataLookups = this.lookups;
+            if (jolCraftDataLookups == null) {
                 return DataResult.error(() -> "Missing required field: 'lookups'");
             }
 
-            ResourceLocation id = resolveParticleId(recipeLookups.particles(), p.getType());
+            ResourceLocation id = resolveParticleId(jolCraftDataLookups.particles(), p.getType());
             if (id == null) {
-                return DataResult.error(() -> "Could not resolve particle id");
+                return DataResult.error(() -> "Could not resolve particle name");
             }
 
             resolvedProducer = new ParticleProducer(id);

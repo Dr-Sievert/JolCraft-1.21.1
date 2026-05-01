@@ -7,11 +7,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
-import net.sievert.jolcraft.world.item.util.coin.CoinPouchHelper;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -297,13 +297,13 @@ public class DwarfMerchantOffer {
         int bCoinsBefore = -1;
 
         if (this.baseCostA.isCoinCost() && playerOfferA.getItem() instanceof CoinPouchItem) {
-            aCoinsBefore = CoinPouchHelper.getCoins(playerOfferA);
+            aCoinsBefore = playerOfferA.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
         }
 
         if (secondCostOpt.isPresent()) {
             DwarfItemCost secondCost = secondCostOpt.get();
             if (secondCost.isCoinCost() && playerOfferB.getItem() instanceof CoinPouchItem) {
-                bCoinsBefore = CoinPouchHelper.getCoins(playerOfferB);
+                bCoinsBefore = playerOfferB.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
             }
         }
 
@@ -315,7 +315,7 @@ public class DwarfMerchantOffer {
             DwarfItemCost secondCost = secondCostOpt.get();
             if (!secondCost.take(playerOfferB, secondCost.count())) {
                 if (aCoinsBefore >= 0) {
-                    CoinPouchHelper.setCoins(playerOfferA, aCoinsBefore);
+                    playerOfferA.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), aCoinsBefore);
                 } else {
                     int delta = aCountBefore - playerOfferA.getCount();
                     if (delta > 0) {
@@ -324,7 +324,7 @@ public class DwarfMerchantOffer {
                 }
 
                 if (bCoinsBefore >= 0) {
-                    CoinPouchHelper.setCoins(playerOfferB, bCoinsBefore);
+                    playerOfferB.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), bCoinsBefore);
                 } else {
                     int delta = bCountBefore - playerOfferB.getCount();
                     if (delta > 0) {
@@ -335,7 +335,6 @@ public class DwarfMerchantOffer {
                 return false;
             }
         }
-
         return true;
     }
 

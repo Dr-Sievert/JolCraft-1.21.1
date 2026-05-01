@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.base;
 
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.data.recipe.param.input.base.InputParam;
-import net.sievert.jolcraft.data.recipe.param.input.base.Inputs;
+import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.world.recipe.param.input.base.InputParam;
+import net.sievert.jolcraft.world.recipe.param.input.base.Inputs;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 

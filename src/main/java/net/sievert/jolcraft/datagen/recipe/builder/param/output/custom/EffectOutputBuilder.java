@@ -2,8 +2,8 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
-import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
+import net.sievert.jolcraft.world.recipe.param.output.base.Output;
+import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

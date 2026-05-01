@@ -1,0 +1,19 @@
+package net.sievert.jolcraft.event.game.world;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+
+public final class JolCraftTimeHelper {
+
+    public static final long TICKS_PER_DAY = 24000L;
+
+    private JolCraftTimeHelper() {}
+
+    public static long day(ServerLevel level) {
+        return level.getDayTime() / TICKS_PER_DAY;
+    }
+
+    public static long day(ServerPlayer player) {
+        return day(player.serverLevel());
+    }
+}

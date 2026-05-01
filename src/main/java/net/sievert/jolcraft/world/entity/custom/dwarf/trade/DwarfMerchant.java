@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
-import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
 
 public interface DwarfMerchant {
     void setTradingPlayer(@Nullable Player tradingPlayer);

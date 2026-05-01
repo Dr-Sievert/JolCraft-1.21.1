@@ -7,14 +7,14 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
-import net.sievert.jolcraft.data.recipe.param.output.custom.particle.ParticleProducer;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class ParticleProducerBuilder {
 
-    private @Nullable RecipeLookups lookups;
+    private @Nullable JolCraftDataLookups lookups;
     private @Nullable ResourceLocation particleId;
 
     private ParticleProducerBuilder() {}
@@ -23,7 +23,7 @@ public final class ParticleProducerBuilder {
         return new ParticleProducerBuilder();
     }
 
-    public @NotNull ParticleProducerBuilder lookups(@Nullable RecipeLookups lookups) {
+    public @NotNull ParticleProducerBuilder lookups(@Nullable JolCraftDataLookups lookups) {
         this.lookups = lookups;
         return this;
     }

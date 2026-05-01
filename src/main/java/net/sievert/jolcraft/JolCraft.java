@@ -10,28 +10,28 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.sievert.jolcraft.data.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.data.attachment.JolCraftAttachments;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
-import net.sievert.jolcraft.data.JolCraftStats;
+import net.sievert.jolcraft.world.player.attachment.JolCraftAttachments;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
-import net.sievert.jolcraft.data.JolCraftAttributes;
+import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.loadout.DwarfLoadouts;
 import net.sievert.jolcraft.world.item.creative.JolCraftCreativeModeTabs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.util.equipment.JolCraftEquipmentAssets;
 import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
-import net.sievert.jolcraft.data.loot.JolCraftLootModifiers;
+import net.sievert.jolcraft.world.loot.JolCraftLootModifiers;
 import net.sievert.jolcraft.network.JolCraftNetworking;
-import net.sievert.jolcraft.data.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.worldgen.feature.JolCraftFeatures;
 import net.sievert.jolcraft.world.worldgen.predicate.JolCraftBlockPredicateTypes;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
@@ -66,10 +66,11 @@ public class JolCraft {
         JolCraftBlockPredicateTypes.register(modEventBus);
         JolCraftAttachments.register(modEventBus);
         JolCraftStats.register(modEventBus);
-        JolCraftEquipmentAssets.register(modEventBus);
         JolCraftRecipes.register(modEventBus);
         JolCraftAttributes.register(modEventBus);
+        JolCraftFeatures.register(modEventBus);
         JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);
+
 
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,

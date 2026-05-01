@@ -51,7 +51,7 @@ public class JolCraftMushroomBlock extends BushBlock implements BonemealableBloc
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.isSolidRender();
+        return state.isSolidRender(level, pos);
     }
 
     @Override

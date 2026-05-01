@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.requirement;
 
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.requirement.ComponentRequirement;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.requirement.EnchantmentRequirement;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.requirement.ItemRequirements;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.requirement.ComponentRequirement;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.requirement.EnchantmentRequirement;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.requirement.ItemRequirements;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 import java.util.ArrayList;

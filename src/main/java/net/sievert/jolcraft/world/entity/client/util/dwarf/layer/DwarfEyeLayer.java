@@ -14,18 +14,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
-import net.sievert.jolcraft.data.id.model.JolCraftModelPartIds;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.DwarfModel;
-import net.sievert.jolcraft.world.entity.client.util.dwarf.DwarfRenderState;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntity;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
+public final class DwarfEyeLayer<T extends AbstractDwarfEntity> extends RenderLayer<T, DwarfModel<T>> {
 
     private static String eyeTextureName(@NotNull DwarfEyeColor color) {
         return JolCraftStrings.underscored(JolCraftDirectoryIds.EYE, color.getId());
@@ -47,7 +47,7 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
                 }
             });
 
-    public DwarfEyeLayer(RenderLayerParent<DwarfRenderState, DwarfModel> parent) {
+    public DwarfEyeLayer(RenderLayerParent<T, DwarfModel<T>> parent) {
         super(parent);
     }
 
@@ -56,21 +56,25 @@ public class DwarfEyeLayer extends RenderLayer<DwarfRenderState, DwarfModel> {
             @NotNull PoseStack poseStack,
             @NotNull MultiBufferSource buffer,
             int packedLight,
-            @NotNull DwarfRenderState state,
-            float yRot,
-            float xRot
+            @NotNull T dwarf,
+            float limbSwing,
+            float limbSwingAmount,
+            float partialTick,
+            float ageInTicks,
+            float netHeadYaw,
+            float headPitch
     ) {
-        if (state.dwarf == null || state.eye == null) return;
+        DwarfEyeColor eyeColor = DwarfEyeColor.byId(dwarf.getData(AbstractBreedingEntity.EYE_COLOR));
+        ResourceLocation texture = LOCATION_BY_EYE.get(eyeColor);
+        if (texture == null) {
+            return;
+        }
 
-        ResourceLocation texture = LOCATION_BY_EYE.get(state.eye);
-        if (texture == null) return;
+        DwarfModel<T> model = this.getParentModel();
+        model.setupAnim(dwarf, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 
-        DwarfModel model = this.getParentModel();
-        model.setupAnim(state);
-
-        ModelPart head = model.getHead();
-        ModelPart rightEye = head.getChild(JolCraftModelPartIds.Creature.Humanoid.RIGHT_EYE);
-        ModelPart leftEye = head.getChild(JolCraftModelPartIds.Creature.Humanoid.LEFT_EYE);
+        ModelPart rightEye = model.right_eye;
+        ModelPart leftEye = model.left_eye;
 
         boolean prevRight = rightEye.visible;
         boolean prevLeft = leftEye.visible;

@@ -4,14 +4,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
@@ -131,7 +131,7 @@ public class PromoteDwarfAction extends InspectDwarfAction {
                         serverLevel,
                         null,
                         dwarf.blockPosition(),
-                        EntitySpawnReason.CONVERSION,
+                        MobSpawnType.CONVERSION,
                         false,
                         false
                 );

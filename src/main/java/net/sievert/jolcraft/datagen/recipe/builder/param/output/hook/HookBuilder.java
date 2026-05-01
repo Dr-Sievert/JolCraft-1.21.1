@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.hook;
 
 import net.minecraft.resources.ResourceLocation;
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.data.recipe.param.output.hook.Hook;
+import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.world.recipe.param.output.hook.Hook;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 

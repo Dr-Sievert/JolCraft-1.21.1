@@ -11,10 +11,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,14 +24,9 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -48,31 +41,28 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
-import net.sievert.jolcraft.data.JolCraftDataComponents;
+import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-
-    // ---------------------------------------------------------------------
-    // State + shape
-    // ---------------------------------------------------------------------
 
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -81,6 +71,8 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
     private static final VoxelShape SHAPE_NS = Block.box(1, 0, 3, 15, 10, 13);
     private static final VoxelShape SHAPE_EW = Block.box(3, 0, 1, 13, 10, 15);
 
+    public static final MapCodec<StrongboxBlock> CODEC = simpleCodec(StrongboxBlock::new);
+
     public StrongboxBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
@@ -88,8 +80,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 .setValue(WATERLOGGED, false)
                 .setValue(LOCKED, false));
     }
-
-    public static final MapCodec<StrongboxBlock> CODEC = simpleCodec(StrongboxBlock::new);
 
     @Override
     protected MapCodec<? extends StrongboxBlock> codec() {
@@ -107,10 +97,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
         Direction facing = state.getValue(FACING);
         return (facing == Direction.EAST || facing == Direction.WEST) ? SHAPE_EW : SHAPE_NS;
     }
-
-    // ---------------------------------------------------------------------
-    // Placement + waterlogging
-    // ---------------------------------------------------------------------
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -130,23 +116,18 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Override
     protected BlockState updateShape(
             BlockState state,
-            LevelReader level,
-            ScheduledTickAccess scheduledTick,
-            BlockPos pos,
             Direction direction,
-            BlockPos neighborPos,
             BlockState neighborState,
-            RandomSource random
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos neighborPos
     ) {
         if (state.getValue(WATERLOGGED)) {
-            scheduledTick.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        return super.updateShape(state, level, scheduledTick, pos, direction, neighborPos, neighborState, random);
-    }
 
-    // ---------------------------------------------------------------------
-    // Block entity
-    // ---------------------------------------------------------------------
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -154,54 +135,52 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide) {
-            return Objects.requireNonNull(createTickerHelper(
-                    type,
-                    JolCraftBlockEntities.STRONGBOX.get(),
-                    StrongboxBlockEntity::lidAnimateTick
-            ));
-        }
-
-        return Objects.requireNonNull(createTickerHelper(
-                type,
-                JolCraftBlockEntities.STRONGBOX.get(),
-                (tickLevel, pos, blockState, be) -> {
-                    be.recheckOpen();
-                    StrongboxBlockEntity.tick(tickLevel, pos, blockState, be);
-                }
-        ));
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
+            Level level,
+            BlockState state,
+            BlockEntityType<T> type
+    ) {
+        return createTickerHelper(type, JolCraftBlockEntities.STRONGBOX.get(), TickingBlockEntity.tickOnBoth());
     }
-
-    // ---------------------------------------------------------------------
-    // Breaking / drops
-    // ---------------------------------------------------------------------
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        // Drops handled manually in playerWillDestroy (and clone stack).
-        return List.of();
+        BlockEntity be = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (!(be instanceof StrongboxBlockEntity strongbox)) {
+            return List.of(new ItemStack(JolCraftItems.STRONGBOX_ITEM.get()));
+        }
+
+        ItemStack tool = builder.getOptionalParameter(LootContextParams.TOOL);
+        boolean silkTouch = hasSilkTouch(builder.getLevel(), tool == null ? ItemStack.EMPTY : tool);
+
+        return getStrongboxDrops(state, strongbox, silkTouch);
     }
 
-    @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide && !player.isCreative()) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof StrongboxBlockEntity strongbox) {
-                if (hasSilkTouch(level, player.getMainHandItem())) {
-                    Block.popResource(level, pos, createSilkTouchDrop(strongbox, state));
-                } else {
-                    dropNonSilk(level, pos, state, strongbox);
-                }
+    private static List<ItemStack> getStrongboxDrops(BlockState state, StrongboxBlockEntity strongbox, boolean silkTouch) {
+        if (silkTouch) {
+            return List.of(createSilkTouchDrop(strongbox, state));
+        }
+
+        if (strongbox.getLootTable() != null && state.getValue(LOCKED)) {
+            return List.of(new ItemStack(JolCraftItems.STRONGBOX_ITEM.get()));
+        }
+
+        List<ItemStack> drops = new java.util.ArrayList<>();
+        drops.add(new ItemStack(JolCraftItems.STRONGBOX_ITEM.get()));
+
+        for (ItemStack stack : strongbox.getItems()) {
+            if (!stack.isEmpty()) {
+                drops.add(stack.copy());
             }
         }
 
-        // Keep vanilla behavior (particles, piglins, game event, etc.)
-        return super.playerWillDestroy(level, pos, state, player);
+        return drops;
     }
 
     private static boolean hasSilkTouch(Level level, ItemStack tool) {
-        if (!(level instanceof ServerLevel serverLevel)) return false;
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return false;
+        }
 
         return serverLevel.registryAccess()
                 .lookup(Registries.ENCHANTMENT)
@@ -231,30 +210,19 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
         return drop;
     }
 
-    private static void dropNonSilk(Level level, BlockPos pos, BlockState state, StrongboxBlockEntity strongbox) {
-        // If it’s a locked loot-table strongbox, don’t spill contents.
-        if (strongbox.getLootTable() != null && state.getValue(LOCKED)) {
-            Block.popResource(level, pos, new ItemStack(JolCraftItems.STRONGBOX_ITEM.get()));
-            return;
-        }
-
-        Containers.dropContents(level, pos, strongbox);
-        Block.popResource(level, pos, new ItemStack(JolCraftItems.STRONGBOX_ITEM.get()));
-    }
-
-    // ---------------------------------------------------------------------
-    // Placement from item (restore saved data)
-    // ---------------------------------------------------------------------
-
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
 
-        if (level.isClientSide) return;
-        BlockEntity be = level.getBlockEntity(pos);
-        if (!(be instanceof StrongboxBlockEntity strongbox)) return;
+        if (level.isClientSide) {
+            return;
+        }
 
-        // Container contents
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof StrongboxBlockEntity strongbox)) {
+            return;
+        }
+
         ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
         if (contents != null) {
             NonNullList<ItemStack> items = NonNullList.withSize(strongbox.getContainerSize(), ItemStack.EMPTY);
@@ -262,14 +230,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             strongbox.setItems(items);
         }
 
-        // Locked flag (stored on the item)
-        Boolean locked = stack.get(JolCraftDataComponents.LOCKED);
-        if (locked != null) {
-            level.setBlock(pos, state.setValue(LOCKED, locked), Block.UPDATE_ALL);
-        }
-
-        // Loot table getId + seed
-        // Loot table getId + seed (typed components)
         ResourceKey<LootTable> lootTable = stack.get(JolCraftDataComponents.LOOT_TABLE);
         if (lootTable != null) {
             strongbox.setLootTable(lootTable, strongbox.getLootTableSeed());
@@ -280,16 +240,16 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             strongbox.setLootTableSeed(lootSeed);
         }
 
-        level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+        Boolean locked = stack.get(JolCraftDataComponents.LOCKED);
+        if (locked != null && state.getValue(LOCKED) != locked) {
+            level.setBlock(pos, state.setValue(LOCKED, locked), Block.UPDATE_ALL);
+        }
+
         strongbox.setChanged();
     }
 
-    // ---------------------------------------------------------------------
-    // Interaction (key / open)
-    // ---------------------------------------------------------------------
-
     @Override
-    protected InteractionResult useItemOn(
+    protected ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
             Level level,
@@ -299,31 +259,27 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             BlockHitResult hit
     ) {
         if (level.isClientSide) {
-            return InteractionResult.CONSUME;
+            return ItemInteractionResult.CONSUME;
         }
 
-        // Dev key
         if (stack.is(JolCraftItems.DEV_KEY)) {
-            boolean locked = state.getValue(LOCKED);
-            boolean newLocked = !locked;
+            boolean newLocked = !state.getValue(LOCKED);
 
             level.setBlock(pos, state.setValue(LOCKED, newLocked), Block.UPDATE_ALL);
 
             player.displayClientMessage(
                     Component.translatable(
                             newLocked
-                                    ? JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOCKED
+                                    ? JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_LOCKED
                                     : JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_UNLOCKED
                     ).withStyle(ChatFormatting.GRAY),
                     true
             );
 
             PlaySound.strongboxUnlock(level, pos);
-
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
 
-        // Gate lockpicking if someone else is in session
         if (state.getValue(LOCKED)) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof StrongboxBlockEntity strongbox) {
@@ -334,7 +290,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                                     .withStyle(ChatFormatting.GRAY),
                             true
                     );
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             } else {
                 JolCraftLogs.warn(
@@ -343,8 +299,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                         JolCraftLogs.roundedPos(pos),
                         (be == null ? "null" : be.getClass().getName())
                 );
-                // Still consume interaction like before.
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
 
@@ -361,7 +316,8 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                     (be == null ? "null" : be.getClass().getName())
             );
         }
-        return InteractionResult.SUCCESS;
+
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
@@ -370,10 +326,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
         BlockEntity be = level.getBlockEntity(pos);
         return (be instanceof MenuProvider menuProvider) ? menuProvider : null;
     }
-
-    // ---------------------------------------------------------------------
-    // Redstone
-    // ---------------------------------------------------------------------
 
     @Override
     protected boolean hasAnalogOutputSignal(BlockState state) {
@@ -387,10 +339,6 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
                 ? AbstractContainerMenu.getRedstoneSignalFromContainer(strongbox)
                 : 0;
     }
-
-    // ---------------------------------------------------------------------
-    // Rotation / pathing / pick-block
-    // ---------------------------------------------------------------------
 
     @Override
     protected BlockState rotate(BlockState state, Rotation rotation) {
@@ -410,27 +358,34 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
 
     @SuppressWarnings("deprecation")
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         ItemStack stack = new ItemStack(JolCraftItems.STRONGBOX_ITEM.get());
 
-        if (includeData) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof StrongboxBlockEntity strongbox) {
-                stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(strongbox.getItems()));
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof StrongboxBlockEntity strongbox) {
+            stack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(strongbox.getItems()));
 
-                ResourceKey<LootTable> lootTable = strongbox.getLootTable();
-                long seed = strongbox.getLootTableSeed();
+            ResourceKey<LootTable> lootTable = strongbox.getLootTable();
+            long seed = strongbox.getLootTableSeed();
 
-                if (lootTable != null) stack.set(JolCraftDataComponents.LOOT_TABLE, lootTable);
-                else stack.remove(JolCraftDataComponents.LOOT_TABLE);
+            if (lootTable != null) {
+                stack.set(JolCraftDataComponents.LOOT_TABLE, lootTable);
+            } else {
+                stack.remove(JolCraftDataComponents.LOOT_TABLE);
+            }
 
-                if (seed != 0L) stack.set(JolCraftDataComponents.LOOT_SEED, seed);
-                else stack.remove(JolCraftDataComponents.LOOT_SEED);
+            if (seed != 0L) {
+                stack.set(JolCraftDataComponents.LOOT_SEED, seed);
+            } else {
+                stack.remove(JolCraftDataComponents.LOOT_SEED);
             }
         }
 
-        if (state.getValue(LOCKED)) stack.set(JolCraftDataComponents.LOCKED, true);
-        else stack.remove(JolCraftDataComponents.LOCKED);
+        if (state.getValue(LOCKED)) {
+            stack.set(JolCraftDataComponents.LOCKED, true);
+        } else {
+            stack.remove(JolCraftDataComponents.LOCKED);
+        }
 
         return stack;
     }

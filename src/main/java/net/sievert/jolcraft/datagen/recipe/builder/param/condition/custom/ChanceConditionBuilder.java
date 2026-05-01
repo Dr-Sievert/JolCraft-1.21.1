@@ -1,9 +1,10 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.custom.ChanceCondition;
-import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.custom.ChanceCondition;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Datagen-only builder for {@link ChanceCondition}.
@@ -18,7 +19,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
  * - chance must be in [0.0, 1.0]
  * - chance must be finite and not NaN
  */
-public final class ChanceConditionBuilder extends AbstractConditionBuilder<ChanceConditionBuilder> implements ValidatedBuilder<Condition> {
+public final class ChanceConditionBuilder extends AbstractConditionBuilder<ChanceConditionBuilder> implements JolCraftValidatedBuilder<Condition> {
 
     private double chance;
 
@@ -42,7 +43,7 @@ public final class ChanceConditionBuilder extends AbstractConditionBuilder<Chanc
     // ---------------------------------------------------------------------
 
     @Override
-    public DataResult<Condition> buildValidated() {
+    public @NotNull DataResult<Condition> buildValidated() {
         ChanceCondition built = new ChanceCondition(chance, invert());
         return built.validate();
     }

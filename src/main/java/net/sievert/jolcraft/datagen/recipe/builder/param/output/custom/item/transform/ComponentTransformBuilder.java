@@ -3,7 +3,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.tra
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ComponentTransform;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ComponentTransform;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import org.jetbrains.annotations.Nullable;
 

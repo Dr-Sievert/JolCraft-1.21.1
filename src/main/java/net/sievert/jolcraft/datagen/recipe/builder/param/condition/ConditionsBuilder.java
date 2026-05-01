@@ -1,10 +1,10 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.condition;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.base.ValidatedBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public final class ConditionsBuilder implements ParamBuilder<Conditions> {
         return this;
     }
 
-    public ConditionsBuilder condition(ValidatedBuilder<? extends Condition> builder) {
+    public ConditionsBuilder condition(JolCraftValidatedBuilder<? extends Condition> builder) {
         if (builder == null) return this;
 
         DataResult<? extends Condition> built = builder.buildValidated();
@@ -56,10 +56,10 @@ public final class ConditionsBuilder implements ParamBuilder<Conditions> {
     }
 
     @SafeVarargs
-    public final ConditionsBuilder conditions(ValidatedBuilder<? extends Condition>... builders) {
+    public final ConditionsBuilder conditions(JolCraftValidatedBuilder<? extends Condition>... builders) {
         if (builders == null) return this;
 
-        for (ValidatedBuilder<? extends Condition> builder : builders) {
+        for (JolCraftValidatedBuilder<? extends Condition> builder : builders) {
             condition(builder);
         }
         return this;

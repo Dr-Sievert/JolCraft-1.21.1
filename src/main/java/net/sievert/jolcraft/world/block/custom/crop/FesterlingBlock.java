@@ -9,8 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BushBlock;
@@ -90,14 +90,16 @@ public class FesterlingBlock extends JolCraftMushroomBlock{
     }
 
     @Override
-    public BlockState updateShape(
-            BlockState state, LevelReader level, ScheduledTickAccess scheduledTick,
-            BlockPos pos, Direction dir, BlockPos pos2, BlockState state2, RandomSource random
+    protected BlockState updateShape(
+            BlockState state,
+            Direction facing,
+            BlockState facingState,
+            LevelAccessor level,
+            BlockPos currentPos,
+            BlockPos facingPos
     ) {
-        return this.canSurvive(state, level, pos)
-                ? state
-                : Blocks.AIR.defaultBlockState();
+        return !state.canSurvive(level, currentPos)
+                ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(state, facing, facingState, level, currentPos, facingPos);
     }
-
-
 }

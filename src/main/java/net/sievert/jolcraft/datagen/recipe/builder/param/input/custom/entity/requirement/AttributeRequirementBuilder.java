@@ -2,7 +2,7 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.re
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement.AttributeRequirement;
+import net.sievert.jolcraft.world.recipe.param.input.custom.entity.requirement.AttributeRequirement;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 /**

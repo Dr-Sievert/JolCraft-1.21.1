@@ -1,8 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
@@ -12,24 +10,37 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.data.recipe.param.output.base.Output;
-import net.sievert.jolcraft.data.recipe.param.output.custom.EffectOutput;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
+import net.sievert.jolcraft.world.recipe.param.output.base.Output;
+import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmissionExecutor;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeLookups;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.FermentingCauldronRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 @SuppressWarnings("SameParameterValue")
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public final class FermentingCauldronRecipesSubProvider implements RecipeSubProvider {
+public record FermentingCauldronRecipesSubProvider(
+        JolCraftDataProvider<RecipeOutput> parent
+) implements RecipeSubProvider {
+
+    public FermentingCauldronRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NotNull String id() {
+        return folder();
+    }
 
     @Override
     public @NotNull String folder() {
@@ -38,12 +49,13 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
 
     @Override
     public void registerRecipes(
-            @NotNull RecipeEmissionExecutor executor,
             @NotNull RecipeOutput output,
-            @NotNull RecipeLookups lookups
+            @NotNull JolCraftDataLookups lookups,
+            @NotNull JolCraftDataTracking tracking
     ) {
         fermentingFinalize(
-                executor,
+                output,
+                tracking,
                 Items.SUGAR,
                 null,
                 1200,
@@ -52,35 +64,39 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
         );
 
         fermentingExtract(
-                executor,
+                output,
+                tracking,
                 Items.GLASS_BOTTLE,
                 Items.SUGAR,
                 JolCraftItems.YEAST.get()
         );
 
         fermenting(
-                executor,
+                output,
+                tracking,
                 JolCraftItems.BARLEY_MALT.get(),
                 null,
                 20,
                 5,
-                0x805d37
+                0x805D37
         );
 
         fermentingEffect(
-                executor,
+                output,
+                tracking,
                 JolCraftItems.ASGARNIAN_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
                 20,
                 5,
-                0x91706e,
+                0x91706E,
                 MobEffects.HEALTH_BOOST,
                 6000,
                 0
         );
 
         fermentingEffect(
-                executor,
+                output,
+                tracking,
                 JolCraftItems.DUSKHOLD_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
                 20,
@@ -92,31 +108,34 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
         );
 
         fermentingEffect(
-                executor,
+                output,
+                tracking,
                 JolCraftItems.KRANDONIAN_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
                 20,
                 5,
-                0x6e918f,
+                0x6E918F,
                 MobEffects.DAMAGE_BOOST,
                 6000,
                 0
         );
 
         fermentingEffect(
-                executor,
+                output,
+                tracking,
                 JolCraftItems.YANILLIAN_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
                 20,
                 5,
-                0x54832e,
+                0x54832E,
                 MobEffects.MOVEMENT_SPEED,
                 6000,
                 0
         );
 
         fermentingFinalize(
-                executor,
+                output,
+                tracking,
                 JolCraftItems.YEAST.get(),
                 JolCraftTags.Items.HOPS,
                 6000,
@@ -125,16 +144,18 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
         );
 
         fermentingExtract(
-                executor,
+                output,
+                tracking,
                 JolCraftItems.GLASS_MUG.get(),
                 JolCraftItems.YEAST.get(),
                 JolCraftItems.DWARVEN_BREW.get()
         );
     }
 
-    private static void fermenting(
-            RecipeEmissionExecutor executor,
-            ItemLike ingredient,
+    private void fermenting(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull ItemLike ingredient,
             @Nullable ItemLike lastIngredient,
             int brewTicks,
             int bubbleTicks,
@@ -155,12 +176,13 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
             builder.noLastIngredient();
         }
 
-        executor.emit(builder.buildValidated());
+        emit(output, tracking, builder.buildValidated());
     }
 
-    private static void fermentingFinalize(
-            RecipeEmissionExecutor executor,
-            ItemLike ingredient,
+    private void fermentingFinalize(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull ItemLike ingredient,
             @Nullable TagKey<Item> lastIngredientTag,
             int brewTicks,
             int bubbleTicks,
@@ -181,17 +203,18 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
             builder.noLastIngredient();
         }
 
-        executor.emit(builder.buildValidated());
+        emit(output, tracking, builder.buildValidated());
     }
 
-    private static void fermentingEffect(
-            RecipeEmissionExecutor executor,
-            ItemLike ingredient,
+    private void fermentingEffect(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull ItemLike ingredient,
             @Nullable TagKey<Item> lastIngredientTag,
             int brewTicks,
             int bubbleTicks,
             int colorRgb,
-            Holder<MobEffect> effect,
+            @NotNull Holder<MobEffect> effect,
             int duration,
             int amplifier
     ) {
@@ -210,14 +233,15 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
             builder.noLastIngredient();
         }
 
-        executor.emit(builder.buildValidated());
+        emit(output, tracking, builder.buildValidated());
     }
 
-    private static void fermentingExtract(
-            RecipeEmissionExecutor executor,
-            ItemLike extractor,
+    private void fermentingExtract(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull ItemLike extractor,
             @Nullable ItemLike lastIngredient,
-            ItemLike result
+            @NotNull ItemLike result
     ) {
         FermentingCauldronRecipeBuilder builder = FermentingCauldronRecipeBuilder.create()
                 .ingredient(extractor)
@@ -233,14 +257,14 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
             builder.noLastIngredient();
         }
 
-        executor.emit(builder.buildValidated());
+        emit(output, tracking, builder.buildValidated());
     }
 
     private static int argb(int colorRgb) {
         return 0xFF000000 | (colorRgb & 0xFFFFFF);
     }
 
-    private static ItemSelector tag(TagKey<Item> tag) {
+    private static @NotNull ItemSelector tag(@NotNull TagKey<Item> tag) {
         return ItemSelector.of(
                 ItemIngredientBuilder.create()
                         .tag(tag)
@@ -248,7 +272,7 @@ public final class FermentingCauldronRecipesSubProvider implements RecipeSubProv
         );
     }
 
-    private static ItemSelector item(ItemLike item) {
+    private static @NotNull ItemSelector item(@NotNull ItemLike item) {
         return ItemSelector.of(
                 ItemIngredientBuilder.create()
                         .item(item)

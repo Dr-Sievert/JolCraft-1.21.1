@@ -8,7 +8,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,7 +63,7 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
 
         cachedInputBlock = level.registryAccess()
                 .lookupOrThrow(Registries.BLOCK)
-                .get(inputBlockId)
+                .get(ResourceKey.create(Registries.BLOCK, inputBlockId))
                 .map(Holder::value)
                 .orElseThrow(() -> new IllegalStateException("Unknown input_block: " + inputBlockId));
 
@@ -73,14 +75,12 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
 
         cachedOutputBlock = level.registryAccess()
                 .lookupOrThrow(Registries.BLOCK)
-                .get(outputBlockId)
+                .get(ResourceKey.create(Registries.BLOCK, outputBlockId))
                 .map(Holder::value)
                 .orElseThrow(() -> new IllegalStateException("Unknown output_block: " + outputBlockId));
 
         return cachedOutputBlock;
     }
-
-
 
     @SuppressWarnings("deprecation")
     @Override
@@ -95,12 +95,15 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
         Block input = resolveInput(level);
 
         if (current.state().is(input)) {
-            if (settings.getRandom(current.pos()).nextFloat() < probability) {
+            var random = settings.getRandom(current.pos());
+
+            if (random.nextFloat() < probability) {
                 Block output = resolveOutput(level);
                 BlockState replacedState = output.defaultBlockState();
 
                 CompoundTag nbt = new CompoundTag();
-                nbt.putString(JolCraftStrings.underscored(JolCraftDictionary.LOOT, JolCraftDictionary.TABLE), lootTable.toString());
+                nbt.putString(RandomizableContainer.LOOT_TABLE_TAG, lootTable.toString());
+                nbt.putLong(RandomizableContainer.LOOT_TABLE_SEED_TAG, random.nextLong());
 
                 return new StructureTemplate.StructureBlockInfo(current.pos(), replacedState, nbt);
             }

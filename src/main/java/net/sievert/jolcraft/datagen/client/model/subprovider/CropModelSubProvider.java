@@ -3,20 +3,26 @@ package net.sievert.jolcraft.datagen.client.model.subprovider;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.blockstates.*;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TexturedModel;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.data.models.blockstates.BlockStateGenerator;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.PropertyDispatch;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.datagen.client.model.util.AbstractModelProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
+import net.sievert.jolcraft.datagen.client.model.JolCraftModelSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.crop.BarleyCropBlock;
 import net.sievert.jolcraft.world.block.custom.crop.FesterlingCropBlock;
@@ -26,58 +32,78 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public final class CropModelSubProvider implements AbstractModelProvider.ModelSubProvider {
+public record CropModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
 
     @Override
-    public void addModels(@NotNull BlockModelGenerators blocks, @NotNull ItemModelGenerators items) {
+    public @NotNull String id() {
+        return JolCraftDictionary.CROP;
+    }
 
-        // -------- Items --------
-        items.generateFlatItem(JolCraftItems.BARLEY.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+    @Override
+    public void registerModels(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull JolCraftDataTracking tracking
+    ) {
+        builder.handheldItem(JolCraftItems.BARLEY.get());
 
-        items.generateFlatItem(JolCraftItems.ASGARNIAN_HOPS.get(), ModelTemplates.FLAT_ITEM);
-        items.generateFlatItem(JolCraftItems.DUSKHOLD_HOPS.get(), ModelTemplates.FLAT_ITEM);
-        items.generateFlatItem(JolCraftItems.KRANDONIAN_HOPS.get(), ModelTemplates.FLAT_ITEM);
-        items.generateFlatItem(JolCraftItems.YANILLIAN_HOPS.get(), ModelTemplates.FLAT_ITEM);
+        builder.flatItem(JolCraftItems.ASGARNIAN_HOPS.get());
+        builder.flatItem(JolCraftItems.DUSKHOLD_HOPS.get());
+        builder.flatItem(JolCraftItems.KRANDONIAN_HOPS.get());
+        builder.flatItem(JolCraftItems.YANILLIAN_HOPS.get());
 
-        items.generateFlatItem(JolCraftItems.DEEPSLATE_BULBS.get(), ModelTemplates.FLAT_ITEM);
+        builder.flatItem(JolCraftItems.DEEPSLATE_BULBS.get());
 
-        // -------- Blocks --------
-        createVerdantFarmland(blocks);
-        blocks.createTrivialCube(JolCraftBlocks.VERDANT_SOIL.get());
+        createVerdantFarmland(builder);
+        builder.cubeAllWithItem(JolCraftBlocks.VERDANT_SOIL.get());
 
-        blocks.createCropBlock(JolCraftBlocks.BARLEY_CROP.get(), BarleyCropBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7);
-        blocks.createRotatedPillarWithHorizontalVariant(
-                JolCraftBlocks.BARLEY_BLOCK.get(),
-                TexturedModel.COLUMN,
-                TexturedModel.COLUMN_HORIZONTAL
+        builder.rotatedPillarWithHorizontalVariantAndItem(JolCraftBlocks.BARLEY_BLOCK.get());
+        builder.createCropBlock(
+                JolCraftBlocks.BARLEY_CROP.get(),
+                BarleyCropBlock.AGE,
+                0, 1, 2, 3, 4, 5, 6, 7
         );
 
-        blocks.createPlantWithDefaultItem(
+        builder.createPlantWithDefaultItem(
                 JolCraftBlocks.DUSKCAP.get(),
-                JolCraftBlocks.POTTED_DUSKCAP.get(),
-                BlockModelGenerators.PlantType.NOT_TINTED
+                JolCraftBlocks.POTTED_DUSKCAP.get()
         );
 
-        createFesterlingCrop(blocks);
-        blocks.createPlantWithDefaultItem(
+        createFesterlingCrop(builder);
+
+        builder.createPlantWithDefaultItem(
                 JolCraftBlocks.FESTERLING.get(),
-                JolCraftBlocks.POTTED_FESTERLING.get(),
-                BlockModelGenerators.PlantType.NOT_TINTED
+                JolCraftBlocks.POTTED_FESTERLING.get()
         );
 
-        createTopCropBlock(blocks, JolCraftBlocks.ASGARNIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
-        blocks.createCropBlock(JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        createTopCropBlock(builder, JolCraftBlocks.ASGARNIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        builder.createCropBlock(
+                JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(),
+                HopsCropBottomBlock.AGE,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+        );
 
-        createTopCropBlock(blocks, JolCraftBlocks.DUSKHOLD_CROP_TOP.get(), 0, 1, 2, 3, 4);
-        blocks.createCropBlock(JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        createTopCropBlock(builder, JolCraftBlocks.DUSKHOLD_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        builder.createCropBlock(
+                JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(),
+                HopsCropBottomBlock.AGE,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+        );
 
-        createTopCropBlock(blocks, JolCraftBlocks.KRANDONIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
-        blocks.createCropBlock(JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        createTopCropBlock(builder, JolCraftBlocks.KRANDONIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        builder.createCropBlock(
+                JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(),
+                HopsCropBottomBlock.AGE,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+        );
 
-        createTopCropBlock(blocks, JolCraftBlocks.YANILLIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
-        blocks.createCropBlock(JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(), HopsCropBottomBlock.AGE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        createTopCropBlock(builder, JolCraftBlocks.YANILLIAN_CROP_TOP.get(), 0, 1, 2, 3, 4);
+        builder.createCropBlock(
+                JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(),
+                HopsCropBottomBlock.AGE,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+        );
 
-        blocks.blockStateOutput.accept(new BlockStateGenerator() {
+        builder.addBlockState(new BlockStateGenerator() {
             @Override
             public JsonObject get() {
                 JsonObject root = new JsonObject();
@@ -96,7 +122,11 @@ public final class CropModelSubProvider implements AbstractModelProvider.ModelSu
         });
     }
 
-    private static void createTopCropBlock(BlockModelGenerators blockModels, Block block, int... ageToVisualStageMapping) {
+    private static void createTopCropBlock(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull Block block,
+            int... ageToVisualStageMapping
+    ) {
         if (HopsCropTopBlock.TOP_AGE.getPossibleValues().size() != ageToVisualStageMapping.length) {
             throw new IllegalArgumentException("Mismatch between age property values and visual stage mapping!");
         }
@@ -107,52 +137,57 @@ public final class CropModelSubProvider implements AbstractModelProvider.ModelSu
             int visualStage = ageToVisualStageMapping[ageValue];
             ResourceLocation modelId = visualStageModels.computeIfAbsent(
                     visualStage,
-                    i -> blockModels.createSuffixedVariant(block, "_stage" + i, ModelTemplates.CROP, TextureMapping::crop)
+                    i -> builder.createSuffixedVariant(block, "_stage" + i, ModelTemplates.CROP, TextureMapping::crop)
             );
             return Variant.variant().with(VariantProperties.MODEL, modelId);
         });
 
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.multiVariant(block).with(dispatch));
+        builder.addBlockState(MultiVariantGenerator.multiVariant(block).with(dispatch));
     }
 
-    private static void createFesterlingCrop(BlockModelGenerators blockModels) {
-        blockModels.blockStateOutput.accept(
+    private static void createFesterlingCrop(@NotNull JolCraftModelBuilder builder) {
+        builder.addBlockState(
                 MultiVariantGenerator.multiVariant(JolCraftBlocks.FESTERLING_CROP.get())
                         .with(
                                 PropertyDispatch.property(FesterlingCropBlock.AGE)
-                                        .generate(age -> Variant.variant()
-                                                .with(
-                                                        VariantProperties.MODEL,
-                                                        blockModels.createSuffixedVariant(
-                                                                JolCraftBlocks.FESTERLING_CROP.get(),
-                                                                "_stage" + age,
-                                                                ModelTemplates.CROSS,
-                                                                TextureMapping::cross
-                                                        )
+                                        .generate(age -> Variant.variant().with(
+                                                VariantProperties.MODEL,
+                                                builder.createSuffixedVariant(
+                                                        JolCraftBlocks.FESTERLING_CROP.get(),
+                                                        "_stage" + age,
+                                                        ModelTemplates.CROSS,
+                                                        TextureMapping::cross
                                                 )
-                                        )
+                                        ))
                         )
         );
     }
 
-    private static void createVerdantFarmland(BlockModelGenerators blockModels) {
+    private static void createVerdantFarmland(@NotNull JolCraftModelBuilder builder) {
         TextureMapping mapping = new TextureMapping()
                 .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(JolCraftBlocks.VERDANT_SOIL.get()))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(JolCraftBlocks.VERDANT_FARMLAND.get()));
 
         ResourceLocation model = ModelTemplates.FARMLAND.create(
-                JolCraftBlocks.VERDANT_FARMLAND.get(),
+                ModelLocationUtils.getModelLocation(JolCraftBlocks.VERDANT_FARMLAND.get()),
                 mapping,
-                blockModels.modelOutput
+                builder::addModel
         );
 
-        blockModels.blockStateOutput.accept(
+        builder.addBlockState(
                 MultiVariantGenerator.multiVariant(JolCraftBlocks.VERDANT_FARMLAND.get())
-                        .with(BlockModelGenerators.createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, model, model))
+                        .with(JolCraftModelBuilder.createEmptyOrFullDispatch(
+                                BlockStateProperties.MOISTURE,
+                                7,
+                                model,
+                                model
+                        ))
         );
+
+        builder.delegateItemToBlockModel(JolCraftBlocks.VERDANT_FARMLAND.get());
     }
 
-    private static JsonObject modelObj(String path) {
+    private static @NotNull JsonObject modelObj(@NotNull String path) {
         JsonObject obj = new JsonObject();
         obj.addProperty("model", JolCraft.MOD_ID + ":" + path);
         return obj;

@@ -1,19 +1,23 @@
 package net.sievert.jolcraft.event.mod;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
-import net.sievert.jolcraft.data.JolCraftAttributes;
+import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.custom.creature.MuffhornEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class JolCraftModEvents {
 
@@ -40,25 +44,54 @@ public final class JolCraftModEvents {
 
         event.put(JolCraftEntities.MUFFHORN.get(), MuffhornEntity.createAttributes().build()); entityTypes++;
 
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered attributes for {} entity types", entityTypes);
+        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered attributes for {} new entity types", entityTypes);
     }
 
     @SubscribeEvent
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
+        int allEntities = addLivingEntityAttributes(event);
+        int playerOnly = addPlayerOnlyAttributes(event);
+
+        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} attribute entries for all living entities", allEntities);
+        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} player-only attributes", playerOnly);
+    }
+
+    private static int addLivingEntityAttributes(EntityAttributeModificationEvent event) {
         int added = 0;
 
-        event.add(EntityType.PLAYER, JolCraftAttributes.XP_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.SLOW_RESISTANCE); added++;
+        added += addToAllLivingEntities(event, JolCraftAttributes.RADIANT);
+        added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_PENETRATION);
+        added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.ATTACK_DAMAGE_INCREASE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_TOTAL);
+        added += addToAllLivingEntities(event, JolCraftAttributes.MOON_SHIELD);
+
+        return added;
+    }
+
+    private static int addToAllLivingEntities(
+            EntityAttributeModificationEvent event,
+            Holder<Attribute> attribute
+    ) {
+        int added = 0;
+
+        for (EntityType<? extends LivingEntity> type : event.getTypes()) {
+            event.add(type, attribute);
+            added++;
+        }
+
+        return added;
+    }
+
+    private static int addPlayerOnlyAttributes(EntityAttributeModificationEvent event) {
+        int added = 0;
+
+        event.add(EntityType.PLAYER, JolCraftAttributes.EXPERIENCE_INCREASE); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.CROP_LOOT_INCREASE); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.CHEST_LOOT_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.RADIANT); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.ARMOR_UNBREAKING); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.MAGIC_RESISTANCE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.ARMOR_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.ATTACK_DAMAGE_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.MOVEMENT_SPEED_DAY_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.MOVEMENT_SPEED_NIGHT_INCREASE); added++;
+        event.add(EntityType.PLAYER, JolCraftAttributes.ITEM_USE_SPEED); added++;
 
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} new player attributes", added);
+        return added;
     }
 }

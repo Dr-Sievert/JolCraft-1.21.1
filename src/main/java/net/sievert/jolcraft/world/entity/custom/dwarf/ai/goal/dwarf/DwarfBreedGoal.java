@@ -20,7 +20,7 @@ public class DwarfBreedGoal extends Goal {
 
     public DwarfBreedGoal(AbstractDwarfEntity dwarf, double speedModifier, Class<? extends AbstractDwarfEntity> partnerClass) {
         this.dwarf = dwarf;
-        this.level = getServerLevel(dwarf);
+        this.level = (ServerLevel) dwarf.level();
         this.partnerClass = partnerClass;
         this.speedModifier = speedModifier;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));

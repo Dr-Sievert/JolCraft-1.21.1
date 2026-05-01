@@ -1,8 +1,9 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.profession;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.data.attachment.custom.compass.DiscoveredStructuresHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
@@ -19,7 +20,7 @@ public final class ExplorerInteractionHandler
         var dwarf = ctx.dwarf();
         var player = ctx.player();
 
-        int score = DiscoveredStructuresHelper.getDiscoveryScore(player);
+        int score = DiscoveredStructuresAttachmentHelper.getDiscoveryScore((ServerPlayer) player);
         if (score <= dwarf.getDwarfXp()) {
             return;
         }

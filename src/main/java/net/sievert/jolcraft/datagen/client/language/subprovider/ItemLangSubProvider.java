@@ -5,37 +5,55 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
-import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+
+import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimPatterns;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 @OnlyIn(Dist.CLIENT)
-public final class ItemLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class ItemLangSubProvider implements LanguageSubProvider {
 
     @Override
-    public void addTranslations(AbstractLanguageProvider p) {
+    public @NotNull String id() {
+        return JolCraftStrings.plural(JolCraftDictionary.ITEM);
+    }
+
+    @Override
+    public @NotNull JolCraftDataProvider<Map<String, String>> parent() {
+        return languageProvider();
+    }
+
+
+    @Override
+    public void addTranslations(@NotNull Map<String, String> translations) {
 
         // Creative tabs
-        p.putManual(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, JolCraft.MOD_NAME);
-        p.putManual(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, JolCraft.MOD_NAME + " Spawn Eggs");
+        putManual(translations, JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, JolCraft.MOD_NAME);
+        putManual(translations, JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, JolCraft.MOD_NAME + " Spawn Eggs");
 
         // Structure maps
-        p.putManual("filled_map.forge", "Map to a Dwarven Forge");
+        putManual(translations, "filled_map.forge", "Map to a Dwarven Forge");
 
         //Items
 
-        p.putManual(JolCraftItems.YEAST, "Brewing Yeast");
+        putManual(translations, JolCraftItems.YEAST, "Brewing Yeast");
 
-        p.putSame("Ink and Quill",
+        putSame(translations, "Ink and Quill",
                 JolCraftItems.QUILL_FULL,
                 JolCraftItems.QUILL_HALF,
                 JolCraftItems.QUILL_SMALL
         );
-        p.putManual(JolCraftItems.QUILL_EMPTY, "Empty Ink and Quill");
+        putManual(translations, JolCraftItems.QUILL_EMPTY, "Empty Ink and Quill");
 
-        p.putSame("Reputation Tablet",
+        putSame(translations, "Reputation Tablet",
                 JolCraftItems.REPUTATION_TABLET_0,
                 JolCraftItems.REPUTATION_TABLET_1,
                 JolCraftItems.REPUTATION_TABLET_2,
@@ -43,14 +61,14 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
                 JolCraftItems.REPUTATION_TABLET_4
         );
 
-        p.putSame("Dwarven Tome",
+        putSame(translations, "Dwarven Tome",
                 JolCraftItems.DWARVEN_TOME_COMMON,
                 JolCraftItems.DWARVEN_TOME_UNCOMMON,
                 JolCraftItems.DWARVEN_TOME_RARE,
                 JolCraftItems.DWARVEN_TOME_EPIC
         );
 
-        p.putSame("Ancient Dwarven Tome",
+        putSame(translations, "Ancient Dwarven Tome",
                 JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON,
                 JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON,
                 JolCraftItems.ANCIENT_DWARVEN_TOME_RARE,
@@ -58,15 +76,14 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
                 JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY
         );
 
-        p.putSame("Ancient Unidentified Dwarven Tome",
+        putSame(translations, "Ancient Unidentified Dwarven Tome",
                 JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME,
                 JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME
         );
 
-        p.putManual(JolCraftItems.SCRAP_HEAP, "Heap of Scrap");
-        p.putManual(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE, "Forge Armor Trim");
+        putManual(translations, JolCraftItems.SCRAP_HEAP, "Heap of Scrap");
 
-        p.putManualFlippedAll(
+        putManualFlippedAll(translations, 
                 JolCraftItems.CONTRACT_BLANK,
                 JolCraftItems.CONTRACT_WRITTEN,
                 JolCraftItems.CONTRACT_SIGNED,
@@ -108,13 +125,26 @@ public final class ItemLangSubProvider implements AbstractLanguageProvider.LangS
                 JolCraftItems.WOECRYSTAL_CUT
         );
 
+        //Trim Patterns
+        addTrimTemplateItems(translations);
+
         for (DeferredHolder<?, ?> holder : JolCraftItems.ITEMS.getEntries()) {
             ResourceLocation id = holder.getId();
 
             String key = AbstractLanguageKeys.item(id.getPath());
-            if (p.hasKey(key)) continue;
+            if (hasKey(translations, key)) continue;
 
-            p.put(key, JolCraftStrings.toTitleCase(id.getPath()));
+            put(translations, key, JolCraftStrings.toTitleCase(id.getPath()));
+        }
+    }
+
+    private void addTrimTemplateItems(@NotNull Map<String, String> translations) {
+        String smithingTemplateName = JolCraftStrings.toTitleCase(
+                JolCraftStrings.underscored(JolCraftDictionary.SMITHING, JolCraftDictionary.TEMPLATE)
+        );
+
+        for (JolCraftTrimPatterns.Entry entry : JolCraftTrimPatterns.entries()) {
+            putItem(translations, entry.templateItem(), smithingTemplateName);
         }
     }
 }

@@ -3,6 +3,7 @@ package net.sievert.jolcraft.network.handler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -13,9 +14,9 @@ import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundPlaySoundPacket;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundSpawnParticlePacket;
-import net.sievert.jolcraft.util.JolCraftLogTags;
-import net.sievert.jolcraft.util.JolCraftLogs;
-import net.sievert.jolcraft.world.gui.custom.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -149,7 +150,7 @@ public final class JolCraftServerPayloadHandlers {
             if (sp.distanceToSqr(packet.x(), packet.y(), packet.z()) > (maxDist * maxDist)) return;
 
             var lookup = level.registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
-            Optional<Holder.Reference<SoundEvent>> opt = lookup.get(soundId);
+            Optional<Holder.Reference<SoundEvent>> opt = lookup.get(ResourceKey.create(Registries.SOUND_EVENT, soundId));
             if (opt.isEmpty()) return;
 
             SoundEvent sound = opt.get().value();
@@ -201,7 +202,7 @@ public final class JolCraftServerPayloadHandlers {
             double maxDist = overrideLimiter ? 512.0D : 32.0D;
             if (sp.distanceToSqr(packet.x(), packet.y(), packet.z()) > (maxDist * maxDist)) return;
 
-            int count = packet.count();
+            int count = Mth.clamp(packet.count(), 0, 128);
             if (count < 0) return;
 
             double xDist = packet.xDist();
@@ -214,11 +215,13 @@ public final class JolCraftServerPayloadHandlers {
 
             level.sendParticles(
                     packet.particle(),
-                    overrideLimiter,
-                    packet.alwaysShow(),
-                    packet.x(), packet.y(), packet.z(),
+                    packet.x(),
+                    packet.y(),
+                    packet.z(),
                     count,
-                    xDist, yDist, zDist,
+                    xDist,
+                    yDist,
+                    zDist,
                     speed
             );
         });

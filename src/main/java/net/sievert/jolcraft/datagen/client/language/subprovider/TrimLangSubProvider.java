@@ -1,101 +1,82 @@
 package net.sievert.jolcraft.datagen.client.language.subprovider;
 
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.equipment.trim.TrimPattern;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
-import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
-import net.sievert.jolcraft.datagen.client.language.util.AbstractLanguageProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
-import net.sievert.jolcraft.world.item.trim.JolCraftTrimPatterns;
+import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimPatterns;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
-public final class TrimLangSubProvider implements AbstractLanguageProvider.LangSubProvider {
+public final class TrimLangSubProvider implements LanguageSubProvider {
 
     @Override
-    public void addTranslations(AbstractLanguageProvider p) {
-        p.putManual(JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS, "Can be used to trim armor.");
-        p.putManual(
-                JolCraftLanguageKeys.TOOLTIP_ATTRIBUTE_TRIM_MATERIALS,
-                "Can be used to trim armor for bonus stats. Applying additional cosmetic trims does not override given stats."
-        );
-
-        addTrimMaterials(p);
-        addTrimPatterns(p);
+    public @NotNull String id() {
+        return JolCraftStrings.plural(JolCraftDictionary.TRIM);
     }
 
-    // -------------------------------------------------------------------------
-    // Trim materials (single source of truth)
-    // -------------------------------------------------------------------------
+    @Override
+    public @NotNull JolCraftDataProvider<Map<String, String>> parent() {
+        return languageProvider();
+    }
 
-    private static void addTrimMaterials(AbstractLanguageProvider p) {
+    @Override
+    public void addTranslations(@NotNull Map<String, String> translations) {
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS, "Can be used to trim armor.");
+        putManual(
+                translations,
+                JolCraftLanguageKeys.TOOLTIP_ATTRIBUTE_TRIM_MATERIALS,
+                "Can be used to trim armor with bonus stats."
+        );
 
         for (JolCraftMaterials.Material material : JolCraftMaterials.Material.values()) {
-            addTrimMaterial(p, material.trimKey().location());
+            addTrimMaterial(translations, material.trimKey().location());
         }
 
         for (JolCraftTrimMaterials.Attribute attribute : JolCraftTrimMaterials.Attribute.values()) {
-            addTrimMaterial(p, attribute.key().location());
+            addTrimMaterial(translations, attribute.key().location());
+        }
+
+        for (JolCraftTrimPatterns.Entry entry : JolCraftTrimPatterns.entries()) {
+            addTrimPattern(translations, entry.key().location());
         }
     }
 
-    private static void addTrimMaterial(AbstractLanguageProvider p, ResourceLocation id) {
+    // -------------------------------------------------------------------------
+    // Trim materials
+    // -------------------------------------------------------------------------
+
+    private void addTrimMaterial(@NotNull Map<String, String> translations, @NotNull ResourceLocation id) {
         if (!JolCraft.MOD_ID.equals(id.getNamespace())) return;
 
         String langKey = trimMaterial(id.getPath());
-        if (p.hasKey(langKey)) return;
+        if (hasKey(translations, langKey)) return;
 
-        p.putManual(langKey, JolCraftStrings.toTitleCase(id.getPath()) + " Material");
+        putManual(translations, langKey, JolCraftStrings.toTitleCase(JolCraftStrings.spaced(id.getPath(), JolCraftDictionary.MATERIAL)));
     }
 
     // -------------------------------------------------------------------------
     // Trim patterns
     // -------------------------------------------------------------------------
 
-    private static void addTrimPatterns(AbstractLanguageProvider p) {
-        for (ResourceKey<TrimPattern> key : reflectTrimPatternKeys()) {
-            ResourceLocation id = key.location();
-            if (!JolCraft.MOD_ID.equals(id.getNamespace())) continue;
+    private void addTrimPattern(@NotNull Map<String, String> translations, @NotNull ResourceLocation id) {
+        if (!JolCraft.MOD_ID.equals(id.getNamespace())) return;
 
-            String langKey = trimPattern(id.getPath());
-            if (p.hasKey(langKey)) continue;
+        String langKey = trimPattern(id.getPath());
+        if (hasKey(translations, langKey)) return;
 
-            p.putManual(langKey, JolCraftStrings.toTitleCase(id.getPath()) + " Armor Trim");
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static ResourceKey<TrimPattern>[] reflectTrimPatternKeys() {
-        ResourceLocation expectedRegistryLoc = Registries.TRIM_PATTERN.location();
-
-        return (ResourceKey<TrimPattern>[]) Arrays.stream(JolCraftTrimPatterns.class.getDeclaredFields())
-                .filter(f -> Modifier.isStatic(f.getModifiers()))
-                .filter(f -> Modifier.isPublic(f.getModifiers()))
-                .filter(f -> f.getType() == ResourceKey.class)
-                .map(f -> (ResourceKey<?>) getStaticFieldValue(f))
-                .filter(Objects::nonNull)
-                .filter(k -> k.registry().equals(expectedRegistryLoc))
-                .toArray(ResourceKey[]::new);
-    }
-
-    private static Object getStaticFieldValue(Field f) {
-        try {
-            return f.get(null);
-        } catch (IllegalAccessException ignored) {
-            return null;
-        }
+        putManual(translations, langKey, JolCraftStrings.toTitleCase(JolCraftStrings.spaced(id.getPath(), JolCraftDictionary.ARMOR, JolCraftDictionary.TRIM)));
     }
 
     // -------------------------------------------------------------------------

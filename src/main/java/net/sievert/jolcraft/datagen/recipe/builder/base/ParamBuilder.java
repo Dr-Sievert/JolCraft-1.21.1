@@ -1,28 +1,16 @@
 package net.sievert.jolcraft.datagen.recipe.builder.base;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.recipe.param.base.SelfValidating;
+import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
+import net.sievert.jolcraft.datagen.base.builder.JolCraftValidatedBuilder;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * Param-specific builder contract.
- *
- * Build targets may be:
- * - concrete self-validating params
- * - polymorphic param interfaces such as OutputParam
- *
- * Contract:
- * - build() assembles the value
- * - buildValidated() validates when the built value implements SelfValidating
- */
-public interface ParamBuilder<T> extends ValidatedBuilder<T> {
+public interface ParamBuilder<T> extends JolCraftValidatedBuilder<T> {
 
-    /**
-     * Assemble without validation.
-     */
     T build();
 
     @Override
-    default DataResult<T> buildValidated() {
+    default @NotNull DataResult<T> buildValidated() {
         T built = build();
 
         if (built == null) {
@@ -31,7 +19,6 @@ public interface ParamBuilder<T> extends ValidatedBuilder<T> {
 
         if (built instanceof SelfValidating<?> validating) {
             DataResult<?> validated = validating.validate();
-
             if (validated.error().isPresent()) {
                 return DataResult.error(() ->
                         validated.error().map(DataResult.Error::message).orElse("invalid")

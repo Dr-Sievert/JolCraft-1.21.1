@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.condition.custom;
 
-import net.sievert.jolcraft.data.recipe.param.condition.Condition;
+import net.sievert.jolcraft.world.recipe.param.condition.Condition;
 
 /**
  * Shared base for condition builders that support {@link Condition#invert()}.

@@ -5,8 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationImpl;
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationHelper;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
@@ -25,7 +24,7 @@ public final class GuildmasterInteractionHandler
         var dwarf = ctx.dwarf();
         var player = ctx.player();
 
-        int reputationTier = DwarvenReputationHelper.getTier(player);
+        int reputationTier = DwarvenReputationAttachmentHelper.getTier(player);
 
         int desiredLevel = Math.min(
                 reputationTier + 1,
@@ -57,9 +56,9 @@ public final class GuildmasterInteractionHandler
         var stack = ctx.stack();
 
         if (stack.is(JolCraftTags.Items.REPUTATION_TABLETS)) {
-            int maxTier = DwarvenReputationImpl.getThresholdCount();
-            int tier = DwarvenReputationHelper.getTier(player);
-            int endorsementCount = DwarvenReputationHelper.getEndorsementCount(player);
+            int maxTier = DwarvenReputationAttachmentHelper.getMaxTier();
+            int tier = DwarvenReputationAttachmentHelper.getTier(player);
+            int endorsementCount = DwarvenReputationAttachmentHelper.getEndorsementCount(player);
 
             if (tier >= maxTier) {
                 player.displayClientMessage(
@@ -71,8 +70,8 @@ public final class GuildmasterInteractionHandler
                 return InteractionResult.SUCCESS;
             }
 
-            if (!DwarvenReputationImpl.canAdvance(tier, endorsementCount)) {
-                int needed = DwarvenReputationImpl.getThresholdForTier(tier);
+            if (!DwarvenReputationAttachmentHelper.canAdvance(player)) {
+                int needed = DwarvenReputationAttachmentHelper.getThresholdForTier(tier);
                 player.displayClientMessage(
                         Component.translatable(
                                 JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_NOT_ENOUGH_ENDORSEMENTS,

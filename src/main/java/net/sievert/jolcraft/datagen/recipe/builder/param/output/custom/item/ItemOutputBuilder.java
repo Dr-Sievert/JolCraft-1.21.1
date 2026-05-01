@@ -6,18 +6,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
-import net.sievert.jolcraft.data.id.recipe.JolCraftParameterIds;
-import net.sievert.jolcraft.data.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.data.recipe.param.output.base.OutputParam;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemProducer;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.ItemSpec;
-import net.sievert.jolcraft.data.recipe.param.output.custom.item.transform.ItemTransforms;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
+import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemProducer;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemSpec;
+import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.transform.ItemTransformsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.output.hook.HookBuilder;
+import net.sievert.jolcraft.world.recipe.param.output.hook.Hook;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public final class ItemOutputBuilder implements ParamBuilder<ItemOutput> {
     private ItemSpec result;
     private ItemTransforms transforms;
     private Conditions conditions;
-    private final List<net.sievert.jolcraft.data.recipe.param.output.hook.Hook> hooks = new ArrayList<>();
+    private final List<Hook> hooks = new ArrayList<>();
 
     private ItemOutputBuilder() {}
 
@@ -151,7 +152,7 @@ public final class ItemOutputBuilder implements ParamBuilder<ItemOutput> {
         return this;
     }
 
-    public ItemOutputBuilder hook(net.sievert.jolcraft.data.recipe.param.output.hook.Hook hook) {
+    public ItemOutputBuilder hook(Hook hook) {
         if (hook != null) {
             this.hooks.add(hook);
         }

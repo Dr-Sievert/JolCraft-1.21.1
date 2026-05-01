@@ -14,7 +14,11 @@ public final class PlaySound {
     // ---- Curse ----
 
     public static void curse(Player player) {
-        JolCraftSoundHelper.player(player, JolCraftSounds.CURSE.get(), 0.8F, 1.0F);
+        JolCraftSoundHelper.player(player, JolCraftSounds.CURSE.get(), 0.8F, 0.2F * player.level().random.nextFloat() + 0.8F);
+    }
+
+    public static void curse(LivingEntity entity) {
+        JolCraftSoundHelper.entity(entity, JolCraftSounds.CURSE.get(), 0.8F, 0.2F * entity.level().random.nextFloat() + 0.8F);
     }
 
     // ---- Level Up ----

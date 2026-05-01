@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.requirement;
 
-import net.sievert.jolcraft.data.recipe.param.input.custom.entity.requirement.BabyRequirement;
+import net.sievert.jolcraft.world.recipe.param.input.custom.entity.requirement.BabyRequirement;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 /**

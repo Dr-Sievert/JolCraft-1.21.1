@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.builder.param.output.pool;
 
-import net.sievert.jolcraft.data.recipe.param.output.pool.Pool;
-import net.sievert.jolcraft.data.recipe.param.output.pool.Pools;
+import net.sievert.jolcraft.world.recipe.param.output.pool.Pool;
+import net.sievert.jolcraft.world.recipe.param.output.pool.Pools;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 import java.util.ArrayList;

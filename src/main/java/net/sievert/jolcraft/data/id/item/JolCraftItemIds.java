@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.data.id.item;
 
-import net.sievert.jolcraft.data.attachment.custom.reputation.DwarvenReputationTier;
+import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
@@ -260,11 +260,19 @@ public final class JolCraftItemIds extends JolCraftIds {
     // Reputation
     // ---------------------------------------------------------------------
 
-    public static final String REPUTATION_TABLET_0 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.STRANGER.idToString());
-    public static final String REPUTATION_TABLET_1 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.KNOWN_FACE.idToString());
-    public static final String REPUTATION_TABLET_2 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.TRUSTED.idToString());
-    public static final String REPUTATION_TABLET_3 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.RESPECTED.idToString());
-    public static final String REPUTATION_TABLET_4 = join(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET, DwarvenReputationTier.BLOOD_KIN.idToString());
+    private static String reputationTablet(DwarvenReputationAttachment.Tier tier) {
+        return join(
+                JolCraftDictionary.REPUTATION,
+                JolCraftDictionary.TABLET,
+                String.valueOf(tier.getId())
+        );
+    }
+
+    public static final String REPUTATION_TABLET_0 = reputationTablet(DwarvenReputationAttachment.Tier.STRANGER);
+    public static final String REPUTATION_TABLET_1 = reputationTablet(DwarvenReputationAttachment.Tier.KNOWN_FACE);
+    public static final String REPUTATION_TABLET_2 = reputationTablet(DwarvenReputationAttachment.Tier.TRUSTED);
+    public static final String REPUTATION_TABLET_3 = reputationTablet(DwarvenReputationAttachment.Tier.RESPECTED);
+    public static final String REPUTATION_TABLET_4 = reputationTablet(DwarvenReputationAttachment.Tier.BLOOD_KIN);
 
     // ---------------------------------------------------------------------
     // Tomes

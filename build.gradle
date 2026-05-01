@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.91'
+    id 'net.neoforged.moddev' version '2.0.140'
     id 'idea'
 }
 
@@ -31,6 +31,18 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output + configurations.runtimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+configurations {
+    gametestImplementation.extendsFrom implementation
+    gametestRuntimeOnly.extendsFrom runtimeOnly
+}
+
 neoForge {
     version = project.neo_version
 
@@ -39,17 +51,16 @@ neoForge {
         minecraftVersion = project.parchment_minecraft_version
     }
 
-    // This line is optional. Access Transformers are automatically detected
-    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
-
     runs {
         client {
             client()
+            sourceSet = sourceSets.gametest
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         client2 {
             client()
+            sourceSet = sourceSets.gametest
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             programArguments.addAll '--username', 'Dev2'
             gameDirectory = file('run/client2')
@@ -57,31 +68,26 @@ neoForge {
 
         server {
             server()
+            sourceSet = sourceSets.gametest
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         gameTestServer {
             type = "gameTestServer"
+            sourceSet = sourceSets.gametest
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
-            clientData()
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
         configureEach {
-            // Recommended logging data for a userdev environment
-            // The markers can be added/remove as needed separated by commas.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
             systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             logLevel = org.slf4j.event.Level.DEBUG
         }
     }
@@ -89,7 +95,13 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.gametest)
         }
+    }
+
+    unitTest {
+        enable()
+        testedMod = mods."${mod_id}"
     }
 }
 
@@ -104,6 +116,14 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    //Tests
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+def includeGametestMixins = !gradle.startParameter.taskNames.any {
+    it.toLowerCase().contains("build") || it.toLowerCase().contains("publish")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
@@ -118,7 +138,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_license            : mod_license,
             mod_version            : mod_version,
             mod_authors            : mod_authors,
-            mod_description        : mod_description
+            mod_description        : mod_description,
+            gametest_mixins        : includeGametestMixins ? '[[mixins]]\nconfig = "' + mod_id + '.gametest.mixins.json"' : ''
     ]
     inputs.properties replaceProperties
     expand replaceProperties
@@ -151,4 +172,9 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+test {
+    useJUnitPlatform()
+    maxHeapSize = "8G"
 }

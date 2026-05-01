@@ -2,7 +2,6 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.base;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,13 +12,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.UseRemainder;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
@@ -31,7 +29,6 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfBeardColor;
 import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfEyeColor;
 import net.sievert.jolcraft.world.entity.custom.dwarf.variant.DwarfVariant;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
-import net.sievert.jolcraft.world.entity.util.EntityData;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.Nullable;
@@ -40,7 +37,7 @@ import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AbstractBreedingEntity extends AgeableMob implements EntityData {
+public class AbstractBreedingEntity extends AgeableMob {
 
     private static final String NBT_VARIANT = JolCraftDictionary.VARIANT;
     private static final String NBT_BEARD = JolCraftDictionary.BEARD;
@@ -117,12 +114,10 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     // EntityData
     // ---------------------------------------------------------------------
 
-    @Override
     public <T> void setData(EntityDataAccessor<T> accessor, T value) {
         this.entityData.set(accessor, value);
     }
 
-    @Override
     public <T> T getData(EntityDataAccessor<T> accessor) {
         return this.entityData.get(accessor);
     }
@@ -162,22 +157,8 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     public void usePlayerItem(Player player, InteractionHand hand, ItemStack stack) {
         if (player.level().isClientSide) return;
         if (player.isCreative()) return;
-        if (stack.isEmpty() || stack.getCount() == 0) return;
-
-        int initialCount = stack.getCount();
-        UseRemainder useRemainder = stack.get(DataComponents.USE_REMAINDER);
-
+        if (stack.isEmpty()) return;
         stack.consume(1, player);
-
-        if (useRemainder != null) {
-            ItemStack remainderStack = useRemainder.convertIntoRemainder(
-                    stack,
-                    initialCount,
-                    false,
-                    player::handleExtraItemsCreatedOnUse
-            );
-            player.setItemInHand(hand, remainderStack);
-        }
     }
 
     public void setInLove(@Nullable Player player) {
@@ -207,9 +188,9 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     }
 
     @Override
-    protected void actuallyHurt(ServerLevel level, DamageSource source, float amount) {
+    protected void actuallyHurt(DamageSource damageSource, float damageAmount) {
         this.resetLove();
-        super.actuallyHurt(level, source, amount);
+        super.actuallyHurt(damageSource, damageAmount);
     }
 
     public void spawnChildFromBreeding(ServerLevel level, AbstractBreedingEntity partner) {
@@ -229,6 +210,14 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
         if (ageablemob != null) {
             ageablemob.setBaby(true);
             ageablemob.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+
+            ageablemob.finalizeSpawn(
+                    level,
+                    level.getCurrentDifficultyAt(ageablemob.blockPosition()),
+                    MobSpawnType.BREEDING,
+                    null
+            );
+
             this.finalizeSpawnChildFromBreeding(level, partner, ageablemob);
             level.addFreshEntityWithPassengers(ageablemob);
         }
@@ -249,7 +238,7 @@ public class AbstractBreedingEntity extends AgeableMob implements EntityData {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        DwarfEntity baby = JolCraftEntities.DWARF.get().create(level, EntitySpawnReason.BREEDING);
+        DwarfEntity baby = JolCraftEntities.DWARF.get().create(level);
         if (baby == null) return null;
 
         DwarfVariant variant = Util.getRandom(DwarfVariant.values(), this.random);

@@ -4,22 +4,23 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.data.recipe.custom.base.ItemIngredientAction;
-import net.sievert.jolcraft.data.recipe.custom.hand.HandInteractionRecipe;
-import net.sievert.jolcraft.data.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.data.recipe.param.output.base.Outputs;
-import net.sievert.jolcraft.data.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.data.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.datagen.recipe.bridge.RecipeEmission;
+import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
+import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
+import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
+import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;
+import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
+import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
@@ -195,15 +196,15 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
         String aAct = actionToken(actionA);
         String bAct = actionToken(actionB);
 
-        RecipeFileNameBuilder builder = RecipeFileNameBuilder.create()
-                .word(aAct)
-                .word(aTok)
-                .word(JolCraftDictionary.AND)
-                .word(bAct)
-                .word(bTok);
+        JolCraftFileNameBuilder builder = JolCraftFileNameBuilder.create()
+                .token(aAct)
+                .token(aTok)
+                .token(JolCraftDictionary.AND)
+                .token(bAct)
+                .token(bTok);
 
         if (requireSneaking) {
-            builder.word(JolCraftDictionary.SNEAK);
+            builder.token(JolCraftDictionary.SNEAK);
         }
 
         DataResult<String> built = builder.build();
@@ -213,8 +214,8 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
         }
 
         String partial = built.result().orElse("");
-        String msg = "recipeName: " + String.join("; ", errors) +
-                (built.error().isPresent() ? ("; " + built.error().get().message()) : "");
+        String msg = "recipeName: " + String.join("; ", errors)
+                + (built.error().isPresent() ? "; " + built.error().get().message() : "");
         return DataResult.error(() -> msg, partial);
     }
 
@@ -264,7 +265,7 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
     }
 
     @Override
-    public @NotNull DataResult<RecipeEmission> buildValidated() {
+    public @NotNull DataResult<JolCraftDataEmission<RecipeOutput>> buildValidated() {
         if (ingredientA == null) {
             errors.add("ingredient_a is required");
         }
@@ -293,6 +294,16 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
             );
         }
 
+        if (ingredientA == null
+                || ingredientB == null
+                || output == null
+                || successSound == null
+                || failSound == null) {
+            return nameResult.flatMap(name ->
+                    DataResult.error(() -> "builder: missing required fields")
+            );
+        }
+
         HandInteractionRecipe recipe = new HandInteractionRecipe(
                 ingredientA,
                 actionA,
@@ -305,11 +316,10 @@ public final class HandInteractionRecipeBuilder implements RecipeBuilder {
         );
 
         return nameResult.flatMap(name ->
-                HandInteractionRecipe.validateRecipe(recipe).flatMap(validRecipe ->
-                        RecipeEmission.of(
-                                JolCraftRecipeIds.HAND_INTERACTION,
+                HandInteractionRecipe.validateRecipe(recipe).map(validRecipe ->
+                        new JolCraftDataEmission<>(
                                 name,
-                                (outAccept, id) -> outAccept.accept(id, validRecipe, null)
+                                (outAccept, path) -> outAccept.accept(JolCraft.location(path), validRecipe, null)
                         )
                 )
         );

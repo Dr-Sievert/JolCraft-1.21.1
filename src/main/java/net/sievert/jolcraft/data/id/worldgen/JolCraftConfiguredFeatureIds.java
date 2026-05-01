@@ -23,22 +23,24 @@ public final class JolCraftConfiguredFeatureIds extends JolCraftIds {
     // Ores
     // ---------------------------------------------------------------------
 
-    public static final String SMALL_MITHRIL_ORE =
-            join(JolCraftDictionary.SMALL, JolCraftDictionary.MITHRIL, JolCraftDictionary.ORE);
+    public static final String ORE_MITHRIL_SMALL =
+            join(JolCraftDictionary.ORE, JolCraftDictionary.MITHRIL, JolCraftDictionary.SMALL);
 
-    public static final String MEDIUM_MITHRIL_ORE =
-            join(JolCraftDictionary.MEDIUM, JolCraftDictionary.MITHRIL, JolCraftDictionary.ORE);
+    public static final String ORE_MITHRIL_MEDIUM =
+            join(JolCraftDictionary.ORE, JolCraftDictionary.MITHRIL, JolCraftDictionary.MEDIUM);
 
-    public static final String LARGE_MITHRIL_ORE =
-            join(JolCraftDictionary.LARGE, JolCraftDictionary.MITHRIL, JolCraftDictionary.ORE);
+    public static final String ORE_MITHRIL_LARGE =
+            join(JolCraftDictionary.ORE, JolCraftDictionary.MITHRIL, JolCraftDictionary.LARGE);
 
-    public static final String SPECIAL_MITHRIL_ORE =
-            join(JolCraftDictionary.SPECIAL, JolCraftDictionary.MITHRIL, JolCraftDictionary.ORE);
+    public static final String ORE_MITHRIL_SPECIAL =
+            join(JolCraftDictionary.ORE, JolCraftDictionary.MITHRIL, JolCraftDictionary.SPECIAL);
+
+    public static final String ORE_MITHRIL_BURIED =
+            join(JolCraftDictionary.ORE, JolCraftDictionary.MITHRIL, JolCraftDictionary.BURIED);
 
     // ---------------------------------------------------------------------
     // Geodes
     // ---------------------------------------------------------------------
 
-    public static final String BASALT_GEODE =
-            join(JolCraftDictionary.BASALT, JolCraftDictionary.GEODE);
+    public static final String BASALT_GEODE = JolCraftFeatureIds.BASALT_GEODE;
 }
