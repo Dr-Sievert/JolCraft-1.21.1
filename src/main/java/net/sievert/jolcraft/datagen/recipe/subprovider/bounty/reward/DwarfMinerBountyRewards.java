@@ -9,7 +9,7 @@ import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemProducer;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemSpec;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.custom.bounty.BountyRewardRecipeBuilder;

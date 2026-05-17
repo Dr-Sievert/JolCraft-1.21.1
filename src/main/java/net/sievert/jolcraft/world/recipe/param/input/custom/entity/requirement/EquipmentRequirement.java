@@ -13,7 +13,7 @@ import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.world.recipe.param.base.ParamCodecs;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

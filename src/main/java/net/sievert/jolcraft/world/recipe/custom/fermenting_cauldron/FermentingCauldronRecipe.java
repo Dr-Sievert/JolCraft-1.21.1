@@ -19,7 +19,7 @@ import net.sievert.jolcraft.world.recipe.custom.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.custom.base.RecipeValidation;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;

@@ -47,7 +47,7 @@ import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
 import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -224,7 +224,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return ItemStack.EMPTY;
         }
 
-        WorldContext ctx = new WorldContext(serverLevel, player, null);
+        WorldContext ctx = new WorldContext(player, null);
 
         ItemStack ingredient = usedItem.copyWithCount(1);
         ItemStack last = lastIngredient.isEmpty() ? ItemStack.EMPTY : lastIngredient.copyWithCount(1);
@@ -522,7 +522,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         ItemStack ingredient = usedItem.copyWithCount(1);
         ItemStack last = lastIngredient.isEmpty() ? ItemStack.EMPTY : lastIngredient.copyWithCount(1);
 
-        WorldContext ctx = new WorldContext(serverLevel, player, null);
+        WorldContext ctx = new WorldContext(player, null);
         FermentingCauldronRecipeInput input = new FermentingCauldronRecipeInput(ctx, ingredient, last);
 
         return serverLevel.getRecipeManager()

@@ -22,7 +22,7 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryRecipeInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.gui.menu.LapidaryBenchMenu;
@@ -199,7 +199,6 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
         if (input.isEmpty() || tool.isEmpty()) return Optional.empty();
 
         WorldContext ctx = new WorldContext(
-                player.serverLevel(),
                 player,
                 null
         );

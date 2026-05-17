@@ -17,6 +17,7 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.param.base.ParamValidations;
 import net.sievert.jolcraft.world.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.world.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
@@ -28,9 +29,8 @@ import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemIn
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.quantity.HasCount;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.runtime.WorldContext;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +44,7 @@ public record ItemInput(
         ItemSelector selector,
         IntRange count,
         ItemRequirements requirements
-) implements InputParam<ItemInput, ItemStack>, HasCount, ConditionGate, RegistryIntrospectionSource {
+) implements InputParam<ItemInput, ItemStack>, ConditionGate, RegistryIntrospectionSource {
 
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.ITEM, JolCraftParameterIds.INPUT));
@@ -296,7 +296,7 @@ public record ItemInput(
         if (!gatePasses(ctx)) return false;
         if (!selector.matches(ctx, subject)) return false;
         if (!requirements.matches(subject)) return false;
-        if (!hasValidCountRange()) return false;
+        if (!count.isPositiveRange()) return false;
         return subject.getCount() >= count.min();
     }
 
@@ -327,8 +327,10 @@ public record ItemInput(
             return SelfValidating.invalid(JolCraftParameterIds.REQUIREMENTS + ": " + reqRes.error().map(DataResult.Error::message).orElse(""));
         }
 
-        if (!hasValidCountRange()) {
-            return SelfValidating.invalid(JolCraftParameterIds.COUNT + ": invalid count range");
+        if (!count.isPositiveRange()) {
+            return ParamValidations.invalid(
+                    JolCraftParameterIds.COUNT + ": invalid count range"
+            );
         }
 
         return SelfValidating.ok(this);

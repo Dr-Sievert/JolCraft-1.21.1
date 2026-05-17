@@ -5,7 +5,7 @@ import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.world.recipe.param.input.custom.entity.EntityInput;
 import net.sievert.jolcraft.world.recipe.param.input.custom.entity.requirement.EntityRequirements;
 import net.sievert.jolcraft.world.recipe.param.input.custom.entity.selector.EntitySelector;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.entity.requirement.EntityRequirementsBuilder;

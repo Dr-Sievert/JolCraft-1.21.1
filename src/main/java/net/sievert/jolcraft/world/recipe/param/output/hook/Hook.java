@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
 import org.jetbrains.annotations.NotNull;

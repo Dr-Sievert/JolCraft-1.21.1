@@ -3,8 +3,8 @@ package net.sievert.jolcraft.datagen.recipe.builder.param.output.pool;
 import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.world.recipe.param.output.pool.PoolEntry;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
-import net.sievert.jolcraft.world.recipe.param.quantity.WeightParam;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.WeightParam;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 

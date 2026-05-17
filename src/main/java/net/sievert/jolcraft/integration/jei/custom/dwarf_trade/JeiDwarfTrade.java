@@ -13,9 +13,9 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import org.jetbrains.annotations.Nullable;
@@ -265,6 +265,6 @@ public record JeiDwarfTrade(
             return null;
         }
 
-        return new WorldContext(serverLevel, player, player);
+        return new WorldContext(player, null);
     }
 }

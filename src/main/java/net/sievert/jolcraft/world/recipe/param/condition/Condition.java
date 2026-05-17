@@ -19,7 +19,7 @@ import net.sievert.jolcraft.world.recipe.param.condition.custom.TimeCondition;
 import net.sievert.jolcraft.world.recipe.param.condition.custom.WeatherCondition;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 

@@ -16,7 +16,7 @@ import net.sievert.jolcraft.world.recipe.param.condition.ConditionalMatcher;
 import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

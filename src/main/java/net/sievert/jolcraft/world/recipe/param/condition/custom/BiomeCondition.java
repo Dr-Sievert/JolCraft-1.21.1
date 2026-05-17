@@ -21,8 +21,8 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.world.recipe.param.condition.Condition;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
-import net.sievert.jolcraft.world.recipe.param.level.WorldAnchor;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldAnchor;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

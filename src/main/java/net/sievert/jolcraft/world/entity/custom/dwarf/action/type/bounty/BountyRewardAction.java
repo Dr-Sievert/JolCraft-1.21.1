@@ -16,7 +16,7 @@ import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
 import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -91,7 +91,7 @@ public final class BountyRewardAction extends InspectDwarfAction {
             return;
         }
 
-        WorldContext ctx = makeCtx(level, player, dwarf);
+        WorldContext ctx = makeCtx(player, dwarf);
         var inRes = BountyRecipeInput.of(ctx, redeemStack);
         if (inRes.error().isPresent()) {
             return;
@@ -153,7 +153,7 @@ public final class BountyRewardAction extends InspectDwarfAction {
             return;
         }
 
-        WorldContext ctx = makeCtx(serverLevel, player, dwarf);
+        WorldContext ctx = makeCtx(player, dwarf);
 
         var inRes = BountyRecipeInput.of(ctx, redeemStack);
         if (inRes.error().isPresent()) {
@@ -244,8 +244,8 @@ public final class BountyRewardAction extends InspectDwarfAction {
         };
     }
 
-    private static @NotNull WorldContext makeCtx(ServerLevel level, Player player, Entity self) {
-        return new WorldContext(level, player, self);
+    private static @NotNull WorldContext makeCtx(Player player, Entity self) {
+        return new WorldContext(player, self);
     }
 
     private void playRewardParticles(int count) {

@@ -21,7 +21,7 @@ import net.sievert.jolcraft.world.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
 import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.world.recipe.param.output.base.ResolvedOutputParam;
@@ -29,7 +29,7 @@ import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.Comp
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.EnchantmentTransform;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

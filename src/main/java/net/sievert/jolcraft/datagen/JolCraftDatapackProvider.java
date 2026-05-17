@@ -9,6 +9,10 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.datagen.structure.JolCraftProcessorListProvider;
+import net.sievert.jolcraft.datagen.structure.JolCraftStructureProvider;
+import net.sievert.jolcraft.datagen.structure.JolCraftStructureSetProvider;
+import net.sievert.jolcraft.datagen.structure.JolCraftTemplatePoolProvider;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.damage.JolCraftDamageTypes;
@@ -53,7 +57,11 @@ public final class JolCraftDatapackProvider extends DatapackBuiltinEntriesProvid
             .add(Registries.CONFIGURED_FEATURE, JolCraftConfiguredFeatures::bootstrap)
             .add(Registries.PLACED_FEATURE, JolCraftPlacedFeatures::bootstrap)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, JolCraftBiomeModifiers::bootstrap)
-            .add(Registries.DAMAGE_TYPE, JolCraftDamageTypes::bootstrap);
+            .add(Registries.DAMAGE_TYPE, JolCraftDamageTypes::bootstrap)
+            .add(Registries.STRUCTURE, JolCraftStructureProvider::bootstrap)
+            .add(Registries.STRUCTURE_SET, JolCraftStructureSetProvider::bootstrap)
+            .add(Registries.TEMPLATE_POOL, JolCraftTemplatePoolProvider::bootstrap)
+            .add(Registries.PROCESSOR_LIST, JolCraftProcessorListProvider::bootstrap);
 
     public static final RegistrySetBuilder BUILDER = SPEC.builder;
 

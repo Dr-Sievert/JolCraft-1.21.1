@@ -8,7 +8,7 @@ import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.requirement.ItemRequirements;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemIngredient;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.condition.ConditionsBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.requirement.ItemRequirementsBuilder;

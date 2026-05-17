@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
@@ -70,7 +70,7 @@ public final class BountyTaskAction extends InspectDwarfAction {
     private void planFromAnyValidTaskRecipe(ServerLevel level, ItemStack redeemStack) {
         if (redeemStack.isEmpty()) return;
 
-        WorldContext ctx = makeCtx(level, player, dwarf);
+        WorldContext ctx = makeCtx(player, dwarf);
         var inRes = BountyRecipeInput.of(ctx, redeemStack);
         if (inRes.error().isPresent()) return;
 
@@ -88,8 +88,8 @@ public final class BountyTaskAction extends InspectDwarfAction {
                 });
     }
 
-    private static @NotNull WorldContext makeCtx(ServerLevel level, Player player, Entity self) {
-        return new WorldContext(level, player, self);
+    private static @NotNull WorldContext makeCtx(Player player, Entity self) {
+        return new WorldContext(player, self);
     }
 
     @Override

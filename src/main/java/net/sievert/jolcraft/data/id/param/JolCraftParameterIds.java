@@ -21,6 +21,7 @@ public final class JolCraftParameterIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String NONE = JolCraftDictionary.NONE;
+    public static final String HAS = JolCraftDictionary.HAS;
 
     public static final String MIN = JolCraftDictionary.MIN;
     public static final String MAX = JolCraftDictionary.MAX;
@@ -49,11 +50,16 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String INGREDIENTS = plural(INGREDIENT);
 
     public static final String ITEM = JolCraftDictionary.ITEM;
+    public static final String ITEMS = plural(ITEM);
     public static final String BLOCK = JolCraftDictionary.BLOCK;
     public static final String ENTITY = JolCraftDictionary.ENTITY;
+    public static final String ENTITIES = JolCraftDictionary.ENTITIES;
     public static final String TAG = JolCraftDictionary.TAG;
     public static final String PLAYER = JolCraftDictionary.PLAYER;
     public static final String STRUCTURE = JolCraftDictionary.STRUCTURE;
+    public static final String DIMENSION = JolCraftDictionary.DIMENSION;
+    public static final String WEATHER = JolCraftDictionary.WEATHER;
+    public static final String TIME = JolCraftDictionary.TIME;
 
     public static final String WEIGHT = JolCraftDictionary.WEIGHT;
 
@@ -63,6 +69,7 @@ public final class JolCraftParameterIds extends JolCraftIds {
 
     public static final String LEVEL = JolCraftDictionary.LEVEL;
 
+
     public static final String MIN_LEVEL = join(MIN, LEVEL);
     public static final String MAX_LEVEL = join(MAX, LEVEL);
 
@@ -71,8 +78,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String GROUP = JolCraftDictionary.GROUP;
     public static final String CATEGORY = JolCraftDictionary.CATEGORY;
     public static final String ENTRIES = JolCraftDictionary.ENTRIES;
-    public static final String ENUM = JolCraftDictionary.ENUM;
-    public static final String RESOURCE_LOCATION = join(JolCraftDictionary.RESOURCE, JolCraftDictionary.LOCATION);
     public static final String PROVIDER = JolCraftDictionary.PROVIDER;
     public static final String BASE = JolCraftDictionary.BASE;
     public static final String PARAMETER = JolCraftDictionary.PARAMETER;
@@ -83,10 +88,6 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String TARGET = JolCraftDictionary.TARGET;
     public static final String KEY = JolCraftDictionary.KEY;
     public static final String NAME = JolCraftDictionary.NAME;
-    public static final String HOLDER = JolCraftDictionary.HOLDER;
-    public static final String STATE = JolCraftDictionary.STATE;
-    public static final String IDENTITY = JolCraftDictionary.IDENTITY;
-    public static final String CONTEXT = JolCraftDictionary.CONTEXT;
     public static final String PATH = JolCraftDictionary.PATH;
 
     // ---------------------------------------------------------------------
@@ -96,8 +97,7 @@ public final class JolCraftParameterIds extends JolCraftIds {
     public static final String ENCHANTMENT = JolCraftDictionary.ENCHANTMENT;
     public static final String ENCHANTMENTS = plural(JolCraftDictionary.ENCHANTMENT);
 
-    public static final String COMPONENT = JolCraftDictionary.COMPONENT;
-    public static final String COMPONENTS = plural(COMPONENT);
+    public static final String DATA_COMPONENT = join(JolCraftDictionary.DATA, JolCraftDictionary.COMPONENT);
 
     public static final String PREDICATES = plural(JolCraftDictionary.PREDICATE);
     public static final String KEEP = JolCraftDictionary.KEEP;
@@ -125,7 +125,8 @@ public final class JolCraftParameterIds extends JolCraftIds {
     // Conditions
     // ---------------------------------------------------------------------
 
-    public static final String CONDITIONS = plural(JolCraftDictionary.CONDITION);
+    public static final String CONDITION = JolCraftDictionary.CONDITION;
+    public static final String CONDITIONS = plural(CONDITION);
     public static final String CHANCE = JolCraftDictionary.CHANCE;
     public static final String INVERT = JolCraftDictionary.INVERT;
 

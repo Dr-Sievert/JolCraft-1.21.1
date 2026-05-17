@@ -20,12 +20,12 @@ import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemSpec;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 

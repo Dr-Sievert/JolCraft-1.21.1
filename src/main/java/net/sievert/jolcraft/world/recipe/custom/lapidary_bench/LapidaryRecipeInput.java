@@ -3,7 +3,7 @@ package net.sievert.jolcraft.world.recipe.custom.lapidary_bench;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.sievert.jolcraft.world.recipe.custom.base.ContextInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 

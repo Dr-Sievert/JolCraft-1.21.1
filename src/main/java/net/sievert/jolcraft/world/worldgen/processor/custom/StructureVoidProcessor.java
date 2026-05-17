@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 public class StructureVoidProcessor extends StructureProcessor {
 
     public static final MapCodec<StructureVoidProcessor> CODEC = MapCodec.unit(StructureVoidProcessor::new);
-    private StructureVoidProcessor() { }
 
     @SuppressWarnings("deprecation")
     @Override
@@ -36,6 +35,6 @@ public class StructureVoidProcessor extends StructureProcessor {
 
     @Override
     protected @NotNull StructureProcessorType<?> getType() {
-        return JolCraftProcessors.STRUCTURE_VOID_PROCESSOR.get();
+        return JolCraftProcessors.STRUCTURE_VOID.type().get();
     }
 }

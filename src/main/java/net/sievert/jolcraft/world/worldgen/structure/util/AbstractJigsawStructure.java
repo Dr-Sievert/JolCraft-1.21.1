@@ -4,9 +4,11 @@ import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
@@ -27,32 +29,24 @@ import java.util.Optional;
 public abstract class AbstractJigsawStructure extends Structure {
 
     // ---------------------------------------------------------------------
-    // Codec field keys (shared, no literals)
+    // Codec field keys
     // ---------------------------------------------------------------------
 
-    protected static final String FIELD_START_POOL =
-            JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.POOL);
+    protected static final String FIELD_START_POOL = JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.POOL);
 
-    protected static final String FIELD_START_JIGSAW_NAME =
-            JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.JIGSAW, JolCraftDictionary.NAME);
+    protected static final String FIELD_START_JIGSAW_NAME = JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.JIGSAW, JolCraftDictionary.NAME);
 
-    protected static final String FIELD_SIZE =
-            JolCraftDictionary.SIZE;
+    protected static final String FIELD_SIZE = JolCraftDictionary.SIZE;
 
-    protected static final String FIELD_START_HEIGHT =
-            JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.HEIGHT);
+    protected static final String FIELD_START_HEIGHT = JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.HEIGHT);
 
-    protected static final String FIELD_PROJECT_START_TO_HEIGHTMAP =
-            JolCraftStrings.underscored(JolCraftDictionary.PROJECT, JolCraftDictionary.START, JolCraftDictionary.TO, JolCraftDictionary.HEIGHTMAP);
+    protected static final String FIELD_PROJECT_START_TO_HEIGHTMAP = JolCraftStrings.underscored(JolCraftDictionary.PROJECT, JolCraftDictionary.START, JolCraftDictionary.TO, JolCraftDictionary.HEIGHTMAP);
 
-    protected static final String FIELD_MAX_DISTANCE_FROM_CENTER =
-            JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftDictionary.DISTANCE, JolCraftDictionary.FROM, JolCraftDictionary.CENTER);
+    protected static final String FIELD_MAX_DISTANCE_FROM_CENTER = JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftDictionary.DISTANCE, JolCraftDictionary.FROM, JolCraftDictionary.CENTER);
 
-    protected static final String FIELD_DIMENSION_PADDING =
-            JolCraftStrings.underscored(JolCraftDictionary.DIMENSION, JolCraftDictionary.PADDING);
+    protected static final String FIELD_DIMENSION_PADDING = JolCraftStrings.underscored(JolCraftDictionary.DIMENSION, JolCraftDictionary.PADDING);
 
-    protected static final String FIELD_LIQUID_SETTINGS =
-            JolCraftStrings.underscored(JolCraftDictionary.LIQUID, JolCraftStrings.plural(JolCraftDictionary.SETTING));
+    protected static final String FIELD_LIQUID_SETTINGS = JolCraftStrings.underscored(JolCraftDictionary.LIQUID, JolCraftStrings.plural(JolCraftDictionary.SETTING));
 
     // ---------------------------------------------------------------------
     // Shared state
@@ -99,33 +93,62 @@ public abstract class AbstractJigsawStructure extends Structure {
             return Optional.empty();
         }
 
+        BlockPos blockPos = startPos(context);
+
+        Optional<Direction> direction = startDirection(context);
+
+        direction.ifPresent(value ->
+                JolCraftStructureContext.setRotation(switch (value) {
+                    case NORTH -> Rotation.NONE;
+                    case EAST -> Rotation.CLOCKWISE_90;
+                    case SOUTH -> Rotation.CLOCKWISE_180;
+                    case WEST -> Rotation.COUNTERCLOCKWISE_90;
+                    default -> throw new IllegalStateException("Horizontal direction required");
+                })
+        );
+
+        try {
+            return JigsawPlacement.addPieces(
+                    context,
+                    this.startPool,
+                    this.startJigsawName,
+                    this.size,
+                    blockPos,
+                    false,
+                    this.projectStartToHeightmap,
+                    this.maxDistanceFromCenter,
+                    PoolAliasLookup.EMPTY,
+                    this.dimensionPadding,
+                    this.liquidSettings
+            );
+        } finally {
+            JolCraftStructureContext.clear();
+        }
+    }
+
+    protected abstract boolean extraSpawningChecks(GenerationContext context);
+
+    protected Optional<Direction> startDirection(GenerationContext context) {
+        return Optional.empty();
+    }
+
+    protected BlockPos startPos(GenerationContext context) {
         int startY = this.startHeight.sample(
                 context.random(),
                 new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor())
         );
 
         ChunkPos chunkPos = context.chunkPos();
-        BlockPos blockPos = new BlockPos(chunkPos.getMinBlockX(), startY, chunkPos.getMinBlockZ());
 
-        return JigsawPlacement.addPieces(
-                context,
-                this.startPool,
-                this.startJigsawName,
-                this.size,
-                blockPos,
-                false,
-                this.projectStartToHeightmap,
-                this.maxDistanceFromCenter,
-                PoolAliasLookup.EMPTY,
-                this.dimensionPadding,
-                this.liquidSettings
+        return new BlockPos(
+                chunkPos.getMinBlockX(),
+                startY,
+                chunkPos.getMinBlockZ()
         );
     }
 
-    protected abstract boolean extraSpawningChecks(GenerationContext context);
-
     // ---------------------------------------------------------------------
-    // Shared codec builder helper (keeps CODEC in subclasses)
+    // Shared codec builder helper
     // ---------------------------------------------------------------------
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

@@ -26,7 +26,8 @@ public enum JolCraftLogTags implements JolCraftEnumHelper.StringId {
     ITEM(JolCraftDictionary.ITEM),
     NETWORK(JolCraftDictionary.NETWORK),
     PLAYER(JolCraftDictionary.PLAYER),
-    RECIPE(JolCraftDictionary.RECIPE);
+    RECIPE(JolCraftDictionary.RECIPE),
+    STRUCTURE(JolCraftDictionary.STRUCTURE);
 
     private final String id;
 

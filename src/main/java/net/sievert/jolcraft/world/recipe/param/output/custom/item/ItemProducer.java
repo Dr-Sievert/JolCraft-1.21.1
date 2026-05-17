@@ -32,8 +32,8 @@ import net.sievert.jolcraft.world.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.world.recipe.param.level.WorldAnchor;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldAnchor;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 

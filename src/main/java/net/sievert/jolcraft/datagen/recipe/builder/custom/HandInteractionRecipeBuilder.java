@@ -17,7 +17,7 @@ import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
 import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;
 import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
 import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.base.RecipeBuilder;

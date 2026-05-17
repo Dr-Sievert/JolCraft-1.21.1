@@ -19,7 +19,7 @@ import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.Tra
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
 import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
@@ -60,7 +60,7 @@ public final class DwarfTrades {
                 return null;
             }
 
-            WorldContext ctx = new WorldContext(serverLevel, null, trader);
+            WorldContext ctx = new WorldContext(null, trader);
 
             ItemStack costAStack = materializeCost(recipe.costA(), ctx);
             if (costAStack.isEmpty()) {

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.param.base.ParamValidations;
 import net.sievert.jolcraft.world.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.world.recipe.param.base.ParamTypeDef;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
@@ -22,9 +23,8 @@ import net.sievert.jolcraft.world.recipe.param.input.custom.entity.requirement.E
 import net.sievert.jolcraft.world.recipe.param.input.custom.entity.selector.EntitySelector;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.quantity.HasCount;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.runtime.WorldContext;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public record EntityInput(
         @NotNull EntitySelector selector,
         @NotNull IntRange count,
         @Nullable EntityRequirements requirements
-) implements InputParam<EntityInput, Entity>, HasCount, ConditionGate, RegistryIntrospectionSource {
+) implements InputParam<EntityInput, Entity>, ConditionGate, RegistryIntrospectionSource {
 
     public static final ResourceLocation TYPE_ID =
             JolCraft.location(JolCraftStrings.underscored(JolCraftDictionary.ENTITY, JolCraftParameterIds.INPUT));
@@ -170,7 +170,7 @@ public record EntityInput(
             return false;
         }
 
-        return hasValidCountRange();
+        return count.isPositiveRange();
     }
 
     @Override
@@ -220,8 +220,10 @@ public record EntityInput(
             }
         }
 
-        if (!hasValidCountRange()) {
-            return SelfValidating.invalid(JolCraftParameterIds.COUNT + ": invalid count range");
+        if (!count.isPositiveRange()) {
+            return ParamValidations.invalid(
+                    JolCraftParameterIds.COUNT + ": invalid count range"
+            );
         }
 
         return SelfValidating.ok(this);

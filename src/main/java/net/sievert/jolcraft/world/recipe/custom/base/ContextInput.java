@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.world.recipe.custom.base;
 
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 
 public interface ContextInput {
     WorldContext ctx();

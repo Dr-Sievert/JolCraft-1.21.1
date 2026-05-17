@@ -11,7 +11,7 @@ import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityAttrib
 import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntityProducer;
 import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntitySpawnConfig;
 import net.sievert.jolcraft.world.recipe.param.output.custom.entity.EntitySpec;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

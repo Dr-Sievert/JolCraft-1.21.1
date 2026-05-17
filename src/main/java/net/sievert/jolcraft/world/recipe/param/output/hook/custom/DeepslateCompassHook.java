@@ -11,7 +11,7 @@ import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompass
 import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper;
 import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper.LocatedStructure;
 import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
 import org.jetbrains.annotations.NotNull;

@@ -17,7 +17,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.base.CustomOutputRecipe;
 import net.sievert.jolcraft.world.recipe.custom.base.RecipeValidation;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
 import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
 import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;

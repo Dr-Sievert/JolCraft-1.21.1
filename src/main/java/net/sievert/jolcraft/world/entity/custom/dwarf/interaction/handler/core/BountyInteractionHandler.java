@@ -13,7 +13,7 @@ import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyTaskRecipe;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -68,7 +68,7 @@ public final class BountyInteractionHandler implements DwarfInteractions.CoreInt
             return deny(ctx, JolCraftLanguageKeys.TOOLTIP_BOUNTY_NOT_COMPLETE);
         }
 
-        WorldContext worldContext = new WorldContext(level, ctx.player(), dwarf);
+        WorldContext worldContext = new WorldContext(ctx.player(), dwarf);
         var inputRes = BountyRecipeInput.of(worldContext, stack);
         if (inputRes.error().isPresent()) {
             return InteractionResult.PASS;

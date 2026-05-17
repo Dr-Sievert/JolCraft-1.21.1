@@ -11,7 +11,7 @@ import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.world.recipe.param.base.Param;
 import net.sievert.jolcraft.world.recipe.param.base.ParamTypeRegistry;
 import net.sievert.jolcraft.world.recipe.param.condition.Conditions;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.recipe.param.output.custom.TextOutput;

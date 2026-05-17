@@ -10,8 +10,8 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleOutput;
 import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleProducer;
 import net.sievert.jolcraft.world.recipe.param.output.custom.particle.ParticleSpec;
-import net.sievert.jolcraft.world.recipe.param.quantity.DoubleRange;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.DoubleRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

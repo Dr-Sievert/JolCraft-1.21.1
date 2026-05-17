@@ -17,8 +17,8 @@ import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
 import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipeInput;
-import net.sievert.jolcraft.world.recipe.param.level.WorldAnchor;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldAnchor;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.world.recipe.param.output.base.Output;
 import net.sievert.jolcraft.world.recipe.param.output.base.OutputHandler;
 import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
@@ -64,7 +64,7 @@ public final class JolCraftHandInteractionEvents {
             return;
         }
 
-        WorldContext ctx = new WorldContext(level, player, player);
+        WorldContext ctx = new WorldContext(player, null);
         HandInteractionRecipeInput rawInput = new HandInteractionRecipeInput(ctx, main, off);
 
         ResolvedRecipe resolved = findResolvedRecipe(level, player, rawInput);

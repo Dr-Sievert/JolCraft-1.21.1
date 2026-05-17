@@ -114,6 +114,6 @@ public class RandomReplaceWithLootProcessor extends StructureProcessor {
 
     @Override
     protected StructureProcessorType<?> getType() {
-        return JolCraftProcessors.RANDOM_REPLACE_WITH_LOOT_PROCESSOR.get();
+        return JolCraftProcessors.RANDOM_REPLACE_WITH_LOOT.type().get();
     }
 }

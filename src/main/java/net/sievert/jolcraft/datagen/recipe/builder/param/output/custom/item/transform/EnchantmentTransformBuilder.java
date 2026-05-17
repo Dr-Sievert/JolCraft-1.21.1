@@ -5,7 +5,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.providers.EnchantmentProvider;
 import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.EnchantmentTransform;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.datagen.recipe.builder.base.ParamBuilder;
 
 /**

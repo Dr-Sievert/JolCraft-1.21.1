@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.recipe.param.base.ParamCodecs;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
@@ -40,7 +41,7 @@ public record ItemRequirements(
                             .optionalFieldOf(JolCraftParameterIds.ENCHANTMENTS, List.of())
                             .forGetter(ItemRequirements::enchantments),
                     ComponentRequirement.CODEC
-                            .optionalFieldOf(JolCraftParameterIds.COMPONENTS)
+                            .optionalFieldOf(JolCraftStrings.plural(JolCraftParameterIds.DATA_COMPONENT))
                             .forGetter(ItemRequirements::componentRequirement)
             ).apply(instance, ItemRequirements::new));
 
@@ -84,7 +85,7 @@ public record ItemRequirements(
             DataResult<ComponentRequirement> res = componentRequirement.get().validate();
             if (res.error().isPresent()) {
                 String msg = res.error().map(DataResult.Error::message).orElse("");
-                return SelfValidating.invalid(JolCraftParameterIds.COMPONENTS + " invalid: " + msg);
+                return SelfValidating.invalid(JolCraftStrings.plural(JolCraftParameterIds.DATA_COMPONENT) + " invalid: " + msg);
             }
         }
 

@@ -6,7 +6,7 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.recipe.param.quantity.IntRange;
+import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;

@@ -13,12 +13,13 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.recipe.param.base.ParamCodecContract;
 import net.sievert.jolcraft.world.recipe.param.base.SelfValidating;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospection;
 import net.sievert.jolcraft.world.recipe.param.introspection.RegistryIntrospectionSource;
-import net.sievert.jolcraft.world.recipe.param.level.WorldAnchor;
-import net.sievert.jolcraft.world.recipe.param.level.WorldContext;
+import net.sievert.jolcraft.param.runtime.WorldAnchor;
+import net.sievert.jolcraft.param.runtime.WorldContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,7 @@ public record ItemTransforms(
                             .forGetter(FullRaw::enchantments),
 
                     ComponentTransform.CODEC.listOf()
-                            .optionalFieldOf(JolCraftParameterIds.COMPONENTS, List.of())
+                            .optionalFieldOf(JolCraftStrings.plural(JolCraftParameterIds.DATA_COMPONENT), List.of())
                             .forGetter(FullRaw::components)
             ).apply(instance, FullRaw::new));
 
@@ -185,7 +186,7 @@ public record ItemTransforms(
             if (error.isPresent()) {
                 String msg = error.map(DataResult.Error::message).orElse("invalid component transform");
                 return SelfValidating.invalid(
-                        "invalid '" + JolCraftParameterIds.COMPONENTS + "': " + msg
+                        "invalid '" + JolCraftStrings.plural(JolCraftParameterIds.DATA_COMPONENT) + "': " + msg
                 );
             }
         }
