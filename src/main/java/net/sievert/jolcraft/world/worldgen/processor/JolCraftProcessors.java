@@ -11,8 +11,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftProcessorIds;
-import net.sievert.jolcraft.world.worldgen.processor.custom.RandomReplaceWithLootProcessor;
-import net.sievert.jolcraft.world.worldgen.processor.custom.StructureVoidProcessor;
+import net.sievert.jolcraft.world.worldgen.processor.custom.*;
 
 public final class JolCraftProcessors {
 
@@ -23,6 +22,18 @@ public final class JolCraftProcessors {
 
     public static final ProcessorDef<RandomReplaceWithLootProcessor> RANDOM_REPLACE_WITH_LOOT =
             registerProcessor(JolCraftProcessorIds.RANDOM_REPLACE_WITH_LOOT, RandomReplaceWithLootProcessor.CODEC);
+
+    public static final ProcessorDef<AddLootTableProcessor> ADD_LOOT_TABLE =
+            registerProcessor(JolCraftProcessorIds.ADD_LOOT_TABLE, AddLootTableProcessor.CODEC);
+
+    public static final ProcessorDef<RandomCobwebProcessor> RANDOM_COBWEB =
+            registerProcessor(JolCraftProcessorIds.RANDOM_COBWEB, RandomCobwebProcessor.CODEC);
+
+    public static final ProcessorDef<RandomCaveInProcessor> RANDOM_CAVE_IN =
+            registerProcessor(JolCraftProcessorIds.RANDOM_CAVE_IN, RandomCaveInProcessor.CODEC);
+
+    public static final ProcessorDef<LanternProcessor> LANTERN =
+            registerProcessor(JolCraftProcessorIds.LANTERN, LanternProcessor.CODEC);
 
     public static final ProcessorDef<StructureVoidProcessor> STRUCTURE_VOID =
             registerProcessor(JolCraftProcessorIds.STRUCTURE_VOID, StructureVoidProcessor.CODEC);

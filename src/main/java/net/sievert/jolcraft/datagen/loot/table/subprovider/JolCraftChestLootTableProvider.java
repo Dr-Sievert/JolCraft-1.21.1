@@ -10,6 +10,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
@@ -90,7 +91,7 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
         target.accept(JolCraftLootTables.Chests.SALVAGE,
                 LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_COINS.get()).setWeight(1)
-                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(5.0F))))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_PICKAXE.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_AMULET.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_BELT.get()).setWeight(1))

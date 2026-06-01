@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.LivingEntity;
@@ -258,6 +259,10 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             InteractionHand hand,
             BlockHitResult hit
     ) {
+        if (player.isSpectator()) {
+            return ItemInteractionResult.CONSUME;
+        }
+
         if (level.isClientSide) {
             return ItemInteractionResult.CONSUME;
         }
@@ -303,6 +308,31 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             }
         }
 
+        openStrongbox(state, level, pos, player);
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            BlockHitResult hit
+    ) {
+        return openStrongbox(state, level, pos, player);
+    }
+
+    private InteractionResult openStrongbox(BlockState state, Level level, BlockPos pos, Player player) {
+
+        if (player.isSpectator()) {
+            return InteractionResult.CONSUME;
+        }
+
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
         MenuProvider provider = this.getMenuProvider(state, level, pos);
         if (provider != null) {
             player.openMenu(provider, pos);
@@ -317,7 +347,7 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
             );
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override

@@ -1,10 +1,13 @@
 package net.sievert.jolcraft.datagen.client.language.subprovider;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
@@ -40,7 +43,8 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, JolCraft.MOD_NAME + " Spawn Eggs");
 
         // Structure maps
-        putManual(translations, "filled_map.forge", "Map to a Dwarven Forge");
+        putManual(translations, JolCraftStrings.dotted(BuiltInRegistries.ITEM.getKey(Items.FILLED_MAP).getPath(), JolCraftStructureIds.DWARVEN_FORTRESS),
+                "Map to a Dwarven Fortress");
 
         //Items
 

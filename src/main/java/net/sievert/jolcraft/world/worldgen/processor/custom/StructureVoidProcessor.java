@@ -3,6 +3,7 @@ package net.sievert.jolcraft.world.worldgen.processor.custom;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
@@ -11,26 +12,41 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * MAKE STRUCTURE VOID PLACED BY PROCESSOR ACTUAL FUNCTION AS STRUCTURE VOID WHEN PLACING
- */
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
+
+@SuppressWarnings("deprecation")
+@ParametersAreNonnullByDefault
 public class StructureVoidProcessor extends StructureProcessor {
 
     public static final MapCodec<StructureVoidProcessor> CODEC = MapCodec.unit(StructureVoidProcessor::new);
 
-    @SuppressWarnings("deprecation")
     @Override
     public StructureTemplate.StructureBlockInfo processBlock(
-            @NotNull LevelReader worldView,
-            @NotNull BlockPos pos, @NotNull
-            BlockPos blockPos,
-            StructureTemplate.@NotNull StructureBlockInfo structureBlockInfoLocal,
-            StructureTemplate.StructureBlockInfo structureBlockInfoWorld,
-            @NotNull StructurePlaceSettings structurePlacementData) {
-        if (structureBlockInfoWorld.state().is(Blocks.STRUCTURE_VOID)) {
-            return null;
-        }
-        return structureBlockInfoWorld;
+            @NotNull LevelReader level,
+            @NotNull BlockPos offset,
+            @NotNull BlockPos pos,
+            StructureTemplate.@NotNull StructureBlockInfo originalInfo,
+            StructureTemplate.StructureBlockInfo currentInfo,
+            @NotNull StructurePlaceSettings settings
+    ) {
+        return currentInfo.state().is(Blocks.STRUCTURE_VOID)
+                ? null
+                : currentInfo;
+    }
+
+    @Override
+    public @NotNull List<StructureTemplate.StructureBlockInfo> finalizeProcessing(
+            ServerLevelAccessor serverLevel,
+            BlockPos offset,
+            BlockPos pos,
+            List<StructureTemplate.StructureBlockInfo> originalBlockInfos,
+            List<StructureTemplate.StructureBlockInfo> processedBlockInfos,
+            StructurePlaceSettings settings
+    ) {
+        return processedBlockInfos.stream()
+                .filter(info -> !info.state().is(Blocks.STRUCTURE_VOID))
+                .toList();
     }
 
     @Override

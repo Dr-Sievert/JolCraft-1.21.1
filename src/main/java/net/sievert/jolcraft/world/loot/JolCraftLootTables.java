@@ -41,10 +41,8 @@ public final class JolCraftLootTables {
 
     public static final class Strongbox {
 
-        public static final ResourceKey<LootTable> DWARVEN_TRAIL_RUIN =
-                strongbox(register(JolCraftLootTableIds.DWARVEN_TRAIL_RUIN));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS));
     }
-
 
     /* ---------------------------------------------------------------------
      * Archaeology
@@ -52,11 +50,11 @@ public final class JolCraftLootTables {
 
     public static final class Archaeology {
 
-        public static final ResourceKey<LootTable> DWARVEN_TRAIL_RUIN_COMMON =
-                archaeology(register(JolCraftLootTableIds.DWARVEN_TRAIL_RUIN_COMMON));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_COMMON =
+                archaeology(register(JolCraftLootTableIds.DWARVEN_FORTRESS_COMMON));
 
-        public static final ResourceKey<LootTable> DWARVEN_TRAIL_RUIN_RARE =
-                archaeology(register(JolCraftLootTableIds.DWARVEN_TRAIL_RUIN_RARE));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_RARE =
+                archaeology(register(JolCraftLootTableIds.DWARVEN_FORTRESS_RARE));
     }
 
     /* ---------------------------------------------------------------------

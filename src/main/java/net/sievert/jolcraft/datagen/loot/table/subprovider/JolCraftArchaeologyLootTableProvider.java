@@ -9,7 +9,9 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
@@ -70,19 +72,21 @@ public final class JolCraftArchaeologyLootTableProvider implements LootTableSubP
         this.tracking = tracking;
 
         target.accept(
-                JolCraftLootTables.Archaeology.DWARVEN_TRAIL_RUIN_COMMON,
+                JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_COMMON,
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1.0F))
-                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(1))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(6))
+                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(2)
+                                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(3))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(1))
                         )
-                        .setRandomSequence(JolCraftLootTables.Archaeology.DWARVEN_TRAIL_RUIN_COMMON.location())
+                        .setRandomSequence(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_COMMON.location())
         );
 
         target.accept(
-                JolCraftLootTables.Archaeology.DWARVEN_TRAIL_RUIN_RARE,
+                JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_RARE,
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
@@ -90,7 +94,7 @@ public final class JolCraftArchaeologyLootTableProvider implements LootTableSubP
                                         .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_LEXICON.get()).setWeight(1))
                                         .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get()).setWeight(3))
                         )
-                        .setRandomSequence(JolCraftLootTables.Archaeology.DWARVEN_TRAIL_RUIN_RARE.location())
+                        .setRandomSequence(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_RARE.location())
         );
 
         tracking.logTrackedOutputCount(

@@ -22,12 +22,12 @@ public final class JolCraftLootTableIds extends JolCraftIds {
      * Strongbox
      * ------------------------------------------------------------------ */
 
-    public static final String DWARVEN_TRAIL_RUIN = JolCraftStructureIds.DWARVEN_TRAIL_RUIN;
+    public static final String DWARVEN_FORTRESS = JolCraftStructureIds.DWARVEN_FORTRESS;
 
     /* ---------------------------------------------------------------------
      * Archaeology
      * ------------------------------------------------------------------ */
 
-    public static final String DWARVEN_TRAIL_RUIN_COMMON = join(DWARVEN_TRAIL_RUIN, JolCraftRarityIds.COMMON);
-    public static final String DWARVEN_TRAIL_RUIN_RARE = join(DWARVEN_TRAIL_RUIN, JolCraftRarityIds.RARE);
+    public static final String DWARVEN_FORTRESS_COMMON = join(DWARVEN_FORTRESS, JolCraftRarityIds.COMMON);
+    public static final String DWARVEN_FORTRESS_RARE = join(DWARVEN_FORTRESS, JolCraftRarityIds.RARE);
 }

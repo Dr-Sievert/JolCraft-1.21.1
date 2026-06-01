@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.world.gui.menu;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -13,26 +14,43 @@ import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+
 public class StrongboxMenu extends AbstractContainerMenu {
+    private static final int STRONGBOX_SIZE = 18;
+
+    @Nullable
     public final StrongboxBlockEntity blockEntity;
+
     private final Level level;
 
     public StrongboxMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
+        this(
+                id,
+                inv,
+                extraData != null
+                        ? inv.player.level().getBlockEntity(extraData.readBlockPos())
+                        : null
+        );
     }
 
-    public StrongboxBlockEntity getBlockEntity() {
+    public @Nullable StrongboxBlockEntity getBlockEntity() {
         return blockEntity;
     }
 
-    public StrongboxMenu(int id, Inventory inv, BlockEntity blockEntity) {
+    public StrongboxMenu(int id, Inventory inv, @Nullable BlockEntity blockEntity) {
         super(JolCraftMenuTypes.STRONGBOX_MENU.get(), id);
-        this.blockEntity = (StrongboxBlockEntity) blockEntity;
+
         this.level = inv.player.level();
+        this.blockEntity = blockEntity instanceof StrongboxBlockEntity strongbox ? strongbox : null;
+
+        var strongboxContainer = this.blockEntity != null
+                ? this.blockEntity
+                : new SimpleContainer(STRONGBOX_SIZE);
 
         for (int row = 0; row < 2; ++row) {
             for (int col = 0; col < 9; ++col) {
-                this.addSlot(new Slot(this.blockEntity, col + row * 9, 8 + col * 18, 18 + row * 18));
+                this.addSlot(new Slot(strongboxContainer, col + row * 9, 8 + col * 18, 18 + row * 18));
             }
         }
 
@@ -47,34 +65,39 @@ public class StrongboxMenu extends AbstractContainerMenu {
         }
     }
 
-    // --- Shift-click logic ---
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
         Slot slot = this.slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;
+
         ItemStack stack = slot.getItem();
         ItemStack copy = stack.copy();
 
-        int strongboxSize = 18;
-        int hotbarStart = strongboxSize + 27;
+        int hotbarStart = STRONGBOX_SIZE + 27;
         int hotbarEnd = hotbarStart + 9;
 
-        if (index < strongboxSize) {
-            if (!moveItemStackTo(stack, strongboxSize, hotbarEnd, true)) return ItemStack.EMPTY;
+        if (index < STRONGBOX_SIZE) {
+            if (!moveItemStackTo(stack, STRONGBOX_SIZE, hotbarEnd, true)) return ItemStack.EMPTY;
         } else {
-            if (!moveItemStackTo(stack, 0, strongboxSize, false)) return ItemStack.EMPTY;
+            if (!moveItemStackTo(stack, 0, STRONGBOX_SIZE, false)) return ItemStack.EMPTY;
         }
 
         if (stack.isEmpty()) slot.set(ItemStack.EMPTY);
         else slot.setChanged();
+
         return copy;
     }
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                player, blockEntity.getBlockState().getBlock());
+        if (blockEntity == null) {
+            return false;
+        }
+
+        return stillValid(
+                ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
+                player,
+                blockEntity.getBlockState().getBlock()
+        );
     }
-
-
 }

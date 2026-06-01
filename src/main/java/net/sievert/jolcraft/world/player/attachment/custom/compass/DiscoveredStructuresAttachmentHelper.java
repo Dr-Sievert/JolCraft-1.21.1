@@ -41,8 +41,7 @@ public final class DiscoveredStructuresAttachmentHelper extends JolCraftAttachme
     private static final Map<ResourceLocation, Integer> STRUCTURE_SCORES = Map.of(
             BuiltinStructures.TRAIL_RUINS.location(), 25,
             BuiltinStructures.ANCIENT_CITY.location(), 100,
-            JolCraftStructures.DWARVEN_TRAIL_RUIN.id(), 25,
-            JolCraftStructures.FORGE.id(), 100
+            JolCraftStructures.DWARVEN_FORTRESS.id(), 100
     );
 
     private DiscoveredStructuresAttachmentHelper() {}

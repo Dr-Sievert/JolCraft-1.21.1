@@ -7,7 +7,5 @@ public final class JolCraftStructureIds extends JolCraftIds {
 
     private JolCraftStructureIds() {}
 
-    public static final String FORGE = JolCraftDictionary.FORGE;
     public static final String DWARVEN_FORTRESS = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.FORTRESS);
-    public static final String DWARVEN_TRAIL_RUIN = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.TRAIL, JolCraftDictionary.RUIN);
 }

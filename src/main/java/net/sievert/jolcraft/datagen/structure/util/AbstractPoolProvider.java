@@ -21,33 +21,30 @@ import java.util.function.Function;
 public abstract class AbstractPoolProvider {
 
     protected final BootstrapContext<StructureTemplatePool> context;
-    protected final Holder<StructureTemplatePool> emptyPool;
-    protected final HolderGetter<StructureProcessorList> processors;
     protected final String directoryId;
 
+    private final Holder<StructureTemplatePool> emptyPool;
+    private final HolderGetter<StructureProcessorList> processors;
+    private final ResourceKey<StructureProcessorList> defaultProcessor;
+
     protected AbstractPoolProvider(BootstrapContext<StructureTemplatePool> context, String directoryId) {
+        this(context, directoryId, null);
+    }
+
+    protected AbstractPoolProvider(BootstrapContext<StructureTemplatePool> context, String directoryId, ResourceKey<StructureProcessorList> defaultProcessor) {
         this.context = context;
         this.directoryId = directoryId;
+        this.defaultProcessor = defaultProcessor;
         this.processors = context.lookup(Registries.PROCESSOR_LIST);
-
-        HolderGetter<StructureTemplatePool> pools = context.lookup(Registries.TEMPLATE_POOL);
-        this.emptyPool = pools.getOrThrow(Pools.EMPTY);
-    }
-
-    protected ResourceKey<StructureProcessorList> defaultProcessor() {
-        return null;
-    }
-
-    protected static String path(String directoryId, String name) {
-        return JolCraftStrings.slashed(directoryId, name);
-    }
-
-    protected static ResourceLocation location(String directoryId, String name) {
-        return JolCraft.location(path(directoryId, name));
+        this.emptyPool = context.lookup(Registries.TEMPLATE_POOL).getOrThrow(Pools.EMPTY);
     }
 
     protected static ResourceKey<StructureTemplatePool> poolKey(String directoryId, String name) {
         return ResourceKey.create(Registries.TEMPLATE_POOL, location(directoryId, name));
+    }
+
+    protected static ResourceLocation location(String directoryId, String name) {
+        return JolCraft.location(JolCraftStrings.slashed(directoryId, name));
     }
 
     protected record PoolEntry(
@@ -56,31 +53,26 @@ public abstract class AbstractPoolProvider {
     ) {}
 
     protected final PoolEntry entry(String template) {
-        return entry(template, defaultProcessor(), 1);
+        return entry(template, 1);
     }
 
     protected final PoolEntry entry(String template, int weight) {
-        return entry(template, defaultProcessor(), weight);
+        return element(location(directoryId, template), defaultProcessor, weight);
     }
 
-    protected final PoolEntry entry(String template, ResourceKey<StructureProcessorList> processorKey) {
-        return entry(template, processorKey, 1);
+    protected final PoolEntry processed(String template, ResourceKey<StructureProcessorList> processor) {
+        return processed(template, processor, 1);
     }
 
-    protected final PoolEntry entry(String template, ResourceKey<StructureProcessorList> processorKey, int weight) {
-        validateWeight(template, weight);
-
-        String templateLocation = location(directoryId, template).toString();
-
-        return new PoolEntry(
-                processorKey == null
-                        ? StructurePoolElement.single(templateLocation)
-                        : StructurePoolElement.single(templateLocation, processors.getOrThrow(processorKey)),
-                weight
-        );
+    protected final PoolEntry processed(String template, ResourceKey<StructureProcessorList> processor, int weight) {
+        return element(location(directoryId, template), processor, weight);
     }
 
-    protected final PoolEntry empty() {
+    protected final PoolEntry external(String directoryId, String template, ResourceKey<StructureProcessorList> processor, int weight) {
+        return element(location(directoryId, template), processor, weight);
+    }
+
+    protected static PoolEntry empty() {
         return empty(1);
     }
 
@@ -89,22 +81,11 @@ public abstract class AbstractPoolProvider {
         return new PoolEntry(StructurePoolElement.empty(), weight);
     }
 
-    protected final void registerRigid(
-            ResourceKey<StructureTemplatePool> poolKey,
-            String... templates
-    ) {
-        registerRigid(
-                poolKey,
-                Arrays.stream(templates)
-                        .map(this::entry)
-                        .toArray(PoolEntry[]::new)
-        );
+    protected final void register(ResourceKey<StructureTemplatePool> poolKey, String... templates) {
+        register(poolKey, Arrays.stream(templates).map(this::entry).toArray(PoolEntry[]::new));
     }
 
-    protected final void registerRigid(
-            ResourceKey<StructureTemplatePool> poolKey,
-            PoolEntry... entries
-    ) {
+    protected final void register(ResourceKey<StructureTemplatePool> poolKey, PoolEntry... entries) {
         ImmutableList.Builder<Pair<Function<StructureTemplatePool.Projection, ? extends StructurePoolElement>, Integer>> elements =
                 ImmutableList.builder();
 
@@ -112,13 +93,17 @@ public abstract class AbstractPoolProvider {
             elements.add(Pair.of(entry.element(), entry.weight()));
         }
 
-        context.register(
-                poolKey,
-                new StructureTemplatePool(
-                        emptyPool,
-                        elements.build(),
-                        StructureTemplatePool.Projection.RIGID
-                )
+        context.register(poolKey, new StructureTemplatePool(emptyPool, elements.build(), StructureTemplatePool.Projection.RIGID));
+    }
+
+    private PoolEntry element(ResourceLocation template, ResourceKey<StructureProcessorList> processor, int weight) {
+        validateWeight(template.toString(), weight);
+
+        return new PoolEntry(
+                processor == null
+                        ? StructurePoolElement.single(template.toString())
+                        : StructurePoolElement.single(template.toString(), processors.getOrThrow(processor)),
+                weight
         );
     }
 

@@ -102,6 +102,7 @@ public final class JolCraftDictionary extends JolCraftIds {
      * Adjectives and qualifiers
      * ===================================================================== */
 
+    public static final String ABANDONED = "abandoned";
     public static final String ACTIVE = "active";
     public static final String ALL = "all";
     public static final String ALREADY = "already";
@@ -200,11 +201,13 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String AEGISCORE = "aegiscore";
     public static final String AGE = "age";
     public static final String AI = "ai";
+    public static final String AIR = "air";
     public static final String ALCHEMIST = "alchemist";
     public static final String ALT = "alt";
     public static final String AMOUNT = "amount";
     public static final String AMPLIFIER = "amplifier";
     public static final String AMULET = "amulet";
+    public static final String ANVIL = "anvil";
     public static final String ARCANIST = "arcanist";
     public static final String ARCHAEOLOGY = "archaeology";
     public static final String ARM = "arm";
@@ -254,6 +257,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CATEGORY = "category";
     public static final String CAULDRON = "cauldron";
     public static final String CAUSE = "cause";
+    public static final String CAVE = "cave";
     public static final String CENTER = "center";
     public static final String CHAIN = "chain";
     public static final String CHAINMAIL = "chainmail";
@@ -263,6 +267,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CHEST = "chest";
     public static final String CHESTPLATE = "chestplate";
     public static final String CHISEL = "chisel";
+    public static final String COBWEB = "cobweb";
     public static final String CODEC = "codec";
     public static final String COIN = "coin";
     public static final String COLOR = "color";
@@ -285,6 +290,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CREATURE = "creature";
     public static final String CRITERION = "criterion";
     public static final String CROP = "crop";
+    public static final String CRUCIBLE = "crucible";
     public static final String CURSE = "curse";
     public static final String CURSED = "cursed";
     public static final String DAMAGE = "damage";
@@ -303,6 +309,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String DIAL = "dial";
     public static final String DIAMOND = "diamond";
     public static final String DIFFERENCE = "difference";
+    public static final String DIGSITE = "digsite";
     public static final String DIMENSION = "dimension";
     public static final String DISCOUNT = "discount";
     public static final String DISCOVERED = "discovered";
@@ -356,6 +363,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String GLASS = "glass";
     public static final String GLASSES = "glasses";
     public static final String GOLD = "gold";
+    public static final String GRAVEL = "gravel";
     public static final String GRIMSTONE = "grimstone";
     public static final String GROUP = "group";
     public static final String GUARD = "guard";
@@ -509,6 +517,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String RESULT = "result";
     public static final String ROD = "rod";
     public static final String ROLL = "roll";
+    public static final String ROOM = "room";
     public static final String ROOT = "root";
     public static final String RUIN = "ruin";
     public static final String RULE = "rule";
@@ -579,7 +588,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TOUGHNESS = "toughness";
     public static final String TOWER = "tower";
     public static final String TOTAL = "total";
-    public static final String TRAIL = "trail";
+    public static final String TRANSITION = "transition";
     public static final String TRANSLATION = "translation";
     public static final String TRIM = "trim";
     public static final String TYPE = "type";

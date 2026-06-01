@@ -36,7 +36,7 @@ public final class JolCraftStructureProvider {
                                 .build(),
                         pools.getOrThrow(JolCraftDwarvenFortressPools.START_POOL),
                         Optional.empty(),
-                        30,
+                        25,
                         ConstantHeight.of(VerticalAnchor.absolute(0)),
                         Optional.empty(),
                         128,

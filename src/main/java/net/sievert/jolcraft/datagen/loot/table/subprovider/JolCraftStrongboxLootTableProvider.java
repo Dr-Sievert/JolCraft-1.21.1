@@ -73,7 +73,7 @@ public final class JolCraftStrongboxLootTableProvider
         this.tracking = tracking;
 
         target.accept(
-                JolCraftLootTables.Strongbox.DWARVEN_TRAIL_RUIN,
+                JolCraftLootTables.Strongbox.DWARVEN_FORTRESS,
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()

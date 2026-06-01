@@ -13,10 +13,14 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String LARGE =     JolCraftDictionary.LARGE;
     public static final String MEDIUM =    JolCraftDictionary.MEDIUM;
     public static final String SMALL =     JolCraftDictionary.SMALL;
+    public static final String ABANDONED = JolCraftDictionary.ABANDONED;
+    public static final String BROKEN = JolCraftDictionary.BROKEN;
     public static final String MAIN =      JolCraftDictionary.MAIN;
     public static final String SHAFT =     JolCraftDictionary.SHAFT;
     public static final String CORRIDOR =  JolCraftDictionary.CORRIDOR;
     public static final String JUNCTION =  JolCraftDictionary.JUNCTION;
+    public static final String TRANSITION = JolCraftDictionary.TRANSITION;
+    public static final String ROOM = JolCraftDictionary.ROOM;
     public static final String STAIRS =    JolCraftDictionary.STAIRS;
     public static final String END =       JolCraftDictionary.END;
     public static final String COLLAPSED = JolCraftDictionary.COLLAPSED;
@@ -24,6 +28,13 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String CHAIN = JolCraftDictionary.CHAIN;
     public static final String LANTERN = JolCraftDictionary.LANTERN;
     public static final String BRAZIER = JolCraftDictionary.BRAZIER;
+    public static final String STRONGBOX = JolCraftDictionary.STRONGBOX;
+    public static final String STRONGBOX_LOCKED = join(STRONGBOX, JolCraftDictionary.LOCKED);
+    public static final String GRAVEL = JolCraftDictionary.GRAVEL;
+    public static final String DIGSITE = JolCraftDictionary.DIGSITE;
+    public static final String FORGE = JolCraftDictionary.FORGE;
+    public static final String CRUCIBLE = JolCraftDictionary.CRUCIBLE;
+    public static final String ANVIL = JolCraftDictionary.ANVIL;
 
     public static final String LARGE_JUNCTION =  join(LARGE, JUNCTION);
     public static final String MEDIUM_JUNCTION = join(MEDIUM, JUNCTION);
@@ -35,11 +46,19 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String CHAIN_1 = one(CHAIN);
     public static final String CHAIN_2 = two(CHAIN);
     public static final String CHAIN_3 = three(CHAIN);
+    public static final String CHAIN_4 = four(CHAIN);
 
     public static final String LANTERN_1 = one(LANTERN);
     public static final String LANTERN_2 = two(LANTERN);
     public static final String LANTERN_3 = three(LANTERN);
     public static final String LANTERN_4 = four(LANTERN);
+    public static final String LANTERN_5 = five(LANTERN);
+
+    public static final String GRAVEL_1 = one(GRAVEL);
+    public static final String GRAVEL_2 = two(GRAVEL);
+    public static final String GRAVEL_3 = three(GRAVEL);
+    public static final String GRAVEL_4 = four(GRAVEL);
+    public static final String GRAVEL_5 = five(GRAVEL);
 
     protected static String one(String name) {
         return JolCraftStrings.underscored(name, "1");
@@ -56,4 +75,9 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     protected static String four(String name) {
         return JolCraftStrings.underscored(name, "4");
     }
+
+    protected static String five(String name) {
+        return JolCraftStrings.underscored(name, "5");
+    }
+
 }

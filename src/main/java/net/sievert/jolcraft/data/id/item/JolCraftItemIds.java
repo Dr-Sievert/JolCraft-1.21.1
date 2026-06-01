@@ -4,7 +4,6 @@ import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenRep
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.id.entity.creature.JolCraftCreatureIds;
-import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftItemIds extends JolCraftIds {
@@ -68,7 +67,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String DEEPSLATE_BOOTS = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.BOOTS);
 
     public static final String FORGE_ARMOR_TRIM_SMITHING_TEMPLATE = join(
-            JolCraftStructureIds.FORGE,
+            JolCraftTrimIds.FORGE,
             JolCraftDictionary.ARMOR,
             JolCraftDictionary.TRIM,
             JolCraftDictionary.SMITHING,

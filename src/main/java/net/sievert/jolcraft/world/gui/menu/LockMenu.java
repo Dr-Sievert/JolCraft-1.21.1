@@ -19,6 +19,8 @@ import net.sievert.jolcraft.world.gui.slot.JolCraftSlot;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+
 public class LockMenu extends AbstractContainerMenu {
 
     // ---------------------------------------------------------------------
@@ -48,20 +50,27 @@ public class LockMenu extends AbstractContainerMenu {
     // Menu state
     // ---------------------------------------------------------------------
 
+    @Nullable
     public final StrongboxBlockEntity blockEntity;
     private final Level level;
 
     private final ContainerData data = new LockData();
 
     public LockMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()));
+        this(
+                id,
+                inv,
+                extraData != null
+                        ? inv.player.level().getBlockEntity(extraData.readBlockPos())
+                        : null
+        );
     }
 
     public LockMenu(int id, Inventory inv, BlockEntity blockEntity) {
         super(JolCraftMenuTypes.LOCK_MENU.get(), id);
 
-        this.blockEntity = (StrongboxBlockEntity) blockEntity;
         this.level = inv.player.level();
+        this.blockEntity = blockEntity instanceof StrongboxBlockEntity strongbox ? strongbox : null;
 
         addDataSlots(this.data);
 
@@ -71,9 +80,8 @@ public class LockMenu extends AbstractContainerMenu {
                 new JolCraftSlot(lockpickContainer, 0, SLOT_LOCKPICK_X, SLOT_LOCKPICK_Y)
                         .mayPlaceRule(stack -> stack.is(JolCraftItems.LOCKPICK))
                         .onSlotChanged(() -> {
-                            if (!level.isClientSide) {
-                                ItemStack lockpick = getLockpickSlotItem();
-                                ((StrongboxBlockEntity) blockEntity).setHasLockpickInserted(!lockpick.isEmpty());
+                            if (!level.isClientSide && this.blockEntity != null) {
+                                this.blockEntity.setHasLockpickInserted(!getLockpickSlotItem().isEmpty());
                             }
                         })
         );
@@ -97,7 +105,7 @@ public class LockMenu extends AbstractContainerMenu {
 
     @Override
     public void broadcastChanges() {
-        if (!level.isClientSide) {
+        if (!level.isClientSide && blockEntity != null) {
             data.set(DATA_PROGRESS, blockEntity.getLockpickProgress());
             data.set(DATA_CORRECT_BUTTON, blockEntity.getCorrectButtonId());
             data.set(DATA_LAYER_PULSE, blockEntity.getButtonLayerUpdatePulse());
@@ -111,7 +119,7 @@ public class LockMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(@NotNull Player player, int buttonId) {
-        if (level.isClientSide) return true;
+        if (level.isClientSide || blockEntity == null) return false;
 
         if (player instanceof ServerPlayer sp) {
             return blockEntity.handleLockButtonPress(sp, buttonId, getLockpickSlotItem());
@@ -155,7 +163,13 @@ public class LockMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        if (!blockEntity.isLocked()) return false;
+        if (blockEntity == null) {
+            return false;
+        }
+
+        if (!blockEntity.isLocked()) {
+            return false;
+        }
 
         return stillValid(
                 ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
@@ -168,18 +182,20 @@ public class LockMenu extends AbstractContainerMenu {
     public void removed(@NotNull Player player) {
         super.removed(player);
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide && blockEntity != null) {
             blockEntity.setHasLockpickInserted(false);
         }
 
-        if (blockEntity.getCurrentInteractingPlayer() == player) {
+        if (blockEntity != null && blockEntity.getCurrentInteractingPlayer() == player) {
             blockEntity.clearCurrentInteractingPlayer(player);
         }
 
-        ItemStack lockpick = getLockpickSlotItem();
-        if (!lockpick.isEmpty()) {
-            dropOrPlaceInInventory(player, lockpick);
-            this.slots.getFirst().set(ItemStack.EMPTY);
+        if (!this.slots.isEmpty()) {
+            ItemStack lockpick = getLockpickSlotItem();
+            if (!lockpick.isEmpty()) {
+                dropOrPlaceInInventory(player, lockpick);
+                this.slots.getFirst().set(ItemStack.EMPTY);
+            }
         }
     }
 

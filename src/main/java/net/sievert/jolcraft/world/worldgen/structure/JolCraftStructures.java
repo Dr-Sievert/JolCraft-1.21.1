@@ -12,8 +12,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.world.worldgen.structure.custom.DwarvenFortressStructure;
-import net.sievert.jolcraft.world.worldgen.structure.custom.DwarvenTrailStructure;
-import net.sievert.jolcraft.world.worldgen.structure.custom.ForgeStructure;
 
 import static net.sievert.jolcraft.JolCraft.location;
 
@@ -33,12 +31,6 @@ public final class JolCraftStructures {
 
     public static final RegisteredStructure<DwarvenFortressStructure> DWARVEN_FORTRESS =
             register(JolCraftStructureIds.DWARVEN_FORTRESS, DwarvenFortressStructure.CODEC);
-
-    public static final RegisteredStructure<ForgeStructure> FORGE =
-            register(JolCraftStructureIds.FORGE, ForgeStructure.CODEC);
-
-    public static final RegisteredStructure<DwarvenTrailStructure> DWARVEN_TRAIL_RUIN =
-            register(JolCraftStructureIds.DWARVEN_TRAIL_RUIN, DwarvenTrailStructure.CODEC);
 
     private static <T extends Structure> RegisteredStructure<T> register(String path, MapCodec<T> codec) {
         ResourceLocation id = location(path);

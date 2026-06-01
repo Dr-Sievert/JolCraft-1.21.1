@@ -2,6 +2,7 @@ package net.sievert.jolcraft.data.id.tag;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
+import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
@@ -73,9 +74,9 @@ public final class JolCraftTagIds extends JolCraftIds {
     // Structure
     // ---------------------------------------------------------------------
 
-    public static final String ON_FORGE_EXPLORER_MAPS = join(
+    public static final String ON_DWARVEN_FORTRESS_EXPLORER_MAPS = join(
             JolCraftDictionary.ON,
-            JolCraftDictionary.FORGE,
+            JolCraftStructureIds.DWARVEN_FORTRESS,
             JolCraftDictionary.EXPLORER,
             plural(JolCraftDictionary.MAP)
     );

@@ -97,7 +97,7 @@ public final class JolCraftTags {
 
     public interface Structures {
 
-        TagKey<Structure> ON_FORGE_EXPLORER_MAPS = create(JolCraftTagIds.ON_FORGE_EXPLORER_MAPS);
+        TagKey<Structure> ON_DWARVEN_FORTRESS_EXPLORER_MAPS = create(JolCraftTagIds.ON_DWARVEN_FORTRESS_EXPLORER_MAPS);
 
         TagKey<Structure> VILLAGES = create(JolCraftTagIds.VILLAGES);
         TagKey<Structure> PILLAGERS = create(JolCraftTagIds.PILLAGERS);

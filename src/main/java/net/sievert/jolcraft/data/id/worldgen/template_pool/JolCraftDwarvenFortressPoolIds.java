@@ -33,6 +33,9 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
     public static final String LARGE_STAIRS =    join(LARGE, STAIRS);
     public static final String LARGE_END =    join(LARGE, END);
     public static final String LARGE_COLLAPSED =    join(LARGE, COLLAPSED);
+    public static final String LARGE_TRANSITION =    join(LARGE, TRANSITION);
+    public static final String LARGE_MEDIUM_TRANSITION =    join(LARGE, MEDIUM, TRANSITION);
+    public static final String LARGE_SMALL_TRANSITION =    join(LARGE, SMALL, TRANSITION);
 
     //Medium
 
@@ -54,4 +57,10 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
     public static final String SMALL_SHAFT =    join(SMALL, SHAFT);
     public static final String SMALL_END =    join(SMALL, END);
     public static final String SMALL_COLLAPSED =    join(SMALL, COLLAPSED);
+
+    //Misc
+
+    public static final String GRAVEL_LARGE = join(GRAVEL, LARGE);
+    public static final String CRUCIBLE_ABANDONED = join(CRUCIBLE, ABANDONED);
+    public static final String CRUCIBLE_BROKEN = join(CRUCIBLE, BROKEN);
 }

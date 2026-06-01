@@ -61,12 +61,11 @@ public final class JolCraftStructureTagProvider
             @Nullable ExistingFileHelper existingFileHelper,
             @NotNull JolCraftDataTracking tracking
     ) {
-        target.tag(JolCraftTags.Structures.ON_FORGE_EXPLORER_MAPS)
-                .addOptional(JolCraftStructures.FORGE.id());
+        target.tag(JolCraftTags.Structures.ON_DWARVEN_FORTRESS_EXPLORER_MAPS)
+                .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
 
         target.tag(JolCraftTags.Structures.DWARVEN)
-                .addOptional(JolCraftStructures.FORGE.id())
-                .addOptional(JolCraftStructures.DWARVEN_TRAIL_RUIN.id());
+                .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
 
         target.tag(JolCraftTags.Structures.VILLAGES)
                 .add(BuiltinStructures.VILLAGE_PLAINS)
@@ -100,8 +99,7 @@ public final class JolCraftStructureTagProvider
         target.tag(JolCraftTags.Structures.RUINS)
                 .add(BuiltinStructures.TRAIL_RUINS)
                 .add(BuiltinStructures.OCEAN_RUIN_COLD)
-                .add(BuiltinStructures.OCEAN_RUIN_WARM)
-                .addOptional(JolCraftStructures.DWARVEN_TRAIL_RUIN.id());
+                .add(BuiltinStructures.OCEAN_RUIN_WARM);
 
         target.tag(JolCraftTags.Structures.OCEAN)
                 .add(BuiltinStructures.BURIED_TREASURE)
@@ -116,6 +114,6 @@ public final class JolCraftStructureTagProvider
                 .add(BuiltinStructures.ANCIENT_CITY)
                 .add(BuiltinStructures.TRIAL_CHAMBERS)
                 .add(BuiltinStructures.STRONGHOLD)
-                .addOptional(JolCraftStructures.FORGE.id());
+                .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
     }
 }

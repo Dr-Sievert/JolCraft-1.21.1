@@ -35,6 +35,7 @@ import net.sievert.jolcraft.world.worldgen.feature.JolCraftFeatures;
 import net.sievert.jolcraft.world.worldgen.predicate.JolCraftBlockPredicateTypes;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
+import net.sievert.jolcraft.world.worldgen.test.JolCraftRuleTests;
 
 @Mod(JolCraft.MOD_ID)
 public class JolCraft {
@@ -70,7 +71,7 @@ public class JolCraft {
         JolCraftAttributes.register(modEventBus);
         JolCraftFeatures.register(modEventBus);
         JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);
-
+        JolCraftRuleTests.register(modEventBus);
 
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,
