@@ -5,56 +5,57 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.RegistryFixedCodec;
-import net.minecraft.world.item.Item;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AddItemModifier extends LootModifier {
+public class AddLootTableModifier extends LootModifier {
 
-    public static final MapCodec<AddItemModifier> CODEC =
+    public static final MapCodec<AddLootTableModifier> CODEC =
             RecordCodecBuilder.mapCodec(inst ->
                     LootModifier.codecStart(inst).and(
                             inst.group(
-                                    RegistryFixedCodec.create(Registries.ITEM)
-                                            .fieldOf(JolCraftDictionary.ITEM)
-                                            .forGetter(modifier -> modifier.item),
+                                    ResourceKey.codec(Registries.LOOT_TABLE)
+                                            .fieldOf(JolCraftStrings.underscored(JolCraftDictionary.LOOT, JolCraftDictionary.TABLE))
+                                            .forGetter(m -> m.lootTable),
                                     Codec.FLOAT
                                             .fieldOf(JolCraftDictionary.CHANCE)
-                                            .forGetter(modifier -> modifier.chance),
+                                            .forGetter(m -> m.chance),
                                     Codec.BOOL
                                             .optionalFieldOf(JolCraftDictionary.REPLACE, false)
-                                            .forGetter(modifier -> modifier.replace)
+                                            .forGetter(m -> m.replace)
                             )
-                    ).apply(inst, AddItemModifier::new)
+                    ).apply(inst, AddLootTableModifier::new)
             );
 
-    private final Holder<Item> item;
+    private final ResourceKey<LootTable> lootTable;
     private final float chance;
     private final boolean replace;
 
-    public AddItemModifier(
+    public AddLootTableModifier(
             LootItemCondition[] conditionsIn,
-            Holder<Item> item,
+            ResourceKey<LootTable> lootTable,
             float chance,
             boolean replace
     ) {
         super(conditionsIn);
-        this.item = item;
+        this.lootTable = lootTable;
         this.chance = Math.max(0.0F, Math.min(1.0F, chance));
         this.replace = replace;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected ObjectArrayList<ItemStack> doApply(
             ObjectArrayList<ItemStack> generatedLoot,
@@ -68,7 +69,13 @@ public class AddItemModifier extends LootModifier {
             generatedLoot.clear();
         }
 
-        generatedLoot.add(new ItemStack(this.item.value()));
+        LootTable table = lootContext.getLevel()
+                .getServer()
+                .reloadableRegistries()
+                .getLootTable(this.lootTable);
+
+        table.getRandomItemsRaw(lootContext, generatedLoot::add);
+
         return generatedLoot;
     }
 

@@ -5,6 +5,7 @@ import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.item.JolCraftRarityIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftLootTableIds extends JolCraftIds {
 
@@ -30,4 +31,12 @@ public final class JolCraftLootTableIds extends JolCraftIds {
 
     public static final String DWARVEN_FORTRESS_COMMON = join(DWARVEN_FORTRESS, JolCraftRarityIds.COMMON);
     public static final String DWARVEN_FORTRESS_RARE = join(DWARVEN_FORTRESS, JolCraftRarityIds.RARE);
+
+    /* ---------------------------------------------------------------------
+     * Fishing
+     * ------------------------------------------------------------------ */
+
+    public static final String FISHING = JolCraftDictionary.FISHING;
+    public static final String JUNK = JolCraftDictionary.JUNK;
+    public static final String TREASURE = JolCraftDictionary.TREASURE;
 }

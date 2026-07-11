@@ -13,8 +13,6 @@ import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
-import net.sievert.jolcraft.world.loot.custom.ReplaceWithItemModifier;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
@@ -22,7 +20,10 @@ import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.loot.glm.subprovider.JolCraftArchaeologyGlobalLootModifierProvider;
 import net.sievert.jolcraft.datagen.loot.glm.subprovider.JolCraftChestGlobalLootModifierProvider;
+import net.sievert.jolcraft.datagen.loot.glm.subprovider.JolCraftFishingGlobalLootModifierProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
+import net.sievert.jolcraft.world.loot.custom.AddLootTableModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,7 +44,8 @@ public final class JolCraftGlobalLootModifierProvider
         this.lookupProvider = lookupProvider;
         this.subProviders = List.of(
                 new JolCraftArchaeologyGlobalLootModifierProvider(this),
-                new JolCraftChestGlobalLootModifierProvider(this)
+                new JolCraftChestGlobalLootModifierProvider(this),
+                new JolCraftFishingGlobalLootModifierProvider(this)
         );
     }
 
@@ -97,35 +99,79 @@ public final class JolCraftGlobalLootModifierProvider
         tracking.record(provider, modifierId);
     }
 
-    public static @NotNull GlmTarget glm(
+    public static @NotNull ItemGlmTarget glm(
             @NotNull Holder<Item> item,
-            @NotNull ResourceKey<LootTable> table
+            @NotNull ResourceKey<LootTable> targetTable
     ) {
-        return new GlmTarget(
-                JolCraftStrings.underscored(
-                        item.unwrapKey().orElseThrow().location().getPath(),
-                        JolCraftDictionary.IN,
-                        table.location().getPath()
+        return new ItemGlmTarget(
+                createModifierId(
+                        item.unwrapKey()
+                                .orElseThrow()
+                                .location()
+                                .getPath(),
+                        targetTable
                 ),
-                LootTableIdCondition.builder(table.location()).build(),
+                createCondition(targetTable),
                 item
         );
     }
 
-    public record GlmTarget(
-            @NotNull String id,
-            @NotNull LootItemCondition condition,
-            @NotNull Holder<Item> item
+    public static @NotNull LootTableGlmTarget glm(
+            @NotNull ResourceKey<LootTable> lootTable,
+            @NotNull ResourceKey<LootTable> targetTable
     ) {
+        return new LootTableGlmTarget(
+                createModifierId(
+                        lootTable.location().getPath(),
+                        targetTable
+                ),
+                createCondition(targetTable),
+                lootTable
+        );
+    }
 
-        public void add(
+    private static @NotNull String createModifierId(
+            @NotNull String sourceId,
+            @NotNull ResourceKey<LootTable> targetTable
+    ) {
+        return JolCraftStrings.underscored(
+                sourceId,
+                JolCraftDictionary.IN,
+                targetTable.location().getPath()
+        );
+    }
+
+    private static @NotNull LootItemCondition createCondition(
+            @NotNull ResourceKey<LootTable> targetTable
+    ) {
+        return LootTableIdCondition.builder(targetTable.location()).build();
+    }
+
+    public interface GlmTarget {
+
+        @NotNull String id();
+
+        @NotNull LootItemCondition condition();
+
+        default void add(
                 @NotNull JolCraftGlobalLootModifierProvider target,
                 @NotNull JolCraftDataProvider<?> provider,
                 @NotNull JolCraftDataTracking tracking,
                 @NotNull IGlobalLootModifier modifier
         ) {
-            target.add(provider, tracking, id, modifier);
+            target.add(provider, tracking, id(), modifier);
         }
+
+        default @NotNull LootItemCondition[] conditions() {
+            return new LootItemCondition[]{condition()};
+        }
+    }
+
+    public record ItemGlmTarget(
+            @NotNull String id,
+            @NotNull LootItemCondition condition,
+            @NotNull Holder<Item> item
+    ) implements GlmTarget {
 
         public void addItem(
                 @NotNull JolCraftGlobalLootModifierProvider target,
@@ -133,15 +179,12 @@ public final class JolCraftGlobalLootModifierProvider
                 @NotNull JolCraftDataTracking tracking,
                 float chance
         ) {
-            add(
+            apply(
                     target,
                     provider,
                     tracking,
-                    new AddItemModifier(
-                            new LootItemCondition[]{condition},
-                            item,
-                            chance
-                    )
+                    chance,
+                    false
             );
         }
 
@@ -151,14 +194,88 @@ public final class JolCraftGlobalLootModifierProvider
                 @NotNull JolCraftDataTracking tracking,
                 float chance
         ) {
+            apply(
+                    target,
+                    provider,
+                    tracking,
+                    chance,
+                    true
+            );
+        }
+
+        private void apply(
+                @NotNull JolCraftGlobalLootModifierProvider target,
+                @NotNull JolCraftDataProvider<?> provider,
+                @NotNull JolCraftDataTracking tracking,
+                float chance,
+                boolean replace
+        ) {
             add(
                     target,
                     provider,
                     tracking,
-                    new ReplaceWithItemModifier(
-                            new LootItemCondition[]{condition},
+                    new AddItemModifier(
+                            conditions(),
                             item,
-                            chance
+                            chance,
+                            replace
+                    )
+            );
+        }
+    }
+
+    public record LootTableGlmTarget(
+            @NotNull String id,
+            @NotNull LootItemCondition condition,
+            @NotNull ResourceKey<LootTable> lootTable
+    ) implements GlmTarget {
+
+        public void addLootTable(
+                @NotNull JolCraftGlobalLootModifierProvider target,
+                @NotNull JolCraftDataProvider<?> provider,
+                @NotNull JolCraftDataTracking tracking,
+                float chance
+        ) {
+            apply(
+                    target,
+                    provider,
+                    tracking,
+                    chance,
+                    false
+            );
+        }
+
+        public void replaceWithLootTable(
+                @NotNull JolCraftGlobalLootModifierProvider target,
+                @NotNull JolCraftDataProvider<?> provider,
+                @NotNull JolCraftDataTracking tracking,
+                float chance
+        ) {
+            apply(
+                    target,
+                    provider,
+                    tracking,
+                    chance,
+                    true
+            );
+        }
+
+        private void apply(
+                @NotNull JolCraftGlobalLootModifierProvider target,
+                @NotNull JolCraftDataProvider<?> provider,
+                @NotNull JolCraftDataTracking tracking,
+                float chance,
+                boolean replace
+        ) {
+            add(
+                    target,
+                    provider,
+                    tracking,
+                    new AddLootTableModifier(
+                            conditions(),
+                            lootTable,
+                            chance,
+                            replace
                     )
             );
         }

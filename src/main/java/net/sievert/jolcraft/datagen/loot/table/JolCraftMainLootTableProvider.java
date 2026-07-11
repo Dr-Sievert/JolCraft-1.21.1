@@ -10,11 +10,7 @@ import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
-import net.sievert.jolcraft.datagen.loot.table.subprovider.JolCraftArchaeologyLootTableProvider;
-import net.sievert.jolcraft.datagen.loot.table.subprovider.JolCraftBlockLootTableProvider;
-import net.sievert.jolcraft.datagen.loot.table.subprovider.JolCraftChestLootTableProvider;
-import net.sievert.jolcraft.datagen.loot.table.subprovider.JolCraftEntityLootTableProvider;
-import net.sievert.jolcraft.datagen.loot.table.subprovider.JolCraftStrongboxLootTableProvider;
+import net.sievert.jolcraft.datagen.loot.table.subprovider.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -37,7 +33,8 @@ public final class JolCraftMainLootTableProvider
                         new SubProviderEntry(JolCraftBlockLootTableProvider::new, LootContextParamSets.BLOCK),
                         new SubProviderEntry(JolCraftChestLootTableProvider::new, LootContextParamSets.CHEST),
                         new SubProviderEntry(JolCraftEntityLootTableProvider::new, LootContextParamSets.ENTITY),
-                        new SubProviderEntry(JolCraftStrongboxLootTableProvider::new, LootContextParamSets.CHEST)
+                        new SubProviderEntry(JolCraftStrongboxLootTableProvider::new, LootContextParamSets.CHEST),
+                        new SubProviderEntry(JolCraftFishingLootTableProvider::new, LootContextParamSets.FISHING)
                 ),
                 registries
         );

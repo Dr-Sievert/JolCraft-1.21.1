@@ -51,6 +51,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String EXTRACT = "extract";
     public static final String FILL = "fill";
     public static final String FINALIZE = "finalize";
+    public static final String FISHING = "fishing";
     public static final String HAS = "has";
     public static final String HEX = "hex";
     public static final String HOLD = "hold";
@@ -402,6 +403,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String JIGSAW = "jigsaw";
     public static final String JSON = "json";
     public static final String JUNCTION = "junction";
+    public static final String JUNK = "junk";
     public static final String KEY = "key";
     public static final String KEEPER = "keeper";
     public static final String KIN = "kin";
@@ -590,6 +592,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TOTAL = "total";
     public static final String TRANSITION = "transition";
     public static final String TRANSLATION = "translation";
+    public static final String TREASURE = "treasure";
     public static final String TRIM = "trim";
     public static final String TYPE = "type";
     public static final String UNCUT = "uncut";

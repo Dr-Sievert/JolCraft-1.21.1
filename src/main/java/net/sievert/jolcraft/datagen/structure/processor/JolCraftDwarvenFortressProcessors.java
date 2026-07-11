@@ -55,19 +55,19 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
 
         register(
                 DWARVEN_FORTRESS,
-                crackedBricks(0.10F)
+                crackedBricks()
         );
 
         register(
                 CAVE_IN,
-                crackedBricks(0.10F),
+                crackedBricks(),
                 new RandomCaveInProcessor(0.10F),
                 new StructureVoidProcessor()
         );
 
         register(
                 COLLAPSED,
-                crackedBricks(0.10F),
+                crackedBricks(),
                 new RuleProcessor(List.of(
                         new ProcessorRule(
                                 new RandomNotAirRuleTest(0.10F),
@@ -120,10 +120,10 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
         );
     }
 
-    private static RuleProcessor crackedBricks(float chance) {
+    private static RuleProcessor crackedBricks() {
         return new RuleProcessor(List.of(
                 new ProcessorRule(
-                        new RandomBlockMatchTest(Blocks.DEEPSLATE_BRICKS, chance),
+                        new RandomBlockMatchTest(Blocks.DEEPSLATE_BRICKS, (float) 0.1),
                         AlwaysTrueTest.INSTANCE,
                         Blocks.CRACKED_DEEPSLATE_BRICKS.defaultBlockState()
                 )

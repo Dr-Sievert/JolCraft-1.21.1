@@ -58,6 +58,22 @@ public final class JolCraftLootTables {
     }
 
     /* ---------------------------------------------------------------------
+     * Fishing
+     * ------------------------------------------------------------------ */
+
+    public static final class Fishing {
+
+        public static final ResourceKey<LootTable> FISHING =
+                fishing(register(JolCraftLootTableIds.FISHING));
+
+        public static final ResourceKey<LootTable> JUNK =
+                fishing(register(JolCraftLootTableIds.JUNK));
+
+        public static final ResourceKey<LootTable> TREASURE =
+                fishing(register(JolCraftLootTableIds.TREASURE));
+    }
+
+    /* ---------------------------------------------------------------------
      * Registration helpers
      * ------------------------------------------------------------------ */
 
@@ -93,6 +109,10 @@ public final class JolCraftLootTables {
 
     private static ResourceKey<LootTable> archaeology(ResourceKey<LootTable> key){
         return inFolder(JolCraftDictionary.ARCHAEOLOGY, key);
+    }
+
+    private static ResourceKey<LootTable> fishing(ResourceKey<LootTable> key){
+        return inFolder(JolCraftDictionary.FISHING, key);
     }
 
     public static Set<ResourceKey<LootTable>> all() {
