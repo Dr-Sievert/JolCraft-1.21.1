@@ -36,10 +36,14 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
 
     public static final ResourceKey<StructureTemplatePool> ROOM_POOL = poolKey(JolCraftDwarvenFortressPoolIds.ROOM);
 
-    public static final ResourceKey<StructureTemplatePool> GRAVEL_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GRAVEL);
+
     public static final ResourceKey<StructureTemplatePool> GRAVEL_LARGE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GRAVEL_LARGE);
+    public static final ResourceKey<StructureTemplatePool> GRAVEL_POOL = poolKey(JolCraftTemplatePoolIds.GRAVEL);
 
     public static final ResourceKey<StructureTemplatePool> CRUCIBLE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CRUCIBLE);
+
+    public static final ResourceKey<StructureTemplatePool> HALL_TABLE_DECORATION = poolKey(JolCraftDwarvenFortressPoolIds.HALL_TABLE_DECORATION);
+    public static final ResourceKey<StructureTemplatePool> BARREL_POOL = poolKey(JolCraftTemplatePoolIds.BARREL);
 
     private JolCraftDwarvenFortressPools(BootstrapContext<StructureTemplatePool> context) {
         super(context, DIRECTORY_ID, JolCraftDwarvenFortressProcessors.DWARVEN_FORTRESS);
@@ -159,22 +163,33 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         register(
                 ROOM_POOL,
                 entry(JolCraftDwarvenFortressPoolIds.DIGSITE),
-                entry(JolCraftDwarvenFortressPoolIds.FORGE)
-        );
-
-        register(
-                GRAVEL_POOL,
-                processed(JolCraftDwarvenFortressPoolIds.GRAVEL_1, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 3),
-                processed(JolCraftDwarvenFortressPoolIds.GRAVEL_2, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 3),
-                processed(JolCraftDwarvenFortressPoolIds.GRAVEL_3, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 2),
-                processed(JolCraftDwarvenFortressPoolIds.GRAVEL_4, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 2),
-                processed(JolCraftDwarvenFortressPoolIds.GRAVEL_5, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 1),
-                empty(3)
+                entry(JolCraftDwarvenFortressPoolIds.FORGE),
+                entry(JolCraftDwarvenFortressPoolIds.HALL)
         );
 
         register(
                 GRAVEL_LARGE_POOL,
                 processed(JolCraftDwarvenFortressPoolIds.GRAVEL_LARGE, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY)
+        );
+
+        register(
+                GRAVEL_POOL,
+                misc(JolCraftTemplatePoolIds.GRAVEL_1, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 3),
+                misc(JolCraftTemplatePoolIds.GRAVEL_2, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 3),
+                misc(JolCraftTemplatePoolIds.GRAVEL_3, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 2),
+                misc(JolCraftTemplatePoolIds.GRAVEL_4, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 2),
+                misc(JolCraftTemplatePoolIds.GRAVEL_5, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY, 1),
+                empty(3)
+        );
+
+        register(
+                BARREL_POOL,
+                misc(JolCraftTemplatePoolIds.BARREL_1, JolCraftDwarvenFortressProcessors.BARREL, 5),
+                misc(JolCraftTemplatePoolIds.BARREL_2, JolCraftDwarvenFortressProcessors.BARREL, 4),
+                misc(JolCraftTemplatePoolIds.BARREL_3, JolCraftDwarvenFortressProcessors.BARREL, 3),
+                misc(JolCraftTemplatePoolIds.BARREL_4, JolCraftDwarvenFortressProcessors.BARREL, 2),
+                misc(JolCraftTemplatePoolIds.BARREL_5, JolCraftDwarvenFortressProcessors.BARREL, 1),
+                empty(5)
         );
 
         register(
@@ -185,9 +200,19 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         );
 
         register(
+                HALL_TABLE_DECORATION,
+                misc(JolCraftTemplatePoolIds.POTTED_AZALEA_BUSH),
+                misc(JolCraftTemplatePoolIds.POTTED_FLOWERING_AZALEA_BUSH),
+                misc(JolCraftTemplatePoolIds.CANDLE_1, 3),
+                misc(JolCraftTemplatePoolIds.CANDLE_2, 3),
+                misc(JolCraftTemplatePoolIds.CANDLE_3, 2),
+                misc(JolCraftTemplatePoolIds.CANDLE_4, 2)
+        );
+
+        register(
                 JolCraftMiscStructurePools.STRONGBOX_POOL,
-                misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.STRONGBOX, 1),
-                misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.STRONGBOX, 2),
+                misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.STRONGBOX, 2),
+                misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.STRONGBOX, 1),
                 empty(3)
         );
     }
@@ -198,6 +223,14 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
 
     private PoolEntry misc(String template, ResourceKey<StructureProcessorList> processor, int weight) {
         return external(JolCraftMiscStructurePools.DIRECTORY_ID, template, processor, weight);
+    }
+
+    private PoolEntry misc(String template, int weight) {
+        return external(JolCraftMiscStructurePools.DIRECTORY_ID, template, null, weight);
+    }
+
+    private PoolEntry misc(String template) {
+        return external(JolCraftMiscStructurePools.DIRECTORY_ID, template, null, 1);
     }
 
     private PoolEntry room(String template, int weight) {

@@ -18,6 +18,7 @@ public final class JolCraftLootTableIds extends JolCraftIds {
     public static final String UNCUT_GEMS = JolCraftTagIds.UNCUT_GEMS;
     public static final String SALVAGE = JolCraftTagIds.SALVAGE;
     public static final String DWARVEN_TOMES = plural(JolCraftItemIds.DWARVEN_TOME);
+    public static final String SUPPLIES = JolCraftDictionary.SUPPLIES;
 
     /* ---------------------------------------------------------------------
      * Strongbox

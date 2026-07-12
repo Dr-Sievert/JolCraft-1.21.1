@@ -1,5 +1,7 @@
 package net.sievert.jolcraft.data.id.worldgen.template_pool;
 
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+
 public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
 
     private JolCraftDwarvenFortressPoolIds() {}
@@ -62,5 +64,5 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
 
     public static final String GRAVEL_LARGE = join(GRAVEL, LARGE);
     public static final String CRUCIBLE_ABANDONED = join(CRUCIBLE, ABANDONED);
-    public static final String CRUCIBLE_BROKEN = join(CRUCIBLE, BROKEN);
+    public static final String HALL_TABLE_DECORATION = join(JolCraftDictionary.HALL, JolCraftDictionary.TABLE, JolCraftDictionary.DECORATION);
 }

@@ -110,8 +110,7 @@ public final class JolCraftItems {
     // Food
     // -------------------------------------------------------------------------
 
-    public static final DeferredItem<Item> MUFFHORN_MILK_BUCKET =
-            JolCraftFoodItems.registerMuffhornMilkBucket();
+    public static final DeferredItem<Item> MUFFHORN_MILK_BUCKET = JolCraftFoodItems.registerMuffhornMilkBucket();
 
     // -------------------------------------------------------------------------
     // Alchemy

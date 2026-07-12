@@ -5,10 +5,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.functions.SetPotionFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -112,6 +116,49 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
                 LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get()).setWeight(9))
                         .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get()).setWeight(1))));
+
+        target.accept(JolCraftLootTables.Chests.SUPPLIES,
+                LootTable.lootTable()
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(UniformGenerator.between(1.0F, 4.0F))
+                                        .add(EmptyLootItem.emptyItem().setWeight(5))
+                                        .add(LootItem.lootTableItem(Items.ROTTEN_FLESH).setWeight(5))
+                                        .add(LootItem.lootTableItem(Items.BREAD).setWeight(5))
+                                        .add(LootItem.lootTableItem(Items.BAKED_POTATO).setWeight(5))
+                                        .add(LootItem.lootTableItem(Items.CARROT).setWeight(5))
+                                        .add(LootItem.lootTableItem(Items.COOKED_BEEF).setWeight(3))
+                                        .add(LootItem.lootTableItem(Items.COOKED_MUTTON).setWeight(3))
+                                        .add(LootItem.lootTableItem(Items.COOKED_CHICKEN).setWeight(3))
+                                        .add(LootItem.lootTableItem(Items.COOKED_PORKCHOP).setWeight(3))
+                                        .add(LootItem.lootTableItem(Items.COOKED_COD).setWeight(3))
+                                        .add(LootItem.lootTableItem(Items.COOKED_SALMON).setWeight(3))
+                                        .add(LootItem.lootTableItem(Items.COOKED_PORKCHOP).setWeight(3))
+                                        .add(LootItem.lootTableItem(Items.PUMPKIN_PIE).setWeight(1))
+                                        .add(LootItem.lootTableItem(Items.BEETROOT_SOUP).setWeight(1))
+                                        .add(LootItem.lootTableItem(Items.RABBIT_STEW).setWeight(1))
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .add(LootItem.lootTableItem(Items.GOLDEN_APPLE).setWeight(5))
+                                        .add(LootItem.lootTableItem(Items.ENCHANTED_GOLDEN_APPLE).setWeight(1))
+                                        .add(EmptyLootItem.emptyItem().setWeight(94))
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(3.0F))
+                                        .add(LootItem.lootTableItem(JolCraftItems.GLASS_MUG).setWeight(5))
+                                        .add(LootItem.lootTableItem(Items.WHEAT).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY_MALT).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.YEAST).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)).apply(SetPotionFunction.setPotion(Potions.STRENGTH))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)).apply(SetPotionFunction.setPotion(Potions.NIGHT_VISION))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)).apply(SetPotionFunction.setPotion(Potions.TURTLE_MASTER))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)).apply(SetPotionFunction.setPotion(Potions.REGENERATION))
+                        )
+        );
 
         tracking.logTrackedOutputCount(
                 this,

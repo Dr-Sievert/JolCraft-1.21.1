@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.structure.processor;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Blocks;
@@ -39,6 +40,9 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
 
     public static final ResourceKey<StructureProcessorList> STRONGBOX =
             processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftBlockIds.STRONGBOX));
+
+    public static final ResourceKey<StructureProcessorList> BARREL =
+            processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDictionary.BARREL));
 
     public static final ResourceKey<StructureProcessorList> ARCHAEOLOGY =
             processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDictionary.ARCHAEOLOGY));
@@ -100,6 +104,14 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
                 new AddLootTableProcessor(
                         JolCraftBlocks.STRONGBOX.getId(),
                         JolCraftLootTables.Strongbox.DWARVEN_FORTRESS
+                )
+        );
+
+        register(
+                BARREL,
+                new AddLootTableProcessor(
+                        BuiltInRegistries.BLOCK.getKey(Blocks.BARREL),
+                        JolCraftLootTables.Chests.SUPPLIES
                 )
         );
 

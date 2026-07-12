@@ -33,6 +33,7 @@ public final class JolCraftLootTables {
         public static final ResourceKey<LootTable> UNCUT_GEMS = chest(register(JolCraftLootTableIds.UNCUT_GEMS));
         public static final ResourceKey<LootTable> SALVAGE = chest(register(JolCraftLootTableIds.SALVAGE));
         public static final ResourceKey<LootTable> DWARVEN_TOMES = chest(register(JolCraftLootTableIds.DWARVEN_TOMES));
+        public static final ResourceKey<LootTable> SUPPLIES = chest(register(JolCraftLootTableIds.SUPPLIES));
     }
 
     /* ---------------------------------------------------------------------

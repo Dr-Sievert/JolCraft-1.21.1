@@ -135,6 +135,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String EXTRACTABLE = "extractable";
     public static final String FAIL = "fail";
     public static final String FILLED = "filled";
+    public static final String FLOWERING = "flowering";
     public static final String FORCED = "forced";
     public static final String FULL = "full";
     public static final String GREATER = "greater";
@@ -223,11 +224,13 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String ATTACK = "attack";
     public static final String ATTRIBUTE = "attribute";
     public static final String AXE = "axe";
+    public static final String AZALEA = "azalea";
     public static final String BABY = "baby";
     public static final String BACKGROUND = "background";
     public static final String BACKPACK = "backpack";
     public static final String BAR = "bar";
     public static final String BARLEY = "barley";
+    public static final String BARREL = "barrel";
     public static final String BASALT = "basalt";
     public static final String BASE = "base";
     public static final String BED = "bed";
@@ -253,7 +256,9 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BUBBLE = "bubble";
     public static final String BUCKET = "bucket";
     public static final String BULB = "bulb";
+    public static final String BUSH = "bush";
     public static final String BUSY = "busy";
+    public static final String CANDLE = "candle";
     public static final String CATALYST = "catalyst";
     public static final String CATEGORY = "category";
     public static final String CAULDRON = "cauldron";
@@ -371,6 +376,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String GUI = "gui";
     public static final String GUILD = "guild";
     public static final String GUILDMASTER = "guildmaster";
+    public static final String HALL = "hall";
     public static final String HAMMER = "hammer";
     public static final String HAND = "hand";
     public static final String HASTE = "haste";
@@ -565,6 +571,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SUBTITLE = "subtitle";
     public static final String SUBTYPE = "subtype";
     public static final String SUNGLEAM = "sungleam";
+    public static final String SUPPLIES = "supplies";
     public static final String SURFACE = "surface";
     public static final String SWORD = "sword";
     public static final String TAB = "tab";
