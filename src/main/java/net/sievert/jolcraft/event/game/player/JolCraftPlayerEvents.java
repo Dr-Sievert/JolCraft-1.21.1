@@ -9,6 +9,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -18,11 +20,14 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.event.game.item.JolCraftCompassEvents;
 import net.sievert.jolcraft.event.game.player.attribute.JolCraftPlayerAttributeHelper;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
@@ -183,5 +188,43 @@ public final class JolCraftPlayerEvents {
 
             serverLevel.setBlock(pos, state, 3);
         }
+    }
+
+    @SubscribeEvent
+    public static void onItemPickup(ItemEntityPickupEvent.Pre event) {
+        ItemEntity itemEntity = event.getItemEntity();
+        ItemStack groundStack = itemEntity.getItem();
+        Player player = event.getPlayer();
+
+        if (!groundStack.is(JolCraftItems.GOLD_COIN.get()) || itemEntity.hasPickUpDelay()) {
+            return;
+        }
+
+        int remaining = groundStack.getCount();
+
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack inventoryStack = player.getInventory().getItem(slot);
+
+            if (!inventoryStack.is(JolCraftItems.COIN_POUCH.get())) {
+                continue;
+            }
+
+            remaining -= CoinPouchItem.insertCoins(
+                    inventoryStack,
+                    remaining,
+                    player
+            );
+
+            if (remaining <= 0) {
+                break;
+            }
+        }
+
+        if (remaining == groundStack.getCount()) {
+            return;
+        }
+
+        groundStack.setCount(remaining);
+        JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP);
     }
 }

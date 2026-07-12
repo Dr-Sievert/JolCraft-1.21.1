@@ -44,12 +44,7 @@ public final class JolCraftSoundHelper {
      * World sound without actor semantics (server authoritative).
      * If called on client, forwards to server via ServerboundPlaySoundPacket.
      */
-    public static void play(Level level,
-                            SoundEvent sound,
-                            SoundSource source,
-                            double x, double y, double z,
-                            float volume,
-                            float pitch) {
+    public static void play(Level level, SoundEvent sound, SoundSource source, double x, double y, double z, float volume, float pitch) {
 
         if (!level.isClientSide) {
             level.playSound(null, x, y, z, sound, source, volume, pitch);
@@ -63,12 +58,7 @@ public final class JolCraftSoundHelper {
     }
 
     /** Local-only positional sound for exactly one player. */
-    public static void playLocal(Player player,
-                                 SoundEvent sound,
-                                 SoundSource source,
-                                 double x, double y, double z,
-                                 float volume,
-                                 float pitch) {
+    public static void playLocal(Player player, SoundEvent sound, SoundSource source, double x, double y, double z, float volume, float pitch) {
 
         Level level = player.level();
 
@@ -100,13 +90,7 @@ public final class JolCraftSoundHelper {
 
 
     /** Generic positional sound centered on a block position. */
-    public static void position(Level level,
-                                BlockPos pos,
-                                SoundEvent sound,
-                                SoundSource source,
-                                float volume,
-                                float pitch) {
-
+    public static void position(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch) {
         play(
                 level,
                 sound,
@@ -120,11 +104,7 @@ public final class JolCraftSoundHelper {
     }
 
     /** Generic positional sound centered on a block position (1.0 / 1.0). */
-    public static void position(Level level,
-                                BlockPos pos,
-                                SoundEvent sound,
-                                SoundSource source) {
-
+    public static void position(Level level, BlockPos pos, SoundEvent sound, SoundSource source) {
         position(level, pos, sound, source, 1.0F, 1.0F);
     }
 
@@ -133,11 +113,7 @@ public final class JolCraftSoundHelper {
     // ------------------------------------------------------------
 
     /** World sound at player position using player's sound source (broadcast to everyone). */
-    public static void player(Player player,
-                              SoundEvent sound,
-                              float volume,
-                              float pitch) {
-
+    public static void player(Player player, SoundEvent sound, float volume, float pitch) {
         play(
                 player.level(),
                 sound,
@@ -149,9 +125,7 @@ public final class JolCraftSoundHelper {
     }
 
     /** World sound at player position (1.0 / 1.0). */
-    public static void player(Player player,
-                              SoundEvent sound) {
-
+    public static void player(Player player, SoundEvent sound) {
         player(player, sound, 1.0F, 1.0F);
     }
 
@@ -160,11 +134,7 @@ public final class JolCraftSoundHelper {
     // ------------------------------------------------------------
 
     /** World sound at entity position. */
-    public static void entity(LivingEntity entity,
-                              SoundEvent sound,
-                              float volume,
-                              float pitch) {
-
+    public static void entity(LivingEntity entity, SoundEvent sound, float volume, float pitch) {
         play(
                 entity.level(),
                 sound,
@@ -176,10 +146,7 @@ public final class JolCraftSoundHelper {
     }
 
     /** World sound at entity position using voice pitch. */
-    public static void entity(LivingEntity entity,
-                              SoundEvent sound,
-                              float volume) {
-
+    public static void entity(LivingEntity entity, SoundEvent sound, float volume) {
         entity(
                 entity,
                 sound,
@@ -197,12 +164,7 @@ public final class JolCraftSoundHelper {
     // BLOCK
     // ------------------------------------------------------------
 
-    private static void blockInternal(Level level,
-                                      BlockPos pos,
-                                      SoundEvent sound,
-                                      float volume,
-                                      float pitch) {
-
+    private static void blockInternal(Level level, BlockPos pos, SoundEvent sound, float volume, float pitch) {
         position(level, pos, sound, SoundSource.BLOCKS, volume, pitch);
     }
 
@@ -224,12 +186,7 @@ public final class JolCraftSoundHelper {
     }
 
     /** Fallback block sound entry. */
-    public static void block(Level level,
-                             BlockPos pos,
-                             SoundEvent sound,
-                             float volume,
-                             float pitch) {
-
+    public static void block(Level level, BlockPos pos, SoundEvent sound, float volume, float pitch) {
         blockInternal(level, pos, sound, volume, pitch);
     }
 

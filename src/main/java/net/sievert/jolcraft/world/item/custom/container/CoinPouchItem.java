@@ -152,7 +152,7 @@ public class CoinPouchItem extends Item {
         return InteractionResultHolder.pass(pouch);
     }
 
-    private boolean isGoldCoin(ItemStack stack) {
+    public static boolean isGoldCoin(ItemStack stack) {
         return !stack.isEmpty() && stack.getItem() == JolCraftItems.GOLD_COIN.get();
     }
 
@@ -195,7 +195,7 @@ public class CoinPouchItem extends Item {
                 : Optional.empty();
     }
 
-    private void playStackSound(Player player) {
+    private static void playStackSound(Player player) {
         JolCraftSoundHelper.player(
                 player,
                 JolCraftSounds.COIN_STACK.get(),
@@ -204,7 +204,7 @@ public class CoinPouchItem extends Item {
         );
     }
 
-    private void playSingleSound(Player player) {
+    private static void playSingleSound(Player player) {
         JolCraftSoundHelper.player(
                 player,
                 JolCraftSounds.COIN_SINGLE.get(),
@@ -213,7 +213,7 @@ public class CoinPouchItem extends Item {
         );
     }
 
-    private void playPouchInsertSound(Player player) {
+    private static void playPouchInsertSound(Player player) {
         JolCraftSoundHelper.player(player, SoundEvents.BUNDLE_INSERT, 0.8F, 1.3F);
     }
 
@@ -232,4 +232,35 @@ public class CoinPouchItem extends Item {
         stack.set(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
     }
 
+    public static int insertCoins(ItemStack pouch, int amount, Player player) {
+        if (amount <= 0 || !pouch.is(JolCraftItems.COIN_POUCH.get())) {
+            return 0;
+        }
+
+        int current = pouch.getOrDefault(
+                JolCraftDataComponents.COIN_POUCH_AMOUNT.get(),
+                0
+        );
+
+        int inserted = Math.min(amount, MAX_COINS - current);
+
+        if (inserted <= 0) {
+            return 0;
+        }
+
+        pouch.set(
+                JolCraftDataComponents.COIN_POUCH_AMOUNT.get(),
+                current + inserted
+        );
+
+        if (inserted == 1 && current == 0) {
+            playPouchInsertSound(player);
+        } else if (inserted == 1) {
+            playSingleSound(player);
+        } else {
+            playStackSound(player);
+        }
+
+        return inserted;
+    }
 }
