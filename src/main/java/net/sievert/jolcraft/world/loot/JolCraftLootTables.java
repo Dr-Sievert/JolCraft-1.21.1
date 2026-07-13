@@ -53,6 +53,7 @@ public final class JolCraftLootTables {
         public static final ResourceKey<LootTable> DWARVEN_FORTRESS_FORGE = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_FORGE));
         public static final ResourceKey<LootTable> DWARVEN_FORTRESS_VAULT = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_VAULT));
         public static final ResourceKey<LootTable> DWARVEN_FORTRESS_GARDEN = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_GARDEN));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_ARCHIVES = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_ARCHIVES));
     }
 
     /* ---------------------------------------------------------------------

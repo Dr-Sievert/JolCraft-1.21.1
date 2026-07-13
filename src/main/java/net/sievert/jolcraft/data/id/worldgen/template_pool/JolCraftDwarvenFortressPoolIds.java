@@ -73,10 +73,13 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
 
     public static final String GARDEN_CORNER = join(GARDEN, CORNER);
 
-    public static final String GARDEN_FLOWER_1 = join(GARDEN, FLOWER_1);
-    public static final String GARDEN_FLOWER_2 = join(GARDEN, FLOWER_2);
-    public static final String GARDEN_FLOWER_3 = join(GARDEN, FLOWER_3);
-    public static final String GARDEN_FLOWER_4 = join(GARDEN, FLOWER_4);
+    public static final String GARDEN_FLOWER = join(GARDEN, FLOWER);
+    public static final String GARDEN_FLOWER_BED = join(GARDEN, FLOWER_BED);
+    public static final String GARDEN_FLOWERS = plural(GARDEN_FLOWER);
+    public static final String GARDEN_FLOWER_1 = join(GARDEN_FLOWER);
+    public static final String GARDEN_FLOWER_2 = join(GARDEN_FLOWER);
+    public static final String GARDEN_FLOWER_3 = join(GARDEN_FLOWER);
+    public static final String GARDEN_FLOWER_4 = join(GARDEN_FLOWER);
 
     public static final String GARDEN_MIDDLE = join(GARDEN, MIDDLE);
     public static final String GARDEN_MIDDLE_1 = one(GARDEN_MIDDLE);
@@ -93,4 +96,5 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
 
     public static final String GARDEN_LOOT = join(GARDEN, LOOT);
 
+    public static final String ARCHIVES_LOOT = join(ARCHIVES, LOOT);
 }

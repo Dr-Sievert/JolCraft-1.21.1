@@ -164,6 +164,9 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get())
                 .add(JolCraftItems.DEEPSLATE_COMPASS.get());
 
+        target.tag(ItemTags.BOOKSHELF_BOOKS)
+                .addTags(JolCraftTags.Items.TOMES);
+
         // Plants
 
         target.tag(Tags.Items.SEEDS)
@@ -428,6 +431,23 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.REPUTATION_TABLET_2.get())
                 .add(JolCraftItems.REPUTATION_TABLET_3.get())
                 .add(JolCraftItems.REPUTATION_TABLET_4.get());
+
+
+        target.tag(JolCraftTags.Items.TOMES)
+                .add(JolCraftItems.DWARVEN_TOME.get())
+                .add(JolCraftItems.DWARVEN_TOME_COMMON.get())
+                .add(JolCraftItems.DWARVEN_TOME_UNCOMMON.get())
+                .add(JolCraftItems.DWARVEN_TOME_RARE.get())
+                .add(JolCraftItems.DWARVEN_TOME_EPIC.get())
+                .add(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get())
+                .add(JolCraftItems.ANCIENT_DWARVEN_TOME.get())
+                .add(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get())
+                .add(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get())
+                .add(JolCraftItems.ANCIENT_DWARVEN_TOME_RARE.get())
+                .add(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get())
+                .add(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get())
+                .add(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get())
+                .add(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get());
 
         // Coins
 

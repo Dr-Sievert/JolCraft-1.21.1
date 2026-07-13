@@ -2,10 +2,14 @@ package net.sievert.jolcraft.datagen.loot.table.subprovider;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
@@ -80,6 +84,7 @@ public final class JolCraftStrongboxLootTableProvider
             @NotNull JolCraftDataTracking tracking
     ) {
         this.tracking = tracking;
+        HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
 
         target.accept(
                 JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_FORGE,
@@ -201,6 +206,43 @@ public final class JolCraftStrongboxLootTableProvider
                                                         LoreHelper.toLoreKeyString(DwarfLoreKey.ALCHEMY_RECIPES)
                                                 )
                                         )
+                                        .add(EmptyLootItem.emptyItem().setWeight(9))
+                        )
+        );
+
+        target.accept(
+                JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_ARCHIVES,
+                LootTable.lootTable()
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(5))
+                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(1))
+                                        .add(
+                                                LootItem.lootTableItem(Items.BOOK)
+                                                        .setWeight(1)
+                                                        .apply(
+                                                                new EnchantRandomlyFunction.Builder()
+                                                                        .withOneOf(
+                                                                                HolderSet.direct(
+                                                                                        registrylookup.getOrThrow(Enchantments.MENDING),
+                                                                                        registrylookup.getOrThrow(Enchantments.SHARPNESS),
+                                                                                        registrylookup.getOrThrow(Enchantments.EFFICIENCY),
+                                                                                        registrylookup.getOrThrow(Enchantments.FORTUNE),
+                                                                                        registrylookup.getOrThrow(Enchantments.LOOTING),
+                                                                                        registrylookup.getOrThrow(Enchantments.UNBREAKING)
+                                                                                )
+                                                                        )
+                                                        )
+                                        )
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(UniformGenerator.between(1, 4))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME).setWeight(30))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME).setWeight(10))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME).setWeight(1))
                                         .add(EmptyLootItem.emptyItem().setWeight(9))
                         )
         );

@@ -40,19 +40,21 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
     public static final ResourceKey<StructureTemplatePool> GRAVEL_POOL = poolKey(JolCraftTemplatePoolIds.GRAVEL);
 
     public static final ResourceKey<StructureTemplatePool> CRUCIBLE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CRUCIBLE);
-    public static final ResourceKey<StructureTemplatePool> FORGE_LOOT = poolKey(JolCraftDwarvenFortressPoolIds.FORGE_LOOT);
+    public static final ResourceKey<StructureTemplatePool> FORGE_LOOT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.FORGE_LOOT);
 
-    public static final ResourceKey<StructureTemplatePool> HALL_TABLE_DECORATION = poolKey(JolCraftDwarvenFortressPoolIds.HALL_TABLE_DECORATION);
+    public static final ResourceKey<StructureTemplatePool> HALL_TABLE_DECORATION_POOL = poolKey(JolCraftDwarvenFortressPoolIds.HALL_TABLE_DECORATION);
     public static final ResourceKey<StructureTemplatePool> BARREL_POOL = poolKey(JolCraftTemplatePoolIds.BARREL);
 
-    public static final ResourceKey<StructureTemplatePool> VAULT_LOOT = poolKey(JolCraftDwarvenFortressPoolIds.VAULT_LOOT);
+    public static final ResourceKey<StructureTemplatePool> VAULT_LOOT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.VAULT_LOOT);
 
-    public static final ResourceKey<StructureTemplatePool> GARDEN_CORNER = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_CORNER);
-    public static final ResourceKey<StructureTemplatePool> GARDEN_MIDDLE = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE);
-    public static final ResourceKey<StructureTemplatePool> GARDEN_LARGE = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE);
-    public static final ResourceKey<StructureTemplatePool> GARDEN_LARGE_WALL = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL);
-    public static final ResourceKey<StructureTemplatePool> FLOWERS = poolKey(JolCraftStrings.plural(JolCraftTemplatePoolIds.FLOWER));
-    public static final ResourceKey<StructureTemplatePool> GARDEN_LOOT = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_LOOT);
+    public static final ResourceKey<StructureTemplatePool> GARDEN_CORNER_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_CORNER);
+    public static final ResourceKey<StructureTemplatePool> GARDEN_MIDDLE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE);
+    public static final ResourceKey<StructureTemplatePool> GARDEN_LARGE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE);
+    public static final ResourceKey<StructureTemplatePool> GARDEN_LARGE_WALL_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL);
+    public static final ResourceKey<StructureTemplatePool> GARDEN_FLOWERS_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_FLOWERS);
+    public static final ResourceKey<StructureTemplatePool> GARDEN_LOOT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.GARDEN_LOOT);
+
+    public static final ResourceKey<StructureTemplatePool> ARCHIVES_LOOT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.ARCHIVES_LOOT);
 
     private JolCraftDwarvenFortressPools(BootstrapContext<StructureTemplatePool> context) {
         super(context, DIRECTORY_ID, JolCraftDwarvenFortressProcessors.DWARVEN_FORTRESS);
@@ -175,7 +177,8 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 entry(JolCraftDwarvenFortressPoolIds.FORGE),
                 entry(JolCraftDwarvenFortressPoolIds.HALL),
                 entry(JolCraftDwarvenFortressPoolIds.VAULT),
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN, JolCraftDwarvenFortressProcessors.ABANDONED)
+                processed(JolCraftDwarvenFortressPoolIds.GARDEN, JolCraftDwarvenFortressProcessors.ABANDONED),
+                entry(JolCraftDwarvenFortressPoolIds.ARCHIVES, 100)
         );
 
         register(
@@ -211,14 +214,14 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         );
 
         register(
-                FORGE_LOOT,
+                FORGE_LOOT_POOL,
                 misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.FORGE_LOOT, 2),
                 misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.FORGE_LOOT, 1),
                 empty(1)
         );
 
         register(
-                HALL_TABLE_DECORATION,
+                HALL_TABLE_DECORATION_POOL,
                 misc(JolCraftTemplatePoolIds.POTTED_AZALEA_BUSH),
                 misc(JolCraftTemplatePoolIds.POTTED_FLOWERING_AZALEA_BUSH),
                 misc(JolCraftTemplatePoolIds.CANDLE_1, 3),
@@ -228,7 +231,7 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         );
 
         register(
-                VAULT_LOOT,
+                VAULT_LOOT_POOL,
                 misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.VAULT_LOOT, 30),
                 misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.VAULT_LOOT, 10),
                 misc(JolCraftTemplatePoolIds.DEEPSLATE_MITHRIL_ORE, JolCraftDwarvenFortressProcessors.VAULT_LOOT, 9),
@@ -237,12 +240,12 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         );
 
         register(
-                GARDEN_CORNER,
-                processed(JolCraftTemplatePoolIds.FLOWER_BED, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
+                GARDEN_CORNER_POOL,
+                processed(JolCraftDwarvenFortressPoolIds.GARDEN_FLOWER_BED, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
         );
 
         register(
-                FLOWERS,
+                GARDEN_FLOWERS_POOL,
                 entry(JolCraftDwarvenFortressPoolIds.GARDEN_FLOWER_1),
                 entry(JolCraftDwarvenFortressPoolIds.GARDEN_FLOWER_2),
                 entry(JolCraftDwarvenFortressPoolIds.GARDEN_FLOWER_3),
@@ -250,29 +253,36 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         );
 
         register(
-                GARDEN_MIDDLE,
+                GARDEN_MIDDLE_POOL,
                 processed(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_1, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
                 processed(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_2, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
                 processed(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_3, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
         );
 
         register(
-                GARDEN_LARGE,
+                GARDEN_LARGE_POOL,
                 processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_1, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
                 processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_2, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
         );
 
 
         register(
-                GARDEN_LARGE_WALL,
+                GARDEN_LARGE_WALL_POOL,
                 processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL_1, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
                 processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL_2, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
         );
 
         register(
-                GARDEN_LOOT,
+                GARDEN_LOOT_POOL,
                 misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.GARDEN_LOOT, 2),
                 misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.GARDEN_LOOT, 1),
+                empty(1)
+        );
+
+        register(
+                ARCHIVES_LOOT_POOL,
+                misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.ARCHIVES_LOOT, 2),
+                misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.ARCHIVES_LOOT, 1),
                 empty(1)
         );
     }

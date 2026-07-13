@@ -15,6 +15,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String COINS = plural(JolCraftDictionary.COIN);
+    public static final String TOMES = plural(JolCraftDictionary.TOME);
     public static final String SPAWN_EGGS = join(JolCraftDictionary.SPAWN, plural(JolCraftDictionary.EGG));
     public static final String DWARF_SPAWN_EGGS = join(JolCraftDwarfIds.DWARF, SPAWN_EGGS);
     public static final String CREATURE_SPAWN_EGGS = join(JolCraftDictionary.CREATURE, SPAWN_EGGS);

@@ -157,7 +157,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MANAGED = "managed";
     public static final String MEDIUM = "medium";
     public static final String MIDDLE = "middle";
-    public static final String MODERN = "modern";
     public static final String NONE = "none";
     public static final String NEVER = "never";
     public static final String OLD = "old";
@@ -214,6 +213,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String ANVIL = "anvil";
     public static final String ARCANIST = "arcanist";
     public static final String ARCHAEOLOGY = "archaeology";
+    public static final String ARCHIVE = "archive";
     public static final String ARM = "arm";
     public static final String ARMOR = "armor";
     public static final String ARROW = "arrow";
@@ -245,6 +245,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BLOOD = "blood";
     public static final String BODY = "body";
     public static final String BOOK = "book";
+    public static final String BOOKSHELF = "bookshelf";
     public static final String BOOTS = "boots";
     public static final String BOTTOM = "bottom";
     public static final String BOUNTIES = "bounties";

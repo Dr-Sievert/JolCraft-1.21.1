@@ -36,6 +36,7 @@ public final class JolCraftLootTableIds extends JolCraftIds {
     public static final String DWARVEN_FORTRESS_FORGE = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.FORGE);
     public static final String DWARVEN_FORTRESS_VAULT = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.VAULT);
     public static final String DWARVEN_FORTRESS_GARDEN = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.GARDEN);
+    public static final String DWARVEN_FORTRESS_ARCHIVES = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.ARCHIVES);
 
     /* ---------------------------------------------------------------------
      * Archaeology
