@@ -2,9 +2,11 @@ package net.sievert.jolcraft.data.id.loot;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.id.item.JolCraftMaterialIds;
 import net.sievert.jolcraft.data.id.item.JolCraftRarityIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
+import net.sievert.jolcraft.data.id.worldgen.template_pool.JolCraftTemplatePoolIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftLootTableIds extends JolCraftIds {
@@ -15,9 +17,15 @@ public final class JolCraftLootTableIds extends JolCraftIds {
      * Chests
      * ------------------------------------------------------------------ */
 
-    public static final String UNCUT_GEMS = JolCraftTagIds.UNCUT_GEMS;
     public static final String SALVAGE = JolCraftTagIds.SALVAGE;
+    public static final String MITHRIL_SALVAGE = join(JolCraftMaterialIds.MITHRIL, SALVAGE);
+    public static final String DEEPSLATE_SALVAGE = join(JolCraftMaterialIds.DEEPSLATE, SALVAGE);
+    public static final String MISC_SALVAGE = join(JolCraftDictionary.MISC, SALVAGE);
+    public static final String SMITHING_SALVAGE = join(JolCraftDictionary.SMITHING, SALVAGE);
+
     public static final String DWARVEN_TOMES = plural(JolCraftItemIds.DWARVEN_TOME);
+
+    public static final String UNCUT_GEMS = JolCraftTagIds.UNCUT_GEMS;
     public static final String SUPPLIES = JolCraftDictionary.SUPPLIES;
 
     /* ---------------------------------------------------------------------
@@ -25,6 +33,9 @@ public final class JolCraftLootTableIds extends JolCraftIds {
      * ------------------------------------------------------------------ */
 
     public static final String DWARVEN_FORTRESS = JolCraftStructureIds.DWARVEN_FORTRESS;
+    public static final String DWARVEN_FORTRESS_FORGE = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.FORGE);
+    public static final String DWARVEN_FORTRESS_VAULT = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.VAULT);
+    public static final String DWARVEN_FORTRESS_GARDEN = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.GARDEN);
 
     /* ---------------------------------------------------------------------
      * Archaeology

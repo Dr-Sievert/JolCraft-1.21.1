@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
+import net.sievert.jolcraft.data.id.worldgen.template_pool.JolCraftDwarvenFortressPoolIds;
 import net.sievert.jolcraft.data.id.worldgen.template_pool.JolCraftTemplatePoolIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.structure.util.AbstractProcessorProvider;
@@ -38,8 +39,14 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
     public static final ResourceKey<StructureProcessorList> COLLAPSED =
             processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftTemplatePoolIds.COLLAPSED));
 
-    public static final ResourceKey<StructureProcessorList> STRONGBOX =
-            processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftBlockIds.STRONGBOX));
+    public static final ResourceKey<StructureProcessorList> FORGE_LOOT =
+            processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDwarvenFortressPoolIds.FORGE_LOOT));
+
+    public static final ResourceKey<StructureProcessorList> VAULT_LOOT =
+            processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDwarvenFortressPoolIds.VAULT_LOOT));
+
+    public static final ResourceKey<StructureProcessorList> GARDEN_LOOT =
+            processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDwarvenFortressPoolIds.GARDEN_LOOT));
 
     public static final ResourceKey<StructureProcessorList> BARREL =
             processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDictionary.BARREL));
@@ -85,6 +92,7 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
 
         register(
                 ABANDONED,
+                crackedBricks(),
                 new RandomCobwebProcessor(0.10F)
         );
 
@@ -100,11 +108,30 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
         );
 
         register(
-                STRONGBOX,
+                FORGE_LOOT,
                 new AddLootTableProcessor(
                         JolCraftBlocks.STRONGBOX.getId(),
-                        JolCraftLootTables.Strongbox.DWARVEN_FORTRESS
-                )
+                        JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_FORGE
+                ),
+                new RandomCobwebProcessor(0.10F)
+        );
+
+        register(
+                VAULT_LOOT,
+                new AddLootTableProcessor(
+                        JolCraftBlocks.STRONGBOX.getId(),
+                        JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_VAULT
+                ),
+                new RandomCobwebProcessor(0.10F)
+        );
+
+        register(
+                GARDEN_LOOT,
+                new AddLootTableProcessor(
+                        JolCraftBlocks.STRONGBOX.getId(),
+                        JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_GARDEN
+                ),
+                new RandomCobwebProcessor(0.10F)
         );
 
         register(
@@ -117,6 +144,7 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
 
         register(
                 ARCHAEOLOGY,
+                crackedBricks(),
                 new RandomReplaceWithLootProcessor(
                         Blocks.GRAVEL.builtInRegistryHolder().key().location(),
                         Blocks.SUSPICIOUS_GRAVEL.builtInRegistryHolder().key().location(),

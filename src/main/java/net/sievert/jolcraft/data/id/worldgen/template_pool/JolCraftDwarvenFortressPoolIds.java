@@ -63,6 +63,34 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
     //Misc
 
     public static final String GRAVEL_LARGE = join(GRAVEL, LARGE);
+
     public static final String CRUCIBLE_ABANDONED = join(CRUCIBLE, ABANDONED);
+    public static final String FORGE_LOOT = join(FORGE, LOOT);
+
     public static final String HALL_TABLE_DECORATION = join(JolCraftDictionary.HALL, JolCraftDictionary.TABLE, JolCraftDictionary.DECORATION);
+
+    public static final String VAULT_LOOT = join(VAULT, LOOT);
+
+    public static final String GARDEN_CORNER = join(GARDEN, CORNER);
+
+    public static final String GARDEN_FLOWER_1 = join(GARDEN, FLOWER_1);
+    public static final String GARDEN_FLOWER_2 = join(GARDEN, FLOWER_2);
+    public static final String GARDEN_FLOWER_3 = join(GARDEN, FLOWER_3);
+    public static final String GARDEN_FLOWER_4 = join(GARDEN, FLOWER_4);
+
+    public static final String GARDEN_MIDDLE = join(GARDEN, MIDDLE);
+    public static final String GARDEN_MIDDLE_1 = one(GARDEN_MIDDLE);
+    public static final String GARDEN_MIDDLE_2 = two(GARDEN_MIDDLE);
+    public static final String GARDEN_MIDDLE_3 = three(GARDEN_MIDDLE);
+
+    public static final String GARDEN_LARGE = join(GARDEN, LARGE);
+    public static final String GARDEN_LARGE_1 = one(GARDEN_LARGE);
+    public static final String GARDEN_LARGE_2 = two(GARDEN_LARGE);
+
+    public static final String GARDEN_LARGE_WALL = join(GARDEN_LARGE, WALL);
+    public static final String GARDEN_LARGE_WALL_1 = one(GARDEN_LARGE_WALL);
+    public static final String GARDEN_LARGE_WALL_2 = two(GARDEN_LARGE_WALL);
+
+    public static final String GARDEN_LOOT = join(GARDEN, LOOT);
+
 }

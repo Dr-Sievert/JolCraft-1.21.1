@@ -19,9 +19,14 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String MAIN =      JolCraftDictionary.MAIN;
     public static final String SHAFT =     JolCraftDictionary.SHAFT;
     public static final String CORRIDOR =  JolCraftDictionary.CORRIDOR;
+    public static final String GARDEN =  JolCraftDictionary.GARDEN;
     public static final String HALL =  JolCraftDictionary.HALL;
+    public static final String WALL =  JolCraftDictionary.WALL;
+    public static final String VAULT =  JolCraftDictionary.VAULT;
     public static final String JUNCTION =  JolCraftDictionary.JUNCTION;
     public static final String TRANSITION = JolCraftDictionary.TRANSITION;
+    public static final String CORNER = JolCraftDictionary.CORNER;
+    public static final String MIDDLE = JolCraftDictionary.MIDDLE;
     public static final String ROOM = JolCraftDictionary.ROOM;
     public static final String STAIRS =    JolCraftDictionary.STAIRS;
     public static final String END =       JolCraftDictionary.END;
@@ -40,6 +45,9 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String ANVIL = JolCraftDictionary.ANVIL;
     public static final String POTTED = JolCraftDictionary.POTTED;
     public static final String BARREL = JolCraftDictionary.BARREL;
+    public static final String FLOWER = JolCraftDictionary.FLOWER;
+    public static final String FLOWER_BED = join(JolCraftDictionary.FLOWER, JolCraftDictionary.BED);
+    public static final String LOOT = JolCraftDictionary.LOOT;
 
     public static final String LARGE_JUNCTION =  join(LARGE, JUNCTION);
     public static final String MEDIUM_JUNCTION = join(MEDIUM, JUNCTION);
@@ -72,16 +80,23 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String BARREL_4 = four(BARREL);
     public static final String BARREL_5 = five(BARREL);
 
-
     public static final String CANDLE_1 = one(CANDLE);
     public static final String CANDLE_2 = two(CANDLE);
     public static final String CANDLE_3 = three(CANDLE);
     public static final String CANDLE_4 = four(CANDLE);
 
+    public static final String FLOWER_1 = one(FLOWER);
+    public static final String FLOWER_2 = two(FLOWER);
+    public static final String FLOWER_3 = three(FLOWER);
+    public static final String FLOWER_4 = four(FLOWER);
+
     public static final String POTTED_AZALEA_BUSH = join(POTTED, JolCraftDictionary.AZALEA, JolCraftDictionary.BUSH);
     public static final String POTTED_FLOWERING_AZALEA_BUSH = join(POTTED, JolCraftDictionary.FLOWERING, JolCraftDictionary.AZALEA, JolCraftDictionary.BUSH);
     public static final String POTTED_FESTERLING = join(POTTED, JolCraftBlockIds.FESTERLING);
     public static final String POTTED_DUSKCAP = join(POTTED, JolCraftBlockIds.DUSKCAP);
+
+    public static final String DEEPSLATE_MITHRIL_ORE = JolCraftBlockIds.DEEPSLATE_MITHRIL_ORE;
+    public static final String PURE_MITHRIL_BLOCK = JolCraftBlockIds.PURE_MITHRIL_BLOCK;
 
     protected static String one(String name) {
         return JolCraftStrings.underscored(name, "1");

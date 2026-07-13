@@ -5,15 +5,24 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
+import net.minecraft.world.level.storage.loot.functions.EnchantRandomlyFunction;
+import net.minecraft.world.level.storage.loot.functions.EnchantWithLevelsFunction;
+import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
@@ -73,23 +82,126 @@ public final class JolCraftStrongboxLootTableProvider
         this.tracking = tracking;
 
         target.accept(
-                JolCraftLootTables.Strongbox.DWARVEN_FORTRESS,
+                JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_FORGE,
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(10))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(1))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(2))
-                                        .add(EmptyLootItem.emptyItem().setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get())
-                                                .setWeight(2)
-                                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(5))))
+                                        .setRolls(ConstantValue.exactly(5))
+                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(20)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SMITHING_SALVAGE).setWeight(27))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_CHISEL).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_WARHAMMER).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_SWORD).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_PICKAXE).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_SHOVEL).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_AXE).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_HELMET).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_CHESTPLATE).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_LEGGINGS).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_BOOTS).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.IMPURE_MITHRIL).setWeight(2))
+                                        .add(LootItem.lootTableItem(JolCraftItems.PURE_MITHRIL).setWeight(2))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_NUGGET).setWeight(2)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_CHAINWEAVE).setWeight(2))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_INGOT).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_ARTISAN_HAMMER).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_CHISEL).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_WARHAMMER).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_SWORD).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_PICKAXE).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_SHOVEL).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_AXE).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_HELMET).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_CHESTPLATE).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_LEGGINGS).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_BOOTS).setWeight(1))
                         )
                         .withPool(
                                 LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(3))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DWARVEN_TOMES).setWeight(2))
-                                        .add(EmptyLootItem.emptyItem().setWeight(1))
+                                        .setRolls(ConstantValue.exactly(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY).setWeight(1))
+                                        .apply(
+                                                SetComponentsFunction.setComponent(
+                                                        JolCraftDataComponents.DWARF_LORE_KEY.get(),
+                                                        LoreHelper.toLoreKeyString(DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE)
+                                                )
+                                        )
+                                        .add(EmptyLootItem.emptyItem().setWeight(9))
+                        )
+        );
+
+        target.accept(
+                JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_VAULT,
+                LootTable.lootTable()
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(5))
+                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(60)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(22)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_SWORD).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_WARHAMMER).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_PICKAXE).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_SHOVEL).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_AXE).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_HELMET).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_CHESTPLATE).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_LEGGINGS).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_BOOTS).setWeight(2))
+                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(UniformGenerator.between(1, 3))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DWARVEN_TOMES).setWeight(13))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME).setWeight(1))
+                                        .add(EmptyLootItem.emptyItem().setWeight(6))
+                        )
+        );
+
+        target.accept(
+                JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_GARDEN,
+                LootTable.lootTable()
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(7))
+                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(22)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(10))
+                                        .add(LootItem.lootTableItem(Items.BONE_MEAL).setWeight(20)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftBlocks.FESTERLING).setWeight(10))
+                                        .add(LootItem.lootTableItem(JolCraftBlocks.DUSKCAP).setWeight(10))
+                                        .add(LootItem.lootTableItem(JolCraftBlocks.VERDANT_SOIL).setWeight(10))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_BULBS).setWeight(10))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_HOE).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_PESTLE).setWeight(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_HOE).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_PESTLE).setWeight(1))
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY).setWeight(1))
+                                        .apply(
+                                                SetComponentsFunction.setComponent(
+                                                        JolCraftDataComponents.DWARF_LORE_KEY.get(),
+                                                        LoreHelper.toLoreKeyString(DwarfLoreKey.ALCHEMY_RECIPES)
+                                                )
+                                        )
+                                        .add(EmptyLootItem.emptyItem().setWeight(9))
                         )
         );
 

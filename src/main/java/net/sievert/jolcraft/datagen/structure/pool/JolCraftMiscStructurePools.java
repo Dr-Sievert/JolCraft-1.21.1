@@ -13,8 +13,6 @@ public class JolCraftMiscStructurePools extends AbstractPoolProvider {
 
     public static final String DIRECTORY_ID = JolCraftDictionary.MISC;
 
-    public static final ResourceKey<StructureTemplatePool> STRONGBOX_POOL = poolKey(JolCraftTemplatePoolIds.STRONGBOX);
-
     public static final ResourceKey<StructureTemplatePool> ANVIL_POOL = poolKey(JolCraftTemplatePoolIds.ANVIL);
     public static final ResourceKey<StructureTemplatePool> BRAZIER_POOL = poolKey(JolCraftTemplatePoolIds.BRAZIER);
 

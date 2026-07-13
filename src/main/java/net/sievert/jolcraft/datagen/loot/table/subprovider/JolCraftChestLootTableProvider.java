@@ -11,6 +11,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SetPotionFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -75,7 +76,7 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
         this.tracking = tracking;
 
         target.accept(JolCraftLootTables.Chests.UNCUT_GEMS,
-                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(JolCraftItems.AEGISCORE.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.ASHFANG.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.DEEPMARROW.get()).setWeight(1))
@@ -92,36 +93,59 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
                         .add(LootItem.lootTableItem(JolCraftItems.VERDANITE.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.WOECRYSTAL.get()).setWeight(1))));
 
-        target.accept(JolCraftLootTables.Chests.SALVAGE,
-                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_COINS.get()).setWeight(1)
-                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
+        target.accept(JolCraftLootTables.Chests.MISC_SALVAGE,
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_COINS.get()).setWeight(2)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                        .add(LootItem.lootTableItem(JolCraftItems.OLD_FABRIC.get()).setWeight(2)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_PICKAXE.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_AMULET.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_BELT.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_MUG.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.EXPIRED_POTION.get()).setWeight(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.RUSTY_TONGS.get()).setWeight(1))));
+
+        target.accept(JolCraftLootTables.Chests.DEEPSLATE_SALVAGE,
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PLATES.get()).setWeight(1)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_MUG.get()).setWeight(2))
                         .add(LootItem.lootTableItem(JolCraftItems.INGOT_MOULD.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_SCRAP.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.OLD_FABRIC.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.RUSTY_TONGS.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_MITHRIL_SWORD.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_TABLET.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PLATES.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_MITHRIL_PLATE.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get()).setWeight(1))
-                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get()).setWeight(1))));
+                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get()).setWeight(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get()).setWeight(1))));
+
+        target.accept(JolCraftLootTables.Chests.MITHRIL_SALVAGE,
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_SCRAP.get()).setWeight(1)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_MITHRIL_SWORD.get()).setWeight(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_MITHRIL_PLATE.get()).setWeight(1))));
+
+        target.accept(JolCraftLootTables.Chests.SALVAGE,
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MISC_SALVAGE).setWeight(6))
+                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DEEPSLATE_SALVAGE).setWeight(3))
+                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_SALVAGE).setWeight(1))));
+
+        target.accept(JolCraftLootTables.Chests.SMITHING_SALVAGE,
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.RUSTY_TONGS.get()).setWeight(2))
+                        .add(LootItem.lootTableItem(JolCraftItems.INGOT_MOULD.get()).setWeight(2))
+                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PLATES.get()).setWeight(2)
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_SALVAGE).setWeight(1))));
 
         target.accept(JolCraftLootTables.Chests.DWARVEN_TOMES,
-                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get()).setWeight(9))
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get()).setWeight(5))
                         .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get()).setWeight(1))));
 
         target.accept(JolCraftLootTables.Chests.SUPPLIES,
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
-                                        .setRolls(UniformGenerator.between(1.0F, 4.0F))
+                                        .setRolls(UniformGenerator.between(1, 4))
                                         .add(EmptyLootItem.emptyItem().setWeight(5))
                                         .add(LootItem.lootTableItem(Items.ROTTEN_FLESH).setWeight(5))
                                         .add(LootItem.lootTableItem(Items.BREAD).setWeight(5))
@@ -147,11 +171,11 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
                         )
                         .withPool(
                                 LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(3.0F))
-                                        .add(LootItem.lootTableItem(JolCraftItems.GLASS_MUG).setWeight(5))
-                                        .add(LootItem.lootTableItem(Items.WHEAT).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY_MALT).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F))))
+                                        .setRolls(ConstantValue.exactly(3))
+                                        .add(LootItem.lootTableItem(JolCraftItems.GLASS_MUG).setWeight(10))
+                                        .add(LootItem.lootTableItem(Items.WHEAT).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY_MALT).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
                                         .add(LootItem.lootTableItem(JolCraftItems.YEAST).setWeight(3))
                                         .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)).apply(SetPotionFunction.setPotion(Potions.STRENGTH))
                                         .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)).apply(SetPotionFunction.setPotion(Potions.NIGHT_VISION))

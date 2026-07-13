@@ -30,9 +30,17 @@ public final class JolCraftLootTables {
 
     public static final class Chests {
 
-        public static final ResourceKey<LootTable> UNCUT_GEMS = chest(register(JolCraftLootTableIds.UNCUT_GEMS));
+
+        public static final ResourceKey<LootTable> MISC_SALVAGE = chest(register(JolCraftLootTableIds.MISC_SALVAGE));
+        public static final ResourceKey<LootTable> DEEPSLATE_SALVAGE = chest(register(JolCraftLootTableIds.DEEPSLATE_SALVAGE));
+        public static final ResourceKey<LootTable> MITHRIL_SALVAGE = chest(register(JolCraftLootTableIds.MITHRIL_SALVAGE));
         public static final ResourceKey<LootTable> SALVAGE = chest(register(JolCraftLootTableIds.SALVAGE));
+        public static final ResourceKey<LootTable> SMITHING_SALVAGE = chest(register(JolCraftLootTableIds.SMITHING_SALVAGE));
+
         public static final ResourceKey<LootTable> DWARVEN_TOMES = chest(register(JolCraftLootTableIds.DWARVEN_TOMES));
+
+        public static final ResourceKey<LootTable> UNCUT_GEMS = chest(register(JolCraftLootTableIds.UNCUT_GEMS));
+
         public static final ResourceKey<LootTable> SUPPLIES = chest(register(JolCraftLootTableIds.SUPPLIES));
     }
 
@@ -42,7 +50,9 @@ public final class JolCraftLootTables {
 
     public static final class Strongbox {
 
-        public static final ResourceKey<LootTable> DWARVEN_FORTRESS = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_FORGE = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_FORGE));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_VAULT = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_VAULT));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_GARDEN = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_GARDEN));
     }
 
     /* ---------------------------------------------------------------------

@@ -156,6 +156,8 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MAIN = "main";
     public static final String MANAGED = "managed";
     public static final String MEDIUM = "medium";
+    public static final String MIDDLE = "middle";
+    public static final String MODERN = "modern";
     public static final String NONE = "none";
     public static final String NEVER = "never";
     public static final String OLD = "old";
@@ -286,6 +288,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CONTRACT = "contract";
     public static final String COOLDOWN = "cooldown";
     public static final String COPPER = "copper";
+    public static final String CORNER = "corner";
     public static final String CORRIDOR = "corridor";
     public static final String CORROSION = "corrosion";
     public static final String COST = "cost";
@@ -354,6 +357,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FARMLAND = "farmland";
     public static final String FERMENTING = "fermenting";
     public static final String FESTERLING = "festerling";
+    public static final String FLOWER = "flower";
     public static final String FOOT = "foot";
     public static final String FORGE = "forge";
     public static final String FORTRESS = "fortress";
@@ -362,6 +366,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FUEL = "fuel";
     public static final String FUR = "fur";
     public static final String GAMETEST = "gametest";
+    public static final String GARDEN = "garden";
     public static final String GEAR = "gear";
     public static final String GENERAL = "general";
     public static final String GEM = "gem";
@@ -607,6 +612,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String VALUE = "value";
     public static final String VANILLA = "vanilla";
     public static final String VARIANT = "variant";
+    public static final String VAULT = "vault";
     public static final String VERDANITE = "verdanite";
     public static final String VERDANT = "verdant";
     public static final String VILLAGE = "village";
@@ -615,6 +621,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String VOICE = "voice";
     public static final String VOID = "void";
     public static final String VOLUME = "volume";
+    public static final String WALL = "wall";
     public static final String WARHAMMER = "warhammer";
     public static final String WATER = "water";
     public static final String WEATHER = "weather";

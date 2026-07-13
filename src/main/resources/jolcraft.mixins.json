@@ -3,7 +3,6 @@
   "package": "net.sievert.jolcraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AnvilMenuMixin",
     "BrushableBlockEntityMixin",
     "BrushItemMixin",
     "JigsawPlacementMixin",
