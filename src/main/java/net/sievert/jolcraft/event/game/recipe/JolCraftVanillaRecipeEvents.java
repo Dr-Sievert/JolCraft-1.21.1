@@ -22,6 +22,14 @@ public final class JolCraftVanillaRecipeEvents {
 
         int recipes = 0;
 
+        builder.addMix(Potions.AWKWARD, JolCraftItems.BROKEN_COINS.get(), JolCraftPotions.UNLUCK); recipes++;
+        builder.addMix(JolCraftPotions.UNLUCK, Items.GLOWSTONE_DUST, JolCraftPotions.STRONG_UNLUCK); recipes++;
+        builder.addMix(JolCraftPotions.UNLUCK, JolCraftItems.INVERIX.get(), Potions.LUCK); recipes++;
+        builder.addMix(JolCraftPotions.STRONG_UNLUCK, JolCraftItems.INVERIX.get(), JolCraftPotions.STRONG_LUCK); recipes++;
+        builder.addMix(Potions.LUCK, Items.GLOWSTONE_DUST, JolCraftPotions.STRONG_LUCK); recipes++;
+        builder.addMix(Potions.LUCK, JolCraftItems.INVERIX.get(), JolCraftPotions.UNLUCK); recipes++;
+        builder.addMix(JolCraftPotions.STRONG_LUCK, JolCraftItems.INVERIX.get(), JolCraftPotions.STRONG_UNLUCK); recipes++;
+
         builder.addMix(Potions.WATER, JolCraftItems.DEEPMARROW_DUST.get(), JolCraftPotions.ANCIENT_MEMORY); recipes++;
         builder.addMix(JolCraftPotions.ANCIENT_MEMORY, Items.REDSTONE, JolCraftPotions.LONG_ANCIENT_MEMORY); recipes++;
 

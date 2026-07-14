@@ -28,25 +28,26 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class BookshelfTomeProcessor extends StructureProcessor {
 
-    /*
+    /**
      * Chance for each individual normal book to be replaced.
-     *
      * A shelf containing four normal books performs four independent rolls.
      */
     private static final float REPLACEMENT_CHANCE = 0.05F;
 
-    /*
-     * Relative tome weights after a book passes its replacement roll:
+    /**
+     * Relative item weights after a book passes its replacement roll:
      *
      * Unidentified:            75%
      * Ancient unidentified:   20%
-     * Legendary unidentified:  5%
+     * Legendary unidentified:  4%
+     * Ancient lexicon:          1%
      */
     private static final int UNIDENTIFIED_WEIGHT = 75;
     private static final int ANCIENT_UNIDENTIFIED_WEIGHT = 20;
-    private static final int LEGENDARY_UNIDENTIFIED_WEIGHT = 5;
+    private static final int LEGENDARY_UNIDENTIFIED_WEIGHT = 4;
+    private static final int ANCIENT_LEXICON_WEIGHT = 1;
 
-    private static final int TOTAL_WEIGHT = UNIDENTIFIED_WEIGHT + ANCIENT_UNIDENTIFIED_WEIGHT + LEGENDARY_UNIDENTIFIED_WEIGHT;
+    private static final int TOTAL_WEIGHT = UNIDENTIFIED_WEIGHT + ANCIENT_UNIDENTIFIED_WEIGHT + LEGENDARY_UNIDENTIFIED_WEIGHT + ANCIENT_LEXICON_WEIGHT;
 
     private static final String ITEMS_TAG = "Items";
     private static final String SLOT_TAG = "Slot";
@@ -98,7 +99,7 @@ public class BookshelfTomeProcessor extends StructureProcessor {
             }
 
             byte slot = storedItemTag.getByte(SLOT_TAG);
-            ItemStack replacement = selectTome(random).getDefaultInstance();
+            ItemStack replacement = selectBookshelfItem(random).getDefaultInstance();
 
             Tag savedTag = replacement.save(registries, new CompoundTag());
 
@@ -122,7 +123,7 @@ public class BookshelfTomeProcessor extends StructureProcessor {
         );
     }
 
-    private static Item selectTome(RandomSource random) {
+    private static Item selectBookshelfItem(RandomSource random) {
         int roll = random.nextInt(TOTAL_WEIGHT);
 
         if (roll < UNIDENTIFIED_WEIGHT) {
@@ -135,7 +136,13 @@ public class BookshelfTomeProcessor extends StructureProcessor {
             return JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get();
         }
 
-        return JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get();
+        roll -= ANCIENT_UNIDENTIFIED_WEIGHT;
+
+        if (roll < LEGENDARY_UNIDENTIFIED_WEIGHT) {
+            return JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get();
+        }
+
+        return JolCraftItems.ANCIENT_DWARVEN_LEXICON.get();
     }
 
     @Override

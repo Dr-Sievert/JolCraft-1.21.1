@@ -17,10 +17,12 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
+import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -29,6 +31,7 @@ import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,15 +104,16 @@ public final class JolCraftFishingLootTableProvider
                 LootTable.lootTable().withPool(LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1.0F))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Fishing.JUNK)
-                                                .setWeight(2)
+                                                .setWeight(17)
                                                 .setQuality(-2))
                                         .add(
                                                 NestedLootTable.lootTableReference(JolCraftLootTables.Fishing.TREASURE)
-                                                        .setWeight(1)
-                                                        .setQuality(2)
+                                                        .setWeight(3)
+                                                        .setQuality(3)
                                                         .when(
                                                                 LootItemEntityPropertyCondition.hasProperties(
-                                                                        LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity().subPredicate(FishingHookPredicate.inOpenWater(true))
+                                                                        LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity()
+                                                                                .subPredicate(FishingHookPredicate.inOpenWater(true))
                                                                 )
                                                         )
                                                         .when(inBiome(biomes, JolCraftTags.Biomes.DWARVEN))
@@ -118,35 +122,19 @@ public final class JolCraftFishingLootTableProvider
 
         target.accept(
                 JolCraftLootTables.Fishing.JUNK,
-                LootTable.lootTable().withPool(LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(1.0F))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_COINS.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_PICKAXE.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_AMULET.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_BELT.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_MUG.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.EXPIRED_POTION.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.INGOT_MOULD.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_SCRAP.get()).setWeight(1))
-                                            .when(inBiome(biomes, JolCraftTags.Biomes.DWARVEN))
-                                        .add(LootItem.lootTableItem(JolCraftItems.OLD_FABRIC.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.RUSTY_TONGS.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_MITHRIL_SWORD.get()).setWeight(1))
-                                            .when(inBiome(biomes, JolCraftTags.Biomes.DWARVEN))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_TABLET.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PLATES.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_MITHRIL_PLATE.get()).setWeight(1))
-                                            .when(inBiome(biomes, JolCraftTags.Biomes.DWARVEN))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get()).setWeight(1))
-                        ));
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(27))
+                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_EMPTY.get()).setWeight(2))
+                        .add(LootItem.lootTableItem(JolCraftItems.GUILD_SIGIL.get()).setWeight(1))
+                ));
 
         target.accept(
                 JolCraftLootTables.Fishing.TREASURE,
-                LootTable.lootTable().withPool(LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(1.0F))
-                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get()).setWeight(9))
-                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get()).setWeight(1))
+                LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                                .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.GEODES).setWeight(300))
+                                .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DWARVEN_TOMES).setWeight(197))
+                                .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_LEXICON.get()).setWeight(2))
+                                .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_LEXICON.get()).setWeight(1))
                         ));
 
         tracking.logTrackedOutputCount(

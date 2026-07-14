@@ -128,7 +128,7 @@ public record FermentingCauldronRecipesSubProvider(
                 20,
                 5,
                 0x54832E,
-                MobEffects.MOVEMENT_SPEED,
+                MobEffects.DAMAGE_RESISTANCE,
                 6000,
                 0
         );

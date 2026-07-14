@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.id.item;
 
+import net.minecraft.world.effect.MobEffects;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -19,6 +20,7 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String DWARVEN_HASTE = JolCraftEffectIds.DWARVEN_HASTE;
     public static final String LONG_DWARVEN_HASTE = longPotion(DWARVEN_HASTE);
     public static final String STRONG_DWARVEN_HASTE = strongPotion(DWARVEN_HASTE);
+    public static final String STRONG_LUCK = strongPotion(MobEffects.LUCK.unwrapKey().orElseThrow().location().getPath());
 
     // Harmful
     public static final String ATAXIA_CURSE = JolCraftEffectIds.ATAXIA_CURSE;
@@ -37,6 +39,8 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String CORROSION = JolCraftEffectIds.CORROSION;
     public static final String LONG_CORROSION = longPotion(CORROSION);
     public static final String STRONG_CORROSION = strongPotion(CORROSION);
+    public static final String UNLUCK = MobEffects.UNLUCK.unwrapKey().orElseThrow().location().getPath();
+    public static final String STRONG_UNLUCK = strongPotion(UNLUCK);
 
     private static String strongPotion(String baseId) {
         return join(JolCraftDictionary.STRONG, baseId);

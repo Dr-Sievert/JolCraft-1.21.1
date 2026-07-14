@@ -51,8 +51,10 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations,  JolCraftPotions.SUPPRESSED, "Suppression", false, false);
 
         addPotion(translations,  JolCraftPotions.CORROSION, "Corrosion", true, true);
-    }
 
+        addPotion(translations,  JolCraftPotions.UNLUCK, "Bad Luck", false, true);
+        addPotion(translations,  JolCraftPotions.STRONG_LUCK, "Luck", false, false);
+    }
 
     private static final String[] TYPES = {
             "potion",

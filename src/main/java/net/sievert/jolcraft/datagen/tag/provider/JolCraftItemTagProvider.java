@@ -440,6 +440,7 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.DWARVEN_TOME_RARE.get())
                 .add(JolCraftItems.DWARVEN_TOME_EPIC.get())
                 .add(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME.get())
+                .add(JolCraftItems.DWARVEN_LEXICON.get())
                 .add(JolCraftItems.ANCIENT_DWARVEN_TOME.get())
                 .add(JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON.get())
                 .add(JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON.get())
@@ -447,7 +448,8 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC.get())
                 .add(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get())
                 .add(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get())
-                .add(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get());
+                .add(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get())
+                .add(JolCraftItems.ANCIENT_DWARVEN_LEXICON.get());
 
         // Coins
 

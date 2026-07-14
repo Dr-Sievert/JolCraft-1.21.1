@@ -262,6 +262,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BUSH = "bush";
     public static final String BUSY = "busy";
     public static final String CANDLE = "candle";
+    public static final String CATACOMB = "catacomb";
     public static final String CATALYST = "catalyst";
     public static final String CATEGORY = "category";
     public static final String CAULDRON = "cauldron";
@@ -446,6 +447,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MEMORY = "memory";
     public static final String MENU = "menu";
     public static final String MERCHANT = "merchant";
+    public static final String METAL = "metal";
     public static final String MISC = "misc";
     public static final String MILK = "milk";
     public static final String MIN = "min";
@@ -595,6 +597,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TIER = "tier";
     public static final String TIME = "time";
     public static final String TITLE = "title";
+    public static final String TOMB = "tomb";
     public static final String TOME = "tome";
     public static final String TONG = "tong";
     public static final String TOOL = "tool";

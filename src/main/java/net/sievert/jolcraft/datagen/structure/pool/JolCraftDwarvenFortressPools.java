@@ -56,6 +56,12 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
 
     public static final ResourceKey<StructureTemplatePool> ARCHIVES_LOOT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.ARCHIVES_LOOT);
 
+    public static final ResourceKey<StructureTemplatePool> CATACOMBS_CORRIDOR_START_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_START);
+    public static final ResourceKey<StructureTemplatePool> CATACOMBS_CORRIDOR_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR);
+    public static final ResourceKey<StructureTemplatePool> CATACOMBS_TOMB_SMALL_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CATACOMBS_TOMB_SMALL);
+    public static final ResourceKey<StructureTemplatePool> CATACOMBS_TOMB_LARGE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CATACOMBS_TOMB_LARGE);
+    public static final ResourceKey<StructureTemplatePool> CATACOMBS_LOOT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CATACOMBS_LOOT);
+
     private JolCraftDwarvenFortressPools(BootstrapContext<StructureTemplatePool> context) {
         super(context, DIRECTORY_ID, JolCraftDwarvenFortressProcessors.DWARVEN_FORTRESS);
     }
@@ -88,15 +94,15 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
 
         register(
                 MAIN_STAIRS_POOL,
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_LARGE_JUNCTION, 1),
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_MEDIUM_JUNCTION, 2),
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_SMALL_JUNCTION, 3),
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_LARGE_CORRIDOR, 1),
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_MEDIUM_CORRIDOR, 2),
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_SMALL_CORRIDOR, 3),
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_STAIRS, 8),
+                room(JolCraftDwarvenFortressPoolIds.MAIN_LARGE_JUNCTION, 1),
+                room(JolCraftDwarvenFortressPoolIds.MAIN_MEDIUM_JUNCTION, 2),
+                room(JolCraftDwarvenFortressPoolIds.MAIN_SMALL_JUNCTION, 3),
+                room(JolCraftDwarvenFortressPoolIds.MAIN_LARGE_CORRIDOR, 1),
+                room(JolCraftDwarvenFortressPoolIds.MAIN_MEDIUM_CORRIDOR, 2),
+                room(JolCraftDwarvenFortressPoolIds.MAIN_SMALL_CORRIDOR, 3),
+                room(JolCraftDwarvenFortressPoolIds.MAIN_STAIRS, 8),
                 processed(JolCraftDwarvenFortressPoolIds.MAIN_COLLAPSED, JolCraftDwarvenFortressProcessors.COLLAPSED, 1),
-                entry(JolCraftDwarvenFortressPoolIds.MAIN_END, 3)
+                room(JolCraftDwarvenFortressPoolIds.MAIN_END, 3)
         );
 
         register(
@@ -108,9 +114,9 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 room(JolCraftDwarvenFortressPoolIds.LARGE_CORRIDOR_2, 2),
                 room(JolCraftDwarvenFortressPoolIds.LARGE_CORRIDOR_3, 3),
                 room(JolCraftDwarvenFortressPoolIds.LARGE_STAIRS, 3),
-                room(JolCraftDwarvenFortressPoolIds.LARGE_COLLAPSED, JolCraftDwarvenFortressProcessors.COLLAPSED, 1),
+                processed(JolCraftDwarvenFortressPoolIds.LARGE_COLLAPSED, JolCraftDwarvenFortressProcessors.COLLAPSED, 1),
                 room(JolCraftDwarvenFortressPoolIds.LARGE_END, 3),
-                entry(JolCraftDwarvenFortressPoolIds.LARGE_TRANSITION, 1)
+                room(JolCraftDwarvenFortressPoolIds.LARGE_TRANSITION, 1)
         );
 
         register(
@@ -122,7 +128,7 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 room(JolCraftDwarvenFortressPoolIds.LARGE_CORRIDOR_2, 2),
                 room(JolCraftDwarvenFortressPoolIds.LARGE_CORRIDOR_3, 3),
                 room(JolCraftDwarvenFortressPoolIds.LARGE_STAIRS, 8),
-                entry(JolCraftDwarvenFortressPoolIds.LARGE_TRANSITION, 1)
+                room(JolCraftDwarvenFortressPoolIds.LARGE_TRANSITION, 1)
         );
 
         register(
@@ -133,9 +139,9 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 room(JolCraftDwarvenFortressPoolIds.MEDIUM_CORRIDOR_2, 2),
                 room(JolCraftDwarvenFortressPoolIds.MEDIUM_CORRIDOR_3, 3),
                 room(JolCraftDwarvenFortressPoolIds.MEDIUM_STAIRS, 3),
-                room(JolCraftDwarvenFortressPoolIds.MEDIUM_COLLAPSED, JolCraftDwarvenFortressProcessors.COLLAPSED, 1),
+                processed(JolCraftDwarvenFortressPoolIds.MEDIUM_COLLAPSED, JolCraftDwarvenFortressProcessors.COLLAPSED, 1),
                 room(JolCraftDwarvenFortressPoolIds.MEDIUM_END, 3),
-                entry(JolCraftDwarvenFortressPoolIds.LARGE_MEDIUM_TRANSITION, 1)
+                room(JolCraftDwarvenFortressPoolIds.LARGE_MEDIUM_TRANSITION, 1)
         );
 
         register(
@@ -146,7 +152,7 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 room(JolCraftDwarvenFortressPoolIds.MEDIUM_CORRIDOR_2, 2),
                 room(JolCraftDwarvenFortressPoolIds.MEDIUM_CORRIDOR_3, 3),
                 room(JolCraftDwarvenFortressPoolIds.MEDIUM_STAIRS, 8),
-                entry(JolCraftDwarvenFortressPoolIds.LARGE_MEDIUM_TRANSITION, 1)
+                room(JolCraftDwarvenFortressPoolIds.LARGE_MEDIUM_TRANSITION, 1)
         );
 
         register(
@@ -156,9 +162,9 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 room(JolCraftDwarvenFortressPoolIds.SMALL_CORRIDOR_2, 2),
                 room(JolCraftDwarvenFortressPoolIds.SMALL_CORRIDOR_3, 3),
                 room(JolCraftDwarvenFortressPoolIds.SMALL_SHAFT, 3),
-                room(JolCraftDwarvenFortressPoolIds.SMALL_COLLAPSED, JolCraftDwarvenFortressProcessors.COLLAPSED, 1),
+                processed(JolCraftDwarvenFortressPoolIds.SMALL_COLLAPSED, JolCraftDwarvenFortressProcessors.COLLAPSED, 1),
                 room(JolCraftDwarvenFortressPoolIds.SMALL_END, 3),
-                entry(JolCraftDwarvenFortressPoolIds.LARGE_SMALL_TRANSITION, 1)
+                room(JolCraftDwarvenFortressPoolIds.LARGE_SMALL_TRANSITION, 1)
         );
 
         register(
@@ -168,17 +174,18 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 room(JolCraftDwarvenFortressPoolIds.SMALL_CORRIDOR_2, 2),
                 room(JolCraftDwarvenFortressPoolIds.SMALL_CORRIDOR_3, 3),
                 room(JolCraftDwarvenFortressPoolIds.SMALL_SHAFT, 3),
-                entry(JolCraftDwarvenFortressPoolIds.LARGE_SMALL_TRANSITION, 1)
+                room(JolCraftDwarvenFortressPoolIds.LARGE_SMALL_TRANSITION, 1)
         );
 
         register(
                 ROOM_POOL,
                 processed(JolCraftDwarvenFortressPoolIds.DIGSITE, JolCraftDwarvenFortressProcessors.ARCHAEOLOGY),
-                entry(JolCraftDwarvenFortressPoolIds.FORGE),
-                entry(JolCraftDwarvenFortressPoolIds.HALL),
-                entry(JolCraftDwarvenFortressPoolIds.VAULT),
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN, JolCraftDwarvenFortressProcessors.ABANDONED),
-                entry(JolCraftDwarvenFortressPoolIds.ARCHIVES, 100)
+                room(JolCraftDwarvenFortressPoolIds.FORGE),
+                room(JolCraftDwarvenFortressPoolIds.HALL),
+                room(JolCraftDwarvenFortressPoolIds.VAULT),
+                room(JolCraftDwarvenFortressPoolIds.GARDEN),
+                room(JolCraftDwarvenFortressPoolIds.ARCHIVES),
+                room(JolCraftDwarvenFortressPoolIds.CATACOMBS)
         );
 
         register(
@@ -209,7 +216,7 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         register(
                 CRUCIBLE_POOL,
                 entry(JolCraftDwarvenFortressPoolIds.CRUCIBLE, 6),
-                processed(JolCraftDwarvenFortressPoolIds.CRUCIBLE_ABANDONED, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
+                entry(JolCraftDwarvenFortressPoolIds.CRUCIBLE_ABANDONED, 1),
                 processed(JolCraftDwarvenFortressPoolIds.CRUCIBLE, JolCraftDwarvenFortressProcessors.BROKEN, 1)
         );
 
@@ -241,7 +248,7 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
 
         register(
                 GARDEN_CORNER_POOL,
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_FLOWER_BED, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_FLOWER_BED, 1)
         );
 
         register(
@@ -254,22 +261,22 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
 
         register(
                 GARDEN_MIDDLE_POOL,
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_1, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_2, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_3, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_1, 1),
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_2, 1),
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_MIDDLE_3,1)
         );
 
         register(
                 GARDEN_LARGE_POOL,
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_1, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_2, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_1, 1),
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_2, 1)
         );
 
 
         register(
                 GARDEN_LARGE_WALL_POOL,
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL_1, JolCraftDwarvenFortressProcessors.ABANDONED, 1),
-                processed(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL_2, JolCraftDwarvenFortressProcessors.ABANDONED, 1)
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL_1, 1),
+                entry(JolCraftDwarvenFortressPoolIds.GARDEN_LARGE_WALL_2, 1)
         );
 
         register(
@@ -283,6 +290,42 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
                 ARCHIVES_LOOT_POOL,
                 misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.ARCHIVES_LOOT, 2),
                 misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.ARCHIVES_LOOT, 1),
+                empty(1)
+        );
+
+        register(
+                CATACOMBS_CORRIDOR_START_POOL,
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_1, 3),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_2, 2),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_3, 1),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_4, 3)
+        );
+
+        register(
+                CATACOMBS_CORRIDOR_POOL,
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_1, 3),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_2, 2),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_3, 1),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_4, 3),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_END_1, 3),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_CORRIDOR_END_2, 1)
+        );
+
+        register(
+                CATACOMBS_TOMB_SMALL_POOL,
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_TOMB_SMALL_1, 9),
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_TOMB_SMALL_2, 1)
+        );
+
+        register(
+                CATACOMBS_TOMB_LARGE_POOL,
+                entry(JolCraftDwarvenFortressPoolIds.CATACOMBS_TOMB_LARGE, 1)
+        );
+
+        register(
+                CATACOMBS_LOOT_POOL,
+                misc(JolCraftTemplatePoolIds.STRONGBOX_LOCKED, JolCraftDwarvenFortressProcessors.CATACOMBS_LOOT, 2),
+                misc(JolCraftTemplatePoolIds.STRONGBOX, JolCraftDwarvenFortressProcessors.CATACOMBS_LOOT, 1),
                 empty(1)
         );
     }
@@ -301,6 +344,10 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
 
     private PoolEntry misc(String template) {
         return external(JolCraftMiscStructurePools.DIRECTORY_ID, template, null, 1);
+    }
+
+    private PoolEntry room(String template) {
+        return processed(template, JolCraftDwarvenFortressProcessors.CAVE_IN);
     }
 
     private PoolEntry room(String template, int weight) {

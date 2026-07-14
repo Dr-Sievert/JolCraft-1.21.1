@@ -51,6 +51,8 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String LOOT = JolCraftDictionary.LOOT;
     public static final String ARCHIVES = plural(JolCraftDictionary.ARCHIVE);
     public static final String BOOKSHELF = JolCraftDictionary.BOOKSHELF;
+    public static final String CATACOMBS = plural(JolCraftDictionary.CATACOMB);
+    public static final String TOMB = JolCraftDictionary.TOMB;
 
     public static final String LARGE_JUNCTION =  join(LARGE, JUNCTION);
     public static final String MEDIUM_JUNCTION = join(MEDIUM, JUNCTION);

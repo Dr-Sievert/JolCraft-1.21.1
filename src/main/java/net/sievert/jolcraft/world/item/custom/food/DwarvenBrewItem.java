@@ -2,6 +2,7 @@ package net.sievert.jolcraft.world.item.custom.food;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -43,14 +45,37 @@ public class DwarvenBrewItem extends PotionItem {
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entityLiving) {
-        Player player = entityLiving instanceof Player playerEntity ? playerEntity : null;
+        Player player = entityLiving instanceof Player playerEntity
+                ? playerEntity
+                : null;
 
         if (player instanceof ServerPlayer serverPlayer) {
             CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, stack);
         }
 
         if (!level.isClientSide) {
-            entityLiving.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
+            PotionContents potionContents = stack.getOrDefault(
+                    DataComponents.POTION_CONTENTS,
+                    PotionContents.EMPTY
+            );
+
+            potionContents.forEachEffect(effect -> {
+                if (effect.getEffect().value().isInstantenous()) {
+                    effect.getEffect().value().applyInstantenousEffect(
+                            player,
+                            player,
+                            entityLiving,
+                            effect.getAmplifier(),
+                            1.0D
+                    );
+                } else {
+                    entityLiving.addEffect(effect);
+                }
+            });
+
+            entityLiving.addEffect(
+                    new MobEffectInstance(MobEffects.CONFUSION, 200, 0)
+            );
         }
 
         if (player != null) {
@@ -63,8 +88,12 @@ public class DwarvenBrewItem extends PotionItem {
                 return new ItemStack(JolCraftItems.GLASS_MUG.get());
             }
 
-            if (player != null && !player.getInventory().add(new ItemStack(JolCraftItems.GLASS_MUG.get()))) {
-                player.drop(new ItemStack(JolCraftItems.GLASS_MUG.get()), false);
+            if (player != null) {
+                ItemStack mug = new ItemStack(JolCraftItems.GLASS_MUG.get());
+
+                if (!player.getInventory().add(mug)) {
+                    player.drop(mug, false);
+                }
             }
         }
 

@@ -3,6 +3,7 @@ package net.sievert.jolcraft.world.item.potion;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.alchemy.Potion;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -49,6 +50,10 @@ public final class JolCraftPotions {
     public static final Holder<Potion> STRONG_DWARVEN_HASTE = POTIONS.register(JolCraftPotionIds.STRONG_DWARVEN_HASTE,
             () -> new Potion(JolCraftPotionIds.STRONG_DWARVEN_HASTE,
                     new MobEffectInstance(JolCraftEffects.DWARVEN_HASTE, 3000, 1)));
+
+    public static final Holder<Potion> STRONG_LUCK = POTIONS.register(JolCraftPotionIds.STRONG_LUCK,
+            () -> new Potion(JolCraftPotionIds.STRONG_LUCK,
+                    new MobEffectInstance(MobEffects.LUCK, 6000, 1)));
 
     // Harmful
 
@@ -109,6 +114,14 @@ public final class JolCraftPotions {
     public static final Holder<Potion> STRONG_CORROSION = POTIONS.register(JolCraftPotionIds.STRONG_CORROSION,
             () -> new Potion(JolCraftPotionIds.STRONG_CORROSION,
                     new MobEffectInstance(JolCraftEffects.CORROSION, 300, 1)));
+
+    public static final Holder<Potion> UNLUCK = POTIONS.register(JolCraftPotionIds.UNLUCK,
+            () -> new Potion(JolCraftPotionIds.UNLUCK,
+                    new MobEffectInstance(MobEffects.UNLUCK, 6000, 0)));
+
+    public static final Holder<Potion> STRONG_UNLUCK = POTIONS.register(JolCraftPotionIds.STRONG_UNLUCK,
+            () -> new Potion(JolCraftPotionIds.STRONG_UNLUCK,
+                    new MobEffectInstance(MobEffects.UNLUCK, 6000, 1)));
 
     public static void register(IEventBus eventBus) {
         POTIONS.register(eventBus);

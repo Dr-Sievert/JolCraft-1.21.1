@@ -262,31 +262,6 @@ public final class JolCraftCreativeModeTabs {
 
                     }).build());
 
-    public static final Supplier<CreativeModeTab> JOLCRAFT_EGGS =
-            CREATIVE_MODE_TABS.register(JolCraftCreativeTabIds.JOLCRAFT_EGG_CREATIVE_TAB, () -> CreativeModeTab.builder()
-                    .title(Component.translatable(JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB))
-                    .icon(() -> new ItemStack(JolCraftItems.DWARF_SPAWN_EGG.get()))
-                    .withTabsBefore(JolCraft.location(JolCraftCreativeTabIds.JOLCRAFT_GENERAL_CREATIVE_TAB))
-                    .displayItems((pParameters, pOutput) -> {
-
-                        pOutput.accept(JolCraftItems.DWARF_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_GUILDMASTER_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_HISTORIAN_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_MERCHANT_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_SCRAPPER_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_BREWMASTER_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_GUARD_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_KEEPER_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_ARTISAN_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_EXPLORER_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_MINER_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_ARCANIST_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.DWARF_PRIEST_SPAWN_EGG);
-                        pOutput.accept(JolCraftItems.MUFFHORN_SPAWN_EGG);
-
-                    }).build());
-
     private static void addCompassDialVariant(
             CreativeModeTab.Output output,
             DeepslateCompassStructureGroup group

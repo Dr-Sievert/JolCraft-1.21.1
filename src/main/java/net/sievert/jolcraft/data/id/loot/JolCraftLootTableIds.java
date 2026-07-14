@@ -25,7 +25,18 @@ public final class JolCraftLootTableIds extends JolCraftIds {
 
     public static final String DWARVEN_TOMES = plural(JolCraftItemIds.DWARVEN_TOME);
 
+    public static final String VANILLA_GEMS = join(JolCraftDictionary.VANILLA, plural(JolCraftDictionary.GEM));
+    public static final String VANILLA_METAL = join(JolCraftDictionary.VANILLA, JolCraftDictionary.METAL);
+
+    public static final String DWARVEN_METAL = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.METAL);
+
+    public static final String DEEPSLATE_ARMOR = join(JolCraftMaterialIds.DEEPSLATE, JolCraftDictionary.ARMOR);
+    public static final String DEEPSLATE_GEAR = join(JolCraftMaterialIds.DEEPSLATE, JolCraftDictionary.GEAR);
+    public static final String MITHRIL_ARMOR = join(JolCraftMaterialIds.MITHRIL, JolCraftDictionary.ARMOR);
+    public static final String MITHRIL_GEAR = join(JolCraftMaterialIds.MITHRIL, JolCraftDictionary.GEAR);
+
     public static final String UNCUT_GEMS = JolCraftTagIds.UNCUT_GEMS;
+    public static final String GEODES = plural(JolCraftDictionary.GEODE);
     public static final String SUPPLIES = JolCraftDictionary.SUPPLIES;
 
     /* ---------------------------------------------------------------------
@@ -37,6 +48,7 @@ public final class JolCraftLootTableIds extends JolCraftIds {
     public static final String DWARVEN_FORTRESS_VAULT = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.VAULT);
     public static final String DWARVEN_FORTRESS_GARDEN = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.GARDEN);
     public static final String DWARVEN_FORTRESS_ARCHIVES = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.ARCHIVES);
+    public static final String DWARVEN_FORTRESS_CATACOMBS = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.CATACOMBS);
 
     /* ---------------------------------------------------------------------
      * Archaeology

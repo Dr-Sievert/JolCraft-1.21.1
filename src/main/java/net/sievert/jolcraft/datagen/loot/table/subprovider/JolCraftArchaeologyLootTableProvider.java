@@ -77,9 +77,8 @@ public final class JolCraftArchaeologyLootTableProvider implements LootTableSubP
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1.0F))
-                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(2)
-                                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 5.0F))))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(3))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(8))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.GEODES).setWeight(1))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(1))
                         )
                         .setRandomSequence(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_COMMON.location())
@@ -91,8 +90,9 @@ public final class JolCraftArchaeologyLootTableProvider implements LootTableSubP
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1.0F))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get()).setWeight(7))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get()).setWeight(2))
                                         .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_LEXICON.get()).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME.get()).setWeight(3))
                         )
                         .setRandomSequence(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_RARE.location())
         );

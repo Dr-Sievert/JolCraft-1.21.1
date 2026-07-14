@@ -149,8 +149,7 @@ public final class JolCraftEntityLootTableProvider
                                         SmeltItemFunction.smelted().when(
                                                 LootItemEntityPropertyCondition.hasProperties(
                                                         LootContext.EntityTarget.THIS,
-                                                        EntityPredicate.Builder.entity()
-                                                                .flags(EntityFlagsPredicate.Builder.flags().setOnFire(true))
+                                                        EntityPredicate.Builder.entity().flags(EntityFlagsPredicate.Builder.flags().setOnFire(true))
                                                 )
                                         )
                                 )

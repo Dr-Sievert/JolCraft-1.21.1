@@ -40,7 +40,6 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
 
         // Creative tabs
         putManual(translations, JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, JolCraft.MOD_NAME);
-        putManual(translations, JolCraftLanguageKeys.JOLCRAFT_EGG_CREATIVE_TAB, JolCraft.MOD_NAME + " Spawn Eggs");
 
         // Structure maps
         putManual(translations, JolCraftStrings.dotted(BuiltInRegistries.ITEM.getKey(Items.FILLED_MAP).getPath(), JolCraftStructureIds.DWARVEN_FORTRESS),

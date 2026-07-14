@@ -97,4 +97,22 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
     public static final String GARDEN_LOOT = join(GARDEN, LOOT);
 
     public static final String ARCHIVES_LOOT = join(ARCHIVES, LOOT);
+
+    public static final String CATACOMBS_CORRIDOR = join(CATACOMBS, CORRIDOR);
+    public static final String CATACOMBS_CORRIDOR_START = join(CATACOMBS_CORRIDOR, START);
+    public static final String CATACOMBS_CORRIDOR_1 = one(CATACOMBS_CORRIDOR);
+    public static final String CATACOMBS_CORRIDOR_2 = two(CATACOMBS_CORRIDOR);
+    public static final String CATACOMBS_CORRIDOR_3 = three(CATACOMBS_CORRIDOR);
+    public static final String CATACOMBS_CORRIDOR_4 = four(CATACOMBS_CORRIDOR);
+    public static final String CATACOMBS_CORRIDOR_END = join(CATACOMBS_CORRIDOR, END);
+    public static final String CATACOMBS_CORRIDOR_END_1 = one(CATACOMBS_CORRIDOR_END);
+    public static final String CATACOMBS_CORRIDOR_END_2 = two(CATACOMBS_CORRIDOR_END);
+
+    public static final String CATACOMBS_TOMB = join(CATACOMBS, TOMB);
+    public static final String CATACOMBS_TOMB_SMALL = join(CATACOMBS_TOMB, SMALL);
+    public static final String CATACOMBS_TOMB_SMALL_1 = one(CATACOMBS_TOMB_SMALL);
+    public static final String CATACOMBS_TOMB_SMALL_2 = two(CATACOMBS_TOMB_SMALL);
+    public static final String CATACOMBS_TOMB_LARGE = join(CATACOMBS_TOMB, LARGE);
+
+    public static final String CATACOMBS_LOOT = join(CATACOMBS, LOOT);
 }

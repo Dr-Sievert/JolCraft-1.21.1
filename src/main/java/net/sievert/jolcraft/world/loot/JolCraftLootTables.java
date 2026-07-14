@@ -39,7 +39,19 @@ public final class JolCraftLootTables {
 
         public static final ResourceKey<LootTable> DWARVEN_TOMES = chest(register(JolCraftLootTableIds.DWARVEN_TOMES));
 
+        public static final ResourceKey<LootTable> VANILLA_GEMS = chest(register(JolCraftLootTableIds.VANILLA_GEMS));
+        public static final ResourceKey<LootTable> VANILLA_METAL = chest(register(JolCraftLootTableIds.VANILLA_METAL));
+
+        public static final ResourceKey<LootTable> DWARVEN_METAL = chest(register(JolCraftLootTableIds.DWARVEN_METAL));
+
+        public static final ResourceKey<LootTable> DEEPSLATE_ARMOR = chest(register(JolCraftLootTableIds.DEEPSLATE_ARMOR));
+        public static final ResourceKey<LootTable> DEEPSLATE_GEAR = chest(register(JolCraftLootTableIds.DEEPSLATE_GEAR));
+        public static final ResourceKey<LootTable> MITHRIL_ARMOR = chest(register(JolCraftLootTableIds.MITHRIL_ARMOR));
+        public static final ResourceKey<LootTable> MITHRIL_GEAR = chest(register(JolCraftLootTableIds.MITHRIL_GEAR));
+
         public static final ResourceKey<LootTable> UNCUT_GEMS = chest(register(JolCraftLootTableIds.UNCUT_GEMS));
+
+        public static final ResourceKey<LootTable> GEODES = chest(register(JolCraftLootTableIds.GEODES));
 
         public static final ResourceKey<LootTable> SUPPLIES = chest(register(JolCraftLootTableIds.SUPPLIES));
     }
@@ -54,6 +66,7 @@ public final class JolCraftLootTables {
         public static final ResourceKey<LootTable> DWARVEN_FORTRESS_VAULT = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_VAULT));
         public static final ResourceKey<LootTable> DWARVEN_FORTRESS_GARDEN = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_GARDEN));
         public static final ResourceKey<LootTable> DWARVEN_FORTRESS_ARCHIVES = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_ARCHIVES));
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_CATACOMBS = strongbox(register(JolCraftLootTableIds.DWARVEN_FORTRESS_CATACOMBS));
     }
 
     /* ---------------------------------------------------------------------
