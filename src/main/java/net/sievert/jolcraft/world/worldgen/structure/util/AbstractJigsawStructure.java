@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.world.worldgen.structure.util;
 
 import com.mojang.datafixers.kinds.App;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -107,8 +108,10 @@ public abstract class AbstractJigsawStructure extends Structure {
                 })
         );
 
+        Optional<GenerationStub> stub;
+
         try {
-            return JigsawPlacement.addPieces(
+            stub = JigsawPlacement.addPieces(
                     context,
                     this.startPool,
                     this.startJigsawName,
@@ -124,6 +127,27 @@ public abstract class AbstractJigsawStructure extends Structure {
         } finally {
             JolCraftStructureContext.clear();
         }
+
+        return stub.map(original ->
+                original.generator().map(
+                        generator -> new GenerationStub(
+                                original.position(),
+                                builder -> {
+                                    JolCraftStructureContext.activate();
+
+                                    try {
+                                        generator.accept(builder);
+                                    } finally {
+                                        JolCraftStructureContext.clear();
+                                    }
+                                }
+                        ),
+                        builder -> new GenerationStub(
+                                original.position(),
+                                Either.right(builder)
+                        )
+                )
+        );
     }
 
     protected abstract boolean extraSpawningChecks(GenerationContext context);

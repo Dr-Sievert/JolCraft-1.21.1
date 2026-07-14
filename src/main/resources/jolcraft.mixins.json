@@ -6,6 +6,7 @@
     "BrushableBlockEntityMixin",
     "BrushItemMixin",
     "JigsawPlacementMixin",
+    "JigsawPlacementPlacerMixin",
     "MeleeAttackGoalMixin",
     "RangedBowAttackGoalMixin",
     "RangedCrossbowAttackGoalMixin",
