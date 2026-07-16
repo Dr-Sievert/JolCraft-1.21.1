@@ -210,11 +210,20 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return ItemInteractionResult.FAIL;
         }
 
-        List<ItemStack> extracts = generateExtract(
-                serverLevel,
-                recipe,
-                usedItem
-        );
+        FermentingCauldronRecipeInput recipeInput =
+                new FermentingCauldronRecipeInput(
+                        usedItem.copyWithCount(1),
+                        lastIngredient.isEmpty()
+                                ? ItemStack.EMPTY
+                                : lastIngredient.copyWithCount(1)
+                );
+
+        List<ItemStack> extracts =
+                generateExtract(
+                        serverLevel,
+                        recipe,
+                        recipeInput
+                );
 
         if (extracts.isEmpty()) {
             return ItemInteractionResult.FAIL;
@@ -232,24 +241,29 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     private List<ItemStack> generateExtract(
             ServerLevel serverLevel,
             FermentingCauldronRecipe recipe,
-            ItemStack usedItem
+            FermentingCauldronRecipeInput recipeInput
     ) {
         if (recipe.extract().isEmpty()) {
             return List.of();
         }
 
-        LootContext context = createExecutionContext(
-                serverLevel,
-                usedItem.copyWithCount(1)
-        );
+        LootContext context =
+                createExecutionContext(
+                        serverLevel,
+                        recipeInput.ingredient()
+                );
 
-        List<ItemStack> generated = new ArrayList<>();
+        List<ItemStack> generated =
+                new ArrayList<>();
 
         recipe.generateExtract(
                 context,
+                recipeInput,
                 stack -> {
                     if (!stack.isEmpty()) {
-                        generated.add(stack.copy());
+                        generated.add(
+                                stack.copy()
+                        );
                     }
                 }
         );

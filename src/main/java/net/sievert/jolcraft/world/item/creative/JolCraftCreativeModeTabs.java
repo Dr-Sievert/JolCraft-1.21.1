@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -26,6 +27,8 @@ public final class JolCraftCreativeModeTabs {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, JolCraft.MOD_ID);
 
+    private static final boolean dev = !FMLEnvironment.production;
+
     public static final Supplier<CreativeModeTab> JOLCRAFT_ITEMS =
             CREATIVE_MODE_TABS.register(JolCraftCreativeTabIds.JOLCRAFT_GENERAL_CREATIVE_TAB, () -> CreativeModeTab.builder()
                     .title(Component.translatable(JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB))
@@ -33,7 +36,9 @@ public final class JolCraftCreativeModeTabs {
                     .displayItems((pParameters, pOutput) -> {
 
                         //Testing
-                        pOutput.accept(JolCraftItems.DEV_KEY);
+                        if (dev) {
+                            pOutput.accept(JolCraftItems.DEV_KEY);
+                        }
 
                         //pOutput.accept(PotionContents.createItemStack(Items.POTION, JolCraftPotions.CURSE));
 
@@ -259,6 +264,10 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.MITHRIL_SCRAP);
                         pOutput.accept(JolCraftItems.BROKEN_MITHRIL_PLATE);
                         pOutput.accept(JolCraftItems.BROKEN_MITHRIL_SWORD);
+
+                        if (!dev) {
+                            pOutput.accept(JolCraftItems.DEV_KEY);
+                        }
 
                     }).build());
 

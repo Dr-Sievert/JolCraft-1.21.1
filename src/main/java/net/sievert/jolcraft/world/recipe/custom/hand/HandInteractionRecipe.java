@@ -16,6 +16,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
@@ -101,6 +102,12 @@ public record HandInteractionRecipe(
                     )
                     .build();
 
+    private static final LootContextParamSet OUTPUT_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(LootContextParams.THIS_ENTITY)
+                    .required(JolCraftRecipeContextParams.INPUT_ITEM)
+                    .build();
+
     public HandInteractionRecipe {
         Objects.requireNonNull(
                 ingredientA,
@@ -147,40 +154,54 @@ public record HandInteractionRecipe(
         ItemStack stackA = input.ingredientA();
         ItemStack stackB = input.ingredientB();
 
-        if (stackA.isEmpty() || stackB.isEmpty()) {
-            return false;
-        }
-
-        boolean direct =
-                matchesInput(
+        return (
+                matchesOrdered(
                         serverLevel,
                         stackA,
-                        ingredientA
+                        stackB
                 )
-                        && matchesInput(
+                        && actionsSatisfied(
+                        stackA,
+                        stackB
+                )
+        ) || (
+                matchesOrdered(
                         serverLevel,
                         stackB,
-                        ingredientB
+                        stackA
                 )
-                        && actionA.isSatisfied(stackA)
-                        && actionB.isSatisfied(stackB);
+                        && actionsSatisfied(
+                        stackB,
+                        stackA
+                )
+        );
+    }
 
-        if (direct) {
-            return true;
-        }
-
-        return matchesInput(
-                serverLevel,
-                stackB,
+    public boolean matchesOrdered(
+            @NotNull ServerLevel level,
+            @NotNull ItemStack stackA,
+            @NotNull ItemStack stackB
+    ) {
+        return !stackA.isEmpty()
+                && !stackB.isEmpty()
+                && matchesInput(
+                level,
+                stackA,
                 ingredientA
         )
                 && matchesInput(
-                serverLevel,
-                stackA,
+                level,
+                stackB,
                 ingredientB
-        )
-                && actionA.isSatisfied(stackB)
-                && actionB.isSatisfied(stackA);
+        );
+    }
+
+    public boolean actionsSatisfied(
+            @NotNull ItemStack stackA,
+            @NotNull ItemStack stackB
+    ) {
+        return actionA.isSatisfied(stackA)
+                && actionB.isSatisfied(stackB);
     }
 
     @Override
@@ -450,12 +471,15 @@ public record HandInteractionRecipe(
                     recipe.actionA().validate();
 
             if (actionAResult.error().isPresent()) {
-                String message = actionAResult.error()
-                        .map(DataResult.Error::message)
-                        .orElse("invalid ingredient A action");
+                String message =
+                        actionAResult.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid ingredient A action");
 
                 return DataResult.error(() ->
-                        ACTION_A_KEY + " invalid: " + message
+                        ACTION_A_KEY
+                                + " invalid: "
+                                + message
                 );
             }
 
@@ -463,12 +487,15 @@ public record HandInteractionRecipe(
                     recipe.actionB().validate();
 
             if (actionBResult.error().isPresent()) {
-                String message = actionBResult.error()
-                        .map(DataResult.Error::message)
-                        .orElse("invalid ingredient B action");
+                String message =
+                        actionBResult.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid ingredient B action");
 
                 return DataResult.error(() ->
-                        ACTION_B_KEY + " invalid: " + message
+                        ACTION_B_KEY
+                                + " invalid: "
+                                + message
                 );
             }
 
@@ -489,6 +516,67 @@ public record HandInteractionRecipe(
                                     + "] is required"
                     );
                 }
+
+                DataResult<Void> outputValidation =
+                        RecipeValidation.validateOutput(
+                                output,
+                                OUTPUT_CONTEXT_PARAMS
+                        );
+
+                if (outputValidation.error().isPresent()) {
+                    int invalidIndex = index;
+
+                    String message =
+                            outputValidation.error()
+                                    .map(DataResult.Error::message)
+                                    .orElse("invalid output");
+
+                    return DataResult.error(() ->
+                            RESULTS_KEY
+                                    + "["
+                                    + invalidIndex
+                                    + "]: "
+                                    + message
+                    );
+                }
+            }
+
+            DataResult<Void> successSoundValidation =
+                    RecipeValidation.validateOutput(
+                            recipe.successSound(),
+                            OUTPUT_CONTEXT_PARAMS
+                    );
+
+            if (successSoundValidation.error().isPresent()) {
+                String message =
+                        successSoundValidation.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid success sound");
+
+                return DataResult.error(() ->
+                        SUCCESS_SOUND_KEY
+                                + ": "
+                                + message
+                );
+            }
+
+            DataResult<Void> failSoundValidation =
+                    RecipeValidation.validateOutput(
+                            recipe.failSound(),
+                            OUTPUT_CONTEXT_PARAMS
+                    );
+
+            if (failSoundValidation.error().isPresent()) {
+                String message =
+                        failSoundValidation.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid fail sound");
+
+                return DataResult.error(() ->
+                        FAIL_SOUND_KEY
+                                + ": "
+                                + message
+                );
             }
 
             return DataResult.success(recipe);

@@ -100,6 +100,12 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
         ItemStack inputStack = items.get(SLOT_INPUT);
         ItemStack toolStack = items.get(SLOT_TOOL);
 
+        LapidaryRecipeInput recipeInput =
+                new LapidaryRecipeInput(
+                        inputStack,
+                        toolStack
+                );
+
         /*
          * Create one shared context for this execution.
          *
@@ -113,7 +119,11 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
         );
 
         List<ItemStack> generatedResults = new ArrayList<>();
-        recipe.generateResult(context, generatedResults::add);
+        recipe.generateResult(
+                context,
+                recipeInput,
+                generatedResults::add
+        );
 
         generatedResults.removeIf(ItemStack::isEmpty);
 
@@ -158,6 +168,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
 
         recipe.generateSound(
                 context,
+                recipeInput,
                 generatedSound -> level.playSound(
                         null,
                         worldPosition,

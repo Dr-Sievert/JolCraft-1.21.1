@@ -15,6 +15,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
@@ -53,6 +54,13 @@ public record LapidaryBenchRecipe(
     private static final LootContextParamSet INPUT_CONTEXT_PARAMS =
             new LootContextParamSet.Builder()
                     .required(JolCraftRecipeContextParams.INPUT_ITEM)
+                    .build();
+
+    private static final LootContextParamSet OUTPUT_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(JolCraftRecipeContextParams.INPUT_ITEM)
+                    .optional(LootContextParams.THIS_ENTITY)
+                    .optional(LootContextParams.ORIGIN)
                     .build();
 
     @Override
@@ -123,9 +131,14 @@ public record LapidaryBenchRecipe(
      */
     public void generateResult(
             @NotNull LootContext context,
+            @NotNull LapidaryRecipeInput input,
             @NotNull Consumer<ItemStack> output
     ) {
-        result.generate(context, output);
+        result.generate(
+                context,
+                input,
+                output
+        );
     }
 
     public int rollXp(@NotNull LootContext context) {
@@ -138,9 +151,14 @@ public record LapidaryBenchRecipe(
 
     public void generateSound(
             @NotNull LootContext context,
+            @NotNull LapidaryRecipeInput input,
             @NotNull Consumer<SoundOutput.GeneratedSound> output
     ) {
-        sound.generate(context, output);
+        sound.generate(
+                context,
+                input,
+                output
+        );
     }
 
     @Override
@@ -289,32 +307,77 @@ public record LapidaryBenchRecipe(
         public static DataResult<LapidaryBenchRecipe> validate(
                 LapidaryBenchRecipe recipe
         ) {
-            return RecipeValidation.validate(recipe)
-                    .require(
-                            recipe.input(),
-                            JolCraftDictionary.INPUT
-                    )
-                    .require(
-                            recipe.tool(),
-                            JolCraftDictionary.TOOL
-                    )
-                    .require(
+            DataResult<LapidaryBenchRecipe> base =
+                    RecipeValidation.validate(recipe)
+                            .require(
+                                    recipe.input(),
+                                    JolCraftDictionary.INPUT
+                            )
+                            .require(
+                                    recipe.tool(),
+                                    JolCraftDictionary.TOOL
+                            )
+                            .require(
+                                    recipe.result(),
+                                    JolCraftDictionary.RESULT
+                            )
+                            .require(
+                                    recipe.sound(),
+                                    JolCraftDictionary.SOUND
+                            )
+                            .require(
+                                    recipe.xp(),
+                                    JolCraftDictionary.XP
+                            )
+                            .require(
+                                    recipe.toolDamage(),
+                                    TOOL_DAMAGE_KEY
+                            )
+                            .done();
+
+            if (base.error().isPresent()) {
+                return base;
+            }
+
+            DataResult<Void> resultValidation =
+                    RecipeValidation.validateOutput(
                             recipe.result(),
-                            JolCraftDictionary.RESULT
-                    )
-                    .require(
+                            OUTPUT_CONTEXT_PARAMS
+                    );
+
+            if (resultValidation.error().isPresent()) {
+                String message =
+                        resultValidation.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid result output");
+
+                return DataResult.error(() ->
+                        JolCraftDictionary.RESULT
+                                + ": "
+                                + message
+                );
+            }
+
+            DataResult<Void> soundValidation =
+                    RecipeValidation.validateOutput(
                             recipe.sound(),
-                            JolCraftDictionary.SOUND
-                    )
-                    .require(
-                            recipe.xp(),
-                            JolCraftDictionary.XP
-                    )
-                    .require(
-                            recipe.toolDamage(),
-                            TOOL_DAMAGE_KEY
-                    )
-                    .done();
+                            OUTPUT_CONTEXT_PARAMS
+                    );
+
+            if (soundValidation.error().isPresent()) {
+                String message =
+                        soundValidation.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid sound output");
+
+                return DataResult.error(() ->
+                        JolCraftDictionary.SOUND
+                                + ": "
+                                + message
+                );
+            }
+
+            return DataResult.success(recipe);
         }
     }
 }

@@ -3,6 +3,7 @@ package net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
@@ -60,37 +61,124 @@ public record DwarfMinerBountyTasks(
                             2
                     );
 
-                    /*
-                    builder.collect(Items.STONE, 8, 15, 4);
-                    builder.collect(Items.GRANITE, 8, 15, 3);
-                    builder.collect(Items.DIORITE, 8, 15, 3);
-                    builder.collect(Items.ANDESITE, 8, 15, 3);
-                    builder.collect(Items.TUFF, 8, 15, 2);
-                     */
+                    builder.collectWeighted(
+                            Items.STONE,
+                            8,
+                            15,
+                            4
+                    );
+
+                    builder.collectWeighted(
+                            Items.GRANITE,
+                            8,
+                            15,
+                            3
+                    );
+
+                    builder.collectWeighted(
+                            Items.DIORITE,
+                            8,
+                            15,
+                            3
+                    );
+
+                    builder.collectWeighted(
+                            Items.ANDESITE,
+                            8,
+                            15,
+                            3
+                    );
+
+                    builder.collectWeighted(
+                            Items.TUFF,
+                            8,
+                            15,
+                            2
+                    );
                 }
         );
 
-        /*
-        emitTier(output, tracking, DwarfMerchantData.Level.APPRENTICE, builder -> {
-            builder.collect(Items.IRON_ORE, 4, 8, 4);
-            builder.collect(Items.COPPER_ORE, 4, 8, 4);
-            builder.collect(Items.DEEPSLATE_IRON_ORE, 4, 8, 3);
-        });
+        emitTier(
+                output,
+                tracking,
+                DwarfMerchantData.Level.APPRENTICE,
+                builder -> {
+                    builder.collectWeighted(
+                            Items.IRON_ORE,
+                            4,
+                            8,
+                            4
+                    );
 
-        emitTier(output, tracking, DwarfMerchantData.Level.JOURNEYMAN, builder -> {
-            builder.collect(Items.GOLD_ORE, 3, 6, 3);
-            builder.collect(Items.EMERALD_ORE, 2, 4, 2);
-        });
+                    builder.collectWeighted(
+                            Items.COPPER_ORE,
+                            4,
+                            8,
+                            4
+                    );
 
-        emitTier(output, tracking, DwarfMerchantData.Level.EXPERT, builder -> {
-            builder.collect(Items.DIAMOND_ORE, 1, 2, 2);
-            builder.collect(Items.DEEPSLATE_DIAMOND_ORE, 1, 2, 2);
-        });
+                    builder.collectWeighted(
+                            Items.DEEPSLATE_IRON_ORE,
+                            4,
+                            8,
+                            3
+                    );
+                }
+        );
 
-        emitTier(output, tracking, DwarfMerchantData.Level.MASTER, builder -> {
-            builder.collect(Items.ANCIENT_DEBRIS, 1, 1, 1);
-        });
-         */
+        emitTier(
+                output,
+                tracking,
+                DwarfMerchantData.Level.JOURNEYMAN,
+                builder -> {
+                    builder.collectWeighted(
+                            Items.GOLD_ORE,
+                            3,
+                            6,
+                            3
+                    );
+
+                    builder.collectWeighted(
+                            Items.EMERALD_ORE,
+                            2,
+                            4,
+                            2
+                    );
+                }
+        );
+
+        emitTier(
+                output,
+                tracking,
+                DwarfMerchantData.Level.EXPERT,
+                builder -> {
+                    builder.collectWeighted(
+                            Items.DIAMOND_ORE,
+                            1,
+                            2,
+                            2
+                    );
+
+                    builder.collectWeighted(
+                            Items.DEEPSLATE_DIAMOND_ORE,
+                            1,
+                            2,
+                            2
+                    );
+                }
+        );
+
+        emitTier(
+                output,
+                tracking,
+                DwarfMerchantData.Level.MASTER,
+                builder -> builder.collectWeighted(
+                        Items.ANCIENT_DEBRIS,
+                        1,
+                        1,
+                        1
+                )
+        );
     }
 
     private void emitTier(
@@ -109,7 +197,9 @@ public record DwarfMinerBountyTasks(
                         .bountyType(
                                 DwarfProfession.MINER
                         )
-                        .tier(tier)
+                        .tier(
+                                tier
+                        )
                         .result(
                                 JolCraftItems.BOUNTY_CRATE.get()
                         )
@@ -120,7 +210,9 @@ public record DwarfMinerBountyTasks(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         );
 
-        objectives.accept(builder);
+        objectives.accept(
+                builder
+        );
 
         emit(
                 output,
@@ -145,7 +237,9 @@ public record DwarfMinerBountyTasks(
                         .bountyType(
                                 DwarfProfession.MINER
                         )
-                        .tier(tier)
+                        .tier(
+                                tier
+                        )
                         .result(
                                 JolCraftItems.BOUNTY.get()
                         )
@@ -156,7 +250,9 @@ public record DwarfMinerBountyTasks(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         );
 
-        objectives.accept(builder);
+        objectives.accept(
+                builder
+        );
 
         emit(
                 output,

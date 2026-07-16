@@ -1,6 +1,10 @@
 package net.sievert.jolcraft.world.recipe.base;
 
 import com.mojang.serialization.DataResult;
+import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.sievert.jolcraft.world.recipe.output.RecipeOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +35,38 @@ public final class RecipeValidation {
             @Nullable R recipe
     ) {
         return new Validator<>(recipe);
+    }
+
+    public static @NotNull DataResult<Void> validateOutput(
+            @Nullable RecipeOutput output,
+            @NotNull LootContextParamSet params
+    ) {
+        if (output == null) {
+            return DataResult.error(() ->
+                    "recipe output is required"
+            );
+        }
+
+        ProblemReporter.Collector problems =
+                new ProblemReporter.Collector();
+
+        ValidationContext context =
+                new ValidationContext(
+                        problems,
+                        params
+                );
+
+        output.validate(
+                context
+        );
+
+        return problems.getReport()
+                .<DataResult<Void>>map(report ->
+                        DataResult.error(() -> report)
+                )
+                .orElseGet(() ->
+                        DataResult.success(null)
+                );
     }
 
     public static final class Validator<R> {

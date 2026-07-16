@@ -116,27 +116,6 @@ public record EntityOutput(
         }
     }
 
-    /**
-     * Convenience overload for outputs which do not use hooks requiring
-     * recipe-input access.
-     */
-    public void generate(
-            @NotNull LootContext context,
-            @NotNull Consumer<GeneratedEntity> output
-    ) {
-        int generatedCount =
-                count.getInt(context);
-
-        if (generatedCount > 0) {
-            output.accept(
-                    new GeneratedEntity(
-                            entity,
-                            generatedCount
-                    )
-            );
-        }
-    }
-
     public EntityOutput applyHook(
             @NotNull ResourceLocation hook
     ) {

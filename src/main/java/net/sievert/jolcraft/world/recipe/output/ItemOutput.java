@@ -98,24 +98,6 @@ public record ItemOutput(
         );
     }
 
-    /**
-     * Convenience overload for outputs which do not use hooks requiring
-     * recipe-input access.
-     */
-    public void generate(
-            @NotNull LootContext context,
-            @NotNull Consumer<ItemStack> output
-    ) {
-        pool.addRandomItems(
-                generated -> {
-                    if (!generated.isEmpty()) {
-                        output.accept(generated);
-                    }
-                },
-                context
-        );
-    }
-
     public ItemOutput applyHook(
             @NotNull ResourceLocation hook
     ) {

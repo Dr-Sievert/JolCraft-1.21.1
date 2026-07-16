@@ -12,6 +12,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -50,6 +52,12 @@ public record BountyRewardRecipe(
             JolCraftStrings.plural(
                     JolCraftDictionary.REWARD
             );
+
+    private static final LootContextParamSet OUTPUT_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(LootContextParams.THIS_ENTITY)
+                    .required(LootContextParams.ORIGIN)
+                    .build();
 
     public BountyRewardRecipe {
         Objects.requireNonNull(
@@ -409,9 +417,10 @@ public record BountyRewardRecipe(
                     );
 
             if (infoResult.error().isPresent()) {
-                String message = infoResult.error()
-                        .map(DataResult.Error::message)
-                        .orElse("invalid bounty");
+                String message =
+                        infoResult.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid bounty");
 
                 return DataResult.error(
                         () -> message
@@ -426,7 +435,8 @@ public record BountyRewardRecipe(
                         recipe.rewards().get(index);
 
                 if (reward == null) {
-                    int invalidIndex = index;
+                    int invalidIndex =
+                            index;
 
                     return DataResult.error(() ->
                             REWARDS_KEY
@@ -437,12 +447,13 @@ public record BountyRewardRecipe(
                 }
 
                 if (!(reward instanceof ItemOutput)) {
-                    int invalidIndex = index;
+                    int invalidIndex =
+                            index;
+
                     String outputType =
                             reward.getType() == null
                                     ? "unknown"
-                                    : reward.getType()
-                                    .toString();
+                                    : reward.getType().toString();
 
                     return DataResult.error(() ->
                             REWARDS_KEY
@@ -452,6 +463,49 @@ public record BountyRewardRecipe(
                                     + outputType
                     );
                 }
+
+                DataResult<Void> rewardValidation =
+                        RecipeValidation.validateOutput(
+                                reward,
+                                OUTPUT_CONTEXT_PARAMS
+                        );
+
+                if (rewardValidation.error().isPresent()) {
+                    int invalidIndex =
+                            index;
+
+                    String message =
+                            rewardValidation.error()
+                                    .map(DataResult.Error::message)
+                                    .orElse("invalid reward output");
+
+                    return DataResult.error(() ->
+                            REWARDS_KEY
+                                    + "["
+                                    + invalidIndex
+                                    + "]: "
+                                    + message
+                    );
+                }
+            }
+
+            DataResult<Void> soundValidation =
+                    RecipeValidation.validateOutput(
+                            recipe.sound(),
+                            OUTPUT_CONTEXT_PARAMS
+                    );
+
+            if (soundValidation.error().isPresent()) {
+                String message =
+                        soundValidation.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid reward sound");
+
+                return DataResult.error(() ->
+                        JolCraftDictionary.SOUND
+                                + ": "
+                                + message
+                );
             }
 
             return DataResult.success(recipe);

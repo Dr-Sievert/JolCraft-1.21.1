@@ -165,24 +165,6 @@ public record SoundOutput(
         }
     }
 
-    /**
-     * Convenience overload for outputs which do not use hooks requiring
-     * recipe-input access.
-     */
-    public void generate(
-            @NotNull LootContext context,
-            @NotNull Consumer<GeneratedSound> output
-    ) {
-        output.accept(
-                new GeneratedSound(
-                        sound,
-                        source,
-                        volume.getFloat(context),
-                        pitch.getFloat(context)
-                )
-        );
-    }
-
     public SoundOutput applyHook(
             @NotNull ResourceLocation hook
     ) {

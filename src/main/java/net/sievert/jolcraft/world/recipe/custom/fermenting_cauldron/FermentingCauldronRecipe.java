@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -145,10 +144,15 @@ public record FermentingCauldronRecipe(
      */
     public void generateExtract(
             @NotNull LootContext context,
+            @NotNull FermentingCauldronRecipeInput input,
             @NotNull Consumer<ItemStack> output
     ) {
         extract.ifPresent(value ->
-                value.generate(context, output)
+                value.generate(
+                        context,
+                        input,
+                        output
+                )
         );
     }
 
@@ -413,6 +417,48 @@ public record FermentingCauldronRecipe(
 
             if (base.error().isPresent()) {
                 return base;
+            }
+
+            if (recipe.extract().isPresent()) {
+                DataResult<Void> extractValidation =
+                        RecipeValidation.validateOutput(
+                                recipe.extract().get(),
+                                INPUT_CONTEXT_PARAMS
+                        );
+
+                if (extractValidation.error().isPresent()) {
+                    String message =
+                            extractValidation.error()
+                                    .map(DataResult.Error::message)
+                                    .orElse("invalid extract output");
+
+                    return DataResult.error(() ->
+                            JolCraftDictionary.EXTRACT
+                                    + ": "
+                                    + message
+                    );
+                }
+            }
+
+            if (recipe.effect().isPresent()) {
+                DataResult<Void> effectValidation =
+                        RecipeValidation.validateOutput(
+                                recipe.effect().get(),
+                                INPUT_CONTEXT_PARAMS
+                        );
+
+                if (effectValidation.error().isPresent()) {
+                    String message =
+                            effectValidation.error()
+                                    .map(DataResult.Error::message)
+                                    .orElse("invalid effect output");
+
+                    return DataResult.error(() ->
+                            JolCraftDictionary.EFFECT
+                                    + ": "
+                                    + message
+                    );
+                }
             }
 
             return DataResult.success(recipe);

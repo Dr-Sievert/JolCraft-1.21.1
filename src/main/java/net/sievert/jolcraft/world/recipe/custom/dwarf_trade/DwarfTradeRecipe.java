@@ -16,6 +16,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
@@ -107,8 +109,13 @@ public record DwarfTradeRecipe(
     public static final int DEFAULT_MAX_USES = 5;
     public static final int DEFAULT_DWARF_XP = 0;
 
-    public static final float DEFAULT_PRICE_MULTIPLIER =
-            0.05F;
+    public static final float DEFAULT_PRICE_MULTIPLIER = 0.05F;
+
+    private static final LootContextParamSet RESULT_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(LootContextParams.THIS_ENTITY)
+                    .required(LootContextParams.ORIGIN)
+                    .build();
 
     public DwarfTradeRecipe {
         if (profession == null) {
@@ -1176,6 +1183,25 @@ public record DwarfTradeRecipe(
                 return DataResult.error(() ->
                         KEY_PRICE_MULTIPLIER
                                 + " must be >= 0"
+                );
+            }
+
+            DataResult<Void> resultValidation =
+                    RecipeValidation.validateOutput(
+                            recipe.result(),
+                            RESULT_CONTEXT_PARAMS
+                    );
+
+            if (resultValidation.error().isPresent()) {
+                String message =
+                        resultValidation.error()
+                                .map(DataResult.Error::message)
+                                .orElse("invalid trade result");
+
+                return DataResult.error(() ->
+                        JolCraftDictionary.RESULT
+                                + ": "
+                                + message
                 );
             }
 

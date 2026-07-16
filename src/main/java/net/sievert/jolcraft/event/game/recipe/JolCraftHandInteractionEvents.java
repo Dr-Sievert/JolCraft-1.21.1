@@ -479,21 +479,15 @@ public final class JolCraftHandInteractionEvents {
             @NotNull ItemStack stackA,
             @NotNull ItemStack stackB
     ) {
-        HandInteractionRecipeInput input =
-                new HandInteractionRecipeInput(
-                        stackA,
-                        stackB
-                );
-
-        if (!recipe.matches(
-                input,
-                level
-        )) {
-            return false;
-        }
-
-        return recipe.actionA().isSatisfied(stackA)
-                && recipe.actionB().isSatisfied(stackB);
+        return recipe.matchesOrdered(
+                level,
+                stackA,
+                stackB
+        )
+                && recipe.actionsSatisfied(
+                stackA,
+                stackB
+        );
     }
 
     private record HandMapping(
