@@ -9,7 +9,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.JolCraftRegistries;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
@@ -93,5 +95,10 @@ public final class JolCraftModEvents {
         event.add(EntityType.PLAYER, JolCraftAttributes.ITEM_USE_SPEED); added++;
 
         return added;
+    }
+
+    @SubscribeEvent
+    public static void registerRegistries(NewRegistryEvent event) {
+        event.register(JolCraftRegistries.RECIPE_OUTPUT_TYPE);
     }
 }

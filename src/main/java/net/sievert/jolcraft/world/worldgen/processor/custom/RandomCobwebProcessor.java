@@ -12,7 +12,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class RandomCobwebProcessor extends StructureProcessor {
 
     public static final MapCodec<RandomCobwebProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.floatRange(0.0F, 1.0F).fieldOf(JolCraftParameterIds.CHANCE).forGetter(processor -> processor.chance)
+            Codec.floatRange(0.0F, 1.0F).fieldOf(JolCraftDictionary.CHANCE).forGetter(processor -> processor.chance)
     ).apply(instance, RandomCobwebProcessor::new));
 
     private final float chance;

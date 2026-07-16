@@ -3,24 +3,38 @@ package net.sievert.jolcraft.world.recipe.custom.hand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.recipe.custom.base.ContextInput;
-import net.sievert.jolcraft.param.runtime.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransformSourceResolver;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public record HandInteractionRecipeInput(
-        @NotNull WorldContext ctx,
         @NotNull ItemStack ingredientA,
         @NotNull ItemStack ingredientB
-) implements RecipeInput, ContextInput, ItemTransformSourceResolver {
+) implements RecipeInput {
+
+    public static final String INGREDIENT_A_KEY =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.INGREDIENT,
+                    "a"
+            );
+
+    public static final String INGREDIENT_B_KEY =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.INGREDIENT,
+                    "b"
+            );
 
     public HandInteractionRecipeInput {
-        Objects.requireNonNull(ctx, JolCraftDictionary.CONTEXT);
-        Objects.requireNonNull(ingredientA, JolCraftStrings.underscored(JolCraftDictionary.INGREDIENT, "a"));
-        Objects.requireNonNull(ingredientB, JolCraftStrings.underscored(JolCraftDictionary.INGREDIENT, "b"));
+        Objects.requireNonNull(
+                ingredientA,
+                INGREDIENT_A_KEY
+        );
+
+        Objects.requireNonNull(
+                ingredientB,
+                INGREDIENT_B_KEY
+        );
     }
 
     @Override
@@ -35,18 +49,5 @@ public record HandInteractionRecipeInput(
     @Override
     public int size() {
         return 2;
-    }
-
-    @Override
-    public @NotNull ItemStack resolveItemTransformSource(@NotNull String source) {
-        if (HandInteractionRecipe.SOURCE_INGREDIENT_A.equals(source)) {
-            return ingredientA;
-        }
-
-        if (HandInteractionRecipe.SOURCE_INGREDIENT_B.equals(source)) {
-            return ingredientB;
-        }
-
-        return ItemStack.EMPTY;
     }
 }

@@ -11,7 +11,6 @@ import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
@@ -69,7 +68,7 @@ public final class JolCraftGlobalLootModifierProvider
                 JolCraftStrings.toTitleCase(
                         JolCraftStrings.underscored(
                                 id(),
-                                JolCraftParameterIds.PROVIDER
+                                JolCraftDictionary.PROVIDER
                         )
                 );
     }

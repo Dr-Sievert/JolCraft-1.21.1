@@ -54,6 +54,11 @@ public final class DwarfProfessionConfigProvider
     }
 
     @Override
+    public @NotNull String folder() {
+        return id();
+    }
+
+    @Override
     public @NotNull JolCraftDataProvider<CachedOutput> parent() {
         return parent;
     }
@@ -96,24 +101,49 @@ public final class DwarfProfessionConfigProvider
         );
     }
 
-    private static DwarfProfessionConfig configFor(DwarfProfession prof) {
-        DwarfProfessionConfig d = DwarfProfessionConfig.DEFAULTS;
+    private static DwarfProfessionConfig configFor(
+            @NotNull DwarfProfession profession
+    ) {
+        DwarfProfessionConfig defaults = DwarfProfessionConfig.DEFAULTS;
 
-        return switch (prof) {
+        return switch (profession) {
             case GUILDMASTER -> new DwarfProfessionConfig(
-                    d.requiredTier(),
-                    d.restockTicks(),
+                    defaults.requiredTier(),
+                    defaults.restockTicks(),
                     0.8F,
+
                     false,
                     true,
+
                     false,
-                    d.showLevel(),
-                    d.rules(),
-                    soundsBoth(SoundEvents.VILLAGER_WORK_CARTOGRAPHER),
-                    d.attributes(),
+                    defaults.showLevel(),
+
+                    defaults.rules(),
+                    soundsBoth(
+                            SoundEvents.VILLAGER_WORK_CARTOGRAPHER
+                    ),
+                    defaults.attributes(),
+                    defaults.tradePools()
+            );
+
+            case MERCHANT -> new DwarfProfessionConfig(
+                    defaults.requiredTier(),
+                    defaults.restockTicks(),
+                    defaults.voicePitch(),
+
+                    defaults.canReroll(),
+                    defaults.canEndorse(),
+
+                    defaults.showProgressBar(),
+                    defaults.showLevel(),
+
+                    defaults.rules(),
+                    defaults.sounds(),
+                    defaults.attributes(),
                     merchantTradePools()
             );
-            default -> d;
+
+            default -> defaults;
         };
     }
 

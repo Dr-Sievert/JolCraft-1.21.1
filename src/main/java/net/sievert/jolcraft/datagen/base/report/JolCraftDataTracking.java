@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.datagen.base.report;
 
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
@@ -30,8 +30,8 @@ public final class JolCraftDataTracking {
             @NotNull JolCraftDataProvider<?> provider,
             @NotNull String path
     ) {
-        Objects.requireNonNull(provider, JolCraftParameterIds.PROVIDER);
-        Objects.requireNonNull(path, JolCraftParameterIds.PATH);
+        Objects.requireNonNull(provider, JolCraftDictionary.PROVIDER);
+        Objects.requireNonNull(path, JolCraftDictionary.PATH);
 
         totalCount++;
         providerCounts.merge(provider.id(), 1, Integer::sum);

@@ -2,180 +2,454 @@ package net.sievert.jolcraft.event.game.recipe;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
-import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
-import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipeInput;
-import net.sievert.jolcraft.param.runtime.WorldAnchor;
-import net.sievert.jolcraft.param.runtime.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.output.base.Output;
-import net.sievert.jolcraft.world.recipe.param.output.base.OutputHandler;
-import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContextParams;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
+import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipeInput;
+import net.sievert.jolcraft.world.recipe.output.EffectOutput;
+import net.sievert.jolcraft.world.recipe.output.EntityOutput;
+import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.output.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(
+        modid = JolCraft.MOD_ID,
+        bus = EventBusSubscriber.Bus.GAME
+)
 public final class JolCraftHandInteractionEvents {
 
     private static final int HAND_INTERACTION_COOLDOWN_TICKS = 10;
 
-    private static final OutputHandler OUTPUTS = new OutputHandler() {};
+    private static final LootContextParamSet EXECUTION_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(LootContextParams.THIS_ENTITY)
+                    .required(JolCraftRecipeContextParams.INPUT_ITEM)
+                    .build();
 
     private JolCraftHandInteractionEvents() {}
 
     @SubscribeEvent
-    public static void onHandInteractionRecipe(PlayerInteractEvent.RightClickItem event) {
+    public static void onHandInteractionRecipe(
+            PlayerInteractEvent.RightClickItem event
+    ) {
         if (event.getHand() != InteractionHand.MAIN_HAND) {
             return;
         }
 
-        Player player = event.getEntity();
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
 
         ItemStack main = player.getMainHandItem();
         ItemStack off = player.getOffhandItem();
+
         if (main.isEmpty() || off.isEmpty()) {
             return;
         }
 
-        if (player.getCooldowns().isOnCooldown(main.getItem())) {
-            return;
-        }
-        if (player.getCooldowns().isOnCooldown(off.getItem())) {
+        if (player.getCooldowns().isOnCooldown(main.getItem())
+                || player.getCooldowns().isOnCooldown(off.getItem())) {
             return;
         }
 
-        WorldContext ctx = new WorldContext(player, null);
-        HandInteractionRecipeInput rawInput = new HandInteractionRecipeInput(ctx, main, off);
+        HandInteractionRecipeInput rawInput =
+                new HandInteractionRecipeInput(
+                        main,
+                        off
+                );
 
-        ResolvedRecipe resolved = findResolvedRecipe(level, player, rawInput);
+        ResolvedRecipe resolved =
+                findResolvedRecipe(
+                        level,
+                        player,
+                        rawInput
+                );
+
         if (resolved == null) {
-            JolCraftLogs.warn(
-                    JolCraftLogTags.RECIPE,
-                    "Hand interaction resolved no recipe for main=" + main + " off=" + off
-            );
             return;
         }
 
-        JolCraftLogs.info(
-                JolCraftLogTags.RECIPE,
-                "Hand interaction resolved recipe={}",
-                resolved.id()
-        );
+        HandInteractionRecipe recipe =
+                resolved.recipe();
 
-        HandInteractionRecipe recipe = resolved.recipe();
-        HandMapping mapping = resolved.mapping();
+        HandMapping mapping =
+                resolved.mapping();
+
+        HandInteractionRecipeInput resolvedInput =
+                new HandInteractionRecipeInput(
+                        mapping.stackA(),
+                        mapping.stackB()
+                );
+
+        LootContext context =
+                createExecutionContext(
+                        level,
+                        player,
+                        mapping.stackA()
+                );
 
         cancel(event);
 
-        HandInteractionRecipeInput resolvedInput = new HandInteractionRecipeInput(
-                ctx,
-                mapping.stackA(),
-                mapping.stackB()
-        );
+        boolean generatedAny =
+                generateOutputs(
+                        level,
+                        player,
+                        recipe,
+                        resolvedInput,
+                        context
+                );
 
-        List<Output> outputs = recipe.roll(resolvedInput, ctx);
-        if (outputs.isEmpty()) {
-            playFailSound(player, recipe);
+        if (!generatedAny) {
+            playSoundOutput(
+                    level,
+                    player,
+                    recipe.failSound(),
+                    resolvedInput,
+                    context
+            );
+
             return;
         }
 
-        OUTPUTS.handleAll(ctx, outputs, null, WorldAnchor.PLAYER, SoundSource.PLAYERS);
+        playSoundOutput(
+                level,
+                player,
+                recipe.successSound(),
+                resolvedInput,
+                context
+        );
 
-        playSuccessSound(player, recipe);
+        recipe.actionA().apply(
+                level,
+                player,
+                mapping.stackA()
+        );
 
-        ItemIngredientAction.apply(ctx, mapping.stackA(), recipe.actionA());
-        ItemIngredientAction.apply(ctx, mapping.stackB(), recipe.actionB());
+        recipe.actionB().apply(
+                level,
+                player,
+                mapping.stackB()
+        );
 
-        player.getCooldowns().addCooldown(main.getItem(), HAND_INTERACTION_COOLDOWN_TICKS);
-        player.getCooldowns().addCooldown(off.getItem(), HAND_INTERACTION_COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(
+                main.getItem(),
+                HAND_INTERACTION_COOLDOWN_TICKS
+        );
 
-        player.swing(mapping.swingHand(), true);
+        player.getCooldowns().addCooldown(
+                off.getItem(),
+                HAND_INTERACTION_COOLDOWN_TICKS
+        );
+
+        player.swing(
+                mapping.swingHand(),
+                true
+        );
+
+        JolCraftLogs.info(
+                JolCraftLogTags.RECIPE,
+                "Executed hand interaction recipe={}",
+                resolved.id()
+        );
+    }
+
+    private static boolean generateOutputs(
+            @NotNull ServerLevel level,
+            @NotNull ServerPlayer player,
+            @NotNull HandInteractionRecipe recipe,
+            @NotNull HandInteractionRecipeInput input,
+            @NotNull LootContext context
+    ) {
+        boolean generatedAny = false;
+
+        for (RecipeOutput output : recipe.outputs()) {
+            if (output instanceof ItemOutput itemOutput) {
+                List<ItemStack> generated =
+                        new ArrayList<>();
+
+                itemOutput.generate(
+                        context,
+                        input,
+                        generated::add
+                );
+
+                for (ItemStack stack : generated) {
+                    if (stack.isEmpty()) {
+                        continue;
+                    }
+
+                    giveOrDrop(
+                            player,
+                            stack
+                    );
+
+                    generatedAny = true;
+                }
+
+                continue;
+            }
+
+            if (output instanceof SoundOutput soundOutput) {
+                boolean[] generated = {false};
+
+                soundOutput.generate(
+                        context,
+                        input,
+                        sound -> {
+                            playGeneratedSound(
+                                    level,
+                                    player,
+                                    sound
+                            );
+
+                            generated[0] = true;
+                        }
+                );
+
+                generatedAny |= generated[0];
+                continue;
+            }
+
+            if (output instanceof EffectOutput effectOutput) {
+                boolean[] generated = {false};
+
+                effectOutput.generate(
+                        context,
+                        input,
+                        effect -> {
+                            player.addEffect(
+                                    new MobEffectInstance(effect)
+                            );
+
+                            generated[0] = true;
+                        }
+                );
+
+                generatedAny |= generated[0];
+                continue;
+            }
+
+            if (output instanceof EntityOutput entityOutput) {
+                boolean[] generated = {false};
+
+                entityOutput.generate(
+                        context,
+                        input,
+                        entity -> {
+                            if (spawnGeneratedEntities(
+                                    level,
+                                    player,
+                                    entity
+                            )) {
+                                generated[0] = true;
+                            }
+                        }
+                );
+
+                generatedAny |= generated[0];
+            }
+        }
+
+        return generatedAny;
+    }
+
+    private static boolean spawnGeneratedEntities(
+            @NotNull ServerLevel level,
+            @NotNull ServerPlayer player,
+            @NotNull EntityOutput.GeneratedEntity generated
+    ) {
+        boolean spawnedAny = false;
+
+        for (int index = 0;
+             index < generated.count();
+             index++) {
+
+            Entity entity = generated.entity().create(
+                    level,
+                    null,
+                    player.blockPosition(),
+                    MobSpawnType.EVENT,
+                    false,
+                    false
+            );
+
+            if (entity == null) {
+                continue;
+            }
+
+            entity.moveTo(
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    level.random.nextFloat() * 360.0F,
+                    0.0F
+            );
+
+            if (level.addFreshEntity(entity)) {
+                spawnedAny = true;
+            }
+        }
+
+        return spawnedAny;
+    }
+
+    private static void giveOrDrop(
+            @NotNull ServerPlayer player,
+            @NotNull ItemStack stack
+    ) {
+        if (!player.getInventory().add(stack)) {
+            player.drop(
+                    stack,
+                    false
+            );
+        }
+    }
+
+    private static void playSoundOutput(
+            @NotNull ServerLevel level,
+            @NotNull ServerPlayer player,
+            @NotNull SoundOutput output,
+            @NotNull HandInteractionRecipeInput input,
+            @NotNull LootContext context
+    ) {
+        output.generate(
+                context,
+                input,
+                generated -> playGeneratedSound(
+                        level,
+                        player,
+                        generated
+                )
+        );
+    }
+
+    private static void playGeneratedSound(
+            @NotNull ServerLevel level,
+            @NotNull ServerPlayer player,
+            @NotNull SoundOutput.GeneratedSound generated
+    ) {
+        SoundEvent sound =
+                generated.sound().value();
+
+        level.playSound(
+                null,
+                player.getX(),
+                player.getY(),
+                player.getZ(),
+                sound,
+                generated.source(),
+                generated.volume(),
+                generated.pitch()
+        );
+    }
+
+    private static @NotNull LootContext createExecutionContext(
+            @NotNull ServerLevel level,
+            @NotNull ServerPlayer player,
+            @NotNull ItemStack inputStack
+    ) {
+        return JolCraftRecipeContexts.create(
+                level,
+                EXECUTION_CONTEXT_PARAMS,
+                builder -> builder
+                        .withParameter(
+                                LootContextParams.THIS_ENTITY,
+                                player
+                        )
+                        .withParameter(
+                                JolCraftRecipeContextParams.INPUT_ITEM,
+                                inputStack
+                        )
+        );
     }
 
     private static @Nullable ResolvedRecipe findResolvedRecipe(
             @NotNull ServerLevel level,
-            @NotNull Player player,
+            @NotNull ServerPlayer player,
             @NotNull HandInteractionRecipeInput rawInput
     ) {
-        List<RecipeHolder<HandInteractionRecipe>> recipes = level.getServer()
-                .getRecipeManager()
-                .getRecipesFor(JolCraftRecipes.HAND_INTERACTION_TYPE.get(), rawInput, level);
-
-        JolCraftLogs.error(
-                JolCraftLogTags.RECIPE,
-                "Hand interaction candidate recipe count=" + recipes.size()
-        );
+        List<RecipeHolder<HandInteractionRecipe>> recipes =
+                level.getRecipeManager()
+                        .getRecipesFor(
+                                JolCraftRecipes.HAND_INTERACTION_TYPE.get(),
+                                rawInput,
+                                level
+                        );
 
         for (RecipeHolder<HandInteractionRecipe> holder : recipes) {
-            HandInteractionRecipe recipe = holder.value();
+            HandInteractionRecipe recipe =
+                    holder.value();
 
-            JolCraftLogs.error(
-                    JolCraftLogTags.RECIPE,
-                    "Checking hand recipe name=" + holder.id()
-            );
-
-            if (recipe.requireSneaking() && !player.isShiftKeyDown()) {
-                JolCraftLogs.error(
-                        JolCraftLogTags.RECIPE,
-                        "Skipped hand recipe due to sneaking requirement: " + holder.id()
-                );
+            if (recipe.requireSneaking()
+                    && !player.isShiftKeyDown()) {
                 continue;
             }
 
-            HandMapping mapping = resolveMapping(recipe, rawInput);
-            if (mapping != null) {
-                JolCraftLogs.error(
-                        JolCraftLogTags.RECIPE,
-                        "Resolved hand recipe: " + holder.id()
-                );
-                return new ResolvedRecipe(holder.id(), recipe, mapping);
-            }
+            HandMapping mapping =
+                    resolveMapping(
+                            level,
+                            recipe,
+                            rawInput
+                    );
 
-            JolCraftLogs.error(
-                    JolCraftLogTags.RECIPE,
-                    "Mapping failed for hand recipe: " + holder.id()
-            );
+            if (mapping != null) {
+                return new ResolvedRecipe(
+                        holder.id(),
+                        recipe,
+                        mapping
+                );
+            }
         }
 
         return null;
     }
 
     private static @Nullable HandMapping resolveMapping(
+            @NotNull ServerLevel level,
             @NotNull HandInteractionRecipe recipe,
-            @NotNull HandInteractionRecipeInput in
+            @NotNull HandInteractionRecipeInput input
     ) {
-        WorldContext ctx = in.ctx();
+        ItemStack main =
+                input.ingredientA();
 
-        ItemStack main = in.ingredientA();
-        ItemStack off = in.ingredientB();
+        ItemStack off =
+                input.ingredientB();
 
-        boolean direct =
-                recipe.ingredientA().matches(ctx, main) &&
-                        recipe.ingredientB().matches(ctx, off) &&
-                        ItemIngredientAction.isSatisfied(main, recipe.actionA()) &&
-                        ItemIngredientAction.isSatisfied(off, recipe.actionB());
-
-        if (direct) {
+        if (matchesMapping(
+                level,
+                recipe,
+                main,
+                off
+        )) {
             return new HandMapping(
                     main,
                     off,
@@ -183,13 +457,12 @@ public final class JolCraftHandInteractionEvents {
             );
         }
 
-        boolean swapped =
-                recipe.ingredientA().matches(ctx, off) &&
-                        recipe.ingredientB().matches(ctx, main) &&
-                        ItemIngredientAction.isSatisfied(off, recipe.actionA()) &&
-                        ItemIngredientAction.isSatisfied(main, recipe.actionB());
-
-        if (swapped) {
+        if (matchesMapping(
+                level,
+                recipe,
+                off,
+                main
+        )) {
             return new HandMapping(
                     off,
                     main,
@@ -198,6 +471,29 @@ public final class JolCraftHandInteractionEvents {
         }
 
         return null;
+    }
+
+    private static boolean matchesMapping(
+            @NotNull ServerLevel level,
+            @NotNull HandInteractionRecipe recipe,
+            @NotNull ItemStack stackA,
+            @NotNull ItemStack stackB
+    ) {
+        HandInteractionRecipeInput input =
+                new HandInteractionRecipeInput(
+                        stackA,
+                        stackB
+                );
+
+        if (!recipe.matches(
+                input,
+                level
+        )) {
+            return false;
+        }
+
+        return recipe.actionA().isSatisfied(stackA)
+                && recipe.actionB().isSatisfied(stackB);
     }
 
     private record HandMapping(
@@ -212,24 +508,13 @@ public final class JolCraftHandInteractionEvents {
             HandMapping mapping
     ) {}
 
-    private static void playSuccessSound(@NotNull Player player, @NotNull HandInteractionRecipe recipe) {
-        SoundOutput s = recipe.successSound();
-        SoundEvent sound = s.resolveValue(player.registryAccess());
-        if (sound != null) {
-            JolCraftSoundHelper.player(player, sound, s.volume(), s.pitch());
-        }
-    }
+    private static void cancel(
+            @NotNull PlayerInteractEvent.RightClickItem event
+    ) {
+        event.setCancellationResult(
+                InteractionResult.SUCCESS
+        );
 
-    private static void playFailSound(@NotNull Player player, @NotNull HandInteractionRecipe recipe) {
-        SoundOutput s = recipe.failSound();
-        SoundEvent sound = s.resolveValue(player.registryAccess());
-        if (sound != null) {
-            JolCraftSoundHelper.player(player, sound, s.volume(), s.pitch());
-        }
-    }
-
-    private static void cancel(@NotNull PlayerInteractEvent.RightClickItem event) {
-        event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
     }
 }

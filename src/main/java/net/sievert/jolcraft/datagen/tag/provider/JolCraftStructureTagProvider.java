@@ -7,7 +7,7 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.tag.JolCraftMainTagProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -34,7 +34,7 @@ public final class JolCraftStructureTagProvider
 
     @Override
     public @NotNull String tagType() {
-        return JolCraftParameterIds.STRUCTURE;
+        return JolCraftDictionary.STRUCTURE;
     }
 
     @Override

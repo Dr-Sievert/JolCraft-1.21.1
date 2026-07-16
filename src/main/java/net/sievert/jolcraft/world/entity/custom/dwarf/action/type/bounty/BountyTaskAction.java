@@ -3,23 +3,24 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.action.type.bounty;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
-import net.sievert.jolcraft.param.runtime.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
+import net.sievert.jolcraft.world.recipe.output.SoundOutput;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -30,17 +31,30 @@ public final class BountyTaskAction extends InspectDwarfAction {
     private static final int FX_SOUND_1_TICKS = 25;
     private static final int FX_SOUND_2_TICKS = 15;
 
+    private static final LootContextParamSet CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(LootContextParams.THIS_ENTITY)
+                    .required(LootContextParams.ORIGIN)
+                    .build();
+
     private int ticksRemaining;
+
     private ItemStack plannedResult;
 
     @Nullable
-    private SoundOutput sound1;
+    private SoundOutput.GeneratedSound sound1;
 
     @Nullable
-    private SoundOutput sound2;
+    private SoundOutput.GeneratedSound sound2;
 
-    public BountyTaskAction(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
+    public BountyTaskAction(
+            AbstractDwarfEntity dwarf,
+            Player player,
+            InteractionHand hand,
+            ItemStack itemstack
+    ) {
         super(dwarf, player, hand, itemstack);
+
         this.ticksRemaining = 0;
         this.plannedResult = ItemStack.EMPTY;
     }
@@ -52,67 +66,132 @@ public final class BountyTaskAction extends InspectDwarfAction {
 
     @Override
     public void start() {
-        this.ticksRemaining = START_TICKS;
-        this.plannedResult = ItemStack.EMPTY;
-        this.sound1 = null;
-        this.sound2 = null;
+        ticksRemaining = START_TICKS;
+        plannedResult = ItemStack.EMPTY;
+        sound1 = null;
+        sound2 = null;
 
         if (dwarf.level() instanceof ServerLevel level) {
-            ItemStack redeemStack = this.itemstack;
+            ItemStack redeemStack = itemstack;
+
             if (!redeemStack.isEmpty()) {
-                planFromAnyValidTaskRecipe(level, redeemStack);
+                planFromAnyValidTaskRecipe(
+                        level,
+                        redeemStack
+                );
             }
         }
 
-        startInspect(dwarf, player, hand, itemstack);
+        startInspect(
+                dwarf,
+                player,
+                hand,
+                itemstack
+        );
     }
 
-    private void planFromAnyValidTaskRecipe(ServerLevel level, ItemStack redeemStack) {
-        if (redeemStack.isEmpty()) return;
+    private void planFromAnyValidTaskRecipe(
+            ServerLevel level,
+            ItemStack redeemStack
+    ) {
+        if (redeemStack.isEmpty()) {
+            return;
+        }
 
-        WorldContext ctx = makeCtx(player, dwarf);
-        var inRes = BountyRecipeInput.of(ctx, redeemStack);
-        if (inRes.error().isPresent()) return;
+        BountyRecipeInput input =
+                BountyRecipeInput.of(redeemStack)
+                        .result()
+                        .orElse(null);
 
-        BountyRecipeInput input = inRes.result().orElse(null);
-        if (input == null) return;
+        if (input == null) {
+            return;
+        }
 
-        level.getServer().getRecipeManager()
-                .getRecipeFor(JolCraftRecipes.BOUNTY_TASK_TYPE.get(), input, level)
+        LootContext context = createContext(level);
+
+        level.getServer()
+                .getRecipeManager()
+                .getRecipeFor(
+                        JolCraftRecipes.BOUNTY_TASK_TYPE.get(),
+                        input,
+                        level
+                )
                 .map(RecipeHolder::value)
-                .ifPresent(r -> {
-                    this.sound1 = r.sound1();
-                    this.sound2 = r.sound2();
+                .ifPresent(recipe -> {
+                    plannedResult = recipe.createBounty(
+                            context,
+                            input
+                    );
 
-                    this.plannedResult = r.assemble(input, level.registryAccess());
+                    recipe.generateSound1(
+                            context,
+                            input,
+                            generated -> {
+                                if (sound1 == null) {
+                                    sound1 = generated;
+                                }
+                            }
+                    );
+
+                    recipe.generateSound2(
+                            context,
+                            input,
+                            generated -> {
+                                if (sound2 == null) {
+                                    sound2 = generated;
+                                }
+                            }
+                    );
                 });
     }
 
-    private static @NotNull WorldContext makeCtx(Player player, Entity self) {
-        return new WorldContext(player, self);
+    private @NotNull LootContext createContext(
+            ServerLevel level
+    ) {
+        return JolCraftRecipeContexts.create(
+                level,
+                dwarf.getRandom(),
+                CONTEXT_PARAMS,
+                builder -> builder
+                        .withParameter(
+                                LootContextParams.THIS_ENTITY,
+                                dwarf
+                        )
+                        .withParameter(
+                                LootContextParams.ORIGIN,
+                                dwarf.position()
+                        )
+        );
     }
 
     @Override
     public void tick() {
-        if (ticksRemaining > 0) ticksRemaining--;
-
-        if (ticksRemaining == FX_SOUND_1_TICKS && sound1 != null) {
-            JolCraftSoundHelper.entity(
-                    dwarf,
-                    Objects.requireNonNull(sound1.resolveValue(player.registryAccess())),
-                    sound1.volume(),
-                    sound1.pitch()
-            );
+        if (ticksRemaining > 0) {
+            ticksRemaining--;
         }
 
-        if (ticksRemaining == FX_SOUND_2_TICKS && sound2 != null) {
-            JolCraftSoundHelper.entity(
-                    dwarf,
-                    Objects.requireNonNull(sound2.resolveValue(player.registryAccess())),
-                    sound2.volume(),
-                    sound2.pitch()
-            );
+        if (ticksRemaining == FX_SOUND_1_TICKS) {
+            playSound(sound1);
         }
+
+        if (ticksRemaining == FX_SOUND_2_TICKS) {
+            playSound(sound2);
+        }
+    }
+
+    private void playSound(
+            @Nullable SoundOutput.GeneratedSound sound
+    ) {
+        if (sound == null) {
+            return;
+        }
+
+        JolCraftSoundHelper.entity(
+                dwarf,
+                sound.sound().value(),
+                sound.volume(),
+                sound.pitch()
+        );
     }
 
     @Override
@@ -122,10 +201,24 @@ public final class BountyTaskAction extends InspectDwarfAction {
 
     @Override
     public void stop() {
-        if (!(dwarf.level() instanceof ServerLevel)) return;
-        if (plannedResult.isEmpty()) return;
+        if (!(dwarf.level() instanceof ServerLevel)) {
+            return;
+        }
 
-        dwarf.usePlayerItem(player, hand, itemstack);
-        throwItem(dwarf, player, plannedResult);
+        if (plannedResult.isEmpty()) {
+            return;
+        }
+
+        dwarf.usePlayerItem(
+                player,
+                hand,
+                itemstack
+        );
+
+        throwItem(
+                dwarf,
+                player,
+                plannedResult
+        );
     }
 }

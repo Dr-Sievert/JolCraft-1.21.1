@@ -23,7 +23,7 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.param.custom.quantity.IntRange;
+import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTrade.AmountRange;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
@@ -42,33 +42,37 @@ import java.util.Map;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrade> {
+public final class JeiDwarfTradeCategory
+        implements IRecipeCategory<JeiDwarfTrade> {
 
-    private static final Map<DwarfProfession, RecipeType<JeiDwarfTrade>> TYPES =
-            new EnumMap<>(DwarfProfession.class);
-
-    public static RecipeType<JeiDwarfTrade> recipeTypeFor(DwarfProfession profession) {
-        return TYPES.computeIfAbsent(profession, p ->
-                RecipeType.create(
-                        JolCraft.MOD_ID,
-                        JolCraftStrings.underscored(JolCraftJeiIds.DWARF_TRADE, p.getId()),
-                        JeiDwarfTrade.class
-                ));
-    }
+    private static final Map<
+            DwarfProfession,
+            RecipeType<JeiDwarfTrade>
+            > TYPES =
+            new EnumMap<>(
+                    DwarfProfession.class
+            );
 
     private static final ResourceLocation ARROW_TEXTURE =
-            JolCraftTextures.jeiRl(JolCraftTextures.jei(
-                    JolCraftStrings.underscored(JolCraftDictionary.RECIPE, JolCraftDictionary.ARROW)
-            ));
+            JolCraftTextures.jeiRl(
+                    JolCraftTextures.jei(
+                            JolCraftStrings.underscored(
+                                    JolCraftDictionary.RECIPE,
+                                    JolCraftDictionary.ARROW
+                            )
+                    )
+            );
 
     private static final ResourceLocation PLUS_TEXTURE =
-            JolCraftTextures.jeiRl(JolCraftTextures.jei(
-                    JolCraftStrings.underscored(
-                            JolCraftDictionary.RECIPE,
-                            JolCraftDictionary.PLUS,
-                            JolCraftDictionary.SIGN
+            JolCraftTextures.jeiRl(
+                    JolCraftTextures.jei(
+                            JolCraftStrings.underscored(
+                                    JolCraftDictionary.RECIPE,
+                                    JolCraftDictionary.PLUS,
+                                    JolCraftDictionary.SIGN
+                            )
                     )
-            ));
+            );
 
     private static final int SLOT_SIZE = 18;
     private static final int SLOT_Y = 25;
@@ -84,25 +88,65 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
     private final IDrawable icon;
     private final DwarfProfession profession;
 
-    public JeiDwarfTradeCategory(IGuiHelper guiHelper, DwarfProfession profession) {
-        this.profession = profession;
-        this.background = guiHelper.createBlankDrawable(150, 60);
-        this.icon = guiHelper.createDrawableIngredient(
-                VanillaTypes.ITEM_STACK,
-                new ItemStack(DwarfProfessionHelper.getSpawnEgg(profession).get())
+    public JeiDwarfTradeCategory(
+            IGuiHelper guiHelper,
+            DwarfProfession profession
+    ) {
+        this.profession =
+                profession;
+
+        this.background =
+                guiHelper.createBlankDrawable(
+                        150,
+                        60
+                );
+
+        this.icon =
+                guiHelper.createDrawableIngredient(
+                        VanillaTypes.ITEM_STACK,
+                        new ItemStack(
+                                DwarfProfessionHelper
+                                        .getSpawnEgg(profession)
+                                        .get()
+                        )
+                );
+    }
+
+    public static RecipeType<JeiDwarfTrade> recipeTypeFor(
+            DwarfProfession profession
+    ) {
+        return TYPES.computeIfAbsent(
+                profession,
+                currentProfession ->
+                        RecipeType.create(
+                                JolCraft.MOD_ID,
+                                JolCraftStrings.underscored(
+                                        JolCraftJeiIds.DWARF_TRADE,
+                                        currentProfession.getId()
+                                ),
+                                JeiDwarfTrade.class
+                        )
         );
     }
 
     @Override
     public RecipeType<JeiDwarfTrade> getRecipeType() {
-        return recipeTypeFor(profession);
+        return recipeTypeFor(
+                profession
+        );
     }
 
     @Override
     public Component getTitle() {
-        return Component.translatable(JolCraftLanguageKeys.JEI_CATEGORY_DWARF_TRADES)
+        return Component
+                .translatable(
+                        JolCraftLanguageKeys
+                                .JEI_CATEGORY_DWARF_TRADES
+                )
                 .append(" — ")
-                .append(profession.getDisplayName());
+                .append(
+                        profession.getDisplayName()
+                );
     }
 
     @Override
@@ -123,40 +167,108 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
             double mouseX,
             double mouseY
     ) {
-        background.draw(graphics, 0, 0);
+        background.draw(
+                graphics,
+                0,
+                0
+        );
 
-        Font font = Minecraft.getInstance().font;
+        Font font =
+                Minecraft.getInstance().font;
 
-        if(entry.level() == null) return;
+        Component levelComponent;
 
-        int levelId = entry.level().getId();
+        if (entry.level() != null) {
+            levelComponent =
+                    Component.translatable(
+                            DwarfMerchantData.Level
+                                    .langKeyFromId(
+                                            entry.level()
+                                                    .getId()
+                                    )
+                    );
+        } else {
+            levelComponent =
+                    Component.literal(
+                            JolCraftDictionary.GLOBAL
+                    );
+        }
 
-        Component levelComponent =
-                Component.translatable(DwarfMerchantData.Level.langKeyFromId(levelId));
-        Component professionComponent = entry.profession().getDisplayName();
+        Component professionComponent =
+                entry.profession()
+                        .getDisplayName();
 
-        String levelStr = levelComponent.getString();
-        String professionStr = professionComponent.getString();
+        String levelText =
+                levelComponent.getString();
 
-        int levelX = 105 - (font.width(levelStr) / 2);
-        graphics.drawString(font, levelStr, levelX, 0, 0x888888, false);
+        String professionText =
+                professionComponent.getString();
 
-        int professionX = 105 - (font.width(professionStr) / 2);
-        graphics.drawString(font, professionStr, professionX, 10, 0x888888, false);
+        int levelX =
+                105
+                        - font.width(levelText) / 2;
 
-        @Nullable ItemStack inputB = entry.inputBExample();
-        boolean hasB = inputB != null && !inputB.isEmpty();
+        graphics.drawString(
+                font,
+                levelText,
+                levelX,
+                0,
+                0x888888,
+                false
+        );
 
-        int shift = hasB ? HAS_B_SHIFT : 0;
+        int professionX =
+                105
+                        - font.width(professionText) / 2;
 
-        int slotAX = SLOT_A_X;
-        int slotBX = SLOT_B_X + shift;
-        int outputX = hasB ? (68 + shift) : 45;
+        graphics.drawString(
+                font,
+                professionText,
+                professionX,
+                10,
+                0x888888,
+                false
+        );
+
+        @Nullable ItemStack inputB =
+                entry.inputBExample();
+
+        boolean hasB =
+                inputB != null
+                        && !inputB.isEmpty();
+
+        int shift =
+                hasB
+                        ? HAS_B_SHIFT
+                        : 0;
+
+        int slotAX =
+                SLOT_A_X;
+
+        int slotBX =
+                SLOT_B_X
+                        + shift;
+
+        int outputX =
+                hasB
+                        ? 68 + shift
+                        : 45;
 
         if (hasB) {
-            int aRight = slotAX + SLOT_SIZE;
-            int gap = slotBX - aRight;
-            int plusX = aRight + ((gap - PLUS_W) / 2) - 1;
+            int aRight =
+                    slotAX
+                            + SLOT_SIZE;
+
+            int gap =
+                    slotBX
+                            - aRight;
+
+            int plusX =
+                    aRight
+                            + (
+                            gap - PLUS_W
+                    ) / 2
+                            - 1;
 
             graphics.blit(
                     PLUS_TEXTURE,
@@ -171,9 +283,10 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
             );
         }
 
-        int arrowX = hasB
-                ? (slotBX + SLOT_SIZE - 1)
-                : (slotAX + SLOT_SIZE + 1);
+        int arrowX =
+                hasB
+                        ? slotBX + SLOT_SIZE - 1
+                        : slotAX + SLOT_SIZE + 1;
 
         graphics.blit(
                 ARROW_TEXTURE,
@@ -187,23 +300,59 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
                 ARROW_H
         );
 
-        LivingEntity dwarf = createDisplayDwarf(entry.profession());
+        LivingEntity dwarf =
+                createDisplayDwarf(
+                        entry.profession()
+                );
+
         if (dwarf != null) {
-            Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI);
-            Quaternionf camera = new Quaternionf().rotateX(-10.0F * (float) (Math.PI / 180.0F));
+            Quaternionf pose =
+                    new Quaternionf()
+                            .rotateZ(
+                                    (float) Math.PI
+                            );
 
-            dwarf.yBodyRot = 200.0F;
-            dwarf.setYRot(200.0F);
-            dwarf.setXRot(-5.0F);
-            dwarf.yHeadRot = 170.0F;
-            dwarf.yHeadRotO = dwarf.yHeadRot;
+            Quaternionf camera =
+                    new Quaternionf()
+                            .rotateX(
+                                    -10.0F
+                                            * (float) (
+                                            Math.PI / 180.0F
+                                    )
+                            );
 
-            float scale = 22.0F / dwarf.getScale();
-            Vector3f translate = new Vector3f(0.0F, dwarf.getBbHeight() * 0.10F, 0.0F);
+            dwarf.yBodyRot =
+                    200.0F;
+
+            dwarf.setYRot(
+                    200.0F
+            );
+
+            dwarf.setXRot(
+                    -5.0F
+            );
+
+            dwarf.yHeadRot =
+                    170.0F;
+
+            dwarf.yHeadRotO =
+                    dwarf.yHeadRot;
+
+            float scale =
+                    22.0F
+                            / dwarf.getScale();
+
+            Vector3f translate =
+                    new Vector3f(
+                            0.0F,
+                            dwarf.getBbHeight()
+                                    * 0.10F,
+                            0.0F
+                    );
 
             InventoryScreen.renderEntityInInventory(
                     graphics,
-                    105F,
+                    105.0F,
                     55.0F,
                     scale,
                     translate,
@@ -213,89 +362,253 @@ public final class JeiDwarfTradeCategory implements IRecipeCategory<JeiDwarfTrad
             );
         }
 
-        drawAmountOverlay(graphics, font, entry.inputAmountA(), slotAX);
+        drawAmountOverlay(
+                graphics,
+                font,
+                entry.inputAmountA(),
+                slotAX
+        );
 
-        IntRange inputAmountB = entry.inputAmountB();
-        if (hasB && inputAmountB != null) {
-            drawAmountOverlay(graphics, font, inputAmountB, slotBX);
+        AmountRange inputAmountB =
+                entry.inputAmountB();
+
+        if (hasB
+                && inputAmountB != null) {
+            drawAmountOverlay(
+                    graphics,
+                    font,
+                    inputAmountB,
+                    slotBX
+            );
         }
 
-        drawAmountOverlay(graphics, font, entry.outputAmount(), outputX);
+        drawAmountOverlay(
+                graphics,
+                font,
+                entry.outputAmount(),
+                outputX
+        );
     }
 
     private static void drawAmountOverlay(
             GuiGraphics graphics,
             Font font,
-            IntRange amount,
+            AmountRange amount,
             int slotX
     ) {
-        if (amount.min() == 1 && amount.max() == 1) {
+        if (amount.min() == 1
+                && amount.max() == 1) {
             return;
         }
 
-        String text = (amount.min() == amount.max())
-                ? String.valueOf(amount.min())
-                : (amount.min() + "-" + amount.max());
+        String text =
+                amount.fixed()
+                        ? String.valueOf(
+                        amount.min()
+                )
+                        : amount.min()
+                        + "-"
+                        + amount.max();
 
-        int strW = font.width(text);
-        float centerX = slotX + (SLOT_SIZE / 2f) - (strW * 0.75f / 2f);
+        int stringWidth =
+                font.width(text);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(centerX, 43, 0);
-        graphics.pose().scale(0.75f, 0.75f, 1.0f);
-        graphics.drawString(font, text, 0, 0, 0x888888, false);
-        graphics.pose().popPose();
+        float centerX =
+                slotX
+                        + SLOT_SIZE / 2.0F
+                        - stringWidth
+                        * 0.75F
+                        / 2.0F;
+
+        graphics.pose()
+                .pushPose();
+
+        graphics.pose()
+                .translate(
+                        centerX,
+                        43,
+                        0
+                );
+
+        graphics.pose()
+                .scale(
+                        0.75F,
+                        0.75F,
+                        1.0F
+                );
+
+        graphics.drawString(
+                font,
+                text,
+                0,
+                0,
+                0x888888,
+                false
+        );
+
+        graphics.pose()
+                .popPose();
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, JeiDwarfTrade entry, IFocusGroup focuses) {
-        int slotY = SLOT_Y;
+    public void setRecipe(
+            IRecipeLayoutBuilder builder,
+            JeiDwarfTrade entry,
+            IFocusGroup focuses
+    ) {
+        ItemStack egg =
+                new ItemStack(
+                        DwarfProfessionHelper
+                                .getSpawnEgg(
+                                        entry.profession()
+                                )
+                                .get()
+                );
 
-        ItemStack egg = new ItemStack(DwarfProfessionHelper.getSpawnEgg(entry.profession()).get());
+        @Nullable ItemStack inputB =
+                entry.inputBExample();
 
-        @Nullable ItemStack inputB = entry.inputBExample();
-        boolean hasB = inputB != null && !inputB.isEmpty();
-        int shift = hasB ? HAS_B_SHIFT : 0;
+        boolean hasB =
+                inputB != null
+                        && !inputB.isEmpty();
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 130, 42).addItemStack(egg);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 130, 42).addItemStack(egg);
+        int shift =
+                hasB
+                        ? HAS_B_SHIFT
+                        : 0;
 
-        ItemStack inputA = entry.inputAExample();
-        ItemStack output = entry.outputExample();
+        builder.addSlot(
+                        RecipeIngredientRole.INPUT,
+                        130,
+                        42
+                )
+                .addItemStack(
+                        egg
+                );
 
-        if (entry.costAItemIs(JolCraftTags.Items.COINS)) {
-            builder.addSlot(RecipeIngredientRole.INPUT, SLOT_A_X, slotY)
-                    .addItemStack(inputA)
-                    .addItemStack(new ItemStack(JolCraftItems.COIN_POUCH.get()));
+        builder.addSlot(
+                        RecipeIngredientRole.OUTPUT,
+                        130,
+                        42
+                )
+                .addItemStack(
+                        egg
+                );
+
+        ItemStack inputA =
+                entry.inputAExample();
+
+        ItemStack output =
+                entry.outputExample();
+
+        if (entry.costAItemIs(
+                JolCraftTags.Items.COINS
+        )) {
+            builder.addSlot(
+                            RecipeIngredientRole.INPUT,
+                            SLOT_A_X,
+                            SLOT_Y
+                    )
+                    .addItemStack(
+                            inputA
+                    )
+                    .addItemStack(
+                            new ItemStack(
+                                    JolCraftItems
+                                            .COIN_POUCH
+                                            .get()
+                            )
+                    );
         } else {
-            builder.addSlot(RecipeIngredientRole.INPUT, SLOT_A_X, slotY).addItemStack(inputA);
+            builder.addSlot(
+                            RecipeIngredientRole.INPUT,
+                            SLOT_A_X,
+                            SLOT_Y
+                    )
+                    .addItemStack(
+                            inputA
+                    );
         }
 
         if (hasB) {
-            int slotBX = SLOT_B_X + shift;
+            int slotBX =
+                    SLOT_B_X
+                            + shift;
 
-            if (entry.costBItemIs(JolCraftTags.Items.COINS)) {
-                builder.addSlot(RecipeIngredientRole.INPUT, slotBX, slotY)
-                        .addItemStack(inputB)
-                        .addItemStack(new ItemStack(JolCraftItems.COIN_POUCH.get()));
+            if (entry.costBItemIs(
+                    JolCraftTags.Items.COINS
+            )) {
+                builder.addSlot(
+                                RecipeIngredientRole.INPUT,
+                                slotBX,
+                                SLOT_Y
+                        )
+                        .addItemStack(
+                                inputB
+                        )
+                        .addItemStack(
+                                new ItemStack(
+                                        JolCraftItems
+                                                .COIN_POUCH
+                                                .get()
+                                )
+                        );
             } else {
-                builder.addSlot(RecipeIngredientRole.INPUT, slotBX, slotY).addItemStack(inputB);
+                builder.addSlot(
+                                RecipeIngredientRole.INPUT,
+                                slotBX,
+                                SLOT_Y
+                        )
+                        .addItemStack(
+                                inputB
+                        );
             }
 
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 68 + shift, slotY).addItemStack(output);
+            builder.addSlot(
+                            RecipeIngredientRole.OUTPUT,
+                            68 + shift,
+                            SLOT_Y
+                    )
+                    .addItemStack(
+                            output
+                    );
         } else {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 45, slotY).addItemStack(output);
+            builder.addSlot(
+                            RecipeIngredientRole.OUTPUT,
+                            45,
+                            SLOT_Y
+                    )
+                    .addItemStack(
+                            output
+                    );
         }
     }
 
-    private static @Nullable LivingEntity createDisplayDwarf(DwarfProfession profession) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) {
+    private static @Nullable LivingEntity createDisplayDwarf(
+            DwarfProfession profession
+    ) {
+        Minecraft minecraft =
+                Minecraft.getInstance();
+
+        if (minecraft.level == null) {
             return null;
         }
 
-        DwarfEntity dwarf = new DwarfEntity(DwarfProfessionHelper.getEntityType(profession), mc.level);
-        dwarf.getEntityData().set(AbstractDwarfEntity.PROFESSION, profession.getId());
+        DwarfEntity dwarf =
+                new DwarfEntity(
+                        DwarfProfessionHelper
+                                .getEntityType(
+                                        profession
+                                ),
+                        minecraft.level
+                );
+
+        dwarf.getEntityData()
+                .set(
+                        AbstractDwarfEntity.PROFESSION,
+                        profession.getId()
+                );
+
         return dwarf;
     }
 

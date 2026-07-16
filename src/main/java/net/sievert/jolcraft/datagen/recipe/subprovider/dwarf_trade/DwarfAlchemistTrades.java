@@ -1,21 +1,27 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
-import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import org.jetbrains.annotations.NotNull;
 
-public record DwarfAlchemistTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+public record DwarfAlchemistTrades(
+        JolCraftDataProvider<RecipeOutput> parent
+) implements RecipeSubProvider {
 
-    public DwarfAlchemistTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+    private static final DwarfProfession PROFESSION =
+            DwarfProfession.ALCHEMIST;
+
+    public DwarfAlchemistTrades(
+            @NotNull JolCraftDataProvider<RecipeOutput> parent
+    ) {
         this.parent = parent;
     }
 
@@ -23,8 +29,6 @@ public record DwarfAlchemistTrades(JolCraftDataProvider<RecipeOutput> parent) im
     public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
         return parent;
     }
-
-    private static final DwarfProfession PROFESSION = DwarfProfession.ALCHEMIST;
 
     @Override
     public @NotNull String id() {
@@ -42,38 +46,61 @@ public record DwarfAlchemistTrades(JolCraftDataProvider<RecipeOutput> parent) im
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-
-        emitOrdered(output, tracking,
+        emitOrdered(
+                output,
+                tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
-                        .costACoins(4, 7)
+                        .merchantLevel(
+                                DwarfMerchantData.Level.NOVICE
+                        )
+                        .costACoins(
+                                4,
+                                7
+                        )
                         .noCostB()
-                        .result(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(), 1)
+                        .result(
+                                JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(),
+                                1
+                        )
                         .maxUses(6)
                         .dwarfXp(0)
                         .priceMultiplier(0.05F)
         );
 
-        emitOrdered(output, tracking,
+        emitOrdered(
+                output,
+                tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
-                        .costACoins(1, 4)
+                        .merchantLevel(
+                                DwarfMerchantData.Level.NOVICE
+                        )
+                        .costACoins(
+                                1,
+                                4
+                        )
                         .noCostB()
-                        .result(JolCraftItems.DEEPSLATE_PESTLE.get(), 1)
+                        .result(
+                                JolCraftItems.DEEPSLATE_PESTLE.get(),
+                                1
+                        )
                         .maxUses(6)
                         .dwarfXp(0)
                         .priceMultiplier(0.05F)
         );
 
-        emitOrdered(output, tracking,
+        emitOrdered(
+                output,
+                tracking,
                 DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
                         DwarfMerchantData.Level.MASTER,
                         PROFESSION,
                         DwarfLoreKey.ALCHEMY_RECIPES,
-                        IntRange.fixed(20),
-                        IntRange.fixed(30)
+                        20,
+                        20,
+                        30,
+                        30
                 )
         );
     }

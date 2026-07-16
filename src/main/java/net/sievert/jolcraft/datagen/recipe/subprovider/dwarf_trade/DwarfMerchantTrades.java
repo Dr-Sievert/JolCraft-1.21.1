@@ -1,23 +1,33 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.builder.custom.DwarfTradeRecipeBuilder;
-import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("SameParameterValue")
-public record DwarfMerchantTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+import java.util.ArrayList;
+import java.util.List;
 
-    public DwarfMerchantTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+@SuppressWarnings("SameParameterValue")
+public record DwarfMerchantTrades(
+        JolCraftDataProvider<RecipeOutput> parent
+) implements RecipeSubProvider {
+
+    private static final DwarfProfession PROFESSION =
+            DwarfProfession.MERCHANT;
+
+    public DwarfMerchantTrades(
+            @NotNull JolCraftDataProvider<RecipeOutput> parent
+    ) {
         this.parent = parent;
     }
 
@@ -25,8 +35,6 @@ public record DwarfMerchantTrades(JolCraftDataProvider<RecipeOutput> parent) imp
     public @NotNull JolCraftDataProvider<RecipeOutput> parent() {
         return parent;
     }
-
-    private static final DwarfProfession PROFESSION = DwarfProfession.MERCHANT;
 
     @Override
     public @NotNull String id() {
@@ -44,11 +52,20 @@ public record DwarfMerchantTrades(JolCraftDataProvider<RecipeOutput> parent) imp
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
+        List<DwarfTradeRecipeBuilder> bountyTrades =
+                new ArrayList<>();
 
-        java.util.List<DwarfTradeRecipeBuilder> bountyTrades = new java.util.ArrayList<>();
-        DwarfTradeRecipeBuilder.addBountyTrades(bountyTrades, PROFESSION);
-        for (var trade : bountyTrades) {
-            emitOrdered(output, tracking, trade);
+        DwarfTradeRecipeBuilder.addBountyTrades(
+                bountyTrades,
+                PROFESSION
+        );
+
+        for (DwarfTradeRecipeBuilder trade : bountyTrades) {
+            emitOrdered(
+                    output,
+                    tracking,
+                    trade
+            );
         }
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.TORCH, 1, 2, 12);
@@ -85,52 +102,86 @@ public record DwarfMerchantTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT, Items.ITEM_FRAME, 1, 2, 1);
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT, Items.ENDER_PEARL, 2, 4, 1);
 
-        pooledCrate(output, tracking, DwarfMerchantData.Level.MASTER, JolCraftItems.RESTOCK_CRATE.get());
-        pooledCrate(output, tracking, DwarfMerchantData.Level.MASTER, JolCraftItems.REROLL_CRATE.get());
+        pooledCrate(
+                output,
+                tracking,
+                DwarfMerchantData.Level.MASTER,
+                JolCraftItems.RESTOCK_CRATE.get()
+        );
+
+        pooledCrate(
+                output,
+                tracking,
+                DwarfMerchantData.Level.MASTER,
+                JolCraftItems.REROLL_CRATE.get()
+        );
     }
 
     private void pooledBuy(
-            RecipeOutput output,
-            JolCraftDataTracking tracking,
-            DwarfMerchantData.Level level,
-            ItemLike result,
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull DwarfMerchantData.Level level,
+            @NotNull ItemLike result,
             int minCoins,
             int maxCoins,
             int count
     ) {
-        emitOrdered(output, tracking,
+        emitOrdered(
+                output,
+                tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(level)
-                        .tradeGroup(TradeGroup.CUMULATIVE_POOL)
+                        .tradeGroup(
+                                TradeGroup.CUMULATIVE_POOL
+                        )
                         .weight(1)
                         .maxUses(3)
                         .dwarfXp(1)
                         .priceMultiplier(0.05F)
-                        .costACoins(minCoins, maxCoins)
+                        .costACoins(
+                                minCoins,
+                                maxCoins
+                        )
                         .noCostB()
-                        .result(result.asItem(), count)
+                        .result(
+                                result,
+                                count
+                        )
         );
     }
 
     private void pooledCrate(
-            RecipeOutput output,
-            JolCraftDataTracking tracking,
-            DwarfMerchantData.Level level,
-            ItemLike crate
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull DwarfMerchantData.Level level,
+            @NotNull ItemLike crate
     ) {
-        emitOrdered(output, tracking,
+        emitOrdered(
+                output,
+                tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(level)
-                        .tradeGroup(TradeGroup.EXACT_LEVEL_POOL)
+                        .tradeGroup(
+                                TradeGroup.EXACT_LEVEL_POOL
+                        )
                         .weight(1)
                         .maxUses(3)
                         .dwarfXp(0)
                         .priceMultiplier(0.0F)
-                        .costACoins(5, 15)
-                        .costB(JolCraftItems.SUNGLEAM_CUT.get().asItem())
-                        .result(crate.asItem())
+                        .costACoins(
+                                5,
+                                15
+                        )
+                        .costB(
+                                JolCraftItems.SUNGLEAM_CUT.get(),
+                                1
+                        )
+                        .result(
+                                crate,
+                                1
+                        )
         );
     }
 }

@@ -29,7 +29,6 @@ import net.sievert.jolcraft.event.game.player.attribute.JolCraftPlayerAttributeH
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.param.runtime.WorldContext;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
@@ -133,9 +132,7 @@ public final class JolCraftPlayerEvents {
                 && state.is(Blocks.WATER_CAULDRON)
                 && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
 
-            WorldContext ctx = new WorldContext(player, null);
             var input = new FermentingCauldronRecipeInput(
-                    ctx,
                     used.copyWithCount(1),
                     ItemStack.EMPTY
             );

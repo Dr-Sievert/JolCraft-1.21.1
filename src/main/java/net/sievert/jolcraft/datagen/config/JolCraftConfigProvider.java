@@ -4,7 +4,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
@@ -38,17 +38,12 @@ public final class JolCraftConfigProvider implements DataProvider, JolCraftMainD
     }
 
     @Override
-    public @NotNull String folder() {
-        return id();
-    }
-
-    @Override
     public @NotNull String name() {
         return JolCraft.MOD_NAME + " " +
                 JolCraftStrings.toTitleCase(
                         JolCraftStrings.underscored(
                                 id(),
-                                JolCraftParameterIds.PROVIDER
+                                JolCraftDictionary.PROVIDER
                         )
                 );
     }

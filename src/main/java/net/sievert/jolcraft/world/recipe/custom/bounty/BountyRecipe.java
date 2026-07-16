@@ -126,17 +126,7 @@ public final class BountyRecipe {
             @Nullable DwarfProfession type,
             @Nullable DwarfMerchantData.Level tier
     ) {
-        String rawType = type != null ? type.professionName() : null;
-        DataResult<DwarfProfession> typeRes = validateType(type, rawType);
-
-        var typeErr = typeRes.error();
-        if (typeErr.isPresent()) {
-            String msg = typeErr.map(DataResult.Error::message).orElse("invalid " + TYPE_KEY);
-            return DataResult.error(() -> msg);
-        }
-
-        DwarfProfession validType = typeRes.result().orElse(null);
-        if (validType == null) {
+        if (type == null || type == DwarfProfession.NONE) {
             return DataResult.error(() -> TYPE_KEY + " is required");
         }
 
@@ -144,19 +134,7 @@ public final class BountyRecipe {
             return DataResult.error(() -> TIER_KEY + " is required");
         }
 
-        DataResult<DwarfMerchantData.Level> tierRes = validateTier(tier.getId());
-        var tierErr = tierRes.error();
-        if (tierErr.isPresent()) {
-            String msg = tierErr.map(DataResult.Error::message).orElse("invalid " + TIER_KEY);
-            return DataResult.error(() -> msg);
-        }
-
-        DwarfMerchantData.Level validTier = tierRes.result().orElse(null);
-        if (validTier == null) {
-            return DataResult.error(() -> TIER_KEY + " is required");
-        }
-
-        return DataResult.success(new BountyInfo(validType, validTier));
+        return DataResult.success(new BountyInfo(type, tier));
     }
 
     // -------------------------------------------------------------------------

@@ -1,35 +1,41 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.hand;
 
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.recipe.custom.base.ItemIngredientAction;
-import net.sievert.jolcraft.world.recipe.param.output.base.Outputs;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.builder.custom.HandInteractionRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.output.base.OutputsBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.SoundOutputBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.output.custom.item.ItemOutputBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.output.pool.PoolBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.output.pool.PoolEntryBuilder;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.builder.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.recipe.base.ItemIngredientAction;
+import net.sievert.jolcraft.world.recipe.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
-public record SpannerHandInteractions(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+public record SpannerHandInteractions(
+        JolCraftDataProvider<RecipeOutput> parent
+) implements RecipeSubProvider {
 
-    public SpannerHandInteractions(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+    public SpannerHandInteractions(
+            @NotNull JolCraftDataProvider<RecipeOutput> parent
+    ) {
         this.parent = parent;
     }
 
@@ -54,355 +60,367 @@ public record SpannerHandInteractions(JolCraftDataProvider<RecipeOutput> parent)
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-        salvagePool(output, tracking, JolCraftTags.Items.GENERAL_SALVAGE, SoundEvents.ITEM_BREAK, 0.75F, 1.25F);
-        salvagePool(output, tracking, JolCraftTags.Items.TEXTILE_SALVAGE, SoundEvents.WOOL_BREAK, 0.75F, 1.25F);
-        salvagePool(output, tracking, JolCraftTags.Items.REDSTONE_SALVAGE, SoundEvents.ITEM_BREAK, 0.75F, 1.45F);
-        salvagePool(output, tracking, JolCraftTags.Items.IRON_SALVAGE, SoundEvents.METAL_BREAK, 0.75F, 1.60F);
-        salvagePool(output, tracking, JolCraftTags.Items.DEEPSLATE_SALVAGE, SoundEvents.DEEPSLATE_BREAK, 0.75F, 1.25F);
-        salvagePool(output, tracking, JolCraftTags.Items.GOLD_SALVAGE, SoundEvents.METAL_BREAK, 0.75F, 1.70F);
-        salvagePool(output, tracking, JolCraftTags.Items.MITHRIL_SALVAGE, SoundEvents.NETHERITE_BLOCK_BREAK, 0.75F, 1.25F);
+        salvagePool(
+                output,
+                tracking,
+                JolCraftTags.Items.GENERAL_SALVAGE,
+                SoundEvents.ITEM_BREAK,
+                0.75F,
+                1.25F
+        );
+
+        salvagePool(
+                output,
+                tracking,
+                JolCraftTags.Items.TEXTILE_SALVAGE,
+                SoundEvents.WOOL_BREAK,
+                0.75F,
+                1.25F
+        );
+
+        salvagePool(
+                output,
+                tracking,
+                JolCraftTags.Items.REDSTONE_SALVAGE,
+                SoundEvents.ITEM_BREAK,
+                0.75F,
+                1.45F
+        );
+
+        salvagePool(
+                output,
+                tracking,
+                JolCraftTags.Items.IRON_SALVAGE,
+                SoundEvents.METAL_BREAK,
+                0.75F,
+                1.60F
+        );
+
+        salvagePool(
+                output,
+                tracking,
+                JolCraftTags.Items.DEEPSLATE_SALVAGE,
+                SoundEvents.DEEPSLATE_BREAK,
+                0.75F,
+                1.25F
+        );
+
+        salvagePool(
+                output,
+                tracking,
+                JolCraftTags.Items.GOLD_SALVAGE,
+                SoundEvents.METAL_BREAK,
+                0.75F,
+                1.70F
+        );
+
+        salvagePool(
+                output,
+                tracking,
+                JolCraftTags.Items.MITHRIL_SALVAGE,
+                SoundEvents.NETHERITE_BLOCK_BREAK,
+                0.75F,
+                1.25F
+        );
     }
 
     private void salvagePool(
             @NotNull RecipeOutput output,
-            JolCraftDataTracking tracking,
+            @NotNull JolCraftDataTracking tracking,
             @NotNull TagKey<Item> salvageTag,
             @NotNull SoundEvent successEvent,
             float successVolume,
             float successPitch
     ) {
-        emit(output, tracking,
+        emit(
+                output,
+                tracking,
                 HandInteractionRecipeBuilder.create()
+                        .id(recipeId(salvageTag))
                         .ingredientA(
-                                ItemInputBuilder.create()
-                                        .selector(ItemIngredientBuilder.create().tag(JolCraftTags.Items.SPANNERS))
-                                        .build()
+                                ItemInput.tag(
+                                        JolCraftTags.Items.SPANNERS
+                                )
                         )
-                        .actionA(new ItemIngredientAction(ItemIngredientAction.Type.DAMAGE, 1))
+                        .actionA(
+                                new ItemIngredientAction(
+                                        ItemIngredientAction.Type.DAMAGE,
+                                        1
+                                )
+                        )
                         .ingredientB(
-                                ItemInputBuilder.create()
-                                        .selector(ItemIngredientBuilder.create().tag(salvageTag))
-                                        .build()
+                                ItemInput.tag(
+                                        salvageTag
+                                )
                         )
-                        .actionB(new ItemIngredientAction(ItemIngredientAction.Type.CONSUME, 1))
-                        .output(salvageOutputs(salvageTag))
+                        .actionB(
+                                new ItemIngredientAction(
+                                        ItemIngredientAction.Type.CONSUME,
+                                        1
+                                )
+                        )
+                        .output(
+                                salvageOutput(salvageTag)
+                        )
                         .successSound(
-                                SoundOutputBuilder.create()
-                                        .sound(successEvent)
-                                        .volume(successVolume)
-                                        .pitch(successPitch)
-                                        .build()
+                                SoundOutputs.sound(
+                                        successEvent,
+                                        SoundSource.PLAYERS,
+                                        ConstantValue.exactly(successVolume),
+                                        ConstantValue.exactly(successPitch)
+                                )
                         )
                         .failSound(
-                                SoundOutputBuilder.create()
-                                        .sound(SoundEvents.BOOK_PUT)
-                                        .volume(1.0F)
-                                        .pitch(1.0F)
-                                        .build()
+                                SoundOutputs.sound(
+                                        SoundEvents.BOOK_PUT,
+                                        SoundSource.PLAYERS,
+                                        ConstantValue.exactly(1.0F),
+                                        ConstantValue.exactly(1.0F)
+                                )
                         )
                         .requireSneaking(false)
                         .buildValidated()
         );
     }
 
-    private static @NotNull Outputs salvageOutputs(@NotNull TagKey<Item> salvageTag) {
-        if (salvageTag.equals(JolCraftTags.Items.GENERAL_SALVAGE)) {
-            return OutputsBuilder.create()
-                    .pool(
-                            PoolBuilder.create()
-                                    .rollsFixed(1)
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(1)
-                                    )
+    private static @NotNull ItemOutput salvageOutput(
+            @NotNull TagKey<Item> salvageTag
+    ) {
+        if (salvageTag.equals(
+                JolCraftTags.Items.GENERAL_SALVAGE
+        )) {
+            return itemOutput(
+                    1,
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            1
                     )
-                    .build();
+            );
         }
 
-        if (salvageTag.equals(JolCraftTags.Items.TEXTILE_SALVAGE)) {
-            return OutputsBuilder.create()
-                    .pool(
-                            PoolBuilder.create()
-                                    .rollsFixed(2)
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(100)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1, 2)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(60)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(Items.STRING, 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(35)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(Items.LEATHER, 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(15)
-                                    )
+        if (salvageTag.equals(
+                JolCraftTags.Items.TEXTILE_SALVAGE
+        )) {
+            return itemOutput(
+                    2,
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            100
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            1,
+                            2,
+                            60
+                    ),
+                    entry(
+                            Items.STRING,
+                            35
+                    ),
+                    entry(
+                            Items.LEATHER,
+                            15
                     )
-                    .build();
+            );
         }
 
-        if (salvageTag.equals(JolCraftTags.Items.REDSTONE_SALVAGE)) {
-            return OutputsBuilder.create()
-                    .pool(
-                            PoolBuilder.create()
-                                    .rollsFixed(2)
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(100)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1, 3)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(60)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(Items.REDSTONE, 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(30)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP_HEAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(5)
-                                    )
+        if (salvageTag.equals(
+                JolCraftTags.Items.REDSTONE_SALVAGE
+        )) {
+            return itemOutput(
+                    2,
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            100
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            1,
+                            3,
+                            60
+                    ),
+                    entry(
+                            Items.REDSTONE,
+                            30
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP_HEAP.get(),
+                            5
                     )
-                    .build();
+            );
         }
 
-        if (salvageTag.equals(JolCraftTags.Items.IRON_SALVAGE)) {
-            return OutputsBuilder.create()
-                    .pool(
-                            PoolBuilder.create()
-                                    .rollsFixed(3)
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(100)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1, 4)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(60)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(Items.IRON_NUGGET, 2, 4)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(50)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(Items.IRON_INGOT, 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(15)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP_HEAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(10)
-                                    )
+        if (salvageTag.equals(
+                JolCraftTags.Items.IRON_SALVAGE
+        )) {
+            return itemOutput(
+                    3,
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            100
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            1,
+                            4,
+                            60
+                    ),
+                    entry(
+                            Items.IRON_NUGGET,
+                            2,
+                            4,
+                            50
+                    ),
+                    entry(
+                            Items.IRON_INGOT,
+                            15
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP_HEAP.get(),
+                            10
                     )
-                    .build();
+            );
         }
 
-        if (salvageTag.equals(JolCraftTags.Items.DEEPSLATE_SALVAGE)) {
-            return OutputsBuilder.create()
-                    .pool(
-                            PoolBuilder.create()
-                                    .rollsFixed(2)
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(100)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1, 4)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(60)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.DEEPSLATE_PLATE.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(15)
-                                    )
+        if (salvageTag.equals(
+                JolCraftTags.Items.DEEPSLATE_SALVAGE
+        )) {
+            return itemOutput(
+                    2,
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            100
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            1,
+                            4,
+                            60
+                    ),
+                    entry(
+                            JolCraftItems.DEEPSLATE_PLATE.get(),
+                            15
                     )
-                    .build();
+            );
         }
 
-        if (salvageTag.equals(JolCraftTags.Items.GOLD_SALVAGE)) {
-            return OutputsBuilder.create()
-                    .pool(
-                            PoolBuilder.create()
-                                    .rollsFixed(3)
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(100)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1, 5)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(60)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(Items.GOLD_NUGGET, 2, 4)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(50)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(Items.GOLD_INGOT, 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(15)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP_HEAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(20)
-                                    )
+        if (salvageTag.equals(
+                JolCraftTags.Items.GOLD_SALVAGE
+        )) {
+            return itemOutput(
+                    3,
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            100
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            1,
+                            5,
+                            60
+                    ),
+                    entry(
+                            Items.GOLD_NUGGET,
+                            2,
+                            4,
+                            50
+                    ),
+                    entry(
+                            Items.GOLD_INGOT,
+                            15
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP_HEAP.get(),
+                            20
                     )
-                    .build();
+            );
         }
 
-        if (salvageTag.equals(JolCraftTags.Items.MITHRIL_SALVAGE)) {
-            return OutputsBuilder.create()
-                    .pool(
-                            PoolBuilder.create()
-                                    .rollsFixed(3)
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(100)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP.get().asItem(), 1, 10)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(60)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.SCRAP_HEAP.get().asItem(), 1)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(30)
-                                    )
-                                    .entry(
-                                            PoolEntryBuilder.create()
-                                                    .output(
-                                                            ItemOutputBuilder.create()
-                                                                    .result(JolCraftItems.MITHRIL_NUGGET.get().asItem(), 1, 4)
-                                                                    .transforms(ItemTransforms.EMPTY)
-                                                    )
-                                                    .weight(15)
-                                    )
+        if (salvageTag.equals(
+                JolCraftTags.Items.MITHRIL_SALVAGE
+        )) {
+            return itemOutput(
+                    3,
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            100
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP.get(),
+                            1,
+                            10,
+                            60
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP_HEAP.get(),
+                            30
+                    ),
+                    entry(
+                            JolCraftItems.MITHRIL_NUGGET.get(),
+                            1,
+                            4,
+                            15
                     )
-                    .build();
+            );
         }
 
-        return Outputs.EMPTY;
+        throw new IllegalArgumentException(
+                "Unsupported salvage tag: "
+                        + salvageTag.location()
+        );
+    }
+
+    private static @NotNull ItemOutput itemOutput(
+            int rolls,
+            LootPoolSingletonContainer.Builder<?>... entries
+    ) {
+        LootPool.Builder pool = LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(rolls));
+
+        for (LootPoolSingletonContainer.Builder<?> entry : entries) {
+            pool.add(entry);
+        }
+
+        return ItemOutput.of(pool);
+    }
+
+    private static @NotNull LootPoolSingletonContainer.Builder<?> entry(
+            @NotNull ItemLike item,
+            int weight
+    ) {
+        return LootItem.lootTableItem(item)
+                .setWeight(weight);
+    }
+
+    private static @NotNull LootPoolSingletonContainer.Builder<?> entry(
+            @NotNull ItemLike item,
+            int minCount,
+            int maxCount,
+            int weight
+    ) {
+        LootPoolSingletonContainer.Builder<?> entry =
+                LootItem.lootTableItem(item)
+                        .setWeight(weight);
+
+        entry.apply(
+                SetItemCountFunction.setCount(
+                        minCount == maxCount
+                                ? ConstantValue.exactly(minCount)
+                                : UniformGenerator.between(
+                                minCount,
+                                maxCount
+                        )
+                )
+        );
+
+        return entry;
+    }
+
+    private static @NotNull String recipeId(
+            @NotNull TagKey<Item> salvageTag
+    ) {
+        return salvageTag.location()
+                .getPath()
+                .replace('/', '_');
     }
 }

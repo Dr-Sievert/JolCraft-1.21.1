@@ -7,6 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,22 +17,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
-import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryRecipeInput;
-import net.sievert.jolcraft.param.runtime.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.gui.menu.LapidaryBenchMenu;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContextParams;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
+import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryRecipeInput;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @ParametersAreNonnullByDefault
@@ -41,14 +46,37 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
     public static final int SLOT_INPUT = 0;
     public static final int SLOT_TOOL = 1;
     public static final int SLOT_OUTPUT = 2;
+
     private static final int SLOT_COUNT = 3;
+
+    /*
+     * Runtime parameters available while generating the lapidary result,
+     * XP, tool damage, and sound.
+     *
+     * INPUT_ITEM identifies the material being processed.
+     */
+    private static final LootContextParamSet OUTPUT_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(JolCraftRecipeContextParams.INPUT_ITEM)
+                    .optional(LootContextParams.THIS_ENTITY)
+                    .optional(LootContextParams.ORIGIN)
+                    .build();
+
+    private NonNullList<ItemStack> items =
+            NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
+
     private boolean recipeValid;
     private int actionId = -1;
 
-    private NonNullList<ItemStack> items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
-
-    public LapidaryBenchBlockEntity(BlockPos pos, BlockState state) {
-        super(JolCraftBlockEntities.LAPIDARY_BENCH.get(), pos, state);
+    public LapidaryBenchBlockEntity(
+            BlockPos pos,
+            BlockState state
+    ) {
+        super(
+                JolCraftBlockEntities.LAPIDARY_BENCH.get(),
+                pos,
+                state
+        );
     }
 
     // ---------------------------------------------------------------------
@@ -56,66 +84,102 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
     // ---------------------------------------------------------------------
 
     public void handleAction(ServerPlayer player) {
-        Level level = player.level();
-        if (level.isClientSide) return;
+        if (!(player.level() instanceof ServerLevel level)) {
+            return;
+        }
 
-        Optional<Resolved> resolved = resolveValidRecipe(player);
-        if (resolved.isEmpty()) return;
+        Optional<LapidaryBenchRecipe> recipeResult =
+                findValidRecipe(player);
 
-        Resolved r = resolved.get();
+        if (recipeResult.isEmpty()) {
+            return;
+        }
 
-        JolCraftItemInsertionHelper.tryInsertIntoSlotInventoryOrDrop(
-                this,
-                SLOT_OUTPUT,
-                player.getInventory(),
+        LapidaryBenchRecipe recipe = recipeResult.orElseThrow();
+
+        ItemStack inputStack = items.get(SLOT_INPUT);
+        ItemStack toolStack = items.get(SLOT_TOOL);
+
+        /*
+         * Create one shared context for this execution.
+         *
+         * This ensures the recipe output, XP, tool damage, and sound are
+         * rolled only once and all use the same runtime random source.
+         */
+        LootContext context = createExecutionContext(
+                level,
                 player,
-                r.result
+                inputStack
         );
 
+        List<ItemStack> generatedResults = new ArrayList<>();
+        recipe.generateResult(context, generatedResults::add);
+
+        generatedResults.removeIf(ItemStack::isEmpty);
+
+        if (generatedResults.isEmpty()) {
+            return;
+        }
+
+        boolean wasGeode =
+                inputStack.is(JolCraftTags.Items.GEODES);
+
+        boolean wasUncutGem =
+                inputStack.is(JolCraftTags.Items.GEMS_UNCUT);
+
+        boolean wasHammer =
+                toolStack.is(JolCraftTags.Items.ARTISAN_HAMMERS);
+
+        boolean wasChisel =
+                toolStack.is(JolCraftTags.Items.CHISELS);
+
+        for (ItemStack generatedResult : generatedResults) {
+            JolCraftItemInsertionHelper.tryInsertIntoSlotInventoryOrDrop(
+                    this,
+                    SLOT_OUTPUT,
+                    player.getInventory(),
+                    player,
+                    generatedResult
+            );
+        }
+
         if (!player.isCreative()) {
-            consumeAndDamage(player, r.recipe);
+            consumeInput();
+
+            int toolDamage = recipe.rollToolDamage(context);
+            damageTool(player, toolDamage);
         }
 
-        this.setChanged();
-        refreshCachedState(player);
+        int xp = recipe.rollXp(context);
 
-        if (r.wasGeode) {
-            player.awardStat(JolCraftStats.GEODES_CRACKED.get());
-        }
-        if (r.wasUncutGem) {
-            if (r.wasHammer) {
-                player.awardStat(JolCraftStats.GEMS_CRUSHED.get());
-            }
-            if (r.wasChisel) {
-                player.awardStat(JolCraftStats.GEMS_CUT.get());
-            }
-        }
-
-        int xp = r.recipe.xp().roll(level.random);
         if (xp > 0) {
             player.giveExperiencePoints(xp);
         }
 
-        SoundOutput sound = r.recipe.sound();
-        JolCraftSoundHelper.player(
-                player,
-                Objects.requireNonNull(sound.resolveValue(player.registryAccess())),
-                sound.volume(),
-                sound.pitch()
+        recipe.generateSound(
+                context,
+                generatedSound -> level.playSound(
+                        null,
+                        worldPosition,
+                        generatedSound.sound().value(),
+                        generatedSound.source(),
+                        generatedSound.volume(),
+                        generatedSound.pitch()
+                )
         );
 
-        JolCraftParticleHelper.spawn(
-                level,
-                ParticleTypes.CRIT,
-                player.getX(),
-                player.getY() + 1.1D,
-                player.getZ(),
-                1,
-                (level.random.nextDouble() - 0.5D) * 0.24D,
-                level.random.nextDouble() * 0.10D,
-                (level.random.nextDouble() - 0.5D) * 0.24D,
-                0.0D
+        awardStats(
+                player,
+                wasGeode,
+                wasUncutGem,
+                wasHammer,
+                wasChisel
         );
+
+        spawnParticles(level, player);
+
+        setChanged();
+        refreshCachedState(player);
     }
 
     // ---------------------------------------------------------------------
@@ -123,6 +187,7 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
     // ---------------------------------------------------------------------
 
     private final ContainerData containerData = new ContainerData() {
+
         @Override
         public int get(int index) {
             return switch (index) {
@@ -147,9 +212,8 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
     };
 
     public ContainerData getContainerData() {
-        return this.containerData;
+        return containerData;
     }
-
 
     // ---------------------------------------------------------------------
     // VALIDATION / UI GATING
@@ -157,104 +221,214 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
 
     public void refreshCachedState(ServerPlayer player) {
         int nextActionId = computeActionId();
-        boolean nextRecipeValid = resolveValidRecipe(player).isPresent();
 
-        if (this.actionId == nextActionId && this.recipeValid == nextRecipeValid) {
+        /*
+         * This checks only matching and player unlock requirements.
+         * It does not roll recipe outputs.
+         */
+        boolean nextRecipeValid =
+                findValidRecipe(player).isPresent();
+
+        if (actionId == nextActionId
+                && recipeValid == nextRecipeValid) {
             return;
         }
 
-        this.actionId = nextActionId;
-        this.recipeValid = nextRecipeValid;
+        actionId = nextActionId;
+        recipeValid = nextRecipeValid;
+
         setChanged();
     }
 
     private int computeActionId() {
-        ItemStack tool = this.items.get(SLOT_TOOL);
+        ItemStack tool = items.get(SLOT_TOOL);
 
-        if (tool.is(JolCraftTags.Items.ARTISAN_HAMMERS)) return 0;
-        if (tool.is(JolCraftTags.Items.CHISELS)) return 1;
+        if (tool.is(JolCraftTags.Items.ARTISAN_HAMMERS)) {
+            return 0;
+        }
+
+        if (tool.is(JolCraftTags.Items.CHISELS)) {
+            return 1;
+        }
 
         return -1;
     }
 
     // ---------------------------------------------------------------------
-    // INTERNALS
+    // RECIPE RESOLUTION
     // ---------------------------------------------------------------------
 
-    private record Resolved(
-            LapidaryBenchRecipe recipe,
-            ItemStack result,
+    private Optional<LapidaryBenchRecipe> findValidRecipe(
+            ServerPlayer player
+    ) {
+        if (!(getLevel() instanceof ServerLevel level)) {
+            return Optional.empty();
+        }
+
+        ItemStack inputStack = items.get(SLOT_INPUT);
+        ItemStack toolStack = items.get(SLOT_TOOL);
+
+        if (inputStack.isEmpty() || toolStack.isEmpty()) {
+            return Optional.empty();
+        }
+
+        LapidaryRecipeInput input = new LapidaryRecipeInput(
+                inputStack,
+                toolStack
+        );
+
+        Optional<LapidaryBenchRecipe> recipe =
+                level.getRecipeManager()
+                        .getRecipeFor(
+                                JolCraftRecipes.LAPIDARY_BENCH_TYPE.get(),
+                                input,
+                                level
+                        )
+                        .map(holder -> holder.value());
+
+        if (recipe.isEmpty()) {
+            return Optional.empty();
+        }
+
+        LapidaryBenchRecipe resolved = recipe.orElseThrow();
+
+        /*
+         * RecipeManager#getRecipeFor has already called matches(...).
+         * Only the player-specific lore requirement remains.
+         */
+        if (!resolved.isUnlockedFor(player, toolStack)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(resolved);
+    }
+
+    private LootContext createExecutionContext(
+            ServerLevel level,
+            ServerPlayer player,
+            ItemStack inputStack
+    ) {
+        return JolCraftRecipeContexts.create(
+                level,
+                level.random,
+                OUTPUT_CONTEXT_PARAMS,
+                builder -> builder
+                        .withParameter(
+                                JolCraftRecipeContextParams.INPUT_ITEM,
+                                inputStack
+                        )
+                        .withParameter(
+                                LootContextParams.THIS_ENTITY,
+                                player
+                        )
+                        .withParameter(
+                                LootContextParams.ORIGIN,
+                                Vec3.atCenterOf(worldPosition)
+                        )
+        );
+    }
+
+    // ---------------------------------------------------------------------
+    // INGREDIENT MUTATION
+    // ---------------------------------------------------------------------
+
+    private void consumeInput() {
+        ItemStack inputStack = items.get(SLOT_INPUT);
+
+        if (inputStack.isEmpty()) {
+            return;
+        }
+
+        inputStack.shrink(1);
+
+        if (inputStack.isEmpty()) {
+            items.set(SLOT_INPUT, ItemStack.EMPTY);
+        }
+    }
+
+    private void damageTool(
+            ServerPlayer player,
+            int damage
+    ) {
+        if (damage <= 0) {
+            return;
+        }
+
+        ItemStack toolStack = items.get(SLOT_TOOL);
+
+        if (toolStack.isEmpty() || !toolStack.isDamageableItem()) {
+            return;
+        }
+
+        toolStack.hurtAndBreak(
+                damage,
+                player.serverLevel(),
+                player,
+                brokenItem -> player.serverLevel().playSound(
+                        null,
+                        worldPosition,
+                        brokenItem.getBreakingSound(),
+                        player.getSoundSource(),
+                        1.0F,
+                        1.0F
+                )
+        );
+
+        if (toolStack.isEmpty()) {
+            items.set(SLOT_TOOL, ItemStack.EMPTY);
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // FEEDBACK
+    // ---------------------------------------------------------------------
+
+    private static void awardStats(
+            ServerPlayer player,
             boolean wasGeode,
             boolean wasUncutGem,
             boolean wasHammer,
             boolean wasChisel
-    ) {}
-
-    private Optional<Resolved> resolveValidRecipe(ServerPlayer player) {
-        Level level = this.getLevel();
-        if (level == null || level.isClientSide) return Optional.empty();
-
-        ItemStack input = this.items.getFirst();
-        ItemStack tool = this.items.get(SLOT_TOOL);
-        if (input.isEmpty() || tool.isEmpty()) return Optional.empty();
-
-        WorldContext ctx = new WorldContext(
-                player,
-                null
-        );
-
-        LapidaryRecipeInput in = new LapidaryRecipeInput(ctx, input, tool);
-
-        var opt = player.serverLevel().getRecipeManager().getRecipeFor(
-                JolCraftRecipes.LAPIDARY_BENCH_TYPE.get(),
-                in,
-                level
-        );
-
-        if (opt.isEmpty()) return Optional.empty();
-
-        LapidaryBenchRecipe recipe = opt.get().value();
-        if (!recipe.matches(in, level)) return Optional.empty();
-
-        ItemStack result = recipe.assemble(in, level.registryAccess());
-        if (result.isEmpty()) return Optional.empty();
-
-        boolean wasGeode = input.is(JolCraftTags.Items.GEODES);
-        boolean wasUncutGem = input.is(JolCraftTags.Items.GEMS_UNCUT);
-        boolean wasHammer = tool.is(JolCraftTags.Items.ARTISAN_HAMMERS);
-        boolean wasChisel = tool.is(JolCraftTags.Items.CHISELS);
-
-        return Optional.of(new Resolved(recipe, result, wasGeode, wasUncutGem, wasHammer, wasChisel));
-    }
-
-    private void consumeAndDamage(ServerPlayer player, LapidaryBenchRecipe recipe) {
-        Level level = this.getLevel();
-        if (level == null || level.isClientSide) return;
-
-        ItemStack input = this.items.getFirst();
-        ItemStack tool = this.items.get(SLOT_TOOL);
-
-        input.shrink(1);
-        this.items.set(SLOT_INPUT, input.isEmpty() ? ItemStack.EMPTY : input);
-
-        int damage = recipe.toolDamage().roll(level.random);
-        if (damage > 0 && !tool.isEmpty()) {
-            tool.hurtAndBreak(
-                    damage,
-                    player.serverLevel(),
-                    player,
-                    brokenItem -> player.serverLevel().playSound(
-                            null,
-                            this.worldPosition,
-                            brokenItem.getBreakingSound(),
-                            player.getSoundSource(),
-                            1.0F,
-                            1.0F
-                    )
+    ) {
+        if (wasGeode) {
+            player.awardStat(
+                    JolCraftStats.GEODES_CRACKED.get()
             );
         }
 
-        this.items.set(SLOT_TOOL, tool.isEmpty() ? ItemStack.EMPTY : tool);
+        if (!wasUncutGem) {
+            return;
+        }
+
+        if (wasHammer) {
+            player.awardStat(
+                    JolCraftStats.GEMS_CRUSHED.get()
+            );
+        }
+
+        if (wasChisel) {
+            player.awardStat(
+                    JolCraftStats.GEMS_CUT.get()
+            );
+        }
+    }
+
+    private static void spawnParticles(
+            ServerLevel level,
+            ServerPlayer player
+    ) {
+        JolCraftParticleHelper.spawn(
+                level,
+                ParticleTypes.CRIT,
+                player.getX(),
+                player.getY() + 1.1D,
+                player.getZ(),
+                1,
+                (level.random.nextDouble() - 0.5D) * 0.24D,
+                level.random.nextDouble() * 0.10D,
+                (level.random.nextDouble() - 0.5D) * 0.24D,
+                0.0D
+        );
     }
 
     // ---------------------------------------------------------------------
@@ -263,35 +437,66 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     protected Component getDefaultName() {
-        return Component.translatable(JolCraftLanguageKeys.CONTAINER_LAPIDARY_BENCH);
+        return Component.translatable(
+                JolCraftLanguageKeys.CONTAINER_LAPIDARY_BENCH
+        );
     }
 
     @Override
-    protected AbstractContainerMenu createMenu(int id, Inventory playerInventory) {
-        return new LapidaryBenchMenu(id, playerInventory, this);
+    protected AbstractContainerMenu createMenu(
+            int id,
+            Inventory playerInventory
+    ) {
+        return new LapidaryBenchMenu(
+                id,
+                playerInventory,
+                this
+        );
     }
 
     @Override
     protected NonNullList<ItemStack> getItems() {
-        return this.items;
+        return items;
     }
 
     @Override
-    protected void setItems(NonNullList<ItemStack> items) {
+    protected void setItems(
+            NonNullList<ItemStack> items
+    ) {
         this.items = items;
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void loadAdditional(
+            CompoundTag tag,
+            HolderLookup.Provider registries
+    ) {
         super.loadAdditional(tag, registries);
-        this.items = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag, this.items, registries);
+
+        items = NonNullList.withSize(
+                SLOT_COUNT,
+                ItemStack.EMPTY
+        );
+
+        ContainerHelper.loadAllItems(
+                tag,
+                items,
+                registries
+        );
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void saveAdditional(
+            CompoundTag tag,
+            HolderLookup.Provider registries
+    ) {
         super.saveAdditional(tag, registries);
-        ContainerHelper.saveAllItems(tag, this.items, registries);
+
+        ContainerHelper.saveAllItems(
+                tag,
+                items,
+                registries
+        );
     }
 
     @Override

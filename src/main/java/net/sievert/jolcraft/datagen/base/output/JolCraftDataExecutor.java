@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.datagen.base.output;
 
 import com.mojang.serialization.DataResult;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftOrderedEmissionBuilder;
@@ -21,7 +20,7 @@ public final class JolCraftDataExecutor {
             @NotNull Iterable<? extends JolCraftDataEmission<TTarget>> emissions,
             @NotNull JolCraftDataTracking tracking
     ) {
-        Objects.requireNonNull(target, JolCraftParameterIds.TARGET);
+        Objects.requireNonNull(target, JolCraftDictionary.TARGET);
         Objects.requireNonNull(provider, JolCraftDictionary.PROVIDER);
         Objects.requireNonNull(emissions, JolCraftStrings.plural(JolCraftDictionary.EMISSION));
         Objects.requireNonNull(tracking, JolCraftDictionary.TRACK);
@@ -41,7 +40,7 @@ public final class JolCraftDataExecutor {
             @NotNull Iterable<? extends JolCraftOrderedEmissionBuilder<TTarget>> orderedEmissionBuilders,
             @NotNull JolCraftDataTracking tracking
     ) {
-        Objects.requireNonNull(target, JolCraftParameterIds.TARGET);
+        Objects.requireNonNull(target, JolCraftDictionary.TARGET);
         Objects.requireNonNull(provider, JolCraftDictionary.PROVIDER);
         Objects.requireNonNull(orderedEmissionBuilders, JolCraftStrings.plural(JolCraftDictionary.EMISSION));
         Objects.requireNonNull(tracking, JolCraftDictionary.TRACK);

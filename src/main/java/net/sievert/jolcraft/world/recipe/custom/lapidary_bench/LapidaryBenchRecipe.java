@@ -3,191 +3,275 @@ package net.sievert.jolcraft.world.recipe.custom.lapidary_bench;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.world.recipe.custom.base.RecipeValidation;
-import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.custom.base.CustomRecipe;
-import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.param.runtime.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.output.base.OutputParam;
-import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemSpec;
-import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
+import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
+import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
+import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContextParams;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.output.SoundOutput;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public record LapidaryBenchRecipe(
         ItemInput input,
-        ItemSelector tool,
+        ItemInput tool,
         ItemOutput result,
         SoundOutput sound,
-        IntRange xp,
-        IntRange toolDamage
+        NumberProvider xp,
+        NumberProvider toolDamage
 ) implements CustomRecipe<LapidaryRecipeInput> {
 
+    private static final String TOOL_DAMAGE_KEY =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.TOOL,
+                    JolCraftDictionary.DAMAGE
+            );
+
+    private static final LootContextParamSet INPUT_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(JolCraftRecipeContextParams.INPUT_ITEM)
+                    .build();
+
     @Override
-    public boolean matches(@NotNull LapidaryRecipeInput in, Level level) {
-        if (level.isClientSide) {
+    public boolean matches(
+            @NotNull LapidaryRecipeInput recipeInput,
+            @NotNull Level level
+    ) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             return false;
         }
 
-        WorldContext ctx = in.ctx();
-
-        ItemStack inputStack = in.input();
-        ItemStack toolStack = in.tool();
+        ItemStack inputStack = recipeInput.input();
+        ItemStack toolStack = recipeInput.tool();
 
         if (inputStack.isEmpty() || toolStack.isEmpty()) {
             return false;
         }
 
-        if (!input.matches(ctx, inputStack)) {
+        if (!matchesInput(serverLevel, inputStack, input)) {
             return false;
         }
 
-        if (!tool.matches(ctx, toolStack)) {
+        if (!matchesInput(serverLevel, toolStack, tool)) {
             return false;
         }
 
-        boolean isHammer = toolStack.is(JolCraftTags.Items.ARTISAN_HAMMERS);
-        boolean isChisel = toolStack.is(JolCraftTags.Items.CHISELS);
+        boolean hammer =
+                toolStack.is(JolCraftTags.Items.ARTISAN_HAMMERS);
 
-        if (isChisel) {
-            if (ctx.player() == null) {
-                return false;
-            }
+        boolean chisel =
+                toolStack.is(JolCraftTags.Items.CHISELS);
 
-            if (!DwarfLoreAttachmentHelper.hasUnlock(ctx.player(), DwarfLoreKey.ANCIENT_GEMCRAFT)) {
-                return false;
-            }
-        }
-
-        if (isHammer) {
+        if (hammer) {
             return inputStack.is(JolCraftTags.Items.GEODES)
                     || inputStack.is(JolCraftTags.Items.GEMS_UNCUT);
         }
 
-        if (isChisel) {
+        if (chisel) {
             return inputStack.is(JolCraftTags.Items.GEMS_UNCUT);
         }
 
         return false;
     }
 
-    @Override
-    public @NotNull ItemStack assemble(@NotNull LapidaryRecipeInput in, HolderLookup.@NotNull Provider registries) {
-        WorldContext ctx = in.ctx();
-        if (ctx.level().isClientSide) {
-            return ItemStack.EMPTY;
+    /**
+     * Player-specific requirement which cannot be checked by
+     * Recipe.matches(...), because vanilla does not provide the player there.
+     */
+    public boolean isUnlockedFor(
+            @NotNull ServerPlayer player,
+            @NotNull ItemStack toolStack
+    ) {
+        if (!toolStack.is(JolCraftTags.Items.CHISELS)) {
+            return true;
         }
 
-        ItemStack inputStack = in.input();
-        ItemStack toolStack = in.tool();
-        if (inputStack.isEmpty() || toolStack.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
+        return DwarfLoreAttachmentHelper.hasUnlock(
+                player,
+                DwarfLoreKey.ANCIENT_GEMCRAFT
+        );
+    }
 
-        ItemOutput out = result;
-        ItemSpec spec = out.result();
+    /**
+     * Generates the recipe's item result.
+     *
+     * The caller decides whether generated stacks are inserted, dropped,
+     * or otherwise handled.
+     */
+    public void generateResult(
+            @NotNull LootContext context,
+            @NotNull Consumer<ItemStack> output
+    ) {
+        result.generate(context, output);
+    }
 
-        ItemStack stack = spec.create(ctx);
-        if (stack.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
+    public int rollXp(@NotNull LootContext context) {
+        return Math.max(0, xp.getInt(context));
+    }
 
-        out.transforms().apply(ctx, stack);
-        return stack.isEmpty() ? ItemStack.EMPTY : stack;
+    public int rollToolDamage(@NotNull LootContext context) {
+        return Math.max(0, toolDamage.getInt(context));
+    }
+
+    public void generateSound(
+            @NotNull LootContext context,
+            @NotNull Consumer<SoundOutput.GeneratedSound> output
+    ) {
+        sound.generate(context, output);
     }
 
     @Override
-    public @NotNull RecipeSerializer<? extends Recipe<LapidaryRecipeInput>> getSerializer() {
+    public @NotNull RecipeSerializer<? extends Recipe<LapidaryRecipeInput>>
+    getSerializer() {
         return JolCraftRecipes.LAPIDARY_BENCH_SERIALIZER.get();
     }
 
     @Override
-    public @NotNull RecipeType<? extends Recipe<LapidaryRecipeInput>> getType() {
+    public @NotNull RecipeType<? extends Recipe<LapidaryRecipeInput>>
+    getType() {
         return JolCraftRecipes.LAPIDARY_BENCH_TYPE.get();
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
+    private static boolean matchesInput(
+            ServerLevel level,
+            ItemStack stack,
+            ItemInput input
+    ) {
+        LootContext context = JolCraftRecipeContexts.create(
+                level,
+                INPUT_CONTEXT_PARAMS,
+                builder -> builder.withParameter(
+                        JolCraftRecipeContextParams.INPUT_ITEM,
+                        stack
+                )
+        );
+
+        return input.condition().test(context);
     }
 
-    @Override
-    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
-        return ItemStack.EMPTY;
-    }
+    public static final class Serializer
+            implements RecipeSerializer<LapidaryBenchRecipe> {
 
-    public static final class Serializer implements RecipeSerializer<LapidaryBenchRecipe> {
+        private static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                ItemInput
+                > ITEM_INPUT_STREAM_CODEC =
+                ByteBufCodecs.fromCodecWithRegistries(ItemInput.CODEC);
 
-        private static final StreamCodec<RegistryFriendlyByteBuf, ItemOutput> RESULT_STREAM_CODEC =
-                StreamCodec.of(
-                        OutputParam.STREAM_CODEC::encode,
-                        buf -> requireItemOutput(OutputParam.STREAM_CODEC.decode(buf))
+        private static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                ItemOutput
+                > ITEM_OUTPUT_STREAM_CODEC =
+                ByteBufCodecs.fromCodecWithRegistries(
+                        ItemOutput.CODEC.codec()
                 );
 
-        private static final com.mojang.serialization.Codec<ItemOutput> RESULT_CODEC =
-                OutputParam.CODEC.comapFlatMap(
-                        Serializer::requireItemOutputResult,
-                        io -> io
+        private static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                SoundOutput
+                > SOUND_OUTPUT_STREAM_CODEC =
+                ByteBufCodecs.fromCodecWithRegistries(
+                        SoundOutput.CODEC.codec()
+                );
+
+        private static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                NumberProvider
+                > NUMBER_PROVIDER_STREAM_CODEC =
+                ByteBufCodecs.fromCodecWithRegistries(
+                        NumberProviders.CODEC
                 );
 
         public static final MapCodec<LapidaryBenchRecipe> CODEC =
-                RecordCodecBuilder.mapCodec((RecordCodecBuilder.Instance<LapidaryBenchRecipe> inst) -> inst.group(
-                        ItemInput.CODEC
-                                .fieldOf(JolCraftDictionary.INPUT)
-                                .forGetter(LapidaryBenchRecipe::input),
+                RecordCodecBuilder.<LapidaryBenchRecipe>mapCodec(instance ->
+                        instance.group(
+                                ItemInput.CODEC
+                                        .fieldOf(JolCraftDictionary.INPUT)
+                                        .forGetter(LapidaryBenchRecipe::input),
 
-                        ItemSelector.CODEC
-                                .fieldOf(JolCraftDictionary.TOOL)
-                                .forGetter(LapidaryBenchRecipe::tool),
+                                ItemInput.CODEC
+                                        .fieldOf(JolCraftDictionary.TOOL)
+                                        .forGetter(LapidaryBenchRecipe::tool),
 
-                        RESULT_CODEC
-                                .fieldOf(JolCraftDictionary.RESULT)
-                                .forGetter(LapidaryBenchRecipe::result),
+                                ItemOutput.CODEC
+                                        .codec()
+                                        .fieldOf(JolCraftDictionary.RESULT)
+                                        .forGetter(LapidaryBenchRecipe::result),
 
-                        SoundOutput.CODEC
-                                .fieldOf(JolCraftDictionary.SOUND)
-                                .forGetter(LapidaryBenchRecipe::sound),
+                                SoundOutput.CODEC
+                                        .codec()
+                                        .fieldOf(JolCraftDictionary.SOUND)
+                                        .forGetter(LapidaryBenchRecipe::sound),
 
-                        IntRange.CODEC
-                                .optionalFieldOf(JolCraftDictionary.XP, IntRange.ZERO)
-                                .forGetter(LapidaryBenchRecipe::xp),
+                                NumberProviders.CODEC
+                                        .optionalFieldOf(
+                                                JolCraftDictionary.XP,
+                                                ConstantValue.exactly(0.0F)
+                                        )
+                                        .forGetter(LapidaryBenchRecipe::xp),
 
-                        IntRange.CODEC
-                                .optionalFieldOf(
-                                        JolCraftStrings.underscored(JolCraftDictionary.TOOL, JolCraftDictionary.DAMAGE),
-                                        IntRange.fixed(1)
-                                )
-                                .forGetter(LapidaryBenchRecipe::toolDamage)
-                ).apply(inst, LapidaryBenchRecipe::new)).flatXmap(
+                                NumberProviders.CODEC
+                                        .optionalFieldOf(
+                                                TOOL_DAMAGE_KEY,
+                                                ConstantValue.exactly(1.0F)
+                                        )
+                                        .forGetter(LapidaryBenchRecipe::toolDamage)
+                        ).apply(
+                                instance,
+                                LapidaryBenchRecipe::new
+                        )
+                ).flatXmap(
                         Serializer::validate,
                         DataResult::success
                 );
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, LapidaryBenchRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ItemInput.STREAM_CODEC, LapidaryBenchRecipe::input,
-                        ItemSelector.STREAM_CODEC, LapidaryBenchRecipe::tool,
-                        RESULT_STREAM_CODEC, LapidaryBenchRecipe::result,
-                        SoundOutput.STREAM_CODEC, LapidaryBenchRecipe::sound,
-                        IntRange.STREAM_CODEC, LapidaryBenchRecipe::xp,
-                        IntRange.STREAM_CODEC, LapidaryBenchRecipe::toolDamage,
-                        LapidaryBenchRecipe::new
-                );
+        public static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                LapidaryBenchRecipe
+                > STREAM_CODEC = StreamCodec.composite(
+                ITEM_INPUT_STREAM_CODEC,
+                LapidaryBenchRecipe::input,
+
+                ITEM_INPUT_STREAM_CODEC,
+                LapidaryBenchRecipe::tool,
+
+                ITEM_OUTPUT_STREAM_CODEC,
+                LapidaryBenchRecipe::result,
+
+                SOUND_OUTPUT_STREAM_CODEC,
+                LapidaryBenchRecipe::sound,
+
+                NUMBER_PROVIDER_STREAM_CODEC,
+                LapidaryBenchRecipe::xp,
+
+                NUMBER_PROVIDER_STREAM_CODEC,
+                LapidaryBenchRecipe::toolDamage,
+
+                LapidaryBenchRecipe::new
+        );
 
         @Override
         public @NotNull MapCodec<LapidaryBenchRecipe> codec() {
@@ -195,75 +279,42 @@ public record LapidaryBenchRecipe(
         }
 
         @Override
-        public @NotNull StreamCodec<RegistryFriendlyByteBuf, LapidaryBenchRecipe> streamCodec() {
+        public @NotNull StreamCodec<
+                RegistryFriendlyByteBuf,
+                LapidaryBenchRecipe
+                > streamCodec() {
             return STREAM_CODEC;
         }
 
-        private static @NotNull DataResult<ItemOutput> requireItemOutputResult(OutputParam param) {
-            if (param instanceof ItemOutput io) {
-                return DataResult.success(io);
-            }
-            return DataResult.error(() ->
-                    "result must be item_output for lapidary bench recipes"
-            );
-        }
-
-        private static @NotNull ItemOutput requireItemOutput(OutputParam param) {
-            return requireItemOutputResult(param)
-                    .result()
-                    .orElseThrow(() ->
-                            new IllegalArgumentException("result must be item_output for lapidary bench recipes"));
-        }
-
-        private static @NotNull DataResult<LapidaryBenchRecipe> validate(LapidaryBenchRecipe recipe) {
-            String toolDamageKey = JolCraftStrings.underscored(
-                    JolCraftDictionary.TOOL,
-                    JolCraftDictionary.DAMAGE
-            );
-
-            DataResult<LapidaryBenchRecipe> base = RecipeValidation.validate(recipe)
-                    .requireValid(recipe.input(), JolCraftDictionary.INPUT)
-                    .requireValid(recipe.tool(), JolCraftDictionary.TOOL)
-                    .requireValid(recipe.result(), JolCraftDictionary.RESULT)
-                    .requireValid(recipe.sound(), JolCraftDictionary.SOUND)
-                    .require(recipe.xp(), JolCraftDictionary.XP)
-                    .require(recipe.toolDamage(), toolDamageKey)
+        public static DataResult<LapidaryBenchRecipe> validate(
+                LapidaryBenchRecipe recipe
+        ) {
+            return RecipeValidation.validate(recipe)
+                    .require(
+                            recipe.input(),
+                            JolCraftDictionary.INPUT
+                    )
+                    .require(
+                            recipe.tool(),
+                            JolCraftDictionary.TOOL
+                    )
+                    .require(
+                            recipe.result(),
+                            JolCraftDictionary.RESULT
+                    )
+                    .require(
+                            recipe.sound(),
+                            JolCraftDictionary.SOUND
+                    )
+                    .require(
+                            recipe.xp(),
+                            JolCraftDictionary.XP
+                    )
+                    .require(
+                            recipe.toolDamage(),
+                            TOOL_DAMAGE_KEY
+                    )
                     .done();
-
-            if (base.error().isPresent()) {
-                return base;
-            }
-
-            ItemOutput out = recipe.result();
-            if (out.transforms().requiresInputSource()) {
-                return DataResult.error(() ->
-                        "this recipe type does not support input-sourced component transforms");
-            }
-
-            IntRange xp = recipe.xp();
-            IntRange toolDamage = recipe.toolDamage();
-
-            DataResult<IntRange> xpRes = IntRange.validateRange(xp);
-            if (xpRes.error().isPresent()) {
-                String msg = xpRes.error().map(DataResult.Error::message).orElse("invalid");
-                return DataResult.error(() -> JolCraftDictionary.XP + " invalid: " + msg);
-            }
-
-            if (xp.min() < 0) {
-                return DataResult.error(() -> "xp must have min >= 0");
-            }
-
-            DataResult<IntRange> tdRes = IntRange.validateRange(toolDamage);
-            if (tdRes.error().isPresent()) {
-                String msg = tdRes.error().map(DataResult.Error::message).orElse("invalid");
-                return DataResult.error(() -> toolDamageKey + " invalid: " + msg);
-            }
-
-            if (toolDamage.min() < 0) {
-                return DataResult.error(() -> toolDamageKey + " must have min >= 0");
-            }
-
-            return DataResult.success(recipe);
         }
     }
 }

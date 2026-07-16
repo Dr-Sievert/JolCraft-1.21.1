@@ -15,7 +15,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
@@ -55,9 +55,9 @@ public interface LanguageSubProvider extends JolCraftSubDataProvider<Map<String,
     }
 
     default void put(@NotNull Map<String, String> target, @NotNull String key, @NotNull String value) {
-        Objects.requireNonNull(target, JolCraftParameterIds.TARGET);
-        Objects.requireNonNull(key, JolCraftParameterIds.KEY);
-        Objects.requireNonNull(value, JolCraftParameterIds.VALUE);
+        Objects.requireNonNull(target, JolCraftDictionary.TARGET);
+        Objects.requireNonNull(key, JolCraftDictionary.KEY);
+        Objects.requireNonNull(value, JolCraftDictionary.VALUE);
 
         if (target.put(key, value) != null) {
             throw new IllegalStateException("Duplicate translation key " + key);

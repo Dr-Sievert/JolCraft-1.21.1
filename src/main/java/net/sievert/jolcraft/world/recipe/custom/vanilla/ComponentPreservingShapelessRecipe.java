@@ -21,10 +21,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.custom.base.RecipeValidation;
+import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
@@ -301,26 +300,26 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
 
     public static final class Serializer implements RecipeSerializer<CraftingRecipe> {
 
-        private static final String KEY_BASE = JolCraftParameterIds.BASE;
-        private static final String KEY_INGREDIENTS = JolCraftParameterIds.INGREDIENTS;
-        private static final String KEY_RESULT = JolCraftParameterIds.RESULT;
-        private static final String KEY_KEEP = JolCraftParameterIds.KEEP;
-        private static final String KEY_REMOVE = JolCraftParameterIds.REMOVE;
+        private static final String KEY_BASE = JolCraftDictionary.BASE;
+        private static final String KEY_INGREDIENTS = JolCraftStrings.plural(JolCraftDictionary.INGREDIENT);
+        private static final String KEY_RESULT = JolCraftDictionary.RESULT;
+        private static final String KEY_KEEP = JolCraftDictionary.KEEP;
+        private static final String KEY_REMOVE = JolCraftDictionary.REMOVE;
         private static final String KEY_SET = JolCraftDictionary.SET;
         private static final String KEY_REMOVE_ALL =
-                JolCraftStrings.underscored(JolCraftParameterIds.REMOVE, JolCraftDictionary.ALL);
+                JolCraftStrings.underscored(JolCraftDictionary.REMOVE, JolCraftDictionary.ALL);
         private static final String KEY_BASE_REQUIRE =
-                JolCraftStrings.underscored(JolCraftParameterIds.BASE, JolCraftParameterIds.REQUIREMENTS);
+                JolCraftStrings.underscored(JolCraftDictionary.BASE, JolCraftStrings.plural(JolCraftDictionary.REQUIREMENT));
 
         private static final int MAX_INGREDIENTS =
                 Math.max(1, ShapedRecipePattern.getMaxWidth() * ShapedRecipePattern.getMaxHeight());
 
         private static final MapCodec<ComponentPreservingShapelessRecipe> CODEC =
                 RecordCodecBuilder.<ComponentPreservingShapelessRecipe>mapCodec(inst -> inst.group(
-                                Codec.STRING.optionalFieldOf(JolCraftParameterIds.GROUP, "")
+                                Codec.STRING.optionalFieldOf(JolCraftDictionary.GROUP, "")
                                         .forGetter(ComponentPreservingShapelessRecipe::getGroup),
 
-                                CraftingBookCategory.CODEC.optionalFieldOf(JolCraftParameterIds.CATEGORY, CraftingBookCategory.MISC)
+                                CraftingBookCategory.CODEC.optionalFieldOf(JolCraftDictionary.CATEGORY, CraftingBookCategory.MISC)
                                         .forGetter(ComponentPreservingShapelessRecipe::category),
 
                                 Ingredient.CODEC.fieldOf(KEY_BASE)

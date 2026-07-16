@@ -1,25 +1,28 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
-import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.world.recipe.param.output.base.Output;
-import net.sievert.jolcraft.world.recipe.param.output.custom.EffectOutput;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
-import net.sievert.jolcraft.datagen.recipe.builder.custom.FermentingCauldronRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
+import net.sievert.jolcraft.datagen.recipe.builder.FermentingCauldronRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.recipe.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.output.EffectOutput;
+import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +31,9 @@ public record FermentingCauldronRecipesSubProvider(
         JolCraftDataProvider<RecipeOutput> parent
 ) implements RecipeSubProvider {
 
-    public FermentingCauldronRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+    public FermentingCauldronRecipesSubProvider(
+            @NotNull JolCraftDataProvider<RecipeOutput> parent
+    ) {
         this.parent = parent;
     }
 
@@ -161,22 +166,34 @@ public record FermentingCauldronRecipesSubProvider(
             int bubbleTicks,
             int colorRgb
     ) {
-        FermentingCauldronRecipeBuilder builder = FermentingCauldronRecipeBuilder.create()
-                .ingredient(ingredient)
-                .brewTicks(brewTicks)
-                .bubbleTicks(bubbleTicks)
-                .brewColor(argb(colorRgb))
-                .finalizeBrew(false)
-                .noEffect()
-                .noExtract();
+        FermentingCauldronRecipeBuilder builder =
+                FermentingCauldronRecipeBuilder.create()
+                        .id(recipeId(
+                                ingredient,
+                                "ferment",
+                                lastIngredient
+                        ))
+                        .ingredient(ItemInput.item(ingredient))
+                        .brewTicks(brewTicks)
+                        .bubbleTicks(bubbleTicks)
+                        .brewColor(argb(colorRgb))
+                        .finalizeBrew(false)
+                        .noEffect()
+                        .noExtract();
 
         if (lastIngredient != null) {
-            builder.lastIngredient(item(lastIngredient));
+            builder.lastIngredient(
+                    ItemInput.item(lastIngredient)
+            );
         } else {
             builder.noLastIngredient();
         }
 
-        emit(output, tracking, builder.buildValidated());
+        emit(
+                output,
+                tracking,
+                builder.buildValidated()
+        );
     }
 
     private void fermentingFinalize(
@@ -188,22 +205,34 @@ public record FermentingCauldronRecipesSubProvider(
             int bubbleTicks,
             int colorRgb
     ) {
-        FermentingCauldronRecipeBuilder builder = FermentingCauldronRecipeBuilder.create()
-                .ingredient(ingredient)
-                .brewTicks(brewTicks)
-                .bubbleTicks(bubbleTicks)
-                .brewColor(argb(colorRgb))
-                .finalizeBrew(true)
-                .noEffect()
-                .noExtract();
+        FermentingCauldronRecipeBuilder builder =
+                FermentingCauldronRecipeBuilder.create()
+                        .id(recipeId(
+                                ingredient,
+                                "finalize",
+                                lastIngredientTag
+                        ))
+                        .ingredient(ItemInput.item(ingredient))
+                        .brewTicks(brewTicks)
+                        .bubbleTicks(bubbleTicks)
+                        .brewColor(argb(colorRgb))
+                        .finalizeBrew(true)
+                        .noEffect()
+                        .noExtract();
 
         if (lastIngredientTag != null) {
-            builder.lastIngredient(tag(lastIngredientTag));
+            builder.lastIngredient(
+                    ItemInput.tag(lastIngredientTag)
+            );
         } else {
             builder.noLastIngredient();
         }
 
-        emit(output, tracking, builder.buildValidated());
+        emit(
+                output,
+                tracking,
+                builder.buildValidated()
+        );
     }
 
     private void fermentingEffect(
@@ -218,22 +247,38 @@ public record FermentingCauldronRecipesSubProvider(
             int duration,
             int amplifier
     ) {
-        FermentingCauldronRecipeBuilder builder = FermentingCauldronRecipeBuilder.create()
-                .ingredient(ingredient)
-                .brewTicks(brewTicks)
-                .bubbleTicks(bubbleTicks)
-                .brewColor(argb(colorRgb))
-                .finalizeBrew(false)
-                .effect(new EffectOutput(effect, duration, amplifier, Output.EffectTarget.PLAYER))
-                .noExtract();
+        FermentingCauldronRecipeBuilder builder =
+                FermentingCauldronRecipeBuilder.create()
+                        .id(recipeId(
+                                ingredient,
+                                "effect",
+                                lastIngredientTag
+                        ))
+                        .ingredient(ItemInput.item(ingredient))
+                        .brewTicks(brewTicks)
+                        .bubbleTicks(bubbleTicks)
+                        .brewColor(argb(colorRgb))
+                        .finalizeBrew(false)
+                        .effect(effect(
+                                effect,
+                                duration,
+                                amplifier
+                        ))
+                        .noExtract();
 
         if (lastIngredientTag != null) {
-            builder.lastIngredient(tag(lastIngredientTag));
+            builder.lastIngredient(
+                    ItemInput.tag(lastIngredientTag)
+            );
         } else {
             builder.noLastIngredient();
         }
 
-        emit(output, tracking, builder.buildValidated());
+        emit(
+                output,
+                tracking,
+                builder.buildValidated()
+        );
     }
 
     private void fermentingExtract(
@@ -243,40 +288,113 @@ public record FermentingCauldronRecipesSubProvider(
             @Nullable ItemLike lastIngredient,
             @NotNull ItemLike result
     ) {
-        FermentingCauldronRecipeBuilder builder = FermentingCauldronRecipeBuilder.create()
-                .ingredient(extractor)
-                .finalizeBrew(false)
-                .noEffect()
-                .noBrewColor()
-                .noBubbleTicks()
-                .extract(result, 1);
+        FermentingCauldronRecipeBuilder builder =
+                FermentingCauldronRecipeBuilder.create()
+                        .id(recipeId(
+                                extractor,
+                                "extract",
+                                result
+                        ))
+                        .ingredient(ItemInput.item(extractor))
+                        .finalizeBrew(false)
+                        .noEffect()
+                        .noBrewColor()
+                        .extract(itemResult(result));
 
         if (lastIngredient != null) {
-            builder.lastIngredient(item(lastIngredient));
+            builder.lastIngredient(
+                    ItemInput.item(lastIngredient)
+            );
         } else {
             builder.noLastIngredient();
         }
 
-        emit(output, tracking, builder.buildValidated());
+        emit(
+                output,
+                tracking,
+                builder.buildValidated()
+        );
     }
 
     private static int argb(int colorRgb) {
-        return 0xFF000000 | (colorRgb & 0xFFFFFF);
+        return 0xFF000000
+                | (colorRgb & 0xFFFFFF);
     }
 
-    private static @NotNull ItemSelector tag(@NotNull TagKey<Item> tag) {
-        return ItemSelector.of(
-                ItemIngredientBuilder.create()
-                        .tag(tag)
-                        .build()
+    private static EffectOutput effect(
+            Holder<MobEffect> effect,
+            int duration,
+            int amplifier
+    ) {
+        return EffectOutput.of(
+                new MobEffectInstance(
+                        effect,
+                        duration,
+                        amplifier
+                )
         );
     }
 
-    private static @NotNull ItemSelector item(@NotNull ItemLike item) {
-        return ItemSelector.of(
-                ItemIngredientBuilder.create()
-                        .item(item)
-                        .build()
+    private static ItemOutput itemResult(
+            ItemLike item
+    ) {
+        return ItemOutputs.item(
+                LootItem.lootTableItem(item)
         );
+    }
+
+    private static String recipeId(
+            ItemLike ingredient,
+            String operation,
+            @Nullable ItemLike relatedItem
+    ) {
+        String suffix = relatedItem == null
+                ? "empty"
+                : itemPath(relatedItem);
+
+        return recipeId(
+                ingredient,
+                operation,
+                suffix
+        );
+    }
+
+    private static String recipeId(
+            ItemLike ingredient,
+            String operation,
+            @Nullable TagKey<Item> relatedTag
+    ) {
+        String suffix = relatedTag == null
+                ? "empty"
+                : relatedTag.location()
+                .getPath()
+                .replace('/', '_');
+
+        return recipeId(
+                ingredient,
+                operation,
+                suffix
+        );
+    }
+
+    private static String recipeId(
+            ItemLike ingredient,
+            String operation,
+            String suffix
+    ) {
+        return itemPath(ingredient)
+                + "_"
+                + operation
+                + "_"
+                + suffix;
+    }
+
+    private static String itemPath(
+            ItemLike item
+    ) {
+        return BuiltInRegistries.ITEM
+                .getKey(item.asItem())
+                .getPath()
+                .replace('/', '_');
     }
 }

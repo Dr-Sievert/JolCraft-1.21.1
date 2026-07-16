@@ -4,7 +4,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -27,7 +26,7 @@ public interface JolCraftDataProvider<TTarget> {
     default String name() {
         return JolCraft.MOD_NAME + " " +
                 JolCraftStrings.toTitleCase(
-                        JolCraftStrings.underscored(id(), JolCraftParameterIds.PROVIDER)
+                        JolCraftStrings.underscored(id(), JolCraftDictionary.PROVIDER)
                 );
     }
 
@@ -115,7 +114,7 @@ public interface JolCraftDataProvider<TTarget> {
             @Nullable ExistingFileHelper existingFileHelper,
             @NotNull JolCraftDataTracking tracking
     ) {
-        Objects.requireNonNull(target, JolCraftParameterIds.TARGET);
+        Objects.requireNonNull(target, JolCraftDictionary.TARGET);
         Objects.requireNonNull(tracking, JolCraftDictionary.TRACK);
 
         run(target, packOutput, lookupProvider, existingFileHelper, tracking);

@@ -1,34 +1,97 @@
 package net.sievert.jolcraft.integration.jei.custom.dwarf_trade;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
-import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
-import net.sievert.jolcraft.world.recipe.param.input.custom.item.ItemInput;
-import net.sievert.jolcraft.param.runtime.WorldContext;
-import net.sievert.jolcraft.world.recipe.param.output.base.Output;
-import net.sievert.jolcraft.param.custom.quantity.IntRange;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeCost;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Optional;
 
 public record JeiDwarfTrade(
         DwarfTradeRecipe recipe,
         DeferredItem<Item> spawnEgg
 ) {
 
-    public DwarfProfession profession() {
+    private static final LootContextParamSet PREVIEW_CONTEXT_PARAMS =
+            new LootContextParamSet.Builder()
+                    .required(LootContextParams.THIS_ENTITY)
+                    .required(LootContextParams.ORIGIN)
+                    .build();
+
+    /**
+     * JEI display-only count range.
+     *
+     * This replaces the deleted recipe-system IntRange without adding that old
+     * parameter system back into the migrated recipe architecture.
+     */
+    public record AmountRange(
+            int min,
+            int max
+    ) {
+
+        public AmountRange {
+            int normalizedMin =
+                    Math.max(
+                            1,
+                            Math.min(
+                                    min,
+                                    max
+                            )
+                    );
+
+            int normalizedMax =
+                    Math.max(
+                            normalizedMin,
+                            Math.max(
+                                    min,
+                                    max
+                            )
+                    );
+
+            min =
+                    normalizedMin;
+
+            max =
+                    normalizedMax;
+        }
+
+        public static @NotNull AmountRange fixed(
+                int value
+        ) {
+            int normalized =
+                    Math.max(
+                            1,
+                            value
+                    );
+
+            return new AmountRange(
+                    normalized,
+                    normalized
+            );
+        }
+
+        public boolean fixed() {
+            return min == max;
+        }
+    }
+
+    public @NotNull DwarfProfession profession() {
         return recipe.profession();
     }
 
@@ -36,204 +99,155 @@ public record JeiDwarfTrade(
         return recipe.merchantLevel();
     }
 
-    public ItemStack inputAExample() {
-        WorldContext ctx = resolveJeiWorldContext();
-        if (ctx == null) {
-            return ItemStack.EMPTY;
-        }
+    public @NotNull ItemStack inputAExample() {
+        LootContext context =
+                resolveJeiLootContext();
 
-        return normalizeForJei(materializeInput(recipe.costA(), ctx, previewRandom()));
+        return normalizeForJei(
+                materializeInput(
+                        recipe.costA(),
+                        context
+                )
+        );
     }
 
     public @Nullable ItemStack inputBExample() {
-        ItemInput costB = recipe.costB();
+        TradeCost costB =
+                recipe.costB();
+
         if (costB == null) {
             return null;
         }
 
-        WorldContext ctx = resolveJeiWorldContext();
-        if (ctx == null) {
+        LootContext context =
+                resolveJeiLootContext();
+
+        ItemStack stack =
+                materializeInput(
+                        costB,
+                        context
+                );
+
+        if (stack.isEmpty()) {
             return null;
         }
 
-        ItemStack stack = materializeInput(costB, ctx, previewRandom());
-        return stack.isEmpty() ? null : normalizeForJei(stack);
+        return normalizeForJei(
+                stack
+        );
     }
 
-    public boolean costAItemIs(TagKey<Item> tag) {
-        WorldContext ctx = resolveJeiWorldContext();
-        if (ctx == null) {
-            return false;
+    public boolean costAItemIs(
+            @NotNull TagKey<Item> tag
+    ) {
+        return recipe.costA()
+                .contains(tag);
+    }
+
+    public boolean costBItemIs(
+            @NotNull TagKey<Item> tag
+    ) {
+        TradeCost costB =
+                recipe.costB();
+
+        return costB != null
+                && costB.contains(tag);
+    }
+
+    public @NotNull ItemStack outputExample() {
+        LootContext context =
+                resolveJeiLootContext();
+
+        if (context == null) {
+            return ItemStack.EMPTY;
         }
-        return inputUsesTag(recipe.costA(), ctx, tag);
+
+        DwarfTradeRecipeInput input =
+                buildPreviewInput(
+                        context
+                );
+
+        if (input.costA().isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack output =
+                recipe.resolveResult(
+                        context,
+                        input
+                );
+
+        return normalizeForJei(
+                output
+        );
     }
 
-    public boolean costBItemIs(TagKey<Item> tag) {
-        ItemInput costB = recipe.costB();
+    public @NotNull AmountRange inputAmountA() {
+        return amountRange(
+                recipe.costA()
+                        .count(),
+                resolveJeiLootContext()
+        );
+    }
+
+    public @Nullable AmountRange inputAmountB() {
+        TradeCost costB =
+                recipe.costB();
+
         if (costB == null) {
-            return false;
-        }
-
-        WorldContext ctx = resolveJeiWorldContext();
-        if (ctx == null) {
-            return false;
-        }
-
-        return inputUsesTag(costB, ctx, tag);
-    }
-
-    public ItemStack outputExample() {
-        WorldContext ctx = resolveJeiWorldContext();
-        if (ctx == null) {
-            return ItemStack.EMPTY;
-        }
-
-        RandomSource random = previewRandom();
-        DwarfTradeRecipeInput input = buildPreviewInput(ctx, random);
-
-        List<Output> generated = recipe.result().generateResolved(ctx, input);
-        if (generated.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        for (Output output : generated) {
-            if (output instanceof Output.Items items) {
-                List<ItemStack> stacks = items.stacksSafe();
-                if (!stacks.isEmpty()) {
-                    ItemStack first = stacks.getFirst();
-                    if (!first.isEmpty()) {
-                        return normalizeForJei(first);
-                    }
-                }
-            }
-        }
-
-        return ItemStack.EMPTY;
-    }
-
-    public IntRange inputAmountA() {
-        return recipe.costA().count();
-    }
-
-    public @Nullable IntRange inputAmountB() {
-        ItemInput costB = recipe.costB();
-        if (costB == null) {
             return null;
         }
 
-        return costB.count();
+        return amountRange(
+                costB.count(),
+                resolveJeiLootContext()
+        );
     }
 
-    public IntRange outputAmount() {
-        ItemStack preview = outputExample();
-        return IntRange.fixed(Math.max(1, preview.getCount()));
+    /**
+     * The migrated ItemOutput can contain arbitrary loot functions and hooks,
+     * so its general count range cannot safely be inferred structurally.
+     *
+     * Preserve the old JEI behavior by displaying the count of the generated
+     * preview stack.
+     */
+    public @NotNull AmountRange outputAmount() {
+        ItemStack preview =
+                outputExample();
+
+        return AmountRange.fixed(
+                preview.isEmpty()
+                        ? 1
+                        : preview.getCount()
+        );
     }
 
-    private static ItemStack materializeInput(@Nullable ItemInput input, WorldContext ctx, RandomSource random) {
-        if (input == null) {
-            return ItemStack.EMPTY;
-        }
+    private @NotNull DwarfTradeRecipeInput buildPreviewInput(
+            @NotNull LootContext context
+    ) {
+        ItemStack costA =
+                materializeInput(
+                        recipe.costA(),
+                        context
+                );
 
-        Holder<Item> holder = resolvePreviewItem(input, ctx);
-        if (holder == null) {
-            return ItemStack.EMPTY;
-        }
+        ItemStack costB =
+                ItemStack.EMPTY;
 
-        int rolled = input.count().roll(random);
-        if (rolled < 1) {
-            return ItemStack.EMPTY;
-        }
-
-        ItemStack stack = new ItemStack(holder.value(), rolled);
-        return input.matches(ctx, stack) ? stack : ItemStack.EMPTY;
-    }
-
-    private static boolean inputUsesTag(@Nullable ItemInput input, WorldContext ctx, TagKey<Item> wantedTag) {
-        if (input == null) {
-            return false;
-        }
-
-        Optional<Holder<Item>> concrete = input.singleConcrete(Registries.ITEM);
-        if (concrete.isPresent()) {
-            return concrete.get().is(wantedTag);
-        }
-
-        for (var introspection : input.introspections()) {
-            if (!Registries.ITEM.equals(introspection.registryKey())) {
-                continue;
-            }
-
-            var tagOpt = introspection.singleTagOpt();
-            if (tagOpt.isEmpty()) {
-                continue;
-            }
-
-            @SuppressWarnings("unchecked")
-            TagKey<Item> actualTag = (TagKey<Item>) tagOpt.get();
-
-            if (actualTag.equals(wantedTag)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static @Nullable Holder<Item> resolvePreviewItem(@Nullable ItemInput input, WorldContext ctx) {
-        if (input == null) {
-            return null;
-        }
-
-        Optional<Holder<Item>> concrete = input.singleConcrete(Registries.ITEM);
-        if (concrete.isPresent()) {
-            return concrete.get();
-        }
-
-        var lookup = ctx.level().registryAccess().lookupOrThrow(Registries.ITEM);
-
-        for (var introspection : input.introspections()) {
-            if (!Registries.ITEM.equals(introspection.registryKey())) {
-                continue;
-            }
-
-            var tagOpt = introspection.singleTagOpt();
-            if (tagOpt.isEmpty()) {
-                continue;
-            }
-
-            @SuppressWarnings("unchecked")
-            TagKey<Item> tag = (TagKey<Item>) tagOpt.get();
-
-            var namedOpt = lookup.get(tag);
-            if (namedOpt.isEmpty()) {
-                continue;
-            }
-
-            var named = namedOpt.get();
-            if (named.size() == 0) {
-                continue;
-            }
-
-            return named.get(0);
-        }
-
-        return null;
-    }
-
-    private DwarfTradeRecipeInput buildPreviewInput(WorldContext ctx, RandomSource random) {
-        ItemStack costA = materializeInput(recipe.costA(), ctx, random);
-
-        ItemStack costB = ItemStack.EMPTY;
         if (recipe.costB() != null) {
-            costB = materializeInput(recipe.costB(), ctx, random);
+            costB =
+                    materializeInput(
+                            recipe.costB(),
+                            context
+                    );
         }
 
-        DwarfMerchantData.Level previewLevel = recipe.merchantLevel() != null
-                ? recipe.merchantLevel()
-                : DwarfMerchantData.Level.NOVICE;
+        DwarfMerchantData.Level previewLevel =
+                recipe.merchantLevel() != null
+                        ? recipe.merchantLevel()
+                        : DwarfMerchantData.Level.NOVICE;
 
         return new DwarfTradeRecipeInput(
-                ctx,
                 recipe.profession(),
                 previewLevel,
                 costA,
@@ -241,30 +255,207 @@ public record JeiDwarfTrade(
         );
     }
 
-    private static ItemStack normalizeForJei(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return stack;
+    private static @NotNull ItemStack materializeInput(
+            @Nullable TradeCost cost,
+            @Nullable LootContext context
+    ) {
+        if (cost == null) {
+            return ItemStack.EMPTY;
         }
 
-        ItemStack copy = stack.copy();
+        ItemStack[] candidates =
+                cost.candidateItems();
+
+        if (candidates.length == 0) {
+            return ItemStack.EMPTY;
+        }
+
+        for (ItemStack candidate : candidates) {
+            if (candidate == null
+                    || candidate.isEmpty()) {
+                continue;
+            }
+
+            ItemStack resolved =
+                    candidate.copy();
+
+            if (!cost.test(resolved)) {
+                continue;
+            }
+
+            int count;
+
+            if (context != null) {
+                count =
+                        cost.resolveCount(
+                                context
+                        );
+            } else {
+                count =
+                        amountRange(
+                                cost.count(),
+                                null
+                        ).min();
+            }
+
+            if (count < 1) {
+                continue;
+            }
+
+            resolved.setCount(
+                    count
+            );
+
+            return resolved;
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    private static @NotNull AmountRange amountRange(
+            @NotNull NumberProvider provider,
+            @Nullable LootContext context
+    ) {
+        if (provider instanceof ConstantValue constant) {
+            return AmountRange.fixed(
+                    Mth.floor(
+                            constant.value()
+                    )
+            );
+        }
+
+        if (provider instanceof UniformGenerator uniform) {
+            int min =
+                    providerMinimum(
+                            uniform.min(),
+                            context
+                    );
+
+            int max =
+                    providerMaximum(
+                            uniform.max(),
+                            context
+                    );
+
+            return new AmountRange(
+                    min,
+                    max
+            );
+        }
+
+        if (context != null) {
+            return AmountRange.fixed(
+                    provider.getInt(
+                            context
+                    )
+            );
+        }
+
+        return AmountRange.fixed(1);
+    }
+
+    private static int providerMinimum(
+            @NotNull NumberProvider provider,
+            @Nullable LootContext context
+    ) {
+        if (provider instanceof ConstantValue constant) {
+            return Mth.floor(
+                    constant.value()
+            );
+        }
+
+        if (provider instanceof UniformGenerator uniform) {
+            return providerMinimum(
+                    uniform.min(),
+                    context
+            );
+        }
+
+        if (context != null) {
+            return provider.getInt(
+                    context
+            );
+        }
+
+        return 1;
+    }
+
+    private static int providerMaximum(
+            @NotNull NumberProvider provider,
+            @Nullable LootContext context
+    ) {
+        if (provider instanceof ConstantValue constant) {
+            return Mth.floor(
+                    constant.value()
+            );
+        }
+
+        if (provider instanceof UniformGenerator uniform) {
+            return providerMaximum(
+                    uniform.max(),
+                    context
+            );
+        }
+
+        if (context != null) {
+            return provider.getInt(
+                    context
+            );
+        }
+
+        return 1;
+    }
+
+    private static @NotNull ItemStack normalizeForJei(
+            @NotNull ItemStack stack
+    ) {
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack copy =
+                stack.copy();
+
         copy.setCount(1);
+
         return copy;
     }
 
-    private static RandomSource previewRandom() {
-        return RandomSource.create(0xDEADBEEFL);
-    }
+    private static @Nullable LootContext resolveJeiLootContext() {
+        Minecraft minecraft =
+                Minecraft.getInstance();
 
-    private static @Nullable WorldContext resolveJeiWorldContext() {
-        Minecraft mc = Minecraft.getInstance();
-        Player player = mc.player;
-        ServerLevel serverLevel =
-                mc.getSingleplayerServer() != null ? mc.getSingleplayerServer().overworld() : null;
-
-        if (serverLevel == null || player == null) {
+        if (minecraft.player == null
+                || minecraft.getSingleplayerServer() == null) {
             return null;
         }
 
-        return new WorldContext(player, null);
+        ServerPlayer serverPlayer =
+                minecraft.getSingleplayerServer()
+                        .getPlayerList()
+                        .getPlayer(
+                                minecraft.player.getUUID()
+                        );
+
+        if (serverPlayer == null) {
+            return null;
+        }
+
+        ServerLevel serverLevel =
+                serverPlayer.serverLevel();
+
+        return JolCraftRecipeContexts.create(
+                serverLevel,
+                PREVIEW_CONTEXT_PARAMS,
+                builder -> builder
+                        .withParameter(
+                                LootContextParams.THIS_ENTITY,
+                                serverPlayer
+                        )
+                        .withParameter(
+                                LootContextParams.ORIGIN,
+                                serverPlayer.position()
+                        )
+        );
     }
 }

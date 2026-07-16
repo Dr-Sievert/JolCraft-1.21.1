@@ -7,7 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.worldgen.test.JolCraftRuleTests;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ public class RandomNotAirRuleTest extends RuleTest {
 
     public static final MapCodec<RandomNotAirRuleTest> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.floatRange(0.0F, 1.0F)
-                    .fieldOf(JolCraftParameterIds.CHANCE)
+                    .fieldOf(JolCraftDictionary.CHANCE)
                     .forGetter(test -> test.probability)
     ).apply(instance, RandomNotAirRuleTest::new));
 

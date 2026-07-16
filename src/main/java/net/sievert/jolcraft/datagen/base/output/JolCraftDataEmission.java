@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.datagen.base.output;
 
-import net.sievert.jolcraft.data.id.param.JolCraftParameterIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,8 +39,8 @@ public final class JolCraftDataEmission<TTarget> {
 
     public void save(@NotNull TTarget target, @NotNull String path) {
         saveAction.accept(
-                Objects.requireNonNull(target, JolCraftParameterIds.TARGET),
-                Objects.requireNonNull(path, JolCraftParameterIds.PATH)
+                Objects.requireNonNull(target, JolCraftDictionary.TARGET),
+                Objects.requireNonNull(path, JolCraftDictionary.PATH)
         );
     }
 }

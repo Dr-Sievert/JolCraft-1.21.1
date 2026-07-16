@@ -1,34 +1,40 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.TagEntry;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
-import net.sievert.jolcraft.world.recipe.param.input.custom.item.selector.ItemSelector;
-import net.sievert.jolcraft.world.recipe.param.output.custom.SoundOutput;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemOutput;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemProducer;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.ItemSpec;
-import net.sievert.jolcraft.world.recipe.param.output.custom.item.transform.ItemTransforms;
-import net.sievert.jolcraft.param.custom.quantity.IntRange;
+import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.builder.custom.LapidaryBenchRecipeBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.ItemInputBuilder;
-import net.sievert.jolcraft.datagen.recipe.builder.param.input.custom.item.selector.ItemIngredientBuilder;
+import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.builder.LapidaryBenchRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.recipe.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
+import net.sievert.jolcraft.world.recipe.output.SoundOutput;
+import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
 public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
-    public LapidaryRecipesSubProvider(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
+    public LapidaryRecipesSubProvider(
+            @NotNull JolCraftDataProvider<RecipeOutput> parent
+    ) {
         this.parent = parent;
     }
 
@@ -54,12 +60,38 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
             @NotNull JolCraftDataTracking tracking
     ) {
         // ------------------------------------------------------------
-        // HAMMER → random uncut gems (from geodes)
+        // HAMMER → random uncut gems from geodes
         // ------------------------------------------------------------
 
-        hammerToTag(output, tracking, JolCraftItems.GEODE_SMALL.get(), JolCraftTags.Items.GEMS_UNCUT, 1, 2, 1);
-        hammerToTag(output, tracking, JolCraftItems.GEODE_MEDIUM.get(), JolCraftTags.Items.GEMS_UNCUT, 2, 3, 1);
-        hammerToTag(output, tracking, JolCraftItems.GEODE_LARGE.get(), JolCraftTags.Items.GEMS_UNCUT, 3, 5, 1);
+        hammerToTag(
+                output,
+                tracking,
+                JolCraftItems.GEODE_SMALL.get(),
+                JolCraftTags.Items.GEMS_UNCUT,
+                1,
+                2,
+                1
+        );
+
+        hammerToTag(
+                output,
+                tracking,
+                JolCraftItems.GEODE_MEDIUM.get(),
+                JolCraftTags.Items.GEMS_UNCUT,
+                2,
+                3,
+                1
+        );
+
+        hammerToTag(
+                output,
+                tracking,
+                JolCraftItems.GEODE_LARGE.get(),
+                JolCraftTags.Items.GEMS_UNCUT,
+                3,
+                5,
+                1
+        );
 
         // ------------------------------------------------------------
         // HAMMER → dust
@@ -111,19 +143,25 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
             int maxCount,
             int xp
     ) {
-        emit(output, tracking,
+        emit(
+                output,
+                tracking,
                 LapidaryBenchRecipeBuilder.create()
-                        .input(
-                                ItemInputBuilder.create()
-                                        .item(input)
-                                        .count(IntRange.ONE)
-                                        .build()
-                        )
+                        .id(recipeId(
+                                input,
+                                "hammer_to",
+                                dust
+                        ))
+                        .input(ItemInput.item(input))
                         .tool(hammerTool())
-                        .result(itemResult(dust, minCount, maxCount))
+                        .result(itemResult(
+                                dust,
+                                minCount,
+                                maxCount
+                        ))
                         .sound(hammerGemCrushSound())
-                        .xp(IntRange.fixed(xp))
-                        .toolDamage(IntRange.ONE)
+                        .xp(ConstantValue.exactly(xp))
+                        .toolDamage(ConstantValue.exactly(1.0F))
                         .buildValidated()
         );
     }
@@ -137,19 +175,25 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
             int maxCount,
             int xp
     ) {
-        emit(output, tracking,
+        emit(
+                output,
+                tracking,
                 LapidaryBenchRecipeBuilder.create()
-                        .input(
-                                ItemInputBuilder.create()
-                                        .item(input)
-                                        .count(IntRange.ONE)
-                                        .build()
-                        )
+                        .id(recipeId(
+                                input,
+                                "hammer_to",
+                                resultTag.location().getPath()
+                        ))
+                        .input(ItemInput.item(input))
                         .tool(hammerTool())
-                        .result(tagResult(resultTag, minCount, maxCount))
+                        .result(tagResult(
+                                resultTag,
+                                minCount,
+                                maxCount
+                        ))
                         .sound(hammerGeodeBreakSound())
-                        .xp(IntRange.fixed(xp))
-                        .toolDamage(IntRange.ONE)
+                        .xp(ConstantValue.exactly(xp))
+                        .toolDamage(ConstantValue.exactly(1.0F))
                         .buildValidated()
         );
     }
@@ -161,68 +205,134 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
             ItemLike cutGem,
             int xp
     ) {
-        emit(output, tracking,
+        emit(
+                output,
+                tracking,
                 LapidaryBenchRecipeBuilder.create()
-                        .input(
-                                ItemInputBuilder.create()
-                                        .item(input)
-                                        .count(IntRange.ONE)
-                                        .build()
-                        )
+                        .id(recipeId(
+                                input,
+                                "chisel_to",
+                                cutGem
+                        ))
+                        .input(ItemInput.item(input))
                         .tool(chiselTool())
-                        .result(itemResult(cutGem, 1, 1))
+                        .result(itemResult(
+                                cutGem,
+                                1,
+                                1
+                        ))
                         .sound(chiselGemCutSound())
-                        .xp(IntRange.fixed(xp))
-                        .toolDamage(IntRange.ONE)
+                        .xp(ConstantValue.exactly(xp))
+                        .toolDamage(ConstantValue.exactly(1.0F))
                         .buildValidated()
         );
     }
-
-    private static ItemSelector hammerTool() {
-        return ItemSelector.of(
-                ItemIngredientBuilder.create()
-                        .tag(JolCraftTags.Items.ARTISAN_HAMMERS)
-                        .build()
+    private static ItemInput hammerTool() {
+        return ItemInput.tag(
+                JolCraftTags.Items.ARTISAN_HAMMERS
         );
     }
 
-    private static ItemSelector chiselTool() {
-        return ItemSelector.of(
-                ItemIngredientBuilder.create()
-                        .tag(JolCraftTags.Items.CHISELS)
-                        .build()
+    private static ItemInput chiselTool() {
+        return ItemInput.tag(
+                JolCraftTags.Items.CHISELS
         );
     }
 
     private static SoundOutput hammerGeodeBreakSound() {
-        return SoundOutput.of(SoundEvents.DEEPSLATE_BREAK, 0.8F, 1.5F);
+        return SoundOutputs.sound(
+                SoundEvents.DEEPSLATE_BREAK,
+                SoundSource.BLOCKS,
+                ConstantValue.exactly(0.8F),
+                ConstantValue.exactly(1.5F)
+        );
     }
 
     private static SoundOutput hammerGemCrushSound() {
-        return SoundOutput.of(SoundEvents.AMETHYST_BLOCK_BREAK, 0.8F, 1.5F);
+        return SoundOutputs.sound(
+                SoundEvents.AMETHYST_BLOCK_BREAK,
+                SoundSource.BLOCKS,
+                ConstantValue.exactly(0.8F),
+                ConstantValue.exactly(1.5F)
+        );
     }
 
     private static SoundOutput chiselGemCutSound() {
-        return SoundOutput.of(JolCraftSounds.GEM_CUT.get(), 0.8F, 1.0F);
-    }
-
-    private static ItemOutput itemResult(ItemLike item, int minCount, int maxCount) {
-        return new ItemOutput(
-                new ItemSpec(
-                        ItemProducer.item(item.asItem()),
-                        new IntRange(minCount, maxCount)
-                ),
-                ItemTransforms.EMPTY
+        return SoundOutputs.sound(
+                JolCraftSounds.GEM_CUT,
+                SoundSource.BLOCKS,
+                ConstantValue.exactly(0.8F),
+                ConstantValue.exactly(1.0F)
         );
     }
 
-    private static ItemOutput tagResult(TagKey<Item> tag, int minCount, int maxCount) {
-        return new ItemOutput(
-                new ItemSpec(
-                        ItemProducer.tag(tag),
-                        new IntRange(minCount, maxCount)
-                ),
-                ItemTransforms.EMPTY
+    private static ItemOutput itemResult(
+            ItemLike item,
+            int minCount,
+            int maxCount
+    ) {
+        return ItemOutputs.item(
+                LootItem.lootTableItem(item)
+                        .apply(SetItemCountFunction.setCount(
+                                count(minCount, maxCount)
+                        ))
         );
+    }
+
+    private static ItemOutput tagResult(
+            TagKey<Item> tag,
+            int minCount,
+            int maxCount
+    ) {
+        return ItemOutputs.item(
+                TagEntry.expandTag(tag)
+                        .apply(SetItemCountFunction.setCount(
+                                count(minCount, maxCount)
+                        ))
+        );
+    }
+
+    private static NumberProvider count(
+            int min,
+            int max
+    ) {
+        if (min == max) {
+            return ConstantValue.exactly(min);
+        }
+
+        return UniformGenerator.between(
+                min,
+                max
+        );
+    }
+
+    private static String recipeId(
+            ItemLike input,
+            String operation,
+            ItemLike result
+    ) {
+        return recipeId(
+                input,
+                operation,
+                BuiltInRegistries.ITEM
+                        .getKey(result.asItem())
+                        .getPath()
+        );
+    }
+
+    private static String recipeId(
+            ItemLike input,
+            String operation,
+            String result
+    ) {
+        String inputId = BuiltInRegistries.ITEM
+                .getKey(input.asItem())
+                .getPath();
+
+        return inputId
+                + "_"
+                + operation
+                + "_"
+                + result.replace('/', '_');
     }
 }

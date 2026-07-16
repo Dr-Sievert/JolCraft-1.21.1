@@ -30,6 +30,8 @@ import net.sievert.jolcraft.world.loot.JolCraftLootModifiers;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
+import net.sievert.jolcraft.world.recipe.condition.JolCraftRecipeConditionTypes;
+import net.sievert.jolcraft.world.recipe.output.JolCraftRecipeOutputTypes;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftFeatures;
 import net.sievert.jolcraft.world.worldgen.predicate.JolCraftBlockPredicateTypes;
@@ -72,6 +74,8 @@ public class JolCraft {
         JolCraftFeatures.register(modEventBus);
         JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);
         JolCraftRuleTests.register(modEventBus);
+        JolCraftRecipeConditionTypes.register(modEventBus);
+        JolCraftRecipeOutputTypes.register(modEventBus);
 
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,
