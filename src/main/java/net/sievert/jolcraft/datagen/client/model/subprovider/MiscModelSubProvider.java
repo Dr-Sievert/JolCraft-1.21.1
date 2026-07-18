@@ -65,6 +65,27 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
 
         createHearth(builder, JolCraftBlocks.HEARTH.get());
         createManagedLight(builder, JolCraftBlocks.MANAGED_LIGHT.get());
+
+        builder.manualBlockState(JolCraftBlocks.DEEPSLATE_MORTAR.get());
+        builder.manualBlockState(JolCraftBlocks.STRONGBOX.get());
+
+        builder.flatItemWithOverlay(
+                JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(),
+                "compass"
+        );
+
+        builder.handheldItemWithOverlay(
+                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
+                "compass"
+        );
+
+        builder.compassItem(
+                JolCraftItems.DEEPSLATE_COMPASS.get(),
+                JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(),
+                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
+                JolCraft.location("deepslate_compass_angle"),
+                "compass"
+        );
     }
 
     private static void generateCoinPouchModel(@NotNull JolCraftModelBuilder builder) {

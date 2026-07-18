@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
@@ -38,6 +39,12 @@ public record BrewingModelSubProvider(@NotNull JolCraftModelProvider parent) imp
         builder.flatItem(JolCraftItems.GLASS_MUG.get(), SUB_BREWING);
 
         fermentingCauldron(builder);
+
+        builder.layeredItem(
+                JolCraftItems.DWARVEN_BREW.get(),
+                JolCraft.location("item/brewing/glass_mug"),
+                JolCraft.location("item/brewing/dwarven_brew")
+        );
     }
 
     private static void fermentingCauldron(@NotNull JolCraftModelBuilder builder) {

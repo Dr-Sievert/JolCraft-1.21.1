@@ -1,7 +1,9 @@
 package net.sievert.jolcraft.datagen.client.model;
 
 import com.google.common.collect.Maps;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.data.CachedOutput;
@@ -28,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -39,6 +42,12 @@ public final class JolCraftModelBuilder {
 
     private static final String ITEM_PREFIX = "item/";
     private static final String BLOCK_PREFIX = "block/";
+
+    private static final String GENERATED_ITEM_PARENT = "minecraft:item/generated";
+    private static final String HANDHELD_ITEM_PARENT = "minecraft:item/handheld";
+
+    private static final int COMPASS_FRAME_COUNT = 32;
+    private static final int COMPASS_BASE_FRAME = COMPASS_FRAME_COUNT / 2;
 
     private final @NotNull JolCraftModelProvider provider;
     private final @NotNull PackOutput.PathProvider blockStatePathProvider;
@@ -395,5 +404,191 @@ public final class JolCraftModelBuilder {
                 TextureMapping.cross(plantBlock),
                 TextureMapping.plant(plantBlock)
         );
+    }
+
+    public void manualBlockState(@NotNull Block block) {
+        addBlockState(MultiVariantGenerator.multiVariant(
+                block,
+                Variant.variant().with(
+                        VariantProperties.MODEL,
+                        ModelLocationUtils.getModelLocation(block)
+                )
+        ));
+    }
+
+    private static @NotNull JsonObject layeredItemModel(
+            @NotNull String parent,
+            @NotNull ResourceLocation... textures
+    ) {
+        if (textures.length == 0) {
+            throw new IllegalArgumentException(
+                    "A layered item model requires at least one texture"
+            );
+        }
+
+        JsonObject json = new JsonObject();
+        json.addProperty("parent", parent);
+
+        JsonObject textureJson = new JsonObject();
+        for (int layer = 0; layer < textures.length; layer++) {
+            textureJson.addProperty(
+                    "layer" + layer,
+                    textures[layer].toString()
+            );
+        }
+
+        json.add("textures", textureJson);
+        return json;
+    }
+
+    private static @NotNull ResourceLocation compassFrame(
+            @NotNull ResourceLocation base,
+            int frame
+    ) {
+        return base.withSuffix(
+                String.format(Locale.ROOT, "_%02d", frame)
+        );
+    }
+
+    public void layeredItem(
+            @NotNull Item item,
+            @NotNull ResourceLocation... textures
+    ) {
+        addModel(
+                ModelLocationUtils.getModelLocation(item),
+                () -> layeredItemModel(GENERATED_ITEM_PARENT, textures)
+        );
+    }
+
+    public void layeredHandheldItem(
+            @NotNull Item item,
+            @NotNull ResourceLocation... textures
+    ) {
+        addModel(
+                ModelLocationUtils.getModelLocation(item),
+                () -> layeredItemModel(HANDHELD_ITEM_PARENT, textures)
+        );
+    }
+
+    public void flatItemWithOverlay(
+            @NotNull Item item,
+            @NotNull String subFolder
+    ) {
+        ResourceLocation texture = itemTexture(item, subFolder);
+
+        layeredItem(
+                item,
+                texture,
+                texture.withSuffix("_overlay")
+        );
+    }
+
+    public void handheldItemWithOverlay(
+            @NotNull Item item,
+            @NotNull String subFolder
+    ) {
+        ResourceLocation texture = itemTexture(item, subFolder);
+
+        layeredHandheldItem(
+                item,
+                texture,
+                texture.withSuffix("_overlay")
+        );
+    }
+
+    public void compassItem(
+            @NotNull Item compass,
+            @NotNull Item emptyCompass,
+            @NotNull Item dial,
+            @NotNull ResourceLocation angleProperty,
+            @NotNull String subFolder
+    ) {
+        ResourceLocation model =
+                ModelLocationUtils.getModelLocation(compass);
+
+        ResourceLocation bodyTexture =
+                itemTexture(emptyCompass, subFolder);
+        ResourceLocation bodyOverlayTexture =
+                bodyTexture.withSuffix("_overlay");
+
+        ResourceLocation dialTexture =
+                itemTexture(dial, subFolder);
+        ResourceLocation dialExtraTexture =
+                dialTexture.withSuffix("_extra");
+
+        // Vanilla generates all suffixed models except frame 16.
+        // The root compass model itself represents frame 16.
+        for (int frame = 0; frame < COMPASS_FRAME_COUNT; frame++) {
+            if (frame == COMPASS_BASE_FRAME) {
+                continue;
+            }
+
+            ResourceLocation frameModel =
+                    compassFrame(model, frame);
+            ResourceLocation frameDialExtra =
+                    compassFrame(dialExtraTexture, frame);
+            ResourceLocation frameDial =
+                    compassFrame(dialTexture, frame);
+
+            addModel(
+                    frameModel,
+                    () -> layeredItemModel(
+                            GENERATED_ITEM_PARENT,
+                            bodyTexture,
+                            bodyOverlayTexture,
+                            frameDialExtra,
+                            frameDial
+                    )
+            );
+        }
+
+        addModel(model, () -> {
+            JsonObject json = layeredItemModel(
+                    GENERATED_ITEM_PARENT,
+                    bodyTexture,
+                    bodyOverlayTexture,
+                    compassFrame(
+                            dialExtraTexture,
+                            COMPASS_BASE_FRAME
+                    ),
+                    compassFrame(
+                            dialTexture,
+                            COMPASS_BASE_FRAME
+                    )
+            );
+
+            JsonArray overrides = new JsonArray();
+
+            // 33 entries: frame 16 occurs at both ends of the cycle.
+            for (int step = 0; step <= COMPASS_FRAME_COUNT; step++) {
+                int frame =
+                        (COMPASS_BASE_FRAME + step) % COMPASS_FRAME_COUNT;
+
+                float angle = step == 0
+                        ? 0.0F
+                        : (2 * step - 1)
+                        / (2.0F * COMPASS_FRAME_COUNT);
+
+                JsonObject predicate = new JsonObject();
+                predicate.addProperty(
+                        angleProperty.toString(),
+                        angle
+                );
+
+                JsonObject override = new JsonObject();
+                override.add("predicate", predicate);
+                override.addProperty(
+                        "model",
+                        frame == COMPASS_BASE_FRAME
+                                ? model.toString()
+                                : compassFrame(model, frame).toString()
+                );
+
+                overrides.add(override);
+            }
+
+            json.add("overrides", overrides);
+            return json;
+        });
     }
 }

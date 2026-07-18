@@ -109,7 +109,7 @@ public record CropModelSubProvider(@NotNull JolCraftModelProvider parent) implem
                 JsonObject root = new JsonObject();
                 JsonObject variants = new JsonObject();
                 for (int age = 0; age <= 9; age++) {
-                    variants.add("age=" + age, modelObj("block/deepslate_bulbs_crop_stage" + age));
+                    variants.add("age=" + age, modelObj("block/deepslate_bulbs/deepslate_bulbs_crop_stage" + age));
                 }
                 root.add("variants", variants);
                 return root;
