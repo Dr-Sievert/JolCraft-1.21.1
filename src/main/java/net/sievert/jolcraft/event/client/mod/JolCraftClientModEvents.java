@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.event.client.mod;
 
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -9,12 +10,15 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.client.color.JolCraftItemColors;
 import net.sievert.jolcraft.world.item.client.property.JolCraftItemProperties;
 import net.sievert.jolcraft.world.item.client.tooltip.JolCraftTooltipRenderers;
@@ -32,6 +36,8 @@ import net.sievert.jolcraft.world.gui.client.screen.DwarfMerchantScreen;
 import net.sievert.jolcraft.world.gui.client.screen.LapidaryBenchScreen;
 import net.sievert.jolcraft.world.gui.client.screen.LockScreen;
 import net.sievert.jolcraft.world.gui.client.screen.StrongboxScreen;
+import net.sievert.jolcraft.world.item.custom.container.strongbox.client.StrongboxItemRenderer;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 @SuppressWarnings("removal")
@@ -142,5 +148,21 @@ public final class JolCraftClientModEvents {
         event.register(JolCraftMenuTypes.LAPIDARY_BENCH_MENU.get(), LapidaryBenchScreen::new); screens++;
 
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} menu screens", screens);
+    }
+
+    @SubscribeEvent
+    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(
+                new IClientItemExtensions() {
+                    private final StrongboxItemRenderer renderer =
+                            new StrongboxItemRenderer();
+
+                    @Override
+                    public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                        return this.renderer;
+                    }
+                },
+                JolCraftItems.STRONGBOX_ITEM.get()
+        );
     }
 }

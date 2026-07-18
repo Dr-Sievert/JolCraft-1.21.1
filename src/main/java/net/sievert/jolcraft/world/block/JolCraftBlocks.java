@@ -27,7 +27,6 @@ public final class JolCraftBlocks {
     public static final DeferredBlock<Block> DEEPSLATE_MORTAR = JolCraftStationBlocks.registerDeepslateMortar();
     public static final DeferredBlock<Block> LAPIDARY_BENCH = JolCraftStationBlocks.registerLapidaryBench();
     public static final DeferredBlock<Block> STRONGBOX = JolCraftStationBlocks.registerStrongbox();
-    public static final DeferredBlock<Block> STRONGBOX_DUMMY = JolCraftStationBlocks.registerStrongboxDummy();
     public static final DeferredBlock<Block> HEARTH = JolCraftStationBlocks.registerHearth();
     public static final DeferredBlock<FermentingCauldronBlock> FERMENTING_CAULDRON = JolCraftStationBlocks.registerFermentingCauldron();
 

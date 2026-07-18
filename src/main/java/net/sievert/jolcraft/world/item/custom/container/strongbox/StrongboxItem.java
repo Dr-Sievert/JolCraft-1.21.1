@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom.container;
+package net.sievert.jolcraft.world.item.custom.container.strongbox;
 
 import com.google.common.collect.Iterables;
 import net.minecraft.ChatFormatting;

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implements BlockEntityRenderer<T> {
-    private final BlockEntityRendererProvider.Context context;
+
     private static final ResourceLocation TEXTURE =
             JolCraftTextures.mod(
                     JolCraftTextures.entity(
@@ -33,43 +33,57 @@ public class StrongboxRenderer<T extends BlockEntity & LidBlockEntity> implement
                     )
             );
 
-    public final StrongboxModel model;
+    private final StrongboxModel model;
 
     public StrongboxRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new StrongboxModel(context.bakeLayer(StrongboxModel.LAYER_LOCATION));
-        this.context = context;
-
+        this.model = new StrongboxModel(
+                context.bakeLayer(StrongboxModel.LAYER_LOCATION)
+        );
     }
 
     @Override
-    public void render(T tileEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(
+            T tileEntity,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay
+    ) {
         poseStack.pushPose();
 
         poseStack.translate(0.5F, 0.75F, 0.5F);
 
         BlockState state = tileEntity.getBlockState();
         Direction facing = state.getValue(StrongboxBlock.FACING);
+
         poseStack.mulPose(Axis.YP.rotationDegrees(-facing.toYRot()));
-
-        poseStack.mulPose(Axis.XP.rotationDegrees(180));
-
-        poseStack.translate(0F, -0.75F, 0F);
+        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+        poseStack.translate(0.0F, -0.75F, 0.0F);
 
         float openness = tileEntity.getOpenNess(partialTicks);
         openness = 1.0F - openness;
         openness = 1.0F - openness * openness * openness;
 
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
-        StrongboxModel freshModel = new StrongboxModel(context.bakeLayer(StrongboxModel.LAYER_LOCATION));
-        freshModel.setupAnim(openness);
-        freshModel.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay);
+        VertexConsumer vertexConsumer =
+                bufferSource.getBuffer(RenderType.entityCutout(TEXTURE));
+
+        this.model.setupAnim(openness);
+        this.model.renderToBuffer(
+                poseStack,
+                vertexConsumer,
+                packedLight,
+                packedOverlay
+        );
 
         poseStack.popPose();
     }
 
-
     @Override
     public @NotNull AABB getRenderBoundingBox(T blockEntity) {
-        return AABB.encapsulatingFullBlocks(blockEntity.getBlockPos().offset(-1, 0, -1), blockEntity.getBlockPos().offset(1, 1, 1));
+        return AABB.encapsulatingFullBlocks(
+                blockEntity.getBlockPos().offset(-1, 0, -1),
+                blockEntity.getBlockPos().offset(1, 1, 1)
+        );
     }
 }

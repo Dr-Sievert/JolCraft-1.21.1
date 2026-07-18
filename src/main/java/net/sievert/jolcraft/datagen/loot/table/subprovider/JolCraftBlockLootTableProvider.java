@@ -98,7 +98,6 @@ public final class JolCraftBlockLootTableProvider
         target.dropSelf(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get());
 
         target.dropOther(JolCraftBlocks.STRONGBOX.get(), JolCraftItems.STRONGBOX_ITEM.get());
-        target.add(JolCraftBlocks.STRONGBOX_DUMMY.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(0))));
 
         target.add(JolCraftBlocks.HEARTH.get(), block ->
                 createSinglePropConditionTable(block, HearthBlock.HALF, DoubleBlockHalf.LOWER)

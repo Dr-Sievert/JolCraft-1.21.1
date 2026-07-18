@@ -64,20 +64,6 @@ public final class JolCraftStationBlocks {
         );
     }
 
-    public static DeferredBlock<Block> registerStrongboxDummy() {
-        return JolCraftBlocks.BLOCKS.registerBlock(
-                JolCraftBlockIds.STRONGBOX_DUMMY,
-                props -> new StrongboxBlock(props
-                        .mapColor(MapColor.DEEPSLATE)
-                        .strength(5.0F, 1200.0F)
-                        .instrument(NoteBlockInstrument.BASS)
-                        .requiresCorrectToolForDrops()
-                        .sound(SoundType.DEEPSLATE_TILES)
-                        .noOcclusion()
-                )
-        );
-    }
-
     public static DeferredBlock<Block> registerHearth() {
         return JolCraftBlockRegistryHelper.registerBlock(
                 JolCraftBlockIds.HEARTH,

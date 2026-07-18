@@ -14,7 +14,7 @@ import net.sievert.jolcraft.world.item.custom.compass.DeepslateCompassDialItem;
 import net.sievert.jolcraft.world.item.custom.compass.DeepslateCompassItem;
 import net.sievert.jolcraft.world.item.custom.tablet.ReputationTabletItem;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
-import net.sievert.jolcraft.world.item.custom.container.StrongboxItem;
+import net.sievert.jolcraft.world.item.custom.container.strongbox.StrongboxItem;
 import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipItem;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
 
