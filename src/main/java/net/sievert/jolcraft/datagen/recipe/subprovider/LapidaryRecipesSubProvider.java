@@ -21,11 +21,9 @@ import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.LapidaryBenchRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
 
@@ -240,7 +238,7 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
     }
 
     private static SoundOutput hammerGeodeBreakSound() {
-        return SoundOutputs.sound(
+        return SoundOutput.sound(
                 SoundEvents.DEEPSLATE_BREAK,
                 SoundSource.BLOCKS,
                 ConstantValue.exactly(0.8F),
@@ -249,7 +247,7 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
     }
 
     private static SoundOutput hammerGemCrushSound() {
-        return SoundOutputs.sound(
+        return SoundOutput.sound(
                 SoundEvents.AMETHYST_BLOCK_BREAK,
                 SoundSource.BLOCKS,
                 ConstantValue.exactly(0.8F),
@@ -258,7 +256,7 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
     }
 
     private static SoundOutput chiselGemCutSound() {
-        return SoundOutputs.sound(
+        return SoundOutput.sound(
                 JolCraftSounds.GEM_CUT,
                 SoundSource.BLOCKS,
                 ConstantValue.exactly(0.8F),
@@ -271,7 +269,7 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
             int minCount,
             int maxCount
     ) {
-        return ItemOutputs.item(
+        return ItemOutput.item(
                 LootItem.lootTableItem(item)
                         .apply(SetItemCountFunction.setCount(
                                 count(minCount, maxCount)
@@ -284,7 +282,7 @@ public record LapidaryRecipesSubProvider(JolCraftDataProvider<RecipeOutput> pare
             int minCount,
             int maxCount
     ) {
-        return ItemOutputs.item(
+        return ItemOutput.item(
                 TagEntry.expandTag(tag)
                         .apply(SetItemCountFunction.setCount(
                                 count(minCount, maxCount)

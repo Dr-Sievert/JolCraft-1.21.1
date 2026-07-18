@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.input;
+package net.sievert.jolcraft.world.recipe.base.input;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.sievert.jolcraft.world.recipe.condition.custom.InputItemCondition;
+import net.sievert.jolcraft.world.recipe.base.condition.custom.InputItemCondition;
 
 public record ItemInput(
         LootItemCondition condition

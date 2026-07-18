@@ -25,10 +25,10 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 

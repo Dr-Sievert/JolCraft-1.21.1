@@ -1,10 +1,10 @@
-package net.sievert.jolcraft.world.recipe.context;
+package net.sievert.jolcraft.world.recipe.base.context;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.param.JolCraftContextParamIds;
+import net.sievert.jolcraft.data.id.recipe.JolCraftContextParamIds;
 
 public final class JolCraftRecipeContextParams {
 

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output;
+package net.sievert.jolcraft.world.recipe.base.output.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -11,7 +11,12 @@ import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
-import net.sievert.jolcraft.world.recipe.output.hook.JolCraftRecipeHooks;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutputType;
+import net.sievert.jolcraft.world.recipe.base.output.hook.JolCraftRecipeHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -25,9 +30,10 @@ public record EntityOutput(
         List<ResourceLocation> hooks
 ) implements RecipeOutput {
 
-    private static final String ENTITY_KEY = "entity";
-    private static final String COUNT_KEY = "count";
-    private static final String HOOKS_KEY = "hooks";
+    private static final String ENTITY_KEY = JolCraftDictionary.ENTITY;
+    private static final String COUNT_KEY = JolCraftDictionary.COUNT;
+    private static final String HOOKS_KEY =
+            JolCraftStrings.plural(JolCraftDictionary.HOOK);
 
     public static final MapCodec<EntityOutput> CODEC =
             RecordCodecBuilder.mapCodec(instance ->
@@ -116,42 +122,18 @@ public record EntityOutput(
         }
     }
 
-    public EntityOutput applyHook(
-            @NotNull ResourceLocation hook
-    ) {
-        Objects.requireNonNull(
-                hook,
-                "hook"
-        );
-
-        List<ResourceLocation> updated =
-                new ArrayList<>(hooks);
-
-        updated.add(hook);
-
-        return new EntityOutput(
-                entity,
-                count,
-                updated
-        );
-    }
-
     public EntityOutput applyHooks(
             @NotNull ResourceLocation... hooks
     ) {
-        Objects.requireNonNull(
-                hooks,
-                HOOKS_KEY
-        );
+        Objects.requireNonNull(hooks, HOOKS_KEY);
 
-        List<ResourceLocation> updated =
-                new ArrayList<>(this.hooks);
+        List<ResourceLocation> updated = new ArrayList<>(this.hooks);
 
         for (ResourceLocation hook : hooks) {
             updated.add(
                     Objects.requireNonNull(
                             hook,
-                            "hook"
+                            JolCraftDictionary.HOOK
                     )
             );
         }
@@ -163,16 +145,16 @@ public record EntityOutput(
         );
     }
 
-    public static EntityOutput of(
+    public static EntityOutput entity(
             @NotNull EntityType<?> entity
     ) {
-        return of(
+        return entity(
                 entity,
                 ConstantValue.exactly(1.0F)
         );
     }
 
-    public static EntityOutput of(
+    public static EntityOutput entity(
             @NotNull EntityType<?> entity,
             @NotNull NumberProvider count
     ) {
@@ -180,6 +162,22 @@ public record EntityOutput(
                 entity,
                 count,
                 List.of()
+        );
+    }
+
+    public static EntityOutput of(
+            @NotNull EntityType<?> entity
+    ) {
+        return entity(entity);
+    }
+
+    public static EntityOutput of(
+            @NotNull EntityType<?> entity,
+            @NotNull NumberProvider count
+    ) {
+        return entity(
+                entity,
+                count
         );
     }
 

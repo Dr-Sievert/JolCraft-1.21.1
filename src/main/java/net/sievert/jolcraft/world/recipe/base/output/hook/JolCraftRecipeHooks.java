@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output.hook;
+package net.sievert.jolcraft.world.recipe.base.output.hook;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -7,7 +7,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeHookIds;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.recipe.output.hook.custom.DeepslateCompassHook;
+import net.sievert.jolcraft.world.recipe.base.output.hook.custom.DeepslateCompassHook;
 
 import java.util.Map;
 

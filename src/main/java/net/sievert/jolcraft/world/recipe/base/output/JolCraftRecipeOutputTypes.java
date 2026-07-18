@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output;
+package net.sievert.jolcraft.world.recipe.base.output;
 
 import com.mojang.serialization.Codec;
 import net.neoforged.bus.api.IEventBus;
@@ -6,6 +6,10 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftRegistries;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 
 import java.util.List;
 

@@ -10,6 +10,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.sievert.jolcraft.config.JolCraftConfigs;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
@@ -30,8 +31,8 @@ import net.sievert.jolcraft.world.loot.JolCraftLootModifiers;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.world.recipe.condition.JolCraftRecipeConditionTypes;
-import net.sievert.jolcraft.world.recipe.output.JolCraftRecipeOutputTypes;
+import net.sievert.jolcraft.world.recipe.base.condition.JolCraftRecipeConditionTypes;
+import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftFeatures;
 import net.sievert.jolcraft.world.worldgen.predicate.JolCraftBlockPredicateTypes;
@@ -76,6 +77,8 @@ public class JolCraft {
         JolCraftRuleTests.register(modEventBus);
         JolCraftRecipeConditionTypes.register(modEventBus);
         JolCraftRecipeOutputTypes.register(modEventBus);
+
+        JolCraftConfigs.register(modContainer);
 
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,

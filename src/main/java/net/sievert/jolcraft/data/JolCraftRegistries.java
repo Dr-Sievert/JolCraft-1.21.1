@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.recipe.output.RecipeOutputType;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutputType;
 
 public final class JolCraftRegistries {
 

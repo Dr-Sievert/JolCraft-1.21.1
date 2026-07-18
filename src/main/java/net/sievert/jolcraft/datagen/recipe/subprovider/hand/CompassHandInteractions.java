@@ -11,10 +11,10 @@ import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.recipe.base.ItemIngredientAction;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
-import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.sounds.SoundEvents.METAL_HIT;
@@ -63,8 +63,8 @@ public record CompassHandInteractions(
                                 )
                         )
                         .actionA(
-                                new ItemIngredientAction(
-                                        ItemIngredientAction.Type.CONSUME,
+                                new ItemInputAction(
+                                        ItemInputAction.Type.CONSUME,
                                         1
                                 )
                         )
@@ -74,24 +74,24 @@ public record CompassHandInteractions(
                                 )
                         )
                         .actionB(
-                                new ItemIngredientAction(
-                                        ItemIngredientAction.Type.CONSUME,
+                                new ItemInputAction(
+                                        ItemInputAction.Type.CONSUME,
                                         1
                                 )
                         )
                         .output(
-                                ItemOutputs.item(
+                                ItemOutput.item(
                                         LootItem.lootTableItem(
                                                 JolCraftItems.DEEPSLATE_COMPASS.get()
                                         )
-                                ).applyHook(
+                                ).applyHooks(
                                         JolCraft.location(
                                                 JolCraftRecipeHookIds.DEEPSLATE_COMPASS
                                         )
                                 )
                         )
                         .successSound(
-                                SoundOutputs.sound(
+                                SoundOutput.sound(
                                         METAL_HIT,
                                         PLAYERS,
                                         exactly(1.0F),
@@ -99,7 +99,7 @@ public record CompassHandInteractions(
                                 )
                         )
                         .failSound(
-                                SoundOutputs.sound(
+                                SoundOutput.sound(
                                         METAL_HIT,
                                         PLAYERS,
                                         exactly(0.4F),

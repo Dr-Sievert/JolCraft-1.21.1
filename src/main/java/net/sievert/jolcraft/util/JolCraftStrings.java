@@ -35,6 +35,11 @@ public final class JolCraftStrings {
         return join('/', parts);
     }
 
+    /** Join non-empty parts with '-' */
+    public static String dashed(String... parts) {
+        return join('-', parts);
+    }
+
     /** Join non-empty parts with ' ' */
     public static String spaced(String... parts) {
         return join(' ', parts);

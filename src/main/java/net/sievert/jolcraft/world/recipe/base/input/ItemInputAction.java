@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.base;
+package net.sievert.jolcraft.world.recipe.base.input;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -17,15 +17,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public record ItemIngredientAction(
+public record ItemInputAction(
         @NotNull Type type,
         @Nullable Integer amount
 ) {
 
-    public static final ItemIngredientAction CATALYST =
-            new ItemIngredientAction(Type.CATALYST, null);
+    public static final ItemInputAction CATALYST =
+            new ItemInputAction(Type.CATALYST, null);
 
-    public ItemIngredientAction {
+    public ItemInputAction {
         Objects.requireNonNull(type, "type");
 
         if (type == Type.CATALYST) {
@@ -33,15 +33,15 @@ public record ItemIngredientAction(
         }
     }
 
-    public static final Codec<ItemIngredientAction> CODEC =
-            RecordCodecBuilder.<ItemIngredientAction>create(instance ->
+    public static final Codec<ItemInputAction> CODEC =
+            RecordCodecBuilder.<ItemInputAction>create(instance ->
                     instance.group(
                             Type.CODEC
                                     .optionalFieldOf(
                                             JolCraftDictionary.TYPE,
                                             Type.CATALYST
                                     )
-                                    .forGetter(ItemIngredientAction::type),
+                                    .forGetter(ItemInputAction::type),
 
                             Codec.INT
                                     .optionalFieldOf(
@@ -55,16 +55,16 @@ public record ItemIngredientAction(
                     ).apply(
                             instance,
                             (type, amount) ->
-                                    new ItemIngredientAction(
+                                    new ItemInputAction(
                                             type,
                                             amount.orElse(null)
                                     )
                     )
-            ).validate(ItemIngredientAction::validateAndNormalize);
+            ).validate(ItemInputAction::validateAndNormalize);
 
     public static final StreamCodec<
             RegistryFriendlyByteBuf,
-            ItemIngredientAction
+            ItemInputAction
             > STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
             action -> action.type().getSerializedName(),
@@ -81,27 +81,27 @@ public record ItemIngredientAction(
                     return CATALYST;
                 }
 
-                return new ItemIngredientAction(
+                return new ItemInputAction(
                         type,
                         Math.max(1, encodedAmount)
                 );
             }
     );
 
-    public static ItemIngredientAction consume() {
+    public static ItemInputAction consume() {
         return consume(1);
     }
 
-    public static ItemIngredientAction consume(int amount) {
-        return new ItemIngredientAction(Type.CONSUME, amount);
+    public static ItemInputAction consume(int amount) {
+        return new ItemInputAction(Type.CONSUME, amount);
     }
 
-    public static ItemIngredientAction damage() {
+    public static ItemInputAction damage() {
         return damage(1);
     }
 
-    public static ItemIngredientAction damage(int amount) {
-        return new ItemIngredientAction(Type.DAMAGE, amount);
+    public static ItemInputAction damage(int amount) {
+        return new ItemInputAction(Type.DAMAGE, amount);
     }
 
     public int resolvedAmount() {
@@ -138,9 +138,6 @@ public record ItemIngredientAction(
         }
 
         switch (type) {
-            case CATALYST -> {
-            }
-
             case CONSUME ->
                     stack.shrink(resolvedAmount());
 
@@ -165,12 +162,12 @@ public record ItemIngredientAction(
         }
     }
 
-    public DataResult<ItemIngredientAction> validate() {
+    public DataResult<ItemInputAction> validate() {
         return validateAndNormalize(this);
     }
 
-    private static DataResult<ItemIngredientAction> validateAndNormalize(
-            ItemIngredientAction action
+    private static DataResult<ItemInputAction> validateAndNormalize(
+            ItemInputAction action
     ) {
         if (action.type() == Type.CATALYST) {
             return DataResult.success(CATALYST);
@@ -178,7 +175,7 @@ public record ItemIngredientAction(
 
         if (action.amount() == null) {
             return DataResult.success(
-                    new ItemIngredientAction(action.type(), 1)
+                    new ItemInputAction(action.type(), 1)
             );
         }
 

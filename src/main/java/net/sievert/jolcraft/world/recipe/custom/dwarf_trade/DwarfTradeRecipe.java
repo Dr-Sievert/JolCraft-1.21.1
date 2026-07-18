@@ -32,7 +32,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -637,22 +637,6 @@ public record DwarfTradeRecipe(
         }
 
         return resolved;
-    }
-
-    /**
-     * Generates the result without imposing the single-stack merchant-offer
-     * restriction.
-     */
-    public void generateResult(
-            @NotNull LootContext context,
-            @NotNull DwarfTradeRecipeInput input,
-            @NotNull java.util.function.Consumer<ItemStack> output
-    ) {
-        result.generate(
-                context,
-                input,
-                output
-        );
     }
 
     // -------------------------------------------------------------------------

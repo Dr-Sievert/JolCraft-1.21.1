@@ -21,12 +21,12 @@ import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.recipe.base.output.*;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyTaskRecipe;
-import net.sievert.jolcraft.world.recipe.output.EntityOutputs;
-import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +62,7 @@ public final class BountyTaskRecipeBuilder
     private @Nullable net.minecraft.world.item.Item bounty;
 
     private final SimpleWeightedRandomList.Builder<
-            net.sievert.jolcraft.world.recipe.output.RecipeOutput
+            RecipeOutput
             > objectives =
             SimpleWeightedRandomList.builder();
 
@@ -109,7 +109,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull SoundEvent sound
     ) {
         this.sound1 =
-                SoundOutputs.sound(sound);
+                SoundOutput.sound(sound);
 
         return this;
     }
@@ -118,7 +118,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull Holder<SoundEvent> sound
     ) {
         this.sound1 =
-                SoundOutputs.sound(sound);
+                SoundOutput.sound(sound);
 
         return this;
     }
@@ -134,7 +134,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull SoundEvent sound
     ) {
         this.sound2 =
-                SoundOutputs.sound(sound);
+                SoundOutput.sound(sound);
 
         return this;
     }
@@ -143,7 +143,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull Holder<SoundEvent> sound
     ) {
         this.sound2 =
-                SoundOutputs.sound(sound);
+                SoundOutput.sound(sound);
 
         return this;
     }
@@ -226,7 +226,7 @@ public final class BountyTaskRecipeBuilder
                         );
 
         objectives.add(
-                ItemOutputs.pool(pool),
+                ItemOutput.pool(pool),
                 weight
         );
 
@@ -278,7 +278,7 @@ public final class BountyTaskRecipeBuilder
         );
 
         objectives.add(
-                EntityOutputs.entity(
+                EntityOutput.entity(
                         entity,
                         countProvider(
                                 minCount,

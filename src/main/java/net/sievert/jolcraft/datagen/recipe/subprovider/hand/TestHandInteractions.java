@@ -15,12 +15,12 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.HandInteractionRecipeBuilder;
-import net.sievert.jolcraft.world.recipe.base.ItemIngredientAction;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.EffectOutput;
-import net.sievert.jolcraft.world.recipe.output.EntityOutput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
-import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
@@ -76,8 +76,8 @@ public record TestHandInteractions(
                                 )
                         )
                         .actionA(
-                                new ItemIngredientAction(
-                                        ItemIngredientAction.Type.CONSUME,
+                                new ItemInputAction(
+                                        ItemInputAction.Type.CONSUME,
                                         1
                                 )
                         )
@@ -87,22 +87,23 @@ public record TestHandInteractions(
                                 )
                         )
                         .actionB(
-                                new ItemIngredientAction(
-                                        ItemIngredientAction.Type.CONSUME,
+                                new ItemInputAction(
+                                        ItemInputAction.Type.CONSUME,
                                         1
                                 )
                         )
 
                         // Item outputs
                         .output(
-                                ItemOutputs.item(
+                                ItemOutput.item(
                                         LootItem.lootTableItem(
                                                 Items.DIAMOND
                                         )
                                 )
                         )
+
                         .output(
-                                ItemOutputs.item(
+                                ItemOutput.item(
                                         LootItem.lootTableItem(
                                                 Items.EMERALD
                                         )
@@ -127,19 +128,9 @@ public record TestHandInteractions(
                                 )
                         )
 
-                        // Sound output
-                        .output(
-                                SoundOutputs.sound(
-                                        SoundEvents.AMETHYST_BLOCK_CHIME,
-                                        SoundSource.PLAYERS,
-                                        ConstantValue.exactly(1.0F),
-                                        ConstantValue.exactly(1.0F)
-                                )
-                        )
-
                         // Interaction result sounds
                         .successSound(
-                                SoundOutputs.sound(
+                                SoundOutput.sound(
                                         SoundEvents.EXPERIENCE_ORB_PICKUP,
                                         SoundSource.PLAYERS,
                                         ConstantValue.exactly(1.0F),
@@ -147,7 +138,7 @@ public record TestHandInteractions(
                                 )
                         )
                         .failSound(
-                                SoundOutputs.sound(
+                                SoundOutput.sound(
                                         SoundEvents.VILLAGER_NO,
                                         SoundSource.PLAYERS,
                                         ConstantValue.exactly(0.8F),

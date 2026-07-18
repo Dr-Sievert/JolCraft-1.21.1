@@ -15,10 +15,8 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -127,7 +125,7 @@ public final class BountyRewardRecipeBuilder
                         .add(reward);
 
         rewards.add(
-                ItemOutputs.pool(pool)
+                ItemOutput.pool(pool)
         );
 
         return this;
@@ -143,7 +141,7 @@ public final class BountyRewardRecipeBuilder
         flushPendingWeightedRewards();
 
         rewards.add(
-                ItemOutputs.pool(pool)
+                ItemOutput.pool(pool)
         );
 
         return this;
@@ -191,7 +189,7 @@ public final class BountyRewardRecipeBuilder
             @NotNull SoundEvent sound
     ) {
         this.sound =
-                SoundOutputs.sound(sound);
+                SoundOutput.sound(sound);
 
         return this;
     }
@@ -313,7 +311,7 @@ public final class BountyRewardRecipeBuilder
         }
 
         rewards.add(
-                ItemOutputs.pool(pool)
+                ItemOutput.pool(pool)
         );
 
         pendingWeightedRewards.clear();
@@ -378,7 +376,7 @@ public final class BountyRewardRecipeBuilder
                 );
             }
 
-            return ItemOutputs.pool(pool);
+            return ItemOutput.pool(pool);
         }
     }
 }

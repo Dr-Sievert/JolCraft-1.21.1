@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output;
+package net.sievert.jolcraft.world.recipe.base.output.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -6,6 +6,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutputType;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,12 +23,12 @@ public record EffectOutput(
     public static final MapCodec<EffectOutput> CODEC =
             RecordCodecBuilder.mapCodec(instance -> instance.group(
                     MobEffectInstance.CODEC
-                            .fieldOf("effect")
+                            .fieldOf(JolCraftDictionary.EFFECT)
                             .forGetter(EffectOutput::effect),
 
                     ResourceLocation.CODEC
                             .listOf()
-                            .optionalFieldOf("hooks", List.of())
+                            .optionalFieldOf(JolCraftStrings.plural(JolCraftDictionary.HOOK), List.of())
                             .forGetter(EffectOutput::hooks)
             ).apply(instance, EffectOutput::new));
 

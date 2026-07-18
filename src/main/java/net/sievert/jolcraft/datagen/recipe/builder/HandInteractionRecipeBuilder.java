@@ -6,10 +6,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftEmissionBuilder;
 import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
-import net.sievert.jolcraft.world.recipe.base.ItemIngredientAction;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
 import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,15 +22,15 @@ public final class HandInteractionRecipeBuilder
     private @Nullable String id;
 
     private @Nullable ItemInput ingredientA;
-    private ItemIngredientAction actionA =
-            ItemIngredientAction.CATALYST;
+    private ItemInputAction actionA =
+            ItemInputAction.CATALYST;
 
     private @Nullable ItemInput ingredientB;
-    private ItemIngredientAction actionB =
-            ItemIngredientAction.CATALYST;
+    private ItemInputAction actionB =
+            ItemInputAction.CATALYST;
 
     private final List<
-            net.sievert.jolcraft.world.recipe.output.RecipeOutput
+            net.sievert.jolcraft.world.recipe.base.output.RecipeOutput
             > outputs = new ArrayList<>();
 
     private @Nullable SoundOutput successSound;
@@ -59,7 +59,7 @@ public final class HandInteractionRecipeBuilder
     }
 
     public HandInteractionRecipeBuilder actionA(
-            @NotNull ItemIngredientAction actionA
+            @NotNull ItemInputAction actionA
     ) {
         this.actionA = actionA;
         return this;
@@ -73,14 +73,14 @@ public final class HandInteractionRecipeBuilder
     }
 
     public HandInteractionRecipeBuilder actionB(
-            @NotNull ItemIngredientAction actionB
+            @NotNull ItemInputAction actionB
     ) {
         this.actionB = actionB;
         return this;
     }
 
     public HandInteractionRecipeBuilder output(
-            @NotNull net.sievert.jolcraft.world.recipe.output.RecipeOutput output
+            @NotNull net.sievert.jolcraft.world.recipe.base.output.RecipeOutput output
     ) {
         this.outputs.add(output);
         return this;
@@ -88,7 +88,7 @@ public final class HandInteractionRecipeBuilder
 
     public HandInteractionRecipeBuilder outputs(
             @NotNull List<
-                    ? extends net.sievert.jolcraft.world.recipe.output.RecipeOutput
+                    ? extends net.sievert.jolcraft.world.recipe.base.output.RecipeOutput
                     > outputs
     ) {
         this.outputs.addAll(outputs);

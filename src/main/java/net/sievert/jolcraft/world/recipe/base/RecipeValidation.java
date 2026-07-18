@@ -4,7 +4,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
-import net.sievert.jolcraft.world.recipe.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,33 +90,6 @@ public final class RecipeValidation {
                         () -> name + " is required"
                 );
             }
-
-            return this;
-        }
-
-        public @NotNull Validator<R> check(
-                @NotNull DataResult<?> result
-        ) {
-            return check(result, null);
-        }
-
-        public @NotNull Validator<R> check(
-                @NotNull DataResult<?> result,
-                @Nullable String path
-        ) {
-            if (hasError()) {
-                return this;
-            }
-
-            result.error().ifPresent(error -> {
-                if (path == null || path.isBlank()) {
-                    state = DataResult.error(error::message);
-                } else {
-                    state = DataResult.error(
-                            () -> path + " invalid: " + error.message()
-                    );
-                }
-            });
 
             return this;
         }

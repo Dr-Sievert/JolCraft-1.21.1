@@ -27,11 +27,11 @@ import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachm
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContextParams;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParams;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

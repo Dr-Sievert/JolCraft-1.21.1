@@ -18,7 +18,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeCost;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;

@@ -10,9 +10,9 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftEmissionBuilder;
 import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

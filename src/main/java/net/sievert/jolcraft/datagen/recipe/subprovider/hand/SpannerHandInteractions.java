@@ -22,10 +22,10 @@ import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.HandInteractionRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.recipe.base.ItemIngredientAction;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutputs;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
@@ -143,8 +143,8 @@ public record SpannerHandInteractions(
                                 )
                         )
                         .actionA(
-                                new ItemIngredientAction(
-                                        ItemIngredientAction.Type.DAMAGE,
+                                new ItemInputAction(
+                                        ItemInputAction.Type.DAMAGE,
                                         1
                                 )
                         )
@@ -154,8 +154,8 @@ public record SpannerHandInteractions(
                                 )
                         )
                         .actionB(
-                                new ItemIngredientAction(
-                                        ItemIngredientAction.Type.CONSUME,
+                                new ItemInputAction(
+                                        ItemInputAction.Type.CONSUME,
                                         1
                                 )
                         )
@@ -163,7 +163,7 @@ public record SpannerHandInteractions(
                                 salvageOutput(salvageTag)
                         )
                         .successSound(
-                                SoundOutputs.sound(
+                                SoundOutput.sound(
                                         successEvent,
                                         SoundSource.PLAYERS,
                                         ConstantValue.exactly(successVolume),
@@ -171,7 +171,7 @@ public record SpannerHandInteractions(
                                 )
                         )
                         .failSound(
-                                SoundOutputs.sound(
+                                SoundOutput.sound(
                                         SoundEvents.BOOK_PUT,
                                         SoundSource.PLAYERS,
                                         ConstantValue.exactly(1.0F),

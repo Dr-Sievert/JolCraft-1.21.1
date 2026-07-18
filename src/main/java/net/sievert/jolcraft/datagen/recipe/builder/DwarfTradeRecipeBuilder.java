@@ -32,7 +32,7 @@ import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.Tra
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradePoolEntry;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeStats;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

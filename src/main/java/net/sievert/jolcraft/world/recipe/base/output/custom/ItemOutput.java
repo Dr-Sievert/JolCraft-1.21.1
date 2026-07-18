@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output;
+package net.sievert.jolcraft.world.recipe.base.output.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,7 +8,14 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.sievert.jolcraft.world.recipe.output.hook.JolCraftRecipeHooks;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutputType;
+import net.sievert.jolcraft.world.recipe.base.output.hook.JolCraftRecipeHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,8 +28,9 @@ public record ItemOutput(
         List<ResourceLocation> hooks
 ) implements RecipeOutput {
 
-    private static final String POOL_KEY = "pool";
-    private static final String HOOKS_KEY = "hooks";
+    private static final String POOL_KEY = JolCraftDictionary.POOL;
+    private static final String HOOK_KEY = JolCraftDictionary.HOOK;
+    private static final String HOOKS_KEY = JolCraftStrings.plural(HOOK_KEY);
 
     public static final MapCodec<ItemOutput> CODEC =
             RecordCodecBuilder.mapCodec(instance ->
@@ -98,25 +106,6 @@ public record ItemOutput(
         );
     }
 
-    public ItemOutput applyHook(
-            @NotNull ResourceLocation hook
-    ) {
-        Objects.requireNonNull(
-                hook,
-                "hook"
-        );
-
-        List<ResourceLocation> updated =
-                new ArrayList<>(hooks);
-
-        updated.add(hook);
-
-        return new ItemOutput(
-                pool,
-                updated
-        );
-    }
-
     public ItemOutput applyHooks(
             @NotNull ResourceLocation... hooks
     ) {
@@ -132,7 +121,7 @@ public record ItemOutput(
             updated.add(
                     Objects.requireNonNull(
                             hook,
-                            "hook"
+                            HOOK_KEY
                     )
             );
         }
@@ -143,13 +132,67 @@ public record ItemOutput(
         );
     }
 
-    public static ItemOutput of(
+    public static ItemOutput item(
+            @NotNull LootPoolEntryContainer.Builder<?> entry
+    ) {
+        Objects.requireNonNull(
+                entry,
+                JolCraftDictionary.ENTRY
+        );
+
+        return pool(
+                LootPool.lootPool()
+                        .add(entry)
+        );
+    }
+
+    public static ItemOutput pool(
             @NotNull LootPool.Builder pool
     ) {
+        Objects.requireNonNull(
+                pool,
+                POOL_KEY
+        );
+
         return new ItemOutput(
                 pool.build(),
                 List.of()
         );
+    }
+
+    public static ItemOutput pool(
+            @NotNull NumberProvider rolls,
+            @NotNull LootPoolEntryContainer.Builder<?>... entries
+    ) {
+        Objects.requireNonNull(
+                rolls,
+                JolCraftStrings.plural(JolCraftDictionary.ROLL)
+        );
+
+        Objects.requireNonNull(
+                entries,
+                JolCraftDictionary.ENTRIES
+        );
+
+        LootPool.Builder pool = LootPool.lootPool()
+                .setRolls(rolls);
+
+        for (LootPoolEntryContainer.Builder<?> entry : entries) {
+            pool.add(
+                    Objects.requireNonNull(
+                            entry,
+                            JolCraftDictionary.ENTRY
+                    )
+            );
+        }
+
+        return pool(pool);
+    }
+
+    public static ItemOutput of(
+            @NotNull LootPool.Builder pool
+    ) {
+        return pool(pool);
     }
 
     private boolean applyHooks(

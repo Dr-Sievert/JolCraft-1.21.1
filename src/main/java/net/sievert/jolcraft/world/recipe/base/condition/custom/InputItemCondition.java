@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.condition.custom;
+package net.sievert.jolcraft.world.recipe.base.condition.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -9,8 +9,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.world.recipe.condition.JolCraftRecipeConditionTypes;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContextParams;
+import net.sievert.jolcraft.world.recipe.base.condition.JolCraftRecipeConditionTypes;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParams;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

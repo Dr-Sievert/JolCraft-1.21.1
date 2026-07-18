@@ -19,10 +19,9 @@ import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.FermentingCauldronRecipeBuilder;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.EffectOutput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutputs;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -338,7 +337,7 @@ public record FermentingCauldronRecipesSubProvider(
     private static ItemOutput itemResult(
             ItemLike item
     ) {
-        return ItemOutputs.item(
+        return ItemOutput.item(
                 LootItem.lootTableItem(item)
         );
     }

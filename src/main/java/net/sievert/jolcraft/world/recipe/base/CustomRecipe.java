@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * machines, interactions, traders, or other external systems.
  *
  * Vanilla crafting assembly and recipe-book presentation are adapter-only.
- * Concrete recipes remain responsible for matching, serialization, type,
- * and serializer definitions.
+ * Concrete recipes remain responsible for matching, serialization, type, and serializer definitions.
  */
 public interface CustomRecipe<T extends RecipeInput> extends Recipe<T> {
 

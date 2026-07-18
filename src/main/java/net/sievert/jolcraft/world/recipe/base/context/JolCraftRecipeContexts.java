@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.context;
+package net.sievert.jolcraft.world.recipe.base.context;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;

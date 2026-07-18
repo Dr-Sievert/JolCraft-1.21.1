@@ -21,14 +21,14 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
-import net.sievert.jolcraft.world.recipe.base.ItemIngredientAction;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContextParams;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.JolCraftRecipeOutputTypes;
-import net.sievert.jolcraft.world.recipe.output.RecipeOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParams;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -39,9 +39,9 @@ import java.util.Objects;
 @ParametersAreNonnullByDefault
 public record HandInteractionRecipe(
         ItemInput ingredientA,
-        ItemIngredientAction actionA,
+        ItemInputAction actionA,
         ItemInput ingredientB,
-        ItemIngredientAction actionB,
+        ItemInputAction actionB,
         List<RecipeOutput> outputs,
         SoundOutput successSound,
         SoundOutput failSound,
@@ -274,10 +274,10 @@ public record HandInteractionRecipe(
                                                         HandInteractionRecipe::ingredientA
                                                 ),
 
-                                        ItemIngredientAction.CODEC
+                                        ItemInputAction.CODEC
                                                 .optionalFieldOf(
                                                         ACTION_A_KEY,
-                                                        ItemIngredientAction.CATALYST
+                                                        ItemInputAction.CATALYST
                                                 )
                                                 .forGetter(
                                                         HandInteractionRecipe::actionA
@@ -291,10 +291,10 @@ public record HandInteractionRecipe(
                                                         HandInteractionRecipe::ingredientB
                                                 ),
 
-                                        ItemIngredientAction.CODEC
+                                        ItemInputAction.CODEC
                                                 .optionalFieldOf(
                                                         ACTION_B_KEY,
-                                                        ItemIngredientAction.CATALYST
+                                                        ItemInputAction.CATALYST
                                                 )
                                                 .forGetter(
                                                         HandInteractionRecipe::actionB
@@ -360,7 +360,7 @@ public record HandInteractionRecipe(
                     recipe.ingredientA()
             );
 
-            ItemIngredientAction.STREAM_CODEC.encode(
+            ItemInputAction.STREAM_CODEC.encode(
                     buffer,
                     recipe.actionA()
             );
@@ -370,7 +370,7 @@ public record HandInteractionRecipe(
                     recipe.ingredientB()
             );
 
-            ItemIngredientAction.STREAM_CODEC.encode(
+            ItemInputAction.STREAM_CODEC.encode(
                     buffer,
                     recipe.actionB()
             );
@@ -400,9 +400,9 @@ public record HandInteractionRecipe(
         ) {
             return new HandInteractionRecipe(
                     ITEM_INPUT_STREAM_CODEC.decode(buffer),
-                    ItemIngredientAction.STREAM_CODEC.decode(buffer),
+                    ItemInputAction.STREAM_CODEC.decode(buffer),
                     ITEM_INPUT_STREAM_CODEC.decode(buffer),
-                    ItemIngredientAction.STREAM_CODEC.decode(buffer),
+                    ItemInputAction.STREAM_CODEC.decode(buffer),
                     OUTPUT_LIST_STREAM_CODEC.decode(buffer),
                     SOUND_OUTPUT_STREAM_CODEC.decode(buffer),
                     SOUND_OUTPUT_STREAM_CODEC.decode(buffer),
@@ -467,7 +467,7 @@ public record HandInteractionRecipe(
                 return base;
             }
 
-            DataResult<ItemIngredientAction> actionAResult =
+            DataResult<ItemInputAction> actionAResult =
                     recipe.actionA().validate();
 
             if (actionAResult.error().isPresent()) {
@@ -483,7 +483,7 @@ public record HandInteractionRecipe(
                 );
             }
 
-            DataResult<ItemIngredientAction> actionBResult =
+            DataResult<ItemInputAction> actionBResult =
                     recipe.actionB().validate();
 
             if (actionBResult.error().isPresent()) {

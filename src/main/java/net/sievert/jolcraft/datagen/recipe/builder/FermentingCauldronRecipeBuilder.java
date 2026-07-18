@@ -9,9 +9,9 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftEmissionBuilder;
 import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
-import net.sievert.jolcraft.world.recipe.input.ItemInput;
-import net.sievert.jolcraft.world.recipe.output.EffectOutput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

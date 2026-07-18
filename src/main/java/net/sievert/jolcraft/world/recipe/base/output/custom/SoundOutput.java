@@ -1,10 +1,11 @@
-package net.sievert.jolcraft.world.recipe.output;
+package net.sievert.jolcraft.world.recipe.base.output.custom;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -14,7 +15,12 @@ import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
-import net.sievert.jolcraft.world.recipe.output.hook.JolCraftRecipeHooks;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutputType;
+import net.sievert.jolcraft.world.recipe.base.output.hook.JolCraftRecipeHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public record SoundOutput(
         Holder<SoundEvent> sound,
@@ -31,17 +38,16 @@ public record SoundOutput(
         List<ResourceLocation> hooks
 ) implements RecipeOutput {
 
-    private static final String SOUND_KEY = "sound";
-    private static final String SOURCE_KEY = "source";
-    private static final String VOLUME_KEY = "volume";
-    private static final String PITCH_KEY = "pitch";
-    private static final String HOOKS_KEY = "hooks";
+    private static final String SOUND_KEY = JolCraftDictionary.SOUND;
+    private static final String SOURCE_KEY = JolCraftDictionary.SOURCE;
+    private static final String VOLUME_KEY = JolCraftDictionary.VOLUME;
+    private static final String PITCH_KEY = JolCraftDictionary.PITCH;
+    private static final String HOOK_KEY = JolCraftDictionary.HOOK;
+    private static final String HOOKS_KEY = JolCraftStrings.plural(HOOK_KEY);
 
     public static final Codec<SoundSource> SOUND_SOURCE_CODEC =
             Codec.STRING.comapFlatMap(
-                    name -> Arrays.stream(
-                                    SoundSource.values()
-                            )
+                    name -> Arrays.stream(SoundSource.values())
                             .filter(value ->
                                     value.getName().equals(name)
                             )
@@ -49,7 +55,9 @@ public record SoundOutput(
                             .map(DataResult::success)
                             .orElseGet(() ->
                                     DataResult.error(() ->
-                                            "Unknown sound source: "
+                                            "Unknown "
+                                                    + SOURCE_KEY
+                                                    + ": "
                                                     + name
                                     )
                             ),
@@ -165,28 +173,6 @@ public record SoundOutput(
         }
     }
 
-    public SoundOutput applyHook(
-            @NotNull ResourceLocation hook
-    ) {
-        Objects.requireNonNull(
-                hook,
-                "hook"
-        );
-
-        List<ResourceLocation> updated =
-                new ArrayList<>(hooks);
-
-        updated.add(hook);
-
-        return new SoundOutput(
-                sound,
-                source,
-                volume,
-                pitch,
-                updated
-        );
-    }
-
     public SoundOutput applyHooks(
             @NotNull ResourceLocation... hooks
     ) {
@@ -202,7 +188,7 @@ public record SoundOutput(
             updated.add(
                     Objects.requireNonNull(
                             hook,
-                            "hook"
+                            HOOK_KEY
                     )
             );
         }
@@ -216,19 +202,81 @@ public record SoundOutput(
         );
     }
 
-    public static SoundOutput of(
+    public static SoundOutput sound(
             @NotNull Holder<SoundEvent> sound
     ) {
-        return new SoundOutput(
+        return sound(
                 sound,
-                SoundSource.BLOCKS,
-                ConstantValue.exactly(1.0F),
-                ConstantValue.exactly(1.0F),
-                List.of()
+                SoundSource.BLOCKS
         );
     }
 
-    public static SoundOutput of(
+    public static SoundOutput sound(
+            @NotNull SoundEvent sound
+    ) {
+        return sound(
+                holder(sound),
+                SoundSource.BLOCKS
+        );
+    }
+
+    public static SoundOutput sound(
+            @NotNull Supplier<? extends SoundEvent> sound
+    ) {
+        Objects.requireNonNull(
+                sound,
+                SOUND_KEY
+        );
+
+        return sound(
+                Objects.requireNonNull(
+                        sound.get(),
+                        SOUND_KEY
+                )
+        );
+    }
+
+    public static SoundOutput sound(
+            @NotNull Holder<SoundEvent> sound,
+            @NotNull SoundSource source
+    ) {
+        return sound(
+                sound,
+                source,
+                ConstantValue.exactly(1.0F),
+                ConstantValue.exactly(1.0F)
+        );
+    }
+
+    public static SoundOutput sound(
+            @NotNull SoundEvent sound,
+            @NotNull SoundSource source
+    ) {
+        return sound(
+                holder(sound),
+                source
+        );
+    }
+
+    public static SoundOutput sound(
+            @NotNull Supplier<? extends SoundEvent> sound,
+            @NotNull SoundSource source
+    ) {
+        Objects.requireNonNull(
+                sound,
+                SOUND_KEY
+        );
+
+        return sound(
+                Objects.requireNonNull(
+                        sound.get(),
+                        SOUND_KEY
+                ),
+                source
+        );
+    }
+
+    public static SoundOutput sound(
             @NotNull Holder<SoundEvent> sound,
             @NotNull SoundSource source,
             @NotNull NumberProvider volume,
@@ -241,6 +289,73 @@ public record SoundOutput(
                 pitch,
                 List.of()
         );
+    }
+
+    public static SoundOutput sound(
+            @NotNull SoundEvent sound,
+            @NotNull SoundSource source,
+            @NotNull NumberProvider volume,
+            @NotNull NumberProvider pitch
+    ) {
+        return sound(
+                holder(sound),
+                source,
+                volume,
+                pitch
+        );
+    }
+
+    public static SoundOutput sound(
+            @NotNull Supplier<? extends SoundEvent> sound,
+            @NotNull SoundSource source,
+            @NotNull NumberProvider volume,
+            @NotNull NumberProvider pitch
+    ) {
+        Objects.requireNonNull(
+                sound,
+                SOUND_KEY
+        );
+
+        return sound(
+                Objects.requireNonNull(
+                        sound.get(),
+                        SOUND_KEY
+                ),
+                source,
+                volume,
+                pitch
+        );
+    }
+
+    public static SoundOutput of(
+            @NotNull Holder<SoundEvent> sound
+    ) {
+        return sound(sound);
+    }
+
+    public static SoundOutput of(
+            @NotNull Holder<SoundEvent> sound,
+            @NotNull SoundSource source,
+            @NotNull NumberProvider volume,
+            @NotNull NumberProvider pitch
+    ) {
+        return sound(
+                sound,
+                source,
+                volume,
+                pitch
+        );
+    }
+
+    private static Holder<SoundEvent> holder(
+            @NotNull SoundEvent sound
+    ) {
+        Objects.requireNonNull(
+                sound,
+                SOUND_KEY
+        );
+
+        return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
     }
 
     private boolean applyHooks(

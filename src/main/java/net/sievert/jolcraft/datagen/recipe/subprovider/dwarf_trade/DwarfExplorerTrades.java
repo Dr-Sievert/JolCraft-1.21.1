@@ -16,7 +16,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 
 public record DwarfExplorerTrades(

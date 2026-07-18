@@ -14,7 +14,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -29,8 +28,8 @@ import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContextParams;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParams;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryRecipeInput;
 

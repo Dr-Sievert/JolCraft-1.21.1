@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output.hook;
+package net.sievert.jolcraft.world.recipe.base.output.hook;
 
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.storage.loot.LootContext;

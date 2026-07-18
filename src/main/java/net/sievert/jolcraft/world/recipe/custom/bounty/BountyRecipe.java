@@ -81,14 +81,6 @@ public final class BountyRecipe {
     // Validation
     // -------------------------------------------------------------------------
 
-    public static @NotNull DataResult<DwarfMerchantData.Level> validateTier(int rawTier) {
-        DwarfMerchantData.Level tier = parseTier(rawTier);
-        if (tier == null) {
-            return DataResult.error(() -> "invalid " + TIER_KEY + " '" + rawTier + "'");
-        }
-        return DataResult.success(tier);
-    }
-
     public static @NotNull DataResult<DwarfMerchantData.Level> validateTier(@Nullable String rawTier) {
         if (rawTier == null) {
             return DataResult.error(() -> TIER_KEY + " is required");

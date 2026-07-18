@@ -32,11 +32,11 @@ import net.sievert.jolcraft.world.item.component.custom.BountyData;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
-import net.sievert.jolcraft.world.recipe.output.EntityOutput;
-import net.sievert.jolcraft.world.recipe.output.ItemOutput;
-import net.sievert.jolcraft.world.recipe.output.JolCraftRecipeOutputTypes;
-import net.sievert.jolcraft.world.recipe.output.RecipeOutput;
-import net.sievert.jolcraft.world.recipe.output.SoundOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

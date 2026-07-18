@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output;
+package net.sievert.jolcraft.world.recipe.base.output;
 
 import com.mojang.serialization.MapCodec;
 

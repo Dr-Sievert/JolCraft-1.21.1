@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.recipe.output.hook.custom;
+package net.sievert.jolcraft.world.recipe.base.output.hook.custom;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,7 +15,7 @@ import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompass
 import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper;
 import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper.LocatedStructure;
 import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipeInput;
-import net.sievert.jolcraft.world.recipe.output.hook.RecipeHook;
+import net.sievert.jolcraft.world.recipe.base.output.hook.RecipeHook;
 import org.jetbrains.annotations.NotNull;
 
 public final class DeepslateCompassHook implements RecipeHook {

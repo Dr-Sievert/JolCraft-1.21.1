@@ -1,10 +1,10 @@
-package net.sievert.jolcraft.world.recipe.output;
+package net.sievert.jolcraft.world.recipe.base.output;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootContextUser;
-import net.sievert.jolcraft.world.recipe.output.hook.JolCraftRecipeHooks;
+import net.sievert.jolcraft.world.recipe.base.output.hook.JolCraftRecipeHooks;
 
 import java.util.List;
 

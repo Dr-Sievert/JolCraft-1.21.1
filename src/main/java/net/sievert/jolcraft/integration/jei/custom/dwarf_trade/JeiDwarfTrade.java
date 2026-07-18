@@ -16,7 +16,7 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.recipe.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeCost;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
