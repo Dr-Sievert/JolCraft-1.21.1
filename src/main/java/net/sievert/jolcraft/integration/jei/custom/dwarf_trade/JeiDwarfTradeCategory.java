@@ -38,6 +38,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 
 @ParametersAreNonnullByDefault
@@ -84,6 +85,8 @@ public final class JeiDwarfTradeCategory
     private static final int ARROW_W = 22;
     private static final int ARROW_H = 16;
 
+    private static final int TEXT_COLOR = 0x888888;
+
     private final IDrawable background;
     private final IDrawable icon;
     private final DwarfProfession profession;
@@ -106,7 +109,9 @@ public final class JeiDwarfTradeCategory
                         VanillaTypes.ITEM_STACK,
                         new ItemStack(
                                 DwarfProfessionHelper
-                                        .getSpawnEgg(profession)
+                                        .getSpawnEgg(
+                                                profession
+                                        )
                                         .get()
                         )
                 );
@@ -176,58 +181,10 @@ public final class JeiDwarfTradeCategory
         Font font =
                 Minecraft.getInstance().font;
 
-        Component levelComponent;
-
-        if (entry.level() != null) {
-            levelComponent =
-                    Component.translatable(
-                            DwarfMerchantData.Level
-                                    .langKeyFromId(
-                                            entry.level()
-                                                    .getId()
-                                    )
-                    );
-        } else {
-            levelComponent =
-                    Component.literal(
-                            JolCraftDictionary.GLOBAL
-                    );
-        }
-
-        Component professionComponent =
-                entry.profession()
-                        .getDisplayName();
-
-        String levelText =
-                levelComponent.getString();
-
-        String professionText =
-                professionComponent.getString();
-
-        int levelX =
-                105
-                        - font.width(levelText) / 2;
-
-        graphics.drawString(
+        drawHeader(
+                graphics,
                 font,
-                levelText,
-                levelX,
-                0,
-                0x888888,
-                false
-        );
-
-        int professionX =
-                105
-                        - font.width(professionText) / 2;
-
-        graphics.drawString(
-                font,
-                professionText,
-                professionX,
-                10,
-                0x888888,
-                false
+                entry
         );
 
         @Nullable ItemStack inputB =
@@ -300,67 +257,10 @@ public final class JeiDwarfTradeCategory
                 ARROW_H
         );
 
-        LivingEntity dwarf =
-                createDisplayDwarf(
-                        entry.profession()
-                );
-
-        if (dwarf != null) {
-            Quaternionf pose =
-                    new Quaternionf()
-                            .rotateZ(
-                                    (float) Math.PI
-                            );
-
-            Quaternionf camera =
-                    new Quaternionf()
-                            .rotateX(
-                                    -10.0F
-                                            * (float) (
-                                            Math.PI / 180.0F
-                                    )
-                            );
-
-            dwarf.yBodyRot =
-                    200.0F;
-
-            dwarf.setYRot(
-                    200.0F
-            );
-
-            dwarf.setXRot(
-                    -5.0F
-            );
-
-            dwarf.yHeadRot =
-                    170.0F;
-
-            dwarf.yHeadRotO =
-                    dwarf.yHeadRot;
-
-            float scale =
-                    22.0F
-                            / dwarf.getScale();
-
-            Vector3f translate =
-                    new Vector3f(
-                            0.0F,
-                            dwarf.getBbHeight()
-                                    * 0.10F,
-                            0.0F
-                    );
-
-            InventoryScreen.renderEntityInInventory(
-                    graphics,
-                    105.0F,
-                    55.0F,
-                    scale,
-                    translate,
-                    pose,
-                    camera,
-                    dwarf
-            );
-        }
+        drawDwarf(
+                graphics,
+                entry.profession()
+        );
 
         drawAmountOverlay(
                 graphics,
@@ -388,6 +288,148 @@ public final class JeiDwarfTradeCategory
                 entry.outputAmount(),
                 outputX
         );
+
+        if (!entry.outputGuaranteed()) {
+            drawChanceOverlay(
+                    graphics,
+                    font,
+                    entry.outputChance(),
+                    outputX
+            );
+        }
+    }
+
+    private static void drawHeader(
+            GuiGraphics graphics,
+            Font font,
+            JeiDwarfTrade entry
+    ) {
+        Component levelComponent;
+
+        if (entry.level() != null) {
+            levelComponent =
+                    Component.translatable(
+                            DwarfMerchantData.Level
+                                    .langKeyFromId(
+                                            entry.level()
+                                                    .getId()
+                                    )
+                    );
+        } else {
+            levelComponent =
+                    Component.literal(
+                            JolCraftDictionary.GLOBAL
+                    );
+        }
+
+        Component professionComponent =
+                entry.profession()
+                        .getDisplayName();
+
+        String levelText =
+                levelComponent.getString();
+
+        String professionText =
+                professionComponent.getString();
+
+        int levelX =
+                105
+                        - font.width(
+                        levelText
+                ) / 2;
+
+        graphics.drawString(
+                font,
+                levelText,
+                levelX,
+                0,
+                TEXT_COLOR,
+                false
+        );
+
+        int professionX =
+                105
+                        - font.width(
+                        professionText
+                ) / 2;
+
+        graphics.drawString(
+                font,
+                professionText,
+                professionX,
+                10,
+                TEXT_COLOR,
+                false
+        );
+    }
+
+    private static void drawDwarf(
+            GuiGraphics graphics,
+            DwarfProfession profession
+    ) {
+        LivingEntity dwarf =
+                createDisplayDwarf(
+                        profession
+                );
+
+        if (dwarf == null) {
+            return;
+        }
+
+        Quaternionf pose =
+                new Quaternionf()
+                        .rotateZ(
+                                (float) Math.PI
+                        );
+
+        Quaternionf camera =
+                new Quaternionf()
+                        .rotateX(
+                                -10.0F
+                                        * (float) (
+                                        Math.PI / 180.0F
+                                )
+                        );
+
+        dwarf.yBodyRot =
+                200.0F;
+
+        dwarf.setYRot(
+                200.0F
+        );
+
+        dwarf.setXRot(
+                -5.0F
+        );
+
+        dwarf.yHeadRot =
+                170.0F;
+
+        dwarf.yHeadRotO =
+                dwarf.yHeadRot;
+
+        float scale =
+                22.0F
+                        / dwarf.getScale();
+
+        Vector3f translate =
+                new Vector3f(
+                        0.0F,
+                        dwarf.getBbHeight()
+                                * 0.10F,
+                        0.0F
+                );
+
+        InventoryScreen.renderEntityInInventory(
+                graphics,
+                105.0F,
+                55.0F,
+                scale,
+                translate,
+                pose,
+                camera,
+                dwarf
+        );
     }
 
     private static void drawAmountOverlay(
@@ -410,14 +452,55 @@ public final class JeiDwarfTradeCategory
                         + "-"
                         + amount.max();
 
+        drawCenteredScaledText(
+                graphics,
+                font,
+                text,
+                slotX,
+                43,
+                0.75F
+        );
+    }
+
+    private static void drawChanceOverlay(
+            GuiGraphics graphics,
+            Font font,
+            double chance,
+            int slotX
+    ) {
+        String text =
+                formatChance(
+                        chance
+                );
+
+        drawCenteredScaledText(
+                graphics,
+                font,
+                text,
+                slotX,
+                52,
+                0.65F
+        );
+    }
+
+    private static void drawCenteredScaledText(
+            GuiGraphics graphics,
+            Font font,
+            String text,
+            int slotX,
+            int y,
+            float scale
+    ) {
         int stringWidth =
-                font.width(text);
+                font.width(
+                        text
+                );
 
         float centerX =
                 slotX
                         + SLOT_SIZE / 2.0F
                         - stringWidth
-                        * 0.75F
+                        * scale
                         / 2.0F;
 
         graphics.pose()
@@ -426,14 +509,14 @@ public final class JeiDwarfTradeCategory
         graphics.pose()
                 .translate(
                         centerX,
-                        43,
+                        y,
                         0
                 );
 
         graphics.pose()
                 .scale(
-                        0.75F,
-                        0.75F,
+                        scale,
+                        scale,
                         1.0F
                 );
 
@@ -442,12 +525,46 @@ public final class JeiDwarfTradeCategory
                 text,
                 0,
                 0,
-                0x888888,
+                TEXT_COLOR,
                 false
         );
 
         graphics.pose()
                 .popPose();
+    }
+
+    private static String formatChance(
+            double chance
+    ) {
+        double percentage =
+                Math.clamp(
+                        chance,
+                        0.0D,
+                        1.0D
+                )
+                        * 100.0D;
+
+        if (percentage >= 10.0D) {
+            return String.format(
+                    Locale.ROOT,
+                    "%.0f%%",
+                    percentage
+            );
+        }
+
+        if (percentage >= 1.0D) {
+            return String.format(
+                    Locale.ROOT,
+                    "%.1f%%",
+                    percentage
+            );
+        }
+
+        return String.format(
+                Locale.ROOT,
+                "%.2f%%",
+                percentage
+        );
     }
 
     @Override
@@ -458,10 +575,7 @@ public final class JeiDwarfTradeCategory
     ) {
         ItemStack egg =
                 new ItemStack(
-                        DwarfProfessionHelper
-                                .getSpawnEgg(
-                                        entry.profession()
-                                )
+                        entry.spawnEgg()
                                 .get()
                 );
 

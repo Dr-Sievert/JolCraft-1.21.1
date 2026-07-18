@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -14,18 +15,19 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredItem;
+import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeCost;
-import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public record JeiDwarfTrade(
-        DwarfTradeRecipe recipe,
-        DeferredItem<Item> spawnEgg
+        @NotNull DwarfTradeRecipe recipe,
+        @NotNull DeferredItem<Item> spawnEgg,
+        @NotNull JeiItemOutcome outcome
 ) {
 
     private static final LootContextParamSet PREVIEW_CONTEXT_PARAMS =
@@ -34,12 +36,6 @@ public record JeiDwarfTrade(
                     .required(LootContextParams.ORIGIN)
                     .build();
 
-    /**
-     * JEI display-only count range.
-     *
-     * This replaces the deleted recipe-system IntRange without adding that old
-     * parameter system back into the migrated recipe architecture.
-     */
     public record AmountRange(
             int min,
             int max
@@ -64,11 +60,8 @@ public record JeiDwarfTrade(
                             )
                     );
 
-            min =
-                    normalizedMin;
-
-            max =
-                    normalizedMax;
+            min = normalizedMin;
+            max = normalizedMax;
         }
 
         public static @NotNull AmountRange fixed(
@@ -155,30 +148,8 @@ public record JeiDwarfTrade(
     }
 
     public @NotNull ItemStack outputExample() {
-        LootContext context =
-                resolveJeiLootContext();
-
-        if (context == null) {
-            return ItemStack.EMPTY;
-        }
-
-        DwarfTradeRecipeInput input =
-                buildPreviewInput(
-                        context
-                );
-
-        if (input.costA().isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        ItemStack output =
-                recipe.resolveResult(
-                        context,
-                        input
-                );
-
         return normalizeForJei(
-                output
+                outcome.stack()
         );
     }
 
@@ -204,55 +175,29 @@ public record JeiDwarfTrade(
         );
     }
 
-    /**
-     * The migrated ItemOutput can contain arbitrary loot functions and hooks,
-     * so its general count range cannot safely be inferred structurally.
-     *
-     * Preserve the old JEI behavior by displaying the count of the generated
-     * preview stack.
-     */
     public @NotNull AmountRange outputAmount() {
-        ItemStack preview =
-                outputExample();
-
-        return AmountRange.fixed(
-                preview.isEmpty()
-                        ? 1
-                        : preview.getCount()
+        return new AmountRange(
+                outcome.minCount(),
+                outcome.maxCount()
         );
     }
 
-    private @NotNull DwarfTradeRecipeInput buildPreviewInput(
-            @NotNull LootContext context
-    ) {
-        ItemStack costA =
-                materializeInput(
-                        recipe.costA(),
-                        context
-                );
+    public double outputChancePerRoll() {
+        return outcome.chancePerRoll();
+    }
 
-        ItemStack costB =
-                ItemStack.EMPTY;
+    public double outputChance() {
+        double chancePerRoll =
+                outcome.chancePerRoll();
 
-        if (recipe.costB() != null) {
-            costB =
-                    materializeInput(
-                            recipe.costB(),
-                            context
-                    );
-        }
-
-        DwarfMerchantData.Level previewLevel =
-                recipe.merchantLevel() != null
-                        ? recipe.merchantLevel()
-                        : DwarfMerchantData.Level.NOVICE;
-
-        return new DwarfTradeRecipeInput(
-                recipe.profession(),
-                previewLevel,
-                costA,
-                costB
+        return 1.0D - Math.pow(
+                1.0D - chancePerRoll,
+                outcome.rolls()
         );
+    }
+
+    public boolean outputGuaranteed() {
+        return outputChance() >= 1.0D;
     }
 
     private static @NotNull ItemStack materializeInput(
@@ -265,10 +210,6 @@ public record JeiDwarfTrade(
 
         ItemStack[] candidates =
                 cost.candidateItems();
-
-        if (candidates.length == 0) {
-            return ItemStack.EMPTY;
-        }
 
         for (ItemStack candidate : candidates) {
             if (candidate == null
@@ -316,10 +257,10 @@ public record JeiDwarfTrade(
             @NotNull NumberProvider provider,
             @Nullable LootContext context
     ) {
-        if (provider instanceof ConstantValue constant) {
+        if (provider instanceof ConstantValue(float value)) {
             return AmountRange.fixed(
                     Mth.floor(
-                            constant.value()
+                            value
                     )
             );
         }
@@ -358,9 +299,9 @@ public record JeiDwarfTrade(
             @NotNull NumberProvider provider,
             @Nullable LootContext context
     ) {
-        if (provider instanceof ConstantValue constant) {
+        if (provider instanceof ConstantValue(float value)) {
             return Mth.floor(
-                    constant.value()
+                    value
             );
         }
 
@@ -384,9 +325,9 @@ public record JeiDwarfTrade(
             @NotNull NumberProvider provider,
             @Nullable LootContext context
     ) {
-        if (provider instanceof ConstantValue constant) {
+        if (provider instanceof ConstantValue(float value)) {
             return Mth.floor(
-                    constant.value()
+                    value
             );
         }
 
@@ -446,6 +387,9 @@ public record JeiDwarfTrade(
 
         return JolCraftRecipeContexts.create(
                 serverLevel,
+                RandomSource.create(
+                        0x4A4F4C4352414654L
+                ),
                 PREVIEW_CONTEXT_PARAMS,
                 builder -> builder
                         .withParameter(

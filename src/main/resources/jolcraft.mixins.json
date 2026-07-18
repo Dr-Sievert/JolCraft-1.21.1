@@ -7,10 +7,16 @@
     "BrushItemMixin",
     "JigsawPlacementMixin",
     "JigsawPlacementPlacerMixin",
+    "LootItemAccessor",
+    "LootPoolAccessor",
+    "LootPoolSingletonContainerAccessor",
     "MeleeAttackGoalMixin",
     "RangedBowAttackGoalMixin",
     "RangedCrossbowAttackGoalMixin",
-    "SpellcasterUseSpellGoalMixin"
+    "SetComponentsFunctionAccessor",
+    "SetItemCountFunctionAccessor",
+    "SpellcasterUseSpellGoalMixin",
+    "UniformGeneratorAccessor"
   ],
   "client": [
   ],
