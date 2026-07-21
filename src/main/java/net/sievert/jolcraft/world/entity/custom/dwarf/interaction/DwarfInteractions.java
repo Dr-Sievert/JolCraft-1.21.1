@@ -6,6 +6,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core.*;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.profession.*;
@@ -21,41 +22,44 @@ import java.util.Map;
 @MethodsReturnNonnullByDefault
 public final class DwarfInteractions {
 
-    // -------------------------------------------------------------------------
-    // State
-    // -------------------------------------------------------------------------
+    private static final Map<
+            DwarfProfession,
+            ProfessionInteraction
+            > PROFESSION_HANDLERS =
+            new EnumMap<>(DwarfProfession.class);
 
-    private static final Map<DwarfProfession, ProfessionInteraction> PROFESSION_HANDLERS = new EnumMap<>(DwarfProfession.class);
+    private static final List<CoreInteraction> CORE_PIPELINE =
+            new ArrayList<>();
 
-    private static boolean isProfessionRegistered(DwarfProfession profession) {
-        return PROFESSION_HANDLERS.containsKey(profession);
-    }
-
-    /**
-     * Ordered core pipeline. First non-PASS wins.
-     * Split CoreDwarfInteractionHandler into multiple CoreInteraction classes over time,
-     * and register them here in the exact order you want them evaluated.
-     */
-    private static final List<CoreInteraction> CORE_PIPELINE = new ArrayList<>();
+    private DwarfInteractions() {}
 
     // -------------------------------------------------------------------------
     // Registration
     // -------------------------------------------------------------------------
 
-    public static void registerCore(CoreInteraction handler) {
+    private static boolean isProfessionRegistered(
+            DwarfProfession profession
+    ) {
+        return PROFESSION_HANDLERS.containsKey(profession);
+    }
+
+    public static void registerCore(
+            CoreInteraction handler
+    ) {
         CORE_PIPELINE.add(handler);
     }
 
-    public static void register(DwarfProfession profession, ProfessionInteraction handler) {
-        PROFESSION_HANDLERS.put(profession, handler);
+    public static void register(
+            DwarfProfession profession,
+            ProfessionInteraction handler
+    ) {
+        PROFESSION_HANDLERS.put(
+                profession,
+                handler
+        );
     }
 
-    /**
-     * Called once during common init.
-     * Enforces that the interaction system is complete and deterministic.
-     */
     public static void registerAll() {
-
         registerCore(new IgnoreInteractionHandler());
         registerCore(new LanguageGateInteractionHandler());
         registerCore(new ReputationGateInteractionHandler());
@@ -69,15 +73,30 @@ public final class DwarfInteractions {
         registerCore(new TradeCrateInteractionHandler());
         registerCore(new TradeInteractionHandler());
 
-        register(DwarfProfession.GUARD, new GuardInteractionHandler());
-        register(DwarfProfession.EXPLORER, new ExplorerInteractionHandler());
-        register(DwarfProfession.GUILDMASTER, new GuildmasterInteractionHandler());
+        register(
+                DwarfProfession.GUARD,
+                new GuardInteractionHandler()
+        );
 
-        final ProfessionInteraction DEFAULT = new DefaultProfessionInteractionHandler();
+        register(
+                DwarfProfession.EXPLORER,
+                new ExplorerInteractionHandler()
+        );
 
-        for (DwarfProfession prof : DwarfProfession.values()) {
-            if (!isProfessionRegistered(prof)) {
-                register(prof, DEFAULT);
+        register(
+                DwarfProfession.GUILDMASTER,
+                new GuildmasterInteractionHandler()
+        );
+
+        ProfessionInteraction defaultHandler =
+                new DefaultProfessionInteractionHandler();
+
+        for (DwarfProfession profession : DwarfProfession.values()) {
+            if (!isProfessionRegistered(profession)) {
+                register(
+                        profession,
+                        defaultHandler
+                );
             }
         }
 
@@ -86,13 +105,16 @@ public final class DwarfInteractions {
 
     private static void validateComplete() {
         if (CORE_PIPELINE.isEmpty()) {
-            throw new IllegalStateException("Missing dwarf CORE interaction pipeline");
+            throw new IllegalStateException(
+                    "Missing dwarf CORE interaction pipeline"
+            );
         }
 
         for (DwarfProfession profession : DwarfProfession.values()) {
             if (!PROFESSION_HANDLERS.containsKey(profession)) {
                 throw new IllegalStateException(
-                        "Missing dwarf interaction handler for profession: " + profession
+                        "Missing dwarf interaction handler for profession: "
+                                + profession
                 );
             }
         }
@@ -102,17 +124,30 @@ public final class DwarfInteractions {
     // Dispatch
     // -------------------------------------------------------------------------
 
-    public static InteractionResult dispatch(DwarfInteractionContext ctx) {
+    public static InteractionResult dispatch(
+            DwarfInteractionContext ctx
+    ) {
         if (ctx.isClient()) {
             return InteractionResult.SUCCESS;
         }
 
-        DwarfProfession profession = ctx.dwarf().getProfession();
-        ProfessionInteraction professionHandler = PROFESSION_HANDLERS.get(profession);
+        /*
+         * Preserve the interacted item before any handler or action can mutate
+         * the player's actual stack.
+         */
+        ItemStack inputSnapshot =
+                ctx.stack().copyWithCount(1);
+
+        DwarfProfession profession =
+                ctx.dwarf().getProfession();
+
+        ProfessionInteraction professionHandler =
+                PROFESSION_HANDLERS.get(profession);
 
         if (professionHandler == null) {
             throw new IllegalStateException(
-                    "No dwarf interaction handler registered for profession: " + profession
+                    "No dwarf interaction handler registered for profession: "
+                            + profession
             );
         }
 
@@ -120,10 +155,16 @@ public final class DwarfInteractions {
             hooks.preCore(ctx);
         }
 
-        for (CoreInteraction core : CORE_PIPELINE) {
-            InteractionResult coreResult = core.handle(ctx);
-            if (coreResult != InteractionResult.PASS) {
-                return coreResult;
+        for (CoreInteraction handler : CORE_PIPELINE) {
+            DwarfInteractionOutcome outcome =
+                    handler.handle(ctx);
+
+            if (!outcome.isPass()) {
+                return commit(
+                        ctx,
+                        inputSnapshot,
+                        outcome
+                );
             }
         }
 
@@ -132,9 +173,15 @@ public final class DwarfInteractions {
             hooks.preProfession(ctx);
         }
 
-        InteractionResult profResult = professionHandler.handle(ctx);
-        if (profResult != InteractionResult.PASS) {
-            return profResult;
+        DwarfInteractionOutcome professionOutcome =
+                professionHandler.handle(ctx);
+
+        if (!professionOutcome.isPass()) {
+            return commit(
+                    ctx,
+                    inputSnapshot,
+                    professionOutcome
+            );
         }
 
         if (professionHandler instanceof DwarfInteractionHooks hooks) {
@@ -144,44 +191,89 @@ public final class DwarfInteractions {
         return InteractionResult.FAIL;
     }
 
+    /**
+     * The single commit point for dwarf interactions.
+     *
+     * An action is started before consuming the player's item. If the action
+     * cannot start, the item remains untouched.
+     */
+    private static InteractionResult commit(
+            DwarfInteractionContext ctx,
+            ItemStack inputSnapshot,
+            DwarfInteractionOutcome outcome
+    ) {
+        DwarfActionType.Subtype actionSubtype =
+                outcome.actionSubtype();
+
+        if (actionSubtype != null) {
+            boolean started =
+                    ctx.dwarf()
+                            .getActionHelper()
+                            .trySetAction(
+                                    ctx.dwarf(),
+                                    null,
+                                    actionSubtype,
+                                    ctx.player(),
+                                    ctx.hand(),
+                                    inputSnapshot
+                            );
+
+            if (!started) {
+                return InteractionResult.FAIL;
+            }
+        }
+
+        if (outcome.itemUse()
+                == DwarfInteractionOutcome.HeldItemUse.CONSUME_ONE) {
+
+            /*
+             * This is the only normal usePlayerItem call in the dwarf
+             * interaction system.
+             */
+            ctx.dwarf().usePlayerItem(
+                    ctx.player(),
+                    ctx.hand(),
+                    ctx.stack()
+            );
+        }
+
+        return outcome.result();
+    }
+
     // -------------------------------------------------------------------------
-    // Types
+    // Interaction types
     // -------------------------------------------------------------------------
 
     public interface DwarfInteraction {
-        InteractionResult handle(DwarfInteractionContext ctx);
+
+        DwarfInteractionOutcome handle(
+                DwarfInteractionContext ctx
+        );
     }
 
-    /**
-     * Mandatory marker for CORE handlers.
-     * These should be shared logic (gates + common interactions).
-     */
-    public interface CoreInteraction extends DwarfInteraction {
-    }
+    public interface CoreInteraction
+            extends DwarfInteraction {}
 
-    /**
-     * Mandatory marker for PROFESSION handlers.
-     * These should be profession-specific logic only.
-     */
-    public interface ProfessionInteraction extends DwarfInteraction {
-    }
+    public interface ProfessionInteraction
+            extends DwarfInteraction {}
 
-    /**
-     * Optional timing hooks for profession handlers that need to run at precise points.
-     * Having named phases makes this deterministic and very easy to read in code.
-     */
     public interface DwarfInteractionHooks {
-        default void preCore(DwarfInteractionContext ctx) {
-        }
 
-        default void postCore(DwarfInteractionContext ctx) {
-        }
+        default void preCore(
+                DwarfInteractionContext ctx
+        ) {}
 
-        default void preProfession(DwarfInteractionContext ctx) {
-        }
+        default void postCore(
+                DwarfInteractionContext ctx
+        ) {}
 
-        default void postProfession(DwarfInteractionContext ctx) {
-        }
+        default void preProfession(
+                DwarfInteractionContext ctx
+        ) {}
+
+        default void postProfession(
+                DwarfInteractionContext ctx
+        ) {}
     }
 
     public record DwarfInteractionContext(

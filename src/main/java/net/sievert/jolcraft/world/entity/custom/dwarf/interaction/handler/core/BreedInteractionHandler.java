@@ -1,8 +1,8 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -10,40 +10,47 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class BreedInteractionHandler implements DwarfInteractions.CoreInteraction {
+public final class BreedInteractionHandler
+        implements DwarfInteractions.CoreInteraction {
 
     @Override
-    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+    public DwarfInteractionOutcome handle(
+            DwarfInteractions.DwarfInteractionContext ctx
+    ) {
         if (ctx.isClient()) {
-            return InteractionResult.SUCCESS;
+            return DwarfInteractionOutcome.handled();
         }
 
         var dwarf = ctx.dwarf();
         var player = ctx.player();
-        var hand = ctx.hand();
         var stack = ctx.stack();
 
         if (!dwarf.isFood(stack)) {
-            return InteractionResult.PASS;
+            return DwarfInteractionOutcome.pass();
         }
 
         int age = dwarf.getAge();
 
         if (age == 0 && dwarf.canFallInLove()) {
-            dwarf.usePlayerItem(player, hand, stack);
             dwarf.setInLove(player);
             dwarf.playEatingSound();
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.consumeOne();
         }
 
         if (dwarf.isBaby()) {
-            dwarf.usePlayerItem(player, hand, stack);
-            dwarf.ageUp(AgeableMob.getSpeedUpSecondsWhenFeeding(-age), true);
+            dwarf.ageUp(
+                    AgeableMob.getSpeedUpSecondsWhenFeeding(-age),
+                    true
+            );
+
             dwarf.playEatingSound();
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.consumeOne();
         }
 
         PlaySound.dwarfNo(dwarf);
-        return InteractionResult.FAIL;
+
+        return DwarfInteractionOutcome.failed();
     }
 }

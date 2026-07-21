@@ -3,11 +3,11 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
-import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -16,25 +16,37 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public final class ReputationGateInteractionHandler implements DwarfInteractions.CoreInteraction {
 
     @Override
-    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+    public DwarfInteractionOutcome handle(
+            DwarfInteractions.DwarfInteractionContext ctx
+    ) {
         if (ctx.isClient()) {
-            return InteractionResult.SUCCESS;
+            return DwarfInteractionOutcome.handled();
         }
 
         var dwarf = ctx.dwarf();
         var player = ctx.player();
 
         int requiredTier = dwarf.getRequiredTier();
-        if (requiredTier > 0 && !DwarvenReputationAttachmentHelper.hasTier(player, requiredTier)) {
+
+        if (requiredTier > 0
+                && !DwarvenReputationAttachmentHelper.hasTier(
+                player,
+                requiredTier
+        )) {
+
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LOCKED, requiredTier)
-                            .withStyle(ChatFormatting.RED),
+                    Component.translatable(
+                            JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LOCKED,
+                            requiredTier
+                    ).withStyle(ChatFormatting.RED),
                     true
             );
+
             PlaySound.dwarfNo(dwarf);
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.handled();
         }
 
-        return InteractionResult.PASS;
+        return DwarfInteractionOutcome.pass();
     }
 }

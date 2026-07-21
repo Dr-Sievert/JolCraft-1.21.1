@@ -10,7 +10,6 @@ import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.BountyTaskRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -295,9 +294,6 @@ public record DwarfMerchantBountyTasks(
                                 DwarfProfession.MERCHANT
                         )
                         .tier(tier)
-                        .result(
-                                JolCraftItems.BOUNTY_CRATE.get()
-                        )
                         .sound1(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         )

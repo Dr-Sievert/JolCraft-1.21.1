@@ -1,9 +1,11 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.trade;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -27,11 +29,7 @@ import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipeInpu
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public final class DwarfTrades {
 
@@ -51,12 +49,14 @@ public final class DwarfTrades {
 
     public static final class RecipeListing {
 
+        private final RecipeHolder<DwarfTradeRecipe> recipeHolder;
         private final DwarfTradeRecipe recipe;
 
         public RecipeListing(
-                DwarfTradeRecipe recipe
+                @NotNull RecipeHolder<DwarfTradeRecipe> recipeHolder
         ) {
-            this.recipe = recipe;
+            this.recipeHolder = recipeHolder;
+            this.recipe = recipeHolder.value();
         }
 
         @Nullable
@@ -195,6 +195,7 @@ public final class DwarfTrades {
                     stats.dwarfXp(),
                     stats.priceMultiplier(),
                     0,
+                    recipeHolder.id(),
                     groupOf(recipe)
             );
         }
@@ -506,15 +507,102 @@ public final class DwarfTrades {
     }
 
     public static @NotNull List<RecipeHolder<DwarfTradeRecipe>>
-    getTradeRecipesAtLevel(
+    getAdditionalGlobalTradeRecipes(
             Level level,
             DwarfProfession profession,
-            DwarfMerchantData.Level merchantLevel
+            DwarfMerchantData.Level merchantLevel,
+            RandomSource random,
+            @NotNull Set<ResourceLocation> excludedRecipeIds
     ) {
-        return findTradeRecipesAtLevel(
+        DwarfProfession resolvedProfession =
+                profession != null
+                        ? profession
+                        : DwarfProfession.NONE;
+
+        DwarfMerchantData.Level resolvedLevel =
+                merchantLevel != null
+                        ? merchantLevel
+                        : DwarfMerchantData.Level.NOVICE;
+
+        DwarfProfessionConfig config =
+                DwarfProfessionConfigManager.INSTANCE.get(
+                        resolvedProfession
+                );
+
+        int rolls =
+                config.tradePools()
+                        .get(TradePoolType.GLOBAL)
+                        .map(pool ->
+                                pool.rollsFor(
+                                        TradePoolType.GLOBAL,
+                                        resolvedLevel
+                                )
+                        )
+                        .orElse(0);
+
+        return getGlobalTradeRecipes(
                 level,
-                profession,
-                merchantLevel
+                resolvedProfession,
+                random,
+                rolls,
+                excludedRecipeIds
+        );
+    }
+
+    public static @NotNull List<RecipeHolder<DwarfTradeRecipe>>
+    getGlobalTradeRecipes(
+            Level level,
+            DwarfProfession profession,
+            RandomSource random,
+            int rolls,
+            @NotNull Set<ResourceLocation> excludedRecipeIds
+    ) {
+        if (!(level instanceof ServerLevel)) {
+            return List.of();
+        }
+
+        if (rolls <= 0) {
+            return List.of();
+        }
+
+        DwarfProfession resolvedProfession =
+                profession != null
+                        ? profession
+                        : DwarfProfession.NONE;
+
+        RandomSource resolvedRandom =
+                random != null
+                        ? random
+                        : RandomSource.create();
+
+        List<RecipeHolder<DwarfTradeRecipe>> candidates =
+                new ArrayList<>();
+
+        for (RecipeHolder<DwarfTradeRecipe> holder :
+                getAllTradeRecipes(level)) {
+
+            DwarfTradeRecipe recipe =
+                    holder.value();
+
+            if (recipe.profession() != resolvedProfession) {
+                continue;
+            }
+
+            if (groupOf(recipe) != TradeGroup.GLOBAL_POOL) {
+                continue;
+            }
+
+            if (excludedRecipeIds.contains(holder.id())) {
+                continue;
+            }
+
+            candidates.add(holder);
+        }
+
+        return pickWeightedWithoutReplacement(
+                candidates,
+                rolls,
+                resolvedRandom
         );
     }
 
@@ -785,61 +873,6 @@ public final class DwarfTrades {
         );
     }
 
-    private static @NotNull List<RecipeHolder<DwarfTradeRecipe>>
-    findTradeRecipesAtLevel(
-            Level level,
-            DwarfProfession profession,
-            DwarfMerchantData.Level merchantLevel
-    ) {
-        List<RecipeHolder<DwarfTradeRecipe>> all =
-                getAllTradeRecipes(
-                        level
-                );
-
-        if (all.isEmpty()) {
-            return List.of();
-        }
-
-        List<RecipeHolder<DwarfTradeRecipe>> filtered =
-                new ArrayList<>();
-
-        int wantedLevel =
-                merchantLevel != null
-                        ? merchantLevel.getId()
-                        : 0;
-
-        for (RecipeHolder<DwarfTradeRecipe> holder : all) {
-            DwarfTradeRecipe recipe =
-                    holder.value();
-
-            if (recipe.profession() != profession) {
-                continue;
-            }
-
-            if (recipe.merchantLevel() == null) {
-                continue;
-            }
-
-            if (recipe.merchantLevel()
-                    .getId()
-                    != wantedLevel) {
-                continue;
-            }
-
-            filtered.add(
-                    holder
-            );
-        }
-
-        sortByPoolThenOrderThenId(
-                filtered
-        );
-
-        return List.copyOf(
-                filtered
-        );
-    }
-
     private static int poolPriority(
             @NotNull DwarfTradeRecipe recipe
     ) {
@@ -912,6 +945,14 @@ public final class DwarfTrades {
                         .getRecipeManager()
                         .getRecipes();
 
+        List<RecipeHolder<DwarfTradeRecipe>> result = getRecipeHolders(all, type);
+
+        return List.copyOf(
+                result
+        );
+    }
+
+    private static @NotNull List<RecipeHolder<DwarfTradeRecipe>> getRecipeHolders(Collection<RecipeHolder<?>> all, RecipeType<DwarfTradeRecipe> type) {
         List<RecipeHolder<DwarfTradeRecipe>> result =
                 new ArrayList<>();
 
@@ -933,9 +974,6 @@ public final class DwarfTrades {
                     )
             );
         }
-
-        return List.copyOf(
-                result
-        );
+        return result;
     }
 }

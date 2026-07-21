@@ -1,10 +1,11 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.profession;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome.HeldItemUse;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
@@ -14,29 +15,41 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class GuardInteractionHandler implements DwarfInteractions.ProfessionInteraction {
+public final class GuardInteractionHandler
+        implements DwarfInteractions.ProfessionInteraction {
 
     @Override
-    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+    public DwarfInteractionOutcome handle(
+            DwarfInteractions.DwarfInteractionContext ctx
+    ) {
         var dwarf = ctx.dwarf();
-        var player = ctx.player();
-        var hand = ctx.hand();
         var stack = ctx.stack();
 
-        ArmorItem.Type type = JolCraftEquipmentHelper.armorType(stack);
+        ArmorItem.Type armorType =
+                JolCraftEquipmentHelper.armorType(stack);
 
-        if (type == null || !stack.is(JolCraftItems.DEEPSLATE_ARMOR_SET.get(type).get())) {
-            return InteractionResult.PASS;
+        if (armorType == null
+                || !stack.is(
+                JolCraftItems.DEEPSLATE_ARMOR_SET
+                        .get(armorType)
+                        .get()
+        )) {
+
+            return DwarfInteractionOutcome.pass();
         }
 
-        EquipmentSlot slot = type.getSlot();
+        EquipmentSlot equipmentSlot =
+                armorType.getSlot();
 
-        if (!dwarf.getItemBySlot(slot).isEmpty()) {
+        if (!dwarf.getItemBySlot(equipmentSlot).isEmpty()) {
             PlaySound.dwarfNo(dwarf);
-            return InteractionResult.FAIL;
+
+            return DwarfInteractionOutcome.failed();
         }
 
-        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.GUARD_EQUIP, player, hand, stack);
-        return InteractionResult.SUCCESS;
+        return DwarfInteractionOutcome.startAction(
+                DwarfActionType.Subtype.GUARD_EQUIP,
+                HeldItemUse.CONSUME_ONE
+        );
     }
 }

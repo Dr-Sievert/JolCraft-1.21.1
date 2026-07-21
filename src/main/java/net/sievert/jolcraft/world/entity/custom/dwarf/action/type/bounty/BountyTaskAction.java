@@ -209,16 +209,16 @@ public final class BountyTaskAction extends InspectDwarfAction {
             return;
         }
 
-        dwarf.usePlayerItem(
-                player,
-                hand,
-                itemstack
-        );
+        ItemStack result =
+                plannedResult;
+
+
+        plannedResult = ItemStack.EMPTY;
 
         throwItem(
                 dwarf,
                 player,
-                plannedResult
+                result
         );
     }
 }

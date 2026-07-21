@@ -3,9 +3,10 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome.HeldItemUse;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
@@ -14,42 +15,54 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class SignContractInteractionHandler implements DwarfInteractions.CoreInteraction {
+public final class SignContractInteractionHandler
+        implements DwarfInteractions.CoreInteraction {
 
     @Override
-    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+    public DwarfInteractionOutcome handle(
+            DwarfInteractions.DwarfInteractionContext ctx
+    ) {
         if (ctx.isClient()) {
-            return InteractionResult.SUCCESS;
+            return DwarfInteractionOutcome.handled();
         }
 
         var dwarf = ctx.dwarf();
         var player = ctx.player();
-        var hand = ctx.hand();
         var stack = ctx.stack();
 
         if (!stack.is(JolCraftItems.CONTRACT_WRITTEN.get())) {
-            return InteractionResult.PASS;
+            return DwarfInteractionOutcome.pass();
         }
 
         if (!dwarf.canSign()) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_SIGN).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(
+                            JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_SIGN
+                    ).withStyle(ChatFormatting.GRAY),
                     true
             );
+
             PlaySound.dwarfNo(dwarf);
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.handled();
         }
 
         if (dwarf.needsPay()) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(
+                            JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID
+                    ).withStyle(ChatFormatting.GRAY),
                     true
             );
+
             PlaySound.dwarfNo(dwarf);
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.handled();
         }
 
-        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.CONTRACT_SIGNING, player, hand, stack);
-        return InteractionResult.SUCCESS;
+        return DwarfInteractionOutcome.startAction(
+                DwarfActionType.Subtype.CONTRACT_SIGNING,
+                HeldItemUse.CONSUME_ONE
+        );
     }
 }

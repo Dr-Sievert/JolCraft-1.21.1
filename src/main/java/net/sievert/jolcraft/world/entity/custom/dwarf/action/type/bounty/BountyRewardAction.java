@@ -201,7 +201,7 @@ public final class BountyRewardAction extends InspectDwarfAction {
 
         previousMainHandItem = ItemStack.EMPTY;
 
-        ItemStack redeemStack = itemstack;
+        ItemStack redeemStack = itemstack.copy();
 
         if (redeemStack.isEmpty()) {
             return;
@@ -328,12 +328,6 @@ public final class BountyRewardAction extends InspectDwarfAction {
                 SoundEvents.SNOWBALL_THROW,
                 0.5F,
                 0.7F
-        );
-
-        dwarf.usePlayerItem(
-                player,
-                hand,
-                redeemStack
         );
 
         dwarf.restockBountiesOnly();

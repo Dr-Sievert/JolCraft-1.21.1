@@ -3,19 +3,22 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
-import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.sound.util.PlaySound;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
+import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 @MethodsReturnNonnullByDefault
-public final class LanguageGateInteractionHandler implements DwarfInteractions.CoreInteraction {
+public final class LanguageGateInteractionHandler
+        implements DwarfInteractions.CoreInteraction {
 
     @Override
-    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+    public DwarfInteractionOutcome handle(
+            DwarfInteractions.DwarfInteractionContext ctx
+    ) {
         if (ctx.isClient()) {
-            return InteractionResult.SUCCESS;
+            return DwarfInteractionOutcome.handled();
         }
 
         var dwarf = ctx.dwarf();
@@ -23,13 +26,17 @@ public final class LanguageGateInteractionHandler implements DwarfInteractions.C
 
         if (!LanguageAttachmentHelper.knowsDwarvish(player)) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_LOCKED).withStyle(ChatFormatting.RED),
+                    Component.translatable(
+                            JolCraftLanguageKeys.TOOLTIP_DWARF_LOCKED
+                    ).withStyle(ChatFormatting.RED),
                     true
             );
+
             PlaySound.dwarfNo(dwarf);
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.handled();
         }
 
-        return InteractionResult.PASS;
+        return DwarfInteractionOutcome.pass();
     }
 }

@@ -3,11 +3,12 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.interaction.handler.core;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
+import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome.HeldItemUse;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
@@ -15,46 +16,60 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class PromoteInteractionHandler implements DwarfInteractions.CoreInteraction {
+public final class PromoteInteractionHandler
+        implements DwarfInteractions.CoreInteraction {
 
     @Override
-    public InteractionResult handle(DwarfInteractions.DwarfInteractionContext ctx) {
+    public DwarfInteractionOutcome handle(
+            DwarfInteractions.DwarfInteractionContext ctx
+    ) {
         if (ctx.isClient()) {
-            return InteractionResult.SUCCESS;
+            return DwarfInteractionOutcome.handled();
         }
 
         var dwarf = ctx.dwarf();
         var player = ctx.player();
-        var hand = ctx.hand();
         var stack = ctx.stack();
 
         if (!stack.is(JolCraftTags.Items.PROFESSION_CONTRACTS)) {
-            return InteractionResult.PASS;
+            return DwarfInteractionOutcome.pass();
         }
 
-        boolean promotable = dwarf.isAlive()
-                && !dwarf.isBaby()
-                && dwarf.getType() == JolCraftEntities.DWARF.get();
+        boolean promotable =
+                dwarf.isAlive()
+                        && !dwarf.isBaby()
+                        && dwarf.getType()
+                        == JolCraftEntities.DWARF.get();
 
         if (!promotable) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_PROMOTE).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(
+                            JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_PROMOTE
+                    ).withStyle(ChatFormatting.GRAY),
                     true
             );
+
             PlaySound.dwarfNo(dwarf);
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.handled();
         }
 
         if (dwarf.needsPay()) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID).withStyle(ChatFormatting.GRAY),
+                    Component.translatable(
+                            JolCraftLanguageKeys.TOOLTIP_DWARF_NOT_PAID
+                    ).withStyle(ChatFormatting.GRAY),
                     true
             );
+
             PlaySound.dwarfNo(dwarf);
-            return InteractionResult.SUCCESS;
+
+            return DwarfInteractionOutcome.handled();
         }
 
-        dwarf.getActionHelper().setAction(dwarf, DwarfActionType.Subtype.PROMOTE, player, hand, stack);
-        return InteractionResult.SUCCESS;
+        return DwarfInteractionOutcome.startAction(
+                DwarfActionType.Subtype.PROMOTE,
+                HeldItemUse.CONSUME_ONE
+        );
     }
 }

@@ -48,7 +48,129 @@ public class DwarfActionHelper {
         }
     }
 
-    /** Sets a new active action. Null is treated as Idle. Calls start() on the new action. */
+    public boolean trySetAction(
+            AbstractDwarfEntity dwarf,
+            @Nullable DwarfActionType type,
+            @Nullable DwarfActionType.Subtype subtype,
+            @Nullable Player player,
+            @Nullable InteractionHand hand,
+            @Nullable ItemStack itemstack
+    ) {
+        if (activeAction.getType() != DwarfActionType.IDLE) {
+            return false;
+        }
+
+        ItemStack actionInput =
+                itemstack == null
+                        ? ItemStack.EMPTY
+                        : itemstack.copyWithCount(1);
+
+        DwarfAction newAction;
+
+        if (subtype != null) {
+            newAction = switch (subtype) {
+                case CONTRACT_SIGNING ->
+                        new SignDwarfAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case PROMOTE ->
+                        new PromoteDwarfAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case ENDORSE ->
+                        new EndorseDwarfAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case REPUTATION_GAIN ->
+                        new ReputationGainDwarfAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case BOUNTY ->
+                        new BountyTaskAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case BOUNTY_REWARD ->
+                        new BountyRewardAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case GUARD_EQUIP ->
+                        new GuardEquipDwarfAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case ATTACK_HEAVY ->
+                        new AttackHeavyDwarfAction(dwarf);
+            };
+        } else {
+            if (type == null) {
+                return false;
+            }
+
+            newAction = switch (type) {
+                case INSPECT ->
+                        new InspectDwarfAction(
+                                dwarf,
+                                player,
+                                hand,
+                                actionInput
+                        );
+
+                case DRINK ->
+                        new DrinkDwarfAction();
+
+                case BLOCK ->
+                        new BlockDwarfAction(dwarf);
+
+                case ATTACK ->
+                        new AttackDwarfAction(dwarf);
+
+                case IDLE ->
+                        IdleDwarfAction.INSTANCE;
+            };
+        }
+
+        activeAction = newAction;
+        activeAction.start();
+
+        setCurrentAction(
+                dwarf,
+                newAction.getType(),
+                newAction.getSubtype()
+        );
+
+        return true;
+    }
+
+    /**
+     * Compatibility wrapper for existing non-interaction callers.
+     */
     public void setAction(
             AbstractDwarfEntity dwarf,
             @Nullable DwarfActionType type,
@@ -57,34 +179,14 @@ public class DwarfActionHelper {
             @Nullable InteractionHand hand,
             @Nullable ItemStack itemstack
     ) {
-        if (activeAction.getType() != DwarfActionType.IDLE) return;
-
-        DwarfAction newAction;
-        if (subtype != null) {
-            newAction = switch (subtype) {
-                case CONTRACT_SIGNING -> new SignDwarfAction(dwarf, player, hand, itemstack);
-                case PROMOTE -> new PromoteDwarfAction(dwarf, player, hand, itemstack);
-                case ENDORSE -> new EndorseDwarfAction(dwarf, player, hand, itemstack);
-                case REPUTATION_GAIN -> new ReputationGainDwarfAction(dwarf, player, hand, itemstack);
-                case BOUNTY -> new BountyTaskAction(dwarf, player, hand, itemstack);
-                case BOUNTY_REWARD -> new BountyRewardAction(dwarf, player, hand, itemstack);
-                case GUARD_EQUIP -> new GuardEquipDwarfAction(dwarf, player, hand, itemstack);
-                case ATTACK_HEAVY -> new AttackHeavyDwarfAction(dwarf);
-            };
-        } else {
-            if (type == null) return;
-            newAction = switch (type) {
-                case INSPECT -> new InspectDwarfAction(dwarf, player, hand, itemstack);
-                case DRINK   -> new DrinkDwarfAction();
-                case BLOCK   -> new BlockDwarfAction(dwarf);
-                case ATTACK  -> new AttackDwarfAction(dwarf);
-                case IDLE    -> IdleDwarfAction.INSTANCE;
-            };
-        }
-
-        this.activeAction = newAction;
-        this.activeAction.start();
-        setCurrentAction(dwarf, newAction.getType(), newAction.getSubtype());
+        trySetAction(
+                dwarf,
+                type,
+                subtype,
+                player,
+                hand,
+                itemstack
+        );
     }
 
     public void setAction(

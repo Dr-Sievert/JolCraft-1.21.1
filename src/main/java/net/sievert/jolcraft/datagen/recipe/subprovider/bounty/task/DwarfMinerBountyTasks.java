@@ -11,7 +11,6 @@ import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.BountyTaskRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -197,12 +196,7 @@ public record DwarfMinerBountyTasks(
                         .bountyType(
                                 DwarfProfession.MINER
                         )
-                        .tier(
-                                tier
-                        )
-                        .result(
-                                JolCraftItems.BOUNTY_CRATE.get()
-                        )
+                        .tier(tier)
                         .sound1(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         )
@@ -210,9 +204,7 @@ public record DwarfMinerBountyTasks(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         );
 
-        objectives.accept(
-                builder
-        );
+        objectives.accept(builder);
 
         emit(
                 output,
@@ -237,12 +229,7 @@ public record DwarfMinerBountyTasks(
                         .bountyType(
                                 DwarfProfession.MINER
                         )
-                        .tier(
-                                tier
-                        )
-                        .result(
-                                JolCraftItems.BOUNTY.get()
-                        )
+                        .tier(tier)
                         .sound1(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         )
@@ -250,9 +237,7 @@ public record DwarfMinerBountyTasks(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         );
 
-        objectives.accept(
-                builder
-        );
+        objectives.accept(builder);
 
         emit(
                 output,

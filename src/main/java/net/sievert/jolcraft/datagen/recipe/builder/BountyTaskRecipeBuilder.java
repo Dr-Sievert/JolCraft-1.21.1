@@ -21,7 +21,7 @@ import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.recipe.base.output.*;
+import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
@@ -59,8 +59,6 @@ public final class BountyTaskRecipeBuilder
     private @Nullable DwarfProfession bountyType;
     private @Nullable DwarfMerchantData.Level tier;
 
-    private @Nullable net.minecraft.world.item.Item bounty;
-
     private final SimpleWeightedRandomList.Builder<
             RecipeOutput
             > objectives =
@@ -81,6 +79,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull String id
     ) {
         this.id = id;
+
         return this;
     }
 
@@ -88,6 +87,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull DwarfProfession bountyType
     ) {
         this.bountyType = bountyType;
+
         return this;
     }
 
@@ -95,13 +95,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull DwarfMerchantData.Level tier
     ) {
         this.tier = tier;
-        return this;
-    }
 
-    public BountyTaskRecipeBuilder result(
-            @NotNull ItemLike bounty
-    ) {
-        this.bounty = bounty.asItem();
         return this;
     }
 
@@ -127,6 +121,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull SoundOutput sound
     ) {
         this.sound1 = sound;
+
         return this;
     }
 
@@ -152,6 +147,7 @@ public final class BountyTaskRecipeBuilder
             @NotNull SoundOutput sound
     ) {
         this.sound2 = sound;
+
         return this;
     }
 
@@ -299,6 +295,7 @@ public final class BountyTaskRecipeBuilder
                     net.minecraft.data.recipes.RecipeOutput
                     >
             > buildValidated() {
+
         if (bountyType == null) {
             return DataResult.error(() ->
                     BountyRecipe.TYPE_KEY
@@ -310,20 +307,6 @@ public final class BountyTaskRecipeBuilder
             return DataResult.error(() ->
                     BountyRecipe.TIER_KEY
                             + " is required"
-            );
-        }
-
-        if (bounty == null) {
-            return DataResult.error(() ->
-                    JolCraftDictionary.RESULT
-                            + " is required"
-            );
-        }
-
-        if (bounty == Items.AIR) {
-            return DataResult.error(() ->
-                    JolCraftDictionary.RESULT
-                            + " must not be air"
             );
         }
 
@@ -352,7 +335,6 @@ public final class BountyTaskRecipeBuilder
                 new BountyTaskRecipe(
                         bountyType,
                         tier,
-                        bounty,
                         objectives.build(),
                         sound1,
                         sound2
@@ -389,10 +371,11 @@ public final class BountyTaskRecipeBuilder
                         resolvedId,
                         (recipeOutput, path) ->
                                 recipeOutput.accept(
-                                        ResourceLocation.fromNamespaceAndPath(
-                                                JolCraft.MOD_ID,
-                                                path
-                                        ),
+                                        ResourceLocation
+                                                .fromNamespaceAndPath(
+                                                        JolCraft.MOD_ID,
+                                                        path
+                                                ),
                                         recipe,
                                         null
                                 )
