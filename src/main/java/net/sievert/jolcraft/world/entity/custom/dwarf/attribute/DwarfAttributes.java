@@ -36,7 +36,6 @@ public final class DwarfAttributes {
                 .add(Attributes.MAX_HEALTH, require(base, Attributes.MAX_HEALTH))
                 .add(Attributes.MOVEMENT_SPEED, require(base, Attributes.MOVEMENT_SPEED))
                 .add(Attributes.FOLLOW_RANGE, require(base, Attributes.FOLLOW_RANGE))
-                .add(Attributes.FOLLOW_RANGE, require(base, Attributes.FOLLOW_RANGE))
                 .add(Attributes.ATTACK_DAMAGE, require(base, Attributes.ATTACK_DAMAGE));
     }
 
