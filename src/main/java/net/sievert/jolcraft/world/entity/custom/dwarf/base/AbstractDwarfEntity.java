@@ -57,13 +57,12 @@ import java.util.*;
 public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, DwarfMerchant {
 
     public DwarfActionType getCurrentActionType() {
-        return DwarfActionType.values()[this.getData(CURRENT_ACTION)];
+        return DwarfActionHelper.getCurrentActionType(this);
     }
 
     @Nullable
     public DwarfActionType.Subtype getCurrentActionSubtype() {
-        int index = this.getData(CURRENT_ACTION_SUBTYPE);
-        return index >= 0 ? DwarfActionType.Subtype.values()[index] : null;
+        return DwarfActionHelper.getCurrentActionSubType(this);
     }
 
     private static final String NBT_PROFESSION = JolCraftDictionary.PROFESSION;
@@ -173,9 +172,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         super.addAdditionalSaveData(compound);
 
         compound.putString(NBT_PROFESSION, this.getData(PROFESSION));
-        compound.putInt(NBT_CURRENT_ACTION, this.getData(CURRENT_ACTION));
-        compound.putInt(NBT_CURRENT_ACTION_SUBTYPE, this.getData(CURRENT_ACTION_SUBTYPE));
         compound.putInt(NBT_PAID_TICKS, this.paidTicks);
+
+        this.actionHelper.addAdditionalSaveData(this, compound);
 
         if (this.paidCause != null) {
             compound.putUUID(NBT_PAID_CAUSE, this.paidCause);
@@ -190,18 +189,43 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
             this.setProfession(DwarfProfession.byId(compound.getString(NBT_PROFESSION)));
         }
 
-        if (compound.contains(NBT_CURRENT_ACTION, 3)) {
-            this.getEntityData().set(CURRENT_ACTION, compound.getInt(NBT_CURRENT_ACTION));
-        }
-
-        if (compound.contains(NBT_CURRENT_ACTION_SUBTYPE, 3)) {
-            this.getEntityData().set(CURRENT_ACTION_SUBTYPE, compound.getInt(NBT_CURRENT_ACTION_SUBTYPE));
-        }
+        this.actionHelper.readAdditionalSaveData(
+                this,
+                compound,
+                hasLegacyInterruptedInspectAction(compound)
+        );
 
         this.paidTicks = compound.getInt(NBT_PAID_TICKS);
         this.paidCause = compound.hasUUID(NBT_PAID_CAUSE)
                 ? compound.getUUID(NBT_PAID_CAUSE)
                 : null;
+    }
+
+    /**
+     * Older saves persisted only animation ordinals. If those values describe
+     * an inspect action, the current main-hand item is treated as the consumed
+     * action input and safely returned by DwarfActionHelper.
+     */
+    private static boolean hasLegacyInterruptedInspectAction(
+            CompoundTag compound
+    ) {
+        if (compound.contains(NBT_CURRENT_ACTION, 3)
+                && compound.getInt(NBT_CURRENT_ACTION)
+                == DwarfActionType.INSPECT.ordinal()) {
+            return true;
+        }
+
+        if (!compound.contains(NBT_CURRENT_ACTION_SUBTYPE, 3)) {
+            return false;
+        }
+
+        int subtypeIndex = compound.getInt(NBT_CURRENT_ACTION_SUBTYPE);
+        DwarfActionType.Subtype[] subtypes = DwarfActionType.Subtype.values();
+
+        return subtypeIndex >= 0
+                && subtypeIndex < subtypes.length
+                && subtypes[subtypeIndex].getParent()
+                == DwarfActionType.INSPECT;
     }
 
     //Attributes

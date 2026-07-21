@@ -14,6 +14,9 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 public class InspectDwarfAction implements DwarfAction {
 
     protected final AbstractDwarfEntity dwarf;
@@ -30,6 +33,13 @@ public class InspectDwarfAction implements DwarfAction {
     protected ItemStack previousMainHandItem =
             ItemStack.EMPTY;
 
+    /**
+     * True only after DwarfInteractions has successfully removed the input
+     * item from the player's hand. Creative-mode interactions therefore do
+     * not receive a duplicate refund if this action is interrupted.
+     */
+    private boolean inputConsumed;
+
     public InspectDwarfAction(
             AbstractDwarfEntity dwarf,
             Player player,
@@ -40,6 +50,7 @@ public class InspectDwarfAction implements DwarfAction {
         this.player = player;
         this.hand = hand;
         this.itemstack = itemstack.copyWithCount(1);
+        this.inputConsumed = false;
     }
 
     @Override
@@ -50,6 +61,29 @@ public class InspectDwarfAction implements DwarfAction {
     @Override
     public boolean blocksMovement() {
         return true;
+    }
+
+    @Nullable
+    public UUID getPlayerId() {
+        return player == null
+                ? null
+                : player.getUUID();
+    }
+
+    public ItemStack getActionInput() {
+        return itemstack.copy();
+    }
+
+    public ItemStack getPreviousMainHandItem() {
+        return previousMainHandItem.copy();
+    }
+
+    public boolean wasInputConsumed() {
+        return inputConsumed;
+    }
+
+    public void markInputConsumed() {
+        inputConsumed = true;
     }
 
     /**

@@ -230,11 +230,19 @@ public final class DwarfInteractions {
              * This is the only normal usePlayerItem call in the dwarf
              * interaction system.
              */
+            int countBefore = ctx.stack().getCount();
+
             ctx.dwarf().usePlayerItem(
                     ctx.player(),
                     ctx.hand(),
                     ctx.stack()
             );
+
+            if (ctx.stack().getCount() < countBefore) {
+                ctx.dwarf()
+                        .getActionHelper()
+                        .markActionInputConsumed();
+            }
         }
 
         return outcome.result();
