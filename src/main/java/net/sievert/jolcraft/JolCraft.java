@@ -11,6 +11,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.sievert.jolcraft.config.JolCraftConfigs;
+import net.sievert.jolcraft.world.item.registry.JolCraftMapDecorationTypes;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
@@ -77,6 +78,7 @@ public class JolCraft {
         JolCraftRuleTests.register(modEventBus);
         JolCraftRecipeConditionTypes.register(modEventBus);
         JolCraftRecipeOutputTypes.register(modEventBus);
+        JolCraftMapDecorationTypes.register(modEventBus);
 
         JolCraftConfigs.register(modContainer);
 

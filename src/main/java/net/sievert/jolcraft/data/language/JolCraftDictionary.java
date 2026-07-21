@@ -575,6 +575,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TOP = "top";
     public static final String TOUGHNESS = "toughness";
     public static final String TOWER = "tower";
+    public static final String TOWN = "town";
     public static final String TOTAL = "total";
     public static final String TRANSITION = "transition";
     public static final String TRANSLATION = "translation";

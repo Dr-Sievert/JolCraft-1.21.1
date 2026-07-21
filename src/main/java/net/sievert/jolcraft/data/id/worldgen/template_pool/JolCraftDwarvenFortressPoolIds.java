@@ -115,4 +115,6 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
     public static final String CATACOMBS_TOMB_LARGE = join(CATACOMBS_TOMB, LARGE);
 
     public static final String CATACOMBS_LOOT = join(CATACOMBS, LOOT);
+
+    public static final String TOWN_ENTRANCE = join(TOWN, ENTRANCE);
 }

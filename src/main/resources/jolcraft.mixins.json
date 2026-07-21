@@ -15,6 +15,7 @@
     "RangedCrossbowAttackGoalMixin",
     "SetComponentsFunctionAccessor",
     "SetItemCountFunctionAccessor",
+    "SinglePoolElementAccessor",
     "SpellcasterUseSpellGoalMixin",
     "UniformGeneratorAccessor"
   ],

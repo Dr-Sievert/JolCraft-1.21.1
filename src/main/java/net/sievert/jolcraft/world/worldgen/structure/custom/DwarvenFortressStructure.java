@@ -16,8 +16,10 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 import net.sievert.jolcraft.world.worldgen.structure.util.AbstractJigsawStructure;
+import net.sievert.jolcraft.world.worldgen.structure.util.SinglePlacementPart;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -30,7 +32,10 @@ public class DwarvenFortressStructure extends AbstractJigsawStructure {
 
     public static final MapCodec<DwarvenFortressStructure> CODEC =
             RecordCodecBuilder.mapCodec(instance ->
-                    AbstractJigsawStructure.codec(instance, DwarvenFortressStructure::new)
+                    AbstractJigsawStructure.codec(
+                            instance,
+                            DwarvenFortressStructure::new
+                    )
             );
 
     public DwarvenFortressStructure(
@@ -42,7 +47,8 @@ public class DwarvenFortressStructure extends AbstractJigsawStructure {
             Optional<Heightmap.Types> projectStartToHeightmap,
             int maxDistanceFromCenter,
             DimensionPadding dimensionPadding,
-            LiquidSettings liquidSettings
+            LiquidSettings liquidSettings,
+            List<SinglePlacementPart> singlePlacementParts
     ) {
         super(
                 config,
@@ -53,7 +59,8 @@ public class DwarvenFortressStructure extends AbstractJigsawStructure {
                 projectStartToHeightmap,
                 maxDistanceFromCenter,
                 dimensionPadding,
-                liquidSettings
+                liquidSettings,
+                singlePlacementParts
         );
     }
 
@@ -88,7 +95,11 @@ public class DwarvenFortressStructure extends AbstractJigsawStructure {
             y--;
         }
 
-        return new BlockPos(x, y - START_STRUCTURE_HEIGHT - GENERATION_PADDING_Y, z);
+        return new BlockPos(
+                x,
+                y - START_STRUCTURE_HEIGHT - GENERATION_PADDING_Y,
+                z
+        );
     }
 
     @Override

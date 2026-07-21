@@ -24,6 +24,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -33,21 +34,58 @@ public abstract class AbstractJigsawStructure extends Structure {
     // Codec field keys
     // ---------------------------------------------------------------------
 
-    protected static final String FIELD_START_POOL = JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.POOL);
+    protected static final String FIELD_START_POOL =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.START,
+                    JolCraftDictionary.POOL
+            );
 
-    protected static final String FIELD_START_JIGSAW_NAME = JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.JIGSAW, JolCraftDictionary.NAME);
+    protected static final String FIELD_START_JIGSAW_NAME =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.START,
+                    JolCraftDictionary.JIGSAW,
+                    JolCraftDictionary.NAME
+            );
 
-    protected static final String FIELD_SIZE = JolCraftDictionary.SIZE;
+    protected static final String FIELD_SIZE =
+            JolCraftDictionary.SIZE;
 
-    protected static final String FIELD_START_HEIGHT = JolCraftStrings.underscored(JolCraftDictionary.START, JolCraftDictionary.HEIGHT);
+    protected static final String FIELD_START_HEIGHT =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.START,
+                    JolCraftDictionary.HEIGHT
+            );
 
-    protected static final String FIELD_PROJECT_START_TO_HEIGHTMAP = JolCraftStrings.underscored(JolCraftDictionary.PROJECT, JolCraftDictionary.START, JolCraftDictionary.TO, JolCraftDictionary.HEIGHTMAP);
+    protected static final String FIELD_PROJECT_START_TO_HEIGHTMAP =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.PROJECT,
+                    JolCraftDictionary.START,
+                    JolCraftDictionary.TO,
+                    JolCraftDictionary.HEIGHTMAP
+            );
 
-    protected static final String FIELD_MAX_DISTANCE_FROM_CENTER = JolCraftStrings.underscored(JolCraftDictionary.MAX, JolCraftDictionary.DISTANCE, JolCraftDictionary.FROM, JolCraftDictionary.CENTER);
+    protected static final String FIELD_MAX_DISTANCE_FROM_CENTER =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.MAX,
+                    JolCraftDictionary.DISTANCE,
+                    JolCraftDictionary.FROM,
+                    JolCraftDictionary.CENTER
+            );
 
-    protected static final String FIELD_DIMENSION_PADDING = JolCraftStrings.underscored(JolCraftDictionary.DIMENSION, JolCraftDictionary.PADDING);
+    protected static final String FIELD_DIMENSION_PADDING =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.DIMENSION,
+                    JolCraftDictionary.PADDING
+            );
 
-    protected static final String FIELD_LIQUID_SETTINGS = JolCraftStrings.underscored(JolCraftDictionary.LIQUID, JolCraftStrings.plural(JolCraftDictionary.SETTING));
+    protected static final String FIELD_LIQUID_SETTINGS =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.LIQUID,
+                    JolCraftStrings.plural(JolCraftDictionary.SETTING)
+            );
+
+    protected static final String FIELD_SINGLE_PLACEMENT_PARTS =
+            "single_placement_parts";
 
     // ---------------------------------------------------------------------
     // Shared state
@@ -61,6 +99,7 @@ public abstract class AbstractJigsawStructure extends Structure {
     protected final int maxDistanceFromCenter;
     protected final DimensionPadding dimensionPadding;
     protected final LiquidSettings liquidSettings;
+    protected final List<SinglePlacementPart> singlePlacementParts;
 
     protected AbstractJigsawStructure(
             StructureSettings config,
@@ -71,7 +110,8 @@ public abstract class AbstractJigsawStructure extends Structure {
             Optional<Heightmap.Types> projectStartToHeightmap,
             int maxDistanceFromCenter,
             DimensionPadding dimensionPadding,
-            LiquidSettings liquidSettings
+            LiquidSettings liquidSettings,
+            List<SinglePlacementPart> singlePlacementParts
     ) {
         super(config);
         this.startPool = startPool;
@@ -82,6 +122,7 @@ public abstract class AbstractJigsawStructure extends Structure {
         this.maxDistanceFromCenter = maxDistanceFromCenter;
         this.dimensionPadding = dimensionPadding;
         this.liquidSettings = liquidSettings;
+        this.singlePlacementParts = List.copyOf(singlePlacementParts);
     }
 
     // ---------------------------------------------------------------------
@@ -89,26 +130,18 @@ public abstract class AbstractJigsawStructure extends Structure {
     // ---------------------------------------------------------------------
 
     @Override
-    public final @NotNull Optional<GenerationStub> findGenerationPoint(@NotNull GenerationContext context) {
+    public final @NotNull Optional<GenerationStub> findGenerationPoint(
+            @NotNull GenerationContext context
+    ) {
         if (!extraSpawningChecks(context)) {
             return Optional.empty();
         }
 
         BlockPos blockPos = startPos(context);
-
         Optional<Direction> direction = startDirection(context);
-
-        direction.ifPresent(value ->
-                JolCraftStructureContext.setRotation(switch (value) {
-                    case NORTH -> Rotation.NONE;
-                    case EAST -> Rotation.CLOCKWISE_90;
-                    case SOUTH -> Rotation.CLOCKWISE_180;
-                    case WEST -> Rotation.COUNTERCLOCKWISE_90;
-                    default -> throw new IllegalStateException("Horizontal direction required");
-                })
-        );
-
         Optional<GenerationStub> stub;
+
+        activateStructureContext(direction);
 
         try {
             stub = JigsawPlacement.addPieces(
@@ -133,7 +166,7 @@ public abstract class AbstractJigsawStructure extends Structure {
                         generator -> new GenerationStub(
                                 original.position(),
                                 builder -> {
-                                    JolCraftStructureContext.activate();
+                                    activateStructureContext(direction);
 
                                     try {
                                         generator.accept(builder);
@@ -150,16 +183,47 @@ public abstract class AbstractJigsawStructure extends Structure {
         );
     }
 
-    protected abstract boolean extraSpawningChecks(GenerationContext context);
+    private void activateStructureContext(
+            Optional<Direction> direction
+    ) {
+        JolCraftStructureContext.activate(this.singlePlacementParts);
 
-    protected Optional<Direction> startDirection(GenerationContext context) {
+        direction.ifPresent(value ->
+                JolCraftStructureContext.setRotation(
+                        rotationFor(value)
+                )
+        );
+    }
+
+    private static Rotation rotationFor(Direction direction) {
+        return switch (direction) {
+            case NORTH -> Rotation.NONE;
+            case EAST -> Rotation.CLOCKWISE_90;
+            case SOUTH -> Rotation.CLOCKWISE_180;
+            case WEST -> Rotation.COUNTERCLOCKWISE_90;
+            default -> throw new IllegalStateException(
+                    "Horizontal direction required"
+            );
+        };
+    }
+
+    protected abstract boolean extraSpawningChecks(
+            GenerationContext context
+    );
+
+    protected Optional<Direction> startDirection(
+            GenerationContext context
+    ) {
         return Optional.empty();
     }
 
     protected BlockPos startPos(GenerationContext context) {
         int startY = this.startHeight.sample(
                 context.random(),
-                new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor())
+                new WorldGenerationContext(
+                        context.chunkGenerator(),
+                        context.heightAccessor()
+                )
         );
 
         ChunkPos chunkPos = context.chunkPos();
@@ -171,12 +235,17 @@ public abstract class AbstractJigsawStructure extends Structure {
         );
     }
 
+    public final List<SinglePlacementPart> singlePlacementParts() {
+        return this.singlePlacementParts;
+    }
+
     // ---------------------------------------------------------------------
     // Shared codec builder helper
     // ---------------------------------------------------------------------
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     protected interface Factory<T extends AbstractJigsawStructure> {
+
         T create(
                 StructureSettings config,
                 Holder<StructureTemplatePool> startPool,
@@ -186,24 +255,74 @@ public abstract class AbstractJigsawStructure extends Structure {
                 Optional<Heightmap.Types> projectStartToHeightmap,
                 int maxDistanceFromCenter,
                 DimensionPadding dimensionPadding,
-                LiquidSettings liquidSettings
+                LiquidSettings liquidSettings,
+                List<SinglePlacementPart> singlePlacementParts
         );
     }
 
-    protected static <T extends AbstractJigsawStructure> App<RecordCodecBuilder.Mu<T>, T> codec(
+    protected static <T extends AbstractJigsawStructure>
+    App<RecordCodecBuilder.Mu<T>, T> codec(
             RecordCodecBuilder.Instance<T> instance,
             Factory<T> factory
     ) {
         return instance.group(
                 Structure.settingsCodec(instance),
-                StructureTemplatePool.CODEC.fieldOf(FIELD_START_POOL).forGetter(s -> s.startPool),
-                ResourceLocation.CODEC.optionalFieldOf(FIELD_START_JIGSAW_NAME).forGetter(s -> s.startJigsawName),
-                Codec.intRange(0, 30).fieldOf(FIELD_SIZE).forGetter(s -> s.size),
-                HeightProvider.CODEC.fieldOf(FIELD_START_HEIGHT).forGetter(s -> s.startHeight),
-                Heightmap.Types.CODEC.optionalFieldOf(FIELD_PROJECT_START_TO_HEIGHTMAP).forGetter(s -> s.projectStartToHeightmap),
-                Codec.intRange(1, 128).fieldOf(FIELD_MAX_DISTANCE_FROM_CENTER).forGetter(s -> s.maxDistanceFromCenter),
-                DimensionPadding.CODEC.optionalFieldOf(FIELD_DIMENSION_PADDING, JigsawStructure.DEFAULT_DIMENSION_PADDING).forGetter(s -> s.dimensionPadding),
-                LiquidSettings.CODEC.optionalFieldOf(FIELD_LIQUID_SETTINGS, JigsawStructure.DEFAULT_LIQUID_SETTINGS).forGetter(s -> s.liquidSettings)
+
+                StructureTemplatePool.CODEC
+                        .fieldOf(FIELD_START_POOL)
+                        .forGetter(structure -> structure.startPool),
+
+                ResourceLocation.CODEC
+                        .optionalFieldOf(FIELD_START_JIGSAW_NAME)
+                        .forGetter(structure -> structure.startJigsawName),
+
+                Codec.intRange(0, 30)
+                        .fieldOf(FIELD_SIZE)
+                        .forGetter(structure -> structure.size),
+
+                HeightProvider.CODEC
+                        .fieldOf(FIELD_START_HEIGHT)
+                        .forGetter(structure -> structure.startHeight),
+
+                Heightmap.Types.CODEC
+                        .optionalFieldOf(FIELD_PROJECT_START_TO_HEIGHTMAP)
+                        .forGetter(structure ->
+                                structure.projectStartToHeightmap
+                        ),
+
+                Codec.intRange(1, 128)
+                        .fieldOf(FIELD_MAX_DISTANCE_FROM_CENTER)
+                        .forGetter(structure ->
+                                structure.maxDistanceFromCenter
+                        ),
+
+                DimensionPadding.CODEC
+                        .optionalFieldOf(
+                                FIELD_DIMENSION_PADDING,
+                                JigsawStructure.DEFAULT_DIMENSION_PADDING
+                        )
+                        .forGetter(structure ->
+                                structure.dimensionPadding
+                        ),
+
+                LiquidSettings.CODEC
+                        .optionalFieldOf(
+                                FIELD_LIQUID_SETTINGS,
+                                JigsawStructure.DEFAULT_LIQUID_SETTINGS
+                        )
+                        .forGetter(structure ->
+                                structure.liquidSettings
+                        ),
+
+                SinglePlacementPart.CODEC
+                        .listOf()
+                        .optionalFieldOf(
+                                FIELD_SINGLE_PLACEMENT_PARTS,
+                                List.of()
+                        )
+                        .forGetter(structure ->
+                                structure.singlePlacementParts
+                        )
         ).apply(instance, factory::create);
     }
 }
