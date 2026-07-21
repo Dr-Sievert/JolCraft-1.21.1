@@ -45,7 +45,7 @@ public final class ContainerLangSubProvider implements LanguageSubProvider {
         // Fermenting Cauldron
         // -----------------------------------------------------------------
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX, "You already added the max amount of this ingredient to the brew.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX, "You have already added the maximum amount of this ingredient to the brew.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI, "Adding more ingredients without proper knowledge would ruin the brew.");
 
         // -----------------------------------------------------------------

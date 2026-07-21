@@ -34,7 +34,7 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_NEED_DWARVEN_LANGUAGE, "You need to understand dwarvish to use this.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_NEED_ANCIENT_DWARVEN_LANGUAGE, "You need to understand ancient dwarvish to use this.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_ANCIENT_MEMORY, "Ancient memory effect gives you temporary understanding of ancient dwarvish.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_ANCIENT_MEMORY, "The Ancient Memory effect gives you a temporary understanding of ancient dwarvish.");
 
         // -----------------------------------------------------------------
         // Dwarven Lexicon
@@ -62,9 +62,9 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED, "Right-click to identify.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED_DWARVEN_TOME, "An unidentified dwarven tome.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_SHIFT, "Can be sold to Dwarven Historians.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_SHIFT, "Can be sold to dwarven historians.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_UNIDENTIFIED_ANCIENT_DWARVEN_TOME, "An unidentified dwarven tome, written in ancient dwarvish.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING, "You recognize the language as Dwarvish, but cannot understand it.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_ANCIENT_DWARVEN_TOME_PARTIAL_UNDERSTANDING, "You recognize the language as dwarvish but cannot understand it.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_LEGENDARY_ANCIENT_DWARVEN_TOME_SHIFT, "Can be used to gain permanent knowledge.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_IDENTIFY_SUCCESS, "You identify the contents of the tome.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_IDENTIFY_FAIL, "You cannot make sense of the dwarven runes.");
@@ -77,7 +77,7 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         // Tome unlock messages
         // -----------------------------------------------------------------
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_EMPTY, "This tome lacks knowledge that you find useful.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_EMPTY, "This tome contains no knowledge useful to you.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_BREW, "You can now brew with multiple ingredients!");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS, "You can now cut gems using a chisel!");
 
@@ -93,17 +93,17 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         // Contract keys
         // -----------------------------------------------------------------
 
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_WRITTEN_CONTRACT,
-                "Given to dwarves without professions to getEntityType signed contracts. " +
+                "Given to dwarves without professions to get signed contracts. " +
                         "Signed contracts are used to buy profession contracts from a guildmaster. " +
-                        "If given to a dwarf with a profession they will create a contract for their profession."
+                        "If given to a dwarf with a profession, they will create a contract for that profession."
         );
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_SIGNED_CONTRACT, "Signed contracts are used to buy profession contracts from a guildmaster.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_PROFESSION_CONTRACT, "Profession contracts can be given to dwarves without professions to set their profession.");
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_GUILD_SIGIL, "Can be bought from a masterTask dwarf without a profession.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_GUILD_SIGIL, "Can be bought from a master-level dwarf without a profession.");
 
         // -----------------------------------------------------------------
         // Dwarf
@@ -122,11 +122,11 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE, "Can be used to restock the inventory of a dwarf or villager trader.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_NO_NEED, "This trader doesn't need restocking.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_SUCCESS, "Trader inventory restocked!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE_SUCCESS, "Trader's inventory restocked!");
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE, "Can be used to reroll the inventory of a dwarf or villager trader.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_FAIL, "This trader inventory cannot be rerolled!");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_SUCCESS, "Trader inventory rerolled!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_FAIL, "This trader's inventory cannot be rerolled!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE_SUCCESS, "Trader's inventory rerolled!");
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_CRATE_COOLDOWN, "You must wait before you can use another crate.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_CRATE_NO_OFFERS_VILLAGER, "This villager has no trades!");

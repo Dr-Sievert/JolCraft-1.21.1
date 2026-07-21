@@ -35,7 +35,7 @@ public final class DwarvenReputationLangSubProvider implements LanguageSubProvid
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_LOCKED, "You need a higher reputation for this.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_MAX_TIER, "You are already at the highest reputation tier!");
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_DWARVEN_REPUTATION_NOT_ENOUGH_ENDORSEMENTS,
                 "You need %1$d endorsements to advance (you have %2$d)."
         );
@@ -53,22 +53,22 @@ public final class DwarvenReputationLangSubProvider implements LanguageSubProvid
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_REPUTATION, "Reputation: ");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS, "Endorsements: %s");
 
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_REPUTATION_PROGRESS,
                 "Endorsements for reputation advancement: %s/%s"
         );
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_TABLET_PROGRESS_PREFIX,
                 "Endorsements for reputation advancement: "
         );
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_TABLET_DWARVEN_ENDORSEMENTS_INFO,
-                "To gain endorsements, give your reputation tablet to a masterTask-level dwarf with a profession. " +
+                "To gain endorsements, give your reputation tablet to a master-level dwarf with a profession. " +
                         "Endorsements are unique per profession and can only be gained once."
         );
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_TABLET_ADVANCE_INFO,
-                "To advance in reputation level you need endorsements from dwarves with professions. " +
+                "To advance to the next reputation level, you need endorsements from dwarves with professions. " +
                         "When you have enough, hand over your tablet to a guildmaster to update it."
         );
 

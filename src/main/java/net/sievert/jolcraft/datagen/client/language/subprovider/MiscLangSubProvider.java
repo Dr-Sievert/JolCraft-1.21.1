@@ -39,28 +39,28 @@ public final class MiscLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_QUILL_FULL, "Used for writing on paper.");
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_VANILLA_CROP, "Grows like vanilla crops.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS, "Needs two blocks height and a light level of 8 or less to grow.");
-        putManual(translations, 
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS, "Needs two blocks of vertical space and a light level of 8 or less to grow.");
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_BULBS,
-                "Needs a light level of 8 or less and a y-level of 0 or less to grow. Can only be planted on Deepslate, Tuff or Verdant Soil."
+                "Needs a light level of 8 or less and a Y-level of 0 or below to grow. Can only be planted on deepslate, tuff, or verdant soil."
         );
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_MALT, "Can be used on a water cauldron as a first step in brewing.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_HOPS, "Can be used on a cauldron with malt to add effects to a brew.");
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_YEAST,
                 "Can be used on a fermenting cauldron with malt/hops to start the brewing process. Created by using sugar on a water cauldron and extracted using glass bottles."
         );
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_GLASS_MUG, "Can be used to extract a finished dwarven brew from a cauldron.");
 
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_SPANNER,
-                "Can be used to produce scrap from salvage. Hold the spanner in one hand and salvage in the other, then right click!"
+                "Can be used to produce scrap from salvage. Hold the spanner in one hand and salvage in the other, then right-click!"
         );
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_SALVAGEABLE, "Salvageable");
-        putManual(translations, 
+        putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_SALVAGE,
-                "Can be used to produce scrap using a spanner. Hold the spanner in one hand and the salvage in the other, then right click!"
+                "Can be used to produce scrap using a spanner. Hold the spanner in one hand and the salvage in the other, then right-click!"
         );
     }
 }
