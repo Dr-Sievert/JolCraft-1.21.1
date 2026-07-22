@@ -3,9 +3,24 @@
   "package": "net.sievert.jolcraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "StructurePoolMixin"
+    "BrushableBlockEntityMixin",
+    "BrushItemMixin",
+    "JigsawPlacementMixin",
+    "JigsawPlacementPlacerMixin",
+    "LootItemAccessor",
+    "LootPoolAccessor",
+    "LootPoolSingletonContainerAccessor",
+    "MeleeAttackGoalMixin",
+    "RangedBowAttackGoalMixin",
+    "RangedCrossbowAttackGoalMixin",
+    "SetComponentsFunctionAccessor",
+    "SetItemCountFunctionAccessor",
+    "SinglePoolElementAccessor",
+    "SpellcasterUseSpellGoalMixin",
+    "UniformGeneratorAccessor"
   ],
-  "client": [],
+  "client": [
+  ],
   "injectors": {
     "defaultRequire": 1
   },

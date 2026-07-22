@@ -1,0 +1,31 @@
+package net.sievert.jolcraft.network.proxy;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.sievert.jolcraft.network.packet.s2c.*;
+
+import javax.annotation.Nullable;
+
+public final class JolCraftServerProxy implements JolCraftClientAccess {
+
+    @Override
+    public boolean isAltDown() {
+        return false;
+    }
+
+    @Override
+    public @Nullable Player getLocalPlayer() {
+        return null;
+    }
+
+    @Override
+    public @Nullable Component getAltKeyComponent() {
+        return null;
+    }
+
+    @Override
+    public void apply(ClientboundDwarfMerchantOffersPacket packet) {}
+
+    @Override
+    public void apply(ClientboundDeliriumCursePacket packet) {}
+}
