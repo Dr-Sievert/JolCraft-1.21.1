@@ -56,6 +56,9 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
     public static final ResourceKey<StructureProcessorList> ARCHAEOLOGY =
             processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDictionary.ARCHAEOLOGY));
 
+    public static final ResourceKey<StructureProcessorList> TOWN =
+            processorKey(JolCraftStrings.slashed(DIRECTORY_ID, JolCraftDwarvenFortressPoolIds.TOWN));
+
     private JolCraftDwarvenFortressProcessors(BootstrapContext<StructureProcessorList> context) {
         super(context, DIRECTORY_ID);
     }
@@ -70,6 +73,11 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
                 DWARVEN_FORTRESS,
                 crackedBricks(),
                 new RandomCobwebProcessor(0.01F)
+        );
+
+        register(
+                TOWN,
+                crackedBricks()
         );
 
         register(
