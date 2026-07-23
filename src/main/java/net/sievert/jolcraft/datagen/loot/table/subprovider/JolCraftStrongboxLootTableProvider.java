@@ -92,7 +92,8 @@ public final class JolCraftStrongboxLootTableProvider
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SMITHING_SALVAGE).setWeight(50))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SMITHING_SALVAGE).setWeight(30))
+                                        .add(LootItem.lootTableItem(Items.COAL).setWeight(20))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_METAL).setWeight(15))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DWARVEN_METAL).setWeight(14))
                                         .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_CHAINWEAVE).setWeight(3))
@@ -182,9 +183,10 @@ public final class JolCraftStrongboxLootTableProvider
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
+                                        .add(LootItem.lootTableItem(JolCraftItems.PARCHMENT.get()).setWeight(3)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
                                         .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(1)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(1))
                                         .add(
                                                 LootItem.lootTableItem(Items.BOOK)
                                                         .setWeight(1)

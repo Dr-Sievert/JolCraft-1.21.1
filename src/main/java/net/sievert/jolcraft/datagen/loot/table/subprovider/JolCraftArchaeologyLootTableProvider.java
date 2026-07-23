@@ -5,6 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -77,8 +78,9 @@ public final class JolCraftArchaeologyLootTableProvider implements LootTableSubP
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1.0F))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(8))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.GEODES).setWeight(1))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(6))
+                                        .add(LootItem.lootTableItem(Items.BONE).setWeight(2))
+                                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_EMPTY).setWeight(1))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(1))
                         )
                         .setRandomSequence(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_COMMON.location())
