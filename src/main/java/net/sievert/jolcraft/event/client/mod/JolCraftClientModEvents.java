@@ -44,9 +44,15 @@ import org.jetbrains.annotations.NotNull;
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class JolCraftClientModEvents {
 
-    @SuppressWarnings("deprecation")
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        event.enqueueWork(JolCraftItemProperties::register);
+    }
+
+    @SuppressWarnings("deprecation")
+    @SubscribeEvent
+    public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+
         int entityRenderers = 0;
         int itemBlockRenderTypes = 0;
 
@@ -95,12 +101,11 @@ public final class JolCraftClientModEvents {
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.POTTED_FESTERLING.get(), RenderType.cutout()); itemBlockRenderTypes++;
 
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} entity renderers and {} item/block render types", entityRenderers, itemBlockRenderTypes);
-
-        event.enqueueWork(JolCraftItemProperties::register);
     }
 
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+
         int layers = 0;
 
         // Entity
