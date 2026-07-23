@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataValidation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +31,13 @@ public interface JolCraftMainDataProvider<TTarget> extends JolCraftDataProvider<
             @Nullable ExistingFileHelper existingFileHelper
     ) {
         JolCraftDataTracking tracking = createTracking();
-        generateSelfAndChildren(target, packOutput, lookupProvider, existingFileHelper, tracking);
+        generateSelfAndChildren(
+                target,
+                packOutput,
+                lookupProvider,
+                existingFileHelper,
+                tracking
+        );
+        JolCraftDataValidation.validate(tracking);
     }
 }

@@ -322,16 +322,6 @@ public final class JolCraftBlockLootTableProvider
     }
 
     @Override
-    protected void add(@NotNull Block block, @NotNull Function<Block, LootTable.Builder> function) {
-        super.add(block, function);
-
-        JolCraftDataTracking tracking = this.tracking;
-        if (tracking != null) {
-            tracking.record(this, JolCraftStrings.slashed(JolCraftStrings.plural(JolCraftDictionary.BLOCK), block.builtInRegistryHolder().key().location().getPath()));
-        }
-    }
-
-    @Override
     protected @NotNull Iterable<Block> getKnownBlocks() {
         return JolCraftBlocks.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
     }
