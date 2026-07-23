@@ -6,6 +6,7 @@
     "BrushableBlockEntityMixin",
     "BrushItemMixin",
     "ConfiguredFeatureMixin",
+    "CropBlockMixin",
     "JigsawPlacementMixin",
     "JigsawPlacementPlacerMixin",
     "LootItemAccessor",

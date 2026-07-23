@@ -35,21 +35,25 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class FesterlingCropBlock extends BushBlock implements BonemealableBlock {
 
+    protected ItemLike getBaseSeedId() {
+        return Items.ROTTEN_FLESH;
+    }
+    public static final int MAX_AGE = 3;
+    public static final IntegerProperty AGE = IntegerProperty.create(JolCraftDictionary.AGE, 0, MAX_AGE);
+
+    public static final MapCodec<FesterlingCropBlock> CODEC = simpleCodec(FesterlingCropBlock::new);
+
+    private static final VoxelShape[] SHAPE_BY_AGE = {
+            Block.box(2.0, 0.0, 2.0, 14.0, 3.0, 14.0),
+            Block.box(2.0, 0.0, 2.0, 14.0, 4.0, 14.0),
+            Block.box(6.0, 0.0, 6.0, 10.0, 6.0, 10.0),
+            Block.box(6.0, 0.0, 6.0, 10.0, 8.0, 10.0)
+    };
+
     public FesterlingCropBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
     }
-
-    public static final int MAX_AGE = 3;
-    public static final IntegerProperty AGE = IntegerProperty.create(JolCraftDictionary.AGE, 0, MAX_AGE);
-    private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
-            Block.box(2, 0, 2, 14, 3, 14), // age 0
-            Block.box(2, 0, 2, 14, 4, 14), // age 1
-            Block.box(6, 0, 6, 10, 6, 10), // age 2
-            Block.box(6, 0, 6, 10, 8, 10)  // age 3 (mature)
-    };
-
-    public static final MapCodec<FesterlingCropBlock> CODEC = simpleCodec(FesterlingCropBlock::new);
 
     @Override
     protected MapCodec<? extends BushBlock> codec() {
@@ -63,85 +67,62 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        BlockState below = level.getBlockState(pos.below());
-        if (below.is(JolCraftBlocks.VERDANT_SOIL.get())) {
-            return true;
-        }
-
-        return isUprightLog(below);
+        BlockState substrate = level.getBlockState(pos.below());
+        return substrate.is(JolCraftBlocks.VERDANT_SOIL.get()) || isUprightLog(substrate);
     }
 
-    private boolean isUprightLog(BlockState state) {
-        return state.is(BlockTags.LOGS)
-                && state.hasProperty(BlockStateProperties.AXIS)
-                && state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y;
+    private static boolean isUprightLog(BlockState state) {
+        return state.is(BlockTags.LOGS) && state.hasProperty(BlockStateProperties.AXIS) && state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!level.isAreaLoaded(pos, 1)) return;
-        if (!this.canSurvive(state, level, pos)) {
-            level.destroyBlock(pos, true);
+    protected void randomTick(
+            BlockState state,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        if (!level.isAreaLoaded(pos, 1)) {
             return;
         }
+
         int age = state.getValue(AGE);
-
-        BlockState below = level.getBlockState(pos.below());
-        boolean isOnLog = isUprightLog(below);
-        boolean isOnVerdant = below.is(JolCraftBlocks.VERDANT_SOIL.get());
-
-        if (!(isOnLog || isOnVerdant)) return;
-
-        if (age < MAX_AGE) {
-            float growthChance = getGrowthSpeed(state, level, pos);
-            if (random.nextInt((int) (25.0F / growthChance) + 1) == 0) {
-                level.setBlock(pos, state.setValue(AGE, age + 1), 2);
-            }
+        if (age >= MAX_AGE) {
+            mature(level, pos, random);
+            return;
         }
-        else if (age == MAX_AGE) {
-            level.setBlock(pos, JolCraftBlocks.FESTERLING.get().defaultBlockState(), 2);
-            for (int i = 0; i < 5; ++i) {
-                double dx = pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.7;
-                double dy = pos.getY() + 0.7 + (random.nextDouble() * 0.3);
-                double dz = pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.7;
 
-                JolCraftParticleHelper.spawn(
-                        level,
-                        ParticleTypes.HAPPY_VILLAGER,
-                        dx, dy, dz,
-                        1,
-                        0.0, 0.0, 0.0,
-                        0.0
-                );
-            }
+        float growthSpeed = getGrowthSpeed(level, pos);
+        if (random.nextInt((int) (25.0F / growthSpeed) + 1) == 0) {
+            level.setBlock(pos, state.setValue(AGE, age + 1), 2);
         }
     }
 
-
-    protected static float getGrowthSpeed(BlockState state, BlockGetter level, BlockPos pos) {
+    private static float getGrowthSpeed(BlockGetter level, BlockPos pos) {
         float speed = 1.0F;
-        BlockPos below = pos.below();
+        BlockPos substratePos = pos.below();
 
-        BlockState soil = level.getBlockState(below);
-        if (soil.is(JolCraftBlocks.VERDANT_SOIL.get()) || soil.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
+        if (level.getBlockState(substratePos).is(JolCraftBlocks.VERDANT_SOIL.get())) {
             speed *= 1.5F;
         }
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                if (dx == 0 && dz == 0) continue;
-                BlockState neighborSoil = level.getBlockState(below.offset(dx, 0, dz));
-                if (neighborSoil.is(JolCraftBlocks.VERDANT_SOIL.get()) || neighborSoil.is(JolCraftBlocks.VERDANT_FARMLAND.get())) {
+        for (int xOffset = -1; xOffset <= 1; xOffset++) {
+            for (int zOffset = -1; zOffset <= 1; zOffset++) {
+                if (xOffset == 0 && zOffset == 0) {
+                    continue;
+                }
+
+                BlockState neighboringSubstrate =
+                        level.getBlockState(substratePos.offset(xOffset, 0, zOffset));
+
+                if (neighboringSubstrate.is(JolCraftBlocks.VERDANT_SOIL.get())) {
                     speed += 2.0F;
                 }
             }
         }
 
-        for (Direction dir : Direction.Plane.HORIZONTAL) {
-            BlockState neighbor = level.getBlockState(pos.relative(dir));
-            if (neighbor.is(BlockTags.LOGS)
-                    && neighbor.hasProperty(BlockStateProperties.AXIS)
-                    && neighbor.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (isUprightLog(level.getBlockState(pos.relative(direction)))) {
                 speed += 0.5F;
             }
         }
@@ -149,38 +130,99 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         return speed;
     }
 
-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+    private static void mature(
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        level.setBlock(
+                pos,
+                JolCraftBlocks.FESTERLING.get().defaultBlockState(),
+                2
+        );
+
+        for (int particle = 0; particle < 5; particle++) {
+            double x = pos.getX() + 0.5
+                    + (random.nextDouble() - 0.5) * 0.7;
+            double y = pos.getY() + 0.7
+                    + random.nextDouble() * 0.3;
+            double z = pos.getZ() + 0.5
+                    + (random.nextDouble() - 0.5) * 0.7;
+
+            JolCraftParticleHelper.spawn(
+                    level,
+                    ParticleTypes.HAPPY_VILLAGER,
+                    x,
+                    y,
+                    z,
+                    1,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+            );
+        }
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(
+            LevelReader level,
+            BlockPos pos,
+            BlockState state
+    ) {
         return state.getValue(AGE) < MAX_AGE;
     }
 
-    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+    @Override
+    public boolean isBonemealSuccess(
+            Level level,
+            RandomSource random,
+            BlockPos pos,
+            BlockState state
+    ) {
         return random.nextFloat() < 0.4F;
     }
 
-    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
-        int age = state.getValue(AGE);
-        int growBy = Mth.nextInt(random, 1, 2);
-        int newAge = Math.min(age + growBy, MAX_AGE);
+    @Override
+    public void performBonemeal(
+            ServerLevel level,
+            RandomSource random,
+            BlockPos pos,
+            BlockState state
+    ) {
+        int newAge = Math.min(
+                state.getValue(AGE) + Mth.nextInt(random, 1, 2),
+                MAX_AGE
+        );
+
         level.setBlock(pos, state.setValue(AGE, newAge), 2);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(
+            StateDefinition.Builder<Block, BlockState> builder
+    ) {
         builder.add(AGE);
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+    protected VoxelShape getShape(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos,
+            CollisionContext context
+    ) {
         return SHAPE_BY_AGE[state.getValue(AGE)];
-    }
-
-    protected ItemLike getBaseSeedId() {
-        return Items.ROTTEN_FLESH;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(
+            LevelReader level,
+            BlockPos pos,
+            BlockState state
+    ) {
+        if (state.getValue(AGE) == MAX_AGE) return new ItemStack(JolCraftBlocks.FESTERLING);
         return new ItemStack(this.getBaseSeedId());
     }
 }
