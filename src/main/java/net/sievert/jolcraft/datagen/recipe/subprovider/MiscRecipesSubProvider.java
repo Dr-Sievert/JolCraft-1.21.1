@@ -47,6 +47,17 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
             @NotNull JolCraftDataTracking tracking
     ) {
         VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftBlocks.HEARTH.get())
+                )
+                .pattern(" X ")
+                .pattern("BBB")
+                .pattern("B B")
+                .define('B', Blocks.DEEPSLATE_TILES)
+                .define('X', Blocks.DEEPSLATE_TILE_WALL)
+                .unlockedByHas(Blocks.DEEPSLATE_TILES)
+                .save(output, folder(), JolCraftBlocks.HEARTH.get());
+
+        VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
                 )
                 .pattern("B B")

@@ -7,7 +7,6 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
-import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -286,31 +285,6 @@ public record DwarfBrewmasterTrades(
                         30,
                         30
                 )
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.MASTER
-                        )
-                        .costACoins(
-                                20,
-                                40
-                        )
-                        .costB(
-                                JolCraftItems.EMBERGLASS_CUT.get(),
-                                2
-                        )
-                        .result(
-                                JolCraftBlocks.HEARTH.get(),
-                                1
-                        )
-                        .maxUses(1)
-                        .dwarfXp(0)
-                        .priceMultiplier(0.0F)
         );
     }
 }
