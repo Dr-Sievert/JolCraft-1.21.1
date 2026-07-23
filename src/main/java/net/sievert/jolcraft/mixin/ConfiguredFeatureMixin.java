@@ -1,46 +1,56 @@
 package net.sievert.jolcraft.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.sievert.jolcraft.data.JolCraftTags;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.sievert.jolcraft.world.worldgen.structure.util.FeaturePlacementContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ConfiguredFeature.class)
 public abstract class ConfiguredFeatureMixin {
 
-    @SuppressWarnings("deprecation")
-    @Inject(
+    @WrapOperation(
             method = "place",
-            at = @At("HEAD"),
-            cancellable = true
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/levelgen/feature/Feature;place(" +
+                            "Lnet/minecraft/world/level/levelgen/feature/configurations/FeatureConfiguration;" +
+                            "Lnet/minecraft/world/level/WorldGenLevel;" +
+                            "Lnet/minecraft/world/level/chunk/ChunkGenerator;" +
+                            "Lnet/minecraft/util/RandomSource;" +
+                            "Lnet/minecraft/core/BlockPos;)Z"
+            )
     )
-    private void jolcraft$preventPlacementInsideProtectedStructure(
+    @SuppressWarnings({"rawtypes"})
+    private boolean jolcraft$trackFeaturePlacement(
+            Feature instance,
+            FeatureConfiguration configuration,
             WorldGenLevel level,
             ChunkGenerator chunkGenerator,
             RandomSource random,
             BlockPos pos,
-            CallbackInfoReturnable<Boolean> cir
+            Operation<Boolean> original
     ) {
-        if (!(level instanceof WorldGenRegion region)) {
-            return;
-        }
+        FeaturePlacementContext.enter();
 
-        if (region.getLevel()
-                .structureManager()
-                .forWorldGenRegion(region)
-                .getStructureWithPieceAt(
-                        pos,
-                        JolCraftTags.Structures.FEATURE_PROTECTED
-                )
-                .isValid()) {
-            cir.setReturnValue(false);
+        try {
+            return original.call(
+                    instance,
+                    configuration,
+                    level,
+                    chunkGenerator,
+                    random,
+                    pos
+            );
+        } finally {
+            FeaturePlacementContext.exit();
         }
     }
 }
