@@ -151,7 +151,6 @@ public final class JolCraftStrongboxLootTableProvider
                                         .setRolls(ConstantValue.exactly(7))
                                         .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(22)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(10))
                                         .add(LootItem.lootTableItem(Items.BONE_MEAL).setWeight(20)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
                                         .add(LootItem.lootTableItem(JolCraftBlocks.FESTERLING).setWeight(10))
@@ -185,6 +184,10 @@ public final class JolCraftStrongboxLootTableProvider
                                         .setRolls(ConstantValue.exactly(5))
                                         .add(LootItem.lootTableItem(JolCraftItems.PARCHMENT.get()).setWeight(3)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_EMPTY.get()).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_SMALL.get()).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_HALF.get()).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_FULL.get()).setWeight(1))
                                         .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(1)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
                                         .add(
