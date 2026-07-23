@@ -61,6 +61,9 @@ public final class JolCraftStructureTagProvider
             @Nullable ExistingFileHelper existingFileHelper,
             @NotNull JolCraftDataTracking tracking
     ) {
+        target.tag(JolCraftTags.Structures.FEATURE_PROTECTED)
+                .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
+
         target.tag(JolCraftTags.Structures.ON_DWARVEN_FORTRESS_EXPLORER_MAPS)
                 .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
 

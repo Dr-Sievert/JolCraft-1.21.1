@@ -5,6 +5,7 @@
   "mixins": [
     "BrushableBlockEntityMixin",
     "BrushItemMixin",
+    "ConfiguredFeatureMixin",
     "JigsawPlacementMixin",
     "JigsawPlacementPlacerMixin",
     "LootItemAccessor",
