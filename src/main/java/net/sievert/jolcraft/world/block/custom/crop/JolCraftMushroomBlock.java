@@ -1,109 +1,89 @@
 package net.sievert.jolcraft.world.block.custom.crop;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.TriState;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class JolCraftMushroomBlock extends BushBlock implements BonemealableBlock {
+public abstract class JolCraftMushroomBlock extends BushBlock {
 
-    public JolCraftMushroomBlock(BlockBehaviour.Properties properties) {
+    protected JolCraftMushroomBlock(BlockBehaviour.Properties properties) {
         super(properties);
-    }
-
-    protected static final VoxelShape SHAPE = Block.box(5.0, 0.0, 5.0, 11.0, 6.0, 11.0);
-
-    @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
-    }
-
-    public static final MapCodec<JolCraftMushroomBlock> CODEC = RecordCodecBuilder.mapCodec(
-            builder -> builder.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf(JolCraftDictionary.PROPERTIES).forGetter(block -> block.properties)
-            ).apply(builder, JolCraftMushroomBlock::new)
-    );
-
-    @Override
-    protected MapCodec<? extends BushBlock> codec() {
-        return CODEC;
-    }
-
-    @Override
-    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.isSolidRender(level, pos);
     }
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        BlockPos blockpos = pos.below();
-        BlockState blockstate = level.getBlockState(blockpos);
-        TriState soilDecision = blockstate.canSustainPlant(level, blockpos, Direction.UP, state);
-        return blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK) || (soilDecision.isDefault() ? (level.getRawBrightness(pos, 0) < 8 && this.mayPlaceOn(blockstate, level, blockpos)) : soilDecision.isTrue());
+        BlockPos soilPos = pos.below();
+        BlockState soil = level.getBlockState(soilPos);
+
+        if (soil.is(BlockTags.MUSHROOM_GROW_BLOCK)) {
+            return true;
+        }
+
+        TriState soilDecision = soil.canSustainPlant(level, soilPos, Direction.UP, state);
+
+        if (!soilDecision.isDefault()) {
+            return soilDecision.isTrue();
+        }
+
+        return level.getRawBrightness(pos, 0) < 8 && this.mayPlaceOn(soil, level, soilPos);
     }
 
     @Override
-    protected void randomTick(BlockState p_221784_, ServerLevel p_221785_, BlockPos p_221786_, RandomSource p_221787_) {
-        if (p_221787_.nextInt(25) == 0) {
-            int i = 5;
-            int j = 4;
+    protected void randomTick(
+            BlockState state,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        if (random.nextInt(25) != 0) {
+            return;
+        }
 
-            for (BlockPos blockpos : BlockPos.betweenClosed(p_221786_.offset(-4, -1, -4), p_221786_.offset(4, 1, 4))) {
-                if (p_221785_.getBlockState(blockpos).is(this)) {
-                    if (--i <= 0) {
-                        return;
-                    }
-                }
+        int remainingNearbyMushrooms = 5;
+
+        for (BlockPos nearbyPos : BlockPos.betweenClosed(
+                pos.offset(-4, -1, -4),
+                pos.offset(4, 1, 4)
+        )) {
+            if (level.getBlockState(nearbyPos).is(this)
+                    && --remainingNearbyMushrooms <= 0) {
+                return;
+            }
+        }
+
+        BlockPos origin = pos;
+        BlockPos target = offsetRandomly(origin, random);
+
+        for (int attempt = 0; attempt < 4; attempt++) {
+            if (level.isEmptyBlock(target) && state.canSurvive(level, target)) {
+                origin = target;
             }
 
-            BlockPos blockpos1 = p_221786_.offset(p_221787_.nextInt(3) - 1, p_221787_.nextInt(2) - p_221787_.nextInt(2), p_221787_.nextInt(3) - 1);
+            target = offsetRandomly(origin, random);
+        }
 
-            for (int k = 0; k < 4; k++) {
-                if (p_221785_.isEmptyBlock(blockpos1) && p_221784_.canSurvive(p_221785_, blockpos1)) {
-                    p_221786_ = blockpos1;
-                }
-
-                blockpos1 = p_221786_.offset(p_221787_.nextInt(3) - 1, p_221787_.nextInt(2) - p_221787_.nextInt(2), p_221787_.nextInt(3) - 1);
-            }
-
-            if (p_221785_.isEmptyBlock(blockpos1) && p_221784_.canSurvive(p_221785_, blockpos1)) {
-                p_221785_.setBlock(blockpos1, p_221784_, 2);
-            }
+        if (level.isEmptyBlock(target) && state.canSurvive(level, target)) {
+            level.setBlock(target, state, 2);
         }
     }
 
-    @Override
-    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos pos, BlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
-        return false;
-    }
-
-    @Override
-    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
-
+    private static BlockPos offsetRandomly(BlockPos origin, RandomSource random) {
+        return origin.offset(
+                random.nextInt(3) - 1,
+                random.nextInt(2) - random.nextInt(2),
+                random.nextInt(3) - 1
+        );
     }
 }

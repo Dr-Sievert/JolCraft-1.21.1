@@ -2,14 +2,19 @@ package net.sievert.jolcraft.world.block.custom.crop;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.util.TriState;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 
 import javax.annotation.Nullable;
@@ -46,5 +51,20 @@ public class VerdantSoilBlock extends Block {
                     0.0, 0.0, 0.0
             );
         }
+    }
+
+    @Override
+    public TriState canSustainPlant(
+            BlockState state,
+            BlockGetter level,
+            BlockPos soilPos,
+            Direction direction,
+            BlockState plant
+    ) {
+        if (direction == Direction.UP && plant.getBlock() instanceof BushBlock && !(plant.getBlock() instanceof CropBlock)) {
+            return TriState.TRUE;
+        }
+
+        return super.canSustainPlant(state, level, soilPos, direction, plant);
     }
 }

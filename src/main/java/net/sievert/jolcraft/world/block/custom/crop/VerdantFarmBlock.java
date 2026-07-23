@@ -8,15 +8,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 
 import javax.annotation.Nullable;
@@ -25,12 +21,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class VerdantFarmBlock extends FarmBlock {
+
     public static final MapCodec<FarmBlock> CODEC = simpleCodec(VerdantFarmBlock::new);
-    protected static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0);
 
     public VerdantFarmBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 7));
+        this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, MAX_MOISTURE));
     }
 
     @Override
@@ -39,21 +35,16 @@ public class VerdantFarmBlock extends FarmBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
-    }
-
-    @Override
-    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (state.getValue(MOISTURE) != MAX_MOISTURE) {
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (state.getValue(MOISTURE) < MAX_MOISTURE) {
             level.setBlock(pos, state.setValue(MOISTURE, MAX_MOISTURE), 2);
         }
     }
 
     @Override
-    protected void tick(BlockState p_221134_, ServerLevel p_221135_, BlockPos p_221136_, RandomSource p_221137_) {
-        if (!p_221134_.canSurvive(p_221135_, p_221136_)) {
-            turnToDirt(null, p_221134_, p_221135_, p_221136_);
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!state.canSurvive(level, pos)) {
+            turnToVerdantSoil(null, state, level, pos);
         }
     }
 
@@ -69,10 +60,25 @@ public class VerdantFarmBlock extends FarmBlock {
                 : super.getStateForPlacement(context);
     }
 
-    public static void turnToDirt(@Nullable Entity entity, BlockState state, Level level, BlockPos pos) {
-        BlockState blockstate = pushEntitiesUp(state, JolCraftBlocks.VERDANT_SOIL.get().defaultBlockState(), level, pos);
-        level.setBlockAndUpdate(pos, blockstate);
-        level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, blockstate));
+    public static void turnToVerdantSoil(
+            @Nullable Entity entity,
+            BlockState state,
+            Level level,
+            BlockPos pos
+    ) {
+        BlockState verdantSoil = pushEntitiesUp(
+                state,
+                JolCraftBlocks.VERDANT_SOIL.get().defaultBlockState(),
+                level,
+                pos
+        );
+
+        level.setBlockAndUpdate(pos, verdantSoil);
+        level.gameEvent(
+                GameEvent.BLOCK_CHANGE,
+                pos,
+                GameEvent.Context.of(entity, verdantSoil)
+        );
     }
 
     @Override
@@ -85,7 +91,9 @@ public class VerdantFarmBlock extends FarmBlock {
                     pos.getX() + random.nextDouble(),
                     pos.getY() + 1.1,
                     pos.getZ() + random.nextDouble(),
-                    0.0, 0.0, 0.0
+                    0.0,
+                    0.0,
+                    0.0
             );
         }
     }

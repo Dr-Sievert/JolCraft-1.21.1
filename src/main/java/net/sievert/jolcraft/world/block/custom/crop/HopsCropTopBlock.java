@@ -5,12 +5,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -18,9 +18,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import org.jetbrains.annotations.NotNull;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
@@ -29,29 +28,26 @@ import java.util.function.Supplier;
 public class HopsCropTopBlock extends HopsCropBottomBlock {
 
     public static final int MAX_AGE = 4;
-    public static final IntegerProperty TOP_AGE = IntegerProperty.create("top_" + JolCraftDictionary.AGE, 0, MAX_AGE);
+    public static final IntegerProperty TOP_AGE = IntegerProperty.create(
+            JolCraftStrings.underscored(JolCraftDictionary.TOP, JolCraftDictionary.AGE),
+            0,
+            MAX_AGE
+    );
 
-    private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
-            Block.box(0, 0, 0, 16, 2, 16),
-            Block.box(0, 0, 0, 16, 5, 16),
-            Block.box(0, 0, 0, 16, 8, 16),
-            Block.box(0, 0, 0, 16, 11, 16),
-            Block.box(0, 0, 0, 16, 14, 16)
+    private static final VoxelShape[] SHAPE_BY_AGE = {
+            Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 5.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 11.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 14.0, 16.0)
     };
 
-    public HopsCropTopBlock(Properties properties, Supplier<? extends ItemLike> seedItem) {
-        super(properties, seedItem, () -> null); // top block doesn't grow further
+    public HopsCropTopBlock(
+            Properties properties,
+            Supplier<? extends ItemLike> seedItem
+    ) {
+        super(properties, seedItem, () -> null);
         this.registerDefaultState(this.stateDefinition.any().setValue(TOP_AGE, 0));
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(TOP_AGE);
-    }
-
-    @Override
-    public VoxelShape getShape(@NotNull BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE_BY_AGE[state.getValue(TOP_AGE)];
     }
 
     @Override
@@ -65,17 +61,39 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        BlockState below = level.getBlockState(pos.below());
-        if (!below.is(JolCraftTags.Blocks.HOPS_BOTTOM) || below.getValue(HopsCropBottomBlock.AGE) < 5) {
-            level.destroyBlock(pos, true);
+    protected VoxelShape getShape(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos,
+            CollisionContext context
+    ) {
+        return SHAPE_BY_AGE[this.getAge(state)];
+    }
+
+    @Override
+    protected void createBlockStateDefinition(
+            StateDefinition.Builder<Block, BlockState> builder
+    ) {
+        builder.add(TOP_AGE);
+    }
+
+    @Override
+    protected void randomTick(
+            BlockState state,
+            ServerLevel level,
+            BlockPos pos,
+            RandomSource random
+    ) {
+        if (!this.canSurvive(state, level, pos)) {
+            level.removeBlock(pos, false);
         }
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        BlockState below = level.getBlockState(pos.below());
-        return below.is(JolCraftTags.Blocks.HOPS_BOTTOM) && below.getValue(HopsCropBottomBlock.AGE) >= 5;
+        BlockState bottomState = level.getBlockState(pos.below());
+        return bottomState.is(JolCraftTags.Blocks.HOPS_BOTTOM)
+                && bottomState.getValue(HopsCropBottomBlock.AGE) >= 5;
     }
 
     @Override
@@ -93,56 +111,45 @@ public class HopsCropTopBlock extends HopsCropBottomBlock {
             level.scheduleTick(pos, this, 1);
         }
 
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
-    }
-
-    @Override
-    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getBlock() instanceof HopsCropBottomBlock;
+        return state;
     }
 
     @Override
     public void growCrops(Level level, BlockPos pos, BlockState state) {
         super.growCrops(level, pos, state);
-        int newTopAge = level.getBlockState(pos).getValue(TOP_AGE);
-        syncBottomBlock(level, pos, newTopAge);
+        this.syncBottomBlock(level, pos, this.getAge(level.getBlockState(pos)));
     }
 
     private void syncBottomBlock(Level level, BlockPos pos, int topAge) {
-        BlockPos below = pos.below();
-        BlockState belowState = level.getBlockState(below);
-        if (belowState.is(JolCraftTags.Blocks.HOPS_BOTTOM)) {
-            int requiredBottomAge = topAge + 5;
-            int clamped = Math.min(requiredBottomAge, HopsCropBottomBlock.MAX_AGE);
-            if (belowState.getValue(HopsCropBottomBlock.AGE) != clamped) {
-                level.setBlock(below, belowState.setValue(HopsCropBottomBlock.AGE, clamped), 2);
+        BlockPos bottomPos = pos.below();
+        BlockState bottomState = level.getBlockState(bottomPos);
+
+        if (bottomState.is(JolCraftTags.Blocks.HOPS_BOTTOM)) {
+            int bottomAge = Math.min(topAge + 5, HopsCropBottomBlock.MAX_AGE);
+
+            if (bottomState.getValue(HopsCropBottomBlock.AGE) != bottomAge) {
+                level.setBlock(
+                        bottomPos,
+                        bottomState.setValue(HopsCropBottomBlock.AGE, bottomAge),
+                        2
+                );
             }
         }
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    protected void onRemove(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            BlockState newState,
+            boolean isMoving
+    ) {
+        if (!state.is(newState.getBlock())
+                && level.getBlockState(pos.below()).is(JolCraftTags.Blocks.HOPS_BOTTOM)) {
+            level.removeBlock(pos.below(), false);
+        }
+
         super.onRemove(state, level, pos, newState, isMoving);
-        if (newState.getBlock() != this) {
-            BlockPos below = pos.below();
-            BlockState belowState = level.getBlockState(below);
-            if (belowState.is(JolCraftTags.Blocks.HOPS_BOTTOM)) {
-                level.setBlock(below, Blocks.AIR.defaultBlockState(), 35);
-            }
-        }
-    }
-
-    @Override
-    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
-        if (!player.isCreative()) {
-            super.playerDestroy(level, player, pos, state, blockEntity, tool);
-        } else {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 35);
-        }
-        BlockPos otherHalf = pos.below();
-        BlockState otherState = level.getBlockState(otherHalf);
-        if (otherState.is(JolCraftTags.Blocks.HOPS_BOTTOM)) {
-            level.setBlock(otherHalf, Blocks.AIR.defaultBlockState(), 35);
-        }
     }
 }

@@ -118,8 +118,7 @@ public final class JolCraftBlockTagProvider
         // Custom
         target.tag(JolCraftTags.Blocks.DEEPSLATE_BULBS_PLANTABLE)
                 .add(JolCraftBlocks.VERDANT_SOIL.get())
-                .add(Blocks.DEEPSLATE)
-                .add(Blocks.TUFF);
+                .add(Blocks.DEEPSLATE);
 
         target.tag(JolCraftTags.Blocks.HOPS_BOTTOM)
                 .add(JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get())

@@ -77,7 +77,7 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
 
         putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_VERDANT,
-                "JolCraft crops ignore their normal growing conditions and grow faster on these blocks. Other crops can also be planted but receive no additional benefits."
+                "Crops ignore their normal growing conditions and grow faster on these blocks."
         );
 
         putManual(translations,
