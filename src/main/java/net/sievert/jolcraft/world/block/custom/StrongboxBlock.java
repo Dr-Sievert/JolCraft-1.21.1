@@ -150,6 +150,27 @@ public class StrongboxBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
+    public BlockState playerWillDestroy(
+            Level level,
+            BlockPos pos,
+            BlockState state,
+            Player player
+    ) {
+        if (!level.isClientSide
+                && player.isCreative()
+                && !state.getValue(LOCKED)
+                && level.getBlockEntity(pos) instanceof StrongboxBlockEntity strongbox) {
+            for (ItemStack stack : strongbox.getItems()) {
+                if (!stack.isEmpty()) {
+                    popResource(level, pos, stack.copy());
+                }
+            }
+        }
+
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         BlockEntity be = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (!(be instanceof StrongboxBlockEntity strongbox)) {

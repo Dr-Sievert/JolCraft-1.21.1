@@ -98,6 +98,8 @@ public final class JolCraftTags {
 
     public interface Structures {
 
+        TagKey<Structure> FEATURE_PROTECTED = create(JolCraftTagIds.FEATURE_PROTECTED);
+
         TagKey<Structure> ON_DWARVEN_FORTRESS_EXPLORER_MAPS = create(JolCraftTagIds.ON_DWARVEN_FORTRESS_EXPLORER_MAPS);
 
         TagKey<Structure> VILLAGES = create(JolCraftTagIds.VILLAGES);

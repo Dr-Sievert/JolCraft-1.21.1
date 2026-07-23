@@ -75,6 +75,8 @@ public final class JolCraftTagIds extends JolCraftIds {
     // Structure
     // ---------------------------------------------------------------------
 
+    public static final String FEATURE_PROTECTED = join(JolCraftDictionary.FEATURE, JolCraftDictionary.PROTECTED);
+
     public static final String ON_DWARVEN_FORTRESS_EXPLORER_MAPS = join(
             JolCraftDictionary.ON,
             JolCraftStructureIds.DWARVEN_FORTRESS,

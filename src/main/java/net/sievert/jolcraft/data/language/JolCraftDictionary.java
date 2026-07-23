@@ -154,6 +154,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PLANTABLE = "plantable";
     public static final String POTTED = "potted";
     public static final String PRESERVING = "preserving";
+    public static final String PROTECTED = "protected";
     public static final String PURE = "pure";
     public static final String RANDOM = "random";
     public static final String RESPECTED = "respected";
@@ -339,6 +340,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FACE = "face";
     public static final String FAMINE = "famine";
     public static final String FARMLAND = "farmland";
+    public static final String FEATURE = "feature";
     public static final String FERMENTING = "fermenting";
     public static final String FESTERLING = "festerling";
     public static final String FLOWER = "flower";
