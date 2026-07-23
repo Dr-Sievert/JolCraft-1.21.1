@@ -18,7 +18,8 @@ public final class JolCraftDataExecutor {
             @NotNull TTarget target,
             @NotNull JolCraftDataProvider<?> provider,
             @NotNull Iterable<? extends JolCraftDataEmission<TTarget>> emissions,
-            @NotNull JolCraftDataTracking tracking
+            @NotNull JolCraftDataTracking tracking,
+            boolean recordOutput
     ) {
         Objects.requireNonNull(target, JolCraftDictionary.TARGET);
         Objects.requireNonNull(provider, JolCraftDictionary.PROVIDER);
@@ -30,7 +31,10 @@ public final class JolCraftDataExecutor {
 
             String path = JolCraftDataPathResolver.resolvePath(provider, emission.fileName());
             emission.save(target, path);
-            tracking.record(provider, path);
+
+            if (recordOutput) {
+                tracking.record(provider, path);
+            }
         }
     }
 
@@ -38,11 +42,15 @@ public final class JolCraftDataExecutor {
             @NotNull TTarget target,
             @NotNull JolCraftDataProvider<?> provider,
             @NotNull Iterable<? extends JolCraftOrderedEmissionBuilder<TTarget>> orderedEmissionBuilders,
-            @NotNull JolCraftDataTracking tracking
+            @NotNull JolCraftDataTracking tracking,
+            boolean recordOutput
     ) {
         Objects.requireNonNull(target, JolCraftDictionary.TARGET);
         Objects.requireNonNull(provider, JolCraftDictionary.PROVIDER);
-        Objects.requireNonNull(orderedEmissionBuilders, JolCraftStrings.plural(JolCraftDictionary.EMISSION));
+        Objects.requireNonNull(
+                orderedEmissionBuilders,
+                JolCraftStrings.plural(JolCraftDictionary.EMISSION)
+        );
         Objects.requireNonNull(tracking, JolCraftDictionary.TRACK);
 
         for (JolCraftOrderedEmissionBuilder<TTarget> orderedEmissionBuilder : orderedEmissionBuilders) {
@@ -60,9 +68,16 @@ public final class JolCraftDataExecutor {
 
             JolCraftDataEmission<TTarget> emission = built.getOrThrow(IllegalStateException::new);
 
-            String path = JolCraftDataPathResolver.resolvePath(provider, emission.fileName());
+            String path = JolCraftDataPathResolver.resolvePath(
+                    provider,
+                    emission.fileName()
+            );
+
             emission.save(target, path);
-            tracking.record(provider, path);
+
+            if (recordOutput) {
+                tracking.record(provider, path);
+            }
         }
     }
 

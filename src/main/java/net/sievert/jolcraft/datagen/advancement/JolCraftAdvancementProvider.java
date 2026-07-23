@@ -432,7 +432,7 @@ public final class JolCraftAdvancementProvider
                         .dummyChild(JolCraft.location(JolCraftAdvancementIds.REP_4))
         ));
 
-        JolCraftDataExecutor.execute(target, this, emissions, tracking);
+        JolCraftDataExecutor.execute(target, this, emissions, tracking, true);
 
         tracking.logTrackedOutputCount(this, JolCraftStrings.plural(JolCraftDictionary.ADVANCEMENT));
     }

@@ -52,7 +52,7 @@ public interface RecipeSubProvider extends JolCraftSubDataProvider<RecipeOutput>
                     @NotNull ICondition... conditions
             ) {
                 target.accept(id, recipe, advancement, conditions);
-                tracking.record(RecipeSubProvider.this, id.getPath());
+                tracking.record(RecipeSubProvider.this, id.toString());
             }
 
             @Override
@@ -77,7 +77,8 @@ public interface RecipeSubProvider extends JolCraftSubDataProvider<RecipeOutput>
                 output,
                 this,
                 List.of(built.getOrThrow(IllegalStateException::new)),
-                tracking
+                tracking,
+                false
         );
     }
 
@@ -90,7 +91,8 @@ public interface RecipeSubProvider extends JolCraftSubDataProvider<RecipeOutput>
                 output,
                 this,
                 List.of(builder),
-                tracking
+                tracking,
+                false
         );
     }
 

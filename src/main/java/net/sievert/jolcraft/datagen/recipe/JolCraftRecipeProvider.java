@@ -18,6 +18,7 @@ import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.base.report.JolCraftDataValidation;
 import net.sievert.jolcraft.datagen.recipe.subprovider.CompassRecipesSubProvider;
 import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfBountyRecipesSubProvider;
 import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfTradeRecipesSubProvider;
@@ -141,6 +142,7 @@ public final class JolCraftRecipeProvider
         };
 
         generateSelfAndChildren(countedOutput, this.packOutput, null, null, tracking);
+        JolCraftDataValidation.validate(tracking);
 
         recipeTypeCounts.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
