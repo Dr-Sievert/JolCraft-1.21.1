@@ -18,7 +18,8 @@
     "SetItemCountFunctionAccessor",
     "SinglePoolElementAccessor",
     "SpellcasterUseSpellGoalMixin",
-    "UniformGeneratorAccessor"
+    "UniformGeneratorAccessor",
+    "WorldGenRegionMixin"
   ],
   "client": [
   ],
