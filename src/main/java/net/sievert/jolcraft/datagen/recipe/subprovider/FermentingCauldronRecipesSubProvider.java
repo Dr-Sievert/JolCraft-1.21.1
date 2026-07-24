@@ -94,7 +94,7 @@ public record FermentingCauldronRecipesSubProvider(
                 5,
                 0x91706E,
                 MobEffects.HEALTH_BOOST,
-                6000,
+                600,
                 0
         );
 
@@ -107,7 +107,7 @@ public record FermentingCauldronRecipesSubProvider(
                 5,
                 0x817788,
                 MobEffects.NIGHT_VISION,
-                6000,
+                600,
                 0
         );
 
@@ -120,7 +120,7 @@ public record FermentingCauldronRecipesSubProvider(
                 5,
                 0x6E918F,
                 MobEffects.DAMAGE_BOOST,
-                6000,
+                600,
                 0
         );
 
@@ -133,7 +133,7 @@ public record FermentingCauldronRecipesSubProvider(
                 5,
                 0x54832E,
                 MobEffects.DAMAGE_RESISTANCE,
-                6000,
+                600,
                 0
         );
 
