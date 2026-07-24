@@ -40,7 +40,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.inventory.JolCraftItemHelper;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -146,7 +148,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     private static final String NBT_EFFECT_DURATION = JolCraftDictionary.DURATION;
     private static final String NBT_EFFECT_AMPLIFIER = JolCraftDictionary.AMPLIFIER;
 
-    private static final int MAX_INGREDIENT_STACK = 3;
+    private static final int MAX_INGREDIENT_STACK = 10;
+    private static final int MAX_FILL_LEVEL = 3;
 
     private static final LootContextParamSet EXECUTION_CONTEXT_PARAMS =
             new LootContextParamSet.Builder()
@@ -183,10 +186,23 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return ItemInteractionResult.FAIL;
         }
         if (isBrewing()) {
+            if (usedItem.is(JolCraftItems.DEV_KEY)) {
+                brewStartTime = level.getGameTime();
+                blendTotalTicks = 1;
+                bubbleDelay = 0;
+                syncClient();
+
+                return ItemInteractionResult.SUCCESS;
+            }
+
             return ItemInteractionResult.FAIL;
         }
         if (usedItem.isEmpty()) {
             return ItemInteractionResult.FAIL;
+        }
+
+        if (extractable && usedItem.is(JolCraftItems.DWARVEN_BREW.get())) {
+            return tryReturnBrew(player, hand, usedItem);
         }
 
         FermentingCauldronRecipe recipe = findRecipe(usedItem);
@@ -368,7 +384,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         recipe.generateEffect(
                 context,
                 recipeInput,
-                this::upsertEffect
+                effect -> this.upsertEffect(effect, newCount)
         );
 
         setLastIngredient(ingredientKey);
@@ -381,7 +397,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     }
 
     private void upsertEffect(
-            MobEffectInstance effect
+            MobEffectInstance effect,
+            int ingredientCount
     ) {
         if (effect.getDuration() < 1
                 || effect.getAmplifier() < 0) {
@@ -397,6 +414,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return;
         }
 
+        MobEffectInstance scaledEffect =
+                new MobEffectInstance(
+                        effect.getEffect(),
+                        effect.getDuration() * ingredientCount,
+                        effect.getAmplifier(),
+                        effect.isAmbient(),
+                        effect.isVisible(),
+                        effect.showIcon()
+                );
+
         for (int i = 0; i < effects.size(); i++) {
             MobEffectInstance existing = effects.get(i);
 
@@ -406,17 +433,12 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                             .orElse(null);
 
             if (key.equals(existingKey)) {
-                effects.set(
-                        i,
-                        new MobEffectInstance(effect)
-                );
+                effects.set(i, scaledEffect);
                 return;
             }
         }
 
-        effects.add(
-                new MobEffectInstance(effect)
-        );
+        effects.add(scaledEffect);
     }
 
     private void setLastIngredient(ItemStack stack) {
@@ -627,6 +649,101 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
 
         return out;
+    }
+
+    private ItemInteractionResult tryReturnBrew(
+            Player player,
+            InteractionHand hand,
+            ItemStack usedItem
+    ) {
+        if (!(player instanceof ServerPlayer serverPlayer)
+                || !hasMatchingBrewData(usedItem)
+                || !raiseFillLevel()
+                || level == null) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        player.awardStat(Stats.ITEM_USED.get(usedItem.getItem()));
+        JolCraftItemHelper.consume(serverPlayer, hand);
+
+        JolCraftSoundHelper.block(
+                level,
+                worldPosition,
+                SoundEvents.BOTTLE_EMPTY,
+                0.8F,
+                0.9F
+        );
+
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    private boolean hasMatchingBrewData(ItemStack brew) {
+        Integer brewColor = brew.get(JolCraftDataComponents.BREW_COLOR.get());
+
+        if (brewColor == null || brewColor != currentColor) {
+            return false;
+        }
+
+        PotionContents contents = brew.get(DataComponents.POTION_CONTENTS);
+
+        if (contents == null) {
+            return effects.isEmpty();
+        }
+
+        if (contents.potion().isPresent() || contents.customColor().isPresent()) {
+            return false;
+        }
+
+        List<MobEffectInstance> brewEffects = contents.customEffects();
+
+        return brewEffects.size() == effects.size()
+                && effects.stream().allMatch(expected ->
+                brewEffects.stream().anyMatch(actual ->
+                        hasSameEffectData(expected, actual)
+                )
+        );
+    }
+
+    private static boolean hasSameEffectData(
+            MobEffectInstance first,
+            MobEffectInstance second
+    ) {
+        return first.getEffect().equals(second.getEffect())
+                && first.getDuration() == second.getDuration()
+                && first.getAmplifier() == second.getAmplifier()
+                && first.isAmbient() == second.isAmbient()
+                && first.isVisible() == second.isVisible()
+                && first.showIcon() == second.showIcon();
+    }
+
+    private boolean raiseFillLevel() {
+        if (level == null || level.isClientSide) {
+            return false;
+        }
+
+        BlockState state =
+                level.getBlockState(worldPosition);
+
+        if (!state.hasProperty(LayeredCauldronBlock.LEVEL)) {
+            return false;
+        }
+
+        int fillLevel =
+                state.getValue(LayeredCauldronBlock.LEVEL);
+
+        if (fillLevel >= MAX_FILL_LEVEL) {
+            return false;
+        }
+
+        level.setBlockAndUpdate(
+                worldPosition,
+                state.setValue(
+                        LayeredCauldronBlock.LEVEL,
+                        fillLevel + 1
+                )
+        );
+
+        return true;
     }
 
     @Nullable
