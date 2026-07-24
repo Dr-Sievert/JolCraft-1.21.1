@@ -120,9 +120,8 @@ public final class JolCraftFishingLootTableProvider
         target.accept(
                 JolCraftLootTables.Fishing.JUNK,
                 LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
-                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(27))
-                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_EMPTY.get()).setWeight(2))
-                        .add(LootItem.lootTableItem(JolCraftItems.GUILD_SIGIL.get()).setWeight(1))
+                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SALVAGE).setWeight(9))
+                        .add(LootItem.lootTableItem(JolCraftItems.QUILL_EMPTY.get()).setWeight(1))
                 ));
 
         target.accept(

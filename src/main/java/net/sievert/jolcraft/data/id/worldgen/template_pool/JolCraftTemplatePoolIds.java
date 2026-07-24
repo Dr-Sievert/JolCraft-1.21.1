@@ -2,6 +2,7 @@ package net.sievert.jolcraft.data.id.worldgen.template_pool;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
+import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
@@ -54,6 +55,9 @@ public abstract class JolCraftTemplatePoolIds extends JolCraftIds {
     public static final String CATACOMBS = plural(JolCraftDictionary.CATACOMB);
     public static final String TOMB = JolCraftDictionary.TOMB;
     public static final String TOWN = JolCraftDictionary.TOWN;
+    public static final String TILE = JolCraftDictionary.TILE;
+    public static final String HOUSE = JolCraftDictionary.HOUSE;
+    public static final String DWARF = JolCraftDwarfIds.DWARF;
 
     public static final String LARGE_JUNCTION =  join(LARGE, JUNCTION);
     public static final String MEDIUM_JUNCTION = join(MEDIUM, JUNCTION);

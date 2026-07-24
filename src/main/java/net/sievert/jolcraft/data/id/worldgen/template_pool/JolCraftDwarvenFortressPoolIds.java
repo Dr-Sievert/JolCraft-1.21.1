@@ -132,4 +132,15 @@ public class JolCraftDwarvenFortressPoolIds extends JolCraftTemplatePoolIds {
     public static final String TOWN_ENTRANCE_LEFT_CORNER = join(TOWN_ENTRANCE_LEFT, CORNER);
     public static final String TOWN_LEFT_WALL = join(TOWN, LEFT, WALL);
     public static final String TOWN_END_LEFT_CORNER = join(TOWN_END, LEFT, CORNER);
+
+    public static final String TOWN_TILE = join(TOWN, TILE);
+    public static final String TOWN_TILE_1 = one(TOWN_TILE);
+    public static final String TOWN_TILE_2 = two(TOWN_TILE);
+    public static final String TOWN_TILE_3 = three(TOWN_TILE);
+    public static final String TOWN_TILE_4 = four(TOWN_TILE);
+
+    public static final String TOWN_HOUSE = join(TOWN, HOUSE);
+    public static final String TOWN_HOUSE_1 = one(TOWN_HOUSE);
+    public static final String TOWN_HOUSE_2 = two(TOWN_HOUSE);
+    public static final String TOWN_HOUSE_3 = three(TOWN_HOUSE);
 }

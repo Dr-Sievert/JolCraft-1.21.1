@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.sievert.jolcraft.data.id.worldgen.template_pool.JolCraftTemplatePoolIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.datagen.structure.processor.JolCraftDwarvenFortressProcessors;
 import net.sievert.jolcraft.datagen.structure.processor.JolCraftMiscProcessors;
 import net.sievert.jolcraft.datagen.structure.util.AbstractPoolProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -13,6 +12,8 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 public class JolCraftMiscStructurePools extends AbstractPoolProvider {
 
     public static final String DIRECTORY_ID = JolCraftDictionary.MISC;
+
+    public static final ResourceKey<StructureTemplatePool> DWARF_POOL = poolKey(JolCraftTemplatePoolIds.DWARF);
 
     public static final ResourceKey<StructureTemplatePool> ANVIL_POOL = poolKey(JolCraftTemplatePoolIds.ANVIL);
     public static final ResourceKey<StructureTemplatePool> BRAZIER_POOL = poolKey(JolCraftTemplatePoolIds.BRAZIER);
@@ -48,6 +49,8 @@ public class JolCraftMiscStructurePools extends AbstractPoolProvider {
     }
 
     private void registerPools() {
+        register(DWARF_POOL, JolCraftTemplatePoolIds.DWARF);
+
         register(ANVIL_POOL, JolCraftTemplatePoolIds.ANVIL);
         register(BRAZIER_POOL, JolCraftTemplatePoolIds.BRAZIER);
 

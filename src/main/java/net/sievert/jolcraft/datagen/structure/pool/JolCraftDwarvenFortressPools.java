@@ -67,22 +67,22 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
     public static final ResourceKey<StructureTemplatePool> CATACOMBS_TOMB_LARGE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CATACOMBS_TOMB_LARGE);
     public static final ResourceKey<StructureTemplatePool> CATACOMBS_LOOT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.CATACOMBS_LOOT);
 
-    public static final ResourceKey<StructureTemplatePool> TOWN = poolKey(JolCraftDwarvenFortressPoolIds.TOWN);
-    public static final ResourceKey<StructureTemplatePool> TOWN_END_WALL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_WALL);
-    public static final ResourceKey<StructureTemplatePool> TOWN_END_RIGHT = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_RIGHT);
-    public static final ResourceKey<StructureTemplatePool> TOWN_END_LEFT = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_LEFT);
+    public static final ResourceKey<StructureTemplatePool> TOWN_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN);
+    public static final ResourceKey<StructureTemplatePool> TOWN_END_WALL_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_WALL);
+    public static final ResourceKey<StructureTemplatePool> TOWN_END_RIGHT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_RIGHT);
+    public static final ResourceKey<StructureTemplatePool> TOWN_END_LEFT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_LEFT);
 
-    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_RIGHT = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_RIGHT);
-    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_RIGHT_CORNER = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_RIGHT_CORNER);
-    public static final ResourceKey<StructureTemplatePool> TOWN_RIGHT_WALL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_RIGHT_WALL);
-    public static final ResourceKey<StructureTemplatePool> TOWN_END_RIGHT_CORNER = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_RIGHT_CORNER);
+    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_RIGHT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_RIGHT);
+    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_RIGHT_CORNER_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_RIGHT_CORNER);
+    public static final ResourceKey<StructureTemplatePool> TOWN_RIGHT_WALL_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_RIGHT_WALL);
+    public static final ResourceKey<StructureTemplatePool> TOWN_END_RIGHT_CORNER_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_RIGHT_CORNER);
 
-    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_LEFT = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_LEFT);
-    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_LEFT_CORNER = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_LEFT_CORNER);
-    public static final ResourceKey<StructureTemplatePool> TOWN_LEFT_WALL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_LEFT_WALL);
-    public static final ResourceKey<StructureTemplatePool> TOWN_END_LEFT_CORNER = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_LEFT_CORNER);
+    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_LEFT_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_LEFT);
+    public static final ResourceKey<StructureTemplatePool> TOWN_ENTRANCE_LEFT_CORNER_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_LEFT_CORNER);
+    public static final ResourceKey<StructureTemplatePool> TOWN_LEFT_WALL_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_LEFT_WALL);
+    public static final ResourceKey<StructureTemplatePool> TOWN_END_LEFT_CORNER_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_END_LEFT_CORNER);
 
-
+    public static final ResourceKey<StructureTemplatePool> TOWN_TILE_POOL = poolKey(JolCraftDwarvenFortressPoolIds.TOWN_TILE);
 
     private JolCraftDwarvenFortressPools(BootstrapContext<StructureTemplatePool> context) {
         super(context, DIRECTORY_ID, JolCraftDwarvenFortressProcessors.DWARVEN_FORTRESS);
@@ -380,67 +380,78 @@ public final class JolCraftDwarvenFortressPools extends AbstractPoolProvider {
         );
 
         register(
-                TOWN,
+                TOWN_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN)
         );
 
         register(
-                TOWN_END_WALL,
+                TOWN_END_WALL_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_END_WALL)
         );
 
         register(
-                TOWN_ENTRANCE_RIGHT,
-                TOWN_END_RIGHT,
+                TOWN_ENTRANCE_RIGHT_POOL,
+                TOWN_END_RIGHT_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_RIGHT)
         );
 
         register(
-                TOWN_ENTRANCE_RIGHT_CORNER,
-                TOWN_END_RIGHT,
+                TOWN_ENTRANCE_RIGHT_CORNER_POOL,
+                TOWN_END_RIGHT_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_RIGHT_CORNER)
         );
 
         register(
-                TOWN_RIGHT_WALL,
+                TOWN_RIGHT_WALL_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_RIGHT_WALL)
         );
 
         register(
-                TOWN_END_RIGHT_CORNER,
+                TOWN_END_RIGHT_CORNER_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_END_RIGHT_CORNER)
         );
 
         register(
-                TOWN_ENTRANCE_LEFT,
-                TOWN_END_LEFT,
+                TOWN_ENTRANCE_LEFT_POOL,
+                TOWN_END_LEFT_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_LEFT)
         );
 
         register(
-                TOWN_ENTRANCE_LEFT_CORNER,
-                TOWN_END_LEFT,
+                TOWN_ENTRANCE_LEFT_CORNER_POOL,
+                TOWN_END_LEFT_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_ENTRANCE_LEFT_CORNER)
         );
 
         register(
-                TOWN_LEFT_WALL,
+                TOWN_LEFT_WALL_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_LEFT_WALL)
         );
 
         register(
-                TOWN_END_LEFT_CORNER,
+                TOWN_END_LEFT_CORNER_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_END_LEFT_CORNER)
         );
 
         register(
-                TOWN_END_RIGHT,
+                TOWN_END_RIGHT_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_END_RIGHT)
         );
 
         register(
-                TOWN_END_LEFT,
+                TOWN_END_LEFT_POOL,
                 town(JolCraftDwarvenFortressPoolIds.TOWN_END_LEFT)
+        );
+
+        register(
+                TOWN_TILE_POOL,
+                town(JolCraftDwarvenFortressPoolIds.TOWN_TILE_1),
+                town(JolCraftDwarvenFortressPoolIds.TOWN_TILE_2),
+                town(JolCraftDwarvenFortressPoolIds.TOWN_TILE_3),
+                town(JolCraftDwarvenFortressPoolIds.TOWN_TILE_4),
+                town(JolCraftDwarvenFortressPoolIds.TOWN_HOUSE_1, 4),
+                town(JolCraftDwarvenFortressPoolIds.TOWN_HOUSE_2, 4),
+                town(JolCraftDwarvenFortressPoolIds.TOWN_HOUSE_3, 2)
         );
     }
 
