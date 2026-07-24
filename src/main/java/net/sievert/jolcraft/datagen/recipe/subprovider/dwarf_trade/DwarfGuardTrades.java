@@ -63,29 +63,5 @@ public record DwarfGuardTrades(
                         .dwarfXp(0)
                         .priceMultiplier(0.05F)
         );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.MASTER
-                        )
-                        .costACoins(30)
-                        .costB(
-                                JolCraftItems.AEGISCORE.get(),
-                                1
-                        )
-                        .result(
-                                JolCraftItems
-                                        .FORGE_ARMOR_TRIM_SMITHING_TEMPLATE
-                                        .get(),
-                                1
-                        )
-                        .maxUses(1)
-                        .dwarfXp(0)
-                        .priceMultiplier(0.05F)
-        );
     }
 }

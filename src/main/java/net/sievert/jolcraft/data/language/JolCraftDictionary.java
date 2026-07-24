@@ -384,6 +384,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String HOMESTEAD = "homestead";
     public static final String HOOK = "hook";
     public static final String HOP = "hop";
+    public static final String HOUSE = "house";
     public static final String HURT = "hurt";
     public static final String ICON = "icon";
     public static final String ID = "id";
@@ -498,7 +499,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PROGRESS = "progress";
     public static final String PROJECT = "project";
     public static final String PROMOTION = "promotion";
-    public static final String PROPERTIES = "properties";
     public static final String PROVIDER = "provider";
     public static final String QUILL = "quill";
     public static final String RADIANT = "radiant";
@@ -567,6 +567,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TEXTURE = "texture";
     public static final String TICK = "tick";
     public static final String TIER = "tier";
+    public static final String TILE = "tile";
     public static final String TIME = "time";
     public static final String TITLE = "title";
     public static final String TOMB = "tomb";
