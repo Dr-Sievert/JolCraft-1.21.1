@@ -513,6 +513,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String BREW_AGE_NAME =
             category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.NAME);
 
+    public static final String BARREL_BREW_AGE =
+            category(JolCraftDictionary.BARREL, JolCraftDataComponentIds.BREW_AGE);
+
     public static final String BREW_AGE_FRESH =
             category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.FRESH);
 
