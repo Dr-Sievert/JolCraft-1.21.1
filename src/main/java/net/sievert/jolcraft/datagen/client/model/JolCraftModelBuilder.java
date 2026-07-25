@@ -591,4 +591,40 @@ public final class JolCraftModelBuilder {
             return json;
         });
     }
+
+    public @NotNull PropertyDispatch createColumnWithFacing() {
+        return PropertyDispatch.property(BlockStateProperties.FACING)
+                .select(
+                        net.minecraft.core.Direction.DOWN,
+                        Variant.variant()
+                                .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)
+                )
+                .select(
+                        net.minecraft.core.Direction.UP,
+                        Variant.variant()
+                )
+                .select(
+                        net.minecraft.core.Direction.NORTH,
+                        Variant.variant()
+                                .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                )
+                .select(
+                        net.minecraft.core.Direction.SOUTH,
+                        Variant.variant()
+                                .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
+                )
+                .select(
+                        net.minecraft.core.Direction.WEST,
+                        Variant.variant()
+                                .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
+                )
+                .select(
+                        net.minecraft.core.Direction.EAST,
+                        Variant.variant()
+                                .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
+                );
+    }
 }

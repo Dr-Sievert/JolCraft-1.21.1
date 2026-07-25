@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.block.custom;
+package net.sievert.jolcraft.world.block.custom.brewing;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
-import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import org.jetbrains.annotations.Nullable;
 

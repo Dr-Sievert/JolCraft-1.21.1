@@ -62,5 +62,13 @@ public final class MiscLangSubProvider implements LanguageSubProvider {
                 JolCraftLanguageKeys.TOOLTIP_SALVAGE,
                 "Can be used to produce scrap using a spanner. Hold the spanner in one hand and the salvage in the other, then right-click!"
         );
+
+
+        putManual(translations, JolCraftLanguageKeys.BREW_AGE, "Age: %s");
+        putManual(translations, JolCraftLanguageKeys.BREW_AGE_FRESH, "Fresh");
+        putManual(translations, JolCraftLanguageKeys.BREW_AGE_AGED, "Aged");
+        putManual(translations, JolCraftLanguageKeys.BREW_AGE_MATURED, "Matured");
+        putManual(translations, JolCraftLanguageKeys.BREW_AGE_VINTAGE, "Vintage");
+        putManual(translations, JolCraftLanguageKeys.BREW_AGE_NAME, "%1$s %2$s");
     }
 }

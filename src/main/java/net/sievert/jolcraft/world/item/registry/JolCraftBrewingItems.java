@@ -1,13 +1,18 @@
 package net.sievert.jolcraft.world.item.registry;
 
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.custom.food.DwarvenBrewItem;
+import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewBucketItem;
+import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewItem;
 import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipItem;
 import net.sievert.jolcraft.world.item.food.JolCraftFoodProperties;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
+
+import java.util.function.Supplier;
 
 public final class JolCraftBrewingItems {
 
@@ -40,6 +45,21 @@ public final class JolCraftBrewingItems {
                 props -> new DwarvenBrewItem(
                         props.food(JolCraftFoodProperties.DWARVEN_BREW)
                                 .craftRemainder(glassMug.get())
+                                .stacksTo(1)
+                )
+        );
+    }
+
+    public static DeferredItem<Item> registerDwarvenBrewBucket(
+            Supplier<? extends Fluid> fluid
+    ) {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.DWARVEN_BREW_BUCKET,
+                props -> new DwarvenBrewBucketItem(
+                        fluid.get(),
+                        props.craftRemainder(
+                                        Items.BUCKET
+                                )
                                 .stacksTo(1)
                 )
         );

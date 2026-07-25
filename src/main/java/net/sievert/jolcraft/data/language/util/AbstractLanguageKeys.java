@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.language.util;
 
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -53,6 +54,14 @@ public abstract class AbstractLanguageKeys {
         return category(JolCraftDictionary.BLOCK, id);
     }
 
+    /** "fluid_type.<modid>.<name>" */
+    public static String fluidType(String id) {
+        return category(
+                NeoForgeRegistries.Keys.FLUID_TYPES.location().getPath(),
+                id
+        );
+    }
+
     /** "item.<modid>.<name>" */
     public static String item(String id) {
         return category(JolCraftDictionary.ITEM, id);
@@ -79,6 +88,19 @@ public abstract class AbstractLanguageKeys {
     /** "subtitle.<modid>.<name>" */
     public static String subtitle(String id) {
         return category(JolCraftDictionary.SUBTITLE, id);
+    }
+
+    /** "config.jade.plugin_<modid>.<name>" */
+    public static String jadeConfig(String id) {
+        return key(
+                JolCraftDictionary.CONFIG,
+                JolCraftDictionary.JADE,
+                JolCraftStrings.underscored(
+                        JolCraftDictionary.PLUGIN,
+                        MOD_ID
+                ),
+                id
+        );
     }
 
     protected static String subtitleFromSoundId(String soundId) {

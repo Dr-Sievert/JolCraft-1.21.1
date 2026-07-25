@@ -9,6 +9,7 @@ import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -60,6 +61,14 @@ public final class BlockLangSubProvider implements LanguageSubProvider {
         for (DeferredHolder<?, ?> holder : JolCraftBlocks.BLOCKS.getEntries()) {
             ResourceLocation id = holder.getId();
             String key = AbstractLanguageKeys.block(id.getPath());
+            if (hasKey(translations, key)) continue;
+
+            put(translations, key, JolCraftStrings.toTitleCase(id.getPath()));
+        }
+
+        for (DeferredHolder<?, ?> holder : JolCraftFluids.FLUID_TYPES.getEntries()) {
+            ResourceLocation id = holder.getId();
+            String key = AbstractLanguageKeys.fluidType(id.getPath());
             if (hasKey(translations, key)) continue;
 
             put(translations, key, JolCraftStrings.toTitleCase(id.getPath()));

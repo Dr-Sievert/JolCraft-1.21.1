@@ -5,6 +5,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.custom.tool.ArtisanHammerItem;
 import net.sievert.jolcraft.world.item.custom.tool.ChiselItem;
 import net.sievert.jolcraft.world.item.custom.tool.PestleItem;
@@ -228,6 +229,7 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> YEAST = JolCraftBrewingItems.registerYeast();
     public static final DeferredItem<Item> GLASS_MUG = JolCraftBrewingItems.registerGlassMug();
     public static final DeferredItem<Item> DWARVEN_BREW = JolCraftBrewingItems.registerDwarvenBrew(GLASS_MUG);
+    public static final DeferredItem<Item> DWARVEN_BREW_BUCKET = JolCraftBrewingItems.registerDwarvenBrewBucket(JolCraftFluids.DWARVEN_BREW);
 
     // -------------------------------------------------------------------------
     // Bounty
@@ -312,10 +314,8 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME_EPIC = JolCraftTomeItems.registerAncientDwarvenTomeEpic();
 
     public static final DeferredItem<Item> LEGENDARY_PAGE = JolCraftTomeItems.registerLegendaryPage();
-    public static final DeferredItem<Item> UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME =
-            JolCraftTomeItems.registerUnidentifiedLegendaryAncientDwarvenTome();
-    public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME_LEGENDARY =
-            JolCraftTomeItems.registerAncientDwarvenTomeLegendary();
+    public static final DeferredItem<Item> UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME = JolCraftTomeItems.registerUnidentifiedLegendaryAncientDwarvenTome();
+    public static final DeferredItem<Item> ANCIENT_DWARVEN_TOME_LEGENDARY = JolCraftTomeItems.registerAncientDwarvenTomeLegendary();
 
     // -------------------------------------------------------------------------
     // Salvage

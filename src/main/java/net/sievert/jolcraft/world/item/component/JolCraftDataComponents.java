@@ -144,10 +144,20 @@ public final class JolCraftDataComponents {
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
             );
 
+    // -----------------
+    // Brewing
+    // -----------------
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BREW_COLOR =
             register(JolCraftDataComponentIds.BREW_COLOR, builder -> builder
                     .persistent(Codec.INT)
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
+            );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> BREW_AGE =
+            register(JolCraftDataComponentIds.BREW_AGE, builder -> builder
+                    .persistent(Codec.LONG)
+                    .networkSynchronized(ByteBufCodecs.VAR_LONG)
             );
 
     // -----------------

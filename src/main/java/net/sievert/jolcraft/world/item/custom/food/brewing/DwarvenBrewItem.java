@@ -1,8 +1,9 @@
-package net.sievert.jolcraft.world.item.custom.food;
+package net.sievert.jolcraft.world.item.custom.food.brewing;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -41,6 +43,15 @@ public class DwarvenBrewItem extends PotionItem {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return Component.translatable(
+                JolCraftLanguageKeys.BREW_AGE_NAME,
+                Component.translatable(DwarvenBrewAge.fromStack(stack).translationKey()),
+                super.getName(stack)
+        );
     }
 
     @Override
@@ -83,7 +94,7 @@ public class DwarvenBrewItem extends PotionItem {
             stack.consume(1, player);
         }
 
-        if (player == null || !player.hasInfiniteMaterials()) {
+        if (player == null || !player.isCreative()) {
             if (stack.isEmpty()) {
                 return new ItemStack(JolCraftItems.GLASS_MUG.get());
             }

@@ -12,6 +12,8 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.*;
+import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
+import net.sievert.jolcraft.world.block.custom.brewing.FermentingCauldronBlock;
 import net.sievert.jolcraft.world.block.registry.util.JolCraftBlockRegistryHelper;
 
 @SuppressWarnings("deprecation")
@@ -92,6 +94,20 @@ public final class JolCraftStationBlocks {
                         .requiresCorrectToolForDrops()
                         .strength(2.0F)
                         .noOcclusion()
+        );
+    }
+
+    public static DeferredBlock<FermentingBarrelBlock> registerFermentingBarrel() {
+        return JolCraftBlocks.BLOCKS.registerBlock(
+                JolCraftBlockIds.FERMENTING_BARREL,
+                props -> new FermentingBarrelBlock(
+                        BlockBehaviour.Properties.of()
+                                .mapColor(MapColor.WOOD)
+                                .instrument(NoteBlockInstrument.BASS)
+                                .strength(2.5F)
+                                .sound(SoundType.WOOD)
+                                .ignitedByLava()
+                )
         );
     }
 }
