@@ -202,7 +202,7 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             player.displayClientMessage(
                     Component.translatable(
                             JolCraftLanguageKeys.BARREL_BREW_AGE,
-                            Component.translatable(brewAge.translationKey()).getString().toLowerCase()
+                            Component.translatable(brewAge.translationKey())
                     ),
                     true
             );
@@ -544,7 +544,7 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         }
 
         DwarvenBrewAge brewAge = DwarvenBrewAge.fromTicks(
-                getBrewAge(brewTank.getFluid())
+                getBrewAge(getCurrentBrew())
         );
 
         if (brewAge != DwarvenBrewAge.VINTAGE && level.getGameTime() % AMBIENT_SOUND_INTERVAL == 0L && level.random.nextInt(3) == 0) {
@@ -849,14 +849,24 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             return brew;
         }
 
+        long previousAgeTicks = getBrewAge(brew);
+
         long elapsed = Math.max(
                 0L,
                 level.getGameTime() - lastAgeTime
         );
 
+        long currentAgeTicks = previousAgeTicks + elapsed;
+
         brew.set(
                 JolCraftDataComponents.BREW_AGE.get(),
-                getBrewAge(brew) + elapsed
+                currentAgeTicks
+        );
+
+        applyAgeAmplifierIncrease(
+                brew,
+                previousAgeTicks,
+                currentAgeTicks
         );
 
         return brew;
@@ -933,14 +943,27 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                     accepted
             );
 
-            stored.setAmount(
+            FluidStack merged = withoutAging(stored);
+
+            merged.setAmount(
                     oldAmount + accepted
             );
 
-            stored.set(
+            merged.set(
                     JolCraftDataComponents.BREW_AGE.get(),
                     mergedAge
             );
+
+            int mergedAmplifierBonus = DwarvenBrewAge.fromTicks(
+                    mergedAge
+            ).amplifierBonus();
+
+            amplifyBrewEffects(
+                    merged,
+                    mergedAmplifierBonus
+            );
+
+            brewTank.setFluid(merged);
 
             onBrewTankChanged();
         }
@@ -989,11 +1012,6 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         if (drained.isEmpty()) {
             return FluidStack.EMPTY;
         }
-
-        drained.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                getBrewAge(result)
-        );
 
         if (brewTank.isEmpty()) {
             restoreVanillaBarrelIfEmpty();
@@ -1071,12 +1089,12 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         }
 
         return FluidStack.isSameFluidSameComponents(
-                withoutBrewAge(first),
-                withoutBrewAge(second)
+                withoutAging(first),
+                withoutAging(second)
         );
     }
 
-    private static FluidStack withoutBrewAge(
+    private static FluidStack withoutAging(
             FluidStack brew
     ) {
         if (brew.isEmpty()) {
@@ -1085,11 +1103,73 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
 
         FluidStack normalized = brew.copy();
 
+        int amplifierBonus = DwarvenBrewAge.fromTicks(
+                getBrewAge(normalized)
+        ).amplifierBonus();
+
         normalized.remove(
                 JolCraftDataComponents.BREW_AGE.get()
         );
 
+        reduceBrewEffects(
+                normalized,
+                amplifierBonus
+        );
+
         return normalized;
+    }
+
+    private static void reduceBrewEffects(
+            FluidStack brew,
+            int amplifierReduction
+    ) {
+        if (amplifierReduction <= 0) {
+            return;
+        }
+
+        PotionContents contents = brew.getOrDefault(
+                DataComponents.POTION_CONTENTS,
+                PotionContents.EMPTY
+        );
+
+        List<MobEffectInstance> reducedEffects = new ArrayList<>(
+                contents.customEffects().size()
+        );
+
+        for (MobEffectInstance effect : contents.customEffects()) {
+            reducedEffects.add(
+                    reduceEffect(
+                            effect,
+                            amplifierReduction
+                    )
+            );
+        }
+
+        brew.set(
+                DataComponents.POTION_CONTENTS,
+                new PotionContents(
+                        contents.potion(),
+                        contents.customColor(),
+                        reducedEffects
+                )
+        );
+    }
+
+    private static MobEffectInstance reduceEffect(
+            MobEffectInstance effect,
+            int amplifierReduction
+    ) {
+        return new MobEffectInstance(
+                effect.getEffect(),
+                effect.getDuration(),
+                Math.max(
+                        0,
+                        effect.getAmplifier() - amplifierReduction
+                ),
+                effect.isAmbient(),
+                effect.isVisible(),
+                effect.showIcon()
+        );
     }
 
     private void onBrewTankChanged() {
