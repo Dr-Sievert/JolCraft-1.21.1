@@ -39,11 +39,18 @@ public record BrewingModelSubProvider(@NotNull JolCraftModelProvider parent) imp
         builder.flatItem(JolCraftItems.GLASS_MUG.get(), SUB_BREWING);
 
         fermentingCauldron(builder);
+        fermentingBarrel(builder);
 
         builder.layeredItem(
                 JolCraftItems.DWARVEN_BREW.get(),
-                JolCraft.location("item/brewing/glass_mug"),
+                JolCraft.location("item/brewing/dwarven_brew_glass_mug"),
                 JolCraft.location("item/brewing/dwarven_brew")
+        );
+
+        builder.layeredItem(
+                JolCraftItems.DWARVEN_BREW_BUCKET.get(),
+                ResourceLocation.withDefaultNamespace("item/bucket"),
+                JolCraft.location("item/brewing/dwarven_brew_bucket")
         );
     }
 
@@ -63,6 +70,20 @@ public record BrewingModelSubProvider(@NotNull JolCraftModelProvider parent) imp
                                         .select(2, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
                                         .select(3, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
                         )
+        );
+    }
+
+    private static void fermentingBarrel(@NotNull JolCraftModelBuilder builder) {
+        ResourceLocation barrelModel = ResourceLocation.withDefaultNamespace("block/barrel");
+
+        builder.addBlockState(
+                MultiVariantGenerator.multiVariant(
+                        JolCraftBlocks.FERMENTING_BARREL.get(),
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                barrelModel
+                        )
+                ).with(builder.createColumnWithFacing())
         );
     }
 }

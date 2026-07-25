@@ -7,7 +7,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.block.custom.FermentingCauldronBlock;
+import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
+import net.sievert.jolcraft.world.block.custom.brewing.FermentingCauldronBlock;
 import net.sievert.jolcraft.world.block.custom.crop.DuskcapBlock;
 import net.sievert.jolcraft.world.block.custom.crop.FesterlingBlock;
 import net.sievert.jolcraft.world.block.registry.JolCraftCropBlocks;
@@ -29,6 +30,7 @@ public final class JolCraftBlocks {
     public static final DeferredBlock<Block> STRONGBOX = JolCraftStationBlocks.registerStrongbox();
     public static final DeferredBlock<Block> HEARTH = JolCraftStationBlocks.registerHearth();
     public static final DeferredBlock<FermentingCauldronBlock> FERMENTING_CAULDRON = JolCraftStationBlocks.registerFermentingCauldron();
+    public static final DeferredBlock<FermentingBarrelBlock> FERMENTING_BARREL = JolCraftStationBlocks.registerFermentingBarrel();
 
     public static final DeferredBlock<Block> GEODE_BLOCK = JolCraftMaterialBlocks.registerGeodeBlock();
     public static final DeferredBlock<Block> DEEPSLATE_MITHRIL_ORE = JolCraftMaterialBlocks.registerDeepslateMithrilOre();

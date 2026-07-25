@@ -47,6 +47,7 @@ public final class JolCraftLanguageProvider
                 new EffectLangSubProvider(),
                 new EntityLangSubProvider(),
                 new ItemLangSubProvider(),
+                new JadeLangSubProvider(),
                 new JeiLangSubProvider(),
                 new LoreLangSubProvider(),
                 new MiscLangSubProvider(),

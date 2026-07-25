@@ -57,6 +57,15 @@ public final class JolCraftItemColors {
                         : NO_TINT
         );
 
+
+        colors += register(
+                event,
+                JolCraftItems.DWARVEN_BREW_BUCKET.get(),
+                (stack, tintIndex) -> tintIndex == 1
+                        ? BrewColor.color(stack)
+                        : NO_TINT
+        );
+
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} items with custom color layers", colors);
     }
 

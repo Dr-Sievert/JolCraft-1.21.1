@@ -55,5 +55,11 @@ public final class JolCraftDataComponentIds extends JolCraftIds {
     // -----------------
 
     public static final String COIN_POUCH_AMOUNT = join(JolCraftItemIds.COIN_POUCH, JolCraftDictionary.AMOUNT);
+
+    // -----------------
+    // Brewing
+    // -----------------
+
     public static final String BREW_COLOR = join(JolCraftDictionary.BREW, JolCraftDictionary.COLOR);
+    public static final String BREW_AGE = join(JolCraftDictionary.BREW, JolCraftDictionary.AGE);
 }

@@ -13,8 +13,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,9 +25,13 @@ import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.event.game.item.JolCraftCompassEvents;
 import net.sievert.jolcraft.event.game.player.attribute.JolCraftPlayerAttributeHelper;
+import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBlockEntity;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
@@ -33,8 +39,8 @@ import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.block.custom.FermentingCauldronBlock;
-import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
+import net.sievert.jolcraft.world.block.custom.brewing.FermentingCauldronBlock;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.network.util.SyncHelper;
@@ -128,9 +134,7 @@ public final class JolCraftPlayerEvents {
             }
         }
 
-        if (!serverLevel.isClientSide()
-                && state.is(Blocks.WATER_CAULDRON)
-                && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
+        if (!serverLevel.isClientSide() && state.is(Blocks.WATER_CAULDRON) && state.getValue(LayeredCauldronBlock.LEVEL) == 3) {
 
             var input = new FermentingCauldronRecipeInput(
                     used.copyWithCount(1),
@@ -184,6 +188,62 @@ public final class JolCraftPlayerEvents {
             );
 
             serverLevel.setBlock(pos, state, 3);
+        }
+
+        if (state.is(Blocks.BARREL)
+                && serverLevel.getBlockEntity(pos) instanceof BarrelBlockEntity vanillaBarrel
+                && vanillaBarrel.isEmpty()
+                && FluidUtil.getFluidContained(used)
+                .filter(fluid -> fluid.is(JolCraftFluids.DWARVEN_BREW.get()))
+                .isPresent()) {
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.PLAYER,
+                    "Converting barrel -> fermenting barrel player={} pos={} item={}",
+                    player.getUUID(),
+                    JolCraftLogs.roundedPos(pos),
+                    used.getItem().builtInRegistryHolder().key().location()
+            );
+
+            BlockState newState = JolCraftBlocks.FERMENTING_BARREL.get()
+                    .defaultBlockState()
+                    .setValue(
+                            FermentingBarrelBlock.FACING,
+                            state.getValue(BarrelBlock.FACING)
+                    );
+
+            serverLevel.setBlock(pos, newState, FermentingCauldronBlock.UPDATE_ALL);
+
+            if (serverLevel.getBlockEntity(pos) instanceof FermentingBarrelBlockEntity be) {
+                ItemInteractionResult result = be.handleInteraction(
+                        player,
+                        event.getHand(),
+                        used
+                );
+
+                JolCraftLogs.debug(
+                        JolCraftLogTags.PLAYER,
+                        "Fermenting barrel interaction handled player={} pos={} result={}",
+                        player.getUUID(),
+                        JolCraftLogs.roundedPos(pos),
+                        result
+                );
+
+                if (result.consumesAction()) {
+                    event.setCancellationResult(result.result());
+                    event.setCanceled(true);
+                    return;
+                }
+            }
+
+            JolCraftLogs.warn(
+                    JolCraftLogTags.PLAYER,
+                    "Fermenting barrel conversion failed, reverting player={} pos={}",
+                    player.getUUID(),
+                    JolCraftLogs.roundedPos(pos)
+            );
+
+            serverLevel.setBlock(pos, state, FermentingCauldronBlock.UPDATE_ALL);
         }
     }
 

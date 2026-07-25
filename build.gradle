@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.140'
+    id 'net.neoforged.moddev' version '2.0.142'
     id 'idea'
 }
 
@@ -14,13 +14,28 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+
     maven {
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
     }
+
     maven {
         name = "ModMaven"
         url = "https://modmaven.dev"
+    }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "CurseMaven"
+                url = "https://cursemaven.com"
+            }
+        }
+
+        filter {
+            includeGroup "curse.maven"
+        }
     }
 }
 
@@ -112,10 +127,15 @@ configurations {
 }
 
 dependencies {
+
     //JEI
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // Jade
+    compileOnly "curse.maven:jade-324717:${jade_file_id}"
+    localRuntime "curse.maven:jade-324717:${jade_file_id}"
 
     //Tests
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'

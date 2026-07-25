@@ -37,6 +37,20 @@ description='''${mod_description}'''
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="[19.39.0.371,)"
+    ordering="NONE"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="jade"
+    type="optional"
+    versionRange="[15.10.5,)"
+    ordering="NONE"
+    side="CLIENT"
+
 [[mixins]]
 config = "${mod_id}.mixins.json"
 

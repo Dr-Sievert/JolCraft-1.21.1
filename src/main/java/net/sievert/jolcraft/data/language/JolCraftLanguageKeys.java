@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.data.language;
 
+import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
 import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
@@ -405,8 +406,15 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JOLCRAFT_GENERAL_CREATIVE_TAB =
             itemGroup(JolCraftCreativeTabIds.JOLCRAFT_GENERAL_CREATIVE_TAB);
 
-    public static final String JOLCRAFT_EGG_CREATIVE_TAB =
-            itemGroup(JolCraftCreativeTabIds.JOLCRAFT_EGG_CREATIVE_TAB);
+    // ---------------------------------------------------------------------
+    // JadeLangSubProvider
+    // ---------------------------------------------------------------------
+
+    public static final String JADE_CONFIG_FERMENTING_BARREL =
+            jadeConfig(JolCraftBlockIds.FERMENTING_BARREL);
+
+    public static final String JADE_CONFIG_FERMENTING_CAULDRON =
+            jadeConfig(JolCraftBlockIds.FERMENTING_CAULDRON);
 
     // ---------------------------------------------------------------------
     // JeiLangSubProvider
@@ -498,6 +506,24 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String TOOLTIP_SALVAGE =
             category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.SALVAGE);
+
+    public static final String BREW_AGE =
+            category(JolCraftDictionary.TOOLTIP, JolCraftDataComponentIds.BREW_AGE);
+
+    public static final String BREW_AGE_NAME =
+            category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.NAME);
+
+    public static final String BREW_AGE_FRESH =
+            category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.FRESH);
+
+    public static final String BREW_AGE_AGED =
+            category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.AGED);
+
+    public static final String BREW_AGE_MATURED =
+            category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.MATURED);
+
+    public static final String BREW_AGE_VINTAGE =
+            category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.VINTAGE);
 
     // ---------------------------------------------------------------------
     // SubtitleLangSubProvider

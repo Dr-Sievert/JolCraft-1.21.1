@@ -4,20 +4,24 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.client.color.JolCraftItemColors;
 import net.sievert.jolcraft.world.item.client.property.JolCraftItemProperties;
@@ -157,6 +161,7 @@ public final class JolCraftClientModEvents {
 
     @SubscribeEvent
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+
         event.registerItem(
                 new IClientItemExtensions() {
                     private final StrongboxItemRenderer renderer =
@@ -168,6 +173,51 @@ public final class JolCraftClientModEvents {
                     }
                 },
                 JolCraftItems.STRONGBOX_ITEM.get()
+        );
+
+        registerTintedFluid(
+                event,
+                JolCraftFluids.DWARVEN_BREW_TYPE.get(),
+                0xFF9A652B
+        );
+
+        registerTintedFluid(
+                event,
+                JolCraftFluids.UNFINISHED_DWARVEN_BREW_TYPE.get(),
+                0xFF805D37
+        );
+    }
+
+    private static void registerTintedFluid(
+            RegisterClientExtensionsEvent event,
+            FluidType fluid,
+            int defaultColor
+    ) {
+        event.registerFluidType(
+                new IClientFluidTypeExtensions() {
+
+                    private static final ResourceLocation STILL_TEXTURE =
+                            ResourceLocation.withDefaultNamespace("block/water_still");
+
+                    private static final ResourceLocation FLOWING_TEXTURE =
+                            ResourceLocation.withDefaultNamespace("block/water_flow");
+
+                    @Override
+                    public @NotNull ResourceLocation getStillTexture() {
+                        return STILL_TEXTURE;
+                    }
+
+                    @Override
+                    public @NotNull ResourceLocation getFlowingTexture() {
+                        return FLOWING_TEXTURE;
+                    }
+
+                    @Override
+                    public int getTintColor() {
+                        return defaultColor;
+                    }
+                },
+                fluid
         );
     }
 }

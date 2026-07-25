@@ -7,7 +7,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.block.entity.JolCraftBlockEntityIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.block.entity.custom.FermentingCauldronBlockEntity;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBlockEntity;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.LapidaryBenchBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.ManagedLightBlockEntity;
@@ -42,6 +43,13 @@ public final class JolCraftBlockEntities {
                     BlockEntityType.Builder.of(
                             FermentingCauldronBlockEntity::new,
                             JolCraftBlocks.FERMENTING_CAULDRON.get()
+                    ).build(null));
+
+    public static final Supplier<BlockEntityType<FermentingBarrelBlockEntity>> FERMENTING_BARREL =
+            BLOCK_ENTITIES.register(JolCraftBlockEntityIds.FERMENTING_BARREL, () ->
+                    BlockEntityType.Builder.of(
+                            FermentingBarrelBlockEntity::new,
+                            JolCraftBlocks.FERMENTING_BARREL.get()
                     ).build(null));
 
     public static final Supplier<BlockEntityType<HearthBlockEntity>> HEARTH =

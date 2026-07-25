@@ -151,13 +151,14 @@ public final class JolCraftBlockLootTableProvider
                 )
         );
 
-        target.add(JolCraftBlocks.FERMENTING_CAULDRON.get(),
-                LootTable.lootTable()
-                        .withPool(
-                                LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(1))
-                                        .add(LootItem.lootTableItem(Blocks.CAULDRON))
-                        )
+        target.dropOther(
+                JolCraftBlocks.FERMENTING_CAULDRON.get(),
+                Items.CAULDRON
+        );
+
+        target.dropOther(
+                JolCraftBlocks.FERMENTING_BARREL.get(),
+                Blocks.BARREL
         );
 
         target.addHopsCropDrops(

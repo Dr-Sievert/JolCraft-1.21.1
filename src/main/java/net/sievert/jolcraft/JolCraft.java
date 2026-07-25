@@ -11,6 +11,8 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.sievert.jolcraft.config.JolCraftConfigs;
+import net.sievert.jolcraft.world.block.fluid.JolCraftCauldronInteractions;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.registry.JolCraftMapDecorationTypes;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -57,6 +59,7 @@ public class JolCraft {
 
         // --- Registry & system setup ---
         JolCraftBlocks.register(modEventBus);
+        JolCraftFluids.register(modEventBus);
         JolCraftItems.register(modEventBus);
         JolCraftEntities.register(modEventBus);
         JolCraftBlockEntities.register(modEventBus);
@@ -106,6 +109,7 @@ public class JolCraft {
         event.enqueueWork(() -> {
             DwarfInteractions.registerAll();
             DwarfLoadouts.bootstrap();
+            JolCraftCauldronInteractions.register();
 
             JolCraftLogs.info(
                     JolCraftLogTags.INIT,

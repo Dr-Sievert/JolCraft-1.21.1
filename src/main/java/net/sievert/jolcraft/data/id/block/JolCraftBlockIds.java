@@ -65,6 +65,7 @@ public final class JolCraftBlockIds extends JolCraftIds {
     public static final String YANILLIAN_CROP_BOTTOM = cropBottom(JolCraftDictionary.YANILLIAN);
 
     public static final String FERMENTING_CAULDRON = join(JolCraftDictionary.FERMENTING, JolCraftDictionary.CAULDRON);
+    public static final String FERMENTING_BARREL = join(JolCraftDictionary.FERMENTING, JolCraftDictionary.BARREL);
 
     /* --------------------------------------------------------------------- */
 
