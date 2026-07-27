@@ -2,7 +2,7 @@ package net.sievert.jolcraft.world.item.custom.food.brewing;
 
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.event.game.world.JolCraftTimeHelper;
+import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
 import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 

@@ -80,7 +80,7 @@ public record FermentingCauldronRecipesSubProvider(
                 tracking,
                 JolCraftItems.BARLEY_MALT.get(),
                 null,
-                20,
+                5,
                 5,
                 0x805D37
         );
@@ -90,7 +90,7 @@ public record FermentingCauldronRecipesSubProvider(
                 tracking,
                 JolCraftItems.ASGARNIAN_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
-                20,
+                5,
                 5,
                 0x91706E,
                 MobEffects.HEALTH_BOOST,
@@ -103,10 +103,10 @@ public record FermentingCauldronRecipesSubProvider(
                 tracking,
                 JolCraftItems.DUSKHOLD_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
-                20,
+                5,
                 5,
                 0x817788,
-                MobEffects.NIGHT_VISION,
+                MobEffects.SATURATION,
                 600,
                 0
         );
@@ -116,7 +116,7 @@ public record FermentingCauldronRecipesSubProvider(
                 tracking,
                 JolCraftItems.KRANDONIAN_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
-                20,
+                5,
                 5,
                 0x6E918F,
                 MobEffects.DAMAGE_BOOST,
@@ -129,7 +129,7 @@ public record FermentingCauldronRecipesSubProvider(
                 tracking,
                 JolCraftItems.YANILLIAN_HOPS.get(),
                 JolCraftTags.Items.HOPS_BREW,
-                20,
+                5,
                 5,
                 0x54832E,
                 MobEffects.DAMAGE_RESISTANCE,

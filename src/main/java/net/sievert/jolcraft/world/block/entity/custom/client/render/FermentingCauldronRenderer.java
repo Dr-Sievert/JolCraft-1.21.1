@@ -18,7 +18,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
-import net.sievert.jolcraft.world.block.entity.custom.util.FermentingCauldronColorHelper;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.util.FermentingCauldronColorHelper;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 

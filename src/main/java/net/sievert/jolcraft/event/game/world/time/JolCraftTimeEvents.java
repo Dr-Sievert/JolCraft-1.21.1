@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game.world;
+package net.sievert.jolcraft.event.game.world.time;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -6,9 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBlockEntity;
 import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachmentHelper;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
@@ -24,12 +22,7 @@ public final class JolCraftTimeEvents {
             return;
         }
 
-        FermentingCauldronBlockEntity.handleSleepFinished(
-                level,
-                event.getNewTime()
-        );
-
-        FermentingBarrelBlockEntity.handleSleepFinished(
+        BrewingSleepHandler.handleSleepFinished(
                 level,
                 event.getNewTime()
         );

@@ -4,60 +4,44 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.SectionPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.neoforged.neoforge.fluids.FluidActionResult;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.event.game.world.JolCraftTimeHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.base.SyncingBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
-import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewInteractionHelper;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.util.FermentingBarrelAging;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemHelper;
-import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -69,27 +53,14 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             JolCraftDictionary.TANK
     );
 
-    private static final String NBT_LAST_AGE_TIME = JolCraftStrings.underscored(
-            JolCraftDictionary.LAST,
-            JolCraftDictionary.AGE,
-            JolCraftDictionary.TIME
-    );
-
     private static final int AMBIENT_SOUND_INTERVAL = 200;
 
-    private static final int MAX_MUGS = 3;
-
-    private static final int MUG_VOLUME =
-            FluidType.BUCKET_VOLUME / MAX_MUGS;
-
-    private static final int FIRST_MUG_VOLUME =
-            FluidType.BUCKET_VOLUME - MUG_VOLUME * 2;
-
-    private long lastAgeTime;
+    private final FermentingBarrelAging aging =
+            new FermentingBarrelAging();
 
     private final FluidTank brewTank = new FluidTank(
             FluidType.BUCKET_VOLUME,
-            FermentingBarrelBlockEntity::isValidBrew
+            DwarvenBrewFluidHelper::isFinishedBrew
     ) {
         @Override
         protected void onContentsChanged() {
@@ -105,12 +76,16 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         }
 
         @Override
-        public FluidStack getFluidInTank(int tank) {
+        public FluidStack getFluidInTank(
+                int tank
+        ) {
             return getCurrentBrew();
         }
 
         @Override
-        public int getTankCapacity(int tank) {
+        public int getTankCapacity(
+                int tank
+        ) {
             return brewTank.getCapacity();
         }
 
@@ -119,7 +94,9 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 int tank,
                 FluidStack stack
         ) {
-            return canInsertBrew(stack);
+            return canInsertBrew(
+                    stack
+            );
         }
 
         @Override
@@ -138,7 +115,9 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 FluidStack resource,
                 FluidAction action
         ) {
-            if (!matchesStoredBrew(resource)) {
+            if (!matchesStoredBrew(
+                    resource
+            )) {
                 return FluidStack.EMPTY;
             }
 
@@ -180,353 +159,53 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             InteractionHand hand,
             ItemStack usedItem
     ) {
-        if (level == null || level.isClientSide) {
+        if (level == null
+                || level.isClientSide
+                || hand != InteractionHand.MAIN_HAND) {
             return ItemInteractionResult.FAIL;
         }
-
-        if (hand != InteractionHand.MAIN_HAND
-                || (!usedItem.isEmpty()
-                && !usedItem.is(JolCraftItems.DEV_KEY.get())
-                && !usedItem.is(Items.BUCKET)
-                && !usedItem.is(JolCraftItems.DWARVEN_BREW_BUCKET.get())
-                && !usedItem.is(JolCraftItems.GLASS_MUG.get())
-                && !usedItem.is(JolCraftItems.DWARVEN_BREW.get()))) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        DwarvenBrewAge brewAge = DwarvenBrewAge.fromTicks(
-                getBrewAge(getCurrentBrew())
-        );
 
         if (usedItem.isEmpty()) {
+            DwarvenBrewAge brewAge =
+                    DwarvenBrewAge.fromTicks(
+                            DwarvenBrewFluidHelper.getAge(
+                                    getCurrentBrew()
+                            )
+                    );
+
             player.displayClientMessage(
                     Component.translatable(
                             JolCraftLanguageKeys.BARREL_BREW_AGE,
-                            Component.translatable(brewAge.translationKey())
+                            Component.translatable(
+                                    brewAge.translationKey()
+                            )
                     ),
                     true
             );
+
             return ItemInteractionResult.SUCCESS;
         }
 
-        if (usedItem.is(JolCraftItems.DEV_KEY.get())) {
+        if (usedItem.is(
+                JolCraftItems.DEV_KEY.get()
+        )) {
             return advanceToNextBrewAge();
         }
 
-        if (usedItem.is(JolCraftItems.GLASS_MUG.get())) {
-            return hasBrew()
-                    ? tryExtractMug(
-                    player,
-                    hand,
-                    usedItem
-            )
-                    : ItemInteractionResult.FAIL;
-        }
-
-        if (usedItem.is(JolCraftItems.DWARVEN_BREW.get())) {
-            return tryInsertMug(
-                    player,
-                    hand,
-                    usedItem
-            );
-        }
-
-        return tryInteractFluidContainer(
-                player,
-                hand,
-                usedItem
-        );
-    }
-
-    private ItemInteractionResult tryInteractFluidContainer(
-            Player player,
-            InteractionHand hand,
-            ItemStack usedItem
-    ) {
-        if (level == null) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        if (player.isCreative() && hasBrew()) {
+        if (player.isCreative()
+                && hasBrew()) {
             applyElapsedAge();
-
-            FluidActionResult result = FluidUtil.tryFillContainer(
-                    usedItem,
-                    brewFluidHandler,
-                    Integer.MAX_VALUE,
-                    player,
-                    false
-            );
-
-            if (result.isSuccess() && player instanceof ServerPlayer serverPlayer) {
-                JolCraftItemInsertionHelper.tryInsertIntoInventoryOrDrop(
-                        serverPlayer,
-                        result.getResult()
-                );
-
-                player.awardStat(
-                        Stats.ITEM_USED.get(
-                                usedItem.getItem()
-                        )
-                );
-
-                JolCraftSoundHelper.block(
-                        level,
-                        worldPosition,
-                        SoundEvents.BUCKET_FILL,
-                        1.0F,
-                        1.0F
-                );
-
-                return ItemInteractionResult.SUCCESS;
-            }
         }
 
-        if (!FluidUtil.interactWithFluidHandler(
-                player,
-                hand,
-                brewFluidHandler
-        )) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        player.awardStat(
-                Stats.ITEM_USED.get(
-                        usedItem.getItem()
-                )
-        );
-
-        return ItemInteractionResult.SUCCESS;
-    }
-
-    private ItemInteractionResult tryExtractMug(
-            Player player,
-            InteractionHand hand,
-            ItemStack usedItem
-    ) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        int drainAmount = getMugDrainAmount();
-
-        if (drainAmount <= 0) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        FluidStack simulated = brewFluidHandler.drain(
-                drainAmount,
-                IFluidHandler.FluidAction.SIMULATE
-        );
-
-        if (simulated.isEmpty() || simulated.getAmount() != drainAmount) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        FluidStack drained = brewFluidHandler.drain(
-                drainAmount,
-                player.isCreative()
-                        ? IFluidHandler.FluidAction.SIMULATE
-                        : IFluidHandler.FluidAction.EXECUTE
-        );
-
-        if (drained.isEmpty() || drained.getAmount() != drainAmount) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        ItemStack output = createBrewMug(
-                drained
-        );
-
-        player.awardStat(
-                Stats.ITEM_USED.get(
-                        usedItem.getItem()
-                )
-        );
-
-        JolCraftItemHelper.consume(
-                serverPlayer,
-                hand
-        );
-
-        JolCraftItemInsertionHelper.tryInsertIntoInventoryOrDrop(
-                serverPlayer,
-                output
-        );
-
-        PlaySound.bottleFill(
-                player,
-                0.8F,
-                0.9F
-        );
-
-        return ItemInteractionResult.SUCCESS;
-    }
-
-    private ItemInteractionResult tryInsertMug(
-            Player player,
-            InteractionHand hand,
-            ItemStack usedItem
-    ) {
-        if (!(player instanceof ServerPlayer serverPlayer) || level == null) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        int fillAmount = getMugFillAmount();
-
-        if (fillAmount <= 0) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        FluidStack incoming = createBrewFluidFromMug(
-                usedItem,
-                fillAmount
-        );
-
-        int simulated = brewFluidHandler.fill(
-                incoming,
-                IFluidHandler.FluidAction.SIMULATE
-        );
-
-        if (simulated != fillAmount) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        int filled = brewFluidHandler.fill(
-                incoming,
-                IFluidHandler.FluidAction.EXECUTE
-        );
-
-        if (filled != fillAmount) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        player.awardStat(
-                Stats.ITEM_USED.get(
-                        usedItem.getItem()
-                )
-        );
-
-        if (!player.isCreative()) {
-            JolCraftItemHelper.consume(
-                    serverPlayer,
-                    hand
-            );
-        }
-
-        JolCraftSoundHelper.block(
+        return DwarvenBrewInteractionHelper.tryInteractFluidContainer(
                 level,
                 worldPosition,
-                SoundEvents.BOTTLE_EMPTY,
-                0.8F,
-                0.9F
+                player,
+                hand,
+                usedItem,
+                brewFluidHandler,
+                hasBrew()
         );
-
-        return ItemInteractionResult.SUCCESS;
-    }
-
-    private int getMugDrainAmount() {
-        int amount = brewTank.getFluidAmount();
-
-        if (amount == FluidType.BUCKET_VOLUME) {
-            return FIRST_MUG_VOLUME;
-        }
-
-        if (amount >= MUG_VOLUME && amount <= FIRST_MUG_VOLUME) {
-            return amount;
-        }
-
-        return amount >= MUG_VOLUME
-                ? MUG_VOLUME
-                : 0;
-    }
-
-    private int getMugFillAmount() {
-        int stored = brewTank.getFluidAmount();
-        int remaining = brewTank.getCapacity() - stored;
-
-        if (remaining < MUG_VOLUME) {
-            return 0;
-        }
-
-        if (stored == 0 || remaining == FIRST_MUG_VOLUME) {
-            return FIRST_MUG_VOLUME;
-        }
-
-        return MUG_VOLUME;
-    }
-
-    private static ItemStack createBrewMug(
-            FluidStack brew
-    ) {
-        ItemStack mug = new ItemStack(
-                JolCraftItems.DWARVEN_BREW.get()
-        );
-
-        mug.set(
-                JolCraftDataComponents.BREW_COLOR.get(),
-                brew.getOrDefault(
-                        JolCraftDataComponents.BREW_COLOR.get(),
-                        0xFFFFFFFF
-                )
-        );
-
-        mug.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                brew.getOrDefault(
-                        JolCraftDataComponents.BREW_AGE.get(),
-                        0L
-                )
-        );
-
-        mug.set(
-                DataComponents.POTION_CONTENTS,
-                brew.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
-                )
-        );
-
-        return mug;
-    }
-
-    private static FluidStack createBrewFluidFromMug(
-            ItemStack mug,
-            int amount
-    ) {
-        FluidStack brew = new FluidStack(
-                JolCraftFluids.DWARVEN_BREW.get(),
-                amount
-        );
-
-        brew.set(
-                JolCraftDataComponents.BREW_COLOR.get(),
-                mug.getOrDefault(
-                        JolCraftDataComponents.BREW_COLOR.get(),
-                        0xFFFFFFFF
-                )
-        );
-
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                Math.max(
-                        0L,
-                        mug.getOrDefault(
-                                JolCraftDataComponents.BREW_AGE.get(),
-                                0L
-                        )
-                )
-        );
-
-        brew.set(
-                DataComponents.POTION_CONTENTS,
-                mug.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
-                )
-        );
-
-        return brew;
     }
 
     // =====================================================================
@@ -535,307 +214,96 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
 
     @Override
     public void tickServer() {
-        if (level == null || level.isClientSide || brewTank.isEmpty()) {
+        if (level == null
+                || level.isClientSide
+                || brewTank.isEmpty()) {
             return;
         }
 
-        if (lastAgeTime <= 0L) {
-            resetAgeTimer();
-        }
-
-        DwarvenBrewAge brewAge = DwarvenBrewAge.fromTicks(
-                getBrewAge(getCurrentBrew())
+        aging.ensureTimerStarted(
+                true,
+                level.getGameTime()
         );
 
-        if (brewAge != DwarvenBrewAge.VINTAGE && level.getGameTime() % AMBIENT_SOUND_INTERVAL == 0L && level.random.nextInt(3) == 0) {
-
-            JolCraftSoundHelper.block(
-                    level,
-                    worldPosition,
-                    SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT,
-                    0.40F,
-                    0.5F + level.random.nextFloat() * 0.3F
-            );
-        }
-    }
-
-    private static void applyAgeAmplifierIncrease(
-            FluidStack brew,
-            long previousAgeTicks,
-            long currentAgeTicks
-    ) {
-        DwarvenBrewAge previousAge = DwarvenBrewAge.fromTicks(
-                previousAgeTicks
-        );
-
-        DwarvenBrewAge currentAge = DwarvenBrewAge.fromTicks(
-                currentAgeTicks
-        );
-
-        int amplifierIncrease =
-                currentAge.amplifierBonus()
-                        - previousAge.amplifierBonus();
-
-        if (amplifierIncrease <= 0) {
+        if (level.getGameTime()
+                % AMBIENT_SOUND_INTERVAL != 0L) {
             return;
         }
 
-        amplifyBrewEffects(
-                brew,
-                amplifierIncrease
+        DwarvenBrewAge brewAge =
+                DwarvenBrewAge.fromTicks(
+                        DwarvenBrewFluidHelper.getAge(
+                                getCurrentBrew()
+                        )
+                );
+
+        if (brewAge == DwarvenBrewAge.VINTAGE
+                || level.random.nextInt(3) != 0) {
+            return;
+        }
+
+        JolCraftSoundHelper.block(
+                level,
+                worldPosition,
+                SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT,
+                0.40F,
+                0.5F
+                        + level.random.nextFloat()
+                        * 0.3F
         );
     }
 
     private void applyElapsedAge() {
-        if (level == null || brewTank.isEmpty()) {
+        if (level == null
+                || brewTank.isEmpty()) {
             return;
         }
 
-        long currentTime = level.getGameTime();
-
-        if (lastAgeTime <= 0L) {
-            lastAgeTime = currentTime;
-            return;
+        if (aging.applyElapsedAge(
+                brewTank.getFluid(),
+                level.getGameTime()
+        )) {
+            setChanged();
         }
-
-        long elapsed = currentTime - lastAgeTime;
-
-        if (elapsed <= 0L) {
-            return;
-        }
-
-        FluidStack brew = brewTank.getFluid();
-
-        long previousAgeTicks = getBrewAge(
-                brew
-        );
-
-        long currentAgeTicks = previousAgeTicks + elapsed;
-
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                currentAgeTicks
-        );
-
-        applyAgeAmplifierIncrease(
-                brew,
-                previousAgeTicks,
-                currentAgeTicks
-        );
-
-        lastAgeTime = currentTime;
-
-        setChanged();
     }
 
     public void fastForwardAge(
             long skippedTicks
     ) {
-        if (level == null || level.isClientSide || brewTank.isEmpty()) {
+        if (level == null
+                || level.isClientSide
+                || brewTank.isEmpty()
+                || skippedTicks <= 0L) {
             return;
         }
 
-        if (skippedTicks <= 0L) {
+        if (!aging.fastForward(
+                brewTank.getFluid(),
+                level.getGameTime(),
+                skippedTicks
+        )) {
             return;
         }
 
-        applyElapsedAge();
-
-        FluidStack brew = brewTank.getFluid();
-
-        long previousAgeTicks = getBrewAge(
-                brew
-        );
-
-        long currentAgeTicks = previousAgeTicks + skippedTicks;
-
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                currentAgeTicks
-        );
-
-        applyAgeAmplifierIncrease(
-                brew,
-                previousAgeTicks,
-                currentAgeTicks
-        );
-
-        resetAgeTimer();
         onBrewTankChanged();
-    }
-
-    public static void handleSleepFinished(
-            ServerLevel level,
-            long newTime
-    ) {
-        long skipped = newTime - level.getDayTime();
-
-        if (skipped <= 0L) {
-            return;
-        }
-
-        Set<BlockPos> seen = new HashSet<>();
-
-        for (ServerPlayer player : level.players()) {
-            int centerChunkX = SectionPos.blockToSectionCoord(
-                    player.blockPosition().getX()
-            );
-
-            int centerChunkZ = SectionPos.blockToSectionCoord(
-                    player.blockPosition().getZ()
-            );
-
-            for (int dx = -4; dx <= 4; dx++) {
-                for (int dz = -4; dz <= 4; dz++) {
-                    var chunk = level.getChunk(
-                            centerChunkX + dx,
-                            centerChunkZ + dz,
-                            ChunkStatus.FULL,
-                            false
-                    );
-
-                    if (!(chunk instanceof LevelChunk levelChunk)) {
-                        continue;
-                    }
-
-                    for (BlockEntity blockEntity :
-                            levelChunk.getBlockEntities().values()) {
-                        if (!(blockEntity instanceof
-                                FermentingBarrelBlockEntity barrel)) {
-                            continue;
-                        }
-
-                        if (!barrel.hasBrew()) {
-                            continue;
-                        }
-
-                        if (!seen.add(
-                                blockEntity.getBlockPos()
-                        )) {
-                            continue;
-                        }
-
-                        barrel.fastForwardAge(
-                                skipped
-                        );
-                    }
-                }
-            }
-        }
-    }
-
-    private static void amplifyBrewEffects(
-            FluidStack brew,
-            int amplifierIncrease
-    ) {
-        if (amplifierIncrease <= 0) {
-            return;
-        }
-
-        PotionContents contents = brew.getOrDefault(
-                DataComponents.POTION_CONTENTS,
-                PotionContents.EMPTY
-        );
-
-        List<MobEffectInstance> amplifiedEffects = new ArrayList<>(
-                contents.customEffects().size()
-        );
-
-        for (MobEffectInstance effect : contents.customEffects()) {
-            amplifiedEffects.add(
-                    amplifyEffect(
-                            effect,
-                            amplifierIncrease
-                    )
-            );
-        }
-
-        brew.set(
-                DataComponents.POTION_CONTENTS,
-                new PotionContents(
-                        contents.potion(),
-                        contents.customColor(),
-                        amplifiedEffects
-                )
-        );
-    }
-
-    private static MobEffectInstance amplifyEffect(
-            MobEffectInstance effect,
-            int amplifierIncrease
-    ) {
-        return new MobEffectInstance(
-                effect.getEffect(),
-                effect.getDuration(),
-                effect.getAmplifier() + amplifierIncrease,
-                effect.isAmbient(),
-                effect.isVisible(),
-                effect.showIcon()
-        );
     }
 
     private ItemInteractionResult advanceToNextBrewAge() {
-        if (level == null || brewTank.isEmpty()) {
+        if (level == null
+                || brewTank.isEmpty()) {
             return ItemInteractionResult.FAIL;
         }
 
-        applyElapsedAge();
-
-        FluidStack brew = brewTank.getFluid();
-
-        long currentAge = getBrewAge(
-                brew
-        );
-
-        long nextAge = getNextAgeThreshold(
-                currentAge
-        );
-
-        if (nextAge <= currentAge) {
+        if (!aging.advanceToNextAge(
+                brewTank.getFluid(),
+                level.getGameTime()
+        )) {
             return ItemInteractionResult.FAIL;
         }
 
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                nextAge
-        );
-
-        applyAgeAmplifierIncrease(
-                brew,
-                currentAge,
-                nextAge
-        );
-
-        resetAgeTimer();
         onBrewTankChanged();
 
         return ItemInteractionResult.SUCCESS;
-    }
-
-    private static long getNextAgeThreshold(
-            long currentAge
-    ) {
-        long day = JolCraftTimeHelper.TICKS_PER_DAY;
-
-        if (currentAge <= day) {
-            return day + 1L;
-        }
-
-        if (currentAge <= day * 3L) {
-            return day * 3L + 1L;
-        }
-
-        if (currentAge <= day * 5L) {
-            return day * 5L + 1L;
-        }
-
-        return currentAge;
-    }
-
-    private void resetAgeTimer() {
-        lastAgeTime = level == null
-                ? 0L
-                : level.getGameTime();
     }
 
     public FluidStack getCurrentBrew() {
@@ -843,44 +311,11 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             return FluidStack.EMPTY;
         }
 
-        FluidStack brew = brewTank.getFluid().copy();
-
-        if (level == null || lastAgeTime <= 0L) {
-            return brew;
-        }
-
-        long previousAgeTicks = getBrewAge(brew);
-
-        long elapsed = Math.max(
-                0L,
-                level.getGameTime() - lastAgeTime
-        );
-
-        long currentAgeTicks = previousAgeTicks + elapsed;
-
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                currentAgeTicks
-        );
-
-        applyAgeAmplifierIncrease(
-                brew,
-                previousAgeTicks,
-                currentAgeTicks
-        );
-
-        return brew;
-    }
-
-    private static long getBrewAge(
-            FluidStack brew
-    ) {
-        return Math.max(
-                0L,
-                brew.getOrDefault(
-                        JolCraftDataComponents.BREW_AGE.get(),
-                        0L
-                )
+        return aging.getCurrentBrew(
+                brewTank.getFluid(),
+                level == null
+                        ? 0L
+                        : level.getGameTime()
         );
     }
 
@@ -892,12 +327,15 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             FluidStack incoming,
             IFluidHandler.FluidAction action
     ) {
-        if (!canInsertBrew(incoming)) {
+        if (!canInsertBrew(
+                incoming
+        )) {
             return 0;
         }
 
-        int available = brewTank.getCapacity()
-                - brewTank.getFluidAmount();
+        int available =
+                brewTank.getCapacity()
+                        - brewTank.getFluidAmount();
 
         int accepted = Math.min(
                 available,
@@ -915,15 +353,11 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         applyElapsedAge();
 
         if (brewTank.isEmpty()) {
-            FluidStack inserted = incoming.copy();
+            FluidStack inserted =
+                    incoming.copy();
 
             inserted.setAmount(
                     accepted
-            );
-
-            inserted.set(
-                    JolCraftDataComponents.BREW_AGE.get(),
-                    getBrewAge(inserted)
             );
 
             brewTank.setFluid(
@@ -931,44 +365,26 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             );
 
             onBrewTankChanged();
-        } else {
-            FluidStack stored = brewTank.getFluid();
 
-            int oldAmount = stored.getAmount();
-
-            long mergedAge = weightedAverageAge(
-                    getBrewAge(stored),
-                    oldAmount,
-                    getBrewAge(incoming),
-                    accepted
-            );
-
-            FluidStack merged = withoutAging(stored);
-
-            merged.setAmount(
-                    oldAmount + accepted
-            );
-
-            merged.set(
-                    JolCraftDataComponents.BREW_AGE.get(),
-                    mergedAge
-            );
-
-            int mergedAmplifierBonus = DwarvenBrewAge.fromTicks(
-                    mergedAge
-            ).amplifierBonus();
-
-            amplifyBrewEffects(
-                    merged,
-                    mergedAmplifierBonus
-            );
-
-            brewTank.setFluid(merged);
-
-            onBrewTankChanged();
+            return accepted;
         }
 
-        resetAgeTimer();
+        FluidStack merged =
+                DwarvenBrewFluidHelper.mergeAgedBrew(
+                        brewTank.getFluid(),
+                        incoming,
+                        accepted
+                );
+
+        if (merged.isEmpty()) {
+            return 0;
+        }
+
+        brewTank.setFluid(
+                merged
+        );
+
+        onBrewTankChanged();
 
         return accepted;
     }
@@ -977,11 +393,13 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             int maxDrain,
             IFluidHandler.FluidAction action
     ) {
-        if (maxDrain <= 0 || brewTank.isEmpty()) {
+        if (maxDrain <= 0
+                || brewTank.isEmpty()) {
             return FluidStack.EMPTY;
         }
 
-        FluidStack current = getCurrentBrew();
+        FluidStack current =
+                getCurrentBrew();
 
         int drainedAmount = Math.min(
                 maxDrain,
@@ -992,7 +410,8 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             return FluidStack.EMPTY;
         }
 
-        FluidStack result = current.copy();
+        FluidStack result =
+                current.copy();
 
         result.setAmount(
                 drainedAmount
@@ -1004,10 +423,11 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
 
         applyElapsedAge();
 
-        FluidStack drained = brewTank.drain(
-                drainedAmount,
-                IFluidHandler.FluidAction.EXECUTE
-        );
+        FluidStack drained =
+                brewTank.drain(
+                        drainedAmount,
+                        IFluidHandler.FluidAction.EXECUTE
+                );
 
         if (drained.isEmpty()) {
             return FluidStack.EMPTY;
@@ -1015,55 +435,26 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
 
         if (brewTank.isEmpty()) {
             restoreVanillaBarrelIfEmpty();
-        } else {
-            resetAgeTimer();
+        } else if (level != null) {
+            aging.reset(
+                    level.getGameTime()
+            );
         }
 
         return drained;
     }
 
-    private static long weightedAverageAge(
-            long firstAge,
-            int firstAmount,
-            long secondAge,
-            int secondAmount
-    ) {
-        long totalAmount = (long) firstAmount + secondAmount;
-
-        if (totalAmount <= 0L) {
-            return 0L;
-        }
-
-        double weightedAge =
-                (double) firstAge * firstAmount
-                        + (double) secondAge * secondAmount;
-
-        return Math.max(
-                0L,
-                Math.round(
-                        weightedAge / totalAmount
-                )
-        );
-    }
-
-    private static boolean isValidBrew(
-            FluidStack brew
-    ) {
-        return !brew.isEmpty()
-                && brew.is(
-                JolCraftFluids.DWARVEN_BREW.get()
-        );
-    }
-
     private boolean canInsertBrew(
             FluidStack incoming
     ) {
-        if (!isValidBrew(incoming)) {
+        if (!DwarvenBrewFluidHelper.isFinishedBrew(
+                incoming
+        )) {
             return false;
         }
 
         return brewTank.isEmpty()
-                || matchesIgnoringAge(
+                || DwarvenBrewFluidHelper.matchesUnderlyingBrew(
                 incoming,
                 brewTank.getFluid()
         );
@@ -1074,134 +465,45 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
     ) {
         return !brewTank.isEmpty()
                 && !requested.isEmpty()
-                && matchesIgnoringAge(
+                && DwarvenBrewFluidHelper.matchesUnderlyingBrew(
                 requested,
                 brewTank.getFluid()
-        );
-    }
-
-    private static boolean matchesIgnoringAge(
-            FluidStack first,
-            FluidStack second
-    ) {
-        if (first.isEmpty() || second.isEmpty()) {
-            return false;
-        }
-
-        return FluidStack.isSameFluidSameComponents(
-                withoutAging(first),
-                withoutAging(second)
-        );
-    }
-
-    private static FluidStack withoutAging(
-            FluidStack brew
-    ) {
-        if (brew.isEmpty()) {
-            return FluidStack.EMPTY;
-        }
-
-        FluidStack normalized = brew.copy();
-
-        int amplifierBonus = DwarvenBrewAge.fromTicks(
-                getBrewAge(normalized)
-        ).amplifierBonus();
-
-        normalized.remove(
-                JolCraftDataComponents.BREW_AGE.get()
-        );
-
-        reduceBrewEffects(
-                normalized,
-                amplifierBonus
-        );
-
-        return normalized;
-    }
-
-    private static void reduceBrewEffects(
-            FluidStack brew,
-            int amplifierReduction
-    ) {
-        if (amplifierReduction <= 0) {
-            return;
-        }
-
-        PotionContents contents = brew.getOrDefault(
-                DataComponents.POTION_CONTENTS,
-                PotionContents.EMPTY
-        );
-
-        List<MobEffectInstance> reducedEffects = new ArrayList<>(
-                contents.customEffects().size()
-        );
-
-        for (MobEffectInstance effect : contents.customEffects()) {
-            reducedEffects.add(
-                    reduceEffect(
-                            effect,
-                            amplifierReduction
-                    )
-            );
-        }
-
-        brew.set(
-                DataComponents.POTION_CONTENTS,
-                new PotionContents(
-                        contents.potion(),
-                        contents.customColor(),
-                        reducedEffects
-                )
-        );
-    }
-
-    private static MobEffectInstance reduceEffect(
-            MobEffectInstance effect,
-            int amplifierReduction
-    ) {
-        return new MobEffectInstance(
-                effect.getEffect(),
-                effect.getDuration(),
-                Math.max(
-                        0,
-                        effect.getAmplifier() - amplifierReduction
-                ),
-                effect.isAmbient(),
-                effect.isVisible(),
-                effect.showIcon()
         );
     }
 
     private void onBrewTankChanged() {
         setChanged();
 
-        if (level == null || level.isClientSide) {
+        if (level == null
+                || level.isClientSide) {
             return;
         }
 
-        if (brewTank.isEmpty()) {
-            lastAgeTime = 0L;
-        } else if (lastAgeTime <= 0L) {
-            resetAgeTimer();
-        }
+        aging.ensureTimerStarted(
+                !brewTank.isEmpty(),
+                level.getGameTime()
+        );
 
         syncClient();
     }
 
     private void sanitizeLoadedTank() {
-        FluidStack brew = brewTank.getFluid();
+        FluidStack brew =
+                brewTank.getFluid();
 
         if (brew.isEmpty()) {
-            lastAgeTime = 0L;
+            aging.clear();
             return;
         }
 
-        if (!isValidBrew(brew)) {
+        if (!DwarvenBrewFluidHelper.isFinishedBrew(
+                brew
+        )) {
             brewTank.setFluid(
                     FluidStack.EMPTY
             );
 
-            lastAgeTime = 0L;
+            aging.clear();
             return;
         }
 
@@ -1213,36 +515,43 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         );
 
         brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                getBrewAge(brew)
+                net.sievert.jolcraft.world.item.component
+                        .JolCraftDataComponents.BREW_AGE.get(),
+                DwarvenBrewFluidHelper.getAge(
+                        brew
+                )
         );
 
         brew.set(
-                DataComponents.POTION_CONTENTS,
+                net.minecraft.core.component.DataComponents.POTION_CONTENTS,
                 brew.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
+                        net.minecraft.core.component.DataComponents.POTION_CONTENTS,
+                        net.minecraft.world.item.alchemy.PotionContents.EMPTY
                 )
         );
     }
 
     private void restoreVanillaBarrelIfEmpty() {
-        if (level == null || level.isClientSide() || !brewTank.isEmpty()) {
+        if (level == null
+                || level.isClientSide()
+                || !brewTank.isEmpty()) {
             return;
         }
 
-        BlockState currentState = getBlockState();
+        BlockState currentState =
+                getBlockState();
 
         Direction facing = currentState.getValue(
                 FermentingBarrelBlock.FACING
         );
 
-        BlockState barrelState = Blocks.BARREL
-                .defaultBlockState()
-                .setValue(
-                        BarrelBlock.FACING,
-                        facing
-                );
+        BlockState barrelState =
+                Blocks.BARREL
+                        .defaultBlockState()
+                        .setValue(
+                                BarrelBlock.FACING,
+                                facing
+                        );
 
         level.setBlock(
                 worldPosition,
@@ -1263,10 +572,11 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 level
         );
 
-        if (!level.isClientSide
-                && !brewTank.isEmpty()
-                && lastAgeTime <= 0L) {
-            resetAgeTimer();
+        if (!level.isClientSide) {
+            aging.ensureTimerStarted(
+                    !brewTank.isEmpty(),
+                    level.getGameTime()
+            );
         }
     }
 
@@ -1279,7 +589,8 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
     public CompoundTag getUpdateTag(
             HolderLookup.Provider registries
     ) {
-        CompoundTag tag = new CompoundTag();
+        CompoundTag tag =
+                new CompoundTag();
 
         writeData(
                 tag,
@@ -1352,12 +663,9 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             );
         }
 
-        if (lastAgeTime > 0L) {
-            tag.putLong(
-                    NBT_LAST_AGE_TIME,
-                    lastAgeTime
-            );
-        }
+        aging.save(
+                tag
+        );
     }
 
     private void readData(
@@ -1368,7 +676,7 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 FluidStack.EMPTY
         );
 
-        lastAgeTime = 0L;
+        aging.clear();
 
         if (tag.contains(
                 NBT_BREW_TANK,
@@ -1384,11 +692,10 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
 
         sanitizeLoadedTank();
 
-        if (!brewTank.isEmpty()) {
-            lastAgeTime = tag.getLong(
-                    NBT_LAST_AGE_TIME
-            );
-        }
+        aging.load(
+                tag,
+                !brewTank.isEmpty()
+        );
     }
 
     // =====================================================================
