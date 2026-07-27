@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.sievert.jolcraft.world.player.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.world.player.attachment.base.JolCraftAttachmentHelper;
-import net.sievert.jolcraft.event.game.world.JolCraftTimeHelper;
+import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

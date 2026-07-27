@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.block.entity.custom.util;
+package net.sievert.jolcraft.world.block.entity.custom.brewing.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

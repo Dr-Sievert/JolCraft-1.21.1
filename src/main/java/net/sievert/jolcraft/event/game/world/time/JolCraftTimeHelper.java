@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game.world;
+package net.sievert.jolcraft.event.game.world.time;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
