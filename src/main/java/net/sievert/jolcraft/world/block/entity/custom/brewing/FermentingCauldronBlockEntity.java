@@ -89,6 +89,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     @Nullable
     private UUID brewPlayer;
 
+    private boolean restoreVanillaCauldronOnLoad;
+
     private final FermentingCauldronProcess process =
             new FermentingCauldronProcess();
 
@@ -394,6 +396,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 1.5F
         );
 
+        int brewAmount = brewTank.isEmpty()
+                ? FluidType.BUCKET_VOLUME
+                : brewTank.getFluidAmount();
+
         process.applyIngredient(
                 level,
                 worldPosition,
@@ -408,7 +414,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         brewTank.setFluid(
-                process.createUnfinishedBrewFluid()
+                process.createUnfinishedBrewFluid(
+                        brewAmount
+                )
         );
 
         onBrewTankChanged();
@@ -419,8 +427,13 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     @Override
     public void tickServer() {
         if (level == null
-                || level.isClientSide
-                || !process.isBrewing()) {
+                || level.isClientSide) {
+            return;
+        }
+
+        tryAwardBrewCreatedStat();
+
+        if (!process.isBrewing()) {
             return;
         }
 
@@ -455,7 +468,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         FluidStack finishedBrew =
-                process.createFinishedBrewFluid();
+                process.createFinishedBrewFluid(
+                        brewTank.getFluidAmount()
+                );
 
         process.clear();
 
@@ -466,7 +481,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         if (DwarvenBrewFluidHelper.isFinishedBrew(
                 finishedBrew
         )) {
-            awardBrewCreatedStat();
+            tryAwardBrewCreatedStat();
         } else {
             brewPlayer = null;
         }
@@ -474,9 +489,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         onBrewTankChanged();
     }
 
-    private void awardBrewCreatedStat() {
+    private void tryAwardBrewCreatedStat() {
         if (!(level instanceof ServerLevel serverLevel)
-                || brewPlayer == null) {
+                || brewPlayer == null
+                || !hasFinishedBrew()) {
             return;
         }
 
@@ -487,13 +503,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                                 brewPlayer
                         );
 
-        if (player != null) {
-            player.awardStat(
-                    JolCraftStats.DWARVEN_BREWS_CREATED.get()
-            );
+        if (player == null) {
+            return;
         }
 
+        player.awardStat(
+                JolCraftStats.DWARVEN_BREWS_CREATED.get()
+        );
+
         brewPlayer = null;
+        setChanged();
     }
 
     public void fastForwardBrew(
@@ -659,6 +678,27 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 );
     }
 
+    public boolean drainForExtinguishing(
+            int amount
+    ) {
+        if (level == null
+                || level.isClientSide
+                || amount <= 0
+                || brewTank.isEmpty()) {
+            return false;
+        }
+
+        FluidStack drained = brewTank.drain(
+                Math.min(
+                        amount,
+                        brewTank.getFluidAmount()
+                ),
+                IFluidHandler.FluidAction.EXECUTE
+        );
+
+        return !drained.isEmpty();
+    }
+
     private void onBrewTankChanged() {
         setChanged();
 
@@ -668,10 +708,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         if (brewTank.isEmpty()) {
-            level.setBlockAndUpdate(
-                    worldPosition,
-                    Blocks.CAULDRON.defaultBlockState()
-            );
+            process.clear();
+            brewPlayer = null;
+            restoreVanillaCauldron();
 
             return;
         }
@@ -679,12 +718,24 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         syncClient();
     }
 
-    private void sanitizeLoadedTank() {
+    private void restoreVanillaCauldron() {
+        if (level == null
+                || level.isClientSide()) {
+            return;
+        }
+
+        level.setBlockAndUpdate(
+                worldPosition,
+                Blocks.CAULDRON.defaultBlockState()
+        );
+    }
+
+    private boolean sanitizeLoadedTank() {
         FluidStack brew =
                 brewTank.getFluid();
 
         if (brew.isEmpty()) {
-            return;
+            return false;
         }
 
         boolean finished =
@@ -713,7 +764,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                     FluidStack.EMPTY
             );
 
-            return;
+            return true;
         }
 
         if (DwarvenBrewFluidHelper.getAge(
@@ -729,7 +780,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                     FluidStack.EMPTY
             );
 
-            return;
+            return true;
         }
 
         brew.setAmount(
@@ -751,27 +802,56 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                         PotionContents.EMPTY
                 )
         );
+
+        return false;
     }
 
     private void sanitizeLoadedState() {
-        sanitizeLoadedTank();
+        restoreVanillaCauldronOnLoad = sanitizeLoadedTank();
 
         FluidStack fluid =
                 brewTank.getFluid();
 
-        if (process.isBrewing()) {
-            if (!DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(
+        if (process.hasUnfinishedState()) {
+            if (process.matchesUnfinishedFluid(
+                    fluid
+            )) {
+                return;
+            }
+
+            if (DwarvenBrewFluidHelper.isFinishedBrewingFluid(
                     fluid
             )) {
                 JolCraftLogs.warn(
                         JolCraftLogTags.BLOCK_ENTITY,
-                        "FermentingCauldron at {} loaded an active process without matching unfinished fluid (clearing process)",
+                        "FermentingCauldron at {} loaded finished fluid with stale process state (clearing process)",
                         JolCraftLogs.roundedPos(this)
                 );
 
                 process.clear();
                 brewPlayer = null;
+
+                return;
             }
+
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK_ENTITY,
+                    "FermentingCauldron at {} loaded unfinished process state without its expected fluid (clearing batch)",
+                    JolCraftLogs.roundedPos(this)
+            );
+
+            process.clear();
+            brewPlayer = null;
+
+            if (DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(
+                    fluid
+            )) {
+                brewTank.setFluid(
+                        FluidStack.EMPTY
+                );
+            }
+
+            restoreVanillaCauldronOnLoad = brewTank.isEmpty();
 
             return;
         }
@@ -781,13 +861,15 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         )) {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} loaded unfinished fluid without an active process (clearing tank)",
+                    "FermentingCauldron at {} loaded unfinished fluid without process state (clearing tank)",
                     JolCraftLogs.roundedPos(this)
             );
 
             brewTank.setFluid(
                     FluidStack.EMPTY
             );
+
+            restoreVanillaCauldronOnLoad = true;
         }
     }
 
@@ -849,8 +931,22 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 level
         );
 
-        if (!level.isClientSide
-                && process.isBrewing()
+        if (level.isClientSide) {
+            return;
+        }
+
+        if (restoreVanillaCauldronOnLoad
+                && brewTank.isEmpty()
+                && !process.hasUnfinishedState()) {
+            restoreVanillaCauldronOnLoad = false;
+            restoreVanillaCauldron();
+
+            return;
+        }
+
+        tryAwardBrewCreatedStat();
+
+        if (process.isBrewing()
                 && process.isComplete(
                 level
         )) {
@@ -895,7 +991,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     ) {
         FluidStack clientFluid =
                 process.hasUnfinishedState()
-                        ? process.createUnfinishedBrewFluid()
+                        ? process.createUnfinishedBrewFluid(
+                        getBrewAmount()
+                )
                         : brewTank.getFluid();
 
         if (!clientFluid.isEmpty()) {
@@ -944,7 +1042,6 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         process.readClientData(
                 tag,
-                registries,
                 worldPosition
         );
     }
@@ -977,7 +1074,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         process.save(
-                tag
+                tag,
+                registries
         );
     }
 
@@ -997,6 +1095,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         process.clear();
         brewPlayer = null;
+        restoreVanillaCauldronOnLoad = false;
 
         if (tag.contains(
                 NBT_BREW_TANK,
@@ -1116,7 +1215,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return FluidStack.EMPTY;
         }
 
-        return process.createUnfinishedBrewFluid();
+        return process.createUnfinishedBrewFluid(
+                getBrewAmount()
+        );
     }
 
     public IFluidHandler getBrewFluidHandler() {

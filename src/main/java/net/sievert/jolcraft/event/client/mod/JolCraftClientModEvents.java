@@ -21,6 +21,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.util.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.client.color.JolCraftItemColors;
@@ -178,25 +179,25 @@ public final class JolCraftClientModEvents {
         registerTintedFluid(
                 event,
                 JolCraftFluids.DWARVEN_BREW_TYPE.get(),
-                0xFF9A652B
+                BrewingColors.DWARVEN_BREW
         );
 
         registerTintedFluid(
                 event,
                 JolCraftFluids.UNFINISHED_DWARVEN_BREW_TYPE.get(),
-                0xFF805D37
+                BrewingColors.UNFINISHED_DWARVEN_BREW
         );
 
         registerTintedFluid(
                 event,
                 JolCraftFluids.YEAST_TYPE.get(),
-                0xFF40B14A
+                BrewingColors.YEAST
         );
 
         registerTintedFluid(
                 event,
                 JolCraftFluids.UNFINISHED_YEAST_TYPE.get(),
-                0xFF7EB140
+                BrewingColors.UNFINISHED_YEAST
         );
     }
 

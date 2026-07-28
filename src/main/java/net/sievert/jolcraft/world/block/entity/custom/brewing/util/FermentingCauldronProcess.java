@@ -70,6 +70,13 @@ public final class FermentingCauldronProcess {
                     JolCraftDictionary.DELAY
             );
 
+    private static final String NBT_LAST_INGREDIENT =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.LAST,
+                    JolCraftDictionary.INGREDIENT
+            );
+
+    /** Legacy item-id-only key retained for existing worlds. */
     private static final String NBT_LAST_INGREDIENT_ID =
             JolCraftStrings.underscored(
                     JolCraftDictionary.LAST,
@@ -120,6 +127,7 @@ public final class FermentingCauldronProcess {
                     JolCraftDictionary.EFFECT
             );
 
+    /** Legacy custom effect keys retained for existing worlds. */
     private static final String NBT_EFFECT_ID =
             JolCraftDictionary.ID;
 
@@ -471,6 +479,14 @@ public final class FermentingCauldronProcess {
     }
 
     public FluidStack createUnfinishedBrewFluid() {
+        return createUnfinishedBrewFluid(
+                FluidType.BUCKET_VOLUME
+        );
+    }
+
+    public FluidStack createUnfinishedBrewFluid(
+            int amount
+    ) {
         FluidStack fluid =
                 new FluidStack(
                         switch (outputFluid) {
@@ -483,7 +499,9 @@ public final class FermentingCauldronProcess {
                                             .UNFINISHED_YEAST
                                             .get();
                         },
-                        FluidType.BUCKET_VOLUME
+                        clampFluidAmount(
+                                amount
+                        )
                 );
 
         applyFluidComponents(
@@ -497,7 +515,7 @@ public final class FermentingCauldronProcess {
             FluidStack existing
     ) {
         if (existing.isEmpty()
-                || !isMatchingUnfinishedFluid(
+                || !matchesUnfinishedFluid(
                 existing
         )) {
             return FluidStack.EMPTY;
@@ -507,7 +525,9 @@ public final class FermentingCauldronProcess {
                 existing.copy();
 
         updated.setAmount(
-                FluidType.BUCKET_VOLUME
+                clampFluidAmount(
+                        existing.getAmount()
+                )
         );
 
         applyFluidComponents(
@@ -518,6 +538,14 @@ public final class FermentingCauldronProcess {
     }
 
     public FluidStack createFinishedBrewFluid() {
+        return createFinishedBrewFluid(
+                FluidType.BUCKET_VOLUME
+        );
+    }
+
+    public FluidStack createFinishedBrewFluid(
+            int amount
+    ) {
         FluidStack fluid =
                 new FluidStack(
                         switch (outputFluid) {
@@ -530,7 +558,9 @@ public final class FermentingCauldronProcess {
                                             .YEAST
                                             .get();
                         },
-                        FluidType.BUCKET_VOLUME
+                        clampFluidAmount(
+                                amount
+                        )
                 );
 
         applyFluidComponents(
@@ -548,7 +578,7 @@ public final class FermentingCauldronProcess {
         return fluid;
     }
 
-    private boolean isMatchingUnfinishedFluid(
+    public boolean matchesUnfinishedFluid(
             FluidStack fluid
     ) {
         return switch (outputFluid) {
@@ -565,6 +595,18 @@ public final class FermentingCauldronProcess {
                                     .get()
                     );
         };
+    }
+
+    private static int clampFluidAmount(
+            int amount
+    ) {
+        return Math.max(
+                1,
+                Math.min(
+                        FluidType.BUCKET_VOLUME,
+                        amount
+                )
+        );
     }
 
     private void applyFluidComponents(
@@ -784,7 +826,6 @@ public final class FermentingCauldronProcess {
 
     public void readClientData(
             CompoundTag tag,
-            HolderLookup.Provider registries,
             BlockPos pos
     ) {
         clear();
@@ -844,9 +885,7 @@ public final class FermentingCauldronProcess {
 
         loadEffects(
                 tag,
-                registries.lookupOrThrow(
-                        Registries.MOB_EFFECT
-                ),
+                null,
                 pos
         );
 
@@ -858,7 +897,8 @@ public final class FermentingCauldronProcess {
     // =====================================================================
 
     public void save(
-            CompoundTag tag
+            CompoundTag tag,
+            HolderLookup.Provider registries
     ) {
         tag.putLong(
                 NBT_BREW_START_TIME,
@@ -881,7 +921,8 @@ public final class FermentingCauldronProcess {
         );
 
         saveLastIngredient(
-                tag
+                tag,
+                registries
         );
 
         saveIngredients(
@@ -982,6 +1023,7 @@ public final class FermentingCauldronProcess {
 
         loadLastIngredient(
                 tag,
+                registries,
                 itemLookup,
                 pos
         );
@@ -1060,25 +1102,29 @@ public final class FermentingCauldronProcess {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void saveLastIngredient(
-            CompoundTag tag
+            CompoundTag tag,
+            HolderLookup.Provider registries
     ) {
         if (lastIngredient.isEmpty()) {
             return;
         }
 
-        ResourceLocation id =
-                lastIngredient
-                        .getItem()
-                        .builtInRegistryHolder()
-                        .key()
-                        .location();
+        Tag saved = lastIngredient
+                .copyWithCount(
+                        1
+                )
+                .save(
+                        registries,
+                        new CompoundTag()
+                );
 
-        tag.putString(
-                NBT_LAST_INGREDIENT_ID,
-                id.toString()
-        );
+        if (saved instanceof CompoundTag ingredientTag) {
+            tag.put(
+                    NBT_LAST_INGREDIENT,
+                    ingredientTag
+            );
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -1157,39 +1203,13 @@ public final class FermentingCauldronProcess {
                 new ListTag();
 
         for (MobEffectInstance effect : effects) {
-            ResourceKey<MobEffect> key =
-                    effect.getEffect()
-                            .unwrapKey()
-                            .orElse(null);
+            Tag saved = effect.save();
 
-            if (key == null) {
-                continue;
-            }
-
-            CompoundTag effectTag =
-                    new CompoundTag();
-
-            effectTag.putString(
-                    NBT_EFFECT_ID,
-                    key.location()
-                            .toString()
-            );
-
-            effectTag.putInt(
-                    NBT_EFFECT_DURATION,
-                    effect.getDuration()
-            );
-
-            if (effect.getAmplifier() != 0) {
-                effectTag.putInt(
-                        NBT_EFFECT_AMPLIFIER,
-                        effect.getAmplifier()
+            if (saved instanceof CompoundTag effectTag) {
+                list.add(
+                        effectTag
                 );
             }
-
-            list.add(
-                    effectTag
-            );
         }
 
         if (!list.isEmpty()) {
@@ -1240,6 +1260,45 @@ public final class FermentingCauldronProcess {
 
     private void loadLastIngredient(
             CompoundTag tag,
+            HolderLookup.Provider registries,
+            HolderLookup.RegistryLookup<Item> itemLookup,
+            BlockPos pos
+    ) {
+        if (tag.contains(
+                NBT_LAST_INGREDIENT,
+                Tag.TAG_COMPOUND
+        )) {
+            ItemStack loaded = ItemStack.parseOptional(
+                    registries,
+                    tag.getCompound(
+                            NBT_LAST_INGREDIENT
+                    )
+            );
+
+            if (!loaded.isEmpty()) {
+                lastIngredient = loaded.copyWithCount(
+                        1
+                );
+
+                return;
+            }
+
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK_ENTITY,
+                    "FermentingCauldron at {} has invalid last ingredient stack (falling back to legacy id)",
+                    JolCraftLogs.roundedPos(pos)
+            );
+        }
+
+        loadLegacyLastIngredient(
+                tag,
+                itemLookup,
+                pos
+        );
+    }
+
+    private void loadLegacyLastIngredient(
+            CompoundTag tag,
             HolderLookup.RegistryLookup<Item> itemLookup,
             BlockPos pos
     ) {
@@ -1263,7 +1322,7 @@ public final class FermentingCauldronProcess {
         if (id == null) {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} has malformed lastIngredient name '{}' (clearing)",
+                    "FermentingCauldron at {} has malformed last ingredient name '{}' (clearing)",
                     JolCraftLogs.roundedPos(pos),
                     raw
             );
@@ -1288,7 +1347,7 @@ public final class FermentingCauldronProcess {
         if (item == Items.AIR) {
             JolCraftLogs.debug(
                     JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} missing lastIngredient item '{}' (clearing)",
+                    "FermentingCauldron at {} missing last ingredient item '{}' (clearing)",
                     JolCraftLogs.roundedPos(pos),
                     id
             );
@@ -1448,84 +1507,117 @@ public final class FermentingCauldronProcess {
                             index
                     );
 
-            if (!effectTag.contains(
-                    NBT_EFFECT_ID,
-                    Tag.TAG_STRING
-            )) {
-                continue;
+            MobEffectInstance effect =
+                    MobEffectInstance.load(
+                            effectTag
+                    );
+
+            if (effect == null
+                    && effectLookup != null) {
+                effect = loadLegacyEffect(
+                        effectTag,
+                        effectLookup,
+                        pos
+                );
             }
 
-            String raw =
-                    effectTag.getString(
-                            NBT_EFFECT_ID
-                    );
-
-            ResourceLocation id =
-                    ResourceLocation.tryParse(
-                            raw
-                    );
-
-            if (id == null) {
+            if (effect == null
+                    || effect.getDuration() < 1
+                    || effect.getAmplifier() < 0) {
                 JolCraftLogs.warn(
                         JolCraftLogTags.BLOCK_ENTITY,
-                        "FermentingCauldron at {} has malformed effect name '{}' (skipping)",
+                        "FermentingCauldron at {} has invalid effect data at index {} (skipping)",
                         JolCraftLogs.roundedPos(pos),
-                        raw
+                        index
                 );
 
                 continue;
             }
-
-            ResourceKey<MobEffect> key =
-                    ResourceKey.create(
-                            Registries.MOB_EFFECT,
-                            id
-                    );
-
-            Holder<MobEffect> holder =
-                    effectLookup
-                            .get(key)
-                            .orElse(null);
-
-            if (holder == null) {
-                JolCraftLogs.debug(
-                        JolCraftLogTags.BLOCK_ENTITY,
-                        "FermentingCauldron at {} missing MobEffect '{}' (skipping)",
-                        JolCraftLogs.roundedPos(pos),
-                        id
-                );
-
-                continue;
-            }
-
-            int duration =
-                    effectTag.getInt(
-                            NBT_EFFECT_DURATION
-                    );
-
-            if (duration < 1) {
-                continue;
-            }
-
-            int amplifier = effectTag.contains(
-                    NBT_EFFECT_AMPLIFIER,
-                    Tag.TAG_INT
-            )
-                    ? effectTag.getInt(
-                    NBT_EFFECT_AMPLIFIER
-            )
-                    : 0;
 
             effects.add(
-                    new MobEffectInstance(
-                            holder,
-                            duration,
-                            Math.max(
-                                    0,
-                                    amplifier
-                            )
-                    )
+                    effect
             );
         }
     }
+
+    private MobEffectInstance loadLegacyEffect(
+            CompoundTag effectTag,
+            HolderLookup.RegistryLookup<MobEffect> effectLookup,
+            BlockPos pos
+    ) {
+        if (!effectTag.contains(
+                NBT_EFFECT_ID,
+                Tag.TAG_STRING
+        )) {
+            return null;
+        }
+
+        String raw = effectTag.getString(
+                NBT_EFFECT_ID
+        );
+
+        ResourceLocation id =
+                ResourceLocation.tryParse(
+                        raw
+                );
+
+        if (id == null) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK_ENTITY,
+                    "FermentingCauldron at {} has malformed effect name '{}' (skipping)",
+                    JolCraftLogs.roundedPos(pos),
+                    raw
+            );
+
+            return null;
+        }
+
+        Holder<MobEffect> holder =
+                effectLookup
+                        .get(
+                                ResourceKey.create(
+                                        Registries.MOB_EFFECT,
+                                        id
+                                )
+                        )
+                        .orElse(null);
+
+        if (holder == null) {
+            JolCraftLogs.debug(
+                    JolCraftLogTags.BLOCK_ENTITY,
+                    "FermentingCauldron at {} missing MobEffect '{}' (skipping)",
+                    JolCraftLogs.roundedPos(pos),
+                    id
+            );
+
+            return null;
+        }
+
+        int duration = effectTag.getInt(
+                NBT_EFFECT_DURATION
+        );
+
+        if (duration < 1) {
+            return null;
+        }
+
+        int amplifier = effectTag.contains(
+                NBT_EFFECT_AMPLIFIER,
+                Tag.TAG_INT
+        )
+                ? effectTag.getInt(
+                NBT_EFFECT_AMPLIFIER
+        )
+                : 0;
+
+        return new MobEffectInstance(
+                holder,
+                duration,
+                Math.max(
+                        0,
+                        amplifier
+                )
+        );
+    }
+
 }

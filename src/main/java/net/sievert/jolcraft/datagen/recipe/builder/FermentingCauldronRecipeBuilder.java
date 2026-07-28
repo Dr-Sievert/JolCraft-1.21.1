@@ -66,7 +66,7 @@ public final class FermentingCauldronRecipeBuilder
         return this;
     }
 
-    public void lastIngredient(
+    public FermentingCauldronRecipeBuilder lastIngredient(
             @NotNull ItemInput lastIngredient
     ) {
         this.lastIngredient =
@@ -74,12 +74,14 @@ public final class FermentingCauldronRecipeBuilder
                         lastIngredient
                 );
 
+        return this;
     }
 
-    public void noLastIngredient() {
+    public FermentingCauldronRecipeBuilder noLastIngredient() {
         this.lastIngredient =
                 Optional.empty();
 
+        return this;
     }
 
     public FermentingCauldronRecipeBuilder effect(

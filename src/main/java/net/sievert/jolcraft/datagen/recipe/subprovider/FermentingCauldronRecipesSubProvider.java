@@ -17,6 +17,7 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.FermentingCauldronRecipeBuilder;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.util.BrewingColors;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
@@ -63,7 +64,7 @@ public record FermentingCauldronRecipesSubProvider(
                 null,
                 1200,
                 3,
-                0x40B14A,
+                BrewingColors.YEAST,
                 FermentingCauldronRecipe.OutputFluid.YEAST
         );
 
@@ -74,7 +75,7 @@ public record FermentingCauldronRecipesSubProvider(
                 null,
                 5,
                 5,
-                0x805D37
+                BrewingColors.UNFINISHED_DWARVEN_BREW
         );
 
         fermentingEffect(
@@ -84,7 +85,7 @@ public record FermentingCauldronRecipesSubProvider(
                 JolCraftTags.Items.HOPS_BREW,
                 5,
                 5,
-                0x91706E,
+                BrewingColors.ASGARNIAN_HOPS,
                 MobEffects.HEALTH_BOOST,
                 600,
                 0
@@ -97,7 +98,7 @@ public record FermentingCauldronRecipesSubProvider(
                 JolCraftTags.Items.HOPS_BREW,
                 5,
                 5,
-                0x817788,
+                BrewingColors.DUSKHOLD_HOPS,
                 MobEffects.SATURATION,
                 600,
                 0
@@ -110,7 +111,7 @@ public record FermentingCauldronRecipesSubProvider(
                 JolCraftTags.Items.HOPS_BREW,
                 5,
                 5,
-                0x6E918F,
+                BrewingColors.KRANDONIAN_HOPS,
                 MobEffects.DAMAGE_BOOST,
                 600,
                 0
@@ -123,7 +124,7 @@ public record FermentingCauldronRecipesSubProvider(
                 JolCraftTags.Items.HOPS_BREW,
                 5,
                 5,
-                0x54832E,
+                BrewingColors.YANILLIAN_HOPS,
                 MobEffects.DAMAGE_RESISTANCE,
                 600,
                 0
@@ -136,7 +137,7 @@ public record FermentingCauldronRecipesSubProvider(
                 JolCraftTags.Items.HOPS,
                 6000,
                 60,
-                0x9A652B,
+                BrewingColors.DWARVEN_BREW,
                 FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW
         );
     }
@@ -148,48 +149,32 @@ public record FermentingCauldronRecipesSubProvider(
             @Nullable ItemLike lastIngredient,
             int brewTicks,
             int bubbleTicks,
-            int colorRgb
+            int brewColor
     ) {
         FermentingCauldronRecipeBuilder builder =
-                FermentingCauldronRecipeBuilder.create()
-                        .id(
+                applyLastIngredient(
+                        baseBuilder(
+                                ingredient,
                                 recipeId(
                                         ingredient,
                                         "ferment",
                                         lastIngredient
+                                ),
+                                brewTicks,
+                                bubbleTicks,
+                                brewColor
+                        )
+                                .dwarvenBrew()
+                                .finalizeBrew(
+                                        false
                                 )
+                                .noEffect(),
+                        lastIngredient == null
+                                ? null
+                                : ItemInput.item(
+                                lastIngredient
                         )
-                        .ingredient(
-                                ItemInput.item(
-                                        ingredient
-                                )
-                        )
-                        .brewTicks(
-                                brewTicks
-                        )
-                        .bubbleTicks(
-                                bubbleTicks
-                        )
-                        .brewColor(
-                                argb(
-                                        colorRgb
-                                )
-                        )
-                        .dwarvenBrew()
-                        .finalizeBrew(
-                                false
-                        )
-                        .noEffect();
-
-        if (lastIngredient != null) {
-            builder.lastIngredient(
-                    ItemInput.item(
-                            lastIngredient
-                    )
-            );
-        } else {
-            builder.noLastIngredient();
-        }
+                );
 
         emit(
                 output,
@@ -205,51 +190,35 @@ public record FermentingCauldronRecipesSubProvider(
             @Nullable TagKey<Item> lastIngredientTag,
             int brewTicks,
             int bubbleTicks,
-            int colorRgb,
+            int brewColor,
             @NotNull FermentingCauldronRecipe.OutputFluid outputFluid
     ) {
         FermentingCauldronRecipeBuilder builder =
-                FermentingCauldronRecipeBuilder.create()
-                        .id(
+                applyLastIngredient(
+                        baseBuilder(
+                                ingredient,
                                 recipeId(
                                         ingredient,
                                         "finalize",
                                         lastIngredientTag
+                                ),
+                                brewTicks,
+                                bubbleTicks,
+                                brewColor
+                        )
+                                .outputFluid(
+                                        outputFluid
                                 )
-                        )
-                        .ingredient(
-                                ItemInput.item(
-                                        ingredient
+                                .finalizeBrew(
+                                        true
                                 )
+                                .noEffect(),
+                        lastIngredientTag == null
+                                ? null
+                                : ItemInput.tag(
+                                lastIngredientTag
                         )
-                        .brewTicks(
-                                brewTicks
-                        )
-                        .bubbleTicks(
-                                bubbleTicks
-                        )
-                        .brewColor(
-                                argb(
-                                        colorRgb
-                                )
-                        )
-                        .outputFluid(
-                                outputFluid
-                        )
-                        .finalizeBrew(
-                                true
-                        )
-                        .noEffect();
-
-        if (lastIngredientTag != null) {
-            builder.lastIngredient(
-                    ItemInput.tag(
-                            lastIngredientTag
-                    )
-            );
-        } else {
-            builder.noLastIngredient();
-        }
+                );
 
         emit(
                 output,
@@ -265,57 +234,41 @@ public record FermentingCauldronRecipesSubProvider(
             @Nullable TagKey<Item> lastIngredientTag,
             int brewTicks,
             int bubbleTicks,
-            int colorRgb,
+            int brewColor,
             @NotNull Holder<MobEffect> effect,
             int duration,
             int amplifier
     ) {
         FermentingCauldronRecipeBuilder builder =
-                FermentingCauldronRecipeBuilder.create()
-                        .id(
+                applyLastIngredient(
+                        baseBuilder(
+                                ingredient,
                                 recipeId(
                                         ingredient,
                                         "effect",
                                         lastIngredientTag
+                                ),
+                                brewTicks,
+                                bubbleTicks,
+                                brewColor
+                        )
+                                .dwarvenBrew()
+                                .finalizeBrew(
+                                        false
                                 )
+                                .effect(
+                                        effect(
+                                                effect,
+                                                duration,
+                                                amplifier
+                                        )
+                                ),
+                        lastIngredientTag == null
+                                ? null
+                                : ItemInput.tag(
+                                lastIngredientTag
                         )
-                        .ingredient(
-                                ItemInput.item(
-                                        ingredient
-                                )
-                        )
-                        .brewTicks(
-                                brewTicks
-                        )
-                        .bubbleTicks(
-                                bubbleTicks
-                        )
-                        .brewColor(
-                                argb(
-                                        colorRgb
-                                )
-                        )
-                        .dwarvenBrew()
-                        .finalizeBrew(
-                                false
-                        )
-                        .effect(
-                                effect(
-                                        effect,
-                                        duration,
-                                        amplifier
-                                )
-                        );
-
-        if (lastIngredientTag != null) {
-            builder.lastIngredient(
-                    ItemInput.tag(
-                            lastIngredientTag
-                    )
-            );
-        } else {
-            builder.noLastIngredient();
-        }
+                );
 
         emit(
                 output,
@@ -324,11 +277,42 @@ public record FermentingCauldronRecipesSubProvider(
         );
     }
 
-    private static int argb(
-            int colorRgb
+    private static FermentingCauldronRecipeBuilder baseBuilder(
+            ItemLike ingredient,
+            String id,
+            int brewTicks,
+            int bubbleTicks,
+            int brewColor
     ) {
-        return 0xFF000000
-                | colorRgb & 0xFFFFFF;
+        return FermentingCauldronRecipeBuilder.create()
+                .id(
+                        id
+                )
+                .ingredient(
+                        ItemInput.item(
+                                ingredient
+                        )
+                )
+                .brewTicks(
+                        brewTicks
+                )
+                .bubbleTicks(
+                        bubbleTicks
+                )
+                .brewColor(
+                        brewColor
+                );
+    }
+
+    private static FermentingCauldronRecipeBuilder applyLastIngredient(
+            FermentingCauldronRecipeBuilder builder,
+            @Nullable ItemInput lastIngredient
+    ) {
+        return lastIngredient == null
+                ? builder.noLastIngredient()
+                : builder.lastIngredient(
+                lastIngredient
+        );
     }
 
     private static EffectOutput effect(
