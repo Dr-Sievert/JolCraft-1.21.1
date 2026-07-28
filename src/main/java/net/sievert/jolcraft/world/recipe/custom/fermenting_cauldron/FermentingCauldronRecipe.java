@@ -24,6 +24,7 @@ import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParams;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.condition.custom.InputItemCondition;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +123,9 @@ public record FermentingCauldronRecipe(
             @NotNull Level level
     ) {
         if (!(level instanceof ServerLevel serverLevel)) {
-            return false;
+            return matchesClient(
+                    recipeInput
+            );
         }
 
         ItemStack ingredientStack =
@@ -156,6 +159,31 @@ public record FermentingCauldronRecipe(
         }
 
         return lastIngredientStack.isEmpty();
+    }
+
+    /**
+     * Matches the item-predicate inputs used by fermenting cauldron recipes without requiring a server loot context.
+     */
+    private boolean matchesClient(
+            FermentingCauldronRecipeInput recipeInput
+    ) {
+        ItemStack ingredientStack = recipeInput.ingredient();
+        ItemStack lastIngredientStack = recipeInput.lastIngredient();
+
+        if (ingredientStack.isEmpty()
+                || !matchesClientInput(
+                ingredientStack,
+                ingredient
+        )) {
+            return false;
+        }
+
+        return lastIngredient.map(itemInput -> !lastIngredientStack.isEmpty()
+                && matchesClientInput(
+                lastIngredientStack,
+                itemInput
+        )).orElseGet(lastIngredientStack::isEmpty);
+
     }
 
     public void generateEffect(
@@ -192,6 +220,13 @@ public record FermentingCauldronRecipe(
         return JolCraftRecipes
                 .FERMENTING_CAULDRON_TYPE
                 .get();
+    }
+
+    private static boolean matchesClientInput(
+            ItemStack stack,
+            ItemInput input
+    ) {
+        return input.condition() instanceof InputItemCondition(net.minecraft.advancements.critereon.ItemPredicate predicate) && predicate.test(stack);
     }
 
     private static boolean matchesInput(

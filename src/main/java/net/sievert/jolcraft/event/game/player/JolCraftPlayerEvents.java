@@ -27,6 +27,7 @@ import net.sievert.jolcraft.network.util.SyncHelper;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.data.custom.PendingStatData;
 import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -47,6 +48,8 @@ public final class JolCraftPlayerEvents {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+
+        PendingStatData.awardPending(serverPlayer);
         SyncHelper.syncAll(serverPlayer);
     }
 

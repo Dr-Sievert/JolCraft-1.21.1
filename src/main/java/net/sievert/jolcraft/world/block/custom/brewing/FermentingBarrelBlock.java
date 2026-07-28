@@ -73,13 +73,16 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             InteractionHand hand,
             BlockHitResult hit
     ) {
-        if (level.isClientSide()) {
-            return ItemInteractionResult.SUCCESS;
-        }
-
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         if (blockEntity instanceof FermentingBarrelBlockEntity barrel) {
+            if (level.isClientSide()) {
+                return barrel.getInteractionResult(
+                        hand,
+                        stack
+                );
+            }
+
             return barrel.handleInteraction(
                     player,
                     hand,
@@ -87,14 +90,16 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             );
         }
 
-        JolCraftLogs.warn(
-                JolCraftLogTags.BLOCK,
-                "FermentingBarrel at {} has missing/wrong BlockEntity (found={})",
-                JolCraftLogs.roundedPos(pos),
-                blockEntity == null ? "null" : blockEntity.getClass().getName()
-        );
+        if (!level.isClientSide()) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK,
+                    "FermentingBarrel at {} has missing/wrong BlockEntity (found={})",
+                    JolCraftLogs.roundedPos(pos),
+                    blockEntity == null ? "null" : blockEntity.getClass().getName()
+            );
+        }
 
-        return ItemInteractionResult.SUCCESS;
+        return ItemInteractionResult.FAIL;
     }
 
     /**
@@ -108,17 +113,21 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             Player player,
             BlockHitResult hit
     ) {
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
-        if (blockEntity instanceof FermentingBarrelBlockEntity barrel) {
-            return barrel.inspectBrewAge(player) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        if (!(blockEntity instanceof FermentingBarrelBlockEntity barrel)) {
+            return InteractionResult.PASS;
         }
 
-        return InteractionResult.PASS;
+        if (level.isClientSide()) {
+            return barrel.hasBrew()
+                    ? InteractionResult.SUCCESS
+                    : InteractionResult.PASS;
+        }
+
+        return barrel.inspectBrewAge(player)
+                ? InteractionResult.SUCCESS
+                : InteractionResult.PASS;
     }
 
     @Override

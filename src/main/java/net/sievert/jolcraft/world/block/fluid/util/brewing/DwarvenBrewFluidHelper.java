@@ -162,6 +162,10 @@ public final class DwarvenBrewFluidHelper {
     public static long getAge(
             FluidStack brew
     ) {
+        if (!isFinishedBrew(brew)) {
+            return 0L;
+        }
+
         return Math.max(
                 0L,
                 brew.getOrDefault(
@@ -182,6 +186,16 @@ public final class DwarvenBrewFluidHelper {
             return FluidStack.EMPTY;
         }
 
+        if (!isFinishedBrew(brew)) {
+            FluidStack normalized = brew.copy();
+
+            normalized.remove(
+                    JolCraftDataComponents.BREW_AGE.get()
+            );
+
+            return normalized;
+        }
+
         FluidStack fresh = withoutAging(brew);
 
         fresh.set(
@@ -200,7 +214,7 @@ public final class DwarvenBrewFluidHelper {
             FluidStack brew,
             long addedTicks
     ) {
-        if (brew.isEmpty() || addedTicks <= 0L) {
+        if (!isFinishedBrew(brew) || addedTicks <= 0L) {
             return;
         }
 

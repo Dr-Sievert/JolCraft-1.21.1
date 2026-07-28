@@ -808,11 +808,17 @@ public final class FermentingCauldronProcess {
     // =====================================================================
 
     /**
-     * Writes the process data required by the client for rendering.
+     * Writes the process data required by the client for rendering and interaction prediction.
      */
     public void writeClientData(
-            CompoundTag tag
+            CompoundTag tag,
+            HolderLookup.Provider registries
     ) {
+        saveLastIngredient(
+                tag,
+                registries
+        );
+
         tag.putInt(
                 NBT_CURRENT_COLOR,
                 currentColor
@@ -853,9 +859,16 @@ public final class FermentingCauldronProcess {
      */
     public void readClientData(
             CompoundTag tag,
+            HolderLookup.Provider registries,
             BlockPos pos
     ) {
         clear();
+
+        loadLastIngredient(
+                tag,
+                registries,
+                pos
+        );
 
         currentColor = tag.contains(
                 NBT_CURRENT_COLOR,

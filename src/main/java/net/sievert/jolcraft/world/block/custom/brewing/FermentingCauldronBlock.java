@@ -4,12 +4,9 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -22,7 +19,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -44,11 +40,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public final class FermentingCauldronBlock extends AbstractCauldronBlock implements EntityBlock {
 
     public static final MapCodec<FermentingCauldronBlock> CODEC = simpleCodec(FermentingCauldronBlock::new);
-
-    private static final float MIN_CONTENT_HEIGHT = 6.0F / 16.0F;
-    private static final float MAX_CONTENT_HEIGHT = 15.0F / 16.0F;
-
-    private static final int EXTINGUISH_DRAIN_AMOUNT = Mth.ceil(FluidType.BUCKET_VOLUME / 3.0F);
 
     public FermentingCauldronBlock(
             Properties properties
@@ -82,13 +73,16 @@ public final class FermentingCauldronBlock extends AbstractCauldronBlock impleme
             InteractionHand hand,
             BlockHitResult hit
     ) {
-        if (level.isClientSide()) {
-            return ItemInteractionResult.SUCCESS;
-        }
-
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         if (blockEntity instanceof FermentingCauldronBlockEntity cauldron) {
+            if (level.isClientSide()) {
+                return cauldron.getInteractionResult(
+                        hand,
+                        stack
+                );
+            }
+
             return cauldron.handleInteraction(
                     player,
                     hand,
@@ -96,14 +90,16 @@ public final class FermentingCauldronBlock extends AbstractCauldronBlock impleme
             );
         }
 
-        JolCraftLogs.warn(
-                JolCraftLogTags.BLOCK,
-                "FermentingCauldron at {} has missing/wrong BlockEntity (found={})",
-                JolCraftLogs.roundedPos(pos),
-                blockEntity == null ? "null" : blockEntity.getClass().getName()
-        );
+        if (!level.isClientSide()) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK,
+                    "FermentingCauldron at {} has missing/wrong BlockEntity (found={})",
+                    JolCraftLogs.roundedPos(pos),
+                    blockEntity == null ? "null" : blockEntity.getClass().getName()
+            );
+        }
 
-        return ItemInteractionResult.SUCCESS;
+        return ItemInteractionResult.FAIL;
     }
 
 

@@ -160,6 +160,42 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
     // =====================================================================
 
     /**
+     * Predicts whether the supplied item interaction is handled by the
+     * fermenting barrel without mutating its state.
+     */
+    public ItemInteractionResult getInteractionResult(
+            InteractionHand hand,
+            ItemStack usedItem
+    ) {
+        if (level == null
+                || hand != InteractionHand.MAIN_HAND) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        if (usedItem.is(JolCraftItems.DEV_KEY.get())) {
+            if (!hasBrew()) {
+                return ItemInteractionResult.FAIL;
+            }
+
+            DwarvenBrewAge brewAge = DwarvenBrewAge.fromTicks(
+                    DwarvenBrewFluidHelper.getAge(
+                            getCurrentBrew()
+                    )
+            );
+
+            return brewAge == DwarvenBrewAge.VINTAGE
+                    ? ItemInteractionResult.FAIL
+                    : ItemInteractionResult.SUCCESS;
+        }
+
+        return DwarvenBrewInteractionHelper.getInteractionResult(
+                usedItem,
+                brewFluidHandler,
+                hasBrew()
+        );
+    }
+
+    /**
      * Handles developer aging and normal fluid-container interaction.
      */
     public ItemInteractionResult handleInteraction(
@@ -167,10 +203,17 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             InteractionHand hand,
             ItemStack usedItem
     ) {
-        if (level == null
-                || level.isClientSide
-                || hand != InteractionHand.MAIN_HAND) {
+        if (level == null || level.isClientSide) {
             return ItemInteractionResult.FAIL;
+        }
+
+        ItemInteractionResult interactionResult = getInteractionResult(
+                hand,
+                usedItem
+        );
+
+        if (interactionResult != ItemInteractionResult.SUCCESS) {
+            return interactionResult;
         }
 
         if (usedItem.is(JolCraftItems.DEV_KEY.get())) {
