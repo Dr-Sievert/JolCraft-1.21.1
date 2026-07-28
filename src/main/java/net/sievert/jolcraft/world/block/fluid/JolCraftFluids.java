@@ -34,13 +34,23 @@ public final class JolCraftFluids {
                     JolCraft.MOD_ID
             );
 
+    // =====================================================================
+    // Finished dwarven brew
+    // =====================================================================
+
     public static final DeferredHolder<FluidType, FluidType> DWARVEN_BREW_TYPE =
             FLUID_TYPES.register(
                     JolCraftFluidIds.DWARVEN_BREW,
                     () -> new DwarvenBrewFluidType(
                             FluidType.Properties.create()
-                                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
-                                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
+                                    .sound(
+                                            SoundActions.BUCKET_FILL,
+                                            SoundEvents.BUCKET_FILL
+                                    )
+                                    .sound(
+                                            SoundActions.BUCKET_EMPTY,
+                                            SoundEvents.BUCKET_EMPTY
+                                    )
                     )
             );
 
@@ -54,14 +64,17 @@ public final class JolCraftFluids {
 
     public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_DWARVEN_BREW =
             FLUIDS.register(
-                    JolCraftStrings.underscored(
-                            JolCraftDictionary.FLOWING,
+                    flowingId(
                             JolCraftFluidIds.DWARVEN_BREW
                     ),
                     () -> new BaseFlowingFluid.Flowing(
                             createDwarvenBrewProperties()
                     )
             );
+
+    // =====================================================================
+    // Unfinished dwarven brew
+    // =====================================================================
 
     public static final DeferredHolder<FluidType, FluidType> UNFINISHED_DWARVEN_BREW_TYPE =
             FLUID_TYPES.register(
@@ -81,8 +94,7 @@ public final class JolCraftFluids {
 
     public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_UNFINISHED_DWARVEN_BREW =
             FLUIDS.register(
-                    JolCraftStrings.underscored(
-                            JolCraftDictionary.FLOWING,
+                    flowingId(
                             JolCraftFluidIds.UNFINISHED_DWARVEN_BREW
                     ),
                     () -> new BaseFlowingFluid.Flowing(
@@ -90,8 +102,72 @@ public final class JolCraftFluids {
                     )
             );
 
+    // =====================================================================
+    // Finished yeast
+    // =====================================================================
+
+    public static final DeferredHolder<FluidType, FluidType> YEAST_TYPE =
+            FLUID_TYPES.register(
+                    JolCraftFluidIds.YEAST,
+                    () -> new FluidType(
+                            FluidType.Properties.create()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> YEAST =
+            FLUIDS.register(
+                    JolCraftFluidIds.YEAST,
+                    () -> new BaseFlowingFluid.Source(
+                            createYeastProperties()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_YEAST =
+            FLUIDS.register(
+                    flowingId(
+                            JolCraftFluidIds.YEAST
+                    ),
+                    () -> new BaseFlowingFluid.Flowing(
+                            createYeastProperties()
+                    )
+            );
+
+    // =====================================================================
+    // Unfinished yeast
+    // =====================================================================
+
+    public static final DeferredHolder<FluidType, FluidType> UNFINISHED_YEAST_TYPE =
+            FLUID_TYPES.register(
+                    JolCraftFluidIds.UNFINISHED_YEAST,
+                    () -> new FluidType(
+                            FluidType.Properties.create()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> UNFINISHED_YEAST =
+            FLUIDS.register(
+                    JolCraftFluidIds.UNFINISHED_YEAST,
+                    () -> new BaseFlowingFluid.Source(
+                            createUnfinishedYeastProperties()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_UNFINISHED_YEAST =
+            FLUIDS.register(
+                    flowingId(
+                            JolCraftFluidIds.UNFINISHED_YEAST
+                    ),
+                    () -> new BaseFlowingFluid.Flowing(
+                            createUnfinishedYeastProperties()
+                    )
+            );
+
+    // =====================================================================
+    // Properties
+    // =====================================================================
+
     private static BaseFlowingFluid.Properties createDwarvenBrewProperties() {
-        return new BaseFlowingFluid.Properties(
+        return createProperties(
                 DWARVEN_BREW_TYPE,
                 DWARVEN_BREW,
                 FLOWING_DWARVEN_BREW
@@ -101,15 +177,59 @@ public final class JolCraftFluids {
     }
 
     private static BaseFlowingFluid.Properties createUnfinishedDwarvenBrewProperties() {
-        return new BaseFlowingFluid.Properties(
+        return createProperties(
                 UNFINISHED_DWARVEN_BREW_TYPE,
                 UNFINISHED_DWARVEN_BREW,
                 FLOWING_UNFINISHED_DWARVEN_BREW
         );
     }
 
-    public static void register(IEventBus eventBus) {
-        FLUID_TYPES.register(eventBus);
-        FLUIDS.register(eventBus);
+    private static BaseFlowingFluid.Properties createYeastProperties() {
+        return createProperties(
+                YEAST_TYPE,
+                YEAST,
+                FLOWING_YEAST
+        );
+    }
+
+    private static BaseFlowingFluid.Properties createUnfinishedYeastProperties() {
+        return createProperties(
+                UNFINISHED_YEAST_TYPE,
+                UNFINISHED_YEAST,
+                FLOWING_UNFINISHED_YEAST
+        );
+    }
+
+    private static BaseFlowingFluid.Properties createProperties(
+            DeferredHolder<FluidType, FluidType> fluidType,
+            DeferredHolder<Fluid, FlowingFluid> source,
+            DeferredHolder<Fluid, FlowingFluid> flowing
+    ) {
+        return new BaseFlowingFluid.Properties(
+                fluidType,
+                source,
+                flowing
+        );
+    }
+
+    private static String flowingId(
+            String fluidId
+    ) {
+        return JolCraftStrings.underscored(
+                JolCraftDictionary.FLOWING,
+                fluidId
+        );
+    }
+
+    public static void register(
+            IEventBus eventBus
+    ) {
+        FLUID_TYPES.register(
+                eventBus
+        );
+
+        FLUIDS.register(
+                eventBus
+        );
     }
 }

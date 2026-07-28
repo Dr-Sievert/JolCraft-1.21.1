@@ -30,7 +30,7 @@ public enum FermentingCauldronComponentProvider implements IBlockComponentProvid
             return;
         }
 
-        FluidStack brew = cauldron.getBrewFluid();
+        FluidStack brew = cauldron.getJadeBrewFluid();
 
         if (brew.isEmpty()) {
             return;

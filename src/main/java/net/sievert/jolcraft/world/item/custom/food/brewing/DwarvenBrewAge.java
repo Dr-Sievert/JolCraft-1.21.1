@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.world.item.custom.food.brewing;
 
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
 import net.sievert.jolcraft.util.JolCraftEnumHelper;
@@ -16,7 +17,9 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
 
     @Override
     public String getId() {
-        return name().toLowerCase(Locale.ROOT);
+        return name().toLowerCase(
+                Locale.ROOT
+        );
     }
 
     public int amplifierBonus() {
@@ -25,41 +28,63 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
 
     public String translationKey() {
         return switch (this) {
-            case FRESH -> JolCraftLanguageKeys.BREW_AGE_FRESH;
-            case AGED -> JolCraftLanguageKeys.BREW_AGE_AGED;
-            case MATURED -> JolCraftLanguageKeys.BREW_AGE_MATURED;
-            case VINTAGE -> JolCraftLanguageKeys.BREW_AGE_VINTAGE;
+            case FRESH ->
+                    JolCraftLanguageKeys.BREW_AGE_FRESH;
+            case AGED ->
+                    JolCraftLanguageKeys.BREW_AGE_AGED;
+            case MATURED ->
+                    JolCraftLanguageKeys.BREW_AGE_MATURED;
+            case VINTAGE ->
+                    JolCraftLanguageKeys.BREW_AGE_VINTAGE;
         };
     }
 
-    public static DwarvenBrewAge fromStack(ItemStack stack) {
-        return fromTicks(
-                stack.getOrDefault(
-                        JolCraftDataComponents.BREW_AGE.get(),
-                        0L
+    public static DwarvenBrewAge fromStack(
+            ItemStack stack
+    ) {
+        return FluidUtil.getFluidContained(
+                        stack
                 )
-        );
+                .map(
+                        fluid -> fromTicks(
+                                fluid.getOrDefault(
+                                        JolCraftDataComponents.BREW_AGE.get(),
+                                        0L
+                                )
+                        )
+                )
+                .orElse(
+                        FRESH
+                );
     }
 
-    public static DwarvenBrewAge fromTicks(long ageTicks) {
-        long age = Math.max(0L, ageTicks);
+    public static DwarvenBrewAge fromTicks(
+            long ageTicks
+    ) {
+        long age =
+                Math.max(
+                        0L,
+                        ageTicks
+                );
 
-        if (age > JolCraftTimeHelper.TICKS_PER_DAY * 5L) {
+        if (age >= JolCraftTimeHelper.TICKS_PER_DAY * 5L) {
             return VINTAGE;
         }
 
-        if (age > JolCraftTimeHelper.TICKS_PER_DAY * 3L) {
+        if (age >= JolCraftTimeHelper.TICKS_PER_DAY * 3L) {
             return MATURED;
         }
 
-        if (age > JolCraftTimeHelper.TICKS_PER_DAY) {
+        if (age >= JolCraftTimeHelper.TICKS_PER_DAY) {
             return AGED;
         }
 
         return FRESH;
     }
 
-    public static DwarvenBrewAge byId(String id) {
+    public static DwarvenBrewAge byId(
+            String id
+    ) {
         return JolCraftEnumHelper.byStringId(
                 DwarvenBrewAge.class,
                 id,

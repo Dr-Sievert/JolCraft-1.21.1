@@ -10,5 +10,8 @@ public class JolCraftFluidIds extends JolCraftIds {
 
     public static final String DWARVEN_BREW = JolCraftItemIds.DWARVEN_BREW;
     public static final String UNFINISHED_DWARVEN_BREW = join(JolCraftDictionary.UNFINISHED, DWARVEN_BREW);
+
+    public static final String YEAST = JolCraftItemIds.YEAST;
+    public static final String UNFINISHED_YEAST= join(JolCraftDictionary.UNFINISHED, YEAST);
 }
 

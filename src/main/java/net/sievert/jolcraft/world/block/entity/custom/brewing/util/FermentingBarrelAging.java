@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.world.block.entity.custom.brewing.util;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
@@ -15,7 +16,7 @@ public final class FermentingBarrelAging {
                     JolCraftDictionary.TIME
             );
 
-    private long lastAgeTime;
+    private long lastAgeTime = -1L;
 
     // =====================================================================
     // Projection
@@ -33,20 +34,20 @@ public final class FermentingBarrelAging {
             return FluidStack.EMPTY;
         }
 
-        FluidStack current = storedBrew.copy();
+        FluidStack current =
+                storedBrew.copy();
 
-        long elapsedTicks = getElapsedTicks(
-                currentGameTime
-        );
+        long elapsedTicks =
+                getElapsedTicks(
+                        currentGameTime
+                );
 
-        if (elapsedTicks <= 0L) {
-            return current;
+        if (elapsedTicks > 0L) {
+            DwarvenBrewFluidHelper.addAgeInPlace(
+                    current,
+                    elapsedTicks
+            );
         }
-
-        DwarvenBrewFluidHelper.addAgeInPlace(
-                current,
-                elapsedTicks
-        );
 
         return current;
     }
@@ -68,27 +69,29 @@ public final class FermentingBarrelAging {
             return clear();
         }
 
-        if (lastAgeTime <= 0L) {
+        if (lastAgeTime < 0L) {
             lastAgeTime = currentGameTime;
+
             return true;
         }
 
         long elapsedTicks =
-                currentGameTime - lastAgeTime;
+                getElapsedTicks(
+                        currentGameTime
+                );
 
         if (elapsedTicks <= 0L) {
             return false;
         }
 
-        boolean changed =
-                DwarvenBrewFluidHelper.addAgeInPlace(
-                        storedBrew,
-                        elapsedTicks
-                );
+        DwarvenBrewFluidHelper.addAgeInPlace(
+                storedBrew,
+                elapsedTicks
+        );
 
         lastAgeTime = currentGameTime;
 
-        return changed;
+        return true;
     }
 
     /**
@@ -106,23 +109,23 @@ public final class FermentingBarrelAging {
             return false;
         }
 
-        boolean changed = applyElapsedAge(
+        applyElapsedAge(
                 storedBrew,
                 currentGameTime
         );
 
-        changed |= DwarvenBrewFluidHelper.addAgeInPlace(
+        DwarvenBrewFluidHelper.addAgeInPlace(
                 storedBrew,
                 skippedTicks
         );
 
         lastAgeTime = currentGameTime;
 
-        return changed;
+        return true;
     }
 
     /**
-     * Advances the brew to one tick beyond the next age threshold.
+     * Advances the brew to the next age threshold.
      *
      * @return whether the brew advanced
      */
@@ -144,9 +147,10 @@ public final class FermentingBarrelAging {
                         storedBrew
                 );
 
-        long nextAge = getNextAgeThreshold(
-                currentAge
-        );
+        long nextAge =
+                getNextAgeThreshold(
+                        currentAge
+                );
 
         if (nextAge <= currentAge) {
             return false;
@@ -172,10 +176,11 @@ public final class FermentingBarrelAging {
     ) {
         if (!hasBrew) {
             clear();
+
             return;
         }
 
-        if (lastAgeTime <= 0L) {
+        if (lastAgeTime < 0L) {
             lastAgeTime = currentGameTime;
         }
     }
@@ -187,17 +192,13 @@ public final class FermentingBarrelAging {
     }
 
     public boolean clear() {
-        if (lastAgeTime == 0L) {
+        if (lastAgeTime < 0L) {
             return false;
         }
 
-        lastAgeTime = 0L;
+        lastAgeTime = -1L;
 
         return true;
-    }
-
-    public long getLastAgeTime() {
-        return lastAgeTime;
     }
 
     // =====================================================================
@@ -207,7 +208,7 @@ public final class FermentingBarrelAging {
     public void save(
             CompoundTag tag
     ) {
-        if (lastAgeTime > 0L) {
+        if (lastAgeTime >= 0L) {
             tag.putLong(
                     NBT_LAST_AGE_TIME,
                     lastAgeTime
@@ -219,14 +220,22 @@ public final class FermentingBarrelAging {
             CompoundTag tag,
             boolean hasBrew
     ) {
-        lastAgeTime = hasBrew
-                ? Math.max(
-                0L,
+        if (!hasBrew
+                || !tag.contains(
+                NBT_LAST_AGE_TIME,
+                Tag.TAG_LONG
+        )) {
+            lastAgeTime = -1L;
+
+            return;
+        }
+
+        lastAgeTime = Math.max(
+                -1L,
                 tag.getLong(
                         NBT_LAST_AGE_TIME
                 )
-        )
-                : 0L;
+        );
     }
 
     // =====================================================================
@@ -236,7 +245,7 @@ public final class FermentingBarrelAging {
     private long getElapsedTicks(
             long currentGameTime
     ) {
-        if (lastAgeTime <= 0L) {
+        if (lastAgeTime < 0L) {
             return 0L;
         }
 
@@ -249,20 +258,20 @@ public final class FermentingBarrelAging {
     private static long getNextAgeThreshold(
             long currentAge
     ) {
-        long day = JolCraftTimeHelper.TICKS_PER_DAY;
+        long day =
+                JolCraftTimeHelper.TICKS_PER_DAY;
 
-        if (currentAge <= day) {
-            return day + 1L;
+        if (currentAge < day) {
+            return day;
         }
 
-        if (currentAge <= day * 3L) {
-            return day * 3L + 1L;
+        if (currentAge < day * 3L) {
+            return day * 3L;
         }
 
-        if (currentAge <= day * 5L) {
-            return day * 5L + 1L;
-        }
-
-        return currentAge;
+        return Math.max(
+                currentAge,
+                day * 5L
+        );
     }
 }

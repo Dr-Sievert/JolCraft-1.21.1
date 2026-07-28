@@ -275,6 +275,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String COMPASS = "compass";
     public static final String CONFIG = "config";
     public static final String CONTAINER = "container";
+    public static final String CONTENT = "content";
     public static final String CONTEXT = "context";
     public static final String CONTRACT = "contract";
     public static final String COOLDOWN = "cooldown";
@@ -349,6 +350,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FERMENTING = "fermenting";
     public static final String FESTERLING = "festerling";
     public static final String FLOWER = "flower";
+    public static final String FLUID = "fluid";
     public static final String FOOT = "foot";
     public static final String FORGE = "forge";
     public static final String FORTRESS = "fortress";

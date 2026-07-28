@@ -7,101 +7,26 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidActionResult;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.inventory.JolCraftItemHelper;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
+import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
-import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 public final class DwarvenBrewInteractionHelper {
 
     private DwarvenBrewInteractionHelper() {}
-
-    /**
-     * Extracts one mug-sized quantity from the supplied fluid handler.
-     *
-     * The caller is responsible for confirming that mug extraction is
-     * currently allowed, such as requiring finished brew in a cauldron.
-     *
-     * Creative players receive a filled mug without draining the handler.
-     */
-    public static ItemInteractionResult tryExtractMug(
-            Player player,
-            InteractionHand hand,
-            ItemStack emptyMug,
-            IFluidHandler fluidHandler,
-            int storedAmount
-    ) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        int drainAmount = DwarvenBrewFluidHelper.getMugDrainAmount(
-                storedAmount
-        );
-
-        if (drainAmount <= 0) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        FluidStack simulated = fluidHandler.drain(
-                drainAmount,
-                IFluidHandler.FluidAction.SIMULATE
-        );
-
-        if (simulated.isEmpty()
-                || simulated.getAmount() != drainAmount) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        FluidStack drained = fluidHandler.drain(
-                drainAmount,
-                player.isCreative()
-                        ? IFluidHandler.FluidAction.SIMULATE
-                        : IFluidHandler.FluidAction.EXECUTE
-        );
-
-        if (drained.isEmpty()
-                || drained.getAmount() != drainAmount) {
-            return ItemInteractionResult.FAIL;
-        }
-
-        ItemStack output =
-                DwarvenBrewFluidHelper.createBrewMug(
-                        drained
-                );
-
-        player.awardStat(
-                Stats.ITEM_USED.get(
-                        emptyMug.getItem()
-                )
-        );
-
-        JolCraftItemHelper.consume(
-                serverPlayer,
-                hand
-        );
-
-        JolCraftItemInsertionHelper.tryInsertIntoInventoryOrDrop(
-                serverPlayer,
-                output
-        );
-
-        PlaySound.bottleFill(
-                player,
-                0.8F,
-                0.9F
-        );
-
-        return ItemInteractionResult.SUCCESS;
-    }
-
 
     public static ItemInteractionResult tryInteractFluidContainer(
             Level level,
@@ -110,79 +35,84 @@ public final class DwarvenBrewInteractionHelper {
             InteractionHand hand,
             ItemStack usedItem,
             IFluidHandler fluidHandler,
-            boolean hasExtractableFluid
+            boolean hasFinishedFluid
     ) {
-        if (level.isClientSide) {
-            return ItemInteractionResult.FAIL;
-        }
+        FluidStack storedFluid =
+                fluidHandler.getFluidInTank(
+                        0
+                );
 
         if (usedItem.is(
                 JolCraftItems.GLASS_MUG.get()
         )) {
-            if (!hasExtractableFluid) {
-                return ItemInteractionResult.FAIL;
-            }
-
-            return tryExtractMug(
+            return tryExtract(
+                    level,
+                    pos,
                     player,
                     hand,
                     usedItem,
                     fluidHandler,
-                    fluidHandler.getFluidInTank(
-                            0
-                    ).getAmount()
+                    JolCraftItems.DWARVEN_BREW.get(),
+                    DwarvenBrewFluidHelper.getMugDrainAmount(
+                            storedFluid.getAmount()
+                    ),
+                    hasFinishedFluid,
+                    true
             );
         }
 
         if (usedItem.is(
                 JolCraftItems.DWARVEN_BREW.get()
         )) {
-            if (!(player instanceof ServerPlayer serverPlayer)) {
-                return ItemInteractionResult.FAIL;
-            }
+            return tryInsertBrewMug(
+                    level,
+                    pos,
+                    player,
+                    hand,
+                    usedItem,
+                    fluidHandler
+            );
+        }
 
-            int storedAmount =
-                    fluidHandler.getFluidInTank(
-                            0
-                    ).getAmount();
+        if (usedItem.is(
+                Items.GLASS_BOTTLE
+        )) {
+            return tryExtract(
+                    level,
+                    pos,
+                    player,
+                    hand,
+                    usedItem,
+                    fluidHandler,
+                    JolCraftItems.YEAST.get(),
+                    JolCraftBrewingItems.YEAST_BOTTLE_VOLUME,
+                    hasFinishedFluid,
+                    false
+            );
+        }
 
-            int fillAmount =
-                    DwarvenBrewFluidHelper.getMugFillAmount(
-                            storedAmount,
-                            fluidHandler.getTankCapacity(
-                                    0
-                            )
-                    );
+        if (storedFluid.is(
+                JolCraftFluids.YEAST.get()
+        )) {
+            return ItemInteractionResult.FAIL;
+        }
 
-            if (fillAmount <= 0) {
-                return ItemInteractionResult.FAIL;
-            }
+        FluidActionResult fillResult =
+                FluidUtil.tryFillContainer(
+                        usedItem,
+                        fluidHandler,
+                        Integer.MAX_VALUE,
+                        player,
+                        true
+                );
 
-            FluidStack incoming =
-                    DwarvenBrewFluidHelper.createBrewFluidFromMug(
-                            usedItem,
-                            fillAmount
-                    );
-
-            int simulated =
-                    fluidHandler.fill(
-                            incoming,
-                            IFluidHandler.FluidAction.SIMULATE
-                    );
-
-            if (simulated != fillAmount) {
-                return ItemInteractionResult.FAIL;
-            }
-
-            int inserted =
-                    fluidHandler.fill(
-                            incoming,
-                            IFluidHandler.FluidAction.EXECUTE
-                    );
-
-            if (inserted != fillAmount) {
-                return ItemInteractionResult.FAIL;
-            }
+        if (fillResult.isSuccess()) {
+            giveFilledContainer(
+                    player,
+                    hand,
+                    usedItem,
+                    fillResult.getResult()
+            );
 
             player.awardStat(
                     Stats.ITEM_USED.get(
@@ -190,37 +120,7 @@ public final class DwarvenBrewInteractionHelper {
                     )
             );
 
-            JolCraftItemHelper.consume(
-                    serverPlayer,
-                    hand
-            );
-
-            JolCraftSoundHelper.block(
-                    level,
-                    pos,
-                    SoundEvents.BOTTLE_EMPTY,
-                    0.8F,
-                    0.9F
-            );
-
             return ItemInteractionResult.SUCCESS;
-        }
-
-        if (player.isCreative()
-                && hasExtractableFluid) {
-            ItemInteractionResult creativeResult =
-                    tryCreativeExtraction(
-                            level,
-                            pos,
-                            player,
-                            usedItem,
-                            fluidHandler
-                    );
-
-            if (creativeResult
-                    == ItemInteractionResult.SUCCESS) {
-                return creativeResult;
-            }
         }
 
         if (!FluidUtil.interactWithFluidHandler(
@@ -240,32 +140,161 @@ public final class DwarvenBrewInteractionHelper {
         return ItemInteractionResult.SUCCESS;
     }
 
-    private static ItemInteractionResult tryCreativeExtraction(
+    private static ItemInteractionResult tryInsertBrewMug(
             Level level,
             BlockPos pos,
             Player player,
+            InteractionHand hand,
             ItemStack usedItem,
             IFluidHandler fluidHandler
     ) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
+        FluidStack mugBrew =
+                DwarvenBrewFluidHelper.getBrewFromMug(
+                        usedItem
+                );
+
+        if (mugBrew.isEmpty()) {
             return ItemInteractionResult.FAIL;
         }
 
-        FluidActionResult result = FluidUtil.tryFillContainer(
-                usedItem,
-                fluidHandler,
-                Integer.MAX_VALUE,
-                player,
-                false
+        int mugAmount =
+                mugBrew.getAmount();
+
+        if (mugAmount != DwarvenBrewFluidHelper.MUG_VOLUME
+                && mugAmount != DwarvenBrewFluidHelper.FIRST_MUG_VOLUME) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        int remainingCapacity =
+                fluidHandler.getTankCapacity(
+                        0
+                ) - fluidHandler.getFluidInTank(
+                        0
+                ).getAmount();
+
+        int fillAmount =
+                mugAmount;
+
+        if (mugAmount == DwarvenBrewFluidHelper.MUG_VOLUME
+                && remainingCapacity
+                == DwarvenBrewFluidHelper.FIRST_MUG_VOLUME) {
+            fillAmount =
+                    DwarvenBrewFluidHelper.FIRST_MUG_VOLUME;
+        } else if (remainingCapacity < mugAmount) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        FluidStack insertedBrew =
+                mugBrew.copy();
+
+        insertedBrew.setAmount(
+                fillAmount
         );
 
-        if (!result.isSuccess()) {
+        int accepted =
+                fluidHandler.fill(
+                        insertedBrew,
+                        IFluidHandler.FluidAction.SIMULATE
+                );
+
+        if (accepted != fillAmount) {
             return ItemInteractionResult.FAIL;
         }
 
-        JolCraftItemInsertionHelper.tryInsertIntoInventoryOrDrop(
-                serverPlayer,
-                result.getResult()
+        int inserted =
+                fluidHandler.fill(
+                        insertedBrew,
+                        IFluidHandler.FluidAction.EXECUTE
+                );
+
+        if (inserted != fillAmount) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        if (!player.isCreative()) {
+            player.setItemInHand(
+                    hand,
+                    ItemUtils.createFilledResult(
+                            usedItem,
+                            player,
+                            new ItemStack(
+                                    JolCraftItems.GLASS_MUG.get()
+                            )
+                    )
+            );
+        }
+
+        player.awardStat(
+                Stats.ITEM_USED.get(
+                        usedItem.getItem()
+                )
+        );
+
+        JolCraftSoundHelper.block(
+                level,
+                pos,
+                SoundEvents.BOTTLE_EMPTY,
+                1.0F,
+                1.0F
+        );
+
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    private static ItemInteractionResult tryExtract(
+            Level level,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            ItemStack usedItem,
+            IFluidHandler fluidHandler,
+            Item filledContainer,
+            int amount,
+            boolean hasFinishedFluid,
+            boolean brew
+    ) {
+        if (!hasFinishedFluid
+                || amount <= 0) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        FluidStack simulated =
+                fluidHandler.drain(
+                        amount,
+                        IFluidHandler.FluidAction.SIMULATE
+                );
+
+        if (simulated.getAmount() != amount
+                || !isExpectedFluid(
+                simulated,
+                brew
+        )) {
+            return ItemInteractionResult.FAIL;
+        }
+
+        FluidStack extracted =
+                fluidHandler.drain(
+                        amount,
+                        IFluidHandler.FluidAction.EXECUTE
+                );
+
+        ItemStack result =
+                new ItemStack(
+                        filledContainer
+                );
+
+        result.set(
+                JolCraftDataComponents.FLUID_CONTENT.get(),
+                SimpleFluidContent.copyOf(
+                        extracted
+                )
+        );
+
+        giveFilledContainer(
+                player,
+                hand,
+                usedItem,
+                result
         );
 
         player.awardStat(
@@ -277,11 +306,51 @@ public final class DwarvenBrewInteractionHelper {
         JolCraftSoundHelper.block(
                 level,
                 pos,
-                SoundEvents.BUCKET_FILL,
+                SoundEvents.BOTTLE_FILL,
                 1.0F,
                 1.0F
         );
 
         return ItemInteractionResult.SUCCESS;
+    }
+
+    private static void giveFilledContainer(
+            Player player,
+            InteractionHand hand,
+            ItemStack usedItem,
+            ItemStack filledContainer
+    ) {
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        if (!player.isCreative()) {
+            usedItem.shrink(
+                    1
+            );
+        } else if (player.getInventory().contains(
+                filledContainer
+        )) {
+            return;
+        }
+
+        JolCraftItemInsertionHelper
+                .tryInsertIntoInventoryOrDrop(
+                        serverPlayer,
+                        filledContainer
+                );
+    }
+
+    private static boolean isExpectedFluid(
+            FluidStack fluid,
+            boolean brew
+    ) {
+        return brew
+                ? fluid.is(
+                JolCraftFluids.DWARVEN_BREW.get()
+        )
+                : fluid.is(
+                JolCraftFluids.YEAST.get()
+        );
     }
 }

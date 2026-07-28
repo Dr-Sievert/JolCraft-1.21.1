@@ -10,7 +10,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
@@ -21,7 +20,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.FermentingCauldronRecipeBuild
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
-import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
+import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,15 +63,8 @@ public record FermentingCauldronRecipesSubProvider(
                 null,
                 1200,
                 3,
-                0x40B14A
-        );
-
-        fermentingExtract(
-                output,
-                tracking,
-                Items.GLASS_BOTTLE,
-                Items.SUGAR,
-                JolCraftItems.YEAST.get()
+                0x40B14A,
+                FermentingCauldronRecipe.OutputFluid.YEAST
         );
 
         fermenting(
@@ -144,15 +136,8 @@ public record FermentingCauldronRecipesSubProvider(
                 JolCraftTags.Items.HOPS,
                 6000,
                 60,
-                0x9A652B
-        );
-
-        fermentingExtract(
-                output,
-                tracking,
-                JolCraftItems.GLASS_MUG.get(),
-                JolCraftItems.YEAST.get(),
-                JolCraftItems.DWARVEN_BREW.get()
+                0x9A652B,
+                FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW
         );
     }
 
@@ -167,22 +152,40 @@ public record FermentingCauldronRecipesSubProvider(
     ) {
         FermentingCauldronRecipeBuilder builder =
                 FermentingCauldronRecipeBuilder.create()
-                        .id(recipeId(
-                                ingredient,
-                                "ferment",
-                                lastIngredient
-                        ))
-                        .ingredient(ItemInput.item(ingredient))
-                        .brewTicks(brewTicks)
-                        .bubbleTicks(bubbleTicks)
-                        .brewColor(argb(colorRgb))
-                        .finalizeBrew(false)
-                        .noEffect()
-                        .noExtract();
+                        .id(
+                                recipeId(
+                                        ingredient,
+                                        "ferment",
+                                        lastIngredient
+                                )
+                        )
+                        .ingredient(
+                                ItemInput.item(
+                                        ingredient
+                                )
+                        )
+                        .brewTicks(
+                                brewTicks
+                        )
+                        .bubbleTicks(
+                                bubbleTicks
+                        )
+                        .brewColor(
+                                argb(
+                                        colorRgb
+                                )
+                        )
+                        .dwarvenBrew()
+                        .finalizeBrew(
+                                false
+                        )
+                        .noEffect();
 
         if (lastIngredient != null) {
             builder.lastIngredient(
-                    ItemInput.item(lastIngredient)
+                    ItemInput.item(
+                            lastIngredient
+                    )
             );
         } else {
             builder.noLastIngredient();
@@ -202,26 +205,47 @@ public record FermentingCauldronRecipesSubProvider(
             @Nullable TagKey<Item> lastIngredientTag,
             int brewTicks,
             int bubbleTicks,
-            int colorRgb
+            int colorRgb,
+            @NotNull FermentingCauldronRecipe.OutputFluid outputFluid
     ) {
         FermentingCauldronRecipeBuilder builder =
                 FermentingCauldronRecipeBuilder.create()
-                        .id(recipeId(
-                                ingredient,
-                                "finalize",
-                                lastIngredientTag
-                        ))
-                        .ingredient(ItemInput.item(ingredient))
-                        .brewTicks(brewTicks)
-                        .bubbleTicks(bubbleTicks)
-                        .brewColor(argb(colorRgb))
-                        .finalizeBrew(true)
-                        .noEffect()
-                        .noExtract();
+                        .id(
+                                recipeId(
+                                        ingredient,
+                                        "finalize",
+                                        lastIngredientTag
+                                )
+                        )
+                        .ingredient(
+                                ItemInput.item(
+                                        ingredient
+                                )
+                        )
+                        .brewTicks(
+                                brewTicks
+                        )
+                        .bubbleTicks(
+                                bubbleTicks
+                        )
+                        .brewColor(
+                                argb(
+                                        colorRgb
+                                )
+                        )
+                        .outputFluid(
+                                outputFluid
+                        )
+                        .finalizeBrew(
+                                true
+                        )
+                        .noEffect();
 
         if (lastIngredientTag != null) {
             builder.lastIngredient(
-                    ItemInput.tag(lastIngredientTag)
+                    ItemInput.tag(
+                            lastIngredientTag
+                    )
             );
         } else {
             builder.noLastIngredient();
@@ -248,26 +272,46 @@ public record FermentingCauldronRecipesSubProvider(
     ) {
         FermentingCauldronRecipeBuilder builder =
                 FermentingCauldronRecipeBuilder.create()
-                        .id(recipeId(
-                                ingredient,
-                                "effect",
-                                lastIngredientTag
-                        ))
-                        .ingredient(ItemInput.item(ingredient))
-                        .brewTicks(brewTicks)
-                        .bubbleTicks(bubbleTicks)
-                        .brewColor(argb(colorRgb))
-                        .finalizeBrew(false)
-                        .effect(effect(
-                                effect,
-                                duration,
-                                amplifier
-                        ))
-                        .noExtract();
+                        .id(
+                                recipeId(
+                                        ingredient,
+                                        "effect",
+                                        lastIngredientTag
+                                )
+                        )
+                        .ingredient(
+                                ItemInput.item(
+                                        ingredient
+                                )
+                        )
+                        .brewTicks(
+                                brewTicks
+                        )
+                        .bubbleTicks(
+                                bubbleTicks
+                        )
+                        .brewColor(
+                                argb(
+                                        colorRgb
+                                )
+                        )
+                        .dwarvenBrew()
+                        .finalizeBrew(
+                                false
+                        )
+                        .effect(
+                                effect(
+                                        effect,
+                                        duration,
+                                        amplifier
+                                )
+                        );
 
         if (lastIngredientTag != null) {
             builder.lastIngredient(
-                    ItemInput.tag(lastIngredientTag)
+                    ItemInput.tag(
+                            lastIngredientTag
+                    )
             );
         } else {
             builder.noLastIngredient();
@@ -280,44 +324,11 @@ public record FermentingCauldronRecipesSubProvider(
         );
     }
 
-    private void fermentingExtract(
-            @NotNull RecipeOutput output,
-            @NotNull JolCraftDataTracking tracking,
-            @NotNull ItemLike extractor,
-            @Nullable ItemLike lastIngredient,
-            @NotNull ItemLike result
+    private static int argb(
+            int colorRgb
     ) {
-        FermentingCauldronRecipeBuilder builder =
-                FermentingCauldronRecipeBuilder.create()
-                        .id(recipeId(
-                                extractor,
-                                "extract",
-                                result
-                        ))
-                        .ingredient(ItemInput.item(extractor))
-                        .finalizeBrew(false)
-                        .noEffect()
-                        .noBrewColor()
-                        .extract(itemResult(result));
-
-        if (lastIngredient != null) {
-            builder.lastIngredient(
-                    ItemInput.item(lastIngredient)
-            );
-        } else {
-            builder.noLastIngredient();
-        }
-
-        emit(
-                output,
-                tracking,
-                builder.buildValidated()
-        );
-    }
-
-    private static int argb(int colorRgb) {
         return 0xFF000000
-                | (colorRgb & 0xFFFFFF);
+                | colorRgb & 0xFFFFFF;
     }
 
     private static EffectOutput effect(
@@ -334,22 +345,17 @@ public record FermentingCauldronRecipesSubProvider(
         );
     }
 
-    private static ItemOutput itemResult(
-            ItemLike item
-    ) {
-        return ItemOutput.item(
-                LootItem.lootTableItem(item)
-        );
-    }
-
     private static String recipeId(
             ItemLike ingredient,
             String operation,
             @Nullable ItemLike relatedItem
     ) {
-        String suffix = relatedItem == null
-                ? "empty"
-                : itemPath(relatedItem);
+        String suffix =
+                relatedItem == null
+                        ? "empty"
+                        : itemPath(
+                        relatedItem
+                );
 
         return recipeId(
                 ingredient,
@@ -363,11 +369,15 @@ public record FermentingCauldronRecipesSubProvider(
             String operation,
             @Nullable TagKey<Item> relatedTag
     ) {
-        String suffix = relatedTag == null
-                ? "empty"
-                : relatedTag.location()
-                .getPath()
-                .replace('/', '_');
+        String suffix =
+                relatedTag == null
+                        ? "empty"
+                        : relatedTag.location()
+                        .getPath()
+                        .replace(
+                                '/',
+                                '_'
+                        );
 
         return recipeId(
                 ingredient,
@@ -381,7 +391,9 @@ public record FermentingCauldronRecipesSubProvider(
             String operation,
             String suffix
     ) {
-        return itemPath(ingredient)
+        return itemPath(
+                ingredient
+        )
                 + "_"
                 + operation
                 + "_"
@@ -392,8 +404,13 @@ public record FermentingCauldronRecipesSubProvider(
             ItemLike item
     ) {
         return BuiltInRegistries.ITEM
-                .getKey(item.asItem())
+                .getKey(
+                        item.asItem()
+                )
                 .getPath()
-                .replace('/', '_');
+                .replace(
+                        '/',
+                        '_'
+                );
     }
 }

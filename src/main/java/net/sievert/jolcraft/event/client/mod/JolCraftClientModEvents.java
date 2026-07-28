@@ -186,6 +186,18 @@ public final class JolCraftClientModEvents {
                 JolCraftFluids.UNFINISHED_DWARVEN_BREW_TYPE.get(),
                 0xFF805D37
         );
+
+        registerTintedFluid(
+                event,
+                JolCraftFluids.YEAST_TYPE.get(),
+                0xFF40B14A
+        );
+
+        registerTintedFluid(
+                event,
+                JolCraftFluids.UNFINISHED_YEAST_TYPE.get(),
+                0xFF7EB140
+        );
     }
 
     private static void registerTintedFluid(

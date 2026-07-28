@@ -5,6 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -93,6 +94,31 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
         );
 
         return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            BlockHitResult hit
+    ) {
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        if (blockEntity instanceof FermentingBarrelBlockEntity barrel) {
+            return barrel.inspectBrewAge(
+                    player
+            )
+                    ? InteractionResult.SUCCESS
+                    : InteractionResult.PASS;
+        }
+
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -185,4 +211,3 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 }
-

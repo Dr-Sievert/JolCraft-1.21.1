@@ -26,9 +26,9 @@ import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParam
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
-import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -36,17 +36,21 @@ import java.util.function.Consumer;
 public record FermentingCauldronRecipe(
         ItemInput ingredient,
         Optional<ItemInput> lastIngredient,
-        Optional<ItemOutput> extract,
         Optional<EffectOutput> effect,
         int brewTicks,
         int bubbleTicks,
         int brewColor,
+        OutputFluid outputFluid,
         boolean finalizeBrew
 ) implements CustomRecipe<FermentingCauldronRecipeInput> {
 
     public static final int DEFAULT_BREW_TICKS = 1;
     public static final int DEFAULT_BUBBLE_TICKS = 1;
     public static final int DEFAULT_BREW_COLOR = -1;
+
+    public static final OutputFluid DEFAULT_OUTPUT_FLUID =
+            OutputFluid.DWARVEN_BREW;
+
     public static final boolean DEFAULT_FINALIZE_BREW = false;
 
     private static final String LAST_INGREDIENT_KEY =
@@ -58,18 +62,27 @@ public record FermentingCauldronRecipe(
     private static final String BREW_TICKS_KEY =
             JolCraftStrings.underscored(
                     JolCraftDictionary.BREW,
-                    JolCraftStrings.plural(JolCraftDictionary.TICK)
+                    JolCraftStrings.plural(
+                            JolCraftDictionary.TICK
+                    )
             );
 
     private static final String BUBBLE_TICKS_KEY =
             JolCraftStrings.underscored(
                     JolCraftDictionary.BUBBLE,
-                    JolCraftStrings.plural(JolCraftDictionary.TICK)
+                    JolCraftStrings.plural(
+                            JolCraftDictionary.TICK
+                    )
             );
+
+    private static final String OUTPUT_FLUID_KEY =
+            "output_fluid";
 
     private static final LootContextParamSet INPUT_CONTEXT_PARAMS =
             new LootContextParamSet.Builder()
-                    .required(JolCraftRecipeContextParams.INPUT_ITEM)
+                    .required(
+                            JolCraftRecipeContextParams.INPUT_ITEM
+                    )
                     .build();
 
     public FermentingCauldronRecipe {
@@ -78,20 +91,23 @@ public record FermentingCauldronRecipe(
                 JolCraftDictionary.INGREDIENT
         );
 
-        lastIngredient = Objects.requireNonNullElse(
-                lastIngredient,
-                Optional.empty()
-        );
+        lastIngredient =
+                Objects.requireNonNullElse(
+                        lastIngredient,
+                        Optional.empty()
+                );
 
-        extract = Objects.requireNonNullElse(
-                extract,
-                Optional.empty()
-        );
+        effect =
+                Objects.requireNonNullElse(
+                        effect,
+                        Optional.empty()
+                );
 
-        effect = Objects.requireNonNullElse(
-                effect,
-                Optional.empty()
-        );
+        outputFluid =
+                Objects.requireNonNullElse(
+                        outputFluid,
+                        DEFAULT_OUTPUT_FLUID
+                );
     }
 
     @Override
@@ -136,26 +152,6 @@ public record FermentingCauldronRecipe(
         return lastIngredientStack.isEmpty();
     }
 
-    /**
-     * Generates extraction results.
-     *
-     * The cauldron executor decides whether generated stacks are inserted
-     * into the player's inventory, returned to their hand, or dropped.
-     */
-    public void generateExtract(
-            @NotNull LootContext context,
-            @NotNull FermentingCauldronRecipeInput input,
-            @NotNull Consumer<ItemStack> output
-    ) {
-        extract.ifPresent(value ->
-                value.generate(
-                        context,
-                        input,
-                        output
-                )
-        );
-    }
-
     public void generateEffect(
             @NotNull LootContext context,
             @NotNull FermentingCauldronRecipeInput input,
@@ -170,10 +166,6 @@ public record FermentingCauldronRecipe(
         );
     }
 
-    public boolean hasExtract() {
-        return extract.isPresent();
-    }
-
     public boolean hasEffect() {
         return effect.isPresent();
     }
@@ -182,14 +174,18 @@ public record FermentingCauldronRecipe(
     public @NotNull RecipeSerializer<
             ? extends Recipe<FermentingCauldronRecipeInput>
             > getSerializer() {
-        return JolCraftRecipes.FERMENTING_CAULDRON_SERIALIZER.get();
+        return JolCraftRecipes
+                .FERMENTING_CAULDRON_SERIALIZER
+                .get();
     }
 
     @Override
     public @NotNull RecipeType<
             ? extends Recipe<FermentingCauldronRecipeInput>
             > getType() {
-        return JolCraftRecipes.FERMENTING_CAULDRON_TYPE.get();
+        return JolCraftRecipes
+                .FERMENTING_CAULDRON_TYPE
+                .get();
     }
 
     private static boolean matchesInput(
@@ -197,16 +193,57 @@ public record FermentingCauldronRecipe(
             @NotNull ItemStack stack,
             @NotNull ItemInput input
     ) {
-        LootContext context = JolCraftRecipeContexts.create(
-                level,
-                INPUT_CONTEXT_PARAMS,
-                builder -> builder.withParameter(
-                        JolCraftRecipeContextParams.INPUT_ITEM,
-                        stack
-                )
-        );
+        LootContext context =
+                JolCraftRecipeContexts.create(
+                        level,
+                        INPUT_CONTEXT_PARAMS,
+                        builder -> builder.withParameter(
+                                JolCraftRecipeContextParams.INPUT_ITEM,
+                                stack
+                        )
+                );
 
-        return input.condition().test(context);
+        return input.condition()
+                .test(
+                        context
+                );
+    }
+
+    public enum OutputFluid {
+        DWARVEN_BREW,
+        YEAST;
+
+        public static final Codec<OutputFluid> CODEC =
+                Codec.STRING.comapFlatMap(
+                        OutputFluid::decode,
+                        OutputFluid::getId
+                );
+
+        public String getId() {
+            return name().toLowerCase(
+                    Locale.ROOT
+            );
+        }
+
+        private static DataResult<OutputFluid> decode(
+                String id
+        ) {
+            for (OutputFluid value : values()) {
+                if (value.getId()
+                        .equals(
+                                id
+                        )) {
+                    return DataResult.success(
+                            value
+                    );
+                }
+            }
+
+            return DataResult.error(
+                    () -> "unknown fermenting cauldron output fluid: "
+                            + id
+            );
+        }
     }
 
     public static final class Serializer
@@ -220,15 +257,16 @@ public record FermentingCauldronRecipe(
 
         private static final Codec<Integer> COLOR_CODEC =
                 Codec.either(
-                        Codec.INT,
-                        Codec.STRING
-                ).comapFlatMap(
-                        either -> either.map(
-                                DataResult::success,
-                                Serializer::decodeColor
-                        ),
-                        Either::left
-                );
+                                Codec.INT,
+                                Codec.STRING
+                        )
+                        .comapFlatMap(
+                                either -> either.map(
+                                        DataResult::success,
+                                        Serializer::decodeColor
+                                ),
+                                Either::left
+                        );
 
         private static final StreamCodec<
                 RegistryFriendlyByteBuf,
@@ -236,14 +274,6 @@ public record FermentingCauldronRecipe(
                 > ITEM_INPUT_STREAM_CODEC =
                 ByteBufCodecs.fromCodecWithRegistries(
                         ItemInput.CODEC
-                );
-
-        private static final StreamCodec<
-                RegistryFriendlyByteBuf,
-                ItemOutput
-                > ITEM_OUTPUT_STREAM_CODEC =
-                ByteBufCodecs.fromCodecWithRegistries(
-                        ItemOutput.CODEC.codec()
                 );
 
         private static final StreamCodec<
@@ -258,98 +288,98 @@ public record FermentingCauldronRecipe(
                 RegistryFriendlyByteBuf,
                 Optional<ItemInput>
                 > OPTIONAL_ITEM_INPUT_STREAM_CODEC =
-                optional(ITEM_INPUT_STREAM_CODEC);
-
-        private static final StreamCodec<
-                RegistryFriendlyByteBuf,
-                Optional<ItemOutput>
-                > OPTIONAL_ITEM_OUTPUT_STREAM_CODEC =
-                optional(ITEM_OUTPUT_STREAM_CODEC);
+                optional(
+                        ITEM_INPUT_STREAM_CODEC
+                );
 
         private static final StreamCodec<
                 RegistryFriendlyByteBuf,
                 Optional<EffectOutput>
                 > OPTIONAL_EFFECT_OUTPUT_STREAM_CODEC =
-                optional(EFFECT_OUTPUT_STREAM_CODEC);
+                optional(
+                        EFFECT_OUTPUT_STREAM_CODEC
+                );
 
         public static final MapCodec<FermentingCauldronRecipe> CODEC =
                 RecordCodecBuilder
                         .<FermentingCauldronRecipe>mapCodec(instance ->
                                 instance.group(
-                                        ItemInput.CODEC
-                                                .fieldOf(
-                                                        JolCraftDictionary.INGREDIENT
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::ingredient
-                                                ),
+                                                ItemInput.CODEC
+                                                        .fieldOf(
+                                                                JolCraftDictionary.INGREDIENT
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::ingredient
+                                                        ),
 
-                                        ItemInput.CODEC
-                                                .optionalFieldOf(
-                                                        LAST_INGREDIENT_KEY
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::lastIngredient
-                                                ),
+                                                ItemInput.CODEC
+                                                        .optionalFieldOf(
+                                                                LAST_INGREDIENT_KEY
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::lastIngredient
+                                                        ),
 
-                                        ItemOutput.CODEC
-                                                .codec()
-                                                .optionalFieldOf(
-                                                        JolCraftDictionary.EXTRACT
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::extract
-                                                ),
+                                                EffectOutput.CODEC
+                                                        .codec()
+                                                        .optionalFieldOf(
+                                                                JolCraftDictionary.EFFECT
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::effect
+                                                        ),
 
-                                        EffectOutput.CODEC
-                                                .codec()
-                                                .optionalFieldOf(
-                                                        JolCraftDictionary.EFFECT
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::effect
-                                                ),
+                                                POSITIVE_TICKS
+                                                        .optionalFieldOf(
+                                                                BREW_TICKS_KEY,
+                                                                DEFAULT_BREW_TICKS
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::brewTicks
+                                                        ),
 
-                                        POSITIVE_TICKS
-                                                .optionalFieldOf(
-                                                        BREW_TICKS_KEY,
-                                                        DEFAULT_BREW_TICKS
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::brewTicks
-                                                ),
+                                                POSITIVE_TICKS
+                                                        .optionalFieldOf(
+                                                                BUBBLE_TICKS_KEY,
+                                                                DEFAULT_BUBBLE_TICKS
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::bubbleTicks
+                                                        ),
 
-                                        POSITIVE_TICKS
-                                                .optionalFieldOf(
-                                                        BUBBLE_TICKS_KEY,
-                                                        DEFAULT_BUBBLE_TICKS
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::bubbleTicks
-                                                ),
+                                                COLOR_CODEC
+                                                        .optionalFieldOf(
+                                                                JolCraftDictionary.COLOR,
+                                                                DEFAULT_BREW_COLOR
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::brewColor
+                                                        ),
 
-                                        COLOR_CODEC
-                                                .optionalFieldOf(
-                                                        JolCraftDictionary.COLOR,
-                                                        DEFAULT_BREW_COLOR
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::brewColor
-                                                ),
+                                                OutputFluid.CODEC
+                                                        .optionalFieldOf(
+                                                                OUTPUT_FLUID_KEY,
+                                                                DEFAULT_OUTPUT_FLUID
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::outputFluid
+                                                        ),
 
-                                        Codec.BOOL
-                                                .optionalFieldOf(
-                                                        JolCraftDictionary.FINALIZE,
-                                                        DEFAULT_FINALIZE_BREW
-                                                )
-                                                .forGetter(
-                                                        FermentingCauldronRecipe::finalizeBrew
-                                                )
-                                ).apply(
-                                        instance,
-                                        FermentingCauldronRecipe::new
-                                )
-                        ).flatXmap(
+                                                Codec.BOOL
+                                                        .optionalFieldOf(
+                                                                JolCraftDictionary.FINALIZE,
+                                                                DEFAULT_FINALIZE_BREW
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::finalizeBrew
+                                                        )
+                                        )
+                                        .apply(
+                                                instance,
+                                                FermentingCauldronRecipe::new
+                                        )
+                        )
+                        .flatXmap(
                                 Serializer::validate,
                                 DataResult::success
                         );
@@ -357,10 +387,11 @@ public record FermentingCauldronRecipe(
         public static final StreamCodec<
                 RegistryFriendlyByteBuf,
                 FermentingCauldronRecipe
-                > STREAM_CODEC = StreamCodec.of(
-                Serializer::encode,
-                Serializer::decode
-        );
+                > STREAM_CODEC =
+                StreamCodec.of(
+                        Serializer::encode,
+                        Serializer::decode
+                );
 
         @Override
         public @NotNull MapCodec<FermentingCauldronRecipe> codec() {
@@ -379,7 +410,9 @@ public record FermentingCauldronRecipe(
                 FermentingCauldronRecipe recipe
         ) {
             DataResult<FermentingCauldronRecipe> base =
-                    RecipeValidation.validate(recipe)
+                    RecipeValidation.validate(
+                                    recipe
+                            )
                             .require(
                                     recipe.ingredient(),
                                     JolCraftDictionary.INGREDIENT
@@ -387,10 +420,6 @@ public record FermentingCauldronRecipe(
                             .require(
                                     recipe.lastIngredient(),
                                     LAST_INGREDIENT_KEY
-                            )
-                            .require(
-                                    recipe.extract(),
-                                    JolCraftDictionary.EXTRACT
                             )
                             .require(
                                     recipe.effect(),
@@ -406,38 +435,24 @@ public record FermentingCauldronRecipe(
                                     () -> BUBBLE_TICKS_KEY
                                             + " must be >= 1"
                             )
-                            .rule(
-                                    recipe.lastIngredient().isPresent()
-                                            || recipe.extract().isEmpty(),
-                                    () -> JolCraftDictionary.EXTRACT
-                                            + " requires "
-                                            + LAST_INGREDIENT_KEY
-                            )
                             .done();
 
             if (base.error().isPresent()) {
                 return base;
             }
 
-            if (recipe.extract().isPresent()) {
-                DataResult<Void> extractValidation =
-                        RecipeValidation.validateOutput(
-                                recipe.extract().get(),
-                                INPUT_CONTEXT_PARAMS
-                        );
+            if (recipe.outputFluid() == OutputFluid.YEAST
+                    && !recipe.finalizeBrew()) {
+                return DataResult.error(
+                        () -> "yeast output must finalize the process"
+                );
+            }
 
-                if (extractValidation.error().isPresent()) {
-                    String message =
-                            extractValidation.error()
-                                    .map(DataResult.Error::message)
-                                    .orElse("invalid extract output");
-
-                    return DataResult.error(() ->
-                            JolCraftDictionary.EXTRACT
-                                    + ": "
-                                    + message
-                    );
-                }
+            if (recipe.outputFluid() == OutputFluid.YEAST
+                    && recipe.effect().isPresent()) {
+                return DataResult.error(
+                        () -> "yeast output cannot define a brew effect"
+                );
             }
 
             if (recipe.effect().isPresent()) {
@@ -450,18 +465,24 @@ public record FermentingCauldronRecipe(
                 if (effectValidation.error().isPresent()) {
                     String message =
                             effectValidation.error()
-                                    .map(DataResult.Error::message)
-                                    .orElse("invalid effect output");
+                                    .map(
+                                            DataResult.Error::message
+                                    )
+                                    .orElse(
+                                            "invalid effect output"
+                                    );
 
-                    return DataResult.error(() ->
-                            JolCraftDictionary.EFFECT
+                    return DataResult.error(
+                            () -> JolCraftDictionary.EFFECT
                                     + ": "
                                     + message
                     );
                 }
             }
 
-            return DataResult.success(recipe);
+            return DataResult.success(
+                    recipe
+            );
         }
 
         private static void encode(
@@ -478,33 +499,51 @@ public record FermentingCauldronRecipe(
                     recipe.lastIngredient()
             );
 
-            OPTIONAL_ITEM_OUTPUT_STREAM_CODEC.encode(
-                    buffer,
-                    recipe.extract()
-            );
-
             OPTIONAL_EFFECT_OUTPUT_STREAM_CODEC.encode(
                     buffer,
                     recipe.effect()
             );
 
-            buffer.writeVarInt(recipe.brewTicks());
-            buffer.writeVarInt(recipe.bubbleTicks());
-            buffer.writeInt(recipe.brewColor());
-            buffer.writeBoolean(recipe.finalizeBrew());
+            buffer.writeVarInt(
+                    recipe.brewTicks()
+            );
+
+            buffer.writeVarInt(
+                    recipe.bubbleTicks()
+            );
+
+            buffer.writeInt(
+                    recipe.brewColor()
+            );
+
+            buffer.writeEnum(
+                    recipe.outputFluid()
+            );
+
+            buffer.writeBoolean(
+                    recipe.finalizeBrew()
+            );
         }
 
         private static FermentingCauldronRecipe decode(
                 RegistryFriendlyByteBuf buffer
         ) {
             return new FermentingCauldronRecipe(
-                    ITEM_INPUT_STREAM_CODEC.decode(buffer),
-                    OPTIONAL_ITEM_INPUT_STREAM_CODEC.decode(buffer),
-                    OPTIONAL_ITEM_OUTPUT_STREAM_CODEC.decode(buffer),
-                    OPTIONAL_EFFECT_OUTPUT_STREAM_CODEC.decode(buffer),
+                    ITEM_INPUT_STREAM_CODEC.decode(
+                            buffer
+                    ),
+                    OPTIONAL_ITEM_INPUT_STREAM_CODEC.decode(
+                            buffer
+                    ),
+                    OPTIONAL_EFFECT_OUTPUT_STREAM_CODEC.decode(
+                            buffer
+                    ),
                     buffer.readVarInt(),
                     buffer.readVarInt(),
                     buffer.readInt(),
+                    buffer.readEnum(
+                            OutputFluid.class
+                    ),
                     buffer.readBoolean()
             );
         }
@@ -512,22 +551,30 @@ public record FermentingCauldronRecipe(
         private static DataResult<Integer> decodeColor(
                 String value
         ) {
-            if (value == null || value.isBlank()) {
-                return DataResult.error(() ->
-                        "invalid color"
+            if (value == null
+                    || value.isBlank()) {
+                return DataResult.error(
+                        () -> "invalid color"
                 );
             }
 
-            String normalized = value.trim();
+            String normalized =
+                    value.trim();
 
-            if (normalized.startsWith("#")) {
-                normalized = normalized.substring(1);
+            if (normalized.startsWith(
+                    "#"
+            )) {
+                normalized =
+                        normalized.substring(
+                                1
+                        );
             }
 
             if (normalized.length() != 6
                     && normalized.length() != 8) {
-                return DataResult.error(() ->
-                        "invalid color: " + value
+                return DataResult.error(
+                        () -> "invalid color: "
+                                + value
                 );
             }
 
@@ -539,8 +586,9 @@ public record FermentingCauldronRecipe(
                         )
                 );
             } catch (NumberFormatException exception) {
-                return DataResult.error(() ->
-                        "invalid color: " + value
+                return DataResult.error(
+                        () -> "invalid color: "
+                                + value
                 );
             }
         }
@@ -552,11 +600,19 @@ public record FermentingCauldronRecipe(
                 StreamCodec<RegistryFriendlyByteBuf, T> codec
         ) {
             return StreamCodec.of(
-                    (buffer, value) -> {
-                        buffer.writeBoolean(value.isPresent());
+                    (
+                            buffer,
+                            value
+                    ) -> {
+                        buffer.writeBoolean(
+                                value.isPresent()
+                        );
 
                         value.ifPresent(element ->
-                                codec.encode(buffer, element)
+                                codec.encode(
+                                        buffer,
+                                        element
+                                )
                         );
                     },
                     buffer -> {
@@ -565,7 +621,9 @@ public record FermentingCauldronRecipe(
                         }
 
                         return Optional.of(
-                                codec.decode(buffer)
+                                codec.decode(
+                                        buffer
+                                )
                         );
                     }
             );

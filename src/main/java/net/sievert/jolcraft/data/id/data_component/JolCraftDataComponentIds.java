@@ -60,6 +60,7 @@ public final class JolCraftDataComponentIds extends JolCraftIds {
     // Brewing
     // -----------------
 
+    public static final String FLUID_CONTENT = join(JolCraftDictionary.FLUID, JolCraftDictionary.CONTENT);
     public static final String BREW_COLOR = join(JolCraftDictionary.BREW, JolCraftDictionary.COLOR);
     public static final String BREW_AGE = join(JolCraftDictionary.BREW, JolCraftDictionary.AGE);
 }
