@@ -30,6 +30,7 @@ import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCa
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +112,9 @@ public final class FermentingCauldronProcess {
     private static final String NBT_FINALIZE =
             JolCraftDictionary.FINALIZE;
 
+    private static final String NBT_OUTPUT_FLUID =
+            "output_fluid";
+
     private static final String NBT_EFFECTS =
             JolCraftStrings.plural(
                     JolCraftDictionary.EFFECT
@@ -136,6 +140,9 @@ public final class FermentingCauldronProcess {
 
     private boolean finalize;
 
+    private FermentingCauldronRecipe.OutputFluid outputFluid =
+            FermentingCauldronRecipe.DEFAULT_OUTPUT_FLUID;
+
     private int bubbleTicks;
     private int bubbleDelay;
 
@@ -148,7 +155,7 @@ public final class FermentingCauldronProcess {
     private int targetColor =
             FermentingCauldronColorHelper.UNSET_COLOR;
 
-    private long brewStartTime;
+    private long brewStartTime = -1L;
 
     private int blendTotalTicks = 1;
 
@@ -163,7 +170,7 @@ public final class FermentingCauldronProcess {
     // =====================================================================
 
     public boolean isBrewing() {
-        return brewStartTime > 0L;
+        return brewStartTime >= 0L;
     }
 
     public boolean hasIngredients() {
@@ -182,8 +189,8 @@ public final class FermentingCauldronProcess {
                 != FermentingCauldronColorHelper.UNSET_COLOR;
     }
 
-    public boolean shouldFinalize() {
-        return finalize;
+    public FermentingCauldronRecipe.OutputFluid getOutputFluid() {
+        return outputFluid;
     }
 
     public int getIngredientCount(
@@ -239,7 +246,7 @@ public final class FermentingCauldronProcess {
     // Ingredient application
     // =====================================================================
 
-    public int applyIngredient(
+    public void applyIngredient(
             Level level,
             BlockPos pos,
             ItemStack ingredient,
@@ -266,6 +273,7 @@ public final class FermentingCauldronProcess {
         );
 
         finalize = recipe.finalizeBrew();
+        outputFluid = recipe.outputFluid();
 
         FermentingCauldronRecipeInput recipeInput =
                 new FermentingCauldronRecipeInput(
@@ -294,8 +302,6 @@ public final class FermentingCauldronProcess {
                 recipe.brewTicks(),
                 recipe.bubbleTicks()
         );
-
-        return newCount;
     }
 
     private void upsertEffect(
@@ -316,11 +322,17 @@ public final class FermentingCauldronProcess {
             return;
         }
 
+        int scaledDuration =
+                (int) Math.min(
+                        Integer.MAX_VALUE,
+                        (long) effect.getDuration()
+                                * ingredientCount
+                );
+
         MobEffectInstance scaledEffect =
                 new MobEffectInstance(
                         effect.getEffect(),
-                        effect.getDuration()
-                                * ingredientCount,
+                        scaledDuration,
                         effect.getAmplifier(),
                         effect.isAmbient(),
                         effect.isVisible(),
@@ -346,7 +358,20 @@ public final class FermentingCauldronProcess {
 
             effects.set(
                     index,
-                    scaledEffect
+                    new MobEffectInstance(
+                            effect.getEffect(),
+                            Math.max(
+                                    existing.getDuration(),
+                                    scaledEffect.getDuration()
+                            ),
+                            Math.max(
+                                    existing.getAmplifier(),
+                                    scaledEffect.getAmplifier()
+                            ),
+                            existing.isAmbient() && scaledEffect.isAmbient(),
+                            existing.isVisible() || scaledEffect.isVisible(),
+                            existing.showIcon() || scaledEffect.showIcon()
+                    )
             );
 
             return;
@@ -434,7 +459,7 @@ public final class FermentingCauldronProcess {
     public boolean completeBlend() {
         currentColor = targetColor;
 
-        brewStartTime = 0L;
+        brewStartTime = -1L;
         blendTotalTicks = 1;
 
         bubbleTicks = 0;
@@ -446,29 +471,34 @@ public final class FermentingCauldronProcess {
     }
 
     public FluidStack createUnfinishedBrewFluid() {
-        FluidStack brew =
+        FluidStack fluid =
                 new FluidStack(
-                        JolCraftFluids
-                                .UNFINISHED_DWARVEN_BREW
-                                .get(),
+                        switch (outputFluid) {
+                            case DWARVEN_BREW ->
+                                    JolCraftFluids
+                                            .UNFINISHED_DWARVEN_BREW
+                                            .get();
+                            case YEAST ->
+                                    JolCraftFluids
+                                            .UNFINISHED_YEAST
+                                            .get();
+                        },
                         FluidType.BUCKET_VOLUME
                 );
 
-        applyBrewComponents(
-                brew
+        applyFluidComponents(
+                fluid
         );
 
-        return brew;
+        return fluid;
     }
 
     public FluidStack createUpdatedUnfinishedBrewFluid(
             FluidStack existing
     ) {
         if (existing.isEmpty()
-                || !existing.is(
-                JolCraftFluids
-                        .UNFINISHED_DWARVEN_BREW
-                        .get()
+                || !isMatchingUnfinishedFluid(
+                existing
         )) {
             return FluidStack.EMPTY;
         }
@@ -480,7 +510,7 @@ public final class FermentingCauldronProcess {
                 FluidType.BUCKET_VOLUME
         );
 
-        applyBrewComponents(
+        applyFluidComponents(
                 updated
         );
 
@@ -488,37 +518,70 @@ public final class FermentingCauldronProcess {
     }
 
     public FluidStack createFinishedBrewFluid() {
-        FluidStack brew =
+        FluidStack fluid =
                 new FluidStack(
-                        JolCraftFluids
-                                .DWARVEN_BREW
-                                .get(),
+                        switch (outputFluid) {
+                            case DWARVEN_BREW ->
+                                    JolCraftFluids
+                                            .DWARVEN_BREW
+                                            .get();
+                            case YEAST ->
+                                    JolCraftFluids
+                                            .YEAST
+                                            .get();
+                        },
                         FluidType.BUCKET_VOLUME
                 );
 
-        applyBrewComponents(
-                brew
+        applyFluidComponents(
+                fluid
         );
 
-        return brew;
+        if (outputFluid
+                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+            fluid.set(
+                    JolCraftDataComponents.BREW_AGE.get(),
+                    0L
+            );
+        }
+
+        return fluid;
     }
 
-    private void applyBrewComponents(
-            FluidStack brew
+    private boolean isMatchingUnfinishedFluid(
+            FluidStack fluid
     ) {
-        brew.set(
+        return switch (outputFluid) {
+            case DWARVEN_BREW ->
+                    fluid.is(
+                            JolCraftFluids
+                                    .UNFINISHED_DWARVEN_BREW
+                                    .get()
+                    );
+            case YEAST ->
+                    fluid.is(
+                            JolCraftFluids
+                                    .UNFINISHED_YEAST
+                                    .get()
+                    );
+        };
+    }
+
+    private void applyFluidComponents(
+            FluidStack fluid
+    ) {
+        fluid.set(
                 JolCraftDataComponents.BREW_COLOR.get(),
                 currentColor
         );
 
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                0L
-        );
-
-        brew.set(
+        fluid.set(
                 DataComponents.POTION_CONTENTS,
                 createPotionContents()
+        );
+
+        fluid.remove(
+                JolCraftDataComponents.BREW_AGE.get()
         );
     }
 
@@ -533,11 +596,6 @@ public final class FermentingCauldronProcess {
                 );
 
         for (MobEffectInstance effect : effects) {
-            if (effect.getDuration() < 1
-                    || effect.getAmplifier() < 0) {
-                continue;
-            }
-
             customEffects.add(
                     new MobEffectInstance(
                             effect
@@ -545,14 +603,10 @@ public final class FermentingCauldronProcess {
             );
         }
 
-        if (customEffects.isEmpty()) {
-            return PotionContents.EMPTY;
-        }
-
         return new PotionContents(
                 Optional.empty(),
                 Optional.empty(),
-                List.copyOf(
+                Collections.unmodifiableList(
                         customEffects
                 )
         );
@@ -567,6 +621,9 @@ public final class FermentingCauldronProcess {
 
         finalize = false;
 
+        outputFluid =
+                FermentingCauldronRecipe.DEFAULT_OUTPUT_FLUID;
+
         bubbleTicks = 0;
         bubbleDelay = 0;
 
@@ -579,7 +636,7 @@ public final class FermentingCauldronProcess {
         targetColor =
                 FermentingCauldronColorHelper.UNSET_COLOR;
 
-        brewStartTime = 0L;
+        brewStartTime = -1L;
         blendTotalTicks = 1;
     }
 
@@ -629,26 +686,54 @@ public final class FermentingCauldronProcess {
             Level level,
             long skippedTicks
     ) {
-        if (skippedTicks <= 0L
+        if (level == null
+                || skippedTicks <= 0L
                 || !isBrewing()) {
             return false;
         }
 
-        long newStart =
-                FermentingCauldronColorHelper
-                        .fastForwardStartTime(
-                                level,
-                                brewStartTime,
-                                blendTotalTicks,
-                                skippedTicks
-                        );
+        long currentGameTime =
+                level.getGameTime();
 
-        if (newStart <= 0L) {
+        int totalTicks = Math.max(
+                1,
+                blendTotalTicks
+        );
+
+        long elapsedTicks = Math.min(
+                totalTicks,
+                Math.max(
+                        0L,
+                        currentGameTime
+                                - brewStartTime
+                )
+        );
+
+        long remainingTicks =
+                totalTicks
+                        - elapsedTicks;
+
+        if (skippedTicks >= remainingTicks) {
             return true;
         }
 
+        float progress =
+                (float) (elapsedTicks + skippedTicks)
+                        / (float) totalTicks;
+
+        startColor =
+                FermentingCauldronColorHelper
+                        .lerpArgb(
+                                startColor,
+                                targetColor,
+                                progress
+                        );
+
+        blendTotalTicks =
+                (int) (remainingTicks - skippedTicks);
+
         brewStartTime =
-                newStart;
+                currentGameTime;
 
         bubbleDelay = 0;
 
@@ -686,10 +771,21 @@ public final class FermentingCauldronProcess {
                 NBT_BLEND_TOTAL_TICKS,
                 blendTotalTicks
         );
+
+        tag.putString(
+                NBT_OUTPUT_FLUID,
+                outputFluid.getId()
+        );
+
+        saveEffects(
+                tag
+        );
     }
 
     public void readClientData(
-            CompoundTag tag
+            CompoundTag tag,
+            HolderLookup.Provider registries,
+            BlockPos pos
     ) {
         clear();
 
@@ -720,17 +816,41 @@ public final class FermentingCauldronProcess {
         )
                 : currentColor;
 
-        brewStartTime =
-                tag.getLong(
-                        NBT_BREW_START_TIME
-                );
+        brewStartTime = tag.contains(
+                NBT_BREW_START_TIME,
+                Tag.TAG_LONG
+        )
+                ? tag.getLong(
+                NBT_BREW_START_TIME
+        )
+                : -1L;
 
-        blendTotalTicks = Math.max(
+        blendTotalTicks = tag.contains(
+                NBT_BLEND_TOTAL_TICKS,
+                Tag.TAG_INT
+        )
+                ? Math.max(
                 1,
                 tag.getInt(
                         NBT_BLEND_TOTAL_TICKS
                 )
+        )
+                : 1;
+
+        outputFluid = loadOutputFluid(
+                tag,
+                pos
         );
+
+        loadEffects(
+                tag,
+                registries.lookupOrThrow(
+                        Registries.MOB_EFFECT
+                ),
+                pos
+        );
+
+        sanitizeLoadedBrewStartTime();
     }
 
     // =====================================================================
@@ -788,6 +908,11 @@ public final class FermentingCauldronProcess {
                 finalize
         );
 
+        tag.putString(
+                NBT_OUTPUT_FLUID,
+                outputFluid.getId()
+        );
+
         saveEffects(
                 tag
         );
@@ -810,31 +935,50 @@ public final class FermentingCauldronProcess {
                         Registries.MOB_EFFECT
                 );
 
-        brewStartTime =
-                tag.getLong(
-                        NBT_BREW_START_TIME
-                );
+        brewStartTime = tag.contains(
+                NBT_BREW_START_TIME,
+                Tag.TAG_LONG
+        )
+                ? tag.getLong(
+                NBT_BREW_START_TIME
+        )
+                : -1L;
 
-        blendTotalTicks = Math.max(
+        blendTotalTicks = tag.contains(
+                NBT_BLEND_TOTAL_TICKS,
+                Tag.TAG_INT
+        )
+                ? Math.max(
                 1,
                 tag.getInt(
                         NBT_BLEND_TOTAL_TICKS
                 )
-        );
+        )
+                : 1;
 
-        bubbleTicks = Math.max(
+        bubbleTicks = tag.contains(
+                NBT_BUBBLE_TICKS,
+                Tag.TAG_INT
+        )
+                ? Math.max(
                 0,
                 tag.getInt(
                         NBT_BUBBLE_TICKS
                 )
-        );
+        )
+                : 0;
 
-        bubbleDelay = Math.max(
+        bubbleDelay = tag.contains(
+                NBT_BUBBLE_DELAY,
+                Tag.TAG_INT
+        )
+                ? Math.max(
                 0,
                 tag.getInt(
                         NBT_BUBBLE_DELAY
                 )
-        );
+        )
+                : 0;
 
         loadLastIngredient(
                 tag,
@@ -851,6 +995,12 @@ public final class FermentingCauldronProcess {
         finalize =
                 tag.getBoolean(
                         NBT_FINALIZE
+                );
+
+        outputFluid =
+                loadOutputFluid(
+                        tag,
+                        pos
                 );
 
         currentColor = tag.contains(
@@ -885,6 +1035,29 @@ public final class FermentingCauldronProcess {
                 effectLookup,
                 pos
         );
+
+        sanitizeLoadedBrewStartTime();
+    }
+
+    private void sanitizeLoadedBrewStartTime() {
+        if (brewStartTime != 0L) {
+            return;
+        }
+
+        boolean hasProcessState =
+                !ingredients.isEmpty()
+                        || !effects.isEmpty()
+                        || !lastIngredient.isEmpty()
+                        || currentColor
+                        != FermentingCauldronColorHelper.UNSET_COLOR
+                        || startColor
+                        != FermentingCauldronColorHelper.UNSET_COLOR
+                        || targetColor
+                        != FermentingCauldronColorHelper.UNSET_COLOR;
+
+        if (!hasProcessState) {
+            brewStartTime = -1L;
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -1025,6 +1198,44 @@ public final class FermentingCauldronProcess {
                     list
             );
         }
+    }
+
+    private FermentingCauldronRecipe.OutputFluid loadOutputFluid(
+            CompoundTag tag,
+            BlockPos pos
+    ) {
+        if (!tag.contains(
+                NBT_OUTPUT_FLUID,
+                Tag.TAG_STRING
+        )) {
+            return FermentingCauldronRecipe.DEFAULT_OUTPUT_FLUID;
+        }
+
+        String id =
+                tag.getString(
+                        NBT_OUTPUT_FLUID
+                );
+
+        for (
+                FermentingCauldronRecipe.OutputFluid value
+                : FermentingCauldronRecipe.OutputFluid.values()
+        ) {
+            if (value.getId()
+                    .equals(
+                            id
+                    )) {
+                return value;
+            }
+        }
+
+        JolCraftLogs.warn(
+                JolCraftLogTags.BLOCK_ENTITY,
+                "FermentingCauldron at {} has unknown output fluid '{}' (using dwarven brew)",
+                JolCraftLogs.roundedPos(pos),
+                id
+        );
+
+        return FermentingCauldronRecipe.DEFAULT_OUTPUT_FLUID;
     }
 
     private void loadLastIngredient(

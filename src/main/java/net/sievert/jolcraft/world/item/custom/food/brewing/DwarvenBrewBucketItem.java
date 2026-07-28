@@ -1,17 +1,17 @@
 package net.sievert.jolcraft.world.item.custom.food.brewing;
 
-import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.material.Fluid;
 
-public final class DwarvenBrewBucketItem extends BucketItem {
+/**
+ * A capability-backed brew container. It intentionally does not extend
+ * BucketItem because brew components cannot survive placement as a world fluid.
+ */
+public final class DwarvenBrewBucketItem extends Item {
 
     public DwarvenBrewBucketItem(
-            Fluid fluid,
-            Item.Properties properties
+            Properties properties
     ) {
         super(
-                fluid,
                 properties
         );
     }

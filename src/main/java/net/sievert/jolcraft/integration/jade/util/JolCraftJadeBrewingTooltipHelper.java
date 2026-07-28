@@ -22,28 +22,35 @@ public final class JolCraftJadeBrewingTooltipHelper {
             return;
         }
 
-        long ageTicks = brew.getOrDefault(
-                JolCraftDataComponents.BREW_AGE.get(),
-                0L
-        );
+        if (brew.has(
+                JolCraftDataComponents.BREW_AGE.get()
+        )) {
+            long ageTicks =
+                    brew.getOrDefault(
+                            JolCraftDataComponents.BREW_AGE.get(),
+                            0L
+                    );
 
-        DwarvenBrewAge age = DwarvenBrewAge.fromTicks(
-                ageTicks
-        );
+            DwarvenBrewAge age =
+                    DwarvenBrewAge.fromTicks(
+                            ageTicks
+                    );
 
-        tooltip.add(
-                Component.translatable(
-                        JolCraftLanguageKeys.BREW_AGE,
-                        Component.translatable(
-                                age.translationKey()
-                        )
-                )
-        );
+            tooltip.add(
+                    Component.translatable(
+                            JolCraftLanguageKeys.BREW_AGE,
+                            Component.translatable(
+                                    age.translationKey()
+                            )
+                    )
+            );
+        }
 
-        PotionContents contents = brew.getOrDefault(
-                DataComponents.POTION_CONTENTS,
-                PotionContents.EMPTY
-        );
+        PotionContents contents =
+                brew.getOrDefault(
+                        DataComponents.POTION_CONTENTS,
+                        PotionContents.EMPTY
+                );
 
         contents.addPotionTooltip(
                 tooltip::add,

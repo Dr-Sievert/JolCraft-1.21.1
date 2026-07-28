@@ -8,6 +8,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
@@ -147,6 +148,13 @@ public final class JolCraftDataComponents {
     // -----------------
     // Brewing
     // -----------------
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SimpleFluidContent>> FLUID_CONTENT =
+            register(
+                    JolCraftDataComponentIds.FLUID_CONTENT, builder -> builder
+                            .persistent(SimpleFluidContent.CODEC)
+                            .networkSynchronized(SimpleFluidContent.STREAM_CODEC)
+            );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BREW_COLOR =
             register(JolCraftDataComponentIds.BREW_COLOR, builder -> builder

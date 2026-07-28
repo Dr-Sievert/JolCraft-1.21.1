@@ -11,7 +11,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.sievert.jolcraft.config.JolCraftConfigs;
-import net.sievert.jolcraft.world.block.fluid.JolCraftCauldronInteractions;
+import net.sievert.jolcraft.world.block.fluid.util.JolCraftCauldronInteractions;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.registry.JolCraftMapDecorationTypes;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;

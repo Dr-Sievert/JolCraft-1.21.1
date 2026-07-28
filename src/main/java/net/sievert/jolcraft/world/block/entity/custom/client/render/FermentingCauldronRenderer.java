@@ -11,12 +11,11 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.util.FermentingCauldronColorHelper;
 import org.jetbrains.annotations.NotNull;
@@ -25,60 +24,230 @@ import org.joml.Matrix4f;
 @OnlyIn(Dist.CLIENT)
 public final class FermentingCauldronRenderer implements BlockEntityRenderer<FermentingCauldronBlockEntity> {
 
-    public FermentingCauldronRenderer(BlockEntityRendererProvider.Context ctx) {}
+    private static final float MIN_XZ = 2.0F / 16.0F;
+    private static final float MAX_XZ = 14.0F / 16.0F;
+
+    /*
+     * The visible liquid occupies the interior between the lowest useful
+     * surface and the full-cauldron surface.
+     */
+    private static final float MIN_Y = 6.0F / 16.0F;
+    private static final float MAX_Y = 15.0F / 16.0F;
+
+    public FermentingCauldronRenderer(
+            BlockEntityRendererProvider.Context context
+    ) {}
 
     @Override
-    public void render(FermentingCauldronBlockEntity be, float partialTicks, @NotNull PoseStack poseStack,
-                       @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(
+            FermentingCauldronBlockEntity blockEntity,
+            float partialTicks,
+            @NotNull PoseStack poseStack,
+            @NotNull MultiBufferSource buffer,
+            int packedLight,
+            int packedOverlay
+    ) {
+        Level level =
+                blockEntity.getLevel();
 
-        Level level = be.getLevel();
-        if (level == null) return;
+        if (level == null) {
+            return;
+        }
 
-        BlockState state = be.getBlockState();
-        if (!state.hasProperty(LayeredCauldronBlock.LEVEL)) return;
+        int amount =
+                blockEntity.getBrewAmount();
 
-        int lvl = state.getValue(LayeredCauldronBlock.LEVEL);
-        if (lvl <= 0) return;
+        if (amount <= 0) {
+            return;
+        }
 
-        float min = 2f / 16f;
-        float max = 14f / 16f;
-        float y = (6f + (lvl * 3f)) / 16f;
+        float fillFraction =
+                Mth.clamp(
+                        amount / (float) FluidType.BUCKET_VOLUME,
+                        0.0F,
+                        1.0F
+                );
 
-        IClientFluidTypeExtensions props = IClientFluidTypeExtensions.of(Fluids.WATER);
+        float y =
+                Mth.lerp(
+                        fillFraction,
+                        MIN_Y,
+                        MAX_Y
+                );
+
+        IClientFluidTypeExtensions properties =
+                IClientFluidTypeExtensions.of(
+                        Fluids.WATER
+                );
 
         @SuppressWarnings("deprecation")
-        TextureAtlasSprite sprite = Minecraft.getInstance()
-                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
-                .apply(props.getStillTexture());
+        TextureAtlasSprite sprite =
+                Minecraft.getInstance()
+                        .getTextureAtlas(
+                                TextureAtlas.LOCATION_BLOCKS
+                        )
+                        .apply(
+                                properties.getStillTexture()
+                        );
 
-        int argb = FermentingCauldronColorHelper.displayColor(
-                level,
-                partialTicks,
-                be.getBrewStartTime(),
-                be.getBlendTotalTicks(),
-                be.getCurrentColor(),
-                be.getStartColor(),
-                be.getTargetColor()
-        );
+        int argb =
+                FermentingCauldronColorHelper.displayColor(
+                        level,
+                        partialTicks,
+                        blockEntity.getBrewStartTime(),
+                        blockEntity.getBlendTotalTicks(),
+                        blockEntity.getCurrentColor(),
+                        blockEntity.getStartColor(),
+                        blockEntity.getTargetColor()
+                );
 
-        float a = ((argb >>> 24) & 0xFF) / 255f;
-        float r = ((argb >>> 16) & 0xFF) / 255f;
-        float g = ((argb >>> 8) & 0xFF) / 255f;
-        float b = (argb & 0xFF) / 255f;
+        float alpha =
+                Mth.clamp(
+                        ((argb >>> 24) & 0xFF) / 255.0F * 0.85F,
+                        0.0F,
+                        1.0F
+                );
 
-        float alpha = Mth.clamp(a * 0.85f, 0f, 1f);
+        float red =
+                ((argb >>> 16) & 0xFF) / 255.0F;
 
-        float u0 = sprite.getU0();
-        float u1 = sprite.getU1();
-        float v0 = sprite.getV0();
-        float v1 = sprite.getV1();
+        float green =
+                ((argb >>> 8) & 0xFF) / 255.0F;
 
-        VertexConsumer vc = buffer.getBuffer(RenderType.translucentMovingBlock());
-        Matrix4f mat = poseStack.last().pose();
+        float blue =
+                (argb & 0xFF) / 255.0F;
 
-        vc.addVertex(mat, min, y, max).setColor(r, g, b, alpha).setUv(u0, v1).setOverlay(packedOverlay).setLight(packedLight).setNormal(0f, 1f, 0f);
-        vc.addVertex(mat, max, y, max).setColor(r, g, b, alpha).setUv(u1, v1).setOverlay(packedOverlay).setLight(packedLight).setNormal(0f, 1f, 0f);
-        vc.addVertex(mat, max, y, min).setColor(r, g, b, alpha).setUv(u1, v0).setOverlay(packedOverlay).setLight(packedLight).setNormal(0f, 1f, 0f);
-        vc.addVertex(mat, min, y, min).setColor(r, g, b, alpha).setUv(u0, v0).setOverlay(packedOverlay).setLight(packedLight).setNormal(0f, 1f, 0f);
+        float u0 =
+                sprite.getU0();
+
+        float u1 =
+                sprite.getU1();
+
+        float v0 =
+                sprite.getV0();
+
+        float v1 =
+                sprite.getV1();
+
+        VertexConsumer consumer =
+                buffer.getBuffer(
+                        RenderType.translucentMovingBlock()
+                );
+
+        Matrix4f matrix =
+                poseStack.last()
+                        .pose();
+
+        consumer.addVertex(
+                        matrix,
+                        MIN_XZ,
+                        y,
+                        MAX_XZ
+                )
+                .setColor(
+                        red,
+                        green,
+                        blue,
+                        alpha
+                )
+                .setUv(
+                        u0,
+                        v1
+                )
+                .setOverlay(
+                        packedOverlay
+                )
+                .setLight(
+                        packedLight
+                )
+                .setNormal(
+                        0.0F,
+                        1.0F,
+                        0.0F
+                );
+
+        consumer.addVertex(
+                        matrix,
+                        MAX_XZ,
+                        y,
+                        MAX_XZ
+                )
+                .setColor(
+                        red,
+                        green,
+                        blue,
+                        alpha
+                )
+                .setUv(
+                        u1,
+                        v1
+                )
+                .setOverlay(
+                        packedOverlay
+                )
+                .setLight(
+                        packedLight
+                )
+                .setNormal(
+                        0.0F,
+                        1.0F,
+                        0.0F
+                );
+
+        consumer.addVertex(
+                        matrix,
+                        MAX_XZ,
+                        y,
+                        MIN_XZ
+                )
+                .setColor(
+                        red,
+                        green,
+                        blue,
+                        alpha
+                )
+                .setUv(
+                        u1,
+                        v0
+                )
+                .setOverlay(
+                        packedOverlay
+                )
+                .setLight(
+                        packedLight
+                )
+                .setNormal(
+                        0.0F,
+                        1.0F,
+                        0.0F
+                );
+
+        consumer.addVertex(
+                        matrix,
+                        MIN_XZ,
+                        y,
+                        MIN_XZ
+                )
+                .setColor(
+                        red,
+                        green,
+                        blue,
+                        alpha
+                )
+                .setUv(
+                        u0,
+                        v0
+                )
+                .setOverlay(
+                        packedOverlay
+                )
+                .setLight(
+                        packedLight
+                )
+                .setNormal(
+                        0.0F,
+                        1.0F,
+                        0.0F
+                );
     }
 }

@@ -82,9 +82,7 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.YANILLIAN_HOPS);
                         pOutput.accept(JolCraftItems.YEAST);
                         pOutput.accept(JolCraftItems.GLASS_MUG);
-                        ItemStack brew = new ItemStack(JolCraftItems.DWARVEN_BREW.get());
-                        brew.set(JolCraftDataComponents.BREW_COLOR.get(), 0xFF9A652B);
-                        pOutput.accept(brew);
+                        pOutput.accept(JolCraftItems.DWARVEN_BREW);
 
                         pOutput.accept(JolCraftItems.MUFFHORN_MILK_BUCKET);
                         pOutput.accept(JolCraftItems.MUFFHORN_FUR);
@@ -292,5 +290,3 @@ public final class JolCraftCreativeModeTabs {
     }
 
 }
-
-

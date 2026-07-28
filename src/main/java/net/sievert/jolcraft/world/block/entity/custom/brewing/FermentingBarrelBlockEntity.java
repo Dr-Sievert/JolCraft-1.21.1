@@ -4,17 +4,17 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
@@ -36,8 +36,8 @@ import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewFl
 import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewInteractionHelper;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.util.FermentingBarrelAging;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewAge;
-import net.sievert.jolcraft.world.item.inventory.JolCraftItemHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +94,7 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 int tank,
                 FluidStack stack
         ) {
-            return canInsertBrew(
+            return DwarvenBrewFluidHelper.isFinishedBrew(
                     stack
             );
         }
@@ -165,27 +165,6 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             return ItemInteractionResult.FAIL;
         }
 
-        if (usedItem.isEmpty()) {
-            DwarvenBrewAge brewAge =
-                    DwarvenBrewAge.fromTicks(
-                            DwarvenBrewFluidHelper.getAge(
-                                    getCurrentBrew()
-                            )
-                    );
-
-            player.displayClientMessage(
-                    Component.translatable(
-                            JolCraftLanguageKeys.BARREL_BREW_AGE,
-                            Component.translatable(
-                                    brewAge.translationKey()
-                            )
-                    ),
-                    true
-            );
-
-            return ItemInteractionResult.SUCCESS;
-        }
-
         if (usedItem.is(
                 JolCraftItems.DEV_KEY.get()
         )) {
@@ -206,6 +185,37 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 brewFluidHandler,
                 hasBrew()
         );
+    }
+
+    public boolean inspectBrewAge(
+            Player player
+    ) {
+        if (level == null
+                || level.isClientSide
+                || !hasBrew()) {
+            return false;
+        }
+
+        applyElapsedAge();
+
+        DwarvenBrewAge brewAge =
+                DwarvenBrewAge.fromTicks(
+                        DwarvenBrewFluidHelper.getAge(
+                                getCurrentBrew()
+                        )
+                );
+
+        player.displayClientMessage(
+                Component.translatable(
+                        JolCraftLanguageKeys.BARREL_BREW_AGE,
+                        Component.translatable(
+                                brewAge.translationKey()
+                        )
+                ),
+                true
+        );
+
+        return true;
     }
 
     // =====================================================================
@@ -515,18 +525,17 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         );
 
         brew.set(
-                net.sievert.jolcraft.world.item.component
-                        .JolCraftDataComponents.BREW_AGE.get(),
+                JolCraftDataComponents.BREW_AGE.get(),
                 DwarvenBrewFluidHelper.getAge(
                         brew
                 )
         );
 
         brew.set(
-                net.minecraft.core.component.DataComponents.POTION_CONTENTS,
+                DataComponents.POTION_CONTENTS,
                 brew.getOrDefault(
-                        net.minecraft.core.component.DataComponents.POTION_CONTENTS,
-                        net.minecraft.world.item.alchemy.PotionContents.EMPTY
+                        DataComponents.POTION_CONTENTS,
+                        PotionContents.EMPTY
                 )
         );
     }
@@ -624,8 +633,6 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 tag,
                 registries
         );
-
-        applyElapsedAge();
 
         writeData(
                 tag,

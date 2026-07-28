@@ -49,6 +49,38 @@ public final class DwarvenBrewFluidHelper {
         );
     }
 
+    public static boolean isFinishedYeast(
+            FluidStack fluid
+    ) {
+        return !fluid.isEmpty()
+                && fluid.is(
+                JolCraftFluids.YEAST.get()
+        );
+    }
+
+    public static boolean isUnfinishedYeast(
+            FluidStack fluid
+    ) {
+        return !fluid.isEmpty()
+                && fluid.is(
+                JolCraftFluids.UNFINISHED_YEAST.get()
+        );
+    }
+
+    public static boolean isFinishedBrewingFluid(
+            FluidStack fluid
+    ) {
+        return isFinishedBrew(fluid)
+                || isFinishedYeast(fluid);
+    }
+
+    public static boolean isUnfinishedBrewingFluid(
+            FluidStack fluid
+    ) {
+        return isUnfinishedBrew(fluid)
+                || isUnfinishedYeast(fluid);
+    }
+
     public static boolean containsDwarvenBrew(
             ItemStack stack
     ) {
@@ -116,78 +148,27 @@ public final class DwarvenBrewFluidHelper {
     // Mug conversion
     // =====================================================================
 
-    public static ItemStack createBrewMug(
-            FluidStack brew
+    public static FluidStack getBrewFromMug(
+            ItemStack mug
     ) {
-        ItemStack mug = new ItemStack(
+        if (!mug.is(
                 JolCraftItems.DWARVEN_BREW.get()
-        );
-
-        mug.set(
-                JolCraftDataComponents.BREW_COLOR.get(),
-                brew.getOrDefault(
-                        JolCraftDataComponents.BREW_COLOR.get(),
-                        0xFFFFFFFF
-                )
-        );
-
-        mug.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                getAge(brew)
-        );
-
-        mug.set(
-                DataComponents.POTION_CONTENTS,
-                brew.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
-                )
-        );
-
-        return mug;
-    }
-
-    public static FluidStack createBrewFluidFromMug(
-            ItemStack mug,
-            int amount
-    ) {
-        if (amount <= 0) {
+        )) {
             return FluidStack.EMPTY;
         }
 
-        FluidStack brew = new FluidStack(
-                JolCraftFluids.DWARVEN_BREW.get(),
-                amount
-        );
-
-        brew.set(
-                JolCraftDataComponents.BREW_COLOR.get(),
-                mug.getOrDefault(
-                        JolCraftDataComponents.BREW_COLOR.get(),
-                        0xFFFFFFFF
+        return FluidUtil.getFluidContained(
+                        mug
                 )
-        );
-
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                Math.max(
-                        0L,
-                        mug.getOrDefault(
-                                JolCraftDataComponents.BREW_AGE.get(),
-                                0L
-                        )
+                .filter(
+                        DwarvenBrewFluidHelper::isFinishedBrew
                 )
-        );
-
-        brew.set(
-                DataComponents.POTION_CONTENTS,
-                mug.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
+                .map(
+                        FluidStack::copy
                 )
-        );
-
-        return brew;
+                .orElse(
+                        FluidStack.EMPTY
+                );
     }
 
     // =====================================================================
@@ -232,15 +213,13 @@ public final class DwarvenBrewFluidHelper {
     /**
      * Adds age directly to the supplied stack and applies any newly earned
      * amplifier increases.
-     *
-     * @return whether the stack was changed
      */
-    public static boolean addAgeInPlace(
+    public static void addAgeInPlace(
             FluidStack brew,
             long addedTicks
     ) {
         if (brew.isEmpty() || addedTicks <= 0L) {
-            return false;
+            return;
         }
 
         long previousAgeTicks = getAge(
@@ -253,7 +232,7 @@ public final class DwarvenBrewFluidHelper {
         );
 
         if (currentAgeTicks <= previousAgeTicks) {
-            return false;
+            return;
         }
 
         brew.set(
@@ -267,7 +246,6 @@ public final class DwarvenBrewFluidHelper {
                 currentAgeTicks
         );
 
-        return true;
     }
 
     // =====================================================================

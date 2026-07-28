@@ -50,21 +50,8 @@ public final class FermentingCauldronColorHelper {
 
     public static boolean isComplete(Level level, long brewStartTime, int blendTotalTicks) {
         if (level == null) return false;
-        if (brewStartTime <= 0L) return false;
+        if (brewStartTime < 0L) return false;
         return level.getGameTime() >= blendEndTime(brewStartTime, blendTotalTicks);
-    }
-
-    /**
-     * Advances blend progress by making the start time earlier.
-     * Returns 0 if the blend would be complete after skipping.
-     */
-    public static long fastForwardStartTime(Level level, long brewStartTime, int blendTotalTicks, long skippedTicks) {
-        if (level == null) return brewStartTime;
-        if (brewStartTime <= 0L) return 0L;
-        if (skippedTicks <= 0L) return brewStartTime;
-
-        long newStart = brewStartTime - skippedTicks;
-        return isComplete(level, newStart, blendTotalTicks) ? 0L : newStart;
     }
 
     // =====================================================================
@@ -86,7 +73,7 @@ public final class FermentingCauldronColorHelper {
             int targetArgb
     ) {
         if (level == null) return currentArgb;
-        if (brewStartTime <= 0L) return currentArgb;
+        if (brewStartTime < 0L) return currentArgb;
         return blendedColor(level, partialTicks, brewStartTime, blendTotalTicks, startArgb, targetArgb);
     }
 
@@ -99,7 +86,7 @@ public final class FermentingCauldronColorHelper {
             int targetArgb
     ) {
         if (level == null) return startArgb;
-        if (brewStartTime <= 0L) return startArgb;
+        if (brewStartTime < 0L) return startArgb;
 
         int total = Math.max(1, blendTotalTicks);
         float elapsed = (float) (level.getGameTime() - brewStartTime) + partialTicks;
