@@ -153,6 +153,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String OLD = "old";
     public static final String OUT = "out";
     public static final String PARTIAL = "partial";
+    public static final String PENDING = "pending";
     public static final String PLACED = "placed";
     public static final String PLANTABLE = "plantable";
     public static final String POTTED = "potted";

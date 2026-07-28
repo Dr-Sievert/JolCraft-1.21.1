@@ -2,6 +2,7 @@ package net.sievert.jolcraft.event.game.player.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BarrelBlock;
@@ -11,6 +12,8 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -18,6 +21,7 @@ import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewInteractionHelper;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
 
@@ -31,7 +35,10 @@ public final class BrewingBlockConversionHelper {
      * right-click interaction is processed.
      */
     public static void tryHandle(PlayerInteractEvent.RightClickBlock event) {
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
+        if (!(event.getLevel() instanceof ServerLevel level)
+                || event.getHand() != InteractionHand.MAIN_HAND) {
+            return;
+        }
 
         BlockState state = level.getBlockState(event.getPos());
 
@@ -117,8 +124,9 @@ public final class BrewingBlockConversionHelper {
 
         if (!state.is(Blocks.BARREL)
                 || !(level.getBlockEntity(pos) instanceof BarrelBlockEntity vanillaBarrel)
+                || vanillaBarrel.getLootTable() != null
                 || !vanillaBarrel.isEmpty()
-                || !DwarvenBrewFluidHelper.containsDwarvenBrew(usedItem)) {
+                || !canFillEmptyFermentingBarrel(usedItem)) {
             return;
         }
 
@@ -165,6 +173,25 @@ public final class BrewingBlockConversionHelper {
                 "fermenting barrel"
         );
 
+    }
+
+    /**
+     * Validates the initiating container against an empty fermenting barrel
+     * before the vanilla barrel is replaced.
+     */
+    private static boolean canFillEmptyFermentingBarrel(
+            ItemStack usedItem
+    ) {
+        FluidTank simulatedTank = new FluidTank(
+                FluidType.BUCKET_VOLUME,
+                DwarvenBrewFluidHelper::isFinishedBrew
+        );
+
+        return DwarvenBrewInteractionHelper.getInteractionResult(
+                usedItem,
+                simulatedTank,
+                false
+        ) == ItemInteractionResult.SUCCESS;
     }
 
     /**
