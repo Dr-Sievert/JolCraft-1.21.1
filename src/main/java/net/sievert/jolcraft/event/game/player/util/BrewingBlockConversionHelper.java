@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.event.game.player.util;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +17,7 @@ import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
 
@@ -25,78 +26,49 @@ public final class BrewingBlockConversionHelper {
 
     private BrewingBlockConversionHelper() {}
 
-    public static void tryHandle(
-            PlayerInteractEvent.RightClickBlock event
-    ) {
-        if (!(event.getLevel() instanceof ServerLevel level)) {
-            return;
-        }
+    /**
+     * Converts eligible vanilla brewing containers before their normal
+     * right-click interaction is processed.
+     */
+    public static void tryHandle(PlayerInteractEvent.RightClickBlock event) {
+        if (!(event.getLevel() instanceof ServerLevel level)) return;
 
-        BlockState state =
-                level.getBlockState(
-                        event.getPos()
-                );
+        BlockState state = level.getBlockState(event.getPos());
 
-        if (!tryConvertWaterCauldron(
-                event,
-                level,
-                state
-        )) {
-            tryConvertBarrel(
-                    event,
-                    level,
-                    state
-            );
-        }
+        if (tryConvertWaterCauldron(event, level, state)) return;
+
+        tryConvertBarrel(event, level, state);
     }
 
+    /**
+     * Converts a full water cauldron when the held item can begin
+     * a fermenting cauldron recipe.
+     */
     private static boolean tryConvertWaterCauldron(
             PlayerInteractEvent.RightClickBlock event,
             ServerLevel level,
             BlockState state
     ) {
-        if (!state.is(
-                Blocks.WATER_CAULDRON
-        )
-                || state.getValue(
-                LayeredCauldronBlock.LEVEL
-        ) != LayeredCauldronBlock.MAX_FILL_LEVEL) {
+        if (!state.is(Blocks.WATER_CAULDRON) || state.getValue(LayeredCauldronBlock.LEVEL) != LayeredCauldronBlock.MAX_FILL_LEVEL) {
             return false;
         }
 
-        ItemStack usedItem =
-                event.getItemStack();
+        ItemStack usedItem = event.getItemStack();
 
-        FermentingCauldronRecipeInput input =
-                new FermentingCauldronRecipeInput(
-                        usedItem.copyWithCount(
-                                1
-                        ),
-                        ItemStack.EMPTY
-                );
+        FermentingCauldronRecipeInput input = new FermentingCauldronRecipeInput(
+                usedItem.copyWithCount(1),
+                ItemStack.EMPTY
+        );
 
-        boolean hasRecipe =
-                level.getRecipeManager()
-                        .getRecipeFor(
-                                JolCraftRecipes
-                                        .FERMENTING_CAULDRON_TYPE
-                                        .get(),
-                                input,
-                                level
-                        )
-                        .isPresent();
+        if (level.getRecipeManager().getRecipeFor(JolCraftRecipes.FERMENTING_CAULDRON_TYPE.get(), input, level).isEmpty()) return false;
 
-        if (!hasRecipe) {
-            return false;
-        }
+        BlockPos pos = event.getPos();
 
         JolCraftLogs.debug(
-                JolCraftLogTags.PLAYER,
+                JolCraftLogTags.BLOCK,
                 "Converting water cauldron -> fermenting cauldron player={} pos={} item={}",
                 event.getEntity().getUUID(),
-                JolCraftLogs.roundedPos(
-                        event.getPos()
-                ),
+                JolCraftLogs.roundedPos(pos),
                 usedItem.getItem()
                         .builtInRegistryHolder()
                         .key()
@@ -104,40 +76,19 @@ public final class BrewingBlockConversionHelper {
         );
 
         level.setBlock(
-                event.getPos(),
-                JolCraftBlocks.FERMENTING_CAULDRON.get()
-                        .defaultBlockState(),
+                pos,
+                JolCraftBlocks.FERMENTING_CAULDRON.get().defaultBlockState(),
                 Block.UPDATE_ALL
         );
 
-        if (level.getBlockEntity(event.getPos()) instanceof
-                FermentingCauldronBlockEntity cauldron) {
-            ItemInteractionResult result =
-                    cauldron.handleInteraction(
-                            event.getEntity(),
-                            event.getHand(),
-                            usedItem
-                    );
-
-            JolCraftLogs.debug(
-                    JolCraftLogTags.PLAYER,
-                    "Fermenting cauldron interaction handled player={} pos={} result={}",
-                    event.getEntity().getUUID(),
-                    JolCraftLogs.roundedPos(
-                            event.getPos()
-                    ),
-                    result
+        if (level.getBlockEntity(pos) instanceof FermentingCauldronBlockEntity cauldron) {
+            ItemInteractionResult result = cauldron.handleInteraction(
+                    event.getEntity(),
+                    event.getHand(),
+                    usedItem
             );
 
-            if (result.consumesAction()) {
-                event.setCancellationResult(
-                        result.result()
-                );
-
-                event.setCanceled(
-                        true
-                );
-
+            if (completeInteraction(event, result, "fermenting cauldron")) {
                 return true;
             }
         }
@@ -152,83 +103,57 @@ public final class BrewingBlockConversionHelper {
         return true;
     }
 
+    /**
+     * Converts an empty vanilla barrel when the held container contains
+     * Dwarven brew that can be transferred into an aging barrel.
+     */
     private static void tryConvertBarrel(
             PlayerInteractEvent.RightClickBlock event,
             ServerLevel level,
             BlockState state
     ) {
-        ItemStack usedItem =
-                event.getItemStack();
+        BlockPos pos = event.getPos();
+        ItemStack usedItem = event.getItemStack();
 
-        if (!state.is(
-                Blocks.BARREL
-        )
-                || !(level.getBlockEntity(event.getPos()) instanceof
-                BarrelBlockEntity vanillaBarrel)
+        if (!state.is(Blocks.BARREL)
+                || !(level.getBlockEntity(pos) instanceof BarrelBlockEntity vanillaBarrel)
                 || !vanillaBarrel.isEmpty()
-                || !DwarvenBrewFluidHelper.containsDwarvenBrew(
-                usedItem
-        )) {
+                || !DwarvenBrewFluidHelper.containsDwarvenBrew(usedItem)) {
             return;
         }
 
         JolCraftLogs.debug(
-                JolCraftLogTags.PLAYER,
+                JolCraftLogTags.BLOCK,
                 "Converting barrel -> fermenting barrel player={} pos={} item={}",
                 event.getEntity().getUUID(),
-                JolCraftLogs.roundedPos(
-                        event.getPos()
-                ),
+                JolCraftLogs.roundedPos(pos),
                 usedItem.getItem()
                         .builtInRegistryHolder()
                         .key()
                         .location()
         );
 
-        BlockState fermentingBarrel =
-                JolCraftBlocks.FERMENTING_BARREL.get()
-                        .defaultBlockState()
-                        .setValue(
-                                FermentingBarrelBlock.FACING,
-                                state.getValue(
-                                        BarrelBlock.FACING
-                                )
-                        );
+        BlockState fermentingBarrel = JolCraftBlocks.FERMENTING_BARREL.get()
+                .defaultBlockState()
+                .setValue(
+                        FermentingBarrelBlock.FACING,
+                        state.getValue(BarrelBlock.FACING)
+                );
 
         level.setBlock(
-                event.getPos(),
+                pos,
                 fermentingBarrel,
                 Block.UPDATE_ALL
         );
 
-        if (level.getBlockEntity(event.getPos()) instanceof
-                FermentingBarrelBlockEntity barrel) {
-            ItemInteractionResult result =
-                    barrel.handleInteraction(
-                            event.getEntity(),
-                            event.getHand(),
-                            usedItem
-                    );
-
-            JolCraftLogs.debug(
-                    JolCraftLogTags.PLAYER,
-                    "Fermenting barrel interaction handled player={} pos={} result={}",
-                    event.getEntity().getUUID(),
-                    JolCraftLogs.roundedPos(
-                            event.getPos()
-                    ),
-                    result
+        if (level.getBlockEntity(pos) instanceof FermentingBarrelBlockEntity fermentingBarrelEntity) {
+            ItemInteractionResult result = fermentingBarrelEntity.handleInteraction(
+                    event.getEntity(),
+                    event.getHand(),
+                    usedItem
             );
 
-            if (result.consumesAction()) {
-                event.setCancellationResult(
-                        result.result()
-                );
-
-                event.setCanceled(
-                        true
-                );
-
+            if (completeInteraction(event, result, "fermenting barrel")) {
                 return;
             }
         }
@@ -242,6 +167,36 @@ public final class BrewingBlockConversionHelper {
 
     }
 
+    /**
+     * Cancels the original interaction when the converted block successfully
+     * consumes the player's action.
+     */
+    private static boolean completeInteraction(
+            PlayerInteractEvent.RightClickBlock event,
+            ItemInteractionResult result,
+            String target
+    ) {
+        JolCraftLogs.debug(
+                JolCraftLogTags.BLOCK,
+                "{} interaction handled player={} pos={} result={}",
+                target,
+                event.getEntity().getUUID(),
+                JolCraftLogs.roundedPos(event.getPos()),
+                result
+        );
+
+        if (!result.consumesAction()) return false;
+
+        event.setCancellationResult(result.result());
+        event.setCanceled(true);
+
+        return true;
+    }
+
+    /**
+     * Restores the original vanilla block when the newly created brewing
+     * block cannot complete the initiating interaction.
+     */
     private static void revertConversion(
             PlayerInteractEvent.RightClickBlock event,
             ServerLevel level,
@@ -249,13 +204,11 @@ public final class BrewingBlockConversionHelper {
             String target
     ) {
         JolCraftLogs.warn(
-                JolCraftLogTags.PLAYER,
+                JolCraftLogTags.BLOCK,
                 "{} conversion failed, reverting player={} pos={}",
                 target,
                 event.getEntity().getUUID(),
-                JolCraftLogs.roundedPos(
-                        event.getPos()
-                )
+                JolCraftLogs.roundedPos(event.getPos())
         );
 
         level.setBlock(

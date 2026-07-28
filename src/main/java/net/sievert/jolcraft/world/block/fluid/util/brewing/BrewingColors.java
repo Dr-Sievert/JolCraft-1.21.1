@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.block.entity.custom.brewing.util;
+package net.sievert.jolcraft.world.block.fluid.util.brewing;
 
 public final class BrewingColors {
 
@@ -39,7 +39,6 @@ public final class BrewingColors {
     public static int argb(
             int rgb
     ) {
-        return 0xFF000000
-                | (rgb & 0xFFFFFF);
+        return 0xFF000000 | (rgb & 0xFFFFFF);
     }
 }

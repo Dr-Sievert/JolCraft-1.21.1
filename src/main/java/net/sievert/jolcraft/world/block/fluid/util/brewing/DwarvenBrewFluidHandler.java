@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom.food.brewing;
+package net.sievert.jolcraft.world.block.fluid.util.brewing;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
@@ -6,12 +6,14 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStackSimple;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import org.jetbrains.annotations.NotNull;
 
-public final class DwarvenBrewFluidHandler
-        extends FluidHandlerItemStackSimple.SwapEmpty {
+/**
+ * Exposes the fluid stored in a dwarven brew container and swaps it for its
+ * empty counterpart when fully drained.
+ */
+public final class DwarvenBrewFluidHandler extends FluidHandlerItemStackSimple.SwapEmpty {
 
     public DwarvenBrewFluidHandler(
             ItemStack container,
@@ -20,12 +22,8 @@ public final class DwarvenBrewFluidHandler
         super(
                 JolCraftDataComponents.FLUID_CONTENT,
                 container,
-                new ItemStack(
-                        emptyContainer
-                ),
-                getCapacity(
-                        container
-                )
+                new ItemStack(emptyContainer),
+                getCapacity(container)
         );
     }
 
@@ -40,28 +38,22 @@ public final class DwarvenBrewFluidHandler
     public boolean canDrainFluidType(
             @NotNull FluidStack fluid
     ) {
-        return DwarvenBrewFluidHelper.isFinishedBrew(
-                fluid
-        );
+        return DwarvenBrewFluidHelper.isFinishedBrew(fluid);
     }
 
+    /**
+     * Drains the complete stored brew only when the requested fluid matches it.
+     */
     @Override
     public @NotNull FluidStack drain(
             @NotNull FluidStack resource,
             IFluidHandler.@NotNull FluidAction action
     ) {
-        FluidStack stored =
-                getFluidInTank(
-                        0
-                );
+        FluidStack stored = getFluidInTank(0);
 
         if (stored.isEmpty()
-                || resource.getAmount()
-                < stored.getAmount()
-                || !FluidStack.isSameFluidSameComponents(
-                stored,
-                resource
-        )) {
+                || resource.getAmount() < stored.getAmount()
+                || !FluidStack.isSameFluidSameComponents(stored, resource)) {
             return FluidStack.EMPTY;
         }
 
@@ -71,15 +63,15 @@ public final class DwarvenBrewFluidHandler
         );
     }
 
+    /**
+     * Drains the complete stored brew only when the requested amount can hold it.
+     */
     @Override
     public @NotNull FluidStack drain(
             int maxDrain,
             IFluidHandler.@NotNull FluidAction action
     ) {
-        FluidStack stored =
-                getFluidInTank(
-                        0
-                );
+        FluidStack stored = getFluidInTank(0);
 
         if (stored.isEmpty()
                 || maxDrain < stored.getAmount()) {
@@ -92,14 +84,14 @@ public final class DwarvenBrewFluidHandler
         );
     }
 
-    private static int getCapacity(
-            ItemStack container
-    ) {
-        SimpleFluidContent content =
-                container.getOrDefault(
-                        JolCraftDataComponents.FLUID_CONTENT.get(),
-                        SimpleFluidContent.EMPTY
-                );
+    /**
+     * Uses the fluid amount encoded on the container as its fixed capacity.
+     */
+    private static int getCapacity(ItemStack container) {
+        SimpleFluidContent content = container.getOrDefault(
+                JolCraftDataComponents.FLUID_CONTENT.get(),
+                SimpleFluidContent.EMPTY
+        );
 
         return content.getAmount();
     }

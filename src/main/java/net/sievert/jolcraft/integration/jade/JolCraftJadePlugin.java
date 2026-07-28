@@ -13,6 +13,7 @@ public final class JolCraftJadePlugin implements IWailaPlugin {
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
+
         registration.registerBlockComponent(
                 FermentingBarrelComponentProvider.INSTANCE,
                 FermentingBarrelBlock.class

@@ -12,14 +12,14 @@ import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
 public enum FermentingBarrelComponentProvider implements IBlockComponentProvider {
+
     INSTANCE;
 
-    private static final ResourceLocation UID =
-            ResourceLocation.fromNamespaceAndPath(
-                    JolCraft.MOD_ID,
-                    JolCraftBlockIds.FERMENTING_BARREL
-            );
+    private static final ResourceLocation UID = JolCraft.location(JolCraftBlockIds.FERMENTING_BARREL);
 
+    /**
+     * Adds brewing information to the Jade tooltip for fermenting barrels.
+     */
     @Override
     public void appendTooltip(
             ITooltip tooltip,
@@ -42,6 +42,9 @@ public enum FermentingBarrelComponentProvider implements IBlockComponentProvider
         );
     }
 
+    /**
+     * Returns the unique Jade identifier for this component provider.
+     */
     @Override
     public ResourceLocation getUid() {
         return UID;
