@@ -11,6 +11,7 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.world.block.entity.custom.brewing.util.BrewingColors;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewBucketItem;
@@ -24,9 +25,6 @@ import java.util.function.Supplier;
 public final class JolCraftBrewingItems {
 
     public static final int YEAST_BOTTLE_VOLUME = 250;
-
-    private static final int DEFAULT_YEAST_COLOR = 0xFF40B14A;
-    private static final int DEFAULT_BREW_COLOR = 0xFF9A652B;
 
     private JolCraftBrewingItems() {}
 
@@ -143,7 +141,7 @@ public final class JolCraftBrewingItems {
 
         yeast.set(
                 JolCraftDataComponents.BREW_COLOR.get(),
-                DEFAULT_YEAST_COLOR
+                BrewingColors.YEAST
         );
 
         return yeast;
@@ -161,7 +159,7 @@ public final class JolCraftBrewingItems {
 
         brew.set(
                 JolCraftDataComponents.BREW_COLOR.get(),
-                DEFAULT_BREW_COLOR
+                BrewingColors.DWARVEN_BREW
         );
 
         brew.set(

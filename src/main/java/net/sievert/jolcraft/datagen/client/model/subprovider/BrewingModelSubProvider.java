@@ -1,11 +1,9 @@
 package net.sievert.jolcraft.datagen.client.model.subprovider;
 
 import net.minecraft.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.data.models.blockstates.PropertyDispatch;
 import net.minecraft.data.models.blockstates.Variant;
 import net.minecraft.data.models.blockstates.VariantProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
@@ -63,13 +61,13 @@ public record BrewingModelSubProvider(@NotNull JolCraftModelProvider parent) imp
         );
 
         builder.addBlockState(
-                MultiVariantGenerator.multiVariant(JolCraftBlocks.FERMENTING_CAULDRON.get())
-                        .with(
-                                PropertyDispatch.property(LayeredCauldronBlock.LEVEL)
-                                        .select(1, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
-                                        .select(2, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
-                                        .select(3, Variant.variant().with(VariantProperties.MODEL, cauldronModel))
+                MultiVariantGenerator.multiVariant(
+                        JolCraftBlocks.FERMENTING_CAULDRON.get(),
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                cauldronModel
                         )
+                )
         );
     }
 

@@ -1,7 +1,5 @@
 package net.sievert.jolcraft.world.block.registry;
 
-import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -84,11 +82,7 @@ public final class JolCraftStationBlocks {
     public static DeferredBlock<FermentingCauldronBlock> registerFermentingCauldron() {
         return JolCraftBlocks.BLOCKS.registerBlock(
                 JolCraftBlockIds.FERMENTING_CAULDRON,
-                props -> new FermentingCauldronBlock(
-                        Biome.Precipitation.NONE,
-                        CauldronInteraction.EMPTY,
-                        props
-                ),
+                FermentingCauldronBlock::new,
                 BlockBehaviour.Properties.ofLegacyCopy(Blocks.CAULDRON)
                         .mapColor(MapColor.STONE)
                         .requiresCorrectToolForDrops()

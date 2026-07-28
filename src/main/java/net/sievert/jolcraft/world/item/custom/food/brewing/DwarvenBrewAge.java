@@ -10,10 +10,40 @@ import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import java.util.Locale;
 
 public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
-    FRESH,
-    AGED,
-    MATURED,
-    VINTAGE;
+    FRESH(
+            0L,
+            0,
+            JolCraftLanguageKeys.BREW_AGE_FRESH
+    ),
+    AGED(
+            JolCraftTimeHelper.TICKS_PER_DAY,
+            1,
+            JolCraftLanguageKeys.BREW_AGE_AGED
+    ),
+    MATURED(
+            JolCraftTimeHelper.TICKS_PER_DAY * 3L,
+            2,
+            JolCraftLanguageKeys.BREW_AGE_MATURED
+    ),
+    VINTAGE(
+            JolCraftTimeHelper.TICKS_PER_DAY * 5L,
+            3,
+            JolCraftLanguageKeys.BREW_AGE_VINTAGE
+    );
+
+    private final long thresholdTicks;
+    private final int amplifierBonus;
+    private final String translationKey;
+
+    DwarvenBrewAge(
+            long thresholdTicks,
+            int amplifierBonus,
+            String translationKey
+    ) {
+        this.thresholdTicks = thresholdTicks;
+        this.amplifierBonus = amplifierBonus;
+        this.translationKey = translationKey;
+    }
 
     @Override
     public String getId() {
@@ -22,21 +52,16 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
         );
     }
 
+    public long thresholdTicks() {
+        return thresholdTicks;
+    }
+
     public int amplifierBonus() {
-        return ordinal();
+        return amplifierBonus;
     }
 
     public String translationKey() {
-        return switch (this) {
-            case FRESH ->
-                    JolCraftLanguageKeys.BREW_AGE_FRESH;
-            case AGED ->
-                    JolCraftLanguageKeys.BREW_AGE_AGED;
-            case MATURED ->
-                    JolCraftLanguageKeys.BREW_AGE_MATURED;
-            case VINTAGE ->
-                    JolCraftLanguageKeys.BREW_AGE_VINTAGE;
-        };
+        return translationKey;
     }
 
     public static DwarvenBrewAge fromStack(
@@ -61,25 +86,39 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
     public static DwarvenBrewAge fromTicks(
             long ageTicks
     ) {
-        long age =
-                Math.max(
-                        0L,
-                        ageTicks
-                );
+        long age = Math.max(
+                0L,
+                ageTicks
+        );
 
-        if (age >= JolCraftTimeHelper.TICKS_PER_DAY * 5L) {
-            return VINTAGE;
+        DwarvenBrewAge resolved = FRESH;
+
+        for (DwarvenBrewAge value : values()) {
+            if (age < value.thresholdTicks) {
+                break;
+            }
+
+            resolved = value;
         }
 
-        if (age >= JolCraftTimeHelper.TICKS_PER_DAY * 3L) {
-            return MATURED;
+        return resolved;
+    }
+
+    public static long nextThreshold(
+            long currentAge
+    ) {
+        long age = Math.max(
+                0L,
+                currentAge
+        );
+
+        for (DwarvenBrewAge value : values()) {
+            if (value.thresholdTicks > age) {
+                return value.thresholdTicks;
+            }
         }
 
-        if (age >= JolCraftTimeHelper.TICKS_PER_DAY) {
-            return AGED;
-        }
-
-        return FRESH;
+        return age;
     }
 
     public static DwarvenBrewAge byId(

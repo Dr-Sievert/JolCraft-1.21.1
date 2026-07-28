@@ -4,65 +4,79 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 /**
- * All color blending / mixing math for the Fermenting Cauldron.
- * Server-authoritative state is stored on the block entity:
- * - currentColor, startColor, targetColor, brewStartTime, blendTotalTicks
- * The renderer may interpolate using partial ticks, but must not invent state.
+ * Owns all color mixing and interpolation for the fermenting cauldron.
+ * The block entity remains authoritative for current, start, and target colors.
  */
 public final class FermentingCauldronColorHelper {
 
-    private FermentingCauldronColorHelper() {}
-
-    /** Sentinel for unset ARGB values (real output colors are always opaque). */
+    /** Sentinel for unset ARGB values. All real brew colors are opaque. */
     public static final int UNSET_COLOR = 0x00000000;
 
+    private FermentingCauldronColorHelper() {}
+
     public interface IngredientView {
+
         int count();
-        /** ARGB; scale is ignored for mixing output. */
+
+        /** ARGB. Alpha is ignored while ingredient colors are mixed. */
         int color();
     }
 
-    // =====================================================================
-    // Base / biome
-    // =====================================================================
+    public static int biomeWaterArgb(
+            Level level,
+            BlockPos pos
+    ) {
+        int rgb = level.getBiome(
+                pos
+        ).value().getWaterColor();
 
-    public static int biomeWaterArgb(Level level, BlockPos pos) {
-        int rgb = level.getBiome(pos).value().getWaterColor();
-        return 0xFF000000 | (rgb & 0xFFFFFF);
+        return BrewingColors.argb(
+                rgb
+        );
     }
 
-    /**
-     * Resolves the base water color for a cauldron.
-     * If the current color is unset, this returns the biome water color (opaque).
-     */
-    public static int resolveBaseWaterColor(Level level, BlockPos pos, int currentArgb) {
-        if (level == null) return currentArgb;
-        return (currentArgb != UNSET_COLOR) ? currentArgb : biomeWaterArgb(level, pos);
+    public static int resolveBaseWaterColor(
+            Level level,
+            BlockPos pos,
+            int currentArgb
+    ) {
+        if (level == null) {
+            return currentArgb;
+        }
+
+        return currentArgb != UNSET_COLOR
+                ? currentArgb
+                : biomeWaterArgb(
+                level,
+                pos
+        );
     }
 
-    // =====================================================================
-    // Timing
-    // =====================================================================
-
-    public static long blendEndTime(long brewStartTime, int blendTotalTicks) {
-        return brewStartTime + Math.max(1L, (long) blendTotalTicks);
+    public static long blendEndTime(
+            long brewStartTime,
+            int blendTotalTicks
+    ) {
+        return brewStartTime
+                + Math.max(
+                1L,
+                blendTotalTicks
+        );
     }
 
-    public static boolean isComplete(Level level, long brewStartTime, int blendTotalTicks) {
-        if (level == null) return false;
-        if (brewStartTime < 0L) return false;
-        return level.getGameTime() >= blendEndTime(brewStartTime, blendTotalTicks);
+    public static boolean isComplete(
+            Level level,
+            long brewStartTime,
+            int blendTotalTicks
+    ) {
+        return level != null
+                && brewStartTime >= 0L
+                && level.getGameTime()
+                >= blendEndTime(
+                brewStartTime,
+                blendTotalTicks
+        );
     }
 
-    // =====================================================================
-    // Render blend
-    // =====================================================================
-
-    /**
-     * Returns the display color for rendering.
-     * If brewing is active, this returns a deterministic lerp between start and target.
-     * If not brewing, it returns currentArgb.
-     */
     public static int displayColor(
             Level level,
             float partialTicks,
@@ -72,9 +86,19 @@ public final class FermentingCauldronColorHelper {
             int startArgb,
             int targetArgb
     ) {
-        if (level == null) return currentArgb;
-        if (brewStartTime < 0L) return currentArgb;
-        return blendedColor(level, partialTicks, brewStartTime, blendTotalTicks, startArgb, targetArgb);
+        if (level == null
+                || brewStartTime < 0L) {
+            return currentArgb;
+        }
+
+        return blendedColor(
+                level,
+                partialTicks,
+                brewStartTime,
+                blendTotalTicks,
+                startArgb,
+                targetArgb
+        );
     }
 
     public static int blendedColor(
@@ -85,81 +109,184 @@ public final class FermentingCauldronColorHelper {
             int startArgb,
             int targetArgb
     ) {
-        if (level == null) return startArgb;
-        if (brewStartTime < 0L) return startArgb;
+        if (level == null
+                || brewStartTime < 0L) {
+            return startArgb;
+        }
 
-        int total = Math.max(1, blendTotalTicks);
-        float elapsed = (float) (level.getGameTime() - brewStartTime) + partialTicks;
-        float t = clamp01(elapsed / (float) total);
+        int total = Math.max(
+                1,
+                blendTotalTicks
+        );
 
-        return lerpArgb(startArgb, targetArgb, t);
+        float elapsed =
+                (float) (
+                        level.getGameTime()
+                                - brewStartTime
+                )
+                        + partialTicks;
+
+        float progress = clamp01(
+                elapsed
+                        / total
+        );
+
+        return lerpArgb(
+                startArgb,
+                targetArgb,
+                progress
+        );
     }
 
-    // =====================================================================
-    // Mixing
-    // =====================================================================
-
     /**
-     * Weighted mixing: per ingredient count, weight steps 1, 1/2, 1/4 (max 3).
-     * Output is opaque (scale=FF).
+     * Mixes up to the first three copies of each ingredient using weights
+     * 1, 1/2, and 1/4. The returned color is always opaque.
      */
-    public static int computeMixedIngredientColor(Iterable<? extends IngredientView> ingredients, int fallbackArgb) {
-        double sumW = 0.0;
-        double sumR = 0.0;
-        double sumG = 0.0;
-        double sumB = 0.0;
+    public static int computeMixedIngredientColor(
+            Iterable<? extends IngredientView> ingredients,
+            int fallbackArgb
+    ) {
+        double totalWeight = 0.0D;
+        double totalRed = 0.0D;
+        double totalGreen = 0.0D;
+        double totalBlue = 0.0D;
 
         for (IngredientView data : ingredients) {
-            if (data == null) continue;
+            if (data == null
+                    || data.count() <= 0) {
+                continue;
+            }
 
-            int count = data.count();
-            if (count <= 0) continue;
+            int color = data.color();
+            int red = color >>> 16 & 0xFF;
+            int green = color >>> 8 & 0xFF;
+            int blue = color & 0xFF;
 
-            int c = data.color();
-            int r = (c >>> 16) & 0xFF;
-            int g = (c >>> 8) & 0xFF;
-            int b = c & 0xFF;
+            int steps = Math.min(
+                    3,
+                    data.count()
+            );
 
-            int steps = Math.min(3, count);
-            for (int i = 0; i < steps; i++) {
-                double w = 1.0 / (1 << i);
-                sumW += w;
-                sumR += r * w;
-                sumG += g * w;
-                sumB += b * w;
+            for (
+                    int index = 0;
+                    index < steps;
+                    index++
+            ) {
+                double weight =
+                        1.0D
+                                / (1 << index);
+
+                totalWeight += weight;
+                totalRed += red * weight;
+                totalGreen += green * weight;
+                totalBlue += blue * weight;
             }
         }
 
-        if (sumW <= 0.0) return fallbackArgb;
+        if (totalWeight <= 0.0D) {
+            return fallbackArgb;
+        }
 
-        int outR = clamp255((int) Math.round(sumR / sumW));
-        int outG = clamp255((int) Math.round(sumG / sumW));
-        int outB = clamp255((int) Math.round(sumB / sumW));
+        int red = clamp255(
+                (int) Math.round(
+                        totalRed
+                                / totalWeight
+                )
+        );
 
-        return 0xFF000000 | (outR << 16) | (outG << 8) | outB;
+        int green = clamp255(
+                (int) Math.round(
+                        totalGreen
+                                / totalWeight
+                )
+        );
+
+        int blue = clamp255(
+                (int) Math.round(
+                        totalBlue
+                                / totalWeight
+                )
+        );
+
+        return BrewingColors.argb(
+                red << 16
+                        | green << 8
+                        | blue
+        );
     }
 
-    // =====================================================================
-    // Math
-    // =====================================================================
-
-    public static int clamp255(int v) {
-        return v < 0 ? 0 : Math.min(v, 255);
+    public static int clamp255(
+            int value
+    ) {
+        return value < 0
+                ? 0
+                : Math.min(
+                value,
+                255
+        );
     }
 
-    public static float clamp01(float v) {
-        return v < 0f ? 0f : Math.min(v, 1f);
+    public static float clamp01(
+            float value
+    ) {
+        return value < 0.0F
+                ? 0.0F
+                : Math.min(
+                value,
+                1.0F
+        );
     }
 
-    public static int lerpArgb(int a, int b, float t) {
-        int aA = (a >>> 24) & 0xFF, aR = (a >>> 16) & 0xFF, aG = (a >>> 8) & 0xFF, aB = a & 0xFF;
-        int bA = (b >>> 24) & 0xFF, bR = (b >>> 16) & 0xFF, bG = (b >>> 8) & 0xFF, bB = b & 0xFF;
+    public static int lerpArgb(
+            int start,
+            int target,
+            float progress
+    ) {
+        int startAlpha = start >>> 24 & 0xFF;
+        int startRed = start >>> 16 & 0xFF;
+        int startGreen = start >>> 8 & 0xFF;
+        int startBlue = start & 0xFF;
 
-        int oA = (int) (aA + (bA - aA) * t);
-        int oR = (int) (aR + (bR - aR) * t);
-        int oG = (int) (aG + (bG - aG) * t);
-        int oB = (int) (aB + (bB - aB) * t);
+        int targetAlpha = target >>> 24 & 0xFF;
+        int targetRed = target >>> 16 & 0xFF;
+        int targetGreen = target >>> 8 & 0xFF;
+        int targetBlue = target & 0xFF;
 
-        return (oA << 24) | (oR << 16) | (oG << 8) | oB;
+        int alpha = (int) (
+                startAlpha
+                        + (
+                        targetAlpha
+                                - startAlpha
+                ) * progress
+        );
+
+        int red = (int) (
+                startRed
+                        + (
+                        targetRed
+                                - startRed
+                ) * progress
+        );
+
+        int green = (int) (
+                startGreen
+                        + (
+                        targetGreen
+                                - startGreen
+                ) * progress
+        );
+
+        int blue = (int) (
+                startBlue
+                        + (
+                        targetBlue
+                                - startBlue
+                ) * progress
+        );
+
+        return alpha << 24
+                | red << 16
+                | green << 8
+                | blue;
     }
 }

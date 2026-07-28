@@ -4,8 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewAge;
 
 public final class FermentingBarrelAging {
 
@@ -258,20 +258,8 @@ public final class FermentingBarrelAging {
     private static long getNextAgeThreshold(
             long currentAge
     ) {
-        long day =
-                JolCraftTimeHelper.TICKS_PER_DAY;
-
-        if (currentAge < day) {
-            return day;
-        }
-
-        if (currentAge < day * 3L) {
-            return day * 3L;
-        }
-
-        return Math.max(
-                currentAge,
-                day * 5L
+        return DwarvenBrewAge.nextThreshold(
+                currentAge
         );
     }
 }

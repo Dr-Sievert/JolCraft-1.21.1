@@ -28,6 +28,8 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.base.SyncingBlockEntity;
@@ -55,6 +57,8 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
 
     private static final int AMBIENT_SOUND_INTERVAL = 200;
 
+    private boolean restoreVanillaBarrelOnLoad;
+
     private final FermentingBarrelAging aging =
             new FermentingBarrelAging();
 
@@ -79,14 +83,18 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         public FluidStack getFluidInTank(
                 int tank
         ) {
-            return getCurrentBrew();
+            return tank == 0
+                    ? getCurrentBrew()
+                    : FluidStack.EMPTY;
         }
 
         @Override
         public int getTankCapacity(
                 int tank
         ) {
-            return brewTank.getCapacity();
+            return tank == 0
+                    ? brewTank.getCapacity()
+                    : 0;
         }
 
         @Override
@@ -94,7 +102,8 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 int tank,
                 FluidStack stack
         ) {
-            return DwarvenBrewFluidHelper.isFinishedBrew(
+            return tank == 0
+                    && DwarvenBrewFluidHelper.isFinishedBrew(
                     stack
             );
         }
@@ -497,24 +506,30 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         syncClient();
     }
 
-    private void sanitizeLoadedTank() {
+    private boolean sanitizeLoadedTank() {
         FluidStack brew =
                 brewTank.getFluid();
 
         if (brew.isEmpty()) {
             aging.clear();
-            return;
+            return false;
         }
 
         if (!DwarvenBrewFluidHelper.isFinishedBrew(
                 brew
         )) {
+            JolCraftLogs.warn(
+                    JolCraftLogTags.BLOCK_ENTITY,
+                    "FermentingBarrel at {} loaded invalid fluid (clearing tank)",
+                    JolCraftLogs.roundedPos(this)
+            );
+
             brewTank.setFluid(
                     FluidStack.EMPTY
             );
 
             aging.clear();
-            return;
+            return true;
         }
 
         brew.setAmount(
@@ -538,6 +553,8 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                         PotionContents.EMPTY
                 )
         );
+
+        return false;
     }
 
     private void restoreVanillaBarrelIfEmpty() {
@@ -581,12 +598,22 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 level
         );
 
-        if (!level.isClientSide) {
-            aging.ensureTimerStarted(
-                    !brewTank.isEmpty(),
-                    level.getGameTime()
-            );
+        if (level.isClientSide) {
+            return;
         }
+
+        if (restoreVanillaBarrelOnLoad
+                && brewTank.isEmpty()) {
+            restoreVanillaBarrelOnLoad = false;
+            restoreVanillaBarrelIfEmpty();
+
+            return;
+        }
+
+        aging.ensureTimerStarted(
+                !brewTank.isEmpty(),
+                level.getGameTime()
+        );
     }
 
     @Override
@@ -684,6 +711,7 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         );
 
         aging.clear();
+        restoreVanillaBarrelOnLoad = false;
 
         if (tag.contains(
                 NBT_BREW_TANK,
@@ -697,7 +725,8 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             );
         }
 
-        sanitizeLoadedTank();
+        restoreVanillaBarrelOnLoad =
+                sanitizeLoadedTank();
 
         aging.load(
                 tag,
