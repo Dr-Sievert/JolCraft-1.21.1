@@ -5,8 +5,13 @@ import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 
+/**
+ * Tracks and applies the passage of time to brew stored within a fermenting
+ * barrel.
+ */
 public final class FermentingBarrelAging {
 
     private static final String NBT_LAST_AGE_TIME =
@@ -34,13 +39,9 @@ public final class FermentingBarrelAging {
             return FluidStack.EMPTY;
         }
 
-        FluidStack current =
-                storedBrew.copy();
+        FluidStack current = storedBrew.copy();
 
-        long elapsedTicks =
-                getElapsedTicks(
-                        currentGameTime
-                );
+        long elapsedTicks = getElapsedTicks(currentGameTime);
 
         if (elapsedTicks > 0L) {
             DwarvenBrewFluidHelper.addAgeInPlace(
@@ -75,10 +76,7 @@ public final class FermentingBarrelAging {
             return true;
         }
 
-        long elapsedTicks =
-                getElapsedTicks(
-                        currentGameTime
-                );
+        long elapsedTicks = getElapsedTicks(currentGameTime);
 
         if (elapsedTicks <= 0L) {
             return false;
@@ -142,15 +140,9 @@ public final class FermentingBarrelAging {
                 currentGameTime
         );
 
-        long currentAge =
-                DwarvenBrewFluidHelper.getAge(
-                        storedBrew
-                );
+        long currentAge = DwarvenBrewFluidHelper.getAge(storedBrew);
 
-        long nextAge =
-                getNextAgeThreshold(
-                        currentAge
-                );
+        long nextAge = getNextAgeThreshold(currentAge);
 
         if (nextAge <= currentAge) {
             return false;
@@ -170,6 +162,10 @@ public final class FermentingBarrelAging {
     // Timer state
     // =====================================================================
 
+    /**
+     * Starts the aging timer when brew is present or clears it when the barrel
+     * is empty.
+     */
     public void ensureTimerStarted(
             boolean hasBrew,
             long currentGameTime
@@ -185,12 +181,20 @@ public final class FermentingBarrelAging {
         }
     }
 
+    /**
+     * Resets the aging timer to the supplied game time.
+     */
     public void reset(
             long currentGameTime
     ) {
         lastAgeTime = currentGameTime;
     }
 
+    /**
+     * Clears the aging timer.
+     *
+     * @return whether the timer was active
+     */
     public boolean clear() {
         if (lastAgeTime < 0L) {
             return false;
@@ -205,6 +209,9 @@ public final class FermentingBarrelAging {
     // Persistence
     // =====================================================================
 
+    /**
+     * Saves the active aging timer to NBT.
+     */
     public void save(
             CompoundTag tag
     ) {
@@ -216,6 +223,9 @@ public final class FermentingBarrelAging {
         }
     }
 
+    /**
+     * Loads the aging timer from NBT when the barrel still contains brew.
+     */
     public void load(
             CompoundTag tag,
             boolean hasBrew
@@ -242,6 +252,10 @@ public final class FermentingBarrelAging {
     // Internal helpers
     // =====================================================================
 
+    /**
+     * Returns the non-negative number of ticks elapsed since aging was last
+     * committed.
+     */
     private long getElapsedTicks(
             long currentGameTime
     ) {
@@ -255,6 +269,9 @@ public final class FermentingBarrelAging {
         );
     }
 
+    /**
+     * Returns the next age threshold after the supplied brew age.
+     */
     private static long getNextAgeThreshold(
             long currentAge
     ) {

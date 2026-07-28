@@ -7,13 +7,19 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import snownee.jade.api.ITooltip;
 
+/**
+ * Shared helper for displaying Dwarven brew information in Jade tooltips.
+ */
 public final class JolCraftJadeBrewingTooltipHelper {
 
     private JolCraftJadeBrewingTooltipHelper() {}
 
+    /**
+     * Adds the brew's aging stage and potion effects to a Jade tooltip.
+     */
     public static void addBrewInfo(
             ITooltip tooltip,
             FluidStack brew

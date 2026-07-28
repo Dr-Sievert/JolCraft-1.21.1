@@ -36,6 +36,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+/**
+ * A vanilla barrel replacement that stores and ages dwarven brew.
+ */
 @SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -49,15 +52,7 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             Properties properties
     ) {
         super(properties);
-
-        this.registerDefaultState(
-                this.stateDefinition
-                        .any()
-                        .setValue(
-                                FACING,
-                                Direction.NORTH
-                        )
-        );
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -65,6 +60,9 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
         return CODEC;
     }
 
+    /**
+     * Delegates item interactions to the fermenting barrel block entity.
+     */
     @Override
     protected ItemInteractionResult useItemOn(
             ItemStack stack,
@@ -93,14 +91,15 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
                 JolCraftLogTags.BLOCK,
                 "FermentingBarrel at {} has missing/wrong BlockEntity (found={})",
                 JolCraftLogs.roundedPos(pos),
-                blockEntity == null
-                        ? "null"
-                        : blockEntity.getClass().getName()
+                blockEntity == null ? "null" : blockEntity.getClass().getName()
         );
 
         return ItemInteractionResult.SUCCESS;
     }
 
+    /**
+     * Allows players to inspect the current brew age with an empty-hand interaction.
+     */
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state,
@@ -116,11 +115,7 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         if (blockEntity instanceof FermentingBarrelBlockEntity barrel) {
-            return barrel.inspectBrewAge(
-                    player
-            )
-                    ? InteractionResult.SUCCESS
-                    : InteractionResult.PASS;
+            return barrel.inspectBrewAge(player) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
 
         return InteractionResult.PASS;
@@ -130,12 +125,7 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
     public @NotNull BlockState getStateForPlacement(
             BlockPlaceContext context
     ) {
-        return this.defaultBlockState()
-                .setValue(
-                        FACING,
-                        context.getNearestLookingDirection()
-                                .getOpposite()
-                );
+        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
 
     @Override
@@ -143,12 +133,7 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             BlockState state,
             Rotation rotation
     ) {
-        return state.setValue(
-                FACING,
-                rotation.rotate(
-                        state.getValue(FACING)
-                )
-        );
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
@@ -156,11 +141,7 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             BlockState state,
             Mirror mirror
     ) {
-        return state.rotate(
-                mirror.getRotation(
-                        state.getValue(FACING)
-                )
-        );
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
@@ -175,10 +156,7 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             BlockPos pos,
             BlockState state
     ) {
-        return new FermentingBarrelBlockEntity(
-                pos,
-                state
-        );
+        return new FermentingBarrelBlockEntity(pos, state);
     }
 
     @SuppressWarnings("unchecked")
@@ -193,20 +171,19 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             return null;
         }
 
-        return type == JolCraftBlockEntities.FERMENTING_BARREL.get()
-                ? (BlockEntityTicker<T>) TickingBlockEntity.tickOnServer()
-                : null;
+        return type == JolCraftBlockEntities.FERMENTING_BARREL.get() ? (BlockEntityTicker<T>) TickingBlockEntity.tickOnServer() : null;
     }
 
+    /**
+     * Returns a vanilla barrel when the block is cloned in creative mode.
+     */
     @Override
     public ItemStack getCloneItemStack(
             LevelReader level,
             BlockPos pos,
             BlockState state
     ) {
-        return new ItemStack(
-                Blocks.BARREL
-        );
+        return new ItemStack(Blocks.BARREL);
     }
 
     @Override

@@ -5,7 +5,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.util.BrewingColors;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import org.jetbrains.annotations.NotNull;
 

@@ -15,12 +15,21 @@ import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldron
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Advances nearby brewing block entities after players skip time by sleeping.
+ *
+ * Only loaded chunks around sleeping players are processed to avoid scanning
+ * the entire world.
+ */
 public final class BrewingSleepHandler {
 
     private static final int CHUNK_SEARCH_RADIUS = 4;
 
     private BrewingSleepHandler() {}
 
+    /**
+     * Fast-forwards brewing progress by the amount of time skipped during sleep.
+     */
     public static void handleSleepFinished(
             ServerLevel level,
             long newTime
@@ -54,6 +63,10 @@ public final class BrewingSleepHandler {
         );
     }
 
+    /**
+     * Visits every loaded chunk within the configured search radius around
+     * the supplied player.
+     */
     private static void processChunksAroundPlayer(
             ServerLevel level,
             ServerPlayer player,
@@ -102,6 +115,9 @@ public final class BrewingSleepHandler {
         }
     }
 
+    /**
+     * Advances all supported brewing block entities contained within the chunk.
+     */
     private static void processChunk(
             ServerLevel level,
             int chunkX,
@@ -132,6 +148,10 @@ public final class BrewingSleepHandler {
         }
     }
 
+    /**
+     * Fast-forwards a supported brewing block entity when it currently has
+     * active work in progress.
+     */
     private static void processBlockEntity(
             BlockEntity blockEntity,
             long skippedTicks,

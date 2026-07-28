@@ -33,6 +33,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Defines a single fermenting cauldron recipe step.
+ *
+ * Recipes may optionally require the previous ingredient, contribute potion effects, control brewing timing and color,
+ * choose the output fluid and optionally finalize the brew.
+ */
 public record FermentingCauldronRecipe(
         ItemInput ingredient,
         Optional<ItemInput> lastIngredient,

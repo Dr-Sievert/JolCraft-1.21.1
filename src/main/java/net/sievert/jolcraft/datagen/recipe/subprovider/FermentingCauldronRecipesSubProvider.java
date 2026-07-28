@@ -17,7 +17,7 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.FermentingCauldronRecipeBuilder;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.util.BrewingColors;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
@@ -99,7 +99,7 @@ public record FermentingCauldronRecipesSubProvider(
                 5,
                 5,
                 BrewingColors.DUSKHOLD_HOPS,
-                MobEffects.SATURATION,
+                MobEffects.ABSORPTION,
                 600,
                 0
         );

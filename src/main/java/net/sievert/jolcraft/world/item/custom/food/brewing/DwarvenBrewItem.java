@@ -19,12 +19,17 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+/**
+ * A drinkable mug of dwarven brew whose name, tooltip and effects are
+ * determined by its stored fluid contents.
+ */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DwarvenBrewItem extends PotionItem {
@@ -32,49 +37,41 @@ public class DwarvenBrewItem extends PotionItem {
     public DwarvenBrewItem(
             Properties properties
     ) {
-        super(
-                properties
-        );
+        super(properties);
     }
 
     @Override
     public ItemStack getDefaultInstance() {
-        return new ItemStack(
-                this
-        );
+        return new ItemStack(this);
     }
 
     @Override
-    public String getDescriptionId(
-            ItemStack stack
-    ) {
+    public String getDescriptionId(ItemStack stack) {
         return getDescriptionId();
     }
 
     @Override
-    public InteractionResult useOn(
-            UseOnContext context
-    ) {
+    public InteractionResult useOn(UseOnContext context) {
         return InteractionResult.PASS;
     }
 
+    /**
+     * Prefixes the brew's normal name with its current age tier.
+     */
     @Override
-    public Component getName(
-            ItemStack stack
-    ) {
+    public Component getName(ItemStack stack) {
         return Component.translatable(
                 JolCraftLanguageKeys.BREW_AGE_NAME,
                 Component.translatable(
-                        DwarvenBrewAge.fromStack(
-                                stack
-                        ).translationKey()
+                        DwarvenBrewAge.fromStack(stack).translationKey()
                 ),
-                super.getName(
-                        stack
-                )
+                super.getName(stack)
         );
     }
 
+    /**
+     * Displays the effects stored in the mug's brew fluid.
+     */
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(
@@ -83,17 +80,13 @@ public class DwarvenBrewItem extends PotionItem {
             List<Component> tooltip,
             TooltipFlag flag
     ) {
-        FluidStack brew =
-                DwarvenBrewFluidHelper.getBrewFromMug(
-                        stack
-                );
+        FluidStack brew = DwarvenBrewFluidHelper.getBrewFromMug(stack);
 
         if (!brew.isEmpty()) {
-            PotionContents contents =
-                    brew.getOrDefault(
-                            DataComponents.POTION_CONTENTS,
-                            PotionContents.EMPTY
-                    );
+            PotionContents contents = brew.getOrDefault(
+                    DataComponents.POTION_CONTENTS,
+                    PotionContents.EMPTY
+            );
 
             contents.addPotionTooltip(
                     tooltip::add,
@@ -110,22 +103,17 @@ public class DwarvenBrewItem extends PotionItem {
         );
     }
 
+    /**
+     * Applies the brew's stored effects and returns an empty glass mug.
+     */
     @Override
     public ItemStack finishUsingItem(
             ItemStack stack,
             Level level,
             LivingEntity entity
     ) {
-        FluidStack brew =
-                DwarvenBrewFluidHelper.getBrewFromMug(
-                        stack
-                );
-
-        ItemStack remaining =
-                entity.eat(
-                        level,
-                        stack
-                );
+        FluidStack brew = DwarvenBrewFluidHelper.getBrewFromMug(stack);
+        ItemStack remaining = entity.eat(level, stack);
 
         if (!level.isClientSide) {
             applyBrewEffects(
@@ -147,19 +135,16 @@ public class DwarvenBrewItem extends PotionItem {
             return remaining;
         }
 
-        ItemStack emptyMug =
-                new ItemStack(
-                        JolCraftItems.GLASS_MUG.get()
-                );
+        ItemStack emptyMug = new ItemStack(
+                JolCraftItems.GLASS_MUG.get()
+        );
 
         if (remaining.isEmpty()) {
             return emptyMug;
         }
 
         if (entity instanceof Player player
-                && !player.getInventory().add(
-                emptyMug
-        )) {
+                && !player.getInventory().add(emptyMug)) {
             player.drop(
                     emptyMug,
                     false
@@ -169,6 +154,9 @@ public class DwarvenBrewItem extends PotionItem {
         return remaining;
     }
 
+    /**
+     * Applies every potion effect encoded in the consumed brew.
+     */
     private static void applyBrewEffects(
             FluidStack brew,
             LivingEntity entity
@@ -177,11 +165,10 @@ public class DwarvenBrewItem extends PotionItem {
             return;
         }
 
-        PotionContents contents =
-                brew.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
-                );
+        PotionContents contents = brew.getOrDefault(
+                DataComponents.POTION_CONTENTS,
+                PotionContents.EMPTY
+        );
 
         contents.forEachEffect(
                 effect -> applyEffect(
@@ -191,13 +178,14 @@ public class DwarvenBrewItem extends PotionItem {
         );
     }
 
+    /**
+     * Applies instant effects immediately and adds duration effects normally.
+     */
     private static void applyEffect(
             MobEffectInstance effect,
             LivingEntity entity
     ) {
-        if (effect.getEffect()
-                .value()
-                .isInstantenous()) {
+        if (effect.getEffect().value().isInstantenous()) {
             effect.getEffect()
                     .value()
                     .applyInstantenousEffect(
@@ -212,9 +200,7 @@ public class DwarvenBrewItem extends PotionItem {
         }
 
         entity.addEffect(
-                new MobEffectInstance(
-                        effect
-                )
+                new MobEffectInstance(effect)
         );
     }
 }

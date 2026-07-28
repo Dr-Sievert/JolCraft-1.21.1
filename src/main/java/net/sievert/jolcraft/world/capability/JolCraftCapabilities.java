@@ -5,7 +5,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewFluidHandler;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHandler;
 
 public final class JolCraftCapabilities {
 

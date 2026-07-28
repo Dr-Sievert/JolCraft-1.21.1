@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.block.entity.custom.brewing.util;
+package net.sievert.jolcraft.world.block.fluid.util.brewing;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,20 +10,24 @@ import net.neoforged.neoforge.fluids.FluidUtil;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewAge;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Shared utility for identifying, comparing, aging and merging dwarven brew fluids.
+ */
 public final class DwarvenBrewFluidHelper {
 
     public static final int MUGS_PER_BUCKET = 3;
 
-    public static final int MUG_VOLUME =
-            FluidType.BUCKET_VOLUME / MUGS_PER_BUCKET;
+    public static final int MUG_VOLUME = FluidType.BUCKET_VOLUME / MUGS_PER_BUCKET;
 
-    public static final int FIRST_MUG_VOLUME =
-            FluidType.BUCKET_VOLUME - MUG_VOLUME * 2;
+    /**
+     * The first mug poured from a full bucket is slightly larger so that three
+     * pours consume the bucket exactly without rounding loss.
+     */
+    public static final int FIRST_MUG_VOLUME = FluidType.BUCKET_VOLUME - MUG_VOLUME * 2;
 
     private DwarvenBrewFluidHelper() {}
 
@@ -81,6 +85,10 @@ public final class DwarvenBrewFluidHelper {
                 || isUnfinishedYeast(fluid);
     }
 
+    /**
+     * Returns whether the supplied item directly represents, or contains,
+     * finished dwarven brew.
+     */
     public static boolean containsDwarvenBrew(
             ItemStack stack
     ) {
@@ -88,27 +96,28 @@ public final class DwarvenBrewFluidHelper {
             return false;
         }
 
-        if (stack.is(
-                JolCraftItems.DWARVEN_BREW.get()
-        )) {
+        if (stack.is(JolCraftItems.DWARVEN_BREW.get())) {
             return true;
         }
 
-        return FluidUtil.getFluidContained(
-                        stack
-                )
+        return FluidUtil.getFluidContained(stack)
                 .filter(
                         fluid -> fluid.is(
                                 JolCraftFluids.DWARVEN_BREW.get()
                         )
-                )
-                .isPresent();
+                ).isPresent();
     }
 
     // =====================================================================
     // Mug volumes
     // =====================================================================
 
+    /**
+     * Returns the amount that should be drained for the next mug pour.
+     *
+     * A full bucket uses a slightly larger first pour so that all three mugs
+     * empty the container exactly.
+     */
     public static int getMugDrainAmount(
             int storedAmount
     ) {
@@ -126,55 +135,30 @@ public final class DwarvenBrewFluidHelper {
                 : 0;
     }
 
-    public static int getMugFillAmount(
-            int storedAmount,
-            int capacity
-    ) {
-        int remaining = capacity - storedAmount;
-
-        if (remaining < MUG_VOLUME) {
-            return 0;
-        }
-
-        if (storedAmount == 0
-                || remaining == FIRST_MUG_VOLUME) {
-            return FIRST_MUG_VOLUME;
-        }
-
-        return MUG_VOLUME;
-    }
-
     // =====================================================================
     // Mug conversion
     // =====================================================================
 
+    /**
+     * Extracts the contained brew from a filled dwarven brew mug.
+     */
     public static FluidStack getBrewFromMug(
             ItemStack mug
     ) {
-        if (!mug.is(
-                JolCraftItems.DWARVEN_BREW.get()
-        )) {
+        if (!mug.is(JolCraftItems.DWARVEN_BREW.get())) {
             return FluidStack.EMPTY;
         }
 
-        return FluidUtil.getFluidContained(
-                        mug
-                )
-                .filter(
-                        DwarvenBrewFluidHelper::isFinishedBrew
-                )
-                .map(
-                        FluidStack::copy
-                )
-                .orElse(
-                        FluidStack.EMPTY
-                );
+        return FluidUtil.getFluidContained(mug).filter(DwarvenBrewFluidHelper::isFinishedBrew).map(FluidStack::copy).orElse(FluidStack.EMPTY);
     }
 
     // =====================================================================
     // Age access and mutation
     // =====================================================================
 
+    /**
+     * Returns the stored brew age, clamped to a non-negative value.
+     */
     public static long getAge(
             FluidStack brew
     ) {
@@ -198,9 +182,7 @@ public final class DwarvenBrewFluidHelper {
             return FluidStack.EMPTY;
         }
 
-        FluidStack fresh = withoutAging(
-                brew
-        );
+        FluidStack fresh = withoutAging(brew);
 
         fresh.set(
                 JolCraftDataComponents.BREW_AGE.get(),
@@ -341,14 +323,9 @@ public final class DwarvenBrewFluidHelper {
                 actualIncomingAmount
         );
 
-        FluidStack merged = withoutAging(
-                stored
-        );
+        FluidStack merged = withoutAging(stored);
 
-        merged.setAmount(
-                stored.getAmount()
-                        + actualIncomingAmount
-        );
+        merged.setAmount(stored.getAmount() + actualIncomingAmount);
 
         merged.set(
                 JolCraftDataComponents.BREW_AGE.get(),
@@ -367,14 +344,15 @@ public final class DwarvenBrewFluidHelper {
     // Internal age normalization
     // =====================================================================
 
+    /**
+     * Returns a copy with only the BREW_AGE component removed.
+     */
     private static FluidStack withoutAgeComponent(
             FluidStack brew
     ) {
         FluidStack normalized = brew.copy();
 
-        normalized.remove(
-                JolCraftDataComponents.BREW_AGE.get()
-        );
+        normalized.remove(JolCraftDataComponents.BREW_AGE.get());
 
         return normalized;
     }
@@ -384,13 +362,9 @@ public final class DwarvenBrewFluidHelper {
     ) {
         FluidStack normalized = brew.copy();
 
-        int amplifierBonus = DwarvenBrewAge.fromTicks(
-                getAge(normalized)
-        ).amplifierBonus();
+        int amplifierBonus = DwarvenBrewAge.fromTicks(getAge(normalized)).amplifierBonus();
 
-        normalized.remove(
-                JolCraftDataComponents.BREW_AGE.get()
-        );
+        normalized.remove(JolCraftDataComponents.BREW_AGE.get());
 
         adjustBrewEffects(
                 normalized,
@@ -405,13 +379,9 @@ public final class DwarvenBrewFluidHelper {
             long previousAgeTicks,
             long currentAgeTicks
     ) {
-        int previousBonus = DwarvenBrewAge.fromTicks(
-                previousAgeTicks
-        ).amplifierBonus();
+        int previousBonus = DwarvenBrewAge.fromTicks(previousAgeTicks).amplifierBonus();
 
-        int currentBonus = DwarvenBrewAge.fromTicks(
-                currentAgeTicks
-        ).amplifierBonus();
+        int currentBonus = DwarvenBrewAge.fromTicks(currentAgeTicks).amplifierBonus();
 
         adjustBrewEffects(
                 brew,
@@ -423,9 +393,7 @@ public final class DwarvenBrewFluidHelper {
             FluidStack brew,
             long ageTicks
     ) {
-        int amplifierBonus = DwarvenBrewAge.fromTicks(
-                ageTicks
-        ).amplifierBonus();
+        int amplifierBonus = DwarvenBrewAge.fromTicks(ageTicks).amplifierBonus();
 
         adjustBrewEffects(
                 brew,
@@ -433,6 +401,10 @@ public final class DwarvenBrewFluidHelper {
         );
     }
 
+    /**
+     * Applies the supplied amplifier adjustment to every custom potion effect
+     * stored within the brew.
+     */
     private static void adjustBrewEffects(
             FluidStack brew,
             int amplifierChange
@@ -469,6 +441,10 @@ public final class DwarvenBrewFluidHelper {
         );
     }
 
+    /**
+     * Creates a copy of an effect with its amplifier adjusted while preserving
+     * all other properties.
+     */
     private static MobEffectInstance adjustEffect(
             MobEffectInstance effect,
             int amplifierChange
@@ -487,23 +463,22 @@ public final class DwarvenBrewFluidHelper {
         );
     }
 
+    /**
+     * Computes the volume-weighted average age of two brew quantities.
+     */
     private static long weightedAverageAge(
             long firstAge,
             int firstAmount,
             long secondAge,
             int secondAmount
     ) {
-        long totalAmount =
-                (long) firstAmount
-                        + secondAmount;
+        long totalAmount = (long) firstAmount + secondAmount;
 
         if (totalAmount <= 0L) {
             return 0L;
         }
 
-        double weightedAge =
-                (double) firstAge * firstAmount
-                        + (double) secondAge * secondAmount;
+        double weightedAge = (double) firstAge * firstAmount + (double) secondAge * secondAmount;
 
         return Math.max(
                 0L,
@@ -513,6 +488,9 @@ public final class DwarvenBrewFluidHelper {
         );
     }
 
+    /**
+     * Adds two age values while preventing overflow and negative results.
+     */
     private static long addClamped(
             long first,
             long second
@@ -529,8 +507,7 @@ public final class DwarvenBrewFluidHelper {
                 first
         );
 
-        if (normalizedFirst
-                > Long.MAX_VALUE - second) {
+        if (normalizedFirst > Long.MAX_VALUE - second) {
             return Long.MAX_VALUE;
         }
 

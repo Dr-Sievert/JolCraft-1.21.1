@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom.food.brewing;
+package net.sievert.jolcraft.world.block.fluid.util.brewing;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
@@ -9,7 +9,11 @@ import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 
 import java.util.Locale;
 
+/**
+ * Represents the age tiers applied to dwarven brew.
+ */
 public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
+
     FRESH(
             0L,
             0,
@@ -47,13 +51,7 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
 
     @Override
     public String getId() {
-        return name().toLowerCase(
-                Locale.ROOT
-        );
-    }
-
-    public long thresholdTicks() {
-        return thresholdTicks;
+        return name().toLowerCase(Locale.ROOT);
     }
 
     public int amplifierBonus() {
@@ -64,28 +62,24 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
         return translationKey;
     }
 
-    public static DwarvenBrewAge fromStack(
-            ItemStack stack
-    ) {
-        return FluidUtil.getFluidContained(
-                        stack
-                )
-                .map(
-                        fluid -> fromTicks(
-                                fluid.getOrDefault(
-                                        JolCraftDataComponents.BREW_AGE.get(),
-                                        0L
-                                )
+    /**
+     * Resolves the brew age stored in an item's fluid contents.
+     */
+    public static DwarvenBrewAge fromStack(ItemStack stack) {
+        return FluidUtil.getFluidContained(stack)
+                .map(fluid -> fromTicks(
+                        fluid.getOrDefault(
+                                JolCraftDataComponents.BREW_AGE.get(),
+                                0L
                         )
-                )
-                .orElse(
-                        FRESH
-                );
+                ))
+                .orElse(FRESH);
     }
 
-    public static DwarvenBrewAge fromTicks(
-            long ageTicks
-    ) {
+    /**
+     * Resolves the highest age tier reached by the supplied age.
+     */
+    public static DwarvenBrewAge fromTicks(long ageTicks) {
         long age = Math.max(
                 0L,
                 ageTicks
@@ -104,9 +98,10 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
         return resolved;
     }
 
-    public static long nextThreshold(
-            long currentAge
-    ) {
+    /**
+     * Returns the next age threshold after the supplied age.
+     */
+    public static long nextThreshold(long currentAge) {
         long age = Math.max(
                 0L,
                 currentAge
@@ -121,9 +116,7 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
         return age;
     }
 
-    public static DwarvenBrewAge byId(
-            String id
-    ) {
+    public static DwarvenBrewAge byId(String id) {
         return JolCraftEnumHelper.byStringId(
                 DwarvenBrewAge.class,
                 id,

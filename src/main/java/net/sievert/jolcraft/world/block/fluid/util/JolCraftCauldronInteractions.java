@@ -24,10 +24,16 @@ import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldron
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
+/**
+ * Registers custom item interactions for vanilla cauldrons.
+ */
 public final class JolCraftCauldronInteractions {
 
     private JolCraftCauldronInteractions() {}
 
+    /**
+     * Registers the dwarven brew bucket interaction for empty cauldrons.
+     */
     public static void register() {
         CauldronInteraction.EMPTY.map().put(
                 JolCraftItems.DWARVEN_BREW_BUCKET.get(),
@@ -35,6 +41,10 @@ public final class JolCraftCauldronInteractions {
         );
     }
 
+    /**
+     * Replaces an empty cauldron with a fermenting cauldron containing one
+     * bucket of dwarven brew.
+     */
     private static ItemInteractionResult fillWithBrew(
             BlockState state,
             Level level,
@@ -43,23 +53,12 @@ public final class JolCraftCauldronInteractions {
             InteractionHand hand,
             ItemStack stack
     ) {
-        FluidStack brew =
-                FluidUtil.getFluidContained(
-                                stack
-                        )
-                        .filter(
-                                fluid -> fluid.is(
-                                        JolCraftFluids.DWARVEN_BREW.get()
-                                )
-                        )
-                        .orElse(
-                                FluidStack.EMPTY
-                        );
+        FluidStack brew = FluidUtil.getFluidContained(stack)
+                .filter(fluid -> fluid.is(JolCraftFluids.DWARVEN_BREW.get()))
+                .orElse(FluidStack.EMPTY);
 
-        if (brew.getAmount()
-                < FluidType.BUCKET_VOLUME) {
-            return ItemInteractionResult
-                    .PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (brew.getAmount() < FluidType.BUCKET_VOLUME) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
         if (level.isClientSide) {
@@ -75,13 +74,9 @@ public final class JolCraftCauldronInteractions {
                 fermentingCauldron
         );
 
-        BlockEntity blockEntity =
-                level.getBlockEntity(
-                        pos
-                );
+        BlockEntity blockEntity = level.getBlockEntity(pos);
 
-        if (!(blockEntity instanceof
-                FermentingCauldronBlockEntity cauldron)) {
+        if (!(blockEntity instanceof FermentingCauldronBlockEntity cauldron)) {
             level.setBlockAndUpdate(
                     pos,
                     Blocks.CAULDRON.defaultBlockState()
@@ -90,14 +85,10 @@ public final class JolCraftCauldronInteractions {
             return ItemInteractionResult.FAIL;
         }
 
-        int inserted =
-                cauldron.getBrewFluidHandler()
-                        .fill(
-                                brew.copyWithAmount(
-                                        FluidType.BUCKET_VOLUME
-                                ),
-                                IFluidHandler.FluidAction.EXECUTE
-                        );
+        int inserted = cauldron.getBrewFluidHandler().fill(
+                brew.copyWithAmount(FluidType.BUCKET_VOLUME),
+                IFluidHandler.FluidAction.EXECUTE
+        );
 
         if (inserted != FluidType.BUCKET_VOLUME) {
             level.setBlockAndUpdate(
@@ -108,22 +99,13 @@ public final class JolCraftCauldronInteractions {
             return ItemInteractionResult.FAIL;
         }
 
-        player.awardStat(
-                Stats.FILL_CAULDRON
-        );
-
-        player.awardStat(
-                Stats.ITEM_USED.get(
-                        stack.getItem()
-                )
-        );
+        player.awardStat(Stats.FILL_CAULDRON);
+        player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
         if (!player.isCreative()) {
             player.setItemInHand(
                     hand,
-                    new ItemStack(
-                            Items.BUCKET
-                    )
+                    new ItemStack(Items.BUCKET)
             );
         }
 

@@ -39,8 +39,8 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.base.SyncingBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewFluidHelper;
-import net.sievert.jolcraft.world.block.entity.custom.brewing.util.DwarvenBrewInteractionHelper;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewInteractionHelper;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.util.FermentingCauldronProcess;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
@@ -61,29 +61,29 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 
+/**
+ * Handles ingredient insertion, brewing progression, fluid storage and
+ * synchronization for a fermenting cauldron.
+ */
 @SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class FermentingCauldronBlockEntity extends BlockEntity
         implements TickingBlockEntity, SyncingBlockEntity {
 
-    private static final String NBT_BREW_TANK =
-            JolCraftStrings.underscored(
-                    JolCraftDictionary.BREW,
-                    JolCraftDictionary.TANK
-            );
+    private static final String NBT_BREW_TANK = JolCraftStrings.underscored(
+            JolCraftDictionary.BREW,
+            JolCraftDictionary.TANK
+    );
 
-    private static final String NBT_BREW_PLAYER =
-            JolCraftStrings.underscored(
-                    JolCraftDictionary.BREW,
-                    JolCraftDictionary.PLAYER
-            );
+    private static final String NBT_BREW_PLAYER = JolCraftStrings.underscored(
+            JolCraftDictionary.BREW,
+            JolCraftDictionary.PLAYER
+    );
 
     private static final LootContextParamSet EXECUTION_CONTEXT_PARAMS =
             new LootContextParamSet.Builder()
-                    .required(
-                            JolCraftRecipeContextParams.INPUT_ITEM
-                    )
+                    .required(JolCraftRecipeContextParams.INPUT_ITEM)
                     .build();
 
     @Nullable
@@ -94,111 +94,97 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     private final FermentingCauldronProcess process =
             new FermentingCauldronProcess();
 
-    private final FluidTank brewTank =
-            new FluidTank(
-                    FluidType.BUCKET_VOLUME,
-                    stack -> DwarvenBrewFluidHelper.isFinishedBrewingFluid(
-                            stack
-                    ) || DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(
-                            stack
-                    )
-            ) {
-                @Override
-                protected void onContentsChanged() {
-                    onBrewTankChanged();
-                }
-            };
+    private final FluidTank brewTank = new FluidTank(
+            FluidType.BUCKET_VOLUME,
+            stack -> DwarvenBrewFluidHelper.isFinishedBrewingFluid(stack)
+                    || DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(stack)
+    ) {
+        @Override
+        protected void onContentsChanged() {
+            onBrewTankChanged();
+        }
+    };
 
-    private final IFluidHandler brewFluidHandler =
-            new IFluidHandler() {
+    private final IFluidHandler brewFluidHandler = new IFluidHandler() {
 
-                @Override
-                public int getTanks() {
-                    return 1;
-                }
+        @Override
+        public int getTanks() {
+            return 1;
+        }
 
-                @Override
-                public FluidStack getFluidInTank(
-                        int tank
-                ) {
-                    if (tank != 0) {
-                        return FluidStack.EMPTY;
-                    }
+        @Override
+        public FluidStack getFluidInTank(int tank) {
+            if (tank != 0) {
+                return FluidStack.EMPTY;
+            }
 
-                    return DwarvenBrewFluidHelper.withFreshAge(
-                            brewTank.getFluid()
-                    );
-                }
+            return DwarvenBrewFluidHelper.withFreshAge(
+                    brewTank.getFluid()
+            );
+        }
 
-                @Override
-                public int getTankCapacity(
-                        int tank
-                ) {
-                    return tank == 0
-                            ? brewTank.getCapacity()
-                            : 0;
-                }
+        @Override
+        public int getTankCapacity(int tank) {
+            return tank == 0
+                    ? brewTank.getCapacity()
+                    : 0;
+        }
 
-                @Override
-                public boolean isFluidValid(
-                        int tank,
-                        FluidStack stack
-                ) {
-                    return tank == 0
-                            && DwarvenBrewFluidHelper.isFinishedBrew(
-                            stack
-                    );
-                }
+        @Override
+        public boolean isFluidValid(
+                int tank,
+                FluidStack stack
+        ) {
+            return tank == 0
+                    && DwarvenBrewFluidHelper.isFinishedBrew(stack);
+        }
 
-                @Override
-                public int fill(
-                        FluidStack resource,
-                        FluidAction action
-                ) {
-                    return fillBrew(
-                            resource,
+        @Override
+        public int fill(
+                FluidStack resource,
+                FluidAction action
+        ) {
+            return fillBrew(
+                    resource,
+                    action
+            );
+        }
+
+        @Override
+        public FluidStack drain(
+                FluidStack resource,
+                FluidAction action
+        ) {
+            if (!hasFinishedFluid()
+                    || !matchesStoredBrew(resource)) {
+                return FluidStack.EMPTY;
+            }
+
+            return DwarvenBrewFluidHelper.withFreshAge(
+                    brewTank.drain(
+                            resource.getAmount(),
                             action
-                    );
-                }
+                    )
+            );
+        }
 
-                @Override
-                public FluidStack drain(
-                        FluidStack resource,
-                        FluidAction action
-                ) {
-                    if (!hasFinishedFluid()
-                            || !matchesStoredBrew(
-                            resource
-                    )) {
-                        return FluidStack.EMPTY;
-                    }
+        @Override
+        public FluidStack drain(
+                int maxDrain,
+                FluidAction action
+        ) {
+            if (!hasFinishedFluid() || maxDrain <= 0) {
+                return FluidStack.EMPTY;
+            }
 
-                    return DwarvenBrewFluidHelper.withFreshAge(
-                            brewTank.drain(
-                                    resource.getAmount(),
-                                    action
-                            )
-                    );
-                }
-
-                @Override
-                public FluidStack drain(
-                        int maxDrain,
-                        FluidAction action
-                ) {
-                    if (!hasFinishedFluid()
-                            || maxDrain <= 0) {
-                        return FluidStack.EMPTY;
-                    }
-
-                    return DwarvenBrewFluidHelper.withFreshAge(
-                            brewTank.drain(
-                                    maxDrain,
-                                    action
-                            )
-                    );
-                }
-            };
+            return DwarvenBrewFluidHelper.withFreshAge(
+                    brewTank.drain(
+                            maxDrain,
+                            action
+                    )
+            );
+        }
+    };
 
     public FermentingCauldronBlockEntity(
             BlockPos pos,
@@ -211,6 +197,13 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
+    // =====================================================================
+    // Interaction
+    // =====================================================================
+
+    /**
+     * Handles fluid-container interaction or inserts a matching recipe ingredient.
+     */
     public ItemInteractionResult handleInteraction(
             Player player,
             InteractionHand hand,
@@ -223,9 +216,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         if (process.isBrewing()) {
-            return handleBrewingInteraction(
-                    usedItem
-            );
+            return handleBrewingInteraction(usedItem);
         }
 
         if (usedItem.isEmpty()) {
@@ -233,31 +224,21 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         if (hasFinishedFluid()
-                || DwarvenBrewFluidHelper.containsDwarvenBrew(
-                usedItem
-        )
-                || usedItem.is(
-                JolCraftItems.GLASS_MUG.get()
-        )
-                || usedItem.is(
-                net.minecraft.world.item.Items.GLASS_BOTTLE
-        )) {
-            return DwarvenBrewInteractionHelper
-                    .tryInteractFluidContainer(
-                            level,
-                            worldPosition,
-                            player,
-                            hand,
-                            usedItem,
-                            brewFluidHandler,
-                            hasFinishedFluid()
-                    );
+                || DwarvenBrewFluidHelper.containsDwarvenBrew(usedItem)
+                || usedItem.is(JolCraftItems.GLASS_MUG.get())
+                || usedItem.is(net.minecraft.world.item.Items.GLASS_BOTTLE)) {
+            return DwarvenBrewInteractionHelper.tryInteractFluidContainer(
+                    level,
+                    worldPosition,
+                    player,
+                    hand,
+                    usedItem,
+                    brewFluidHandler,
+                    hasFinishedFluid()
+            );
         }
 
-        FermentingCauldronRecipe recipe =
-                findRecipe(
-                        usedItem
-                );
+        FermentingCauldronRecipe recipe = findRecipe(usedItem);
 
         if (recipe == null) {
             return ItemInteractionResult.FAIL;
@@ -271,25 +252,23 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
-    private ItemInteractionResult handleBrewingInteraction(
-            ItemStack usedItem
-    ) {
-        if (level == null
-                || !usedItem.is(
-                JolCraftItems.DEV_KEY.get()
-        )) {
+    /**
+     * Allows the developer key to immediately complete the active blend.
+     */
+    private ItemInteractionResult handleBrewingInteraction(ItemStack usedItem) {
+        if (level == null || !usedItem.is(JolCraftItems.DEV_KEY.get())) {
             return ItemInteractionResult.FAIL;
         }
 
-        process.restartImmediately(
-                level.getGameTime()
-        );
-
+        process.restartImmediately(level.getGameTime());
         syncClient();
 
         return ItemInteractionResult.SUCCESS;
     }
 
+    /**
+     * Validates ingredient limits and progression requirements before insertion.
+     */
     private ItemInteractionResult tryInsert(
             Player player,
             InteractionHand hand,
@@ -300,24 +279,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return ItemInteractionResult.FAIL;
         }
 
-        Item item =
-                usedItem.getItem();
+        Item item = usedItem.getItem();
+        int count = process.getIngredientCount(item);
 
-        int count =
-                process.getIngredientCount(
-                        item
-                );
-
-        if (count
-                >= FermentingCauldronProcess.MAX_INGREDIENT_STACK) {
+        if (count >= FermentingCauldronProcess.MAX_INGREDIENT_STACK) {
             player.displayClientMessage(
                     Component.translatable(
                                     JolCraftLanguageKeys
                                             .TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX
                             )
-                            .withStyle(
-                                    ChatFormatting.GRAY
-                            ),
+                            .withStyle(ChatFormatting.GRAY),
                     true
             );
 
@@ -326,9 +297,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         if (recipe.effect().isPresent()
                 && process.hasIngredients()
-                && !process.containsIngredient(
-                item
-        )
+                && !process.containsIngredient(item)
                 && !DwarfLoreAttachmentHelper.hasUnlock(
                 player,
                 DwarfLoreKey.FORGOTTEN_BREW_FORMULAS
@@ -338,9 +307,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                                     JolCraftLanguageKeys
                                             .TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI
                             )
-                            .withStyle(
-                                    ChatFormatting.RED
-                            ),
+                            .withStyle(ChatFormatting.RED),
                     true
             );
 
@@ -355,6 +322,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
+    /**
+     * Consumes one ingredient and starts its resulting brewing process.
+     */
     private ItemInteractionResult applyInsert(
             Player player,
             InteractionHand hand,
@@ -366,21 +336,15 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return ItemInteractionResult.FAIL;
         }
 
-        ItemStack ingredient =
-                usedItem.copyWithCount(
-                        1
-                );
+        ItemStack ingredient = usedItem.copyWithCount(1);
 
-        LootContext context =
-                createExecutionContext(
-                        serverLevel,
-                        ingredient
-                );
+        LootContext context = createExecutionContext(
+                serverLevel,
+                ingredient
+        );
 
         player.awardStat(
-                Stats.ITEM_USED.get(
-                        usedItem.getItem()
-                )
+                Stats.ITEM_USED.get(usedItem.getItem())
         );
 
         JolCraftItemHelper.consume(
@@ -409,14 +373,11 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
 
         if (recipe.finalizeBrew()) {
-            brewPlayer =
-                    player.getUUID();
+            brewPlayer = player.getUUID();
         }
 
         brewTank.setFluid(
-                process.createUnfinishedBrewFluid(
-                        brewAmount
-                )
+                process.createUnfinishedBrewFluid(brewAmount)
         );
 
         onBrewTankChanged();
@@ -424,10 +385,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         return ItemInteractionResult.SUCCESS;
     }
 
+    // =====================================================================
+    // Brewing
+    // =====================================================================
+
+    /**
+     * Advances the active brewing process and completes it when ready.
+     */
     @Override
     public void tickServer() {
-        if (level == null
-                || level.isClientSide) {
+        if (level == null || level.isClientSide) {
             return;
         }
 
@@ -439,48 +406,39 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         doBubbleEffects();
 
-        if (process.isComplete(
-                level
-        )) {
+        if (process.isComplete(level)) {
             completeBrew();
         }
     }
 
+    /**
+     * Commits the completed blend or replaces the unfinished fluid with its
+     * finished output.
+     */
     private void completeBrew() {
-        boolean finished =
-                process.completeBlend();
+        boolean finished = process.completeBlend();
 
         if (!finished) {
-            FluidStack updated =
-                    process.createUpdatedUnfinishedBrewFluid(
-                            brewTank.getFluid()
-                    );
+            FluidStack updated = process.createUpdatedUnfinishedBrewFluid(
+                    brewTank.getFluid()
+            );
 
             if (!updated.isEmpty()) {
-                brewTank.setFluid(
-                        updated
-                );
-
+                brewTank.setFluid(updated);
                 onBrewTankChanged();
             }
 
             return;
         }
 
-        FluidStack finishedBrew =
-                process.createFinishedBrewFluid(
-                        brewTank.getFluidAmount()
-                );
-
-        process.clear();
-
-        brewTank.setFluid(
-                finishedBrew
+        FluidStack finishedBrew = process.createFinishedBrewFluid(
+                brewTank.getFluidAmount()
         );
 
-        if (DwarvenBrewFluidHelper.isFinishedBrew(
-                finishedBrew
-        )) {
+        process.clear();
+        brewTank.setFluid(finishedBrew);
+
+        if (DwarvenBrewFluidHelper.isFinishedBrew(finishedBrew)) {
             tryAwardBrewCreatedStat();
         } else {
             brewPlayer = null;
@@ -489,6 +447,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         onBrewTankChanged();
     }
 
+    /**
+     * Awards the brew-created stat once the attributed player is online.
+     */
     private void tryAwardBrewCreatedStat() {
         if (!(level instanceof ServerLevel serverLevel)
                 || brewPlayer == null
@@ -496,12 +457,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return;
         }
 
-        ServerPlayer player =
-                serverLevel.getServer()
-                        .getPlayerList()
-                        .getPlayer(
-                                brewPlayer
-                        );
+        ServerPlayer player = serverLevel
+                .getServer()
+                .getPlayerList()
+                .getPlayer(brewPlayer);
 
         if (player == null) {
             return;
@@ -515,9 +474,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         setChanged();
     }
 
-    public void fastForwardBrew(
-            long skippedTicks
-    ) {
+    /**
+     * Advances the active brew by time skipped through sleeping.
+     */
+    public void fastForwardBrew(long skippedTicks) {
         if (level == null
                 || level.isClientSide
                 || skippedTicks <= 0L
@@ -530,12 +490,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 skippedTicks
         )) {
             completeBrew();
+
             return;
         }
 
         syncClient();
     }
 
+    /**
+     * Spawns the next scheduled brewing bubble and sound.
+     */
     private void doBubbleEffects() {
         if (level == null
                 || level.isClientSide
@@ -543,25 +507,17 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return;
         }
 
-        double x =
-                worldPosition.getX()
-                        + 0.5D
-                        + (
-                        level.random.nextDouble()
-                                - 0.5D
-                );
+        double x = worldPosition.getX()
+                + 0.5D
+                + level.random.nextDouble()
+                - 0.5D;
 
-        double y =
-                worldPosition.getY()
-                        + 1.01D;
+        double y = worldPosition.getY() + 1.01D;
 
-        double z =
-                worldPosition.getZ()
-                        + 0.5D
-                        + (
-                        level.random.nextDouble()
-                                - 0.5D
-                );
+        double z = worldPosition.getZ()
+                + 0.5D
+                + level.random.nextDouble()
+                - 0.5D;
 
         JolCraftParticleHelper.spawn(
                 level,
@@ -589,27 +545,29 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
 
         process.scheduleNextBubble(
-                level.random.nextInt(
-                        process.getBubbleTicks()
-                )
+                level.random.nextInt(process.getBubbleTicks())
         );
     }
 
+    // =====================================================================
+    // Fluid handling
+    // =====================================================================
+
+    /**
+     * Inserts fresh finished brew into the cauldron.
+     */
     private int fillBrew(
             FluidStack incoming,
             IFluidHandler.FluidAction action
     ) {
-        if (!canInsertBrew(
-                incoming
-        )) {
+        if (!canInsertBrew(incoming)) {
             return 0;
         }
 
-        int accepted =
-                Math.min(
-                        brewTank.getSpace(),
-                        incoming.getAmount()
-                );
+        int accepted = Math.min(
+                brewTank.getSpace(),
+                incoming.getAmount()
+        );
 
         if (accepted <= 0) {
             return 0;
@@ -621,24 +579,12 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         if (brewTank.isEmpty()) {
             FluidStack inserted =
-                    DwarvenBrewFluidHelper.withFreshAge(
-                            incoming
-                    );
+                    DwarvenBrewFluidHelper.withFreshAge(incoming);
 
-            inserted.setAmount(
-                    accepted
-            );
-
-            brewTank.setFluid(
-                    inserted
-            );
+            inserted.setAmount(accepted);
+            brewTank.setFluid(inserted);
         } else {
-            FluidStack stored =
-                    brewTank.getFluid();
-
-            stored.grow(
-                    accepted
-            );
+            brewTank.getFluid().grow(accepted);
         }
 
         onBrewTankChanged();
@@ -646,64 +592,35 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         return accepted;
     }
 
-    private boolean canInsertBrew(
-            FluidStack incoming
-    ) {
-        if (!DwarvenBrewFluidHelper.isFinishedBrew(
-                incoming
-        )
-                || DwarvenBrewFluidHelper.getAge(
-                incoming
-        ) > 0L
+    private boolean canInsertBrew(FluidStack incoming) {
+        if (!DwarvenBrewFluidHelper.isFinishedBrew(incoming)
+                || DwarvenBrewFluidHelper.getAge(incoming) > 0L
                 || process.hasUnfinishedState()) {
             return false;
         }
 
         return brewTank.isEmpty()
-                || DwarvenBrewFluidHelper
-                .matchesIgnoringAgeComponent(
-                        incoming,
-                        brewTank.getFluid()
-                );
-    }
-
-    private boolean matchesStoredBrew(
-            FluidStack requested
-    ) {
-        return !brewTank.isEmpty()
-                && DwarvenBrewFluidHelper
-                .matchesIgnoringAgeComponent(
-                        requested,
-                        brewTank.getFluid()
-                );
-    }
-
-    public boolean drainForExtinguishing(
-            int amount
-    ) {
-        if (level == null
-                || level.isClientSide
-                || amount <= 0
-                || brewTank.isEmpty()) {
-            return false;
-        }
-
-        FluidStack drained = brewTank.drain(
-                Math.min(
-                        amount,
-                        brewTank.getFluidAmount()
-                ),
-                IFluidHandler.FluidAction.EXECUTE
+                || DwarvenBrewFluidHelper.matchesIgnoringAgeComponent(
+                incoming,
+                brewTank.getFluid()
         );
-
-        return !drained.isEmpty();
     }
 
+    private boolean matchesStoredBrew(FluidStack requested) {
+        return !brewTank.isEmpty()
+                && DwarvenBrewFluidHelper.matchesIgnoringAgeComponent(
+                requested,
+                brewTank.getFluid()
+        );
+    }
+
+    /**
+     * Persists fluid changes, clears stale process state and synchronizes clients.
+     */
     private void onBrewTankChanged() {
         setChanged();
 
-        if (level == null
-                || level.isClientSide) {
+        if (level == null || level.isClientSide) {
             return;
         }
 
@@ -718,9 +635,11 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         syncClient();
     }
 
+    /**
+     * Replaces the fermenting cauldron with an empty vanilla cauldron.
+     */
     private void restoreVanillaCauldron() {
-        if (level == null
-                || level.isClientSide()) {
+        if (level == null || level.isClientSide()) {
             return;
         }
 
@@ -730,26 +649,29 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
+    // =====================================================================
+    // Loaded-state validation
+    // =====================================================================
+
+    /**
+     * Validates the stored fluid and normalizes its amount and components.
+     *
+     * @return whether invalid fluid was removed
+     */
     private boolean sanitizeLoadedTank() {
-        FluidStack brew =
-                brewTank.getFluid();
+        FluidStack brew = brewTank.getFluid();
 
         if (brew.isEmpty()) {
             return false;
         }
 
         boolean finished =
-                DwarvenBrewFluidHelper.isFinishedBrewingFluid(
-                        brew
-                );
+                DwarvenBrewFluidHelper.isFinishedBrewingFluid(brew);
 
         boolean unfinished =
-                DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(
-                        brew
-                );
+                DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(brew);
 
-        if (!finished
-                && !unfinished) {
+        if (!finished && !unfinished) {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK_ENTITY,
                     "FermentingCauldron at {} loaded invalid fluid '{}' (clearing)",
@@ -760,25 +682,19 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                             .location()
             );
 
-            brewTank.setFluid(
-                    FluidStack.EMPTY
-            );
+            brewTank.setFluid(FluidStack.EMPTY);
 
             return true;
         }
 
-        if (DwarvenBrewFluidHelper.getAge(
-                brew
-        ) > 0L) {
+        if (DwarvenBrewFluidHelper.getAge(brew) > 0L) {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK_ENTITY,
                     "FermentingCauldron at {} loaded aged brew (clearing)",
                     JolCraftLogs.roundedPos(this)
             );
 
-            brewTank.setFluid(
-                    FluidStack.EMPTY
-            );
+            brewTank.setFluid(FluidStack.EMPTY);
 
             return true;
         }
@@ -806,22 +722,20 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         return false;
     }
 
+    /**
+     * Reconciles the loaded process state with the fluid stored in the tank.
+     */
     private void sanitizeLoadedState() {
         restoreVanillaCauldronOnLoad = sanitizeLoadedTank();
 
-        FluidStack fluid =
-                brewTank.getFluid();
+        FluidStack fluid = brewTank.getFluid();
 
         if (process.hasUnfinishedState()) {
-            if (process.matchesUnfinishedFluid(
-                    fluid
-            )) {
+            if (process.matchesUnfinishedFluid(fluid)) {
                 return;
             }
 
-            if (DwarvenBrewFluidHelper.isFinishedBrewingFluid(
-                    fluid
-            )) {
+            if (DwarvenBrewFluidHelper.isFinishedBrewingFluid(fluid)) {
                 JolCraftLogs.warn(
                         JolCraftLogTags.BLOCK_ENTITY,
                         "FermentingCauldron at {} loaded finished fluid with stale process state (clearing process)",
@@ -843,12 +757,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             process.clear();
             brewPlayer = null;
 
-            if (DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(
-                    fluid
-            )) {
-                brewTank.setFluid(
-                        FluidStack.EMPTY
-                );
+            if (DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(fluid)) {
+                brewTank.setFluid(FluidStack.EMPTY);
             }
 
             restoreVanillaCauldronOnLoad = brewTank.isEmpty();
@@ -856,35 +766,32 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return;
         }
 
-        if (DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(
-                fluid
-        )) {
+        if (DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(fluid)) {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK_ENTITY,
                     "FermentingCauldron at {} loaded unfinished fluid without process state (clearing tank)",
                     JolCraftLogs.roundedPos(this)
             );
 
-            brewTank.setFluid(
-                    FluidStack.EMPTY
-            );
-
+            brewTank.setFluid(FluidStack.EMPTY);
             restoreVanillaCauldronOnLoad = true;
         }
     }
 
+    // =====================================================================
+    // Recipe handling
+    // =====================================================================
+
+    /**
+     * Finds the recipe matching the held item and previous ingredient.
+     */
     @Nullable
-    private FermentingCauldronRecipe findRecipe(
-            ItemStack usedItem
-    ) {
+    private FermentingCauldronRecipe findRecipe(ItemStack usedItem) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return null;
         }
 
-        ItemStack ingredient =
-                usedItem.copyWithCount(
-                        1
-                );
+        ItemStack ingredient = usedItem.copyWithCount(1);
 
         FermentingCauldronRecipeInput input =
                 new FermentingCauldronRecipeInput(
@@ -895,20 +802,17 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         return serverLevel
                 .getRecipeManager()
                 .getRecipeFor(
-                        JolCraftRecipes
-                                .FERMENTING_CAULDRON_TYPE
-                                .get(),
+                        JolCraftRecipes.FERMENTING_CAULDRON_TYPE.get(),
                         input,
                         serverLevel
                 )
-                .map(
-                        RecipeHolder::value
-                )
-                .orElse(
-                        null
-                );
+                .map(RecipeHolder::value)
+                .orElse(null);
     }
 
+    /**
+     * Creates the loot context used to execute an ingredient recipe.
+     */
     private static LootContext createExecutionContext(
             ServerLevel level,
             ItemStack input
@@ -923,13 +827,16 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
+    // =====================================================================
+    // Level attachment / synchronization
+    // =====================================================================
+
+    /**
+     * Restores invalid empty cauldrons and completes brews that finished while unloaded.
+     */
     @Override
-    public void setLevel(
-            Level level
-    ) {
-        super.setLevel(
-                level
-        );
+    public void setLevel(Level level) {
+        super.setLevel(level);
 
         if (level.isClientSide) {
             return;
@@ -946,10 +853,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         tryAwardBrewCreatedStat();
 
-        if (process.isBrewing()
-                && process.isComplete(
-                level
-        )) {
+        if (process.isBrewing() && process.isComplete(level)) {
             completeBrew();
         }
     }
@@ -960,11 +864,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     }
 
     @Override
-    public CompoundTag getUpdateTag(
-            HolderLookup.Provider registries
-    ) {
-        CompoundTag tag =
-                new CompoundTag();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
 
         writeClientData(
                 tag,
@@ -985,26 +886,23 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
+    /**
+     * Writes the fluid and process data required for client rendering.
+     */
     private void writeClientData(
             CompoundTag tag,
             HolderLookup.Provider registries
     ) {
-        FluidStack clientFluid =
-                process.hasUnfinishedState()
-                        ? process.createUnfinishedBrewFluid(
-                        getBrewAmount()
-                )
-                        : brewTank.getFluid();
+        FluidStack clientFluid = process.hasUnfinishedState()
+                ? process.createUnfinishedBrewFluid(getBrewAmount())
+                : brewTank.getFluid();
 
         if (!clientFluid.isEmpty()) {
-            FluidTank clientTank =
-                    new FluidTank(
-                            FluidType.BUCKET_VOLUME
-                    );
-
-            clientTank.setFluid(
-                    clientFluid.copy()
+            FluidTank clientTank = new FluidTank(
+                    FluidType.BUCKET_VOLUME
             );
+
+            clientTank.setFluid(clientFluid.copy());
 
             tag.put(
                     NBT_BREW_TANK,
@@ -1015,18 +913,17 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             );
         }
 
-        process.writeClientData(
-                tag
-        );
+        process.writeClientData(tag);
     }
 
+    /**
+     * Replaces the local client state with data received from the server.
+     */
     private void readClientData(
             CompoundTag tag,
             HolderLookup.Provider registries
     ) {
-        brewTank.setFluid(
-                FluidStack.EMPTY
-        );
+        brewTank.setFluid(FluidStack.EMPTY);
 
         if (tag.contains(
                 NBT_BREW_TANK,
@@ -1034,9 +931,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         )) {
             brewTank.readFromNBT(
                     registries,
-                    tag.getCompound(
-                            NBT_BREW_TANK
-                    )
+                    tag.getCompound(NBT_BREW_TANK)
             );
         }
 
@@ -1046,6 +941,13 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
+    // =====================================================================
+    // Persistence
+    // =====================================================================
+
+    /**
+     * Saves the fluid tank, attributed player and brewing process.
+     */
     @Override
     protected void saveAdditional(
             CompoundTag tag,
@@ -1079,6 +981,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         );
     }
 
+    /**
+     * Loads the fluid tank, attributed player and brewing process.
+     */
     @Override
     protected void loadAdditional(
             CompoundTag tag,
@@ -1089,11 +994,9 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 registries
         );
 
-        brewTank.setFluid(
-                FluidStack.EMPTY
-        );
-
+        brewTank.setFluid(FluidStack.EMPTY);
         process.clear();
+
         brewPlayer = null;
         restoreVanillaCauldronOnLoad = false;
 
@@ -1103,19 +1006,12 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         )) {
             brewTank.readFromNBT(
                     registries,
-                    tag.getCompound(
-                            NBT_BREW_TANK
-                    )
+                    tag.getCompound(NBT_BREW_TANK)
             );
         }
 
-        if (tag.hasUUID(
-                NBT_BREW_PLAYER
-        )) {
-            brewPlayer =
-                    tag.getUUID(
-                            NBT_BREW_PLAYER
-                    );
+        if (tag.hasUUID(NBT_BREW_PLAYER)) {
+            brewPlayer = tag.getUUID(NBT_BREW_PLAYER);
         }
 
         process.load(
@@ -1126,6 +1022,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         sanitizeLoadedState();
     }
+
+    // =====================================================================
+    // Integration access
+    // =====================================================================
 
     public boolean isBrewing() {
         return process.isBrewing();
@@ -1179,8 +1079,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     }
 
     public int getBrewAmount() {
-        int storedAmount =
-                brewTank.getFluidAmount();
+        int storedAmount = brewTank.getFluidAmount();
 
         if (storedAmount > 0) {
             return storedAmount;
@@ -1191,22 +1090,14 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 : 0;
     }
 
-    public FluidStack getBrewFluid() {
-        return DwarvenBrewFluidHelper.withFreshAge(
-                brewTank.getFluid()
-        );
-    }
-
+    /**
+     * Returns the dwarven brew fluid representation exposed to Jade.
+     */
     public FluidStack getJadeBrewFluid() {
-        FluidStack stored =
-                brewTank.getFluid();
+        FluidStack stored = brewTank.getFluid();
 
-        if (DwarvenBrewFluidHelper.isFinishedBrew(
-                stored
-        )) {
-            return DwarvenBrewFluidHelper.withFreshAge(
-                    stored
-            );
+        if (DwarvenBrewFluidHelper.isFinishedBrew(stored)) {
+            return DwarvenBrewFluidHelper.withFreshAge(stored);
         }
 
         if (process.getOutputFluid()

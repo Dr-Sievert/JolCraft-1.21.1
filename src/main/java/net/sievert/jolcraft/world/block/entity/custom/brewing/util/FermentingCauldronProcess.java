@@ -36,6 +36,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Owns the active fermenting cauldron process, including its ingredients, effects, output fluid and visual brewing state.
+ */
 public final class FermentingCauldronProcess {
 
     public static final int MAX_INGREDIENT_STACK = 10;
@@ -74,14 +77,6 @@ public final class FermentingCauldronProcess {
             JolCraftStrings.underscored(
                     JolCraftDictionary.LAST,
                     JolCraftDictionary.INGREDIENT
-            );
-
-    /** Legacy item-id-only key retained for existing worlds. */
-    private static final String NBT_LAST_INGREDIENT_ID =
-            JolCraftStrings.underscored(
-                    JolCraftDictionary.LAST,
-                    JolCraftDictionary.INGREDIENT,
-                    JolCraftDictionary.ID
             );
 
     private static final String NBT_INGREDIENTS =
@@ -126,16 +121,6 @@ public final class FermentingCauldronProcess {
             JolCraftStrings.plural(
                     JolCraftDictionary.EFFECT
             );
-
-    /** Legacy custom effect keys retained for existing worlds. */
-    private static final String NBT_EFFECT_ID =
-            JolCraftDictionary.ID;
-
-    private static final String NBT_EFFECT_DURATION =
-            JolCraftDictionary.DURATION;
-
-    private static final String NBT_EFFECT_AMPLIFIER =
-            JolCraftDictionary.AMPLIFIER;
 
     private ItemStack lastIngredient =
             ItemStack.EMPTY;
@@ -189,6 +174,9 @@ public final class FermentingCauldronProcess {
         return !effects.isEmpty();
     }
 
+    /**
+     * Returns whether any incomplete brewing process data remains.
+     */
     public boolean hasUnfinishedState() {
         return isBrewing()
                 || hasIngredients()
@@ -254,6 +242,9 @@ public final class FermentingCauldronProcess {
     // Ingredient application
     // =====================================================================
 
+    /**
+     * Applies one ingredient and updates the effects, output fluid and active color blend from its matching recipe.
+     */
     public void applyIngredient(
             Level level,
             BlockPos pos,
@@ -312,6 +303,9 @@ public final class FermentingCauldronProcess {
         );
     }
 
+    /**
+     * Inserts or updates an effect while retaining the longest duration and strongest amplifier generated for that effect type.
+     */
     private void upsertEffect(
             MobEffectInstance effect,
             int ingredientCount
@@ -402,6 +396,9 @@ public final class FermentingCauldronProcess {
     // Brewing lifecycle
     // =====================================================================
 
+    /**
+     * Starts a new blend from the current color toward the color produced by all accumulated ingredients.
+     */
     private void startBrew(
             Level level,
             BlockPos pos,
@@ -441,6 +438,9 @@ public final class FermentingCauldronProcess {
                 level.getGameTime();
     }
 
+    /**
+     * Restarts the current blend with a one-tick duration.
+     */
     public void restartImmediately(
             long currentGameTime
     ) {
@@ -452,6 +452,9 @@ public final class FermentingCauldronProcess {
         bubbleDelay = 0;
     }
 
+    /**
+     * Returns whether the active color blend has reached its end time.
+     */
     public boolean isComplete(
             Level level
     ) {
@@ -464,6 +467,11 @@ public final class FermentingCauldronProcess {
                 );
     }
 
+    /**
+     * Commits the target color and clears the active blend state.
+     *
+     * @return whether the completed recipe should finalize the brew
+     */
     public boolean completeBlend() {
         currentColor = targetColor;
 
@@ -478,12 +486,9 @@ public final class FermentingCauldronProcess {
         return finalize;
     }
 
-    public FluidStack createUnfinishedBrewFluid() {
-        return createUnfinishedBrewFluid(
-                FluidType.BUCKET_VOLUME
-        );
-    }
-
+    /**
+     * Creates unfinished brewing fluid containing the current process color and effects.
+     */
     public FluidStack createUnfinishedBrewFluid(
             int amount
     ) {
@@ -511,6 +516,9 @@ public final class FermentingCauldronProcess {
         return fluid;
     }
 
+    /**
+     * Reapplies the current process data to matching unfinished brewing fluid.
+     */
     public FluidStack createUpdatedUnfinishedBrewFluid(
             FluidStack existing
     ) {
@@ -537,12 +545,9 @@ public final class FermentingCauldronProcess {
         return updated;
     }
 
-    public FluidStack createFinishedBrewFluid() {
-        return createFinishedBrewFluid(
-                FluidType.BUCKET_VOLUME
-        );
-    }
-
+    /**
+     * Creates finished brewing fluid containing the current process color and effects. Finished dwarven brew begins at age zero.
+     */
     public FluidStack createFinishedBrewFluid(
             int amount
     ) {
@@ -578,6 +583,9 @@ public final class FermentingCauldronProcess {
         return fluid;
     }
 
+    /**
+     * Returns whether the supplied fluid matches the unfinished form of the currently selected output fluid.
+     */
     public boolean matchesUnfinishedFluid(
             FluidStack fluid
     ) {
@@ -609,6 +617,9 @@ public final class FermentingCauldronProcess {
         );
     }
 
+    /**
+     * Writes the current brew color and effects onto the supplied fluid and removes any stale aging data.
+     */
     private void applyFluidComponents(
             FluidStack fluid
     ) {
@@ -627,6 +638,9 @@ public final class FermentingCauldronProcess {
         );
     }
 
+    /**
+     * Creates immutable potion contents from the effects currently accumulated by the brewing process.
+     */
     private PotionContents createPotionContents() {
         if (effects.isEmpty()) {
             return PotionContents.EMPTY;
@@ -654,6 +668,9 @@ public final class FermentingCauldronProcess {
         );
     }
 
+    /**
+     * Clears all ingredient, effect, output and visual process state.
+     */
     public void clear() {
         lastIngredient =
                 ItemStack.EMPTY;
@@ -699,12 +716,16 @@ public final class FermentingCauldronProcess {
 
         if (bubbleDelay > 0) {
             bubbleDelay--;
+
             return false;
         }
 
         return true;
     }
 
+    /**
+     * Schedules the next bubble using the supplied random delay.
+     */
     public void scheduleNextBubble(
             int randomDelay
     ) {
@@ -720,9 +741,9 @@ public final class FermentingCauldronProcess {
     // =====================================================================
 
     /**
-     * Fast-forwards the active blend.
+     * Fast-forwards the active blend while preserving its remaining visual interpolation when it does not fully complete.
      *
-     * @return true when the brew has completed and should now be finalized
+     * @return whether the brew completed and should now be finalized
      */
     public boolean fastForward(
             Level level,
@@ -786,6 +807,9 @@ public final class FermentingCauldronProcess {
     // Client data
     // =====================================================================
 
+    /**
+     * Writes the process data required by the client for rendering.
+     */
     public void writeClientData(
             CompoundTag tag
     ) {
@@ -824,6 +848,9 @@ public final class FermentingCauldronProcess {
         );
     }
 
+    /**
+     * Replaces the local process state with data received from the server.
+     */
     public void readClientData(
             CompoundTag tag,
             BlockPos pos
@@ -885,7 +912,6 @@ public final class FermentingCauldronProcess {
 
         loadEffects(
                 tag,
-                null,
                 pos
         );
 
@@ -896,6 +922,9 @@ public final class FermentingCauldronProcess {
     // Persistent storage
     // =====================================================================
 
+    /**
+     * Saves the complete brewing process to persistent NBT.
+     */
     public void save(
             CompoundTag tag,
             HolderLookup.Provider registries
@@ -959,6 +988,9 @@ public final class FermentingCauldronProcess {
         );
     }
 
+    /**
+     * Loads the complete brewing process from persistent NBT.
+     */
     public void load(
             CompoundTag tag,
             HolderLookup.Provider registries,
@@ -969,11 +1001,6 @@ public final class FermentingCauldronProcess {
         HolderLookup.RegistryLookup<Item> itemLookup =
                 registries.lookupOrThrow(
                         Registries.ITEM
-                );
-
-        HolderLookup.RegistryLookup<MobEffect> effectLookup =
-                registries.lookupOrThrow(
-                        Registries.MOB_EFFECT
                 );
 
         brewStartTime = tag.contains(
@@ -1024,7 +1051,6 @@ public final class FermentingCauldronProcess {
         loadLastIngredient(
                 tag,
                 registries,
-                itemLookup,
                 pos
         );
 
@@ -1074,13 +1100,15 @@ public final class FermentingCauldronProcess {
 
         loadEffects(
                 tag,
-                effectLookup,
                 pos
         );
 
         sanitizeLoadedBrewStartTime();
     }
 
+    /**
+     * Converts an empty default start time into the inactive sentinel when no other brewing process data was loaded.
+     */
     private void sanitizeLoadedBrewStartTime() {
         if (brewStartTime != 0L) {
             return;
@@ -1102,6 +1130,9 @@ public final class FermentingCauldronProcess {
         }
     }
 
+    /**
+     * Saves the complete last ingredient stack so its data components remain available to subsequent recipe inputs.
+     */
     private void saveLastIngredient(
             CompoundTag tag,
             HolderLookup.Provider registries
@@ -1127,6 +1158,9 @@ public final class FermentingCauldronProcess {
         }
     }
 
+    /**
+     * Saves the accumulated ingredient counts and colors.
+     */
     @SuppressWarnings("deprecation")
     private void saveIngredients(
             CompoundTag tag
@@ -1192,6 +1226,9 @@ public final class FermentingCauldronProcess {
         }
     }
 
+    /**
+     * Saves all generated potion effects using the vanilla effect format.
+     */
     private void saveEffects(
             CompoundTag tag
     ) {
@@ -1220,6 +1257,9 @@ public final class FermentingCauldronProcess {
         }
     }
 
+    /**
+     * Loads the selected output fluid, falling back to dwarven brew when the stored identifier is absent or invalid.
+     */
     private FermentingCauldronRecipe.OutputFluid loadOutputFluid(
             CompoundTag tag,
             BlockPos pos
@@ -1258,109 +1298,46 @@ public final class FermentingCauldronProcess {
         return FermentingCauldronRecipe.DEFAULT_OUTPUT_FLUID;
     }
 
+    /**
+     * Loads the complete last ingredient stack.
+     */
     private void loadLastIngredient(
             CompoundTag tag,
             HolderLookup.Provider registries,
-            HolderLookup.RegistryLookup<Item> itemLookup,
-            BlockPos pos
-    ) {
-        if (tag.contains(
-                NBT_LAST_INGREDIENT,
-                Tag.TAG_COMPOUND
-        )) {
-            ItemStack loaded = ItemStack.parseOptional(
-                    registries,
-                    tag.getCompound(
-                            NBT_LAST_INGREDIENT
-                    )
-            );
-
-            if (!loaded.isEmpty()) {
-                lastIngredient = loaded.copyWithCount(
-                        1
-                );
-
-                return;
-            }
-
-            JolCraftLogs.warn(
-                    JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} has invalid last ingredient stack (falling back to legacy id)",
-                    JolCraftLogs.roundedPos(pos)
-            );
-        }
-
-        loadLegacyLastIngredient(
-                tag,
-                itemLookup,
-                pos
-        );
-    }
-
-    private void loadLegacyLastIngredient(
-            CompoundTag tag,
-            HolderLookup.RegistryLookup<Item> itemLookup,
             BlockPos pos
     ) {
         if (!tag.contains(
-                NBT_LAST_INGREDIENT_ID,
-                Tag.TAG_STRING
+                NBT_LAST_INGREDIENT,
+                Tag.TAG_COMPOUND
         )) {
             return;
         }
 
-        String raw =
-                tag.getString(
-                        NBT_LAST_INGREDIENT_ID
-                );
+        ItemStack loaded = ItemStack.parseOptional(
+                registries,
+                tag.getCompound(
+                        NBT_LAST_INGREDIENT
+                )
+        );
 
-        ResourceLocation id =
-                ResourceLocation.tryParse(
-                        raw
-                );
-
-        if (id == null) {
+        if (loaded.isEmpty()) {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} has malformed last ingredient name '{}' (clearing)",
-                    JolCraftLogs.roundedPos(pos),
-                    raw
+                    "FermentingCauldron at {} has invalid last ingredient stack (clearing)",
+                    JolCraftLogs.roundedPos(pos)
             );
 
             return;
         }
 
-        Item item = itemLookup
-                .get(
-                        ResourceKey.create(
-                                Registries.ITEM,
-                                id
-                        )
-                )
-                .map(
-                        Holder.Reference::value
-                )
-                .orElse(
-                        Items.AIR
-                );
-
-        if (item == Items.AIR) {
-            JolCraftLogs.debug(
-                    JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} missing last ingredient item '{}' (clearing)",
-                    JolCraftLogs.roundedPos(pos),
-                    id
-            );
-
-            return;
-        }
-
-        lastIngredient =
-                new ItemStack(
-                        item
-                );
+        lastIngredient = loaded.copyWithCount(
+                1
+        );
     }
 
+    /**
+     * Loads the accumulated ingredient counts and colors.
+     */
     private void loadIngredients(
             CompoundTag tag,
             HolderLookup.RegistryLookup<Item> itemLookup,
@@ -1479,9 +1456,11 @@ public final class FermentingCauldronProcess {
         }
     }
 
+    /**
+     * Loads all generated potion effects using the vanilla effect format.
+     */
     private void loadEffects(
             CompoundTag tag,
-            HolderLookup.RegistryLookup<MobEffect> effectLookup,
             BlockPos pos
     ) {
         if (!tag.contains(
@@ -1502,24 +1481,12 @@ public final class FermentingCauldronProcess {
                 index < list.size();
                 index++
         ) {
-            CompoundTag effectTag =
-                    list.getCompound(
-                            index
-                    );
-
             MobEffectInstance effect =
                     MobEffectInstance.load(
-                            effectTag
+                            list.getCompound(
+                                    index
+                            )
                     );
-
-            if (effect == null
-                    && effectLookup != null) {
-                effect = loadLegacyEffect(
-                        effectTag,
-                        effectLookup,
-                        pos
-                );
-            }
 
             if (effect == null
                     || effect.getDuration() < 1
@@ -1539,85 +1506,4 @@ public final class FermentingCauldronProcess {
             );
         }
     }
-
-    private MobEffectInstance loadLegacyEffect(
-            CompoundTag effectTag,
-            HolderLookup.RegistryLookup<MobEffect> effectLookup,
-            BlockPos pos
-    ) {
-        if (!effectTag.contains(
-                NBT_EFFECT_ID,
-                Tag.TAG_STRING
-        )) {
-            return null;
-        }
-
-        String raw = effectTag.getString(
-                NBT_EFFECT_ID
-        );
-
-        ResourceLocation id =
-                ResourceLocation.tryParse(
-                        raw
-                );
-
-        if (id == null) {
-            JolCraftLogs.warn(
-                    JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} has malformed effect name '{}' (skipping)",
-                    JolCraftLogs.roundedPos(pos),
-                    raw
-            );
-
-            return null;
-        }
-
-        Holder<MobEffect> holder =
-                effectLookup
-                        .get(
-                                ResourceKey.create(
-                                        Registries.MOB_EFFECT,
-                                        id
-                                )
-                        )
-                        .orElse(null);
-
-        if (holder == null) {
-            JolCraftLogs.debug(
-                    JolCraftLogTags.BLOCK_ENTITY,
-                    "FermentingCauldron at {} missing MobEffect '{}' (skipping)",
-                    JolCraftLogs.roundedPos(pos),
-                    id
-            );
-
-            return null;
-        }
-
-        int duration = effectTag.getInt(
-                NBT_EFFECT_DURATION
-        );
-
-        if (duration < 1) {
-            return null;
-        }
-
-        int amplifier = effectTag.contains(
-                NBT_EFFECT_AMPLIFIER,
-                Tag.TAG_INT
-        )
-                ? effectTag.getInt(
-                NBT_EFFECT_AMPLIFIER
-        )
-                : 0;
-
-        return new MobEffectInstance(
-                holder,
-                duration,
-                Math.max(
-                        0,
-                        amplifier
-                )
-        );
-    }
-
 }
