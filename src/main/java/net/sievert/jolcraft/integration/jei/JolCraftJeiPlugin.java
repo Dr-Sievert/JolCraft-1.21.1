@@ -8,11 +8,14 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeHelper;
+import net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron.JeiFermentingCauldronCategory;
+import net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron.JeiFermentingCauldronHelper;
 import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionCategory;
 import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionHelper;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
@@ -33,7 +36,10 @@ import java.util.Locale;
 @SuppressWarnings("removal")
 public final class JolCraftJeiPlugin implements IModPlugin {
 
-    private static final ResourceLocation ID = JolCraft.location(JolCraftJeiIds.JEI_PLUGIN);
+    private static final ResourceLocation ID =
+            JolCraft.location(
+                    JolCraftJeiIds.JEI_PLUGIN
+            );
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -60,6 +66,12 @@ public final class JolCraftJeiPlugin implements IModPlugin {
 
         registration.addRecipeCategories(
                 new JeiLapidaryBenchCategory(
+                        guiHelper
+                )
+        );
+
+        registration.addRecipeCategories(
+                new JeiFermentingCauldronCategory(
                         guiHelper
                 )
         );
@@ -107,7 +119,19 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             );
         }
 
-        var handInteractionRecipes = JeiHandInteractionHelper.getAllHandInteractionRecipes();
+        var fermentingCauldronRecipes =
+                JeiFermentingCauldronHelper.getRecipes();
+
+        if (!fermentingCauldronRecipes.isEmpty()) {
+            registration.addRecipes(
+                    JeiFermentingCauldronCategory.RECIPE_TYPE,
+                    fermentingCauldronRecipes
+            );
+        }
+
+        var handInteractionRecipes =
+                JeiHandInteractionHelper
+                        .getAllHandInteractionRecipes();
 
         if (!handInteractionRecipes.isEmpty()) {
             registration.addRecipes(
@@ -134,6 +158,13 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                 ),
                 JeiLapidaryBenchCategory.RECIPE_TYPE
         );
+
+        registration.addRecipeCatalyst(
+                new ItemStack(
+                        Blocks.CAULDRON
+                ),
+                JeiFermentingCauldronCategory.RECIPE_TYPE
+        );
     }
 
     @Override
@@ -144,7 +175,10 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                 JolCraftItems
                         .ANCIENT_DWARVEN_TOME_LEGENDARY
                         .get(),
-                (stack, context) -> {
+                (
+                        stack,
+                        context
+                ) -> {
                     String loreKey =
                             stack.get(
                                     JolCraftDataComponents
@@ -164,7 +198,10 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                 JolCraftItems
                         .DEEPSLATE_COMPASS_DIAL
                         .get(),
-                (stack, context) -> {
+                (
+                        stack,
+                        context
+                ) -> {
                     String group =
                             stack.get(
                                     JolCraftDataComponents
@@ -172,8 +209,10 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                                             .get()
                             );
 
-                    if (group == null
-                            || group.isEmpty()) {
+                    if (
+                            group == null
+                                    || group.isEmpty()
+                    ) {
                         group =
                                 JolCraftDictionary.UNKNOWN;
                     } else {
