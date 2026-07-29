@@ -239,24 +239,19 @@ public final class JeiBountyRewardCategory
                         .getId()
         );
 
-        findDisplayedReward(
-                entry,
-                slots
-        ).ifPresent(
-                outcome -> {
-                    drawAmountRange(
-                            graphics,
-                            font,
-                            outcome.minCount(),
-                            outcome.maxCount()
-                    );
+        JeiItemOutcome outcome = entry.reward();
 
-                    drawChance(
-                            graphics,
-                            font,
-                            outcome
-                    );
-                }
+        drawAmountRange(
+                graphics,
+                font,
+                outcome.minCount(),
+                outcome.maxCount()
+        );
+
+        drawChance(
+                graphics,
+                font,
+                outcome
         );
     }
 
@@ -361,44 +356,6 @@ public final class JeiBountyRewardCategory
                 font,
                 chance
         );
-    }
-
-    private static Optional<JeiItemOutcome> findDisplayedReward(
-            JeiBountyRewardRecipe entry,
-            IRecipeSlotsView slots
-    ) {
-        List<IRecipeSlotView> outputSlots =
-                slots.getSlotViews(
-                        RecipeIngredientRole.OUTPUT
-                );
-
-        if (outputSlots.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Optional<ItemStack> displayedStack =
-                outputSlots.getFirst()
-                        .getDisplayedIngredient(
-                                VanillaTypes.ITEM_STACK
-                        );
-
-        if (displayedStack.isEmpty()) {
-            return Optional.empty();
-        }
-
-        ItemStack displayed =
-                displayedStack.get();
-
-        return entry.rewards()
-                .stream()
-                .filter(
-                        outcome ->
-                                ItemStack.isSameItemSameComponents(
-                                        outcome.stack(),
-                                        displayed
-                                )
-                )
-                .findFirst();
     }
 
     private static void drawCenteredScaledText(
@@ -681,12 +638,7 @@ public final class JeiBountyRewardCategory
                         OUTPUT_Y
                 )
                 .addItemStacks(
-                        entry.rewards()
-                                .stream()
-                                .map(
-                                        JeiItemOutcome::stack
-                                )
-                                .toList()
+                        List.of(entry.reward().stack())
                 );
     }
 

@@ -74,35 +74,18 @@ public record JeiHandInteractionRecipe(
     }
 
     public record ItemResult(
-            @NotNull List<JeiItemOutcome> outcomes
+            @NotNull JeiItemOutcome outcome
     ) implements Result {
 
         public ItemResult {
             Objects.requireNonNull(
-                    outcomes,
-                    "outcomes"
+                    outcome,
+                    "outcome"
             );
-
-            outcomes =
-                    List.copyOf(
-                            outcomes
-                    );
-
-            if (outcomes.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Item result must contain at least one outcome"
-                );
-            }
         }
 
-        public @NotNull List<ItemStack> examples() {
-            return outcomes.stream()
-                    .map(
-                            outcome ->
-                                    outcome.stack()
-                                            .copy()
-                    )
-                    .toList();
+        public @NotNull ItemStack example() {
+            return outcome.stack().copy();
         }
     }
 

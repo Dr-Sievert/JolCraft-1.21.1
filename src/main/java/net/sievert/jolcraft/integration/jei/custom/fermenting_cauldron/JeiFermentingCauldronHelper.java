@@ -12,6 +12,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.integration.jei.util.ItemInputJeiTranslator;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
@@ -288,7 +289,10 @@ public final class JeiFermentingCauldronHelper {
                 new JeiFermentingCauldronRecipe(
                         YEAST_BOTTLE_EXTRACTION_ID,
                         new JeiFermentingCauldronRecipe.FluidInput(
-                                yeast
+                                withAmount(
+                                        yeast,
+                                        JolCraftBrewingItems.YEAST_BOTTLE_VOLUME
+                                )
                         ),
                         List.of(
                                 new ItemStack(

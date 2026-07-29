@@ -93,23 +93,27 @@ public final class JeiHandInteractionHelper {
         }
 
         for (RecipeOutput output : recipe.outputs()) {
-            JeiHandInteractionRecipe.Result translated =
-                    translateOutput(
-                            output
-                    );
-
-            if (translated == null) {
-                continue;
-            }
-
-            result.add(
-                    new JeiHandInteractionRecipe(
+            if (output instanceof ItemOutput itemOutput) {
+                for (JeiItemOutcome outcome : ItemOutputJeiTranslator.translate(itemOutput)) {
+                    result.add(new JeiHandInteractionRecipe(
                             recipe,
                             ingredientAExamples,
                             ingredientBExamples,
-                            translated
-                    )
-            );
+                            new JeiHandInteractionRecipe.ItemResult(outcome)
+                    ));
+                }
+                continue;
+            }
+
+            JeiHandInteractionRecipe.Result translated = translateOutput(output);
+            if (translated != null) {
+                result.add(new JeiHandInteractionRecipe(
+                        recipe,
+                        ingredientAExamples,
+                        ingredientBExamples,
+                        translated
+                ));
+            }
         }
     }
 
@@ -127,9 +131,7 @@ public final class JeiHandInteractionHelper {
                     return null;
                 }
 
-                return new JeiHandInteractionRecipe.ItemResult(
-                        outcomes
-                );
+                return null;
             }
 
             case EntityOutput entityOutput -> {

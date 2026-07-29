@@ -6,51 +6,25 @@ import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchReci
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public record JeiLapidaryBenchRecipe(
         @NotNull LapidaryBenchRecipe recipe,
         @NotNull List<ItemStack> inputExamples,
         @NotNull List<ItemStack> toolExamples,
-        @NotNull List<JeiItemOutcome> outcomes
+        @NotNull JeiItemOutcome outcome
 ) {
-
     public JeiLapidaryBenchRecipe {
-        inputExamples = List.copyOf(
-                inputExamples
-        );
-
-        toolExamples = List.copyOf(
-                toolExamples
-        );
-
-        outcomes = List.copyOf(
-                outcomes
-        );
-
-        if (inputExamples.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Lapidary JEI recipe requires at least one input example"
-            );
-        }
-
-        if (toolExamples.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Lapidary JEI recipe requires at least one tool example"
-            );
-        }
-
-        if (outcomes.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Lapidary JEI recipe requires at least one output outcome"
-            );
+        Objects.requireNonNull(recipe, "recipe");
+        Objects.requireNonNull(outcome, "outcome");
+        inputExamples = inputExamples.stream().map(ItemStack::copy).toList();
+        toolExamples = toolExamples.stream().map(ItemStack::copy).toList();
+        if (inputExamples.isEmpty() || toolExamples.isEmpty()) {
+            throw new IllegalArgumentException("Lapidary JEI recipe requires input and tool examples");
         }
     }
 
-    public @NotNull List<ItemStack> outputExamples() {
-        return outcomes.stream()
-                .map(
-                        JeiItemOutcome::stack
-                )
-                .toList();
+    public @NotNull ItemStack outputExample() {
+        return outcome.stack().copy();
     }
 }

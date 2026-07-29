@@ -21,7 +21,7 @@ import java.util.Objects;
 public record JeiBountyRewardRecipe(
         @NotNull BountyRewardRecipe recipe,
         @NotNull List<ItemStack> inputs,
-        @NotNull List<JeiItemOutcome> rewards
+        @NotNull JeiItemOutcome reward
 ) {
 
     public JeiBountyRewardRecipe {
@@ -36,17 +36,13 @@ public record JeiBountyRewardRecipe(
         );
 
         Objects.requireNonNull(
-                rewards,
-                "rewards"
+                reward,
+                "reward"
         );
 
         inputs = inputs.stream()
                 .map(ItemStack::copy)
                 .toList();
-
-        rewards = List.copyOf(
-                rewards
-        );
 
         if (inputs.isEmpty()) {
             throw new IllegalArgumentException(
@@ -54,14 +50,9 @@ public record JeiBountyRewardRecipe(
             );
         }
 
-        if (rewards.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "rewards must contain at least one item outcome"
-            );
-        }
     }
 
-    public static @NotNull JeiBountyRewardRecipe create(
+    public static @NotNull List<JeiBountyRewardRecipe> create(
             @NotNull BountyRewardRecipe rewardRecipe,
             @NotNull List<BountyTaskRecipe> taskRecipes
     ) {
@@ -86,11 +77,13 @@ public record JeiBountyRewardRecipe(
                         rewardRecipe
                 );
 
-        return new JeiBountyRewardRecipe(
-                rewardRecipe,
-                inputs,
-                rewards
-        );
+        return rewards.stream()
+                .map(reward -> new JeiBountyRewardRecipe(
+                        rewardRecipe,
+                        inputs,
+                        reward
+                ))
+                .toList();
     }
 
     private static @NotNull List<ItemStack> createInputs(

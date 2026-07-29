@@ -69,22 +69,17 @@ public final class JeiBountyRewardHelper {
                 continue;
             }
 
-            JeiBountyRewardRecipe recipe =
+            List<JeiBountyRewardRecipe> translated =
                     JeiBountyRewardRecipe.create(
                             rewardRecipe,
                             matchingTasks
                     );
 
-            if (
-                    recipe.inputs().isEmpty()
-                            || recipe.rewards().isEmpty()
-            ) {
-                continue;
+            for (JeiBountyRewardRecipe recipe : translated) {
+                if (!recipe.inputs().isEmpty()) {
+                    recipes.add(recipe);
+                }
             }
-
-            recipes.add(
-                    recipe
-            );
         }
 
         return List.copyOf(
