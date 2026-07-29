@@ -185,6 +185,7 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.deprecation = false
 }
 
 idea {
