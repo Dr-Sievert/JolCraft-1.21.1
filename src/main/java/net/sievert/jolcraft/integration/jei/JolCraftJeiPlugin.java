@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyRewardCategory;
+import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyRewardHelper;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskCategory;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskHelper;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
@@ -91,6 +93,12 @@ public final class JolCraftJeiPlugin implements IModPlugin {
         );
 
         registration.addRecipeCategories(
+                new JeiBountyRewardCategory(
+                        guiHelper
+                )
+        );
+
+        registration.addRecipeCategories(
                 new JeiInfoPageCategory(
                         guiHelper
                 )
@@ -148,12 +156,23 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             );
         }
 
-        var bountyTaskRecipes = JeiBountyTaskHelper.getRecipes();
+        var bountyTaskRecipes =
+                JeiBountyTaskHelper.getRecipes();
 
         if (!bountyTaskRecipes.isEmpty()) {
             registration.addRecipes(
                     JeiBountyTaskCategory.RECIPE_TYPE,
                     bountyTaskRecipes
+            );
+        }
+
+        var bountyRewardRecipes =
+                JeiBountyRewardHelper.getRecipes();
+
+        if (!bountyRewardRecipes.isEmpty()) {
+            registration.addRecipes(
+                    JeiBountyRewardCategory.RECIPE_TYPE,
+                    bountyRewardRecipes
             );
         }
 
@@ -188,6 +207,20 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                         JolCraftItems.BOUNTY.get()
                 ),
                 JeiBountyTaskCategory.RECIPE_TYPE
+        );
+
+        registration.addRecipeCatalyst(
+                new ItemStack(
+                        JolCraftItems.BOUNTY.get()
+                ),
+                JeiBountyRewardCategory.RECIPE_TYPE
+        );
+
+        registration.addRecipeCatalyst(
+                new ItemStack(
+                        JolCraftItems.BOUNTY_CRATE.get()
+                ),
+                JeiBountyRewardCategory.RECIPE_TYPE
         );
     }
 

@@ -239,6 +239,7 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> BOUNTY_CRATE = JolCraftBountyItems.registerBountyCrate();
     public static final DeferredItem<Item> RESTOCK_CRATE = JolCraftBountyItems.registerRestockCrate();
     public static final DeferredItem<Item> REROLL_CRATE = JolCraftBountyItems.registerRerollCrate();
+    public static final DeferredItem<Item> REWARD_CRATE = JolCraftBountyItems.registerRewardCrate();
 
     // -------------------------------------------------------------------------
     // Contracts

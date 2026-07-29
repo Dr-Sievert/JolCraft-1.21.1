@@ -27,6 +27,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -229,6 +230,13 @@ public final class JolCraftModelBuilder {
             @NotNull String subFolder
     ) {
         createFlatItemModel(item, itemTexture(textureSource, subFolder));
+    }
+
+    public void flatItem(
+            @NotNull Item item,
+            @NotNull ResourceLocation texture
+    ) {
+        createFlatItemModel(item, texture);
     }
 
     public void flatBlockItem(@NotNull Block block) {

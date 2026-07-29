@@ -47,13 +47,12 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
 
     @Override
     protected boolean supportsAltTooltip(ItemStack stack) {
-        // Always show the long "how to use" help on Alt.
-        return true;
+        BountyData data = getBountyDataOrNull(stack);
+        return data != null;
     }
 
     @Override
     protected @NotNull String altTooltipKey(ItemStack stack) {
-        // This is your generic crate help text (still fine to keep as-is).
         return JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COLLECT_ALT;
     }
 

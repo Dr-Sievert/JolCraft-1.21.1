@@ -33,6 +33,7 @@ public final class JolCraftDataComponentIds extends JolCraftIds {
     public static final String BOUNTY_DATA     = join(JolCraftItemIds.BOUNTY, JolCraftDictionary.DATA);
     public static final String BOUNTY_FILL     = join(JolCraftItemIds.BOUNTY, JolCraftDictionary.FILL);
     public static final String BOUNTY_COMPLETE = join(JolCraftItemIds.BOUNTY, JolCraftDictionary.COMPLETE);
+    public static final String BOUNTY_REWARDS = join(JolCraftItemIds.BOUNTY, plural(JolCraftDictionary.REWARD));
 
     // -----------------
     // Compass

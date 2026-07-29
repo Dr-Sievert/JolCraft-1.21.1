@@ -44,7 +44,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String DEMAND = "demand";
     public static final String DYE = "dye";
     public static final String ENDORSE = "endorse";
-    public static final String EXTRACT = "extract";
     public static final String FILL = "fill";
     public static final String FINALIZE = "finalize";
     public static final String FISHING = "fishing";
@@ -200,7 +199,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String ALCHEMIST = "alchemist";
     public static final String ALT = "alt";
     public static final String AMOUNT = "amount";
-    public static final String AMPLIFIER = "amplifier";
     public static final String AMULET = "amulet";
     public static final String ANVIL = "anvil";
     public static final String ARCANIST = "arcanist";
@@ -317,7 +315,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String DISCOVERED = "discovered";
     public static final String DISTANCE = "distance";
     public static final String DUMMY = "dummy";
-    public static final String DURATION = "duration";
     public static final String DURABILITY = "durability";
     public static final String DUSKCAP = "duskcap";
     public static final String DUSKHOLD = "duskhold";
@@ -511,6 +508,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PROVIDER = "provider";
     public static final String QUILL = "quill";
     public static final String RADIANT = "radiant";
+    public static final String RARITY = "rarity";
     public static final String RECIPE = "recipe";
     public static final String REDSTONE = "redstone";
     public static final String REPUTATION = "reputation";

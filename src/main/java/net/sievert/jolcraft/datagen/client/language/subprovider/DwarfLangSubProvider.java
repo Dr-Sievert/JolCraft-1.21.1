@@ -137,5 +137,6 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_CRATE_COOLDOWN, "You must wait before you can use another crate.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_CRATE_NO_OFFERS_VILLAGER, "This villager has no trades!");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_CRATE_NO_OFFERS_DWARF, "This dwarf has no trades!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_REWARD_CRATE, "There is loot inside!");
     }
 }

@@ -140,74 +140,238 @@ public abstract class AbstractBountyTaskItem extends Item implements IItemExtens
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        Player player = JolCraftProxy.access().getLocalPlayer();
-        boolean knowsLanguage = LanguageAttachmentHelper.knowsDwarvish(player);
+    public void appendHoverText(
+            ItemStack stack,
+            TooltipContext context,
+            List<Component> tooltip,
+            TooltipFlag flag
+    ) {
+        Player player =
+                JolCraftProxy.access()
+                        .getLocalPlayer();
+
+        boolean knowsLanguage =
+                LanguageAttachmentHelper.knowsDwarvish(
+                        player
+                );
 
         if (!knowsLanguage) {
-            tooltip.add(Component.translatable(lockedTooltipKey()).withStyle(ChatFormatting.GRAY));
-            super.appendHoverText(stack, context, tooltip, flag);
+            tooltip.add(
+                    Component.translatable(
+                                    lockedTooltipKey()
+                            )
+                            .withStyle(
+                                    ChatFormatting.GRAY
+                            )
+            );
+
+            super.appendHoverText(
+                    stack,
+                    context,
+                    tooltip,
+                    flag
+            );
+
             return;
         }
 
-        if (supportsAltTooltip(stack) && JolCraftProxy.access().isAltDown()) {
-            String key = altTooltipKey(stack);
+        if (
+                supportsAltTooltip(
+                        stack
+                )
+                        && JolCraftProxy.access()
+                        .isAltDown()
+        ) {
+            String key =
+                    altTooltipKey(
+                            stack
+                    );
+
             if (!key.isBlank()) {
-                tooltip.add(Component.translatable(key).withStyle(ChatFormatting.GRAY));
+                tooltip.add(
+                        Component.translatable(
+                                        key
+                                )
+                                .withStyle(
+                                        ChatFormatting.GRAY
+                                )
+                );
+
                 return;
             }
         }
 
-        appendHeaderLines(stack, context, tooltip, flag);
+        appendHeaderLines(
+                stack,
+                context,
+                tooltip,
+                flag
+        );
 
-        BountyData data = getBountyDataOrNull(stack);
+        BountyData data =
+                getBountyDataOrNull(
+                        stack
+                );
+
         if (data == null) {
-            appendInvalidLines(stack, context, tooltip, flag);
-
-            if (showHoldKeyHint(stack)) {
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
-                        .withStyle(ChatFormatting.DARK_GRAY));
+            if (isCompleteFlag(stack)) {
+                tooltip.add(
+                        Component.translatable(
+                                        JolCraftLanguageKeys.TOOLTIP_BOUNTY_COMPLETE
+                                )
+                                .withStyle(
+                                        ChatFormatting.GREEN
+                                )
+                );
+            } else {
+                appendInvalidLines(
+                        stack,
+                        context,
+                        tooltip,
+                        flag
+                );
             }
 
-            super.appendHoverText(stack, context, tooltip, flag);
+            if (showHoldKeyHint(stack)) {
+                tooltip.add(
+                        Component.translatable(
+                                        JolCraftLanguageKeys.TOOLTIP_HOLD_KEY,
+                                        JolCraftTooltipHelper.altKey()
+                                )
+                                .withStyle(
+                                        ChatFormatting.DARK_GRAY
+                                )
+                );
+            }
+
+            super.appendHoverText(
+                    stack,
+                    context,
+                    tooltip,
+                    flag
+            );
+
             return;
         }
 
         switch (data.objective()) {
-            case BountyData.BountyObjective.ItemObjective(Holder<Item> item, int ignored) -> {
-                Component itemName = item.value().getDefaultInstance().getHoverName();
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COLLECT, itemName)
-                        .withStyle(ChatFormatting.GRAY));
-            }
-            case BountyData.BountyObjective.EntityObjective(Holder<EntityType<?>> entity, int ignored) -> {
-                ResourceLocation id = entity.unwrapKey().map(ResourceKey::location).orElse(null);
-                Component name = (id != null)
-                        ? Component.translatable(id.toLanguageKey(JolCraftDictionary.ENTITY))
-                        : Component.literal(JolCraftDictionary.UNKNOWN);
+            case BountyData.BountyObjective.ItemObjective(
+                    Holder<Item> item,
+                    int ignored
+            ) -> {
+                Component itemName =
+                        item.value()
+                                .getDefaultInstance()
+                                .getHoverName();
 
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_SLAY, name)
-                        .withStyle(ChatFormatting.GRAY));
+                tooltip.add(
+                        Component.translatable(
+                                        JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COLLECT,
+                                        itemName
+                                )
+                                .withStyle(
+                                        ChatFormatting.GRAY
+                                )
+                );
+            }
+
+            case BountyData.BountyObjective.EntityObjective(
+                    Holder<EntityType<?>> entity,
+                    int ignored
+            ) -> {
+                ResourceLocation id =
+                        entity.unwrapKey()
+                                .map(
+                                        ResourceKey::location
+                                )
+                                .orElse(
+                                        null
+                                );
+
+                Component name =
+                        id != null
+                                ? Component.translatable(
+                                id.toLanguageKey(
+                                        JolCraftDictionary.ENTITY
+                                )
+                        )
+                                : Component.literal(
+                                JolCraftDictionary.UNKNOWN
+                        );
+
+                tooltip.add(
+                        Component.translatable(
+                                        JolCraftLanguageKeys.TOOLTIP_BOUNTY_SLAY,
+                                        name
+                                )
+                                .withStyle(
+                                        ChatFormatting.GRAY
+                                )
+                );
             }
         }
 
-        int required = getRequiredAmountOrZero(stack);
+        int required =
+                getRequiredAmountOrZero(
+                        stack
+                );
+
         if (required > 0) {
-            int fill = getFill(stack);
+            int fill =
+                    getFill(
+                            stack
+                    );
 
-            tooltip.add(Component.literal(JolCraftStrings.slashed(String.valueOf(fill), String.valueOf(required)))
-                    .withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(
+                    Component.literal(
+                                    JolCraftStrings.slashed(
+                                            String.valueOf(
+                                                    fill
+                                            ),
+                                            String.valueOf(
+                                                    required
+                                            )
+                                    )
+                            )
+                            .withStyle(
+                                    ChatFormatting.DARK_GRAY
+                            )
+            );
 
-            if (fill >= required || isCompleteFlag(stack)) {
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_COMPLETE)
-                        .withStyle(ChatFormatting.GREEN));
+            if (
+                    fill >= required
+                            || isCompleteFlag(
+                            stack
+                    )
+            ) {
+                tooltip.add(
+                        Component.translatable(
+                                        JolCraftLanguageKeys.TOOLTIP_BOUNTY_COMPLETE
+                                )
+                                .withStyle(
+                                        ChatFormatting.GREEN
+                                )
+                );
             }
         }
 
         if (showHoldKeyHint(stack)) {
-            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
-                    .withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(
+                    Component.translatable(
+                                    JolCraftLanguageKeys.TOOLTIP_HOLD_KEY,
+                                    JolCraftTooltipHelper.altKey()
+                            )
+                            .withStyle(
+                                    ChatFormatting.DARK_GRAY
+                            )
+            );
         }
 
-        super.appendHoverText(stack, context, tooltip, flag);
+        super.appendHoverText(
+                stack,
+                context,
+                tooltip,
+                flag
+        );
     }
 }

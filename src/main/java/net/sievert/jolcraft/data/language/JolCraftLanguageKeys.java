@@ -2,6 +2,7 @@ package net.sievert.jolcraft.data.language;
 
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.data.id.item.JolCraftRarityIds;
 import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
@@ -327,6 +328,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_REROLL_CRATE_SUCCESS =
             category(JolCraftDictionary.TOOLTIP, dot(JolCraftItemIds.REROLL_CRATE, JolCraftDictionary.SUCCESS));
 
+    public static final String TOOLTIP_REWARD_CRATE =
+            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.REWARD_CRATE);
+
     public static final String TOOLTIP_CRATE_COOLDOWN =
             tooltip(JolCraftDictionary.CRATE, JolCraftDictionary.COOLDOWN);
 
@@ -407,6 +411,25 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // ItemLangSubProvider
     // ---------------------------------------------------------------------
 
+    public static final String RARITY_COMMON =
+            category(JolCraftDictionary.RARITY, JolCraftRarityIds.COMMON);
+
+    public static final String RARITY_UNCOMMON =
+            category(JolCraftDictionary.RARITY, JolCraftRarityIds.UNCOMMON);
+
+    public static final String RARITY_RARE =
+            category(JolCraftDictionary.RARITY, JolCraftRarityIds.RARE);
+
+    public static final String RARITY_EPIC =
+            category(JolCraftDictionary.RARITY, JolCraftRarityIds.EPIC);
+
+    public static final String RARITY_LEGENDARY =
+            category(JolCraftDictionary.RARITY, JolCraftRarityIds.LEGENDARY);
+
+    public static final String TOOLTIP_RARITY_NAME =
+            tooltip(JolCraftDictionary.RARITY, JolCraftDictionary.NAME);
+
+
     public static final String JOLCRAFT_GENERAL_CREATIVE_TAB =
             itemGroup(JolCraftCreativeTabIds.JOLCRAFT_GENERAL_CREATIVE_TAB);
 
@@ -444,6 +467,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String JEI_CATEGORY_BOUNTY_TASK =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.BOUNTY_TASK);
+
+    public static final String JEI_CATEGORY_BOUNTY_REWARD =
+            category(JolCraftDictionary.JEI, JolCraftRecipeIds.BOUNTY_REWARD);
 
     public static final String JEI_INFO_REPUTATION_TABLET =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), us(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET)));

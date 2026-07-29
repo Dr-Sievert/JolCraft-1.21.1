@@ -6,6 +6,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
@@ -16,6 +17,7 @@ import net.sievert.jolcraft.world.item.component.custom.BountyData;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
 
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 public final class JolCraftDataComponents {
@@ -89,6 +91,12 @@ public final class JolCraftDataComponents {
             register(JolCraftDataComponentIds.BOUNTY_COMPLETE, builder -> builder
                     .persistent(Codec.BOOL)
                     .networkSynchronized(ByteBufCodecs.BOOL)
+            );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ItemStack>>> BOUNTY_REWARDS =
+            register(JolCraftDataComponentIds.BOUNTY_REWARDS, builder -> builder
+                    .persistent(ItemStack.CODEC.listOf())
+                    .networkSynchronized(ItemStack.LIST_STREAM_CODEC)
             );
 
     // -----------------

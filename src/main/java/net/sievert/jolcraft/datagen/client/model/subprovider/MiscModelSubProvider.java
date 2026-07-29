@@ -60,8 +60,15 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
 
         builder.flatItem(JolCraftItems.BOUNTY.get());
         builder.flatItem(JolCraftItems.BOUNTY_CRATE.get());
-        builder.flatItem(JolCraftItems.RESTOCK_CRATE.get());
+        builder.flatItem(
+                JolCraftItems.RESTOCK_CRATE.get(),
+            JolCraft.location("item/crate")
+        );
         builder.flatItem(JolCraftItems.REROLL_CRATE.get());
+        builder.flatItem(
+                JolCraftItems.REWARD_CRATE.get(),
+                JolCraft.location("item/crate")
+        );
 
         createHearth(builder, JolCraftBlocks.HEARTH.get());
         createManagedLight(builder, JolCraftBlocks.MANAGED_LIGHT.get());
