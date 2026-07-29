@@ -3,6 +3,7 @@ package net.sievert.jolcraft.integration.jei.util.gui.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -14,9 +15,19 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.ENTITY_TARGET_SIZE;
 
 public final class JeiDwarfRenderer {
+
+    private static final Map<DwarfProfession, DwarfEntity> DWARF_CACHE =
+            new EnumMap<>(
+                    DwarfProfession.class
+            );
+
+    private static @Nullable ClientLevel cachedLevel;
 
     private JeiDwarfRenderer() {
     }
@@ -24,11 +35,27 @@ public final class JeiDwarfRenderer {
     public static @Nullable LivingEntity create(
             @NotNull DwarfProfession profession
     ) {
-        Minecraft minecraft =
-                Minecraft.getInstance();
+        ClientLevel level =
+                Minecraft.getInstance().level;
 
-        if (minecraft.level == null) {
+        if (level == null) {
+            clearCache();
             return null;
+        }
+
+        if (cachedLevel != level) {
+            DWARF_CACHE.clear();
+            cachedLevel =
+                    level;
+        }
+
+        DwarfEntity cached =
+                DWARF_CACHE.get(
+                        profession
+                );
+
+        if (cached != null) {
+            return cached;
         }
 
         DwarfEntity dwarf =
@@ -36,7 +63,7 @@ public final class JeiDwarfRenderer {
                         DwarfProfessionHelper.getEntityType(
                                 profession
                         ),
-                        minecraft.level
+                        level
                 );
 
         dwarf.getEntityData()
@@ -45,7 +72,18 @@ public final class JeiDwarfRenderer {
                         profession.getId()
                 );
 
+        DWARF_CACHE.put(
+                profession,
+                dwarf
+        );
+
         return dwarf;
+    }
+
+    private static void clearCache() {
+        DWARF_CACHE.clear();
+        cachedLevel =
+                null;
     }
 
     public static void drawBountyDwarf(

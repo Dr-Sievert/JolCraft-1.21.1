@@ -18,8 +18,6 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import org.jetbrains.annotations.NotNull;
 
-import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.CHANCE_TEXT_SCALE;
-
 public abstract class AbstractJeiBountyCategory<R>
         extends AbstractJeiCategory<R> {
 
@@ -99,15 +97,24 @@ public abstract class AbstractJeiBountyCategory<R>
                 font
         );
 
-        JeiDrawHelper.drawScaledText(
+        JeiDrawHelper.drawChance(
                 graphics,
                 font,
-                chanceText(
+                chancePerRoll(
                         entry
                 ),
                 JeiBountyLayout.CHANCE.x(),
-                JeiBountyLayout.CHANCE.y(),
-                CHANCE_TEXT_SCALE
+                JeiBountyLayout.CHANCE.y()
+        );
+
+        JeiDrawHelper.drawRolls(
+                graphics,
+                font,
+                rolls(
+                        entry
+                ),
+                JeiBountyLayout.ROLLS.x(),
+                JeiBountyLayout.ROLLS.y()
         );
     }
 
@@ -149,7 +156,11 @@ public abstract class AbstractJeiBountyCategory<R>
             @NotNull R entry
     );
 
-    protected abstract @NotNull String chanceText(
+    protected abstract double chancePerRoll(
+            @NotNull R entry
+    );
+
+    protected abstract int rolls(
             @NotNull R entry
     );
 

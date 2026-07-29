@@ -54,18 +54,18 @@ public final class JeiFermentingCauldronHelper {
         List<JeiFermentingCauldronRecipe> result =
                 new ArrayList<>();
 
-        for (RecipeHolder<FermentingCauldronRecipe> holder :
-                JeiRecipeAccess.getSorted(
+        result.addAll(
+                JeiRecipeAccess.translateSorted(
                         JolCraftRecipes
                                 .FERMENTING_CAULDRON_TYPE
-                                .get()
-                )) {
-            result.add(
-                    translate(
-                            holder
-                    )
-            );
-        }
+                                .get(),
+                        holder -> List.of(
+                                translate(
+                                        holder
+                                )
+                        )
+                )
+        );
 
         addExtractionRecipes(
                 result

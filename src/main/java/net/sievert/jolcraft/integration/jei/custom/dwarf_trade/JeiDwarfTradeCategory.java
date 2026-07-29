@@ -17,22 +17,21 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTrade.AmountRange;
-import net.sievert.jolcraft.integration.jei.util.*;
-import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
-import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
+import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.gui.render.JeiDwarfRenderer;
-import net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
-import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.CHANCE_TEXT_SCALE;
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_SIZE;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -40,12 +39,13 @@ public final class JeiDwarfTradeCategory
         extends AbstractJeiCategory<JeiDwarfTrade> {
 
     private static final int WIDTH = 150;
-    private static final int HEIGHT = 60;
+    private static final int HEIGHT = 68;
 
     private static final int DWARF_CENTER_X = 105;
     private static final int DWARF_BOTTOM_Y = 55;
     private static final int AMOUNT_Y = 43;
     private static final int CHANCE_Y = 52;
+    private static final int ROLLS_Y = 60;
 
     private static final JeiRecipeLayout SINGLE_INPUT_LAYOUT =
             JeiRecipeLayout.singleInputToOutput(
@@ -129,7 +129,7 @@ public final class JeiDwarfTradeCategory
                         entry
                 );
 
-        if (layout.inputB() != null) {
+        if (entry.hasInputB()) {
             JeiDrawHelper.drawPlus(
                     graphics,
                     layout.requirePlus()
@@ -158,7 +158,7 @@ public final class JeiDwarfTradeCategory
         AmountRange inputAmountB =
                 entry.inputAmountB();
 
-        if (layout.inputB() != null
+        if (entry.hasInputB()
                 && inputAmountB != null) {
             drawAmountOverlay(
                     graphics,
@@ -175,19 +175,26 @@ public final class JeiDwarfTradeCategory
                 layout.output().x()
         );
 
-        if (!entry.outputGuaranteed()) {
-            JeiDrawHelper.drawCenteredScaledText(
+        if (!entry.outputGuaranteedPerRoll()
+                || entry.outputRolls() > 1) {
+            JeiDrawHelper.drawCenteredChance(
                     graphics,
                     font,
-                    JeiDrawHelper.formatChance(
-                            entry.outputChance()
-                    ),
+                    entry.outputChancePerRoll(),
                     layout.output().x(),
-                    JeiGuiConstants.SLOT_SIZE,
-                    CHANCE_Y,
-                    CHANCE_TEXT_SCALE
+                    SLOT_SIZE,
+                    CHANCE_Y
             );
         }
+
+        JeiDrawHelper.drawCenteredRolls(
+                graphics,
+                font,
+                entry.outputRolls(),
+                layout.output().x(),
+                SLOT_SIZE,
+                ROLLS_Y
+        );
     }
 
     private static void drawHeader(
@@ -224,6 +231,17 @@ public final class JeiDwarfTradeCategory
             @NotNull AmountRange amount,
             int slotX
     ) {
+        if (!amount.known()) {
+            JeiDrawHelper.drawUnknownAmount(
+                    graphics,
+                    font,
+                    slotX,
+                    AMOUNT_Y
+            );
+
+            return;
+        }
+
         JeiDrawHelper.drawAmountRange(
                 graphics,
                 font,
@@ -272,22 +290,17 @@ public final class JeiDwarfTradeCategory
         addTradeInput(
                 builder,
                 layout.inputA().x(),
-                entry.inputAExample(),
+                entry.inputAExamples(),
                 entry.costAItemIs(
                         JolCraftTags.Items.COINS
                 )
         );
 
-        @Nullable ItemStack inputB =
-                entry.inputBExample();
-
-        if (layout.inputB() != null
-                && inputB != null
-                && !inputB.isEmpty()) {
+        if (entry.hasInputB()) {
             addTradeInput(
                     builder,
                     layout.requireInputB().x(),
-                    inputB,
+                    entry.inputBExamples(),
                     entry.costBItemIs(
                             JolCraftTags.Items.COINS
                     )
@@ -307,7 +320,7 @@ public final class JeiDwarfTradeCategory
     private static void addTradeInput(
             @NotNull IRecipeLayoutBuilder builder,
             int x,
-            @NotNull ItemStack input,
+            @NotNull List<ItemStack> inputs,
             boolean acceptsCoinPouch
     ) {
         var slot =
@@ -316,8 +329,8 @@ public final class JeiDwarfTradeCategory
                                 x,
                                 SINGLE_INPUT_LAYOUT.inputA().y()
                         )
-                        .addItemStack(
-                                input
+                        .addItemStacks(
+                                inputs
                         );
 
         if (acceptsCoinPouch) {
@@ -332,11 +345,7 @@ public final class JeiDwarfTradeCategory
     private static @NotNull JeiRecipeLayout layoutFor(
             @NotNull JeiDwarfTrade entry
     ) {
-        @Nullable ItemStack inputB =
-                entry.inputBExample();
-
-        return inputB != null
-                && !inputB.isEmpty()
+        return entry.hasInputB()
                 ? TWO_INPUT_LAYOUT
                 : SINGLE_INPUT_LAYOUT;
     }

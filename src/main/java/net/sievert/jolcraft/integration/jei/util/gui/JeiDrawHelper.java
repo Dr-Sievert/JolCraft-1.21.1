@@ -95,6 +95,23 @@ public final class JeiDrawHelper {
         );
     }
 
+    public static void drawUnknownAmount(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            int slotX,
+            int y
+    ) {
+        drawCenteredScaledText(
+                graphics,
+                font,
+                "?",
+                slotX,
+                SLOT_SIZE,
+                y,
+                AMOUNT_TEXT_SCALE
+        );
+    }
+
     public static @NotNull String formatRange(
             int min,
             int max
@@ -231,6 +248,75 @@ public final class JeiDrawHelper {
         );
     }
 
+    public static void drawRolls(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            int rolls,
+            int x,
+            int y
+    ) {
+        if (rolls <= 1) {
+            return;
+        }
+
+        drawScaledText(
+                graphics,
+                font,
+                formatRolls(
+                        rolls
+                ),
+                x,
+                y,
+                CHANCE_TEXT_SCALE
+        );
+    }
+
+    public static void drawCenteredChance(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            double chance,
+            int startX,
+            int width,
+            int y
+    ) {
+        drawCenteredScaledText(
+                graphics,
+                font,
+                formatChance(
+                        chance
+                ),
+                startX,
+                width,
+                y,
+                CHANCE_TEXT_SCALE
+        );
+    }
+
+    public static void drawCenteredRolls(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            int rolls,
+            int startX,
+            int width,
+            int y
+    ) {
+        if (rolls <= 1) {
+            return;
+        }
+
+        drawCenteredScaledText(
+                graphics,
+                font,
+                formatRolls(
+                        rolls
+                ),
+                startX,
+                width,
+                y,
+                CHANCE_TEXT_SCALE
+        );
+    }
+
     public static @NotNull String formatChance(
             double chance
     ) {
@@ -263,6 +349,19 @@ public final class JeiDrawHelper {
                 "%.2f%%",
                 percentage
         );
+    }
+
+    public static @NotNull String formatRolls(
+            int rolls
+    ) {
+        if (rolls <= 0) {
+            throw new IllegalArgumentException(
+                    "rolls must be positive"
+            );
+        }
+
+        return "Rolls: "
+                + rolls;
     }
 
     public static boolean contains(

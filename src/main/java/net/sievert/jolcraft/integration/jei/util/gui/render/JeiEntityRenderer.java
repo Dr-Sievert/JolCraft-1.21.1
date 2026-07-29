@@ -3,6 +3,7 @@ package net.sievert.jolcraft.integration.jei.util.gui.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,11 +12,19 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 public final class JeiEntityRenderer {
 
     private static final float CAMERA_PITCH = -10.0F;
     private static final float MIN_DIMENSION = 0.25F;
     private static final float VERTICAL_OFFSET = 0.10F;
+
+    private static final Map<EntityType<?>, LivingEntity> LIVING_CACHE =
+            new IdentityHashMap<>();
+
+    private static @Nullable ClientLevel cachedLevel;
 
     private JeiEntityRenderer() {
     }
@@ -23,21 +32,50 @@ public final class JeiEntityRenderer {
     public static @Nullable LivingEntity createLiving(
             @NotNull EntityType<?> entityType
     ) {
-        Minecraft minecraft =
-                Minecraft.getInstance();
+        ClientLevel level =
+                Minecraft.getInstance().level;
 
-        if (minecraft.level == null) {
+        if (level == null) {
+            clearCache();
             return null;
+        }
+
+        if (cachedLevel != level) {
+            LIVING_CACHE.clear();
+            cachedLevel =
+                    level;
+        }
+
+        LivingEntity cached =
+                LIVING_CACHE.get(
+                        entityType
+                );
+
+        if (cached != null) {
+            return cached;
         }
 
         Entity entity =
                 entityType.create(
-                        minecraft.level
+                        level
                 );
 
-        return entity instanceof LivingEntity livingEntity
-                ? livingEntity
-                : null;
+        if (!(entity instanceof LivingEntity livingEntity)) {
+            return null;
+        }
+
+        LIVING_CACHE.put(
+                entityType,
+                livingEntity
+        );
+
+        return livingEntity;
+    }
+
+    private static void clearCache() {
+        LIVING_CACHE.clear();
+        cachedLevel =
+                null;
     }
 
     public static void renderToBounds(

@@ -3,6 +3,7 @@ package net.sievert.jolcraft.integration.jei.util.recipe;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -11,12 +12,19 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.entries.TagEntry;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.sievert.jolcraft.mixin.*;
+import net.sievert.jolcraft.mixin.LootItemAccessor;
+import net.sievert.jolcraft.mixin.LootItemConditionalFunctionAccessor;
+import net.sievert.jolcraft.mixin.LootPoolAccessor;
+import net.sievert.jolcraft.mixin.LootPoolEntryContainerAccessor;
+import net.sievert.jolcraft.mixin.LootPoolSingletonContainerAccessor;
+import net.sievert.jolcraft.mixin.SetComponentsFunctionAccessor;
+import net.sievert.jolcraft.mixin.SetItemCountFunctionAccessor;
+import net.sievert.jolcraft.mixin.TagEntryAccessor;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +50,23 @@ public final class ItemOutputJeiTranslator {
         LootPoolAccessor poolAccessor =
                 (LootPoolAccessor) pool;
 
+        requireNoConditions(
+                poolAccessor.jolcraft$getConditions(),
+                "loot pool"
+        );
+
+        int bonusRolls =
+                JeiNumberRangeTranslator.requireConstantInt(
+                        poolAccessor.jolcraft$getBonusRolls(),
+                        "loot-pool bonus rolls"
+                );
+
+        if (bonusRolls != 0) {
+            throw new IllegalArgumentException(
+                    "JEI translation does not support loot-pool bonus rolls"
+            );
+        }
+
         List<LootPoolEntryContainer> entries =
                 poolAccessor.jolcraft$getEntries();
 
@@ -55,12 +80,32 @@ public final class ItemOutputJeiTranslator {
                         "loot-pool rolls"
                 );
 
+        if (rolls <= 0) {
+            throw new IllegalArgumentException(
+                    "loot-pool rolls must be positive"
+            );
+        }
+
+        List<LootItemFunction> poolFunctions =
+                poolAccessor.jolcraft$getFunctions();
+
+        requireUnconditionalFunctions(
+                poolFunctions,
+                "loot pool"
+        );
+
         List<TranslatedEntry> translatedEntries =
                 new ArrayList<>();
 
         int totalWeight = 0;
 
         for (LootPoolEntryContainer entry : entries) {
+            requireNoConditions(
+                    ((LootPoolEntryContainerAccessor) entry)
+                            .jolcraft$getConditions(),
+                    "loot entry"
+            );
+
             if (!(entry instanceof LootPoolSingletonContainer singleton)) {
                 throw unsupportedEntry(
                         entry
@@ -69,6 +114,20 @@ public final class ItemOutputJeiTranslator {
 
             LootPoolSingletonContainerAccessor singletonAccessor =
                     (LootPoolSingletonContainerAccessor) singleton;
+
+            if (singletonAccessor.jolcraft$getQuality() != 0) {
+                throw new IllegalArgumentException(
+                        "JEI translation does not support luck-dependent loot-entry quality"
+                );
+            }
+
+            List<LootItemFunction> entryFunctions =
+                    singletonAccessor.jolcraft$getFunctions();
+
+            requireUnconditionalFunctions(
+                    entryFunctions,
+                    "loot entry"
+            );
 
             int weight =
                     singletonAccessor.jolcraft$getWeight();
@@ -86,7 +145,7 @@ public final class ItemOutputJeiTranslator {
                 translatedEntries.add(
                         new TranslatedEntry(
                                 item,
-                                singletonAccessor.jolcraft$getFunctions(),
+                                entryFunctions,
                                 weight
                         )
                 );
@@ -100,9 +159,6 @@ public final class ItemOutputJeiTranslator {
                 || totalWeight <= 0) {
             return List.of();
         }
-
-        List<LootItemFunction> poolFunctions =
-                poolAccessor.jolcraft$getFunctions();
 
         List<JeiItemOutcome> outcomes =
                 new ArrayList<>(
@@ -270,7 +326,6 @@ public final class ItemOutputJeiTranslator {
             @NotNull ItemStack stack,
             @NotNull List<LootItemFunction> functions
     ) {
-
         for (LootItemFunction function : functions) {
             if (function instanceof SetItemCountFunction) {
                 continue;
@@ -294,7 +349,41 @@ public final class ItemOutputJeiTranslator {
                             .getName()
             );
         }
+    }
 
+    private static void requireUnconditionalFunctions(
+            @NotNull List<LootItemFunction> functions,
+            @NotNull String owner
+    ) {
+        for (LootItemFunction function : functions) {
+            if (!(function instanceof LootItemConditionalFunction conditional)) {
+                continue;
+            }
+
+            List<?> predicates =
+                    ((LootItemConditionalFunctionAccessor) conditional)
+                            .jolcraft$getPredicates();
+
+            if (!predicates.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "JEI translation does not support conditional "
+                                + owner
+                                + " loot functions"
+                );
+            }
+        }
+    }
+
+    private static void requireNoConditions(
+            @NotNull List<?> conditions,
+            @NotNull String owner
+    ) {
+        if (!conditions.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "JEI translation does not support conditional "
+                            + owner
+            );
+        }
     }
 
     private static @NotNull CountRange readNumberRange(

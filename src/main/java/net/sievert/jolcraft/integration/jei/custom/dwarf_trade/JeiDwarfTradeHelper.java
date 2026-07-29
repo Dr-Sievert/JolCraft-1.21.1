@@ -66,30 +66,24 @@ public final class JeiDwarfTradeHelper {
                 );
 
         List<JeiDwarfTrade> result =
-                new ArrayList<>();
+                JeiRecipeAccess.translate(
+                        matching,
+                        holder -> {
+                            DwarfTradeRecipe recipe =
+                                    holder.value();
 
-        for (
-                RecipeHolder<DwarfTradeRecipe> holder :
-                matching
-        ) {
-            DwarfTradeRecipe recipe =
-                    holder.value();
+                            List<JeiItemOutcome> outcomes =
+                                    ItemOutputJeiTranslator.translate(
+                                            recipe.result()
+                                    );
 
-            List<JeiItemOutcome> outcomes =
-                    ItemOutputJeiTranslator.translate(
-                            recipe.result()
-                    );
-
-            for (JeiItemOutcome outcome : outcomes) {
-                result.add(
-                        new JeiDwarfTrade(
-                                recipe,
-                                spawnEgg,
-                                outcome
-                        )
+                            return JeiDwarfTrade.create(
+                                    recipe,
+                                    spawnEgg,
+                                    outcomes
+                            );
+                        }
                 );
-            }
-        }
 
         return List.copyOf(result);
     }

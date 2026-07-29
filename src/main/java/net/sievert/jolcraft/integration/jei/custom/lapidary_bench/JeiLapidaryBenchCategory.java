@@ -9,18 +9,22 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_SIZE;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -31,8 +35,10 @@ public final class JeiLapidaryBenchCategory
             JeiRecipeTypes.LAPIDARY_BENCH;
 
     private static final int WIDTH = 96;
-    private static final int HEIGHT = 52;
+    private static final int HEIGHT = 68;
     private static final int AMOUNT_Y = 43;
+    private static final int CHANCE_Y = 52;
+    private static final int ROLLS_Y = 60;
 
     private static final JeiRecipeLayout LAYOUT =
             JeiRecipeLayout.twoInputsToOutput(
@@ -86,13 +92,40 @@ public final class JeiLapidaryBenchCategory
                 LAYOUT.arrow()
         );
 
+        Font font =
+                Minecraft.getInstance().font;
+
+        JeiItemOutcome outcome =
+                recipe.outcome();
+
         JeiDrawHelper.drawAmountRange(
                 graphics,
-                Minecraft.getInstance().font,
-                recipe.outcome().minCount(),
-                recipe.outcome().maxCount(),
+                font,
+                outcome.minCount(),
+                outcome.maxCount(),
                 LAYOUT.output().x(),
                 AMOUNT_Y
+        );
+
+        if (outcome.chancePerRoll() < 1.0D
+                || outcome.rolls() > 1) {
+            JeiDrawHelper.drawCenteredChance(
+                    graphics,
+                    font,
+                    outcome.chancePerRoll(),
+                    LAYOUT.output().x(),
+                    SLOT_SIZE,
+                    CHANCE_Y
+            );
+        }
+
+        JeiDrawHelper.drawCenteredRolls(
+                graphics,
+                font,
+                outcome.rolls(),
+                LAYOUT.output().x(),
+                SLOT_SIZE,
+                ROLLS_Y
         );
     }
 
