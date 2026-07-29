@@ -100,6 +100,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String BOUNTY_CRATE = join(BOUNTY, JolCraftDictionary.CRATE);
     public static final String RESTOCK_CRATE = join(JolCraftDictionary.RESTOCK, JolCraftDictionary.CRATE);
     public static final String REROLL_CRATE = join(JolCraftDictionary.REROLL, JolCraftDictionary.CRATE);
+    public static final String REWARD_CRATE = join(JolCraftDictionary.REWARD, JolCraftDictionary.CRATE);
 
     // ---------------------------------------------------------------------
     // Contracts

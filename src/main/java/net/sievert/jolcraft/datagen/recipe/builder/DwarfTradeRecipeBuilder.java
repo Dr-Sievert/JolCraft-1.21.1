@@ -41,7 +41,7 @@ import java.util.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", "deprecation"})
 public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBuilder<RecipeOutput> {
 
     private final List<String> errors =

@@ -16,4 +16,5 @@ public class JolCraftJeiIds extends JolCraftIds {
     public static final String HAND_INTERACTION = join(JolCraftRecipeIds.HAND_INTERACTION);
     public static final String FERMENTING_CAULDRON = join(JolCraftRecipeIds.FERMENTING_CAULDRON);
     public static final String BOUNTY_TASK = join(JolCraftRecipeIds.BOUNTY_TASK);
+    public static final String BOUNTY_REWARD = join(JolCraftRecipeIds.BOUNTY_REWARD);
 }

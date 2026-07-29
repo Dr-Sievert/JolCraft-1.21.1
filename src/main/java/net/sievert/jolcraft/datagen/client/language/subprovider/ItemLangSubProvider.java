@@ -38,13 +38,6 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
     @Override
     public void addTranslations(@NotNull Map<String, String> translations) {
 
-        // Creative tabs
-        putManual(translations, JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, JolCraft.MOD_NAME);
-
-        // Structure maps
-        putManual(translations, JolCraftStrings.dotted(BuiltInRegistries.ITEM.getKey(Items.FILLED_MAP).getPath(), JolCraftStructureIds.DWARVEN_FORTRESS),
-                "Map to a Dwarven Fortress");
-
         //Items
 
         putManual(translations, JolCraftItems.YEAST, "Brewing Yeast");
@@ -127,6 +120,21 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
                 JolCraftItems.VERDANITE_CUT,
                 JolCraftItems.WOECRYSTAL_CUT
         );
+
+        // Rarities
+        putManual(translations, JolCraftLanguageKeys.RARITY_COMMON, "Common");
+        putManual(translations, JolCraftLanguageKeys.RARITY_UNCOMMON, "Uncommon");
+        putManual(translations, JolCraftLanguageKeys.RARITY_RARE, "Rare");
+        putManual(translations, JolCraftLanguageKeys.RARITY_EPIC, "Epic");
+        putManual(translations, JolCraftLanguageKeys.RARITY_LEGENDARY, "Legendary");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_RARITY_NAME, "%1$s %2$s");
+
+        // Creative tabs
+        putManual(translations, JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, JolCraft.MOD_NAME);
+
+        // Structure maps
+        putManual(translations, JolCraftStrings.dotted(BuiltInRegistries.ITEM.getKey(Items.FILLED_MAP).getPath(), JolCraftStructureIds.DWARVEN_FORTRESS),
+                "Map to a Dwarven Fortress");
 
         //Trim Patterns
         addTrimTemplateItems(translations);

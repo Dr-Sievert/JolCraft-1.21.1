@@ -34,16 +34,15 @@ public class BountyItem extends AbstractBountyTaskItem {
 
     @Override
     protected boolean supportsAltTooltip(ItemStack stack) {
-        return true;
+        BountyData data = getBountyDataOrNull(stack);
+        return data != null;
     }
 
     @Override
     protected @NotNull String altTooltipKey(ItemStack stack) {
         BountyData data = getBountyDataOrNull(stack);
 
-        if (data != null &&
-                data.objective() instanceof BountyData.BountyObjective.EntityObjective) {
-
+        if (data != null && data.objective() instanceof BountyData.BountyObjective.EntityObjective) {
             return JolCraftLanguageKeys.TOOLTIP_BOUNTY_SLAY_ALT;
         }
 

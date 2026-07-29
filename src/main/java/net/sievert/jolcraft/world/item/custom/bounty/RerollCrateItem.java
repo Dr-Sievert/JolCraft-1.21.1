@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom.merchant;
+package net.sievert.jolcraft.world.item.custom.bounty;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

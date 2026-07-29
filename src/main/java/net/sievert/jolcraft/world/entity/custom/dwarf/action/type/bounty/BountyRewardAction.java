@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.action.type.bounty;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -9,11 +9,13 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
@@ -22,18 +24,21 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
+import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipeInput;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
-import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -45,11 +50,6 @@ public final class BountyRewardAction extends InspectDwarfAction {
     private static final int FX_PARTICLES_TICKS = 10;
 
     private static final float THROW_SPEED = 0.4F;
-
-    private static final double PARTICLE_SPREAD_X = 0.25D;
-    private static final double PARTICLE_SPREAD_Y = 0.20D;
-    private static final double PARTICLE_SPREAD_Z = 0.25D;
-    private static final float PARTICLE_SPEED = 0.02F;
 
     private static final LootContextParamSet CONTEXT_PARAMS =
             new LootContextParamSet.Builder()
@@ -70,7 +70,12 @@ public final class BountyRewardAction extends InspectDwarfAction {
             InteractionHand hand,
             ItemStack itemstack
     ) {
-        super(dwarf, player, hand, itemstack);
+        super(
+                dwarf,
+                player,
+                hand,
+                itemstack
+        );
 
         this.ticksRemaining = 0;
         this.rewardSound = null;
@@ -118,16 +123,18 @@ public final class BountyRewardAction extends InspectDwarfAction {
         }
 
         BountyRecipeInput input =
-                BountyRecipeInput.of(redeemStack)
-                        .result()
-                        .orElse(null);
+                BountyRecipeInput.of(
+                        redeemStack
+                ).result().orElse(null);
 
         if (input == null) {
             return;
         }
 
         LootContext context =
-                createContext(level);
+                createContext(
+                        level
+                );
 
         level.getRecipeManager()
                 .getRecipeFor(
@@ -148,7 +155,9 @@ public final class BountyRewardAction extends InspectDwarfAction {
                     );
 
                     plannedParticleCount =
-                            particleCountFor(input.tier());
+                            particleCountFor(
+                                    input.tier()
+                            );
                 });
     }
 
@@ -201,7 +210,8 @@ public final class BountyRewardAction extends InspectDwarfAction {
 
         previousMainHandItem = ItemStack.EMPTY;
 
-        ItemStack redeemStack = itemstack.copy();
+        ItemStack redeemStack =
+                itemstack.copy();
 
         if (redeemStack.isEmpty()) {
             return;
@@ -214,9 +224,9 @@ public final class BountyRewardAction extends InspectDwarfAction {
         }
 
         BountyRecipeInput input =
-                BountyRecipeInput.of(redeemStack)
-                        .result()
-                        .orElse(null);
+                BountyRecipeInput.of(
+                        redeemStack
+                ).result().orElse(null);
 
         if (input == null) {
             return;
@@ -237,7 +247,16 @@ public final class BountyRewardAction extends InspectDwarfAction {
         }
 
         LootContext context =
-                createContext(serverLevel);
+                createContext(
+                        serverLevel
+                );
+
+        List<ItemStack> rewards =
+                generateRewards(
+                        recipe,
+                        context,
+                        input
+                );
 
         DwarfProfession redeemType =
                 input.type();
@@ -255,50 +274,61 @@ public final class BountyRewardAction extends InspectDwarfAction {
                 serverLevel.dimension().location()
         );
 
-        Vec3 start =
-                dwarf.position()
-                        .add(
-                                0.0D,
-                                dwarf.getEyeHeight(),
-                                0.0D
-                        );
+        if (!rewards.isEmpty()) {
 
-        Vec3 target =
-                player.position()
-                        .add(
-                                0.0D,
-                                player.getBbHeight() * 0.5D,
-                                0.0D
-                        );
+            ItemStack rewardCrate = JolCraftItems.REWARD_CRATE.toStack();
 
-        Vec3 direction =
-                target.subtract(start);
+            rewardCrate.set(
+                    DataComponents.RARITY,
+                    rarityForTier(
+                            input.tier()
+                    )
+            );
 
-        Vec3 velocity =
-                direction.lengthSqr() > 0.0D
-                        ? direction.normalize()
-                        .scale(THROW_SPEED)
-                        : Vec3.ZERO;
+            rewardCrate.set(
+                    JolCraftDataComponents.BOUNTY_REWARDS.get(),
+                    rewards
+            );
 
-        recipe.generateRewards(
-                context,
-                input,
-                stack -> {
-                    if (stack == null || stack.isEmpty()) {
-                        return;
-                    }
+            Vec3 start =
+                    dwarf.position()
+                            .add(
+                                    0.0D,
+                                    dwarf.getEyeHeight(),
+                                    0.0D
+                            );
 
-                    throwStack(
-                            serverLevel,
-                            start,
-                            velocity,
-                            stack
+            Vec3 target =
+                    player.position()
+                            .add(
+                                    0.0D,
+                                    player.getBbHeight() * 0.5D,
+                                    0.0D
+                            );
+
+            Vec3 direction =
+                    target.subtract(
+                            start
                     );
-                }
-        );
+
+            Vec3 velocity =
+                    direction.lengthSqr() > 0.0D
+                            ? direction.normalize()
+                            .scale(THROW_SPEED)
+                            : Vec3.ZERO;
+
+            throwStack(
+                    serverLevel,
+                    start,
+                    velocity,
+                    rewardCrate
+            );
+        }
 
         int xp =
-                xpForTier(redeemTier);
+                xpForTier(
+                        redeemTier
+                );
 
         dwarf.dwarfXp += xp;
 
@@ -337,6 +367,33 @@ public final class BountyRewardAction extends InspectDwarfAction {
         );
     }
 
+    private static @NotNull List<ItemStack> generateRewards(
+            @NotNull BountyRewardRecipe recipe,
+            @NotNull LootContext context,
+            @NotNull BountyRecipeInput input
+    ) {
+        List<ItemStack> rewards =
+                new ArrayList<>();
+
+        recipe.generateRewards(
+                context,
+                input,
+                stack -> {
+                    if (stack == null || stack.isEmpty()) {
+                        return;
+                    }
+
+                    rewards.add(
+                            stack.copy()
+                    );
+                }
+        );
+
+        return List.copyOf(
+                rewards
+        );
+    }
+
     private @NotNull LootContext createContext(
             @NotNull ServerLevel level
     ) {
@@ -368,6 +425,18 @@ public final class BountyRewardAction extends InspectDwarfAction {
         };
     }
 
+    private static @NotNull Rarity rarityForTier(
+            @NotNull DwarfMerchantData.Level tier
+    ) {
+        return switch (tier) {
+            case NOVICE -> Rarity.COMMON;
+            case APPRENTICE -> Rarity.UNCOMMON;
+            case JOURNEYMAN -> Rarity.RARE;
+            case EXPERT -> Rarity.EPIC;
+            case MASTER -> JolCraftEnumExtensions.Rarity.LEGENDARY.getValue();
+        };
+    }
+
     private static int particleCountFor(
             @NotNull DwarfMerchantData.Level tier
     ) {
@@ -387,18 +456,13 @@ public final class BountyRewardAction extends InspectDwarfAction {
             return;
         }
 
-        JolCraftParticleHelper.spawn(
-                dwarf.level(),
-                ParticleTypes.FIREWORK,
-                dwarf.getX(),
-                dwarf.getY()
-                        + dwarf.getBbHeight() * 0.6D,
-                dwarf.getZ(),
+        dwarf.spawnColoredParticles(
+                1.0F,
+                0.84F,
+                0.0F,
+                1.0F,
                 count,
-                PARTICLE_SPREAD_X,
-                PARTICLE_SPREAD_Y,
-                PARTICLE_SPREAD_Z,
-                PARTICLE_SPEED
+                0.5D
         );
 
         JolCraftSoundHelper.play(
