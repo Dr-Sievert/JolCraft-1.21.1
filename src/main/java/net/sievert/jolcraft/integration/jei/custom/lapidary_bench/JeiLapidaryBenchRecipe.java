@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.integration.jei.custom.lapidary;
+package net.sievert.jolcraft.integration.jei.custom.lapidary_bench;
 
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;

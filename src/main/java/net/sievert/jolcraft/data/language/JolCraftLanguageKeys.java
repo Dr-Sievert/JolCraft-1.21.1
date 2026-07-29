@@ -434,7 +434,10 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
             category(JolCraftDictionary.JEI, us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE));
 
     public static final String JEI_CATEGORY_LAPIDARY_BENCH =
-            category(JolCraftDictionary.JEI, JolCraftBlockIds.LAPIDARY_BENCH);
+            category(JolCraftDictionary.JEI, JolCraftRecipeIds.LAPIDARY_BENCH);
+
+    public static final String JEI_CATEGORY_HAND_INTERACTION =
+            category(JolCraftDictionary.JEI, JolCraftRecipeIds.HAND_INTERACTION);
 
     public static final String JEI_INFO_REPUTATION_TABLET =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), us(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET)));

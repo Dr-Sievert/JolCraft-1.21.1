@@ -13,5 +13,6 @@ public class JolCraftJeiIds extends JolCraftIds {
 
     public static final String DWARF_TRADE = JolCraftRecipeIds.DWARF_TRADE;
     public static final String INFO_PAGE = join(JolCraftDictionary.INFO, JolCraftDictionary.PAGE);
-    public static final String LAPIDARY_BENCH = join(JolCraftBlockIds.LAPIDARY_BENCH);
+    public static final String LAPIDARY_BENCH = join(JolCraftRecipeIds.LAPIDARY_BENCH);
+    public static final String HAND_INTERACTION = join(JolCraftRecipeIds.HAND_INTERACTION);
 }

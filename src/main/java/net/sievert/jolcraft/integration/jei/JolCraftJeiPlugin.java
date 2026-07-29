@@ -13,10 +13,12 @@ import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeHelper;
+import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionCategory;
+import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionHelper;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
-import net.sievert.jolcraft.integration.jei.custom.lapidary.JeiLapidaryBenchCategory;
-import net.sievert.jolcraft.integration.jei.custom.lapidary.JeiLapidaryBenchHelper;
+import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchCategory;
+import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -31,10 +33,7 @@ import java.util.Locale;
 @SuppressWarnings("removal")
 public final class JolCraftJeiPlugin implements IModPlugin {
 
-    private static final ResourceLocation ID =
-            JolCraft.location(
-                    JolCraftJeiIds.JEI_PLUGIN
-            );
+    private static final ResourceLocation ID = JolCraft.location(JolCraftJeiIds.JEI_PLUGIN);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -66,6 +65,12 @@ public final class JolCraftJeiPlugin implements IModPlugin {
         );
 
         registration.addRecipeCategories(
+                new JeiHandInteractionCategory(
+                        guiHelper
+                )
+        );
+
+        registration.addRecipeCategories(
                 new JeiInfoPageCategory(
                         guiHelper
                 )
@@ -92,12 +97,22 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             }
         }
 
-        var lapidaryRecipes = JeiLapidaryBenchHelper.getRecipes();
+        var lapidaryRecipes =
+                JeiLapidaryBenchHelper.getRecipes();
 
         if (!lapidaryRecipes.isEmpty()) {
             registration.addRecipes(
                     JeiLapidaryBenchCategory.RECIPE_TYPE,
                     lapidaryRecipes
+            );
+        }
+
+        var handInteractionRecipes = JeiHandInteractionHelper.getAllHandInteractionRecipes();
+
+        if (!handInteractionRecipes.isEmpty()) {
+            registration.addRecipes(
+                    JeiHandInteractionCategory.RECIPE_TYPE,
+                    handInteractionRecipes
             );
         }
 
@@ -111,7 +126,14 @@ public final class JolCraftJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(
             IRecipeCatalystRegistration registration
     ) {
-        registration.addRecipeCatalyst(new ItemStack(JolCraftBlocks.LAPIDARY_BENCH.get()), JeiLapidaryBenchCategory.RECIPE_TYPE);
+        registration.addRecipeCatalyst(
+                new ItemStack(
+                        JolCraftBlocks
+                                .LAPIDARY_BENCH
+                                .get()
+                ),
+                JeiLapidaryBenchCategory.RECIPE_TYPE
+        );
     }
 
     @Override
