@@ -1,9 +1,9 @@
 package net.sievert.jolcraft.integration.jei.custom.lapidary_bench;
 
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.sievert.jolcraft.integration.jei.util.ItemInputJeiTranslator;
-import net.sievert.jolcraft.integration.jei.util.ItemOutputJeiTranslator;
-import net.sievert.jolcraft.integration.jei.util.JeiRecipeAccess;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemInputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.integration.jei.util;
+package net.sievert.jolcraft.integration.jei.util.recipe;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -14,9 +14,7 @@ import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.sievert.jolcraft.mixin.*;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
@@ -52,7 +50,7 @@ public final class ItemOutputJeiTranslator {
         }
 
         int rolls =
-                readConstantInt(
+                JeiNumberRangeTranslator.requireConstantInt(
                         pool.getRolls(),
                         "loot-pool rolls"
                 );
@@ -302,74 +300,15 @@ public final class ItemOutputJeiTranslator {
     private static @NotNull CountRange readNumberRange(
             @NotNull NumberProvider provider
     ) {
-        if (provider instanceof ConstantValue constant) {
-            int value =
-                    readConstantInt(
-                            constant,
-                            "item count"
-                    );
+        JeiNumberRangeTranslator.NumberRange range =
+                JeiNumberRangeTranslator.translate(
+                        provider
+                );
 
-            return new CountRange(
-                    value,
-                    value
-            );
-        }
-
-        if (provider instanceof UniformGenerator uniform) {
-            UniformGeneratorAccessor accessor =
-                    (UniformGeneratorAccessor) (Object) uniform;
-
-            int min =
-                    readConstantInt(
-                            accessor.jolcraft$getMin(),
-                            "uniform minimum"
-                    );
-
-            int max =
-                    readConstantInt(
-                            accessor.jolcraft$getMax(),
-                            "uniform maximum"
-                    );
-
-            return new CountRange(
-                    min,
-                    max
-            );
-        }
-
-        throw new IllegalArgumentException(
-                "Unsupported number provider for JEI translation: "
-                        + provider.getClass()
-                        .getName()
+        return new CountRange(
+                range.min(),
+                range.max()
         );
-    }
-
-    private static int readConstantInt(
-            @NotNull NumberProvider provider,
-            @NotNull String description
-    ) {
-        if (!(provider instanceof ConstantValue(float value))) {
-            throw new IllegalArgumentException(
-                    "JEI translation currently requires constant "
-                            + description
-                            + ", found "
-                            + provider.getClass()
-                            .getName()
-            );
-        }
-
-        if (value != Math.floor(
-                value
-        )) {
-            throw new IllegalArgumentException(
-                    "Expected an integer "
-                            + description
-                            + ", found "
-                            + value
-            );
-        }
-
-        return (int) value;
     }
 
     private static @NotNull IllegalArgumentException unsupportedEntry(

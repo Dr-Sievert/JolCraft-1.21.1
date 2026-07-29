@@ -3,7 +3,9 @@ package net.sievert.jolcraft.integration.jei.custom.hand_interaction;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
 import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,51 +22,25 @@ public record JeiHandInteractionRecipe(
     public JeiHandInteractionRecipe {
         Objects.requireNonNull(
                 recipe,
-                "recipe"
+                JolCraftDictionary.RECIPE
         );
 
         ingredientAExamples =
-                copyStacks(
+                JeiStacks.copyRequired(
                         ingredientAExamples,
                         "ingredientAExamples"
                 );
 
         ingredientBExamples =
-                copyStacks(
+                JeiStacks.copyRequired(
                         ingredientBExamples,
                         "ingredientBExamples"
                 );
 
         Objects.requireNonNull(
                 result,
-                "result"
+                JolCraftDictionary.RESULT
         );
-    }
-
-    private static @NotNull List<ItemStack> copyStacks(
-            @NotNull List<ItemStack> stacks,
-            @NotNull String name
-    ) {
-        Objects.requireNonNull(
-                stacks,
-                name
-        );
-
-        List<ItemStack> copies =
-                stacks.stream()
-                        .map(
-                                ItemStack::copy
-                        )
-                        .toList();
-
-        if (copies.isEmpty()) {
-            throw new IllegalArgumentException(
-                    name
-                            + " must contain at least one stack"
-            );
-        }
-
-        return copies;
     }
 
     public sealed interface Result
@@ -141,7 +117,7 @@ public record JeiHandInteractionRecipe(
         public EffectResult {
             Objects.requireNonNull(
                     effect,
-                    "effect"
+                    JolCraftDictionary.EFFECT
             );
 
             effect =

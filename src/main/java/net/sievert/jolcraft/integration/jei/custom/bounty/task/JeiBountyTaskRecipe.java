@@ -2,6 +2,7 @@ package net.sievert.jolcraft.integration.jei.custom.bounty.task;
 
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.item.ItemStack;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
@@ -25,17 +26,17 @@ public record JeiBountyTaskRecipe(
     public JeiBountyTaskRecipe {
         Objects.requireNonNull(
                 recipe,
-                "recipe"
+                JolCraftDictionary.RECIPE
         );
 
         Objects.requireNonNull(
                 bounty,
-                "bounty"
+                JolCraftDictionary.BOUNTY
         );
 
         Objects.requireNonNull(
                 objective,
-                "objective"
+                JolCraftDictionary.OBJECTIVE
         );
 
         if (
@@ -67,7 +68,7 @@ public record JeiBountyTaskRecipe(
     ) {
         Objects.requireNonNull(
                 recipe,
-                "recipe"
+                JolCraftDictionary.RECIPE
         );
 
         List<WeightedEntry.Wrapper<RecipeOutput>> entries =
@@ -151,47 +152,7 @@ public record JeiBountyTaskRecipe(
         return bounty;
     }
 
-    public boolean isItemObjective() {
-        return objective instanceof ItemOutput;
-    }
-
-    public boolean isEntityObjective() {
-        return objective instanceof EntityOutput;
-    }
-
-    public @NotNull ItemOutput itemObjective() {
-        if (
-                objective
-                        instanceof ItemOutput itemOutput
-        ) {
-            return itemOutput;
-        }
-
-        throw new IllegalStateException(
-                "objective is not an item output"
-        );
-    }
-
-    public @NotNull EntityOutput entityObjective() {
-        if (
-                objective
-                        instanceof EntityOutput entityOutput
-        ) {
-            return entityOutput;
-        }
-
-        throw new IllegalStateException(
-                "objective is not an entity output"
-        );
-    }
-
     public double chance() {
-        return (double) weight
-                / totalWeight;
-    }
-
-    public double chancePercent() {
-        return chance()
-                * 100.0D;
+        return (double) weight / totalWeight;
     }
 }

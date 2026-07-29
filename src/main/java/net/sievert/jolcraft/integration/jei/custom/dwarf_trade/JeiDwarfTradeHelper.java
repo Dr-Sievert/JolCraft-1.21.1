@@ -1,14 +1,11 @@
 package net.sievert.jolcraft.integration.jei.custom.dwarf_trade;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.integration.jei.util.ItemOutputJeiTranslator;
-import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionHelper;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
@@ -25,35 +22,20 @@ public final class JeiDwarfTradeHelper {
     private JeiDwarfTradeHelper() {
     }
 
-    public static @NotNull List<JeiDwarfTrade>
-    getAllDwarfJeiTrades(
+    public static @NotNull List<JeiDwarfTrade> getRecipes(
             @NotNull DwarfProfession profession
     ) {
-        ClientLevel clientLevel =
-                Minecraft.getInstance().level;
-
-        if (clientLevel == null) {
-            return List.of();
-        }
-
         List<RecipeHolder<DwarfTradeRecipe>> matching =
-                new ArrayList<>();
-
-        for (
-                RecipeHolder<DwarfTradeRecipe> holder :
-                clientLevel.getRecipeManager()
-                        .getAllRecipesFor(
+                new ArrayList<>(
+                        JeiRecipeAccess.getSortedMatching(
                                 JolCraftRecipes
                                         .DWARF_TRADE_TYPE
-                                        .get()
+                                        .get(),
+                                recipe ->
+                                        recipe.profession()
+                                                == profession
                         )
-        ) {
-            if (holder.value().profession() != profession) {
-                continue;
-            }
-
-            matching.add(holder);
-        }
+                );
 
         matching.sort(
                 Comparator

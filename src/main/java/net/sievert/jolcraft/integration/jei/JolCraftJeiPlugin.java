@@ -26,6 +26,8 @@ import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchCategory;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchHelper;
+import net.sievert.jolcraft.integration.jei.util.JeiCategoryDefinition;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -34,7 +36,9 @@ import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 @JeiPlugin
 @SuppressWarnings("removal")
@@ -43,6 +47,67 @@ public final class JolCraftJeiPlugin implements IModPlugin {
     private static final ResourceLocation ID =
             JolCraft.location(
                     JolCraftJeiIds.JEI_PLUGIN
+            );
+
+    private static final List<JeiCategoryDefinition<?>> CATEGORY_DEFINITIONS =
+            List.of(
+                    new JeiCategoryDefinition<>(
+                            JeiLapidaryBenchCategory::new,
+                            JeiRecipeTypes.LAPIDARY_BENCH,
+                            JeiLapidaryBenchHelper::getRecipes,
+                            catalysts(
+                                    () -> new ItemStack(
+                                            JolCraftBlocks
+                                                    .LAPIDARY_BENCH
+                                                    .get()
+                                    )
+                            )
+                    ),
+                    new JeiCategoryDefinition<>(
+                            JeiFermentingCauldronCategory::new,
+                            JeiRecipeTypes.FERMENTING_CAULDRON,
+                            JeiFermentingCauldronHelper::getRecipes,
+                            catalysts(
+                                    () -> new ItemStack(
+                                            Blocks.CAULDRON
+                                    )
+                            )
+                    ),
+                    new JeiCategoryDefinition<>(
+                            JeiHandInteractionCategory::new,
+                            JeiRecipeTypes.HAND_INTERACTION,
+                            JeiHandInteractionHelper::getRecipes,
+                            List.of()
+                    ),
+                    new JeiCategoryDefinition<>(
+                            JeiBountyTaskCategory::new,
+                            JeiRecipeTypes.BOUNTY_TASK,
+                            JeiBountyTaskHelper::getRecipes,
+                            catalysts(
+                                    () -> new ItemStack(
+                                            JolCraftItems.BOUNTY.get()
+                                    )
+                            )
+                    ),
+                    new JeiCategoryDefinition<>(
+                            JeiBountyRewardCategory::new,
+                            JeiRecipeTypes.BOUNTY_REWARD,
+                            JeiBountyRewardHelper::getRecipes,
+                            catalysts(
+                                    () -> new ItemStack(
+                                            JolCraftItems.BOUNTY.get()
+                                    ),
+                                    () -> new ItemStack(
+                                            JolCraftItems.BOUNTY_CRATE.get()
+                                    )
+                            )
+                    ),
+                    new JeiCategoryDefinition<>(
+                            JeiInfoPageCategory::new,
+                            JeiRecipeTypes.INFO_PAGE,
+                            JeiInfoPageHelper::getRecipes,
+                            List.of()
+                    )
             );
 
     @Override
@@ -59,7 +124,7 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                         .getJeiHelpers()
                         .getGuiHelper();
 
-        for (var profession : DwarfProfession.values()) {
+        for (DwarfProfession profession : DwarfProfession.values()) {
             registration.addRecipeCategories(
                     new JeiDwarfTradeCategory(
                             guiHelper,
@@ -68,56 +133,28 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             );
         }
 
-        registration.addRecipeCategories(
-                new JeiLapidaryBenchCategory(
-                        guiHelper
-                )
-        );
-
-        registration.addRecipeCategories(
-                new JeiFermentingCauldronCategory(
-                        guiHelper
-                )
-        );
-
-        registration.addRecipeCategories(
-                new JeiHandInteractionCategory(
-                        guiHelper
-                )
-        );
-
-        registration.addRecipeCategories(
-                new JeiBountyTaskCategory(
-                        guiHelper
-                )
-        );
-
-        registration.addRecipeCategories(
-                new JeiBountyRewardCategory(
-                        guiHelper
-                )
-        );
-
-        registration.addRecipeCategories(
-                new JeiInfoPageCategory(
-                        guiHelper
-                )
-        );
+        for (JeiCategoryDefinition<?> definition : CATEGORY_DEFINITIONS) {
+            registration.addRecipeCategories(
+                    definition.createCategory(
+                            guiHelper
+                    )
+            );
+        }
     }
 
     @Override
     public void registerRecipes(
             @NotNull IRecipeRegistration registration
     ) {
-        for (var profession : DwarfProfession.values()) {
+        for (DwarfProfession profession : DwarfProfession.values()) {
             var recipes =
-                    JeiDwarfTradeHelper.getAllDwarfJeiTrades(
+                    JeiDwarfTradeHelper.getRecipes(
                             profession
                     );
 
             if (!recipes.isEmpty()) {
                 registration.addRecipes(
-                        JeiDwarfTradeCategory.recipeTypeFor(
+                        JeiRecipeTypes.dwarfTrade(
                                 profession
                         ),
                         recipes
@@ -125,102 +162,30 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             }
         }
 
-        var lapidaryRecipes =
-                JeiLapidaryBenchHelper.getRecipes();
-
-        if (!lapidaryRecipes.isEmpty()) {
-            registration.addRecipes(
-                    JeiLapidaryBenchCategory.RECIPE_TYPE,
-                    lapidaryRecipes
+        for (JeiCategoryDefinition<?> definition : CATEGORY_DEFINITIONS) {
+            definition.registerRecipes(
+                    registration
             );
         }
-
-        var fermentingCauldronRecipes =
-                JeiFermentingCauldronHelper.getRecipes();
-
-        if (!fermentingCauldronRecipes.isEmpty()) {
-            registration.addRecipes(
-                    JeiFermentingCauldronCategory.RECIPE_TYPE,
-                    fermentingCauldronRecipes
-            );
-        }
-
-        var handInteractionRecipes =
-                JeiHandInteractionHelper
-                        .getAllHandInteractionRecipes();
-
-        if (!handInteractionRecipes.isEmpty()) {
-            registration.addRecipes(
-                    JeiHandInteractionCategory.RECIPE_TYPE,
-                    handInteractionRecipes
-            );
-        }
-
-        var bountyTaskRecipes =
-                JeiBountyTaskHelper.getRecipes();
-
-        if (!bountyTaskRecipes.isEmpty()) {
-            registration.addRecipes(
-                    JeiBountyTaskCategory.RECIPE_TYPE,
-                    bountyTaskRecipes
-            );
-        }
-
-        var bountyRewardRecipes =
-                JeiBountyRewardHelper.getRecipes();
-
-        if (!bountyRewardRecipes.isEmpty()) {
-            registration.addRecipes(
-                    JeiBountyRewardCategory.RECIPE_TYPE,
-                    bountyRewardRecipes
-            );
-        }
-
-        registration.addRecipes(
-                JeiInfoPageCategory.RECIPE_TYPE,
-                JeiInfoPageHelper.getAllInfoPages()
-        );
     }
 
     @Override
     public void registerRecipeCatalysts(
-            IRecipeCatalystRegistration registration
+            @NotNull IRecipeCatalystRegistration registration
     ) {
-        registration.addRecipeCatalyst(
-                new ItemStack(
-                        JolCraftBlocks
-                                .LAPIDARY_BENCH
-                                .get()
-                ),
-                JeiLapidaryBenchCategory.RECIPE_TYPE
-        );
+        for (JeiCategoryDefinition<?> definition : CATEGORY_DEFINITIONS) {
+            definition.registerCatalysts(
+                    registration
+            );
+        }
+    }
 
-        registration.addRecipeCatalyst(
-                new ItemStack(
-                        Blocks.CAULDRON
-                ),
-                JeiFermentingCauldronCategory.RECIPE_TYPE
-        );
-
-        registration.addRecipeCatalyst(
-                new ItemStack(
-                        JolCraftItems.BOUNTY.get()
-                ),
-                JeiBountyTaskCategory.RECIPE_TYPE
-        );
-
-        registration.addRecipeCatalyst(
-                new ItemStack(
-                        JolCraftItems.BOUNTY.get()
-                ),
-                JeiBountyRewardCategory.RECIPE_TYPE
-        );
-
-        registration.addRecipeCatalyst(
-                new ItemStack(
-                        JolCraftItems.BOUNTY_CRATE.get()
-                ),
-                JeiBountyRewardCategory.RECIPE_TYPE
+    @SafeVarargs
+    private static @NotNull List<Supplier<ItemStack>> catalysts(
+            @NotNull Supplier<ItemStack>... catalysts
+    ) {
+        return List.of(
+                catalysts
         );
     }
 
@@ -266,10 +231,8 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                                             .get()
                             );
 
-                    if (
-                            group == null
-                                    || group.isEmpty()
-                    ) {
+                    if (group == null
+                            || group.isEmpty()) {
                         group =
                                 JolCraftDictionary.UNKNOWN;
                     } else {

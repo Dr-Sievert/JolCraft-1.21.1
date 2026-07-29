@@ -1,312 +1,178 @@
 package net.sievert.jolcraft.integration.jei.custom.hand_interaction;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
-import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.util.client.JolCraftTextures;
+import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
+import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawableHelper;
+import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
+import net.sievert.jolcraft.integration.jei.util.gui.JeiPoint;
+import net.sievert.jolcraft.integration.jei.util.gui.JeiTextures;
+import net.sievert.jolcraft.integration.jei.util.gui.render.JeiEffectRenderer;
+import net.sievert.jolcraft.integration.jei.util.gui.render.JeiEntityRenderer;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.List;
+
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_CONTENT_SIZE;
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_SIZE;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class JeiHandInteractionCategory
-        implements IRecipeCategory<JeiHandInteractionRecipe> {
+        extends AbstractJeiCategory<JeiHandInteractionRecipe> {
 
     public static final RecipeType<JeiHandInteractionRecipe> RECIPE_TYPE =
-            RecipeType.create(
-                    JolCraft.MOD_ID,
-                    JolCraftJeiIds.HAND_INTERACTION,
-                    JeiHandInteractionRecipe.class
-            );
+            JeiRecipeTypes.HAND_INTERACTION;
 
-    private static final ResourceLocation HAND_RIGHT =
-            JolCraftTextures.modSprite(
-                    "hand_right"
-            );
-
-    private static final ResourceLocation HAND_LEFT =
-            JolCraftTextures.modSprite(
-                    "hand_left"
-            );
-
-    private static final ResourceLocation RIGHT_CLICK_TEXTURE =
-            ResourceLocation.withDefaultNamespace(
-                    "textures/gui/sprites/toast/right_click.png"
-            );
-
-    private static final ResourceLocation ARROW_TEXTURE =
-            JolCraftTextures.jeiRl(
-                    JolCraftTextures.jei(
-                            JolCraftStrings.underscored(
-                                    JolCraftDictionary.RECIPE,
-                                    JolCraftDictionary.ARROW
-                            )
-                    )
-            );
-
-    private static final int WIDTH = 138;
+    private static final int WIDTH = 152;
     private static final int HEIGHT = 72;
 
-    private static final int SLOT_SIZE = 18;
-    private static final int SLOT_Y = 4;
-    private static final int ENTITY_EGG_Y = 42;
-
-    private static final int GAP = 4;
-    private static final int PLUS_WIDTH = 13;
-
-    private static final int ARROW_WIDTH = 22;
-    private static final int ARROW_HEIGHT = 16;
-    private static final int ARROW_Y = 5;
-
-    private static final int INPUT_A_X = 4;
-
-    private static final int PLUS_X =
-            INPUT_A_X
-                    + SLOT_SIZE
-                    + GAP;
-
-    private static final int INPUT_B_X =
-            PLUS_X
-                    + PLUS_WIDTH
-                    + GAP;
-
-    private static final int ARROW_X =
-            INPUT_B_X
-                    + SLOT_SIZE
-                    + 10;
-
-    private static final int OUTPUT_X =
-            ARROW_X
-                    + ARROW_WIDTH
-                    + 16;
-
-    private static final int HAND_SIZE = 16;
     private static final int HAND_Y = 34;
-
-    private static final int HAND_LEFT_X =
-            INPUT_A_X
-                    + (
-                    SLOT_SIZE - HAND_SIZE
-            ) / 2;
-
-    private static final int HAND_RIGHT_X =
-            INPUT_B_X
-                    + (
-                    SLOT_SIZE - HAND_SIZE
-            ) / 2;
-
-    private static final int PLUS_Y = 5;
-
-    private static final int RIGHT_CLICK_SIZE = 20;
-
-    private static final int RIGHT_CLICK_X =
-            ARROW_X
-                    + (
-                    ARROW_WIDTH - RIGHT_CLICK_SIZE
-            ) / 2;
-
-    private static final int RIGHT_CLICK_Y = 32;
-
     private static final int AMOUNT_Y = 23;
+
+    private static final int ENTITY_VERTICAL_OFFSET = 8;
     private static final int ENTITY_AMOUNT_Y = 60;
+    private static final int ENTITY_EGG_Y =
+            42 + ENTITY_VERTICAL_OFFSET;
+    private static final int ENTITY_BOTTOM_Y =
+            35 + ENTITY_VERTICAL_OFFSET;
 
-    private static final int TEXT_COLOR = 0x888888;
+    private static final JeiRecipeLayout LAYOUT =
+            JeiRecipeLayout.twoInputsToOutput(
+                    4,
+                    43,
+                    122,
+                    4,
+                    5,
+                    5,
+                    0,
+                    10
+            );
 
-    private final IDrawable background;
-    private final IDrawable plus;
-    private final IDrawable icon;
+    private static final int OUTPUT_CENTER_X =
+            LAYOUT.output().x()
+                    + SLOT_SIZE / 2;
+
+    private static final JeiPoint CHANCE =
+            new JeiPoint(
+                    LAYOUT.arrow().x()
+                            + JeiTextures.ARROW_WIDTH
+                            + 5,
+                    LAYOUT.arrow().y()
+                            + 6
+            );
+
+    private static final JeiPoint RIGHT_CLICK =
+            new JeiPoint(
+                    LAYOUT.arrow().x()
+                            + (
+                            JeiTextures.ARROW_WIDTH
+                                    - JeiTextures.RIGHT_CLICK_SIZE
+                    ) / 2,
+                    32
+            );
 
     public JeiHandInteractionCategory(
             IGuiHelper guiHelper
     ) {
-        background =
-                guiHelper.createBlankDrawable(
-                        WIDTH,
-                        HEIGHT
-                );
-
-        plus =
-                guiHelper.getRecipePlusSign();
-
-        icon =
-                new IDrawable() {
-
-                    @Override
-                    public int getWidth() {
-                        return HAND_SIZE;
-                    }
-
-                    @Override
-                    public int getHeight() {
-                        return HAND_SIZE;
-                    }
-
-                    @Override
-                    public void draw(
-                            GuiGraphics graphics,
-                            int xOffset,
-                            int yOffset
-                    ) {
-                        graphics.blitSprite(
-                                HAND_RIGHT,
-                                xOffset,
-                                yOffset,
-                                HAND_SIZE,
-                                HAND_SIZE
-                        );
-                    }
-                };
-    }
-
-    @Override
-    public RecipeType<JeiHandInteractionRecipe> getRecipeType() {
-        return RECIPE_TYPE;
-    }
-
-    @Override
-    public Component getTitle() {
-        return Component.translatable(
-                JolCraftLanguageKeys.JEI_CATEGORY_HAND_INTERACTION
+        super(
+                guiHelper,
+                RECIPE_TYPE,
+                Component.translatable(
+                        JolCraftLanguageKeys.JEI_CATEGORY_HAND_INTERACTION
+                ),
+                WIDTH,
+                HEIGHT,
+                JeiDrawableHelper.sprite(
+                        JeiTextures.HAND_RIGHT,
+                        JeiTextures.HAND_SIZE,
+                        JeiTextures.HAND_SIZE
+                )
         );
     }
 
     @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @SuppressWarnings("SuspiciousNameCombination")
-    @Override
-    public void draw(
-            JeiHandInteractionRecipe entry,
-            IRecipeSlotsView slots,
-            GuiGraphics graphics,
+    protected void drawRecipe(
+            @NotNull JeiHandInteractionRecipe entry,
+            @NotNull IRecipeSlotsView slots,
+            @NotNull GuiGraphics graphics,
             double mouseX,
             double mouseY
     ) {
-        background.draw(
+        drawJeiPlus(
                 graphics,
-                0,
-                0
+                LAYOUT.requirePlus()
         );
 
-        plus.draw(
+        drawHands(
+                graphics
+        );
+
+        JeiDrawHelper.drawArrow(
                 graphics,
-                PLUS_X,
-                PLUS_Y
+                LAYOUT.arrow()
         );
 
-        graphics.blitSprite(
-                HAND_LEFT,
-                HAND_LEFT_X,
-                HAND_Y,
-                HAND_SIZE,
-                HAND_SIZE
+        JeiDrawHelper.drawRightClick(
+                graphics,
+                RIGHT_CLICK
         );
 
-        graphics.blitSprite(
-                HAND_RIGHT,
-                HAND_RIGHT_X,
-                HAND_Y,
-                HAND_SIZE,
-                HAND_SIZE
-        );
+        switch (entry.result()) {
+            case JeiHandInteractionRecipe.EffectResult effectResult ->
+                    drawEffectResult(
+                            graphics,
+                            effectResult
+                    );
 
-        graphics.blit(
-                ARROW_TEXTURE,
-                ARROW_X,
-                ARROW_Y,
-                0,
-                0,
-                ARROW_WIDTH,
-                ARROW_HEIGHT,
-                ARROW_WIDTH,
-                ARROW_HEIGHT
-        );
+            case JeiHandInteractionRecipe.EntityResult entityResult ->
+                    drawEntityResult(
+                            graphics,
+                            entityResult
+                    );
 
-        graphics.blit(
-                RIGHT_CLICK_TEXTURE,
-                RIGHT_CLICK_X,
-                RIGHT_CLICK_Y,
-                0,
-                0,
-                RIGHT_CLICK_SIZE,
-                RIGHT_CLICK_SIZE,
-                RIGHT_CLICK_SIZE,
-                RIGHT_CLICK_SIZE
-        );
-
-        if (
-                entry.result()
-                        instanceof JeiHandInteractionRecipe.EffectResult
-                        effectResult
-        ) {
-            drawEffectResult(
-                    graphics,
-                    effectResult
-            );
-        }
-
-        if (
-                entry.result()
-                        instanceof JeiHandInteractionRecipe.EntityResult
-                        entityResult
-        ) {
-            drawEntityResult(
-                    graphics,
-                    entityResult
-            );
+            default -> {
+            }
         }
 
         Font font =
                 Minecraft.getInstance().font;
 
+        drawOutputChance(
+                graphics,
+                font,
+                entry
+        );
+
         drawInputAmount(
                 graphics,
                 font,
                 entry.recipe().actionA(),
-                INPUT_A_X
+                LAYOUT.inputA().x()
         );
 
         drawInputAmount(
                 graphics,
                 font,
                 entry.recipe().actionB(),
-                INPUT_B_X
+                LAYOUT.requireInputB().x()
         );
 
         drawOutputAmount(
@@ -316,35 +182,62 @@ public final class JeiHandInteractionCategory
         );
     }
 
-    private static void drawEffectResult(
-            GuiGraphics graphics,
-            JeiHandInteractionRecipe.EffectResult result
+    private static void drawHands(
+            @NotNull GuiGraphics graphics
     ) {
-        TextureAtlasSprite sprite =
-                Minecraft.getInstance()
-                        .getMobEffectTextures()
-                        .get(
-                                result.effect()
-                                        .getEffect()
-                        );
+        graphics.blitSprite(
+                JeiTextures.HAND_LEFT,
+                centeredSpriteX(
+                        LAYOUT.inputA().x()
+                ),
+                HAND_Y,
+                JeiTextures.HAND_SIZE,
+                JeiTextures.HAND_SIZE
+        );
 
-        graphics.blit(
-                OUTPUT_X + 1,
-                SLOT_Y + 1,
+        graphics.blitSprite(
+                JeiTextures.HAND_RIGHT,
+                centeredSpriteX(
+                        LAYOUT.requireInputB().x()
+                ),
+                HAND_Y,
+                JeiTextures.HAND_SIZE,
+                JeiTextures.HAND_SIZE
+        );
+    }
+
+    private static int centeredSpriteX(
+            int slotX
+    ) {
+        return slotX
+                + (
+                SLOT_SIZE
+                        - JeiTextures.HAND_SIZE
+        ) / 2;
+    }
+
+    private static void drawEffectResult(
+            @NotNull GuiGraphics graphics,
+            @NotNull JeiHandInteractionRecipe.EffectResult result
+    ) {
+        JeiEffectRenderer.draw(
+                graphics,
+                result.effect(),
+                LAYOUT.output().x() + 1,
+                LAYOUT.output().y() + 1,
                 0,
-                16,
-                16,
-                sprite
+                SLOT_CONTENT_SIZE,
+                SLOT_CONTENT_SIZE
         );
     }
 
     private static void drawEntityResult(
-            GuiGraphics graphics,
-            JeiHandInteractionRecipe.EntityResult result
+            @NotNull GuiGraphics graphics,
+            @NotNull JeiHandInteractionRecipe.EntityResult result
     ) {
         LivingEntity entity =
-                createDisplayEntity(
-                        result
+                JeiEntityRenderer.createLiving(
+                        result.entityType()
                 );
 
         if (entity == null) {
@@ -354,172 +247,80 @@ public final class JeiHandInteractionCategory
         Font font =
                 Minecraft.getInstance().font;
 
-        Component label =
-                Component.literal(
-                        "Spawns "
-                ).append(
-                        result.entityType()
-                                .getDescription()
-                );
-
-        float labelScale =
-                0.6F;
-
-        float labelX =
-                OUTPUT_X
-                        + SLOT_SIZE / 2.0F
-                        - font.width(
-                        label
-                )
-                        * labelScale
-                        / 2.0F;
-
-        graphics.pose()
-                .pushPose();
-
-        graphics.pose()
-                .translate(
-                        labelX,
-                        0.0F,
-                        0.0F
-                );
-
-        graphics.pose()
-                .scale(
-                        labelScale,
-                        labelScale,
-                        1.0F
-                );
-
-        graphics.drawString(
-                font,
-                label,
-                0,
-                0,
-                TEXT_COLOR,
-                false
-        );
-
-        graphics.pose()
-                .popPose();
-
-        Quaternionf pose =
-                new Quaternionf()
-                        .rotateZ(
-                                (float) Math.PI
-                        );
-
-        Quaternionf camera =
-                new Quaternionf()
-                        .rotateX(
-                                -10.0F
-                                        * (float) (
-                                        Math.PI / 180.0F
-                                )
-                        );
-
-        float rotation =
-                142.0F;
-
-        entity.yBodyRot =
-                rotation;
-
-        entity.yBodyRotO =
-                rotation;
-
-        entity.setYRot(
-                rotation
-        );
-
-        entity.yRotO =
-                rotation;
-
-        entity.yHeadRot =
-                rotation;
-
-        entity.yHeadRotO =
-                rotation;
-
-        entity.setXRot(
-                -5.0F
-        );
-
-        entity.xRotO =
-                -5.0F;
-
-        float largestDimension =
-                Math.max(
-                        entity.getBbWidth(),
-                        entity.getBbHeight()
-                );
-
-        float scale =
-                22.0F
-                        / Math.max(
-                        largestDimension,
-                        0.25F
-                );
-
-        Vector3f translate =
-                new Vector3f(
-                        0.0F,
-                        entity.getBbHeight()
-                                * 0.10F,
-                        0.0F
-                );
-
-        InventoryScreen.renderEntityInInventory(
+        JeiDrawHelper.drawCenteredText(
                 graphics,
-                OUTPUT_X + SLOT_SIZE / 2.0F,
-                35.0F,
-                scale,
-                translate,
-                pose,
-                camera,
-                entity
+                font,
+                Component.translatable(
+                        JolCraftLanguageKeys.JEI_TOOLTIP_SPAWN
+                ),
+                OUTPUT_CENTER_X,
+                2
+        );
+
+        JeiDrawHelper.drawCenteredText(
+                graphics,
+                font,
+                result.entityType().getDescription(),
+                OUTPUT_CENTER_X,
+                12
+        );
+
+        JeiEntityRenderer.renderToBounds(
+                graphics,
+                entity,
+                OUTPUT_CENTER_X,
+                ENTITY_BOTTOM_Y,
+                22.0F,
+                142.0F,
+                -5.0F
         );
     }
 
-    private static @Nullable LivingEntity createDisplayEntity(
-            JeiHandInteractionRecipe.EntityResult result
+    private static void drawOutputChance(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            @NotNull JeiHandInteractionRecipe entry
     ) {
-        Minecraft minecraft =
-                Minecraft.getInstance();
-
-        if (minecraft.level == null) {
-            return null;
+        if (!(entry.result()
+                instanceof JeiHandInteractionRecipe.ItemResult(
+                JeiItemOutcome outcome
+        )) || outcome.totalWeight() <= outcome.weight()) {
+            return;
         }
 
-        Entity entity =
-                result.entityType()
-                        .create(
-                                minecraft.level
-                        );
+        double chancePerRoll =
+                outcome.chancePerRoll();
 
-        if (!(entity instanceof LivingEntity livingEntity)) {
-            return null;
-        }
+        double chance =
+                1.0D - Math.pow(
+                        1.0D - chancePerRoll,
+                        outcome.rolls()
+                );
 
-        return livingEntity;
+        JeiDrawHelper.drawChance(
+                graphics,
+                font,
+                chance,
+                CHANCE.x(),
+                CHANCE.y()
+        );
     }
 
     private static void drawInputAmount(
-            GuiGraphics graphics,
-            Font font,
-            ItemInputAction action,
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            @NotNull ItemInputAction action,
             int slotX
     ) {
-        if (
-                action.type()
-                        == ItemInputAction.Type.CATALYST
-        ) {
+        if (action.type()
+                == ItemInputAction.Type.CATALYST) {
             return;
         }
 
         int amount =
                 action.resolvedAmount();
 
-        drawAmountOverlay(
+        JeiDrawHelper.drawAmountRange(
                 graphics,
                 font,
                 amount,
@@ -530,135 +331,37 @@ public final class JeiHandInteractionCategory
     }
 
     private static void drawOutputAmount(
-            GuiGraphics graphics,
-            Font font,
-            JeiHandInteractionRecipe entry
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            @NotNull JeiHandInteractionRecipe entry
     ) {
-        int min;
-        int max;
-        int y;
+        if (entry.result()
+                instanceof JeiHandInteractionRecipe.ItemResult(
+                JeiItemOutcome outcome
+        )) {
+            JeiDrawHelper.drawAmountRange(
+                    graphics,
+                    font,
+                    outcome.minCount(),
+                    outcome.maxCount(),
+                    LAYOUT.output().x(),
+                    AMOUNT_Y
+            );
 
-        if (
-                entry.result()
-                        instanceof JeiHandInteractionRecipe.ItemResult itemResult
-        ) {
-            JeiItemOutcome outcome = itemResult.outcome();
-
-            min =
-                    outcome.minCount();
-
-            max =
-                    outcome.maxCount();
-
-            y =
-                    AMOUNT_Y;
-        } else if (
-                entry.result()
-                        instanceof JeiHandInteractionRecipe.EntityResult
-                        entityResult
-        ) {
-            min =
-                    entityResult.minCount();
-
-            max =
-                    entityResult.maxCount();
-
-            y =
-                    ENTITY_AMOUNT_Y;
-        } else {
             return;
         }
 
-        drawAmountOverlay(
-                graphics,
-                font,
-                min,
-                max,
-                OUTPUT_X,
-                y
-        );
-    }
-
-    private static void drawAmountOverlay(
-            GuiGraphics graphics,
-            Font font,
-            int min,
-            int max,
-            int slotX,
-            int y
-    ) {
-        if (
-                min == 1
-                        && max == 1
-        ) {
-            return;
+        if (entry.result()
+                instanceof JeiHandInteractionRecipe.EntityResult entityResult) {
+            JeiDrawHelper.drawAmountRange(
+                    graphics,
+                    font,
+                    entityResult.minCount(),
+                    entityResult.maxCount(),
+                    LAYOUT.output().x(),
+                    ENTITY_AMOUNT_Y
+            );
         }
-
-        String text =
-                min == max
-                        ? String.valueOf(
-                        min
-                )
-                        : min
-                        + "-"
-                        + max;
-
-        drawCenteredScaledText(
-                graphics,
-                font,
-                text,
-                slotX,
-                y
-        );
-    }
-
-    private static void drawCenteredScaledText(
-            GuiGraphics graphics,
-            Font font,
-            String text,
-            int slotX,
-            int y
-    ) {
-        int stringWidth =
-                font.width(
-                        text
-                );
-
-        float centerX =
-                slotX
-                        + SLOT_SIZE / 2.0F
-                        - stringWidth
-                        * (float) 0.75
-                        / 2.0F;
-
-        graphics.pose()
-                .pushPose();
-
-        graphics.pose()
-                .translate(
-                        centerX,
-                        y,
-                        0
-                );
-
-        graphics.pose()
-                .scale(
-                        (float) 0.75,
-                        (float) 0.75,
-                        1.0F
-                );
-
-        graphics.drawString(
-                font,
-                text,
-                0,
-                0,
-                TEXT_COLOR,
-                false
-        );
-
-        graphics.pose()
-                .popPose();
     }
 
     @SuppressWarnings("removal")
@@ -669,44 +372,23 @@ public final class JeiHandInteractionCategory
             double mouseX,
             double mouseY
     ) {
-        if (
-                !(
-                        entry.result()
-                                instanceof JeiHandInteractionRecipe.EffectResult(
-                                MobEffectInstance effect
-                        )
-                )
-                        || !isInsideEffectOutput(
-                        mouseX,
-                        mouseY
-                )
-        ) {
+        if (!(entry.result()
+                instanceof JeiHandInteractionRecipe.EffectResult(
+                MobEffectInstance effect
+        )) || !JeiDrawHelper.contains(
+                mouseX,
+                mouseY,
+                LAYOUT.output().x(),
+                LAYOUT.output().y(),
+                SLOT_SIZE,
+                SLOT_SIZE
+        )) {
             return List.of();
         }
 
-        List<Component> tooltip =
-                new ArrayList<>();
-
-        PotionContents.addPotionTooltip(
-                List.of(
-                        effect
-                ),
-                tooltip::add,
-                1.0F,
-                20.0F
+        return JeiEffectRenderer.tooltip(
+                effect
         );
-
-        return tooltip;
-    }
-
-    private static boolean isInsideEffectOutput(
-            double mouseX,
-            double mouseY
-    ) {
-        return mouseX >= OUTPUT_X
-                && mouseX < OUTPUT_X + SLOT_SIZE
-                && mouseY >= SLOT_Y
-                && mouseY < SLOT_Y + SLOT_SIZE;
     }
 
     @Override
@@ -717,8 +399,8 @@ public final class JeiHandInteractionCategory
     ) {
         builder.addSlot(
                         RecipeIngredientRole.INPUT,
-                        INPUT_A_X,
-                        SLOT_Y
+                        LAYOUT.inputA().x(),
+                        LAYOUT.inputA().y()
                 )
                 .addItemStacks(
                         entry.ingredientAExamples()
@@ -726,48 +408,37 @@ public final class JeiHandInteractionCategory
 
         builder.addSlot(
                         RecipeIngredientRole.INPUT,
-                        INPUT_B_X,
-                        SLOT_Y
+                        LAYOUT.requireInputB().x(),
+                        LAYOUT.requireInputB().y()
                 )
                 .addItemStacks(
                         entry.ingredientBExamples()
                 );
 
-        if (
-                entry.result()
-                        instanceof JeiHandInteractionRecipe.ItemResult
-                        itemResult
-        ) {
+        if (entry.result()
+                instanceof JeiHandInteractionRecipe.ItemResult itemResult) {
             builder.addSlot(
                             RecipeIngredientRole.OUTPUT,
-                            OUTPUT_X,
-                            SLOT_Y
+                            LAYOUT.output().x(),
+                            LAYOUT.output().y()
                     )
-                    .addItemStacks(
-                            List.of(itemResult.example())
+                    .addItemStack(
+                            itemResult.example()
                     );
 
             return;
         }
 
-        if (
-                entry.result()
-                        instanceof JeiHandInteractionRecipe.EntityResult
-                        entityResult
-        ) {
+        if (entry.result()
+                instanceof JeiHandInteractionRecipe.EntityResult entityResult) {
             builder.addSlot(
                             RecipeIngredientRole.OUTPUT,
-                            OUTPUT_X,
+                            LAYOUT.output().x(),
                             ENTITY_EGG_Y
                     )
                     .addItemStack(
                             entityResult.spawnEgg()
                     );
         }
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
     }
 }
