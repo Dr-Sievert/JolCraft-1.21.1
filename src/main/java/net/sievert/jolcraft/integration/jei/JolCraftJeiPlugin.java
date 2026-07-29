@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskCategory;
+import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskHelper;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeHelper;
 import net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron.JeiFermentingCauldronCategory;
@@ -83,6 +85,12 @@ public final class JolCraftJeiPlugin implements IModPlugin {
         );
 
         registration.addRecipeCategories(
+                new JeiBountyTaskCategory(
+                        guiHelper
+                )
+        );
+
+        registration.addRecipeCategories(
                 new JeiInfoPageCategory(
                         guiHelper
                 )
@@ -140,6 +148,15 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             );
         }
 
+        var bountyTaskRecipes = JeiBountyTaskHelper.getRecipes();
+
+        if (!bountyTaskRecipes.isEmpty()) {
+            registration.addRecipes(
+                    JeiBountyTaskCategory.RECIPE_TYPE,
+                    bountyTaskRecipes
+            );
+        }
+
         registration.addRecipes(
                 JeiInfoPageCategory.RECIPE_TYPE,
                 JeiInfoPageHelper.getAllInfoPages()
@@ -164,6 +181,13 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                         Blocks.CAULDRON
                 ),
                 JeiFermentingCauldronCategory.RECIPE_TYPE
+        );
+
+        registration.addRecipeCatalyst(
+                new ItemStack(
+                        JolCraftItems.BOUNTY.get()
+                ),
+                JeiBountyTaskCategory.RECIPE_TYPE
         );
     }
 
