@@ -476,6 +476,20 @@ public record FermentingCauldronRecipe(
                                     () -> BUBBLE_TICKS_KEY
                                             + " must be >= 1"
                             )
+                            .rule(
+                                    recipe.ingredient().condition()
+                                            instanceof InputItemCondition,
+                                    () -> JolCraftDictionary.INGREDIENT
+                                            + " must use an input item condition"
+                            )
+                            .rule(
+                                    recipe.lastIngredient()
+                                            .map(ItemInput::condition)
+                                            .map(InputItemCondition.class::isInstance)
+                                            .orElse(true),
+                                    () -> LAST_INGREDIENT_KEY
+                                            + " must use an input item condition"
+                            )
                             .done();
 
             if (base.error().isPresent()) {

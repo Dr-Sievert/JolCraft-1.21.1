@@ -14,6 +14,7 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -24,6 +25,7 @@ import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCa
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.client.color.JolCraftItemColors;
 import net.sievert.jolcraft.world.item.client.property.JolCraftItemProperties;
 import net.sievert.jolcraft.world.item.client.tooltip.JolCraftTooltipRenderers;
@@ -228,6 +230,14 @@ public final class JolCraftClientModEvents {
                     @Override
                     public int getTintColor() {
                         return defaultColor;
+                    }
+
+                    @Override
+                    public int getTintColor(@NotNull FluidStack stack) {
+                        return stack.getOrDefault(
+                                JolCraftDataComponents.BREW_COLOR.get(),
+                                defaultColor
+                        );
                     }
                 },
                 fluid

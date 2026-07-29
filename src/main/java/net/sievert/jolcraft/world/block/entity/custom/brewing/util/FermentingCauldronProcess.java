@@ -178,11 +178,22 @@ public final class FermentingCauldronProcess {
      * Returns whether any incomplete brewing process data remains.
      */
     public boolean hasUnfinishedState() {
-        return isBrewing()
+        return !lastIngredient.isEmpty()
                 || hasIngredients()
                 || hasEffects()
+                || finalize
+                || outputFluid
+                != FermentingCauldronRecipe.DEFAULT_OUTPUT_FLUID
+                || bubbleTicks != 0
+                || bubbleDelay != 0
                 || currentColor
-                != FermentingCauldronColorHelper.UNSET_COLOR;
+                != FermentingCauldronColorHelper.UNSET_COLOR
+                || startColor
+                != FermentingCauldronColorHelper.UNSET_COLOR
+                || targetColor
+                != FermentingCauldronColorHelper.UNSET_COLOR
+                || brewStartTime != -1L
+                || blendTotalTicks != 1;
     }
 
     public FermentingCauldronRecipe.OutputFluid getOutputFluid() {
