@@ -31,6 +31,7 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
         // JEI categories
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_DWARF_TRADES, "Dwarf Trades");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_INFO_PAGE, "Information");
+        putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_LAPIDARY_BENCH, "Lapidary Bench");
 
         // JEI info pages
         putManual(translations,

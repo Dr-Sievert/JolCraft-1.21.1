@@ -1,25 +1,24 @@
 package net.sievert.jolcraft.integration.jei.util;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.sievert.jolcraft.mixin.LootItemAccessor;
-import net.sievert.jolcraft.mixin.LootPoolAccessor;
-import net.sievert.jolcraft.mixin.LootPoolSingletonContainerAccessor;
-import net.sievert.jolcraft.mixin.SetComponentsFunctionAccessor;
-import net.sievert.jolcraft.mixin.SetItemCountFunctionAccessor;
-import net.sievert.jolcraft.mixin.UniformGeneratorAccessor;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.sievert.jolcraft.mixin.*;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,10 +57,8 @@ public final class ItemOutputJeiTranslator {
                         "loot-pool rolls"
                 );
 
-        List<LootPoolSingletonContainer> singletonEntries =
-                new ArrayList<>(
-                        entries.size()
-                );
+        List<TranslatedEntry> translatedEntries =
+                new ArrayList<>();
 
         int totalWeight = 0;
 
@@ -72,29 +69,37 @@ public final class ItemOutputJeiTranslator {
                 );
             }
 
-            if (!(singleton instanceof LootItem)) {
-                throw unsupportedEntry(
-                        singleton
-                );
-            }
+            LootPoolSingletonContainerAccessor singletonAccessor =
+                    (LootPoolSingletonContainerAccessor) singleton;
 
             int weight =
-                    ((LootPoolSingletonContainerAccessor) singleton)
-                            .jolcraft$getWeight();
+                    singletonAccessor.jolcraft$getWeight();
 
             if (weight <= 0) {
                 continue;
             }
 
-            singletonEntries.add(
-                    singleton
-            );
+            List<Item> items =
+                    resolveItems(
+                            singleton
+                    );
 
-            totalWeight +=
-                    weight;
+            for (Item item : items) {
+                translatedEntries.add(
+                        new TranslatedEntry(
+                                item,
+                                singletonAccessor.jolcraft$getFunctions(),
+                                weight
+                        )
+                );
+
+                totalWeight +=
+                        weight;
+            }
         }
 
-        if (totalWeight <= 0) {
+        if (translatedEntries.isEmpty()
+                || totalWeight <= 0) {
             return List.of();
         }
 
@@ -103,33 +108,17 @@ public final class ItemOutputJeiTranslator {
 
         List<JeiItemOutcome> outcomes =
                 new ArrayList<>(
-                        singletonEntries.size()
+                        translatedEntries.size()
                 );
 
-        for (LootPoolSingletonContainer singleton : singletonEntries) {
-            LootItem lootItem =
-                    (LootItem) singleton;
-
-            LootPoolSingletonContainerAccessor singletonAccessor =
-                    (LootPoolSingletonContainerAccessor) singleton;
-
-            int weight =
-                    singletonAccessor.jolcraft$getWeight();
-
-            Holder<Item> item =
-                    ((LootItemAccessor) lootItem)
-                            .jolcraft$getItem();
-
-            List<LootItemFunction> entryFunctions =
-                    singletonAccessor.jolcraft$getFunctions();
-
+        for (TranslatedEntry entry : translatedEntries) {
             CountRange count =
                     applyCountFunctions(
                             new CountRange(
                                     1,
                                     1
                             ),
-                            entryFunctions
+                            entry.functions()
                     );
 
             /*
@@ -144,20 +133,18 @@ public final class ItemOutputJeiTranslator {
 
             ItemStack displayStack =
                     new ItemStack(
-                            item.value()
+                            entry.item()
                     );
 
-            displayStack =
-                    applyDisplayFunctions(
-                            displayStack,
-                            entryFunctions
-                    );
+            applyDisplayFunctions(
+                    displayStack,
+                    entry.functions()
+            );
 
-            displayStack =
-                    applyDisplayFunctions(
-                            displayStack,
-                            poolFunctions
-                    );
+            applyDisplayFunctions(
+                    displayStack,
+                    poolFunctions
+            );
 
             /*
              * The display stack represents the output item and its components.
@@ -172,7 +159,7 @@ public final class ItemOutputJeiTranslator {
                             displayStack,
                             count.min(),
                             count.max(),
-                            weight,
+                            entry.weight(),
                             totalWeight,
                             rolls
                     )
@@ -181,6 +168,66 @@ public final class ItemOutputJeiTranslator {
 
         return List.copyOf(
                 outcomes
+        );
+    }
+
+    private static @NotNull List<Item> resolveItems(
+            @NotNull LootPoolSingletonContainer entry
+    ) {
+        if (entry instanceof LootItem lootItem) {
+            Holder<Item> item =
+                    ((LootItemAccessor) lootItem)
+                            .jolcraft$getItem();
+
+            return List.of(
+                    item.value()
+            );
+        }
+
+        if (entry instanceof TagEntry tagEntry) {
+            TagEntryAccessor accessor =
+                    (TagEntryAccessor) tagEntry;
+
+            if (!accessor.jolcraft$isExpanded()) {
+                throw new IllegalArgumentException(
+                        "JEI translation requires item-tag loot entries to be expanded"
+                );
+            }
+
+            TagKey<Item> tag =
+                    accessor.jolcraft$getTag();
+
+            HolderSet.Named<Item> items =
+                    BuiltInRegistries.ITEM
+                            .getTag(
+                                    tag
+                            )
+                            .orElseThrow(
+                                    () -> new IllegalArgumentException(
+                                            "Unknown or empty item tag for JEI translation: "
+                                                    + tag.location()
+                                    )
+                            );
+
+            List<Item> resolved =
+                    items.stream()
+                            .map(
+                                    Holder::value
+                            )
+                            .toList();
+
+            if (resolved.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Item tag produced no JEI outputs: "
+                                + tag.location()
+                );
+            }
+
+            return resolved;
+        }
+
+        throw unsupportedEntry(
+                entry
         );
     }
 
@@ -221,12 +268,10 @@ public final class ItemOutputJeiTranslator {
         return result;
     }
 
-    private static @NotNull ItemStack applyDisplayFunctions(
+    private static void applyDisplayFunctions(
             @NotNull ItemStack stack,
             @NotNull List<LootItemFunction> functions
     ) {
-        ItemStack result =
-                stack;
 
         for (LootItemFunction function : functions) {
             if (function instanceof SetItemCountFunction) {
@@ -238,7 +283,7 @@ public final class ItemOutputJeiTranslator {
                         ((SetComponentsFunctionAccessor) setComponents)
                                 .jolcraft$getComponents();
 
-                result.applyComponentsAndValidate(
+                stack.applyComponentsAndValidate(
                         components
                 );
 
@@ -252,7 +297,6 @@ public final class ItemOutputJeiTranslator {
             );
         }
 
-        return result;
     }
 
     private static @NotNull CountRange readNumberRange(
@@ -336,6 +380,13 @@ public final class ItemOutputJeiTranslator {
                         + entry.getClass()
                         .getName()
         );
+    }
+
+    private record TranslatedEntry(
+            @NotNull Item item,
+            @NotNull List<LootItemFunction> functions,
+            int weight
+    ) {
     }
 
     private record CountRange(
