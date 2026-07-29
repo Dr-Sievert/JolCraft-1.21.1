@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.data.id.jei;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
-import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
@@ -15,4 +14,5 @@ public class JolCraftJeiIds extends JolCraftIds {
     public static final String INFO_PAGE = join(JolCraftDictionary.INFO, JolCraftDictionary.PAGE);
     public static final String LAPIDARY_BENCH = join(JolCraftRecipeIds.LAPIDARY_BENCH);
     public static final String HAND_INTERACTION = join(JolCraftRecipeIds.HAND_INTERACTION);
+    public static final String FERMENTING_CAULDRON = join(JolCraftRecipeIds.FERMENTING_CAULDRON);
 }

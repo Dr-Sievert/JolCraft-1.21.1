@@ -45,11 +45,11 @@ public final class MiscLangSubProvider implements LanguageSubProvider {
                 "Needs a light level of 8 or less and a Y-level of 0 or below to grow. Can only be planted on deepslate, tuff, or verdant soil."
         );
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_MALT, "Can be used on a water cauldron as a first step in brewing.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HOPS, "Can be used on a cauldron with malt to add effects to a brew.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_MALT, "Can be used on a water cauldron as a first step in creating a dwarven brew.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_HOPS, "Can be used on a cauldron to add effects to a an unfinished brew.");
         putManual(translations,
                 JolCraftLanguageKeys.TOOLTIP_YEAST,
-                "Can be used on a fermenting cauldron with malt/hops to start the brewing process. Created by using sugar on a water cauldron and extracted using glass bottles."
+                "Can be used on a fermenting cauldron to start the brewing process of an unfinished brew."
         );
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_GLASS_MUG, "Can be used to extract a finished dwarven brew from a cauldron.");
 
