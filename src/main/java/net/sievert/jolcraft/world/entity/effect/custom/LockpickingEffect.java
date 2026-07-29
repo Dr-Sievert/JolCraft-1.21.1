@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.effect.custom;
+package net.sievert.jolcraft.world.entity.effect.custom;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

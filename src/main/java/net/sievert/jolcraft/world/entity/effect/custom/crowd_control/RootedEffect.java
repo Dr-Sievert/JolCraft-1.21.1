@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.effect.custom;
+package net.sievert.jolcraft.world.entity.effect.custom.crowd_control;
 
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
@@ -7,14 +7,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 
-public class DisarmedEffect extends MobEffect {
+public class RootedEffect extends AbstractCrowdControlEffect {
 
-    public DisarmedEffect(MobEffectCategory category, int color) {
+    public RootedEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
 
     @Override
     public void onEffectAdded(@NotNull LivingEntity livingEntity, int amplifier) {
-        JolCraftSoundHelper.entity(livingEntity, SoundEvents.ANVIL_PLACE, 0.70F, 1.60F);
+        JolCraftSoundHelper.entity(livingEntity, SoundEvents.COBWEB_HIT, 1.20F, 0.80F);
     }
 }

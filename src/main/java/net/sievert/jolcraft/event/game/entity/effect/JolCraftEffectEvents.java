@@ -19,7 +19,7 @@ import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachme
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 
 import java.util.Map;

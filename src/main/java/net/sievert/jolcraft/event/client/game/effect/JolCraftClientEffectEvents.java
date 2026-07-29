@@ -11,7 +11,7 @@ import net.neoforged.neoforge.client.event.CalculatePlayerTurnEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 
 

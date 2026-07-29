@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.effect.custom.curse;
+package net.sievert.jolcraft.world.entity.effect.custom.curse;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
@@ -14,7 +14,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumCursePacket;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import javax.annotation.ParametersAreNonnullByDefault;

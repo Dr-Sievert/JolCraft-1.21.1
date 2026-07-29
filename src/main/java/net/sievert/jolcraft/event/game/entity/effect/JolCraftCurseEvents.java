@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.damage.JolCraftDamageTypes;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)

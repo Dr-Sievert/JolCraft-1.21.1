@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.effect.custom.curse;
+package net.sievert.jolcraft.world.entity.effect.custom.curse;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

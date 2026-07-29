@@ -6,7 +6,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.sievert.jolcraft.world.player.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.world.player.attachment.base.JolCraftAttachmentHelper;
 import net.sievert.jolcraft.data.id.font.JolCraftFontIds;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import org.jetbrains.annotations.NotNull;
 
 public final class LanguageAttachmentHelper extends JolCraftAttachmentHelper<LanguageAttachment> {

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.minecraft.world.effect.MobEffect;
 
 @OnlyIn(Dist.CLIENT)

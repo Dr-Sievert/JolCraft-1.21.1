@@ -11,8 +11,8 @@ import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.custom.HearthBlock;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
-import net.sievert.jolcraft.world.effect.custom.curse.DeliriumCurseEffect;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.custom.curse.DeliriumCurseEffect;
 
 /**
  * Handles initial sync of all JolCraft data for a joining player.

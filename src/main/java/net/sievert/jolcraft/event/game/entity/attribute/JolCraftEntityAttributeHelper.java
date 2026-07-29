@@ -20,7 +20,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 

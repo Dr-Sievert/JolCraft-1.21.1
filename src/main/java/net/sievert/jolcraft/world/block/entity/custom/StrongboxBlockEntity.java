@@ -26,7 +26,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.custom.StrongboxBlock;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.gui.menu.LockMenu;
 import net.sievert.jolcraft.world.gui.menu.StrongboxMenu;
 import net.sievert.jolcraft.world.sound.util.PlaySound;

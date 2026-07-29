@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.mixin;
 
 import net.minecraft.world.entity.monster.SpellcasterIllager;
-import net.sievert.jolcraft.world.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

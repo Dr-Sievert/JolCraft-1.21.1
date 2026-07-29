@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.effect;
+package net.sievert.jolcraft.world.entity.effect;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -12,8 +12,12 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.effect.custom.*;
-import net.sievert.jolcraft.world.effect.custom.curse.*;
+import net.sievert.jolcraft.world.entity.effect.custom.*;
+import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.DisarmedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.RootedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.StunnedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.SuppressedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.curse.*;
 
 public final class JolCraftEffects {
 
