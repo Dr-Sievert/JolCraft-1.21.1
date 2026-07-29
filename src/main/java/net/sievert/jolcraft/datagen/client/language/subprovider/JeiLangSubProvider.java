@@ -34,6 +34,7 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_LAPIDARY_BENCH, "Lapidary Bench");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_HAND_INTERACTION, "Hand Interaction");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_FERMENTING_CAULDRON, "Fermenting Cauldron");
+        putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_BOUNTY_TASK, "Bounty Task");
 
         // JEI info pages
         putManual(translations,
