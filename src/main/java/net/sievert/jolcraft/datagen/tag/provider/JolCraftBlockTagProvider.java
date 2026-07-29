@@ -77,6 +77,9 @@ public final class JolCraftBlockTagProvider
                 .add(JolCraftBlocks.FERMENTING_CAULDRON.get())
                 .add(JolCraftBlocks.DEEPSLATE_MORTAR.get());
 
+        target.tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(JolCraftBlocks.FERMENTING_BARREL.get());
+
         target.tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(JolCraftBlocks.DEEPSLATE_BULBS_CROP.get())
                 .add(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get());

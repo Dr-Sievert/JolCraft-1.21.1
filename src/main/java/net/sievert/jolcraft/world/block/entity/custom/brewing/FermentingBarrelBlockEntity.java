@@ -62,6 +62,7 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
     private static final int AMBIENT_SOUND_INTERVAL = 200;
 
     private boolean restoreVanillaBarrelOnLoad;
+    private boolean loadedStateNeedsSave;
 
     private final FermentingBarrelAging aging =
             new FermentingBarrelAging();
@@ -525,10 +526,10 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
         FluidStack brew = brewTank.getFluid();
 
         if (brew.isEmpty()) {
-            aging.clear();
-
-            return false;
+            return aging.clear();
         }
+
+        FluidStack original = brew.copy();
 
         if (!DwarvenBrewFluidHelper.isFinishedBrew(brew)) {
             JolCraftLogs.warn(
@@ -563,7 +564,11 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
                 )
         );
 
-        return false;
+        return original.getAmount() != brew.getAmount()
+                || !FluidStack.isSameFluidSameComponents(
+                original,
+                brew
+        );
     }
 
     /**
@@ -613,6 +618,11 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             restoreVanillaBarrelIfEmpty();
 
             return;
+        }
+
+        if (loadedStateNeedsSave) {
+            loadedStateNeedsSave = false;
+            setChanged();
         }
 
         aging.ensureTimerStarted(
@@ -716,6 +726,7 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
 
         aging.clear();
         restoreVanillaBarrelOnLoad = false;
+        loadedStateNeedsSave = false;
 
         if (tag.contains(
                 NBT_BREW_TANK,
@@ -727,7 +738,9 @@ public final class FermentingBarrelBlockEntity extends BlockEntity
             );
         }
 
-        restoreVanillaBarrelOnLoad = sanitizeLoadedTank();
+        loadedStateNeedsSave = sanitizeLoadedTank();
+        restoreVanillaBarrelOnLoad = loadedStateNeedsSave
+                && brewTank.isEmpty();
 
         aging.load(
                 tag,
