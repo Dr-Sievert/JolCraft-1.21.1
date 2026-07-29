@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.integration.jei.custom.lapidary;
+package net.sievert.jolcraft.integration.jei.custom.lapidary_bench;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

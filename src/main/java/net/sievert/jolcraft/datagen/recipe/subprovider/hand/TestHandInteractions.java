@@ -15,6 +15,7 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.HandInteractionRecipeBuilder;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
@@ -72,7 +73,7 @@ public record TestHandInteractions(
                         .id("supported_outputs")
                         .ingredientA(
                                 ItemInput.item(
-                                        Items.OAK_LOG
+                                        JolCraftItems.DEV_KEY
                                 )
                         )
                         .actionA(
@@ -83,7 +84,7 @@ public record TestHandInteractions(
                         )
                         .ingredientB(
                                 ItemInput.item(
-                                        Items.BIRCH_LOG
+                                        JolCraftItems.DEV_KEY
                                 )
                         )
                         .actionB(
