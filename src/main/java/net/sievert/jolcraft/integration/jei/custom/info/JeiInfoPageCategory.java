@@ -507,7 +507,7 @@ public final class JeiInfoPageCategory
             addItemGroup(
                     builder,
                     recipe,
-                    registryAccess,
+                    Objects.requireNonNull(registryAccess),
                     centerX,
                     slotY
             );
@@ -518,7 +518,7 @@ public final class JeiInfoPageCategory
             addItemTag(
                     builder,
                     recipe,
-                    registryAccess,
+                    Objects.requireNonNull(registryAccess),
                     centerX,
                     slotY
             );
@@ -556,7 +556,7 @@ public final class JeiInfoPageCategory
             addFluidFocus(
                     builder,
                     recipe,
-                    registryAccess,
+                    Objects.requireNonNull(registryAccess),
                     fluidX,
                     slotY
             );
@@ -568,7 +568,7 @@ public final class JeiInfoPageCategory
             addFluidFocus(
                     builder,
                     recipe,
-                    registryAccess,
+                    Objects.requireNonNull(registryAccess),
                     centerX,
                     slotY
             );
