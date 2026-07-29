@@ -55,6 +55,7 @@ public final class JolCraftLanguageProvider
                 new DwarvenReputationLangSubProvider(),
                 new StatLangSubProvider(),
                 new SubtitleLangSubProvider(),
+                new TagLangSubProvider(),
                 new TrimLangSubProvider()
         );
     }

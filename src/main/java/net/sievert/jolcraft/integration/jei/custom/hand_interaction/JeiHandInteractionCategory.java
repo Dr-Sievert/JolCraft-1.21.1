@@ -540,16 +540,9 @@ public final class JeiHandInteractionCategory
 
         if (
                 entry.result()
-                        instanceof JeiHandInteractionRecipe.ItemResult(
-                        List<JeiItemOutcome> outcomes
-                )
+                        instanceof JeiHandInteractionRecipe.ItemResult itemResult
         ) {
-            if (outcomes.isEmpty()) {
-                return;
-            }
-
-            JeiItemOutcome outcome =
-                    outcomes.getFirst();
+            JeiItemOutcome outcome = itemResult.outcome();
 
             min =
                     outcome.minCount();
@@ -751,7 +744,7 @@ public final class JeiHandInteractionCategory
                             SLOT_Y
                     )
                     .addItemStacks(
-                            itemResult.examples()
+                            List.of(itemResult.example())
                     );
 
             return;

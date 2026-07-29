@@ -213,9 +213,9 @@ public final class JolCraftCreativeModeTabs {
 
                         pOutput.accept(JolCraftItems.BOUNTY);
                         pOutput.accept(JolCraftItems.BOUNTY_CRATE);
+                        pOutput.accept(JolCraftItems.REWARD_CRATE);
                         pOutput.accept(JolCraftItems.RESTOCK_CRATE);
                         pOutput.accept(JolCraftItems.REROLL_CRATE);
-                        pOutput.accept(JolCraftItems.REWARD_CRATE);
 
                         pOutput.accept(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME);
                         pOutput.accept(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME);

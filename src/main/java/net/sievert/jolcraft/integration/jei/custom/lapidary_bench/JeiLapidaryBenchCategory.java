@@ -195,8 +195,7 @@ public final class JeiLapidaryBenchCategory
             JeiLapidaryBenchRecipe recipe
     ) {
         JeiItemOutcome outcome =
-                recipe.outcomes()
-                        .getFirst();
+                recipe.outcome();
 
         int min =
                 outcome.minCount();
@@ -301,8 +300,8 @@ public final class JeiLapidaryBenchCategory
                         OUTPUT_X,
                         SLOT_Y
                 )
-                .addItemStacks(
-                        recipe.outputExamples()
+                .addItemStack(
+                        recipe.outputExample()
                 );
     }
 

@@ -101,5 +101,5 @@ public final class JolCraftTagIds extends JolCraftIds {
 
     public static final String HAS_STRUCTURE = JolCraftStrings.underscored(JolCraftDictionary.HAS, JolCraftDictionary.STRUCTURE);
 
-    public static final String MOUNTAINS_HILLS = join(plural(JolCraftDictionary.MOUNTAIN), plural(JolCraftDictionary.HILL));
+    public static final String MOUNTAINS_HILLS = join(plural(JolCraftDictionary.MOUNTAIN), JolCraftDictionary.AND, plural(JolCraftDictionary.HILL));
 }
