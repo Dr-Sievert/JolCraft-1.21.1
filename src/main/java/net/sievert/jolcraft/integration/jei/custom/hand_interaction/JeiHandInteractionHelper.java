@@ -1,15 +1,13 @@
 package net.sievert.jolcraft.integration.jei.custom.hand_interaction;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.sievert.jolcraft.integration.jei.util.ItemInputJeiTranslator;
-import net.sievert.jolcraft.integration.jei.util.ItemOutputJeiTranslator;
-import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
-import net.sievert.jolcraft.integration.jei.util.JeiNumberRangeTranslator;
-import net.sievert.jolcraft.integration.jei.util.JeiNumberRangeTranslator.NumberRange;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemInputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator.NumberRange;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public final class JeiHandInteractionHelper {
@@ -28,38 +25,15 @@ public final class JeiHandInteractionHelper {
     private JeiHandInteractionHelper() {
     }
 
-    public static @NotNull List<JeiHandInteractionRecipe>
-    getAllHandInteractionRecipes() {
-        ClientLevel clientLevel =
-                Minecraft.getInstance().level;
-
-        if (clientLevel == null) {
-            return List.of();
-        }
-
-        List<RecipeHolder<HandInteractionRecipe>> recipes =
-                new ArrayList<>(
-                        clientLevel.getRecipeManager()
-                                .getAllRecipesFor(
-                                        JolCraftRecipes
-                                                .HAND_INTERACTION_TYPE
-                                                .get()
-                                )
-                );
-
-        recipes.sort(
-                Comparator.comparing(
-                        RecipeHolder::id
-                )
-        );
-
+    public static @NotNull List<JeiHandInteractionRecipe> getRecipes() {
         List<JeiHandInteractionRecipe> result =
                 new ArrayList<>();
 
-        for (
-                RecipeHolder<HandInteractionRecipe> holder :
-                recipes
-        ) {
+        for (var holder : JeiRecipeAccess.getSorted(
+                JolCraftRecipes
+                        .HAND_INTERACTION_TYPE
+                        .get()
+        )) {
             addRecipeEntries(
                     holder.value(),
                     result
@@ -121,19 +95,6 @@ public final class JeiHandInteractionHelper {
             @NotNull RecipeOutput output
     ) {
         switch (output) {
-            case ItemOutput itemOutput -> {
-                List<JeiItemOutcome> outcomes =
-                        ItemOutputJeiTranslator.translate(
-                                itemOutput
-                        );
-
-                if (outcomes.isEmpty()) {
-                    return null;
-                }
-
-                return null;
-            }
-
             case EntityOutput entityOutput -> {
                 SpawnEggItem spawnEgg =
                         SpawnEggItem.byId(

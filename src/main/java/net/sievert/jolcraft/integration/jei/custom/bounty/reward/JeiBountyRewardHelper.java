@@ -1,8 +1,6 @@
 package net.sievert.jolcraft.integration.jei.custom.bounty.reward;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyTaskRecipe;
@@ -13,71 +11,41 @@ import java.util.List;
 
 public final class JeiBountyRewardHelper {
 
-    private JeiBountyRewardHelper() {}
+    private JeiBountyRewardHelper() {
+    }
 
     public static @NotNull List<JeiBountyRewardRecipe> getRecipes() {
-        Minecraft minecraft =
-                Minecraft.getInstance();
-
-        if (minecraft.level == null) {
-            return List.of();
-        }
-
-        RecipeManager recipeManager =
-                minecraft.level
-                        .getRecipeManager();
-
+        /*
+         * Task and reward recipes remain separate recipe types. Both sets are
+         * loaded once; the wrapper performs the single profession/tier match.
+         */
         List<BountyTaskRecipe> taskRecipes =
-                recipeManager.getAllRecipesFor(
-                                JolCraftRecipes
-                                        .BOUNTY_TASK_TYPE
-                                        .get()
-                        )
-                        .stream()
-                        .map(RecipeHolder::value)
-                        .toList();
+                JeiRecipeAccess.getSortedValues(
+                        JolCraftRecipes
+                                .BOUNTY_TASK_TYPE
+                                .get()
+                );
 
         List<JeiBountyRewardRecipe> recipes =
                 new ArrayList<>();
 
-        for (
-                RecipeHolder<BountyRewardRecipe> holder :
-                recipeManager.getAllRecipesFor(
-                        JolCraftRecipes
-                                .BOUNTY_REWARD_TYPE
-                                .get()
-                )
-        ) {
+        for (var holder : JeiRecipeAccess.getSorted(
+                JolCraftRecipes
+                        .BOUNTY_REWARD_TYPE
+                        .get()
+        )) {
             BountyRewardRecipe rewardRecipe =
                     holder.value();
 
-            List<BountyTaskRecipe> matchingTasks =
-                    taskRecipes.stream()
-                            .filter(
-                                    taskRecipe ->
-                                            taskRecipe.bountyType()
-                                                    == rewardRecipe.bountyType()
-                            )
-                            .filter(
-                                    taskRecipe ->
-                                            taskRecipe.tier()
-                                                    == rewardRecipe.tier()
-                            )
-                            .toList();
-
-            if (matchingTasks.isEmpty()) {
-                continue;
-            }
-
-            List<JeiBountyRewardRecipe> translated =
+            for (JeiBountyRewardRecipe recipe :
                     JeiBountyRewardRecipe.create(
                             rewardRecipe,
-                            matchingTasks
-                    );
-
-            for (JeiBountyRewardRecipe recipe : translated) {
+                            taskRecipes
+                    )) {
                 if (!recipe.inputs().isEmpty()) {
-                    recipes.add(recipe);
+                    recipes.add(
+                            recipe
+                    );
                 }
             }
         }

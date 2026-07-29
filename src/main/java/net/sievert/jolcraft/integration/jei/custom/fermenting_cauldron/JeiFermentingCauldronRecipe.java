@@ -4,6 +4,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,7 +21,7 @@ public record JeiFermentingCauldronRecipe(
     public JeiFermentingCauldronRecipe {
         Objects.requireNonNull(
                 id,
-                "id"
+                JolCraftDictionary.ID
         );
 
         Objects.requireNonNull(
@@ -28,41 +30,15 @@ public record JeiFermentingCauldronRecipe(
         );
 
         ingredientExamples =
-                copyStacks(
+                JeiStacks.copyRequired(
                         ingredientExamples,
                         "ingredientExamples"
                 );
 
         Objects.requireNonNull(
                 result,
-                "result"
+                JolCraftDictionary.RESULT
         );
-    }
-
-    private static @NotNull List<ItemStack> copyStacks(
-            @NotNull List<ItemStack> stacks,
-            @NotNull String name
-    ) {
-        Objects.requireNonNull(
-                stacks,
-                name
-        );
-
-        List<ItemStack> copies =
-                stacks.stream()
-                        .map(
-                                ItemStack::copy
-                        )
-                        .toList();
-
-        if (copies.isEmpty()) {
-            throw new IllegalArgumentException(
-                    name
-                            + " must contain at least one stack"
-            );
-        }
-
-        return copies;
     }
 
     public sealed interface PreviousInput
@@ -76,7 +52,7 @@ public record JeiFermentingCauldronRecipe(
 
         public ItemInput {
             examples =
-                    copyStacks(
+                    JeiStacks.copyRequired(
                             examples,
                             "examples"
                     );
@@ -90,7 +66,7 @@ public record JeiFermentingCauldronRecipe(
         public FluidInput {
             Objects.requireNonNull(
                     fluid,
-                    "fluid"
+                    JolCraftDictionary.FLUID
             );
 
             if (fluid.isEmpty()) {
@@ -116,7 +92,7 @@ public record JeiFermentingCauldronRecipe(
 
         public ItemResult {
             examples =
-                    copyStacks(
+                    JeiStacks.copyRequired(
                             examples,
                             "examples"
                     );
@@ -130,7 +106,7 @@ public record JeiFermentingCauldronRecipe(
         public FluidResult {
             Objects.requireNonNull(
                     fluid,
-                    "fluid"
+                    JolCraftDictionary.FLUID
             );
 
             if (fluid.isEmpty()) {
@@ -151,7 +127,7 @@ public record JeiFermentingCauldronRecipe(
         public EffectResult {
             Objects.requireNonNull(
                     effect,
-                    "effect"
+                    JolCraftDictionary.EFFECT
             );
 
             effect =

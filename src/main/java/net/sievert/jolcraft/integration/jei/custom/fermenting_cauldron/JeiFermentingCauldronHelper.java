@@ -1,7 +1,5 @@
 package net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +12,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.integration.jei.util.ItemInputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemInputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
@@ -25,7 +24,6 @@ import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCa
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public final class JeiFermentingCauldronHelper {
@@ -49,36 +47,19 @@ public final class JeiFermentingCauldronHelper {
     }
 
     public static @NotNull List<JeiFermentingCauldronRecipe> getRecipes() {
-        ClientLevel level =
-                Minecraft.getInstance().level;
-
-        if (level == null) {
+        if (!JeiRecipeAccess.isAvailable()) {
             return List.of();
         }
-
-        List<RecipeHolder<FermentingCauldronRecipe>> recipes =
-                new ArrayList<>(
-                        level.getRecipeManager()
-                                .getAllRecipesFor(
-                                        JolCraftRecipes
-                                                .FERMENTING_CAULDRON_TYPE
-                                                .get()
-                                )
-                );
-
-        recipes.sort(
-                Comparator.comparing(
-                        RecipeHolder::id
-                )
-        );
 
         List<JeiFermentingCauldronRecipe> result =
                 new ArrayList<>();
 
-        for (
-                RecipeHolder<FermentingCauldronRecipe> holder :
-                recipes
-        ) {
+        for (RecipeHolder<FermentingCauldronRecipe> holder :
+                JeiRecipeAccess.getSorted(
+                        JolCraftRecipes
+                                .FERMENTING_CAULDRON_TYPE
+                                .get()
+                )) {
             result.add(
                     translate(
                             holder

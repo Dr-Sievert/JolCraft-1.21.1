@@ -37,6 +37,10 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_BOUNTY_TASK, "Bounty Task");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_BOUNTY_REWARD, "Bounty Reward");
 
+        //Misc support
+
+        putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_SPAWN, "Spawn");
+
         // JEI info pages
         putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET,
@@ -53,8 +57,8 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
 
         putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_DEEPSLATE_COMPASS,
-                "An empty deepslate compass must be combined with a deepslate compass dial. Hold one in each hand, then right-click to combine them. " +
-                        "Dials are sold by explorers or found as loot. A combined compass points to a structure selected from the pool associated with its dial. " +
+                "An empty deepslate compass must be combined with a deepslate compass dial. " +
+                        "Dials are found by exploring. A combined compass points to a structure selected from the structure group on a dial. " +
                         "The compass can be dyed multiple times to blend colors. Craft an empty compass by itself to remove its dye, or a combined compass by itself to remove its dial."
         );
 

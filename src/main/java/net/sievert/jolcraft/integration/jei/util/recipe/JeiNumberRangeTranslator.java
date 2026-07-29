@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.integration.jei.util;
+package net.sievert.jolcraft.integration.jei.util.recipe;
 
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
@@ -56,7 +56,7 @@ public final class JeiNumberRangeTranslator {
         );
     }
 
-    private static int readConstant(
+    public static int requireConstantInt(
             @NotNull NumberProvider provider,
             @NotNull String description
     ) {
@@ -72,6 +72,16 @@ public final class JeiNumberRangeTranslator {
 
         return requireInteger(
                 value,
+                description
+        );
+    }
+
+    private static int readConstant(
+            @NotNull NumberProvider provider,
+            @NotNull String description
+    ) {
+        return requireConstantInt(
+                provider,
                 description
         );
     }

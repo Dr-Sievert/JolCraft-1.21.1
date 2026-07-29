@@ -44,11 +44,15 @@ public final class BountyLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_COMPLETED, "Your current %s bounty has been completed!");
 
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COLLECT, "Collect: %s");
+
+        putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_BOUNTY_COLLECT, "Collect");
+
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_SLAY, "Slay: %s");
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_SLAY_ALT, "Slay the specified number of mobs, then hand in the bounty for a reward.");
+        putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_BOUNTY_SLAY, "Slay");
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COLLECT, "Collect: %s");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_SLAY_ALT, "Slay the specified number of mobs, then hand in the bounty for a reward.");
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_COLLECT_ALT, "Fill the crate with the specified items, then hand it in for a reward.");
 

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.integration.jei.util;
+package net.sievert.jolcraft.integration.jei.util.recipe;
 
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.Holder;

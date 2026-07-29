@@ -13,7 +13,7 @@ public final class JeiInfoPageHelper {
 
     private JeiInfoPageHelper() {}
 
-    public static List<JeiInfoPageRecipe> getAllInfoPages() {
+    public static List<JeiInfoPageRecipe> getRecipes() {
 
         return List.of(
                 new JeiInfoPageRecipe(

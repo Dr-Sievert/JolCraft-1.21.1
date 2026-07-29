@@ -1,7 +1,9 @@
 package net.sievert.jolcraft.integration.jei.custom.lapidary_bench;
 
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,13 +17,16 @@ public record JeiLapidaryBenchRecipe(
         @NotNull JeiItemOutcome outcome
 ) {
     public JeiLapidaryBenchRecipe {
-        Objects.requireNonNull(recipe, "recipe");
+        Objects.requireNonNull(recipe, JolCraftDictionary.RECIPE);
         Objects.requireNonNull(outcome, "outcome");
-        inputExamples = inputExamples.stream().map(ItemStack::copy).toList();
-        toolExamples = toolExamples.stream().map(ItemStack::copy).toList();
-        if (inputExamples.isEmpty() || toolExamples.isEmpty()) {
-            throw new IllegalArgumentException("Lapidary JEI recipe requires input and tool examples");
-        }
+        inputExamples = JeiStacks.copyRequired(
+                inputExamples,
+                "inputExamples"
+        );
+        toolExamples = JeiStacks.copyRequired(
+                toolExamples,
+                "toolExamples"
+        );
     }
 
     public @NotNull ItemStack outputExample() {

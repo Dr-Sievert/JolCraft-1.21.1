@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
@@ -77,10 +77,6 @@ public record JeiDwarfTrade(
                     normalized,
                     normalized
             );
-        }
-
-        public boolean fixed() {
-            return min == max;
         }
     }
 
@@ -182,10 +178,6 @@ public record JeiDwarfTrade(
         );
     }
 
-    public double outputChancePerRoll() {
-        return outcome.chancePerRoll();
-    }
-
     public double outputChance() {
         double chancePerRoll =
                 outcome.chancePerRoll();
@@ -265,6 +257,7 @@ public record JeiDwarfTrade(
             );
         }
 
+        //noinspection DeconstructionCanBeUsed
         if (provider instanceof UniformGenerator uniform) {
             int min =
                     providerMinimum(

@@ -1,260 +1,178 @@
 package net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron;
 
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
-import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.util.client.JolCraftTextures;
-import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
-import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
+import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
+import net.sievert.jolcraft.integration.jei.util.gui.render.JeiEffectRenderer;
+import net.sievert.jolcraft.integration.jei.util.gui.render.JeiFluidRenderer;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.List;
+
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_CONTENT_SIZE;
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_SIZE;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class JeiFermentingCauldronCategory
-        implements IRecipeCategory<JeiFermentingCauldronRecipe> {
+public final class JeiFermentingCauldronCategory extends AbstractJeiCategory<JeiFermentingCauldronRecipe> {
 
-    public static final RecipeType<JeiFermentingCauldronRecipe> RECIPE_TYPE =
-            RecipeType.create(
-                    JolCraft.MOD_ID,
-                    JolCraftJeiIds.FERMENTING_CAULDRON,
-                    JeiFermentingCauldronRecipe.class
-            );
-
-    private static final ResourceLocation ARROW_TEXTURE =
-            JolCraftTextures.jeiRl(
-                    JolCraftTextures.jei(
-                            JolCraftStrings.underscored(
-                                    JolCraftDictionary.RECIPE,
-                                    JolCraftDictionary.ARROW
-                            )
-                    )
-            );
+    public static final RecipeType<JeiFermentingCauldronRecipe> RECIPE_TYPE = JeiRecipeTypes.FERMENTING_CAULDRON;
 
     private static final int WIDTH = 124;
     private static final int HEIGHT = 40;
 
-    private static final int SLOT_SIZE = 18;
-    private static final int SLOT_Y = 11;
-
-    private static final int PREVIOUS_INPUT_X = 4;
-    private static final int PLUS_X = 27;
-    private static final int INGREDIENT_X = 44;
-    private static final int ARROW_X = 71;
-    private static final int OUTPUT_X = 102;
-
-    private static final int PLUS_Y = 13;
-
-    private static final int ARROW_WIDTH = 22;
-    private static final int ARROW_HEIGHT = 16;
-    private static final int ARROW_Y = 12;
-
-    private static final int INGREDIENT_SIZE = 16;
-
-    private final IDrawable background;
-    private final IDrawable plus;
-    private final IDrawable icon;
+    private static final JeiRecipeLayout LAYOUT =
+            JeiRecipeLayout.twoInputsToOutput(
+                    4,
+                    44,
+                    102,
+                    11,
+                    13,
+                    12,
+                    1,
+                    9
+            );
 
     public JeiFermentingCauldronCategory(
             IGuiHelper guiHelper
     ) {
-        background =
-                guiHelper.createBlankDrawable(
-                        WIDTH,
-                        HEIGHT
-                );
-
-        plus =
-                guiHelper.getRecipePlusSign();
-
-        icon =
+        super(
+                guiHelper,
+                RECIPE_TYPE,
+                Component.translatable(
+                        JolCraftLanguageKeys.JEI_CATEGORY_FERMENTING_CAULDRON
+                ),
+                WIDTH,
+                HEIGHT,
                 guiHelper.createDrawableIngredient(
-                        mezz.jei.api.constants.VanillaTypes.ITEM_STACK,
+                        VanillaTypes.ITEM_STACK,
                         new ItemStack(
                                 Blocks.CAULDRON
                         )
-                );
-    }
-
-    @Override
-    public RecipeType<JeiFermentingCauldronRecipe> getRecipeType() {
-        return RECIPE_TYPE;
-    }
-
-    @Override
-    public Component getTitle() {
-        return Component.translatable(
-                JolCraftLanguageKeys.JEI_CATEGORY_FERMENTING_CAULDRON
+                )
         );
     }
 
     @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public void draw(
-            JeiFermentingCauldronRecipe recipe,
-            IRecipeSlotsView slots,
-            GuiGraphics graphics,
+    protected void drawRecipe(
+            @NotNull JeiFermentingCauldronRecipe recipe,
+            @NotNull IRecipeSlotsView slots,
+            @NotNull GuiGraphics graphics,
             double mouseX,
             double mouseY
     ) {
-        background.draw(
+        drawPreviousInput(
                 graphics,
-                0,
-                0
+                recipe.previousInput()
         );
 
-        plus.draw(
+        drawJeiPlus(
                 graphics,
-                PLUS_X,
-                PLUS_Y
+                LAYOUT.requirePlus()
         );
 
-        graphics.blit(
-                ARROW_TEXTURE,
-                ARROW_X,
-                ARROW_Y,
-                0,
-                0,
-                ARROW_WIDTH,
-                ARROW_HEIGHT,
-                ARROW_WIDTH,
-                ARROW_HEIGHT
+        JeiDrawHelper.drawArrow(
+                graphics,
+                LAYOUT.arrow()
         );
 
-        if (
+        drawResult(
+                graphics,
                 recipe.result()
-                        instanceof JeiFermentingCauldronRecipe.EffectResult
-                        effectResult
-        ) {
-            drawEffectResult(
+        );
+    }
+
+    private static void drawPreviousInput(
+            @NotNull GuiGraphics graphics,
+            @NotNull JeiFermentingCauldronRecipe.PreviousInput previousInput
+    ) {
+        FluidStack fluid = switch (previousInput) {
+            case JeiFermentingCauldronRecipe.ItemInput ignored ->
+                    JeiFluidRenderer.unfinishedDwarvenBrew();
+
+            case JeiFermentingCauldronRecipe.FluidInput(
+                    FluidStack inputFluid
+            ) -> inputFluid;
+        };
+
+        JeiFluidRenderer.drawTinted(
+                graphics,
+                fluid,
+                LAYOUT.inputA().x(),
+                LAYOUT.inputA().y(),
+                0,
+                SLOT_CONTENT_SIZE,
+                SLOT_CONTENT_SIZE
+        );
+    }
+
+    private static void drawResult(
+            @NotNull GuiGraphics graphics,
+            @NotNull JeiFermentingCauldronRecipe.Result result
+    ) {
+        switch (result) {
+            case JeiFermentingCauldronRecipe.EffectResult effectResult ->
+                    drawEffectResult(
+                            graphics,
+                            effectResult
+                    );
+
+            case JeiFermentingCauldronRecipe.FluidResult(
+                    FluidStack fluid
+            ) -> JeiFluidRenderer.drawTinted(
                     graphics,
-                    effectResult
+                    fluid,
+                    LAYOUT.output().x(),
+                    LAYOUT.output().y(),
+                    1,
+                    SLOT_CONTENT_SIZE,
+                    SLOT_CONTENT_SIZE
             );
+
+            default -> {
+            }
         }
     }
 
     private static void drawEffectResult(
-            GuiGraphics graphics,
-            JeiFermentingCauldronRecipe.EffectResult result
+            @NotNull GuiGraphics graphics,
+            @NotNull JeiFermentingCauldronRecipe.EffectResult result
     ) {
-        drawEffectFluid(
-                graphics
-        );
-
-        TextureAtlasSprite effectSprite =
-                Minecraft.getInstance()
-                        .getMobEffectTextures()
-                        .get(
-                                result.effect()
-                                        .getEffect()
-                        );
-
-        graphics.blit(
-                OUTPUT_X,
-                SLOT_Y,
-                1,
-                SLOT_SIZE,
-                SLOT_SIZE,
-                effectSprite
-        );
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void drawEffectFluid(
-            GuiGraphics graphics
-    ) {
-        FluidStack fluid =
-                createUnfinishedBrew();
-
-        IClientFluidTypeExtensions extensions =
-                IClientFluidTypeExtensions.of(
-                        fluid.getFluid()
-                );
-
-        ResourceLocation stillTexture =
-                extensions.getStillTexture(
-                        fluid
-                );
-
-        TextureAtlasSprite fluidSprite =
-                Minecraft.getInstance()
-                        .getTextureAtlas(
-                                TextureAtlas.LOCATION_BLOCKS
-                        )
-                        .apply(
-                                stillTexture
-                        );
-
-        int tint =
-                extensions.getTintColor(
-                        fluid
-                );
-
-        float alpha =
-                ((tint >> 24) & 0xFF) / 255.0F;
-
-        if (alpha == 0.0F) {
-            alpha = 1.0F;
-        }
-
-        graphics.setColor(
-                ((tint >> 16) & 0xFF) / 255.0F,
-                ((tint >> 8) & 0xFF) / 255.0F,
-                (tint & 0xFF) / 255.0F,
-                alpha
-        );
-
-        graphics.blit(
-                OUTPUT_X,
-                SLOT_Y,
+        JeiFluidRenderer.drawTinted(
+                graphics,
+                JeiFluidRenderer.unfinishedDwarvenBrew(),
+                LAYOUT.output().x(),
+                LAYOUT.output().y(),
                 0,
                 SLOT_SIZE,
-                SLOT_SIZE,
-                fluidSprite
+                SLOT_SIZE
         );
 
-        graphics.setColor(
-                1.0F,
-                1.0F,
-                1.0F,
-                1.0F
+        JeiEffectRenderer.draw(
+                graphics,
+                result.effect(),
+                LAYOUT.output().x(),
+                LAYOUT.output().y(),
+                1,
+                SLOT_SIZE,
+                SLOT_SIZE
         );
     }
 
@@ -266,44 +184,23 @@ public final class JeiFermentingCauldronCategory
             double mouseX,
             double mouseY
     ) {
-        if (
-                !(
-                        recipe.result()
-                                instanceof JeiFermentingCauldronRecipe.EffectResult(
-                                MobEffectInstance effect
-                        )
-                )
-                        || !isInsideOutput(
-                        mouseX,
-                        mouseY
-                )
-        ) {
+        if (!(recipe.result()
+                instanceof JeiFermentingCauldronRecipe.EffectResult(
+                MobEffectInstance effect
+        )) || !JeiDrawHelper.contains(
+                mouseX,
+                mouseY,
+                LAYOUT.output().x(),
+                LAYOUT.output().y(),
+                SLOT_SIZE,
+                SLOT_SIZE
+        )) {
             return List.of();
         }
 
-        List<Component> tooltip =
-                new ArrayList<>();
-
-        PotionContents.addPotionTooltip(
-                List.of(
-                        effect
-                ),
-                tooltip::add,
-                1.0F,
-                20.0F
+        return JeiEffectRenderer.tooltip(
+                effect
         );
-
-        return tooltip;
-    }
-
-    private static boolean isInsideOutput(
-            double mouseX,
-            double mouseY
-    ) {
-        return mouseX >= OUTPUT_X
-                && mouseX < OUTPUT_X + SLOT_SIZE
-                && mouseY >= SLOT_Y
-                && mouseY < SLOT_Y + SLOT_SIZE;
     }
 
     @Override
@@ -319,8 +216,8 @@ public final class JeiFermentingCauldronCategory
 
         builder.addSlot(
                         RecipeIngredientRole.INPUT,
-                        INGREDIENT_X,
-                        SLOT_Y
+                        LAYOUT.requireInputB().x(),
+                        LAYOUT.requireInputB().y()
                 )
                 .addItemStacks(
                         recipe.ingredientExamples()
@@ -333,69 +230,46 @@ public final class JeiFermentingCauldronCategory
     }
 
     private static void addPreviousInput(
-            IRecipeLayoutBuilder builder,
-            JeiFermentingCauldronRecipe.PreviousInput previousInput
+            @NotNull IRecipeLayoutBuilder builder,
+            @NotNull JeiFermentingCauldronRecipe.PreviousInput previousInput
     ) {
-        if (
-                previousInput
-                        instanceof JeiFermentingCauldronRecipe.ItemInput(
-                        List<ItemStack> examples
-                )
-        ) {
-            builder.addSlot(
+        switch (previousInput) {
+            case JeiFermentingCauldronRecipe.ItemInput(
+                    List<ItemStack> examples
+            ) -> builder.addSlot(
                             RecipeIngredientRole.INPUT,
-                            PREVIOUS_INPUT_X,
-                            SLOT_Y
+                            LAYOUT.inputA().x(),
+                            LAYOUT.inputA().y()
                     )
                     .addItemStacks(
                             examples
                     );
 
-            addFluidSlot(
+            case JeiFermentingCauldronRecipe.FluidInput(
+                    FluidStack fluid
+            ) -> JeiFluidRenderer.addSlot(
                     builder,
                     RecipeIngredientRole.INPUT,
-                    PREVIOUS_INPUT_X,
-                    createUnfinishedBrew()
-            );
-
-            builder.addSlot(
-                            RecipeIngredientRole.INPUT,
-                            PREVIOUS_INPUT_X,
-                            SLOT_Y
-                    )
-                    .addItemStacks(
-                            examples
-                    );
-
-            return;
-        }
-
-        if (
-                previousInput
-                        instanceof JeiFermentingCauldronRecipe.FluidInput(
-                        FluidStack fluid
-                )
-        ) {
-            addFluidSlot(
-                    builder,
-                    RecipeIngredientRole.INPUT,
-                    PREVIOUS_INPUT_X,
-                    fluid
+                    LAYOUT.inputA().x(),
+                    LAYOUT.inputA().y(),
+                    fluid,
+                    SLOT_CONTENT_SIZE,
+                    SLOT_CONTENT_SIZE
             );
         }
     }
 
     private static void addResult(
-            IRecipeLayoutBuilder builder,
-            JeiFermentingCauldronRecipe.Result result
+            @NotNull IRecipeLayoutBuilder builder,
+            @NotNull JeiFermentingCauldronRecipe.Result result
     ) {
         switch (result) {
             case JeiFermentingCauldronRecipe.ItemResult(
                     List<ItemStack> examples
             ) -> builder.addSlot(
                             RecipeIngredientRole.OUTPUT,
-                            OUTPUT_X,
-                            SLOT_Y
+                            LAYOUT.output().x(),
+                            LAYOUT.output().y()
                     )
                     .addItemStacks(
                             examples
@@ -403,64 +277,18 @@ public final class JeiFermentingCauldronCategory
 
             case JeiFermentingCauldronRecipe.FluidResult(
                     FluidStack fluid
-            ) -> addFluidSlot(
+            ) -> JeiFluidRenderer.addSlot(
                     builder,
                     RecipeIngredientRole.OUTPUT,
-                    OUTPUT_X,
-                    fluid
+                    LAYOUT.output().x(),
+                    LAYOUT.output().y(),
+                    fluid,
+                    SLOT_CONTENT_SIZE,
+                    SLOT_CONTENT_SIZE
             );
 
-            default -> {}
+            default -> {
+            }
         }
-    }
-
-    private static FluidStack createUnfinishedBrew() {
-        FluidStack fluid =
-                new FluidStack(
-                        JolCraftFluids
-                                .UNFINISHED_DWARVEN_BREW
-                                .get(),
-                        FluidType.BUCKET_VOLUME
-                );
-
-        fluid.set(
-                JolCraftDataComponents
-                        .BREW_COLOR
-                        .get(),
-                BrewingColors.UNFINISHED_DWARVEN_BREW
-        );
-
-        return fluid;
-    }
-
-    private static void addFluidSlot(
-            IRecipeLayoutBuilder builder,
-            RecipeIngredientRole role,
-            int x,
-            FluidStack fluid
-    ) {
-        IRecipeSlotBuilder slot =
-                builder.addSlot(
-                        role,
-                        x,
-                        SLOT_Y
-                );
-
-        slot.addFluidStack(
-                        fluid.getFluid(),
-                        fluid.getAmount(),
-                        fluid.getComponentsPatch()
-                )
-                .setFluidRenderer(
-                        1,
-                        false,
-                        INGREDIENT_SIZE,
-                        INGREDIENT_SIZE
-                );
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
     }
 }

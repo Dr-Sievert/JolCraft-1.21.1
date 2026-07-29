@@ -453,14 +453,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_CATEGORY_DWARF_TRADES =
             category(JolCraftDictionary.JEI, pl(JolCraftRecipeIds.DWARF_TRADE));
 
-    public static final String JEI_CATEGORY_INFO_PAGE =
-            category(JolCraftDictionary.JEI, us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE));
-
     public static final String JEI_CATEGORY_LAPIDARY_BENCH =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.LAPIDARY_BENCH);
-
-    public static final String JEI_CATEGORY_HAND_INTERACTION =
-            category(JolCraftDictionary.JEI, JolCraftRecipeIds.HAND_INTERACTION);
 
     public static final String JEI_CATEGORY_FERMENTING_CAULDRON =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.FERMENTING_CAULDRON);
@@ -468,8 +462,23 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_CATEGORY_BOUNTY_TASK =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.BOUNTY_TASK);
 
+    public static final String JEI_TOOLTIP_BOUNTY_COLLECT =
+            tooltip(dot(JolCraftItemIds.BOUNTY, JolCraftDictionary.JEI), JolCraftDictionary.COLLECT);
+
+    public static final String JEI_TOOLTIP_BOUNTY_SLAY =
+            tooltip(dot(JolCraftItemIds.BOUNTY, JolCraftDictionary.JEI), JolCraftDictionary.SLAY);
+
     public static final String JEI_CATEGORY_BOUNTY_REWARD =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.BOUNTY_REWARD);
+
+    public static final String JEI_CATEGORY_HAND_INTERACTION =
+            category(JolCraftDictionary.JEI, JolCraftRecipeIds.HAND_INTERACTION);
+
+    public static final String JEI_TOOLTIP_SPAWN =
+            tooltip(dot(JolCraftDictionary.JEI), JolCraftDictionary.SPAWN);
+
+    public static final String JEI_CATEGORY_INFO_PAGE =
+            category(JolCraftDictionary.JEI, us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE));
 
     public static final String JEI_INFO_REPUTATION_TABLET =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), us(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET)));

@@ -3,7 +3,6 @@ package net.sievert.jolcraft.integration.jei.custom.info;
 import com.mojang.blaze3d.platform.InputConstants;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.inputs.IJeiInputHandler;
 import mezz.jei.api.gui.inputs.IJeiUserInput;
@@ -12,7 +11,6 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,20 +22,22 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
+import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_SIZE;
+
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRecipe> {
+public final class JeiInfoPageCategory extends AbstractJeiCategory<JeiInfoPageRecipe> {
 
-    public static final RecipeType<JeiInfoPageRecipe> RECIPE_TYPE = RecipeType.create(JolCraft.MOD_ID, JolCraftJeiIds.INFO_PAGE, JeiInfoPageRecipe.class);
+    public static final RecipeType<JeiInfoPageRecipe> RECIPE_TYPE = JeiRecipeTypes.INFO_PAGE;
 
     private final int textStartY = 32;
     private final int textHeight = getHeight() - textStartY - 8;
@@ -46,40 +46,24 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
     private int dragStartMouseY = 0;
     private int dragStartScrollOffset = 0;
 
-    private final IDrawable background;
-    private final IDrawable icon;
-
     public JeiInfoPageCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(150, 100);
-        this.icon = guiHelper.createDrawableIngredient(
-                VanillaTypes.ITEM_STACK,
-                new ItemStack(JolCraftItems.DWARVEN_TOME.get())
+        super(
+                guiHelper,
+                RECIPE_TYPE,
+                Component.translatable(JolCraftLanguageKeys.JEI_CATEGORY_INFO_PAGE),
+                200,
+                150,
+                150,
+                100,
+                guiHelper.createDrawableIngredient(
+                        VanillaTypes.ITEM_STACK,
+                        new ItemStack(JolCraftItems.DWARVEN_TOME.get())
+                )
         );
     }
 
     @Override
-    public RecipeType<JeiInfoPageRecipe> getRecipeType() {
-        return RECIPE_TYPE;
-    }
-
-    @Override
-    public Component getTitle() {
-        return Component.translatable(JolCraftLanguageKeys.JEI_CATEGORY_INFO_PAGE);
-    }
-
-    @Override
-    public int getWidth() {
-        return 200;
-    }
-
-    @Override
-    public int getHeight() {
-        return 150;
-    }
-
-    @Override
-    public void draw(JeiInfoPageRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        background.draw(graphics, 0, 0);
+    protected void drawRecipe(JeiInfoPageRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
 
         int lineHeight = 10;
         int maxLines = Math.max(1, textHeight / lineHeight);
@@ -204,7 +188,7 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, JeiInfoPageRecipe recipe, IFocusGroup focuses) {
-        int slotX = (getWidth() - 18) / 2;
+        int slotX = (getWidth() - SLOT_SIZE) / 2;
         int slotY = 8;
 
         Minecraft mc = Minecraft.getInstance();
@@ -293,8 +277,4 @@ public final class JeiInfoPageCategory implements IRecipeCategory<JeiInfoPageRec
         return stacks;
     }
 
-    @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
 }

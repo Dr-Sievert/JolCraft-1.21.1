@@ -2,8 +2,11 @@ package net.sievert.jolcraft.integration.jei.custom.bounty.reward;
 
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.integration.jei.util.ItemOutputJeiTranslator;
-import net.sievert.jolcraft.integration.jei.util.JeiItemOutcome;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
@@ -27,28 +30,23 @@ public record JeiBountyRewardRecipe(
     public JeiBountyRewardRecipe {
         Objects.requireNonNull(
                 recipe,
-                "recipe"
+                JolCraftDictionary.RECIPE
         );
 
         Objects.requireNonNull(
                 inputs,
-                "inputs"
+                JolCraftStrings.plural(JolCraftDictionary.INPUT)
         );
 
         Objects.requireNonNull(
                 reward,
-                "reward"
+                JolCraftDictionary.REWARD
         );
 
-        inputs = inputs.stream()
-                .map(ItemStack::copy)
-                .toList();
-
-        if (inputs.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "inputs must contain at least one completed bounty"
-            );
-        }
+        inputs = JeiStacks.copyRequired(
+                inputs,
+                JolCraftStrings.plural(JolCraftDictionary.INPUT)
+        );
 
     }
 
@@ -58,12 +56,13 @@ public record JeiBountyRewardRecipe(
     ) {
         Objects.requireNonNull(
                 rewardRecipe,
-                "rewardRecipe"
+                JolCraftStrings.underscored(JolCraftDictionary.REWARD, JolCraftDictionary.RECIPE)
         );
 
         Objects.requireNonNull(
                 taskRecipes,
-                "taskRecipes"
+                JolCraftStrings.underscored(JolCraftDictionary.TASK, JolCraftStrings.plural(JolCraftDictionary.RECIPE))
+
         );
 
         List<ItemStack> inputs =
@@ -151,8 +150,7 @@ public record JeiBountyRewardRecipe(
                                 ItemStack.EMPTY
                         );
 
-        List<ItemStack> inputs =
-                new ArrayList<>(2);
+        List<ItemStack> inputs = new ArrayList<>(2);
 
         if (!bounty.isEmpty()) {
             inputs.add(
