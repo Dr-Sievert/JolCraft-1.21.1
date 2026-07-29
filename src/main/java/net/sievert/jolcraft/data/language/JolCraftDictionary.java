@@ -612,6 +612,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String WEIGHT = "weight";
     public static final String WIDGET = "widget";
     public static final String WOECRYSTAL = "woecrystal";
+    public static final String WORLDGEN = "worldgen";
     public static final String WOUND = "wound";
     public static final String XP = "xp";
     public static final String YANILLIAN = "yanillian";

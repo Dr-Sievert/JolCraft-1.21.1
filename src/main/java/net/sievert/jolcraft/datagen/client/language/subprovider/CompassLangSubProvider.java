@@ -50,18 +50,6 @@ public final class CompassLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_NO_STRUCTURE, "No structures found!");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_COMPASS_LOCATE, "The tracked %s is at %s (%s blocks away)");
 
-        // Dial labels
-        for (DeepslateCompassStructureGroup group : DeepslateCompassStructureGroup.values()) {
-            String key = JolCraftLanguageKeys.tooltip(
-                    JolCraftItemIds.DEEPSLATE_COMPASS_DIAL,
-                    group.getId()
-            );
-
-            if (hasKey(translations, key)) continue;
-
-            putManual(translations, key, JolCraftStrings.toTitleCase(group.getId()));
-        }
-
         // Vanilla structures
         for (ResourceLocation id : reflectStructureIds()) {
             putStructureNameIfMissing(translations,  id);
