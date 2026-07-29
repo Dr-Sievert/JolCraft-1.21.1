@@ -3,6 +3,7 @@ package net.sievert.jolcraft.world.block.custom;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -52,6 +53,42 @@ public class LapidaryBenchBlock extends BaseEntityBlock {
         }
         return InteractionResult.SUCCESS;
     }
+
+
+    @Override
+    protected void onRemove(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            BlockState newState,
+            boolean movedByPiston
+    ) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+
+            if (blockEntity instanceof LapidaryBenchBlockEntity lapidaryBench) {
+                Containers.dropContents(
+                        level,
+                        pos,
+                        lapidaryBench
+                );
+
+                level.updateNeighbourForOutputSignal(
+                        pos,
+                        this
+                );
+            }
+        }
+
+        super.onRemove(
+                state,
+                level,
+                pos,
+                newState,
+                movedByPiston
+        );
+    }
+
 
     @Override
     public RenderShape getRenderShape(BlockState state) {

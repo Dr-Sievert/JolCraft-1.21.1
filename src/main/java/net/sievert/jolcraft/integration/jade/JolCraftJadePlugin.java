@@ -1,9 +1,11 @@
 package net.sievert.jolcraft.integration.jade;
 
-import net.sievert.jolcraft.integration.jade.provider.FermentingBarrelComponentProvider;
-import net.sievert.jolcraft.integration.jade.provider.FermentingCauldronComponentProvider;
+import net.sievert.jolcraft.integration.jade.provider.block.FermentingBarrelComponentProvider;
+import net.sievert.jolcraft.integration.jade.provider.block.FermentingCauldronComponentProvider;
+import net.sievert.jolcraft.integration.jade.provider.entity.DwarfComponentProvider;
 import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
 import net.sievert.jolcraft.world.block.custom.brewing.FermentingCauldronBlock;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
@@ -14,6 +16,8 @@ public final class JolCraftJadePlugin implements IWailaPlugin {
     @Override
     public void registerClient(IWailaClientRegistration registration) {
 
+        //Blocks
+
         registration.registerBlockComponent(
                 FermentingBarrelComponentProvider.INSTANCE,
                 FermentingBarrelBlock.class
@@ -22,6 +26,13 @@ public final class JolCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(
                 FermentingCauldronComponentProvider.INSTANCE,
                 FermentingCauldronBlock.class
+        );
+
+        //Entities
+
+        registration.registerEntityComponent(
+                DwarfComponentProvider.INSTANCE,
+                AbstractDwarfEntity.class
         );
     }
 }

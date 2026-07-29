@@ -81,6 +81,7 @@ public final class JolCraftBlockTagProvider
                 .add(JolCraftBlocks.FERMENTING_BARREL.get());
 
         target.tag(BlockTags.NEEDS_IRON_TOOL)
+                .add(JolCraftBlocks.GEODE_BLOCK.get())
                 .add(JolCraftBlocks.DEEPSLATE_BULBS_CROP.get())
                 .add(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get());
 

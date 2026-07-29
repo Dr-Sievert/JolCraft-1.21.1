@@ -117,6 +117,12 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARF_GUARD_PROMOTION, "Guard promoted to %s!");
 
         // -----------------------------------------------------------------
+        // Jade
+        // -----------------------------------------------------------------
+
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_JADE_DWARF_PROFESSION, "Profession: %s");
+
+        // -----------------------------------------------------------------
         // Crates
         // -----------------------------------------------------------------
 

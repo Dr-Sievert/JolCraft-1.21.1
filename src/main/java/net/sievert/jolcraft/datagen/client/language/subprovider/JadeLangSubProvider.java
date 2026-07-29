@@ -3,6 +3,8 @@ package net.sievert.jolcraft.datagen.client.language.subprovider;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
+import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
@@ -39,6 +41,12 @@ public final class JadeLangSubProvider implements LanguageSubProvider {
                 translations,
                 JolCraftLanguageKeys.JADE_CONFIG_FERMENTING_CAULDRON,
                 JolCraftStrings.toTitleCase(JolCraftBlockIds.FERMENTING_CAULDRON)
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JADE_CONFIG_DWARF_PROFESSION,
+                JolCraftStrings.toTitleCase(JolCraftStrings.underscored(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION))
         );
     }
 }

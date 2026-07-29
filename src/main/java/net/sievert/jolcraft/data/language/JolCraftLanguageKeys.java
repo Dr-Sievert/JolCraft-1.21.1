@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.data.language;
 
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
+import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
 import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
@@ -335,6 +336,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_CRATE_NO_OFFERS_DWARF =
             tooltip(JolCraftDictionary.CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.OFFER), JolCraftDictionary.DWARF));
 
+    public static final String TOOLTIP_JADE_DWARF_PROFESSION =
+            tooltip(JolCraftDictionary.JADE, us(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION));
+
     // ---------------------------------------------------------------------
     // DwarvenReputationLangSubProvider
     // ---------------------------------------------------------------------
@@ -415,6 +419,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String JADE_CONFIG_FERMENTING_CAULDRON =
             jadeConfig(JolCraftBlockIds.FERMENTING_CAULDRON);
+
+    public static final String JADE_CONFIG_DWARF_PROFESSION =
+            jadeConfig(us(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION));
 
     // ---------------------------------------------------------------------
     // JeiLangSubProvider
