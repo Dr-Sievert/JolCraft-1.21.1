@@ -2,22 +2,27 @@ package net.sievert.jolcraft.integration.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
-import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
-import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeHelper;
+import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
+import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
+import net.sievert.jolcraft.integration.jei.custom.lapidary.JeiLapidaryBenchCategory;
+import net.sievert.jolcraft.integration.jei.custom.lapidary.JeiLapidaryBenchHelper;
+import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -26,7 +31,10 @@ import java.util.Locale;
 @SuppressWarnings("removal")
 public final class JolCraftJeiPlugin implements IModPlugin {
 
-    private static final ResourceLocation ID = JolCraft.location(JolCraftJeiIds.JEI_PLUGIN);
+    private static final ResourceLocation ID =
+            JolCraft.location(
+                    JolCraftJeiIds.JEI_PLUGIN
+            );
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -34,50 +42,143 @@ public final class JolCraftJeiPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerCategories(IRecipeCategoryRegistration registration) {
-        var guiHelper = registration.getJeiHelpers().getGuiHelper();
-        for (var prof : DwarfProfession.values()) {
-            registration.addRecipeCategories(new JeiDwarfTradeCategory(guiHelper, prof));
+    public void registerCategories(
+            IRecipeCategoryRegistration registration
+    ) {
+        var guiHelper =
+                registration
+                        .getJeiHelpers()
+                        .getGuiHelper();
+
+        for (var profession : DwarfProfession.values()) {
+            registration.addRecipeCategories(
+                    new JeiDwarfTradeCategory(
+                            guiHelper,
+                            profession
+                    )
+            );
         }
-        registration.addRecipeCategories(new JeiInfoPageCategory(guiHelper));
+
+        registration.addRecipeCategories(
+                new JeiLapidaryBenchCategory(
+                        guiHelper
+                )
+        );
+
+        registration.addRecipeCategories(
+                new JeiInfoPageCategory(
+                        guiHelper
+                )
+        );
     }
 
     @Override
-    public void registerRecipes(@NotNull IRecipeRegistration registration) {
-        for (var prof : DwarfProfession.values()) {
-            var recipes = JeiDwarfTradeHelper.getAllDwarfJeiTrades(prof);
+    public void registerRecipes(
+            @NotNull IRecipeRegistration registration
+    ) {
+        for (var profession : DwarfProfession.values()) {
+            var recipes =
+                    JeiDwarfTradeHelper.getAllDwarfJeiTrades(
+                            profession
+                    );
+
             if (!recipes.isEmpty()) {
-                registration.addRecipes(JeiDwarfTradeCategory.recipeTypeFor(prof), recipes);
+                registration.addRecipes(
+                        JeiDwarfTradeCategory.recipeTypeFor(
+                                profession
+                        ),
+                        recipes
+                );
             }
         }
-        registration.addRecipes(JeiInfoPageCategory.RECIPE_TYPE, JeiInfoPageHelper.getAllInfoPages());
+
+        var lapidaryRecipes = JeiLapidaryBenchHelper.getRecipes();
+
+        if (!lapidaryRecipes.isEmpty()) {
+            registration.addRecipes(
+                    JeiLapidaryBenchCategory.RECIPE_TYPE,
+                    lapidaryRecipes
+            );
+        }
+
+        registration.addRecipes(
+                JeiInfoPageCategory.RECIPE_TYPE,
+                JeiInfoPageHelper.getAllInfoPages()
+        );
     }
 
     @Override
-    public void registerItemSubtypes(ISubtypeRegistration registration) {
+    public void registerRecipeCatalysts(
+            IRecipeCatalystRegistration registration
+    ) {
+        registration.addRecipeCatalyst(new ItemStack(JolCraftBlocks.LAPIDARY_BENCH.get()), JeiLapidaryBenchCategory.RECIPE_TYPE);
+    }
 
+    @Override
+    public void registerItemSubtypes(
+            ISubtypeRegistration registration
+    ) {
         registration.registerSubtypeInterpreter(
-                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
+                JolCraftItems
+                        .ANCIENT_DWARVEN_TOME_LEGENDARY
+                        .get(),
                 (stack, context) -> {
-                    String loreKey = stack.get(JolCraftDataComponents.DWARF_LORE_KEY.get());
-                    return loreKey != null ? loreKey.toLowerCase(Locale.ROOT) : JolCraftDictionary.EMPTY;
+                    String loreKey =
+                            stack.get(
+                                    JolCraftDataComponents
+                                            .DWARF_LORE_KEY
+                                            .get()
+                            );
+
+                    return loreKey != null
+                            ? loreKey.toLowerCase(
+                            Locale.ROOT
+                    )
+                            : JolCraftDictionary.EMPTY;
                 }
         );
 
         registration.registerSubtypeInterpreter(
-                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
+                JolCraftItems
+                        .DEEPSLATE_COMPASS_DIAL
+                        .get(),
                 (stack, context) -> {
-                    String group = stack.get(JolCraftDataComponents.STRUCTURE_GROUP.get());
-                    if (group == null || group.isEmpty()) {
-                        group = JolCraftDictionary.UNKNOWN;
+                    String group =
+                            stack.get(
+                                    JolCraftDataComponents
+                                            .STRUCTURE_GROUP
+                                            .get()
+                            );
+
+                    if (group == null
+                            || group.isEmpty()) {
+                        group =
+                                JolCraftDictionary.UNKNOWN;
                     } else {
-                        group = group.toLowerCase(Locale.ROOT);
+                        group =
+                                group.toLowerCase(
+                                        Locale.ROOT
+                                );
                     }
 
-                    DeepslateCompassDialColor compassColor = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get());
-                    String rgb = compassColor != null ? Integer.toString(compassColor.color()) : JolCraftDictionary.DEFAULT;
+                    DeepslateCompassDialColor compassColor =
+                            stack.get(
+                                    JolCraftDataComponents
+                                            .DEEPSLATE_COMPASS_DIAL_COLOR
+                                            .get()
+                            );
 
-                    return JolCraftStrings.underscored(group, rgb);
+                    String rgb =
+                            compassColor != null
+                                    ? Integer.toString(
+                                    compassColor.color()
+                            )
+                                    : JolCraftDictionary.DEFAULT;
+
+                    return JolCraftStrings.underscored(
+                            group,
+                            rgb
+                    );
                 }
         );
     }

@@ -19,6 +19,7 @@
     "SetItemCountFunctionAccessor",
     "SinglePoolElementAccessor",
     "SpellcasterUseSpellGoalMixin",
+    "TagEntryAccessor",
     "UniformGeneratorAccessor",
     "WorldGenRegionMixin"
   ],
