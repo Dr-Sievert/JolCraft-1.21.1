@@ -13,6 +13,9 @@ public interface LootPoolSingletonContainerAccessor {
     @Accessor("weight")
     int jolcraft$getWeight();
 
+    @Accessor("quality")
+    int jolcraft$getQuality();
+
     @Accessor("functions")
     List<LootItemFunction> jolcraft$getFunctions();
 }

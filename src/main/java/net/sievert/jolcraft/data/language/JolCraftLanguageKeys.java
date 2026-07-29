@@ -480,6 +480,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_CATEGORY_INFO_PAGE =
             category(JolCraftDictionary.JEI, us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE));
 
+    public static final String JEI_INFO_FERMENTING_BARREL =
+            category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), JolCraftBlockIds.FERMENTING_BARREL));
+
     public static final String JEI_INFO_REPUTATION_TABLET =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), us(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET)));
 

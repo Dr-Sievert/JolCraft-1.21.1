@@ -43,6 +43,11 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
 
         // JEI info pages
         putManual(translations,
+                JolCraftLanguageKeys.JEI_INFO_FERMENTING_BARREL,
+                "Barrels can be used to gradually age dwarven brew and increase the amplitude of stored effects."
+        );
+
+        putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET,
                 "To gain endorsements, give your reputation tablet to a master-level dwarf with a profession. " +
                         "Endorsements are unique per profession and can only be gained once. To advance to the next reputation level, " +

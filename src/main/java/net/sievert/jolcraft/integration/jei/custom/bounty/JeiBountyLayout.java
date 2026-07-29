@@ -51,7 +51,14 @@ public final class JeiBountyLayout {
                     ARROW.x()
                             + ARROW_WIDTH
                             + 5,
-                    33
+                    29
+            );
+
+    public static final JeiPoint ROLLS =
+            new JeiPoint(
+                    CHANCE.x(),
+                    CHANCE.y()
+                            + 8
             );
 
     public static final JeiPoint RIGHT_CLICK =

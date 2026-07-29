@@ -3,6 +3,10 @@ package net.sievert.jolcraft.integration.jei.custom.bounty.task;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator.NumberRange;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
@@ -18,7 +22,7 @@ import java.util.Objects;
 public record JeiBountyTaskRecipe(
         @NotNull BountyTaskRecipe recipe,
         @NotNull ItemStack bounty,
-        @NotNull RecipeOutput objective,
+        @NotNull Objective objective,
         int weight,
         int totalWeight
 ) {
@@ -38,15 +42,6 @@ public record JeiBountyTaskRecipe(
                 objective,
                 JolCraftDictionary.OBJECTIVE
         );
-
-        if (
-                !(objective instanceof ItemOutput)
-                        && !(objective instanceof EntityOutput)
-        ) {
-            throw new IllegalArgumentException(
-                    "objective must be an item or entity output"
-            );
-        }
 
         if (weight < 1) {
             throw new IllegalArgumentException(
@@ -96,34 +91,59 @@ public record JeiBountyTaskRecipe(
                 );
 
         List<JeiBountyTaskRecipe> recipes =
-                new ArrayList<>(
-                        entries.size()
-                );
+                new ArrayList<>();
 
         for (
                 WeightedEntry.Wrapper<RecipeOutput> entry :
                 entries
         ) {
-            RecipeOutput objective =
-                    entry.data();
+            int weight =
+                    entry.weight()
+                            .asInt();
 
-            if (
-                    !(objective instanceof ItemOutput)
-                            && !(objective instanceof EntityOutput)
-            ) {
+            if (weight < 1) {
                 continue;
             }
 
-            recipes.add(
-                    new JeiBountyTaskRecipe(
-                            recipe,
-                            bounty,
-                            objective,
-                            entry.weight()
-                                    .asInt(),
-                            totalWeight
-                    )
-            );
+            switch (entry.data()) {
+                case ItemOutput itemOutput -> {
+                    for (JeiItemOutcome outcome :
+                            ItemOutputJeiTranslator.translate(
+                                    itemOutput
+                            )) {
+                        recipes.add(
+                                new JeiBountyTaskRecipe(
+                                        recipe,
+                                        bounty,
+                                        new ItemObjective(
+                                                outcome
+                                        ),
+                                        weight,
+                                        totalWeight
+                                )
+                        );
+                    }
+                }
+
+                case EntityOutput entityOutput ->
+                        recipes.add(
+                                new JeiBountyTaskRecipe(
+                                        recipe,
+                                        bounty,
+                                        new EntityObjective(
+                                                entityOutput,
+                                                JeiNumberRangeTranslator.translate(
+                                                        entityOutput.count()
+                                                )
+                                        ),
+                                        weight,
+                                        totalWeight
+                                )
+                        );
+
+                default -> {
+                }
+            }
         }
 
         return List.copyOf(
@@ -152,7 +172,64 @@ public record JeiBountyTaskRecipe(
         return bounty;
     }
 
-    public double chance() {
-        return (double) weight / totalWeight;
+    public double chancePerRoll() {
+        double objectiveChance =
+                (double) weight / totalWeight;
+
+        return switch (objective) {
+            case ItemObjective itemObjective ->
+                    objectiveChance
+                            * itemObjective.outcome()
+                            .chancePerRoll();
+
+            case EntityObjective ignored ->
+                    objectiveChance;
+        };
+    }
+
+    public int rolls() {
+        return switch (objective) {
+            case ItemObjective itemObjective ->
+                    itemObjective.outcome()
+                            .rolls();
+
+            case EntityObjective ignored ->
+                    1;
+        };
+    }
+
+    public sealed interface Objective
+            permits ItemObjective,
+            EntityObjective {
+    }
+
+    public record ItemObjective(
+            @NotNull JeiItemOutcome outcome
+    ) implements Objective {
+
+        public ItemObjective {
+            Objects.requireNonNull(
+                    outcome,
+                    JolCraftDictionary.OBJECTIVE
+            );
+        }
+    }
+
+    public record EntityObjective(
+            @NotNull EntityOutput output,
+            @NotNull NumberRange amount
+    ) implements Objective {
+
+        public EntityObjective {
+            Objects.requireNonNull(
+                    output,
+                    JolCraftDictionary.OBJECTIVE
+            );
+
+            Objects.requireNonNull(
+                    amount,
+                    JolCraftDictionary.COUNT
+            );
+        }
     }
 }

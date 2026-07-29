@@ -69,22 +69,19 @@ public final class JeiBountyRewardCategory
     }
 
     @Override
-    protected @NotNull String chanceText(
+    protected double chancePerRoll(
             @NotNull JeiBountyRewardRecipe entry
     ) {
-        JeiItemOutcome outcome =
-                entry.reward();
+        return entry.reward()
+                .chancePerRoll();
+    }
 
-        String chance =
-                JeiDrawHelper.formatChance(
-                        outcome.chancePerRoll()
-                );
-
-        return outcome.rolls() > 1
-                ? chance
-                + " ×"
-                + outcome.rolls()
-                : chance;
+    @Override
+    protected int rolls(
+            @NotNull JeiBountyRewardRecipe entry
+    ) {
+        return entry.reward()
+                .rolls();
     }
 
     @Override

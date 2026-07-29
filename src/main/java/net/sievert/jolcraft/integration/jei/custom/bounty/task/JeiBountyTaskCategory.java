@@ -15,21 +15,17 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.integration.jei.custom.bounty.AbstractJeiBountyCategory;
 import net.sievert.jolcraft.integration.jei.custom.bounty.JeiBountyLayout;
-import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.gui.render.JeiEntityRenderer;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
-import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator.NumberRange;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
-import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -50,7 +46,7 @@ public final class JeiBountyTaskCategory
         super(
                 guiHelper,
                 RECIPE_TYPE,
-                net.minecraft.network.chat.Component.translatable(
+                Component.translatable(
                         JolCraftLanguageKeys.JEI_CATEGORY_BOUNTY_TASK
                 ),
                 guiHelper.createDrawableIngredient(
@@ -80,12 +76,17 @@ public final class JeiBountyTaskCategory
     }
 
     @Override
-    protected @NotNull String chanceText(
+    protected double chancePerRoll(
             @NotNull JeiBountyTaskRecipe entry
     ) {
-        return JeiDrawHelper.formatChance(
-                entry.chance()
-        );
+        return entry.chancePerRoll();
+    }
+
+    @Override
+    protected int rolls(
+            @NotNull JeiBountyTaskRecipe entry
+    ) {
+        return entry.rolls();
     }
 
     @Override
@@ -94,51 +95,38 @@ public final class JeiBountyTaskCategory
             @NotNull GuiGraphics graphics,
             @NotNull Font font
     ) {
-        if (entry.objective()
-                instanceof ItemOutput itemOutput) {
-            drawItemObjective(
-                    graphics,
-                    font,
-                    itemOutput
-            );
+        switch (entry.objective()) {
+            case JeiBountyTaskRecipe.ItemObjective itemObjective ->
+                    drawItemObjective(
+                            graphics,
+                            font,
+                            itemObjective.outcome()
+                    );
 
-            return;
-        }
-
-        if (entry.objective()
-                instanceof EntityOutput entityOutput) {
-            drawEntityObjective(
-                    graphics,
-                    font,
-                    entityOutput
-            );
+            case JeiBountyTaskRecipe.EntityObjective entityObjective ->
+                    drawEntityObjective(
+                            graphics,
+                            font,
+                            entityObjective.output(),
+                            entityObjective.amount()
+                    );
         }
     }
 
     private static void drawItemObjective(
             @NotNull GuiGraphics graphics,
             @NotNull Font font,
-            @NotNull ItemOutput itemOutput
+            @NotNull JeiItemOutcome outcome
     ) {
-        List<JeiItemOutcome> outcomes =
-                ItemOutputJeiTranslator.translate(
-                        itemOutput
-                );
-
-        if (outcomes.isEmpty()) {
-            return;
-        }
-
         JeiDrawHelper.drawCenteredText(
                 graphics,
                 font,
-                Component.translatable(JolCraftLanguageKeys.JEI_TOOLTIP_BOUNTY_COLLECT),
+                Component.translatable(
+                        JolCraftLanguageKeys.JEI_TOOLTIP_BOUNTY_COLLECT
+                ),
                 JeiBountyLayout.OUTPUT_CENTER_X,
                 2
         );
-
-        JeiItemOutcome outcome =
-                outcomes.getFirst();
 
         JeiDrawHelper.drawAmountRange(
                 graphics,
@@ -153,7 +141,8 @@ public final class JeiBountyTaskCategory
     private static void drawEntityObjective(
             @NotNull GuiGraphics graphics,
             @NotNull Font font,
-            @NotNull EntityOutput entityOutput
+            @NotNull EntityOutput entityOutput,
+            @NotNull NumberRange amount
     ) {
         JeiDrawHelper.drawCenteredText(
                 graphics,
@@ -190,11 +179,6 @@ public final class JeiBountyTaskCategory
             );
         }
 
-        NumberRange amount =
-                JeiNumberRangeTranslator.translate(
-                        entityOutput.count()
-                );
-
         JeiDrawHelper.drawAmountRange(
                 graphics,
                 font,
@@ -225,48 +209,40 @@ public final class JeiBountyTaskCategory
             @NotNull IRecipeLayoutBuilder builder,
             @NotNull JeiBountyTaskRecipe entry
     ) {
-        if (entry.objective()
-                instanceof ItemOutput itemOutput) {
-            builder.addSlot(
-                            RecipeIngredientRole.OUTPUT,
-                            JeiBountyLayout.OUTPUT.x(),
-                            JeiBountyLayout.OUTPUT.y()
-                    )
-                    .addItemStacks(
-                            ItemOutputJeiTranslator.translate(
-                                            itemOutput
-                                    )
-                                    .stream()
-                                    .map(
-                                            JeiItemOutcome::stack
-                                    )
-                                    .toList()
-                    );
-
-            return;
-        }
-
-        if (entry.objective()
-                instanceof EntityOutput entityOutput) {
-            SpawnEggItem egg =
-                    SpawnEggItem.byId(
-                            entityOutput.entity()
-                    );
-
-            if (egg == null) {
-                return;
-            }
-
-            builder.addSlot(
-                            RecipeIngredientRole.OUTPUT,
-                            JeiBountyLayout.OUTPUT.x(),
-                            ENTITY_EGG_Y
-                    )
-                    .addItemStack(
-                            new ItemStack(
-                                    egg
+        switch (entry.objective()) {
+            case JeiBountyTaskRecipe.ItemObjective itemObjective ->
+                    builder.addSlot(
+                                    RecipeIngredientRole.OUTPUT,
+                                    JeiBountyLayout.OUTPUT.x(),
+                                    JeiBountyLayout.OUTPUT.y()
                             )
-                    );
+                            .addItemStack(
+                                    itemObjective.outcome()
+                                            .stack()
+                            );
+
+            case JeiBountyTaskRecipe.EntityObjective entityObjective -> {
+                SpawnEggItem egg =
+                        SpawnEggItem.byId(
+                                entityObjective.output()
+                                        .entity()
+                        );
+
+                if (egg == null) {
+                    return;
+                }
+
+                builder.addSlot(
+                                RecipeIngredientRole.OUTPUT,
+                                JeiBountyLayout.OUTPUT.x(),
+                                ENTITY_EGG_Y
+                        )
+                        .addItemStack(
+                                new ItemStack(
+                                        egg
+                                )
+                        );
+            }
         }
     }
 }

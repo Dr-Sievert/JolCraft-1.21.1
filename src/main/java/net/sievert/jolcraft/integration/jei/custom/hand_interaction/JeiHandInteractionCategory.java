@@ -45,7 +45,7 @@ public final class JeiHandInteractionCategory
     private static final int HEIGHT = 72;
 
     private static final int HAND_Y = 34;
-    private static final int AMOUNT_Y = 23;
+    private static final int AMOUNT_Y = 26;
 
     private static final int ENTITY_VERTICAL_OFFSET = 8;
     private static final int ENTITY_AMOUNT_Y = 60;
@@ -155,7 +155,7 @@ public final class JeiHandInteractionCategory
         Font font =
                 Minecraft.getInstance().font;
 
-        drawOutputChance(
+        drawOutputChanceAndRolls(
                 graphics,
                 font,
                 entry
@@ -276,7 +276,7 @@ public final class JeiHandInteractionCategory
         );
     }
 
-    private static void drawOutputChance(
+    private static void drawOutputChanceAndRolls(
             @NotNull GuiGraphics graphics,
             @NotNull Font font,
             @NotNull JeiHandInteractionRecipe entry
@@ -284,25 +284,30 @@ public final class JeiHandInteractionCategory
         if (!(entry.result()
                 instanceof JeiHandInteractionRecipe.ItemResult(
                 JeiItemOutcome outcome
-        )) || outcome.totalWeight() <= outcome.weight()) {
+        ))) {
             return;
         }
 
         double chancePerRoll =
                 outcome.chancePerRoll();
 
-        double chance =
-                1.0D - Math.pow(
-                        1.0D - chancePerRoll,
-                        outcome.rolls()
-                );
+        if (chancePerRoll < 1.0D
+                || outcome.rolls() > 1) {
+            JeiDrawHelper.drawChance(
+                    graphics,
+                    font,
+                    chancePerRoll,
+                    CHANCE.x(),
+                    CHANCE.y()
+            );
+        }
 
-        JeiDrawHelper.drawChance(
+        JeiDrawHelper.drawRolls(
                 graphics,
                 font,
-                chance,
+                outcome.rolls(),
                 CHANCE.x(),
-                CHANCE.y()
+                CHANCE.y() + 8
         );
     }
 

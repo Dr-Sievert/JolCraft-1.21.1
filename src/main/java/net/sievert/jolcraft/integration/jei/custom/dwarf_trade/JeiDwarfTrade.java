@@ -15,7 +15,9 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredItem;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
@@ -24,10 +26,18 @@ import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.Tra
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public record JeiDwarfTrade(
         @NotNull DwarfTradeRecipe recipe,
         @NotNull DeferredItem<Item> spawnEgg,
-        @NotNull JeiItemOutcome outcome
+        @NotNull JeiItemOutcome outcome,
+        @NotNull List<ItemStack> inputAExamples,
+        @NotNull List<ItemStack> inputBExamples,
+        @NotNull AmountRange inputAmountA,
+        @Nullable AmountRange inputAmountB
 ) {
 
     private static final LootContextParamSet PREVIEW_CONTEXT_PARAMS =
@@ -36,32 +46,194 @@ public record JeiDwarfTrade(
                     .required(LootContextParams.ORIGIN)
                     .build();
 
+    public JeiDwarfTrade {
+        Objects.requireNonNull(
+                recipe,
+                JolCraftDictionary.RECIPE
+        );
+
+        Objects.requireNonNull(
+                spawnEgg,
+                JolCraftDictionary.ENTITY
+        );
+
+        Objects.requireNonNull(
+                outcome,
+                JolCraftDictionary.RESULT
+        );
+
+        inputAExamples =
+                copyStacks(
+                        inputAExamples,
+                        "inputAExamples",
+                        true
+                );
+
+        inputBExamples =
+                copyStacks(
+                        inputBExamples,
+                        "inputBExamples",
+                        false
+                );
+
+        Objects.requireNonNull(
+                inputAmountA,
+                "inputAAmount"
+        );
+
+        if (recipe.costB() == null) {
+            if (!inputBExamples.isEmpty()
+                    || inputAmountB != null) {
+                throw new IllegalArgumentException(
+                        "Input B preview must be absent when the recipe has no cost B"
+                );
+            }
+        } else {
+            if (inputBExamples.isEmpty()
+                    || inputAmountB == null) {
+                throw new IllegalArgumentException(
+                        "Input B preview is required when the recipe has cost B"
+                );
+            }
+        }
+    }
+
+    public static @NotNull List<JeiDwarfTrade> create(
+            @NotNull DwarfTradeRecipe recipe,
+            @NotNull DeferredItem<Item> spawnEgg,
+            @NotNull List<JeiItemOutcome> outcomes
+    ) {
+        Objects.requireNonNull(
+                recipe,
+                JolCraftDictionary.RECIPE
+        );
+
+        Objects.requireNonNull(
+                spawnEgg,
+                JolCraftDictionary.ENTITY
+        );
+
+        Objects.requireNonNull(
+                outcomes,
+                JolCraftStrings.plural(
+                        JolCraftDictionary.RESULT
+                )
+        );
+
+        LootContext context =
+                resolveJeiLootContext();
+
+        List<ItemStack> inputAExamples =
+                materializeInputs(
+                        recipe.costA()
+                );
+
+        if (inputAExamples.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Dwarf trade cost A produced no JEI input examples"
+            );
+        }
+
+        AmountRange inputAmountA =
+                amountRange(
+                        recipe.costA()
+                                .count(),
+                        context
+                );
+
+        TradeCost costB =
+                recipe.costB();
+
+        List<ItemStack> inputBExamples;
+        AmountRange inputAmountB;
+
+        if (costB == null) {
+            inputBExamples =
+                    List.of();
+
+            inputAmountB =
+                    null;
+        } else {
+            inputBExamples =
+                    materializeInputs(
+                            costB
+                    );
+
+            if (inputBExamples.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Dwarf trade cost B produced no JEI input examples"
+                );
+            }
+
+            inputAmountB =
+                    amountRange(
+                            costB.count(),
+                            context
+                    );
+        }
+
+        List<JeiDwarfTrade> result =
+                new ArrayList<>(
+                        outcomes.size()
+                );
+
+        for (JeiItemOutcome outcome : outcomes) {
+            result.add(
+                    new JeiDwarfTrade(
+                            recipe,
+                            spawnEgg,
+                            outcome,
+                            inputAExamples,
+                            inputBExamples,
+                            inputAmountA,
+                            inputAmountB
+                    )
+            );
+        }
+
+        return List.copyOf(
+                result
+        );
+    }
+
     public record AmountRange(
             int min,
-            int max
+            int max,
+            boolean known
     ) {
 
         public AmountRange {
-            int normalizedMin =
-                    Math.max(
-                            1,
-                            Math.min(
-                                    min,
-                                    max
-                            )
-                    );
+            if (known) {
+                int normalizedMin =
+                        Math.max(
+                                1,
+                                Math.min(
+                                        min,
+                                        max
+                                )
+                        );
 
-            int normalizedMax =
-                    Math.max(
-                            normalizedMin,
-                            Math.max(
-                                    min,
-                                    max
-                            )
-                    );
+                int normalizedMax =
+                        Math.max(
+                                normalizedMin,
+                                Math.max(
+                                        min,
+                                        max
+                                )
+                        );
 
-            min = normalizedMin;
-            max = normalizedMax;
+                min =
+                        normalizedMin;
+
+                max =
+                        normalizedMax;
+            } else {
+                min =
+                        1;
+
+                max =
+                        1;
+            }
         }
 
         public static @NotNull AmountRange fixed(
@@ -75,7 +247,27 @@ public record JeiDwarfTrade(
 
             return new AmountRange(
                     normalized,
-                    normalized
+                    normalized,
+                    true
+            );
+        }
+
+        public static @NotNull AmountRange range(
+                int min,
+                int max
+        ) {
+            return new AmountRange(
+                    min,
+                    max,
+                    true
+            );
+        }
+
+        public static @NotNull AmountRange unknown() {
+            return new AmountRange(
+                    1,
+                    1,
+                    false
             );
         }
     }
@@ -88,42 +280,8 @@ public record JeiDwarfTrade(
         return recipe.merchantLevel();
     }
 
-    public @NotNull ItemStack inputAExample() {
-        LootContext context =
-                resolveJeiLootContext();
-
-        return normalizeForJei(
-                materializeInput(
-                        recipe.costA(),
-                        context
-                )
-        );
-    }
-
-    public @Nullable ItemStack inputBExample() {
-        TradeCost costB =
-                recipe.costB();
-
-        if (costB == null) {
-            return null;
-        }
-
-        LootContext context =
-                resolveJeiLootContext();
-
-        ItemStack stack =
-                materializeInput(
-                        costB,
-                        context
-                );
-
-        if (stack.isEmpty()) {
-            return null;
-        }
-
-        return normalizeForJei(
-                stack
-        );
+    public boolean hasInputB() {
+        return !inputBExamples.isEmpty();
     }
 
     public boolean costAItemIs(
@@ -149,100 +307,74 @@ public record JeiDwarfTrade(
         );
     }
 
-    public @NotNull AmountRange inputAmountA() {
-        return amountRange(
-                recipe.costA()
-                        .count(),
-                resolveJeiLootContext()
-        );
-    }
-
-    public @Nullable AmountRange inputAmountB() {
-        TradeCost costB =
-                recipe.costB();
-
-        if (costB == null) {
-            return null;
-        }
-
-        return amountRange(
-                costB.count(),
-                resolveJeiLootContext()
-        );
-    }
-
     public @NotNull AmountRange outputAmount() {
-        return new AmountRange(
+        return AmountRange.range(
                 outcome.minCount(),
                 outcome.maxCount()
         );
     }
 
-    public double outputChance() {
-        double chancePerRoll =
-                outcome.chancePerRoll();
+    public double outputChancePerRoll() {
+        return outcome.chancePerRoll();
+    }
 
-        return 1.0D - Math.pow(
-                1.0D - chancePerRoll,
-                outcome.rolls()
+    public int outputRolls() {
+        return outcome.rolls();
+    }
+
+    public boolean outputGuaranteedPerRoll() {
+        return outputChancePerRoll() >= 1.0D;
+    }
+
+    private static @NotNull List<ItemStack> materializeInputs(
+            @NotNull TradeCost cost
+    ) {
+        List<ItemStack> resolved =
+                new ArrayList<>();
+
+        for (ItemStack candidate : cost.candidateItems()) {
+            if (candidate == null
+                    || candidate.isEmpty()
+                    || !cost.test(candidate)) {
+                continue;
+            }
+
+            ItemStack normalized =
+                    normalizeForJei(
+                            candidate
+                    );
+
+            if (containsEquivalent(
+                    resolved,
+                    normalized
+            )) {
+                continue;
+            }
+
+            resolved.add(
+                    normalized
+            );
+        }
+
+        return List.copyOf(
+                resolved
         );
     }
 
-    public boolean outputGuaranteed() {
-        return outputChance() >= 1.0D;
-    }
-
-    private static @NotNull ItemStack materializeInput(
-            @Nullable TradeCost cost,
-            @Nullable LootContext context
+    private static boolean containsEquivalent(
+            @NotNull List<ItemStack> stacks,
+            @NotNull ItemStack candidate
     ) {
-        if (cost == null) {
-            return ItemStack.EMPTY;
+        for (ItemStack stack : stacks) {
+            if (ItemStack.isSameItemSameComponents(
+                    stack,
+                    candidate
+            )) {
+                return true;
+            }
         }
 
-        ItemStack[] candidates =
-                cost.candidateItems();
-
-        for (ItemStack candidate : candidates) {
-            if (candidate == null
-                    || candidate.isEmpty()) {
-                continue;
-            }
-
-            ItemStack resolved =
-                    candidate.copy();
-
-            if (!cost.test(resolved)) {
-                continue;
-            }
-
-            int count;
-
-            if (context != null) {
-                count =
-                        cost.resolveCount(
-                                context
-                        );
-            } else {
-                count =
-                        amountRange(
-                                cost.count(),
-                                null
-                        ).min();
-            }
-
-            if (count < 1) {
-                continue;
-            }
-
-            resolved.setCount(
-                    count
-            );
-
-            return resolved;
-        }
-
-        return ItemStack.EMPTY;
+        return false;
     }
 
     private static @NotNull AmountRange amountRange(
@@ -259,19 +391,24 @@ public record JeiDwarfTrade(
 
         //noinspection DeconstructionCanBeUsed
         if (provider instanceof UniformGenerator uniform) {
-            int min =
+            Integer min =
                     providerMinimum(
                             uniform.min(),
                             context
                     );
 
-            int max =
+            Integer max =
                     providerMaximum(
                             uniform.max(),
                             context
                     );
 
-            return new AmountRange(
+            if (min == null
+                    || max == null) {
+                return AmountRange.unknown();
+            }
+
+            return AmountRange.range(
                     min,
                     max
             );
@@ -285,10 +422,10 @@ public record JeiDwarfTrade(
             );
         }
 
-        return AmountRange.fixed(1);
+        return AmountRange.unknown();
     }
 
-    private static int providerMinimum(
+    private static @Nullable Integer providerMinimum(
             @NotNull NumberProvider provider,
             @Nullable LootContext context
     ) {
@@ -311,10 +448,10 @@ public record JeiDwarfTrade(
             );
         }
 
-        return 1;
+        return null;
     }
 
-    private static int providerMaximum(
+    private static @Nullable Integer providerMaximum(
             @NotNull NumberProvider provider,
             @Nullable LootContext context
     ) {
@@ -337,7 +474,7 @@ public record JeiDwarfTrade(
             );
         }
 
-        return 1;
+        return null;
     }
 
     private static @NotNull ItemStack normalizeForJei(
@@ -350,9 +487,37 @@ public record JeiDwarfTrade(
         ItemStack copy =
                 stack.copy();
 
-        copy.setCount(1);
+        copy.setCount(
+                1
+        );
 
         return copy;
+    }
+
+    private static @NotNull List<ItemStack> copyStacks(
+            @NotNull List<ItemStack> stacks,
+            @NotNull String name,
+            boolean required
+    ) {
+        Objects.requireNonNull(
+                stacks,
+                name
+        );
+
+        List<ItemStack> copies =
+                stacks.stream()
+                        .map(ItemStack::copy)
+                        .toList();
+
+        if (required
+                && copies.isEmpty()) {
+            throw new IllegalArgumentException(
+                    name
+                            + " must contain at least one stack"
+            );
+        }
+
+        return copies;
     }
 
     private static @Nullable LootContext resolveJeiLootContext() {

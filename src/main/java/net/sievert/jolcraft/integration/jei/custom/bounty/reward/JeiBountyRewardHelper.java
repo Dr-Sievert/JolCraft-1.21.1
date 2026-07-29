@@ -2,11 +2,9 @@ package net.sievert.jolcraft.integration.jei.custom.bounty.reward;
 
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyTaskRecipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class JeiBountyRewardHelper {
@@ -27,28 +25,23 @@ public final class JeiBountyRewardHelper {
                 );
 
         List<JeiBountyRewardRecipe> recipes =
-                new ArrayList<>();
-
-        for (var holder : JeiRecipeAccess.getSorted(
-                JolCraftRecipes
-                        .BOUNTY_REWARD_TYPE
-                        .get()
-        )) {
-            BountyRewardRecipe rewardRecipe =
-                    holder.value();
-
-            for (JeiBountyRewardRecipe recipe :
-                    JeiBountyRewardRecipe.create(
-                            rewardRecipe,
-                            taskRecipes
-                    )) {
-                if (!recipe.inputs().isEmpty()) {
-                    recipes.add(
-                            recipe
-                    );
-                }
-            }
-        }
+                JeiRecipeAccess.translateSorted(
+                        JolCraftRecipes
+                                .BOUNTY_REWARD_TYPE
+                                .get(),
+                        holder ->
+                                JeiBountyRewardRecipe.create(
+                                                holder.value(),
+                                                taskRecipes
+                                        )
+                                        .stream()
+                                        .filter(
+                                                recipe ->
+                                                        !recipe.inputs()
+                                                                .isEmpty()
+                                        )
+                                        .toList()
+                );
 
         return List.copyOf(
                 recipes

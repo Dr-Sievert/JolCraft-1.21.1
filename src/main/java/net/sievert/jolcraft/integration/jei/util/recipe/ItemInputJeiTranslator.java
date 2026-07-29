@@ -58,7 +58,8 @@ public final class ItemInputJeiTranslator {
 
         if (matches.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Item input produced no displayable JEI ingredients"
+                    "Item input produced no displayable JEI ingredients from default item stacks; "
+                            + "component-specific predicates require an explicit preview stack"
             );
         }
 
