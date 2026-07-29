@@ -23,6 +23,8 @@ import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStr
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.player.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.world.player.attachment.base.JolCraftAttachmentHelper;
@@ -341,7 +343,8 @@ public final class DiscoveredStructuresAttachmentHelper extends JolCraftAttachme
                 continue;
             }
 
-            if (hasDiscoveredStructureTarget(level, player, locatePos)) {
+            if (hasDiscoveredStructureTarget(level, player, locatePos)
+                    || hasTrackedStructureTarget(level, player, locatePos)) {
                 continue;
             }
 
@@ -396,6 +399,28 @@ public final class DiscoveredStructuresAttachmentHelper extends JolCraftAttachme
             if (!discovered.dimension().equals(level.dimension())) continue;
 
             BlockPos pos = discovered.pos();
+            if (pos.getX() == candidate.getX() && pos.getZ() == candidate.getZ()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    private static boolean hasTrackedStructureTarget(
+            ServerLevel level,
+            ServerPlayer player,
+            BlockPos candidate
+    ) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            var stack = player.getInventory().getItem(slot);
+            if (!stack.is(JolCraftItems.DEEPSLATE_COMPASS.get())) continue;
+
+            GlobalPos target = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
+            if (target == null || !target.dimension().equals(level.dimension())) continue;
+
+            BlockPos pos = target.pos();
             if (pos.getX() == candidate.getX() && pos.getZ() == candidate.getZ()) {
                 return true;
             }

@@ -12,7 +12,6 @@ public class DwarfBreedGoal extends Goal {
     private static final TargetingConditions PARTNER_TARGETING = TargetingConditions.forNonCombat().range(8.0F).ignoreLineOfSight();
     protected final AbstractDwarfEntity dwarf;
     private final Class<? extends AbstractDwarfEntity> partnerClass;
-    protected final ServerLevel level;
     @Nullable
     protected AbstractDwarfEntity partner;
     private int loveTime;
@@ -20,19 +19,22 @@ public class DwarfBreedGoal extends Goal {
 
     public DwarfBreedGoal(AbstractDwarfEntity dwarf, double speedModifier, Class<? extends AbstractDwarfEntity> partnerClass) {
         this.dwarf = dwarf;
-        this.level = (ServerLevel) dwarf.level();
         this.partnerClass = partnerClass;
         this.speedModifier = speedModifier;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     public boolean canUse() {
+        if (!(this.dwarf.level() instanceof ServerLevel)) {
+            return false;
+        }
+
         if (!this.dwarf.isInLove()) {
             return false;
-        } else {
-            this.partner = this.getFreePartner();
-            return this.partner != null;
         }
+
+        this.partner = this.getFreePartner();
+        return this.partner != null;
     }
 
     @Override
@@ -67,7 +69,11 @@ public class DwarfBreedGoal extends Goal {
 
     @Nullable
     private AbstractDwarfEntity getFreePartner() {
-        List<? extends AbstractDwarfEntity> list = this.level.getNearbyEntities(this.partnerClass, PARTNER_TARGETING, this.dwarf, this.dwarf.getBoundingBox().inflate(8.0F));
+        if (!(this.dwarf.level() instanceof ServerLevel level)) {
+            return null;
+        }
+
+        List<? extends AbstractDwarfEntity> list = level.getNearbyEntities(this.partnerClass, PARTNER_TARGETING, this.dwarf, this.dwarf.getBoundingBox().inflate(8.0F));
         double d0 = Double.MAX_VALUE;
         AbstractDwarfEntity dwarf = null;
 
@@ -82,7 +88,11 @@ public class DwarfBreedGoal extends Goal {
     }
 
     protected void breed() {
-        if (this.level == null || this.partner == null) return;
-        this.dwarf.spawnChildFromBreeding(this.level, this.partner);
+        if (!(this.dwarf.level() instanceof ServerLevel level)
+                || this.partner == null) {
+            return;
+        }
+
+        this.dwarf.spawnChildFromBreeding(level, this.partner);
     }
 }

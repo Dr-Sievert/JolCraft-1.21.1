@@ -53,7 +53,7 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
     public void onEffectAdded(LivingEntity entity, int amplifier) {
         super.onEffectAdded(entity, amplifier);
 
-        if (!(entity instanceof Player player)) {
+        if (!(entity instanceof ServerPlayer player)) {
             return;
         }
 

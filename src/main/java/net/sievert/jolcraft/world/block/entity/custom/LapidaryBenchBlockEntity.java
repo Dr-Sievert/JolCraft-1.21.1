@@ -126,7 +126,16 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
 
         generatedResults.removeIf(ItemStack::isEmpty);
 
+        if (!player.isCreative()) {
+            consumeInput();
+
+            int toolDamage = recipe.rollToolDamage(context);
+            damageTool(player, toolDamage);
+        }
+
         if (generatedResults.isEmpty()) {
+            setChanged();
+            refreshCachedState(player);
             return;
         }
 
@@ -150,13 +159,6 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
                     player,
                     generatedResult
             );
-        }
-
-        if (!player.isCreative()) {
-            consumeInput();
-
-            int toolDamage = recipe.rollToolDamage(context);
-            damageTool(player, toolDamage);
         }
 
         int xp = recipe.rollXp(context);

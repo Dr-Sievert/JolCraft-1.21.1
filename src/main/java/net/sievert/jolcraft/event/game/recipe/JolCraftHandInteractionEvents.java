@@ -128,22 +128,12 @@ public final class JolCraftHandInteractionEvents {
                         context
                 );
 
-        if (!generatedAny) {
-            playSoundOutput(
-                    level,
-                    player,
-                    recipe.failSound(),
-                    resolvedInput,
-                    context
-            );
-
-            return;
-        }
-
         playSoundOutput(
                 level,
                 player,
-                recipe.successSound(),
+                generatedAny
+                        ? recipe.successSound()
+                        : recipe.failSound(),
                 resolvedInput,
                 context
         );
@@ -177,8 +167,9 @@ public final class JolCraftHandInteractionEvents {
 
         JolCraftLogs.info(
                 JolCraftLogTags.RECIPE,
-                "Executed hand interaction recipe={}",
-                resolved.id()
+                "Executed hand interaction recipe={} success={}",
+                resolved.id(),
+                generatedAny
         );
     }
 

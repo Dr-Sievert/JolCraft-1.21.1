@@ -440,6 +440,7 @@ public final class JolCraftPlayerAttributeHelper {
 
     public static void applyItemUseSpeedTick(LivingEntityUseItemEvent.Tick event) {
         if (!(event.getEntity() instanceof Player player)) return;
+        if (player.level().isClientSide()) return;
 
         ItemStack stack = event.getItem();
         UUID uuid = player.getUUID();
@@ -460,6 +461,7 @@ public final class JolCraftPlayerAttributeHelper {
 
     public static void stopItemUseSpeed(LivingEntityUseItemEvent.Stop event) {
         if (!(event.getEntity() instanceof Player player)) return;
+        if (player.level().isClientSide()) return;
 
         ItemStack stack = event.getItem();
         UUID uuid = player.getUUID();
@@ -486,7 +488,8 @@ public final class JolCraftPlayerAttributeHelper {
     }
 
     public static void finishItemUseSpeed(LivingEntityUseItemEvent.Finish event) {
-        if (event.getEntity() instanceof Player player) {
+        if (event.getEntity() instanceof Player player
+                && !player.level().isClientSide()) {
             ITEM_USE_SPEED_PROGRESS.remove(player.getUUID());
         }
     }

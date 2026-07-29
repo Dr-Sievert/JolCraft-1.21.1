@@ -35,10 +35,6 @@ public final class ExplorerInteractionHandler
 
         dwarf.overrideXp(discoveryScore);
 
-        AbstractTradingEntity.triggerLevelUp(dwarf);
-
-        dwarf.overrideXp(discoveryScore);
-
         if (AbstractTradingEntity.triggerLevelUp(dwarf) > 0) {
             PlaySound.dwarfYes(dwarf);
         }

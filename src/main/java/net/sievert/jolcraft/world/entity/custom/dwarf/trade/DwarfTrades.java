@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.trade;
 
+import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -59,6 +60,7 @@ public final class DwarfTrades {
             this.recipe = recipeHolder.value();
         }
 
+        @SuppressWarnings("deprecation")
         @Nullable
         public DwarfMerchantOffer getOffer(
                 AbstractTradingEntity trader
@@ -174,15 +176,17 @@ public final class DwarfTrades {
 
             DwarfItemCost costA =
                     new DwarfItemCost(
-                            costAStack.getItem(),
-                            costAStack.getCount()
+                            costAStack.getItem().builtInRegistryHolder(),
+                            costAStack.getCount(),
+                            DataComponentPredicate.allOf(costAStack.getComponents())
                     );
 
             Optional<DwarfItemCost> costB =
                     costBStack.map(stack ->
                             new DwarfItemCost(
-                                    stack.getItem(),
-                                    stack.getCount()
+                                    stack.getItem().builtInRegistryHolder(),
+                                    stack.getCount(),
+                                    DataComponentPredicate.allOf(stack.getComponents())
                             )
                     );
 

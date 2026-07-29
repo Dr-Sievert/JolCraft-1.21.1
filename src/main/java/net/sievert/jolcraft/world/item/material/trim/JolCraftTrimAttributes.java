@@ -19,7 +19,6 @@ import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class JolCraftTrimAttributes {
 
@@ -58,24 +57,14 @@ public final class JolCraftTrimAttributes {
             throw new IllegalStateException("Item is not valid armor for trim attribute: " + stack);
         }
 
-        ItemAttributeModifiers modifiers = stack.getItem().getDefaultAttributeModifiers(stack);
-
-        ItemAttributeModifiers existing = stack.getOrDefault(
+        ItemAttributeModifiers modifiers = stack.getOrDefault(
                 DataComponents.ATTRIBUTE_MODIFIERS,
-                ItemAttributeModifiers.EMPTY
+                stack.getItem().getDefaultAttributeModifiers(stack)
         );
 
-        existing = removeOldTrimModifiers(existing);
+        modifiers = removeOldTrimModifiers(modifiers);
 
-        for (ItemAttributeModifiers.Entry entry : existing.modifiers()) {
-            modifiers = modifiers.withModifierAdded(
-                    entry.attribute(),
-                    entry.modifier(),
-                    entry.slot()
-            );
-        }
-
-        ResourceLocation modifierId = JolCraft.location(match.getId() + "_" + slot.getName());
+        ResourceLocation modifierId = trimModifierId(slot);
 
         modifiers = modifiers.withModifierAdded(
                 attr.attribute(),
@@ -105,16 +94,45 @@ public final class JolCraftTrimAttributes {
     }
 
     private static ItemAttributeModifiers removeOldTrimModifiers(@NotNull ItemAttributeModifiers modifiers) {
-        Set<ResourceLocation> trimIds = Arrays.stream(JolCraftTrimMaterials.Attribute.values())
-                .map(attr -> JolCraft.location(attr.getId()))
-                .collect(Collectors.toSet());
+        Set<ResourceLocation> legacyIds = new HashSet<>();
+
+        for (JolCraftTrimMaterials.Attribute attribute : JolCraftTrimMaterials.Attribute.values()) {
+            legacyIds.add(JolCraft.location(attribute.getId()));
+
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                legacyIds.add(JolCraft.location(attribute.getId() + "_" + slot.getName()));
+            }
+        }
 
         return new ItemAttributeModifiers(
                 modifiers.modifiers().stream()
-                        .filter(entry -> !trimIds.contains(entry.modifier().id()))
+                        .filter(entry -> !isTrimModifier(entry.modifier().id(), legacyIds))
                         .toList(),
                 modifiers.showInTooltip()
         );
+    }
+
+    private static boolean isTrimModifier(
+            @NotNull ResourceLocation id,
+            @NotNull Set<ResourceLocation> legacyIds
+    ) {
+        if (legacyIds.contains(id)) {
+            return true;
+        }
+
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (trimModifierId(slot).equals(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static @NotNull ResourceLocation trimModifierId(
+            @NotNull EquipmentSlot slot
+    ) {
+        return JolCraft.location("attribute_trim_" + slot.getName());
     }
 
     public static EquipmentSlot getSlotForArmor(ItemStack stack) {

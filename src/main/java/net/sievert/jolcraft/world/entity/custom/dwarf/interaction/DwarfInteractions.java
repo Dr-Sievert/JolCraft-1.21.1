@@ -60,6 +60,9 @@ public final class DwarfInteractions {
     }
 
     public static void registerAll() {
+        CORE_PIPELINE.clear();
+        PROFESSION_HANDLERS.clear();
+
         registerCore(new IgnoreInteractionHandler());
         registerCore(new LanguageGateInteractionHandler());
         registerCore(new ReputationGateInteractionHandler());

@@ -3,6 +3,10 @@ package net.sievert.jolcraft.world.recipe.custom.dwarf_trade;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.JsonOps;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -1189,9 +1193,114 @@ public record DwarfTradeRecipe(
                 );
             }
 
+            DataResult<Void> cardinalityValidation =
+                    validateGuaranteedSingleResult(recipe.result());
+
+            if (cardinalityValidation.error().isPresent()) {
+                String message =
+                        cardinalityValidation.error()
+                                .map(DataResult.Error::message)
+                                .orElse("trade result must generate exactly one item stack");
+
+                return DataResult.error(() ->
+                        JolCraftDictionary.RESULT
+                                + ": "
+                                + message
+                );
+            }
+
             return DataResult.success(
                     recipe
             );
+        }
+
+
+        private static @NotNull DataResult<Void> validateGuaranteedSingleResult(
+                @NotNull ItemOutput output
+        ) {
+            DataResult<JsonElement> encoded =
+                    ItemOutput.CODEC.codec()
+                            .encodeStart(
+                                    JsonOps.INSTANCE,
+                                    output
+                            );
+
+            if (encoded.error().isPresent()) {
+                String message = encoded.error()
+                        .map(DataResult.Error::message)
+                        .orElse("could not inspect trade result");
+
+                return DataResult.error(() -> message);
+            }
+
+            JsonElement root = encoded.result().orElse(null);
+            if (root == null || !root.isJsonObject()) {
+                return DataResult.error(() ->
+                        "trade result must encode as an object"
+                );
+            }
+
+            JsonObject outputObject = root.getAsJsonObject();
+            JsonElement poolElement = outputObject.get(JolCraftDictionary.POOL);
+            if (poolElement == null || !poolElement.isJsonObject()) {
+                return DataResult.error(() ->
+                        "trade result pool is missing"
+                );
+            }
+
+            JsonObject pool = poolElement.getAsJsonObject();
+            JsonElement rolls = pool.get(JolCraftStrings.plural(JolCraftDictionary.ROLL));
+
+            if (rolls != null
+                    && (!rolls.isJsonPrimitive()
+                    || !rolls.getAsJsonPrimitive().isNumber()
+                    || Double.compare(rolls.getAsDouble(), 1.0D) != 0)) {
+                return DataResult.error(() ->
+                        "trade result must use exactly 1 constant roll"
+                );
+            }
+
+            JsonElement entriesElement = pool.get(JolCraftDictionary.ENTRIES);
+            if (entriesElement == null || !entriesElement.isJsonArray()) {
+                return DataResult.error(() ->
+                        "trade result entries are missing"
+                );
+            }
+
+            JsonArray entries = entriesElement.getAsJsonArray();
+            if (entries.size() != 1) {
+                return DataResult.error(() ->
+                        "trade result must contain exactly 1 entry"
+                );
+            }
+
+            JsonElement entryElement = entries.get(0);
+            if (!entryElement.isJsonObject()) {
+                return DataResult.error(() ->
+                        "trade result entry must be an object"
+                );
+            }
+
+            JsonObject entry = entryElement.getAsJsonObject();
+            JsonElement type = entry.get(JolCraftDictionary.TYPE);
+            if (type == null
+                    || !type.isJsonPrimitive()
+                    || !"minecraft:item".equals(type.getAsString())) {
+                return DataResult.error(() ->
+                        "trade result entry must be a single minecraft:item entry"
+                );
+            }
+
+            JsonElement conditions = entry.get("conditions");
+            if (conditions != null
+                    && conditions.isJsonArray()
+                    && !conditions.getAsJsonArray().isEmpty()) {
+                return DataResult.error(() ->
+                        "trade result entry must not use chance conditions"
+                );
+            }
+
+            return DataResult.success(null);
         }
 
         private static @NotNull DataResult<DwarfProfession>

@@ -75,7 +75,7 @@ public record ItemInputAction(
                     : Math.max(0, action.amount()),
 
             (typeId, encodedAmount) -> {
-                Type type = Type.byId(typeId);
+                Type type = Type.byIdOrThrow(typeId);
 
                 if (type == Type.CATALYST) {
                     return CATALYST;
@@ -218,6 +218,20 @@ public record ItemInputAction(
             }
 
             return CATALYST;
+        }
+
+        public static Type byIdOrThrow(@Nullable String id) {
+            if (id != null) {
+                for (Type type : values()) {
+                    if (type.serializedName.equals(id)) {
+                        return type;
+                    }
+                }
+            }
+
+            throw new IllegalArgumentException(
+                    "Unknown item input action type: " + id
+            );
         }
     }
 }

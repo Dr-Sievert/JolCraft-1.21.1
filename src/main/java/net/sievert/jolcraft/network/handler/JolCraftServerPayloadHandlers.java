@@ -56,8 +56,8 @@ public final class JolCraftServerPayloadHandlers {
     private static final PerTickLimiter PARTICLE_LIMITER = new PerTickLimiter();
     private static final PerTickLimiter SOUND_LIMITER = new PerTickLimiter();
 
-    private static final int MAX_PARTICLE_PACKETS_PER_TICK = 6;
-    private static final int MAX_SOUND_PACKETS_PER_TICK = 2;
+    private static final int MAX_PARTICLE_PACKETS_PER_TICK = 2;
+    private static final int MAX_SOUND_PACKETS_PER_TICK = 1;
 
     public static void cleanupPlayer(ServerPlayer player) {
         UUID id = player.getUUID();
@@ -118,7 +118,7 @@ public final class JolCraftServerPayloadHandlers {
             ResourceLocation soundId = packet.soundId();
             String ns = soundId.getNamespace();
 
-            if (!ns.equals(JolCraft.MOD_ID) && !ns.equals(ResourceLocation.DEFAULT_NAMESPACE)) {
+            if (!ns.equals(JolCraft.MOD_ID)) {
 
                 JolCraftLogs.debug(
                         JolCraftLogTags.NETWORK,
@@ -146,7 +146,7 @@ public final class JolCraftServerPayloadHandlers {
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;
 
-            final double maxDist = JolCraftNetworking.DEFAULT_RADIUS;
+            final double maxDist = 16.0D;
             if (sp.distanceToSqr(packet.x(), packet.y(), packet.z()) > (maxDist * maxDist)) return;
 
             var lookup = level.registryAccess().lookupOrThrow(Registries.SOUND_EVENT);
@@ -159,7 +159,7 @@ public final class JolCraftServerPayloadHandlers {
             float pitch = packet.pitch();
             if (!Float.isFinite(volume) || !Float.isFinite(pitch)) return;
 
-            volume = Mth.clamp(volume, 0.0F, 4.0F);
+            volume = Mth.clamp(volume, 0.0F, 2.0F);
             pitch = Mth.clamp(pitch, 0.5F, 2.0F);
 
             level.playSound(null, packet.x(), packet.y(), packet.z(), sound, packet.source(), volume, pitch);
@@ -189,21 +189,11 @@ public final class JolCraftServerPayloadHandlers {
             BlockPos pos = BlockPos.containing(packet.x(), packet.y(), packet.z());
             if (!level.isLoaded(pos)) return;
 
-            boolean overrideLimiter = packet.overrideLimiter();
-            if (overrideLimiter && !sp.hasPermissions(2)) {
-                JolCraftLogs.warn(
-                        JolCraftLogTags.NETWORK,
-                        "Rejected particle overrideLimiter from {}",
-                        sp.getGameProfile().getName()
-                );
-                overrideLimiter = false;
-            }
-
-            double maxDist = overrideLimiter ? 512.0D : 32.0D;
+            boolean overrideLimiter = packet.overrideLimiter() && sp.hasPermissions(2);
+            double maxDist = overrideLimiter ? 64.0D : 16.0D;
             if (sp.distanceToSqr(packet.x(), packet.y(), packet.z()) > (maxDist * maxDist)) return;
 
-            int count = Mth.clamp(packet.count(), 0, 128);
-            if (count < 0) return;
+            int count = Mth.clamp(packet.count(), 0, 64);
 
             double xDist = packet.xDist();
             double yDist = packet.yDist();
@@ -212,6 +202,11 @@ public final class JolCraftServerPayloadHandlers {
 
             if (!Double.isFinite(xDist) || !Double.isFinite(yDist) || !Double.isFinite(zDist)) return;
             if (!Double.isFinite(speed)) return;
+
+            xDist = Mth.clamp(xDist, -4.0D, 4.0D);
+            yDist = Mth.clamp(yDist, -4.0D, 4.0D);
+            zDist = Mth.clamp(zDist, -4.0D, 4.0D);
+            speed = Mth.clamp(speed, -2.0D, 2.0D);
 
             level.sendParticles(
                     packet.particle(),

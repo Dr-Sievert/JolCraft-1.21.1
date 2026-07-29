@@ -170,7 +170,6 @@ public final class PendingStatData extends AbstractSavedData {
                     JolCraftLogTags.PLAYER,
                     "Pending stats awarded on login for player {}. Stats = [{}]",
                     player.getName().getString(),
-                    player.getUUID(),
                     awardedStats
             );
         }

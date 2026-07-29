@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -14,6 +15,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -122,11 +127,33 @@ public final class JolCraftCompassEvents {
         if (holder == null) return false;
 
         var manager = level.structureManager();
+        var structure = holder.value();
 
-        BlockPos playerPos = player.blockPosition();
+        StructureStart playerStart = manager.getStructureWithPieceAt(
+                player.blockPosition(),
+                structure
+        );
 
-        var start = manager.getStructureWithPieceAt(playerPos, holder.value());
-        return start.isValid();
+        if (!playerStart.isValid()) {
+            return false;
+        }
+
+        ChunkPos targetChunkPos = new ChunkPos(target.pos());
+        ChunkAccess targetChunk = level.getChunk(
+                targetChunkPos.x,
+                targetChunkPos.z,
+                ChunkStatus.STRUCTURE_STARTS
+        );
+
+        StructureStart targetStart = manager.getStartForStructure(
+                SectionPos.bottomOf(targetChunk),
+                structure,
+                targetChunk
+        );
+
+        return targetStart != null
+                && targetStart.isValid()
+                && playerStart.getChunkPos().equals(targetStart.getChunkPos());
     }
 
     private static void completeDiscovery(ServerPlayer player, @NotNull Compass compass) {

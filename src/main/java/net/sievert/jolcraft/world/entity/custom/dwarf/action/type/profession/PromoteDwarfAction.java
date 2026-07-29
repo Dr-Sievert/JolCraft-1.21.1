@@ -3,21 +3,19 @@ package net.sievert.jolcraft.world.entity.custom.dwarf.action.type.profession;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
-import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractBreedingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.loadout.DwarfLoadouts;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -120,40 +118,36 @@ public class PromoteDwarfAction extends InspectDwarfAction {
     );
 
     public void transformToProfession() {
-        if (!dwarf.level().isClientSide) {
-            ServerLevel serverLevel = (ServerLevel) dwarf.level();
-
-            EntityType<? extends AbstractDwarfEntity> professionType = resolveProfessionType(itemstack);
-
-
-            if (professionType != null) {
-                Entity entity = professionType.create(
-                        serverLevel,
-                        null,
-                        dwarf.blockPosition(),
-                        MobSpawnType.CONVERSION,
-                        false,
-                        false
-                );
-
-                if (entity instanceof AbstractDwarfEntity newDwarf) {
-                    newDwarf.moveTo(dwarf.getX(), dwarf.getY(), dwarf.getZ(), dwarf.getYRot(), dwarf.getXRot());
-                    newDwarf.setData(AbstractBreedingEntity.BEARD_COLOR, dwarf.getData(AbstractBreedingEntity.BEARD_COLOR));
-                    newDwarf.setData(AbstractBreedingEntity.EYE_COLOR, dwarf.getData(AbstractBreedingEntity.EYE_COLOR));
-                    serverLevel.addFreshEntity(newDwarf);
-                    dwarf.discard();
-
-                    JolCraftLogs.info(
-                            JolCraftLogTags.ENTITY,
-                            "{} at {} in {} promoted by {} to {}",
-                            DwarfProfession.getDisplayName(dwarf).getString(),
-                            JolCraftLogs.roundedPos(dwarf),
-                            dwarf.level().dimension().location(),
-                            player.getDisplayName().getString(),
-                            newDwarf.getProfession()
-                    );
-                }
-            }
+        if (!(dwarf.level() instanceof ServerLevel level)) {
+            return;
         }
+
+        EntityType<? extends AbstractDwarfEntity> professionType =
+                resolveProfessionType(itemstack);
+
+        if (professionType == null) {
+            return;
+        }
+
+        DwarfProfession profession =
+                DwarfProfession.fromEntityType(professionType);
+
+        dwarf.setProfession(profession);
+        DwarfLoadouts.applySpawnLoadout(
+                dwarf,
+                level,
+                level.getCurrentDifficultyAt(dwarf.blockPosition()),
+                null
+        );
+
+        JolCraftLogs.info(
+                JolCraftLogTags.ENTITY,
+                "{} at {} in {} promoted by {} to {}",
+                DwarfProfession.getDisplayName(dwarf).getString(),
+                JolCraftLogs.roundedPos(dwarf),
+                dwarf.level().dimension().location(),
+                player.getDisplayName().getString(),
+                profession
+        );
     }
 }
