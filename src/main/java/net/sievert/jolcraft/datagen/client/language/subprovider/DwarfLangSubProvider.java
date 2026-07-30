@@ -103,8 +103,6 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_SIGNED_CONTRACT, "Signed contracts are used to buy profession contracts from a guildmaster.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_PROFESSION_CONTRACT, "Profession contracts can be given to dwarves without professions to set their profession.");
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_GUILD_SIGIL, "Can be bought from a master-level dwarf without a profession.");
-
         // -----------------------------------------------------------------
         // Dwarf
         // -----------------------------------------------------------------

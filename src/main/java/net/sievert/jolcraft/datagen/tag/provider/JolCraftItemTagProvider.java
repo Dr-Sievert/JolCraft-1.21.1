@@ -341,7 +341,9 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get())
                 .add(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get())
                 .add(JolCraftItems.DEEPSLATE_MUG.get())
-                .add(JolCraftItems.BROKEN_TABLET.get());
+                .add(JolCraftItems.BROKEN_TABLET.get())
+                .add(JolCraftItems.INGOT_MOULD.get())
+                .add(JolCraftItems.GUILD_SIGIL_MOULD.get());
 
         target.tag(JolCraftTags.Items.TEXTILE_SALVAGE)
                 .add(Items.LEATHER_HELMET)
@@ -375,8 +377,7 @@ public final class JolCraftItemTagProvider
                 .add(Items.SHEARS)
                 .add(JolCraftItems.BROKEN_PICKAXE.get())
                 .add(JolCraftItems.BROKEN_AMULET.get())
-                .add(JolCraftItems.RUSTY_TONGS.get())
-                .add(JolCraftItems.INGOT_MOULD.get());
+                .add(JolCraftItems.RUSTY_TONGS.get());
 
         target.tag(JolCraftTags.Items.GOLD_SALVAGE)
                 .add(Items.GOLDEN_SWORD)

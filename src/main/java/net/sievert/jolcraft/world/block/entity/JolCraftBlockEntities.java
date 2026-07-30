@@ -6,6 +6,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.block.entity.JolCraftBlockEntityIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
@@ -68,5 +70,11 @@ public final class JolCraftBlockEntities {
 
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} block entity types",
+                BLOCK_ENTITIES.getEntries().size()
+        );
     }
 }

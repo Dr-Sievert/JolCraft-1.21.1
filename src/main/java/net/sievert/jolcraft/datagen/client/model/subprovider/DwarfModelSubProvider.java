@@ -66,6 +66,7 @@ public record DwarfModelSubProvider(@NotNull JolCraftModelProvider parent) imple
         builder.flatItem(JolCraftItems.CONTRACT_WRITTEN.get(), SUB_CONTRACT);
         builder.flatItem(JolCraftItems.CONTRACT_SIGNED.get(), SUB_CONTRACT);
         builder.flatItem(JolCraftItems.GUILD_SIGIL.get(), SUB_CONTRACT);
+        builder.flatItem(JolCraftItems.GUILD_SIGIL_MOULD.get(), SUB_CONTRACT);
 
         builder.flatItem(JolCraftItems.CONTRACT_GUILDMASTER.get(), SUB_CONTRACT);
         builder.flatItem(JolCraftItems.CONTRACT_MERCHANT.get(), SUB_CONTRACT);

@@ -5,6 +5,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.custom.tool.ArtisanHammerItem;
 import net.sievert.jolcraft.world.item.custom.tool.ChiselItem;
@@ -249,6 +251,7 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> CONTRACT_BLANK = JolCraftContractItems.registerBlank();
     public static final DeferredItem<Item> CONTRACT_WRITTEN = JolCraftContractItems.registerWritten();
     public static final DeferredItem<Item> CONTRACT_SIGNED = JolCraftContractItems.registerSigned();
+    public static final DeferredItem<Item> GUILD_SIGIL_MOULD = JolCraftContractItems.registerGuildSigilMould();
     public static final DeferredItem<Item> GUILD_SIGIL = JolCraftContractItems.registerGuildSigil();
 
     public static final DeferredItem<Item> CONTRACT_GUILDMASTER = JolCraftContractItems.registerGuildmaster();
@@ -339,10 +342,15 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> BROKEN_DEEPSLATE_PLATES = JolCraftSalvageItems.registerBrokenDeepslatePlates();
     public static final DeferredItem<Item> BROKEN_MITHRIL_PLATE = JolCraftSalvageItems.registerBrokenMithrilPlate();
     public static final DeferredItem<Item> BROKEN_DEEPSLATE_GEAR = JolCraftSalvageItems.registerBrokenDeepslateGear();
-    public static final DeferredItem<Item> BROKEN_DEEPSLATE_PICKAXE_HEAD =
-            JolCraftSalvageItems.registerBrokenDeepslatePickaxeHead();
+    public static final DeferredItem<Item> BROKEN_DEEPSLATE_PICKAXE_HEAD = JolCraftSalvageItems.registerBrokenDeepslatePickaxeHead();
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} items",
+                ITEMS.getEntries().size()
+        );
     }
 }

@@ -39,11 +39,11 @@ public final class JolCraftSalvageItems {
     }
 
     public static DeferredItem<Item> registerExpiredPotion() {
-        return registerSalvage(JolCraftItemIds.EXPIRED_POTION, new Item.Properties().stacksTo(16));
+        return registerSalvage(JolCraftItemIds.EXPIRED_POTION, new Item.Properties().stacksTo(1));
     }
 
     public static DeferredItem<Item> registerIngotMould() {
-        return registerSalvage(JolCraftItemIds.INGOT_MOULD, new Item.Properties().stacksTo(16));
+        return registerSalvage(JolCraftItemIds.INGOT_MOULD, new Item.Properties().stacksTo(1));
     }
 
     public static DeferredItem<Item> registerMithrilScrap() {
@@ -81,14 +81,14 @@ public final class JolCraftSalvageItems {
     }
 
     public static DeferredItem<Item> registerBrokenDeepslateGear() {
-        return registerSalvage(JolCraftItemIds.BROKEN_DEEPSLATE_GEAR, new Item.Properties());
+        return registerSalvage(JolCraftItemIds.BROKEN_DEEPSLATE_GEAR, new Item.Properties().stacksTo(1));
     }
 
     public static DeferredItem<Item> registerBrokenDeepslatePickaxeHead() {
-        return registerSalvage(JolCraftItemIds.BROKEN_DEEPSLATE_PICKAXE_HEAD, new Item.Properties());
+        return registerSalvage(JolCraftItemIds.BROKEN_DEEPSLATE_PICKAXE_HEAD, new Item.Properties().stacksTo(1));
     }
 
-    private static DeferredItem<Item> registerSalvage(String id, Item.Properties properties) {
+    public static DeferredItem<Item> registerSalvage(String id, Item.Properties properties) {
         return JolCraftItemRegistryHelper.registerItem(id, SalvageItem::new, properties);
     }
 }

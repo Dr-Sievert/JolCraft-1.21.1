@@ -5,6 +5,8 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachment;
 import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachment;
 import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachment;
@@ -68,5 +70,11 @@ public final class JolCraftAttachments {
 
     public static void register(IEventBus bus) {
         ATTACHMENT_TYPES.register(bus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} attachments",
+                ATTACHMENT_TYPES.getEntries().size()
+        );
     }
 }

@@ -13,6 +13,8 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.component.custom.BountyData;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
@@ -189,5 +191,11 @@ public final class JolCraftDataComponents {
 
     public static void register(IEventBus eventBus) {
         DATA_COMPONENT_TYPES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} data component types",
+                DATA_COMPONENT_TYPES.getEntries().size()
+        );
     }
 }

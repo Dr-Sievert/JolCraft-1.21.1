@@ -30,10 +30,13 @@ public final class JolCraftContractItems {
     }
 
     public static DeferredItem<Item> registerGuildSigil() {
-        return JolCraftItemRegistryHelper.registerItem(
-                JolCraftItemIds.GUILD_SIGIL,
-                props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_GUILD_SIGIL)
-        );
+        return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.GUILD_SIGIL);
+    }
+
+    public static DeferredItem<Item> registerGuildSigilMould() {
+        return JolCraftItemRegistryHelper.registerItem(JolCraftItemIds.GUILD_SIGIL_MOULD, MouldItem::new, new Item.Properties()
+                .rarity(Rarity.UNCOMMON)
+                .stacksTo(1));
     }
 
     public static DeferredItem<Item> registerGuildmaster() { return registerProfession(JolCraftItemIds.CONTRACT_GUILDMASTER); }

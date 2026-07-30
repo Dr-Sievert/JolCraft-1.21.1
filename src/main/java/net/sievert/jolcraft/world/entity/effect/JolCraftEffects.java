@@ -12,6 +12,8 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.effect.custom.*;
 import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.DisarmedEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.RootedEffect;
@@ -165,5 +167,11 @@ public final class JolCraftEffects {
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} mob effects",
+                MOB_EFFECTS.getEntries().size()
+        );
     }
 }

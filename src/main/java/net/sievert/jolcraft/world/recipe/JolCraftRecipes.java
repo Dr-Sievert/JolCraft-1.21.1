@@ -7,6 +7,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyTaskRecipe;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
@@ -78,5 +80,11 @@ public final class JolCraftRecipes {
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);
         TYPES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} recipe types",
+                TYPES.getEntries().size()
+        );
     }
 }

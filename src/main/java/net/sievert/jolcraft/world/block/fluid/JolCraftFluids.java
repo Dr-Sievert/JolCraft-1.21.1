@@ -15,6 +15,8 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.block.JolCraftFluidIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.custom.DwarvenBrewFluidType;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
@@ -230,6 +232,13 @@ public final class JolCraftFluids {
 
         FLUIDS.register(
                 eventBus
+        );
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} fluid types and {} fluids",
+                FLUID_TYPES.getEntries().size(),
+                FLUIDS.getEntries().size()
         );
     }
 }

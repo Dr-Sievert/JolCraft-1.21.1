@@ -7,6 +7,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.loot.JolCraftLootModifierIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.loot.custom.AddItemModifier;
 import net.sievert.jolcraft.world.loot.custom.AddLootTableModifier;
 
@@ -34,5 +36,11 @@ public final class JolCraftLootModifiers {
 
     public static void register(IEventBus eventBus) {
         LOOT_MODIFIER_SERIALIZERS.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} loot modifiers",
+                LOOT_MODIFIER_SERIALIZERS.getEntries().size()
+        );
     }
 }

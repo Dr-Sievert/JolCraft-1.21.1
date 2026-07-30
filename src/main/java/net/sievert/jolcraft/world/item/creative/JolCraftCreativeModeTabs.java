@@ -193,6 +193,7 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.CONTRACT_BLANK);
                         pOutput.accept(JolCraftItems.CONTRACT_WRITTEN);
                         pOutput.accept(JolCraftItems.CONTRACT_SIGNED);
+                        pOutput.accept(JolCraftItems.GUILD_SIGIL_MOULD);
                         pOutput.accept(JolCraftItems.GUILD_SIGIL);
                         pOutput.accept(JolCraftItems.CONTRACT_GUILDMASTER);
                         pOutput.accept(JolCraftItems.CONTRACT_MERCHANT);

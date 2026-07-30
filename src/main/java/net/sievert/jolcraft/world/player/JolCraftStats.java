@@ -6,6 +6,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.stat.JolCraftStatIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 import java.util.function.Supplier;
 
@@ -51,5 +53,11 @@ public final class JolCraftStats {
 
     public static void register(IEventBus bus) {
         STATS.register(bus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} stats",
+                STATS.getEntries().size()
+        );
     }
 }

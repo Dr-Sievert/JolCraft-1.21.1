@@ -51,7 +51,8 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 )
                 .requires(Items.PURPLE_DYE)
                 .requires(Items.HONEYCOMB)
-                .unlockedByHas(Items.HONEYCOMB)
+                .requires(JolCraftItems.GUILD_SIGIL_MOULD)
+                .unlockedByHas(JolCraftItems.GUILD_SIGIL_MOULD)
                 .save(output, folder(), JolCraftItems.GUILD_SIGIL.get());
 
         VanillaRecipeBuilder.shaped(

@@ -10,6 +10,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
 import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 public final class JolCraftAttributes {
 
@@ -68,5 +70,11 @@ public final class JolCraftAttributes {
 
     public static void register(IEventBus eventBus) {
         ATTRIBUTES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} attributes",
+                ATTRIBUTES.getEntries().size()
+        );
     }
 }

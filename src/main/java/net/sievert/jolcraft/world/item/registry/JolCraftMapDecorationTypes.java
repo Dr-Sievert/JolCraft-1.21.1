@@ -8,6 +8,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 public final class JolCraftMapDecorationTypes {
 
@@ -30,5 +32,11 @@ public final class JolCraftMapDecorationTypes {
 
     public static void register(IEventBus eventBus) {
         MAP_DECORATION_TYPES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} map decoration types",
+                MAP_DECORATION_TYPES.getEntries().size()
+        );
     }
 }

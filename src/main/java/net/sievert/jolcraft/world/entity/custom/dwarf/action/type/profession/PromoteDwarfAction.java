@@ -11,11 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftEntities;
-import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.type.InspectDwarfAction;
-import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.loadout.DwarfLoadouts;
+import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -31,7 +31,9 @@ public class PromoteDwarfAction extends InspectDwarfAction {
     }
 
     @Override
-    public DwarfActionType.Subtype getSubtype() {return DwarfActionType.Subtype.PROMOTE;}
+    public DwarfActionType.Subtype getSubtype() {
+        return DwarfActionType.Subtype.PROMOTE;
+    }
 
     @Override
     public void start() {
@@ -44,7 +46,9 @@ public class PromoteDwarfAction extends InspectDwarfAction {
 
     @Override
     public void tick() {
-        if (ticksRemaining > 0) ticksRemaining--;
+        if (ticksRemaining > 0) {
+            ticksRemaining--;
+        }
 
         if (ticksRemaining == 20) {
             smokeEffect();
@@ -56,12 +60,12 @@ public class PromoteDwarfAction extends InspectDwarfAction {
     }
 
     private void smokeEffect() {
-        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, (float) 0.8, 24, 0.7);
+        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, 0.8F, 24, 0.7D);
         JolCraftSoundHelper.entity(dwarf, SoundEvents.EVOKER_CAST_SPELL, 1.0F, 1.5F);
     }
 
     private void transformEffect() {
-        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, (float) 1.25, 64, 2.5);
+        dwarf.spawnColoredParticles(0.35F, 0.35F, 0.35F, 1.25F, 64, 2.5D);
         JolCraftSoundHelper.entity(dwarf, SoundEvents.EVOKER_CAST_SPELL, 1.5F, 1.0F);
     }
 
@@ -73,6 +77,14 @@ public class PromoteDwarfAction extends InspectDwarfAction {
     @Override
     public void stop() {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+
+        /*
+         * Promotion replaces the entity. Clear the transactional inspect action
+         * before copying the dwarf so the consumed contract is not persisted as
+         * an interrupted action and refunded by the replacement entity.
+         */
+        dwarf.getActionHelper().stopAction(dwarf);
+
         transformToProfession();
         this.previousMainHandItem = ItemStack.EMPTY;
     }
@@ -100,7 +112,6 @@ public class PromoteDwarfAction extends InspectDwarfAction {
             Map.entry(JolCraftItems.CONTRACT_ARTISAN.get(), JolCraftEntities.DWARF_ARTISAN.get()),
             Map.entry(JolCraftItems.CONTRACT_EXPLORER.get(), JolCraftEntities.DWARF_EXPLORER.get()),
             Map.entry(JolCraftItems.CONTRACT_MINER.get(), JolCraftEntities.DWARF_MINER.get()),
-
 
             // Tier 4
             Map.entry(JolCraftItems.CONTRACT_ALCHEMIST.get(), JolCraftEntities.DWARF_ALCHEMIST.get()),
@@ -132,20 +143,53 @@ public class PromoteDwarfAction extends InspectDwarfAction {
         DwarfProfession profession =
                 DwarfProfession.fromEntityType(professionType);
 
-        dwarf.setProfession(profession);
+        AbstractDwarfEntity promotedDwarf =
+                professionType.create(level);
+
+        if (promotedDwarf == null) {
+            JolCraftLogs.error(
+                    JolCraftLogTags.ENTITY,
+                    "Failed to create promoted dwarf entity for profession {}",
+                    profession
+            );
+            return;
+        }
+
+        /*
+         * Copy the complete dwarf state before replacing the entity. This keeps
+         * its UUID, name, appearance, age, health, equipment, attachments and
+         * other persisted data while allowing the registered entity type to
+         * change for rendering and integrations such as Jade.
+         */
+        promotedDwarf.restoreFrom(dwarf);
+        promotedDwarf.setProfession(profession);
+
         DwarfLoadouts.applySpawnLoadout(
-                dwarf,
+                promotedDwarf,
                 level,
-                level.getCurrentDifficultyAt(dwarf.blockPosition()),
+                level.getCurrentDifficultyAt(promotedDwarf.blockPosition()),
                 null
         );
+
+        dwarf.discard();
+
+        if (!level.addWithUUID(promotedDwarf)) {
+            JolCraftLogs.error(
+                    JolCraftLogTags.ENTITY,
+                    "Failed to add promoted dwarf entity for profession {} at {} in {}",
+                    profession,
+                    JolCraftLogs.roundedPos(promotedDwarf),
+                    level.dimension().location()
+            );
+            return;
+        }
 
         JolCraftLogs.info(
                 JolCraftLogTags.ENTITY,
                 "{} at {} in {} promoted by {} to {}",
-                DwarfProfession.getDisplayName(dwarf).getString(),
-                JolCraftLogs.roundedPos(dwarf),
-                dwarf.level().dimension().location(),
+                DwarfProfession.getDisplayName(promotedDwarf).getString(),
+                JolCraftLogs.roundedPos(promotedDwarf),
+                promotedDwarf.level().dimension().location(),
                 player.getDisplayName().getString(),
                 profession
         );

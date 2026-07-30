@@ -11,6 +11,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.worldgen.structure.custom.DwarvenFortressStructure;
 
 import static net.sievert.jolcraft.JolCraft.location;
@@ -43,6 +45,12 @@ public final class JolCraftStructures {
 
         DeferredHolder<StructureType<?>, StructureType<T>> type =
                 STRUCTURE_TYPES.register(path, () -> explicitStructureTypeTyping(codec));
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} structures",
+                STRUCTURE_TYPES.getEntries().size()
+        );
 
         return new RegisteredStructure<>(id, key, setKey, type);
     }

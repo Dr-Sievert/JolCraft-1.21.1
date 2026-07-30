@@ -7,6 +7,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftBlockPredicateTypeIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.worldgen.predicate.custom.DarknessPredicate;
 
 public final class JolCraftBlockPredicateTypes {
@@ -24,5 +26,11 @@ public final class JolCraftBlockPredicateTypes {
 
     public static void register(IEventBus eventBus) {
         BLOCK_PREDICATE_TYPES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} block predicate types",
+                BLOCK_PREDICATE_TYPES.getEntries().size()
+        );
     }
 }

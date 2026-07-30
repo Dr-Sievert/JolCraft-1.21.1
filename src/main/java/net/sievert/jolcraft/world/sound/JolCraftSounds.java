@@ -7,6 +7,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 
 import java.util.function.Supplier;
 
@@ -57,5 +59,11 @@ public final class JolCraftSounds {
 
     public static void register(IEventBus eventBus) {
         SOUND_EVENTS.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} sounds",
+                SOUND_EVENTS.getEntries().size()
+        );
     }
 }

@@ -9,6 +9,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftPotionIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 
 public final class JolCraftPotions {
@@ -125,5 +127,11 @@ public final class JolCraftPotions {
 
     public static void register(IEventBus eventBus) {
         POTIONS.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} potions",
+                POTIONS.getEntries().size()
+        );
     }
 }

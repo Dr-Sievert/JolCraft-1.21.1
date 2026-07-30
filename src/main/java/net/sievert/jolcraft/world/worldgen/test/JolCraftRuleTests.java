@@ -7,6 +7,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftRuleTestIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.worldgen.test.custom.RandomNotAirRuleTest;
 
 public class JolCraftRuleTests {
@@ -18,5 +20,11 @@ public class JolCraftRuleTests {
 
     public static void register(IEventBus eventBus) {
         RULE_TEST_TYPES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} worldgen rule test",
+                RULE_TEST_TYPES.getEntries().size()
+        );
     }
 }

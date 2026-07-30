@@ -11,6 +11,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftProcessorIds;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.worldgen.processor.custom.*;
 
 public final class JolCraftProcessors {
@@ -58,5 +60,11 @@ public final class JolCraftProcessors {
 
     public static void register(IEventBus eventBus) {
         PROCESSOR_TYPES.register(eventBus);
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Queued {} structure processors",
+                PROCESSOR_TYPES.getEntries().size()
+        );
     }
 }

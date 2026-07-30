@@ -110,6 +110,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String CONTRACT_WRITTEN = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.WRITTEN);
     public static final String CONTRACT_SIGNED = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.SIGNED);
     public static final String GUILD_SIGIL = join(JolCraftDictionary.GUILD, JolCraftDictionary.SIGIL);
+    public static final String GUILD_SIGIL_MOULD = join(GUILD_SIGIL, JolCraftDictionary.MOULD);
 
     public static final String CONTRACT_GUILDMASTER = join(JolCraftDictionary.CONTRACT, JolCraftDictionary.GUILDMASTER);
 
