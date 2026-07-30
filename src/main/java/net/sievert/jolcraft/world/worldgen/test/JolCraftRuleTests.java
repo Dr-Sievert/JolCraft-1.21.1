@@ -23,7 +23,7 @@ public class JolCraftRuleTests {
 
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,
-                "Queued {} worldgen rule test",
+                "Queued {} worldgen rule tests",
                 RULE_TEST_TYPES.getEntries().size()
         );
     }

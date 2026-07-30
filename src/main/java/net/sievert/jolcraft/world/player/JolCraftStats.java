@@ -56,7 +56,7 @@ public final class JolCraftStats {
 
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,
-                "Queued {} stats",
+                "Queued {} player stats",
                 STATS.getEntries().size()
         );
     }
