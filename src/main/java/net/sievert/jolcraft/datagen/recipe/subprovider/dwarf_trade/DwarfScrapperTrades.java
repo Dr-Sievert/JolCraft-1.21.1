@@ -44,150 +44,78 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .tradeGroup(
-                                TradeGroup.MAIN
-                        )
-                        .costACoins(
-                                8,
-                                15
-                        )
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                .tradeGroup(TradeGroup.MAIN)
+                .costA(JolCraftItems.SCRAP.get())
+                .noCostB()
+                .coinsResult(1)
+                .maxUses(256)
+                .dwarfXp(5)
+                .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
+                .tradeGroup(TradeGroup.MAIN)
+                .costACoins(8, 15)
+                .noCostB()
+                .result(JolCraftItems.COPPER_SPANNER)
+                .maxUses(3)
+                .dwarfXp(1)
+                .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
+                        .tradeGroup(TradeGroup.MAIN)
+                        .costACoins(24, 32)
                         .noCostB()
-                        .result(
-                                JolCraftItems.COPPER_SPANNER.get(),
-                                1
-                        )
+                        .result(JolCraftItems.IRON_SPANNER)
                         .maxUses(3)
-                        .dwarfXp(10)
+                        .dwarfXp(1)
                         .priceMultiplier(0.05F)
         );
 
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.APPRENTICE
-                        )
-                        .tradeGroup(
-                                TradeGroup.MAIN
-                        )
-                        .costA(
-                                JolCraftItems.SCRAP.get(),
-                                1
-                        )
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .tradeGroup(TradeGroup.MAIN)
+                        .costA(JolCraftItems.SCRAP_HEAP)
                         .noCostB()
-                        .coinsResult(1)
-                        .maxUses(256)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.JOURNEYMAN
-                        )
-                        .tradeGroup(
-                                TradeGroup.MAIN
-                        )
-                        .costACoins(
-                                24,
-                                32
-                        )
-                        .noCostB()
-                        .result(
-                                JolCraftItems.IRON_SPANNER.get(),
-                                1
-                        )
-                        .maxUses(3)
-                        .dwarfXp(40)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.EXPERT
-                        )
-                        .tradeGroup(
-                                TradeGroup.MAIN
-                        )
-                        .costA(
-                                JolCraftItems.SCRAP_HEAP.get(),
-                                1
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                4,
-                                7
-                        )
+                        .coinsResult(4, 7)
                         .maxUses(50)
                         .dwarfXp(4)
                         .priceMultiplier(0.05F)
         );
 
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.MASTER
-                        )
-                        .tradeGroup(
-                                TradeGroup.MAIN
-                        )
-                        .costACoins(
-                                1,
-                                15
-                        )
-                        .costB(
-                                JolCraftItems.SCRAP_HEAP.get(),
-                                1
-                        )
-                        .result(
-                                JolCraftItems.RUSTAGATE.get(),
-                                1
-                        )
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.MASTER)
+                        .tradeGroup(TradeGroup.MAIN)
+                        .costACoins(1, 15)
+                        .costB(JolCraftItems.SCRAP_HEAP)
+                        .result(JolCraftItems.RUSTAGATE)
                         .maxUses(3)
                         .dwarfXp(0)
                         .priceMultiplier(0.05F)
         );
 
-        pooledSalvage(output, tracking, JolCraftItems.EXPIRED_POTION.get(), 1, 3, 1);
-        pooledSalvage(output, tracking, JolCraftItems.OLD_FABRIC.get(), 1, 3, 1);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_PICKAXE.get(), 1, 4, 1);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_AMULET.get(), 1, 4, 1);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_BELT.get(), 1, 4, 1);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_COINS.get(), 1, 4, 1);
-        pooledSalvage(output, tracking, JolCraftItems.RUSTY_TONGS.get(), 1, 4, 1);
-        pooledSalvage(output, tracking, JolCraftItems.INGOT_MOULD.get(), 1, 4, 1);
-
-        pooledSalvage(output, tracking, JolCraftItems.DEEPSLATE_MUG.get(), 3, 5, 3);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_TABLET.get(), 3, 5, 3);
-
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), 3, 5, 3);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), 3, 5, 3);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), 3, 5, 3);
-
-        pooledSalvage(output, tracking, JolCraftItems.MITHRIL_SCRAP.get(), 5, 10, 5);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_MITHRIL_PLATE.get(), 5, 10, 5);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_MITHRIL_SWORD.get(), 5, 10, 5);
+        pooledSalvage(output, tracking, JolCraftItems.EXPIRED_POTION.get(), 1, 3, 3, 1, 3);
+        pooledSalvage(output, tracking, JolCraftItems.OLD_FABRIC.get(), 1, 3, 5, 1, 3);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_PICKAXE.get(), 1, 4, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_AMULET.get(), 1, 4, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_BELT.get(), 1, 4, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_COINS.get(), 1, 4, 5, 3, 3);
+        pooledSalvage(output, tracking, JolCraftItems.RUSTY_TONGS.get(), 1, 4, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.INGOT_MOULD.get(), 1, 4, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.DEEPSLATE_MUG.get(), 3, 5, 3, 1, 3);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_TABLET.get(), 3, 5, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get(), 3, 5, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_GEAR.get(), 3, 5, 3, 1, 2);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_DEEPSLATE_PLATES.get(), 3, 5, 3, 1, 2);
+        pooledMithrilSalvage(output, tracking, JolCraftItems.MITHRIL_SCRAP.get());
+        pooledMithrilSalvage(output, tracking, JolCraftItems.BROKEN_MITHRIL_PLATE.get());
+        pooledMithrilSalvage(output, tracking, JolCraftItems.BROKEN_MITHRIL_SWORD.get());
     }
 
     private void pooledSalvage(
@@ -196,30 +124,45 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
             @NotNull ItemLike item,
             int minGold,
             int maxGold,
-            int dwarfXp
+            int maxUses,
+            int count,
+            int weight
     ) {
         emitOrdered(
                 output,
                 tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .tradeGroup(
-                                TradeGroup.GLOBAL_POOL
-                        )
+                        .tradeGroup(TradeGroup.GLOBAL_POOL)
                         .noMerchantLevel()
-                        .weight(1)
-                        .maxUses(5)
-                        .dwarfXp(dwarfXp)
+                        .weight(weight)
+                        .maxUses(maxUses)
+                        .dwarfXp(1)
                         .priceMultiplier(0.05F)
-                        .costA(
-                                item,
-                                1
-                        )
+                        .costA(item, count)
                         .noCostB()
-                        .coinsResult(
-                                minGold,
-                                maxGold
-                        )
+                        .coinsResult(minGold, maxGold)
+        );
+    }
+
+    private void pooledMithrilSalvage(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull ItemLike item
+    ) {
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create()
+                        .profession(PROFESSION)
+                        .tradeGroup(TradeGroup.GLOBAL_POOL)
+                        .noMerchantLevel()
+                        .maxUses(5)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
+                        .costA(item)
+                        .noCostB()
+                        .coinsResult(3, 10)
         );
     }
 }

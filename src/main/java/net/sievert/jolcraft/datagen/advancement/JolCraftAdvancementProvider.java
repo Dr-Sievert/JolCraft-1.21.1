@@ -152,7 +152,7 @@ public final class JolCraftAdvancementProvider
                 JolCraftAdvancementBuilder.create()
                         .idPath(JolCraftAdvancementIds.TRADE_MERCHANT)
                         .parent(JolCraft.location(JolCraftAdvancementIds.TRADE_DWARF))
-                        .icon(JolCraftItems.RESTOCK_CRATE.get())
+                        .icon(JolCraftItems.REWARD_CRATE.get())
                         .type(AdvancementType.TASK)
                         .display(true, true, false)
                         .criterion(DwarfTradeTrigger.tradedWithProfession(DwarfProfession.MERCHANT))

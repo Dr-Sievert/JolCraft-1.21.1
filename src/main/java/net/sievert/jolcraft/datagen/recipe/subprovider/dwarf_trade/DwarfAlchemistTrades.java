@@ -91,8 +91,8 @@ public record DwarfAlchemistTrades(JolCraftDataProvider<RecipeOutput> parent) im
                 output,
                 tracking,
                 DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
-                        DwarfMerchantData.Level.MASTER,
                         PROFESSION,
+                        DwarfMerchantData.Level.MASTER,
                         DwarfLoreKey.ALCHEMY_RECIPES,
                         20,
                         20,

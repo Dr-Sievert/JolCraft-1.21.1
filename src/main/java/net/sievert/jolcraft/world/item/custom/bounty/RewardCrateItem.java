@@ -113,8 +113,8 @@ public class RewardCrateItem extends Item {
         JolCraftSoundHelper.player(
                 player,
                 SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR,
-                0.60F,
-                0.75F
+                0.30F,
+                0.60F
         );
 
         JolCraftItemHelper.consume(

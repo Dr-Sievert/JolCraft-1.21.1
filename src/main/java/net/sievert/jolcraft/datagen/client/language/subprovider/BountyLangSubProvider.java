@@ -58,7 +58,7 @@ public final class BountyLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_LOCKED, "The crate is marked with unfamiliar symbols.");
 
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED, "The crate is already full.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_FILLED, "The crate is already full!");
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_BOUNTY_CRATE_NO_ITEMS, "You don't have any items to fill the crate.");
 

@@ -342,8 +342,8 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                 output,
                 tracking,
                 DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
-                        DwarfMerchantData.Level.MASTER,
                         PROFESSION,
+                        DwarfMerchantData.Level.MASTER,
                         DwarfLoreKey.ANCIENT_GEMCRAFT,
                         20,
                         20,

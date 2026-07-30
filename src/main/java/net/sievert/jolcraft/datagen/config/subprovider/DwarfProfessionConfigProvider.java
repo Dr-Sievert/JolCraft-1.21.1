@@ -501,19 +501,19 @@ public final class DwarfProfessionConfigProvider
                         TradePoolType.CUMULATIVE,
                         Map.of(
                                 DwarfMerchantData.Level.NOVICE,
-                                2,
+                                3,
 
                                 DwarfMerchantData.Level.APPRENTICE,
-                                2,
+                                3,
 
                                 DwarfMerchantData.Level.JOURNEYMAN,
-                                2,
+                                3,
 
                                 DwarfMerchantData.Level.EXPERT,
-                                2,
+                                3,
 
                                 DwarfMerchantData.Level.MASTER,
-                                2
+                                3
                         ),
                         TradeRerollType.RESTOCK
                 ),

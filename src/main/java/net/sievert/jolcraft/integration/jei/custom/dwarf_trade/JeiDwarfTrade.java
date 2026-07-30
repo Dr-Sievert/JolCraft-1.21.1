@@ -33,6 +33,7 @@ import java.util.Objects;
 public record JeiDwarfTrade(
         @NotNull DwarfTradeRecipe recipe,
         @NotNull DeferredItem<Item> spawnEgg,
+        double tradeChancePerRoll,
         @NotNull JeiItemOutcome outcome,
         @NotNull List<ItemStack> inputAExamples,
         @NotNull List<ItemStack> inputBExamples,
@@ -56,6 +57,15 @@ public record JeiDwarfTrade(
                 spawnEgg,
                 JolCraftDictionary.ENTITY
         );
+
+        if (!Double.isFinite(
+                tradeChancePerRoll
+        ) || tradeChancePerRoll < 0.0D
+                || tradeChancePerRoll > 1.0D) {
+            throw new IllegalArgumentException(
+                    "tradeChancePerRoll must be between 0 and 1"
+            );
+        }
 
         Objects.requireNonNull(
                 outcome,
@@ -101,6 +111,7 @@ public record JeiDwarfTrade(
     public static @NotNull List<JeiDwarfTrade> create(
             @NotNull DwarfTradeRecipe recipe,
             @NotNull DeferredItem<Item> spawnEgg,
+            double tradeChancePerRoll,
             @NotNull List<JeiItemOutcome> outcomes
     ) {
         Objects.requireNonNull(
@@ -182,6 +193,7 @@ public record JeiDwarfTrade(
                     new JeiDwarfTrade(
                             recipe,
                             spawnEgg,
+                            tradeChancePerRoll,
                             outcome,
                             inputAExamples,
                             inputBExamples,
@@ -324,6 +336,10 @@ public record JeiDwarfTrade(
 
     public boolean outputGuaranteedPerRoll() {
         return outputChancePerRoll() >= 1.0D;
+    }
+
+    public boolean tradeGuaranteedPerRoll() {
+        return tradeChancePerRoll >= 1.0D;
     }
 
     private static @NotNull List<ItemStack> materializeInputs(

@@ -32,6 +32,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_SIZE;
+import static net.sievert.jolcraft.integration.jei.util.gui.JeiTextures.ARROW_WIDTH;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -44,13 +45,14 @@ public final class JeiDwarfTradeCategory
     private static final int DWARF_CENTER_X = 105;
     private static final int DWARF_BOTTOM_Y = 55;
     private static final int AMOUNT_Y = 43;
+    private static final int TRADE_CHANCE_Y = 44;
     private static final int CHANCE_Y = 52;
     private static final int ROLLS_Y = 60;
 
     private static final JeiRecipeLayout SINGLE_INPUT_LAYOUT =
             JeiRecipeLayout.singleInputToOutput(
                     2,
-                    45,
+                    48,
                     25,
                     25,
                     1
@@ -60,7 +62,7 @@ public final class JeiDwarfTradeCategory
             JeiRecipeLayout.twoInputsToOutput(
                     2,
                     35,
-                    75,
+                    78,
                     25,
                     27,
                     25,
@@ -140,6 +142,17 @@ public final class JeiDwarfTradeCategory
                 graphics,
                 layout.arrow()
         );
+
+        if (!entry.tradeGuaranteedPerRoll()) {
+            JeiDrawHelper.drawCenteredChance(
+                    graphics,
+                    font,
+                    entry.tradeChancePerRoll(),
+                    layout.arrow().x(),
+                    ARROW_WIDTH,
+                    TRADE_CHANCE_Y
+            );
+        }
 
         JeiDwarfRenderer.drawTradeDwarf(
                 graphics,

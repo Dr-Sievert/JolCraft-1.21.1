@@ -44,47 +44,24 @@ public record DwarfBrewmasterTrades(JolCraftDataProvider<RecipeOutput> parent) i
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                JolCraftItems.GLASS_MUG.get(),
-                                1,
-                                2
-                        )
+                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                        .costA(JolCraftItems.GLASS_MUG.get(), 1, 2)
                         .noCostB()
-                        .coinsResult(
-                                1,
-                                3
-                        )
+                        .coinsResult(1, 3)
                         .maxUses(5)
                         .dwarfXp(2)
                         .priceMultiplier(0.05F)
         );
 
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costACoins(
-                                1,
-                                2
-                        )
+                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                        .costACoins(1, 3)
                         .noCostB()
-                        .result(
-                                Items.SUGAR,
-                                1,
-                                2
-                        )
+                        .result(Items.SUGAR, 1, 2)
                         .maxUses(10)
                         .dwarfXp(1)
                         .priceMultiplier(0.05F)
@@ -274,8 +251,8 @@ public record DwarfBrewmasterTrades(JolCraftDataProvider<RecipeOutput> parent) i
                 output,
                 tracking,
                 DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
-                        DwarfMerchantData.Level.MASTER,
                         PROFESSION,
+                        DwarfMerchantData.Level.MASTER,
                         DwarfLoreKey.FORGOTTEN_BREW_FORMULAS,
                         20,
                         20,

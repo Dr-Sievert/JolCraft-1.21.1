@@ -1552,8 +1552,8 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
     }
 
     public static @NotNull DwarfTradeRecipeBuilder buyLegendaryLoreTome(
-            @Nullable DwarfMerchantData.Level level,
             @Nullable DwarfProfession profession,
+            @Nullable DwarfMerchantData.Level level,
             @Nullable DwarfLoreKey loreKey,
             int legendaryPagesMin,
             int legendaryPagesMax,

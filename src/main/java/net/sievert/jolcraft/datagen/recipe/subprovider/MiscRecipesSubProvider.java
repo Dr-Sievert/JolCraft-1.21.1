@@ -112,14 +112,24 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .save(output, folder(), JolCraftItems.CONTRACT_GUILDMASTER.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.GLASS_MUG.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.GLASS_MUG.get(), 3)
+                )
+                .pattern(" B")
+                .pattern("BB")
+                .pattern(" B")
+                .define('B', Items.GLASS)
+                .unlockedByHas(Items.GLASS)
+                .save(output, folder(), JolCraftItems.GLASS_MUG.getId().getPath() + "_right");
+
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.GLASS_MUG.get(), 3)
                 )
                 .pattern("B ")
                 .pattern("BB")
                 .pattern("B ")
                 .define('B', Items.GLASS)
                 .unlockedByHas(Items.GLASS)
-                .save(output, folder(), JolCraftItems.GLASS_MUG.get());
+                .save(output, folder(), JolCraftItems.GLASS_MUG.getId().getPath() + "_left");
 
         VanillaRecipeBuilder.shapeless(
                         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.QUILL_EMPTY.get())
