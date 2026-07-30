@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -194,7 +195,8 @@ public record SpannerHandInteractions(
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1
-                    )
+                    ),
+                    empty(1)
             );
         }
 
@@ -203,10 +205,6 @@ public record SpannerHandInteractions(
         )) {
             return itemOutput(
                     2,
-                    entry(
-                            JolCraftItems.SCRAP.get(),
-                            100
-                    ),
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
@@ -220,7 +218,8 @@ public record SpannerHandInteractions(
                     entry(
                             Items.LEATHER,
                             15
-                    )
+                    ),
+                    empty(1)
             );
         }
 
@@ -229,10 +228,6 @@ public record SpannerHandInteractions(
         )) {
             return itemOutput(
                     2,
-                    entry(
-                            JolCraftItems.SCRAP.get(),
-                            100
-                    ),
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
@@ -246,7 +241,8 @@ public record SpannerHandInteractions(
                     entry(
                             JolCraftItems.SCRAP_HEAP.get(),
                             5
-                    )
+                    ),
+                    empty(1)
             );
         }
 
@@ -255,10 +251,6 @@ public record SpannerHandInteractions(
         )) {
             return itemOutput(
                     3,
-                    entry(
-                            JolCraftItems.SCRAP.get(),
-                            100
-                    ),
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
@@ -278,7 +270,8 @@ public record SpannerHandInteractions(
                     entry(
                             JolCraftItems.SCRAP_HEAP.get(),
                             10
-                    )
+                    ),
+                    empty(1)
             );
         }
 
@@ -289,10 +282,6 @@ public record SpannerHandInteractions(
                     2,
                     entry(
                             JolCraftItems.SCRAP.get(),
-                            100
-                    ),
-                    entry(
-                            JolCraftItems.SCRAP.get(),
                             1,
                             4,
                             60
@@ -300,7 +289,8 @@ public record SpannerHandInteractions(
                     entry(
                             JolCraftItems.DEEPSLATE_PLATE.get(),
                             15
-                    )
+                    ),
+                    empty(1)
             );
         }
 
@@ -309,10 +299,6 @@ public record SpannerHandInteractions(
         )) {
             return itemOutput(
                     3,
-                    entry(
-                            JolCraftItems.SCRAP.get(),
-                            100
-                    ),
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
@@ -332,7 +318,8 @@ public record SpannerHandInteractions(
                     entry(
                             JolCraftItems.SCRAP_HEAP.get(),
                             20
-                    )
+                    ),
+                    empty(1)
             );
         }
 
@@ -341,10 +328,6 @@ public record SpannerHandInteractions(
         )) {
             return itemOutput(
                     3,
-                    entry(
-                            JolCraftItems.SCRAP.get(),
-                            100
-                    ),
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
@@ -414,6 +397,12 @@ public record SpannerHandInteractions(
         );
 
         return entry;
+    }
+
+    private static @NotNull LootPoolSingletonContainer.Builder<?> empty(
+            int weight
+    ) {
+        return EmptyLootItem.emptyItem().setWeight(weight);
     }
 
     private static @NotNull String recipeId(

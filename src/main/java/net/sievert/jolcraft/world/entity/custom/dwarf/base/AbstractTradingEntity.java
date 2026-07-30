@@ -58,6 +58,12 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
     private static final String NBT_OFFERS = JolCraftStrings.plural(JolCraftDictionary.OFFER);
     private static final String NBT_MERCHANT_DATA =
             JolCraftStrings.underscored(JolCraftDictionary.MERCHANT, JolCraftDictionary.DATA);
+    private static final String NBT_LAST_RESTOCK_TIME =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.LAST,
+                    JolCraftDictionary.RESTOCK,
+                    JolCraftDictionary.TIME
+            );
 
     private static final long TRADE_SOUND_COOLDOWN_TICKS = 8L;
 
@@ -66,7 +72,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     private long lastTradeSoundGameTime = Long.MIN_VALUE;
 
-    public long lastRestockGameTime = 0L;
+    public long lastRestockGameTime;
     public int dwarfXp;
     public int updateMerchantTimer = 0;
     public boolean increaseProfessionLevelOnUpdate = false;
@@ -82,6 +88,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
     protected AbstractTradingEntity(EntityType<? extends AgeableMob> entityType, Level level) {
         super(entityType, level);
+        this.lastRestockGameTime = level.getGameTime();
     }
 
     @Override
@@ -108,6 +115,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                 .ifPresent(tag -> compound.put(NBT_MERCHANT_DATA, tag));
 
         compound.putInt(NBT_XP, this.dwarfXp);
+        compound.putLong(NBT_LAST_RESTOCK_TIME, this.lastRestockGameTime);
 
         if (!this.level().isClientSide && this.offers != null && !this.offers.isEmpty()) {
             compound.put(
@@ -132,6 +140,10 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
         if (compound.contains(NBT_XP, 3)) {
             this.dwarfXp = compound.getInt(NBT_XP);
+        }
+
+        if (compound.contains(NBT_LAST_RESTOCK_TIME, 4)) {
+            this.lastRestockGameTime = compound.getLong(NBT_LAST_RESTOCK_TIME);
         }
 
         if (compound.contains(NBT_OFFERS)) {

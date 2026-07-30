@@ -450,6 +450,12 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_CATEGORY_DWARF_TRADES =
             category(JolCraftDictionary.JEI, pl(JolCraftRecipeIds.DWARF_TRADE));
 
+    public static final String JEI_TOOLTIP_CHANCE_ROLL =
+            tooltip(dot(JolCraftDictionary.CHANCE, JolCraftDictionary.JEI), JolCraftDictionary.ROLL);
+
+    public static final String JEI_TOOLTIP_CHANCE_TOTAL =
+            tooltip(dot(JolCraftDictionary.CHANCE, JolCraftDictionary.JEI), JolCraftDictionary.TOTAL);
+
     public static final String JEI_CATEGORY_LAPIDARY_BENCH =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.LAPIDARY_BENCH);
 

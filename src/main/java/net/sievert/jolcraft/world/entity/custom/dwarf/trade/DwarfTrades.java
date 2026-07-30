@@ -440,11 +440,10 @@ public final class DwarfTrades {
                         resolvedMode
                 );
 
-        int cumulativeRolls =
-                rollsForMode(
+        DwarfProfessionTradePoolConfig cumulativePoolConfig =
+                poolConfigForMode(
                         pools,
                         TradePoolType.CUMULATIVE,
-                        resolvedLevel,
                         resolvedMode
                 );
 
@@ -464,9 +463,10 @@ public final class DwarfTrades {
                 );
 
         List<RecipeHolder<DwarfTradeRecipe>> selectedCumulative =
-                pickWeightedWithoutReplacement(
+                pickCumulativeWeightedWithoutReplacement(
                         cumulativePool,
-                        cumulativeRolls,
+                        cumulativePoolConfig,
+                        resolvedLevel,
                         resolvedRandom
                 );
 
@@ -653,37 +653,41 @@ public final class DwarfTrades {
             @Nullable DwarfMerchantData.Level level,
             @NotNull RefreshMode mode
     ) {
-        if (pools == null
-                || type == null
-                || level == null) {
+        if (level == null) {
             return 0;
         }
 
-        return switch (mode) {
-            case FULL, REROLL ->
-                    pools.get(type)
-                            .map(config ->
-                                    config.rollsFor(
-                                            type,
-                                            level
-                                    )
-                            )
-                            .orElse(0);
+        DwarfProfessionTradePoolConfig config =
+                poolConfigForMode(
+                        pools,
+                        type,
+                        mode
+                );
 
-            case RESTOCK ->
-                    pools.get(type)
-                            .filter(
-                                    DwarfProfessionTradePoolConfig
-                                            ::rerollsOnRestock
-                            )
-                            .map(config ->
-                                    config.rollsFor(
-                                            type,
-                                            level
-                                    )
-                            )
-                            .orElse(0);
-        };
+        return config != null
+                ? config.rollsFor(
+                type,
+                level
+        )
+                : 0;
+    }
+
+    private static @Nullable DwarfProfessionTradePoolConfig poolConfigForMode(
+            @Nullable DwarfProfessionTradePoolsConfig pools,
+            @Nullable TradePoolType type,
+            @NotNull RefreshMode mode
+    ) {
+        if (pools == null
+                || type == null) {
+            return null;
+        }
+
+        return pools.get(type)
+                .filter(config ->
+                        mode != RefreshMode.RESTOCK
+                                || config.rerollsOnRestock()
+                )
+                .orElse(null);
     }
 
     private static @NotNull TradeGroup groupOf(
@@ -734,6 +738,96 @@ public final class DwarfTrades {
         return recipe.merchantLevel()
                 .getId()
                 == currentId;
+    }
+
+    private static @NotNull List<RecipeHolder<DwarfTradeRecipe>>
+    pickCumulativeWeightedWithoutReplacement(
+            @NotNull List<RecipeHolder<DwarfTradeRecipe>> candidates,
+            @Nullable DwarfProfessionTradePoolConfig config,
+            @Nullable DwarfMerchantData.Level merchantLevel,
+            @Nullable RandomSource random
+    ) {
+        if (candidates.isEmpty()
+                || config == null
+                || merchantLevel == null) {
+            return List.of();
+        }
+
+        RandomSource resolvedRandom =
+                random != null
+                        ? random
+                        : RandomSource.create();
+
+        List<RecipeHolder<DwarfTradeRecipe>> remaining =
+                new ArrayList<>(
+                        candidates
+                );
+
+        List<RecipeHolder<DwarfTradeRecipe>> selected =
+                new ArrayList<>();
+
+        /*
+         * Each configured cumulative value is a new level contribution.
+         * Selected recipes stay removed while later levels add their rolls,
+         * so an expert recipe receives the expert rolls plus the master rolls.
+         */
+        for (DwarfMerchantData.Level level :
+                DwarfMerchantData.Level.values()) {
+
+            if (level.getId()
+                    > merchantLevel.getId()) {
+                continue;
+            }
+
+            int rolls =
+                    config.rolls()
+                            .rollsFor(level);
+
+            if (rolls <= 0) {
+                continue;
+            }
+
+            List<RecipeHolder<DwarfTradeRecipe>> eligible =
+                    new ArrayList<>();
+
+            for (RecipeHolder<DwarfTradeRecipe> holder : remaining) {
+                if (isUnlocked(
+                        holder.value(),
+                        level
+                )) {
+                    eligible.add(
+                            holder
+                    );
+                }
+            }
+
+            List<RecipeHolder<DwarfTradeRecipe>> picked =
+                    pickWeightedWithoutReplacement(
+                            eligible,
+                            rolls,
+                            resolvedRandom
+                    );
+
+            if (picked.isEmpty()) {
+                continue;
+            }
+
+            selected.addAll(
+                    picked
+            );
+
+            remaining.removeAll(
+                    picked
+            );
+        }
+
+        sortByPoolThenOrderThenId(
+                selected
+        );
+
+        return List.copyOf(
+                selected
+        );
     }
 
     private static @NotNull List<RecipeHolder<DwarfTradeRecipe>>

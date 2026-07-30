@@ -30,10 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public record JeiDwarfTrade(
+public record JeiDwarfTradeRecipe(
         @NotNull DwarfTradeRecipe recipe,
         @NotNull DeferredItem<Item> spawnEgg,
-        double tradeChancePerRoll,
+        double tradeSelectionChance,
         @NotNull JeiItemOutcome outcome,
         @NotNull List<ItemStack> inputAExamples,
         @NotNull List<ItemStack> inputBExamples,
@@ -47,7 +47,7 @@ public record JeiDwarfTrade(
                     .required(LootContextParams.ORIGIN)
                     .build();
 
-    public JeiDwarfTrade {
+    public JeiDwarfTradeRecipe {
         Objects.requireNonNull(
                 recipe,
                 JolCraftDictionary.RECIPE
@@ -59,11 +59,11 @@ public record JeiDwarfTrade(
         );
 
         if (!Double.isFinite(
-                tradeChancePerRoll
-        ) || tradeChancePerRoll < 0.0D
-                || tradeChancePerRoll > 1.0D) {
+                tradeSelectionChance
+        ) || tradeSelectionChance < 0.0D
+                || tradeSelectionChance > 1.0D) {
             throw new IllegalArgumentException(
-                    "tradeChancePerRoll must be between 0 and 1"
+                    "tradeSelectionChance must be between 0 and 1"
             );
         }
 
@@ -108,10 +108,10 @@ public record JeiDwarfTrade(
         }
     }
 
-    public static @NotNull List<JeiDwarfTrade> create(
+    public static @NotNull List<JeiDwarfTradeRecipe> create(
             @NotNull DwarfTradeRecipe recipe,
             @NotNull DeferredItem<Item> spawnEgg,
-            double tradeChancePerRoll,
+            double tradeSelectionChance,
             @NotNull List<JeiItemOutcome> outcomes
     ) {
         Objects.requireNonNull(
@@ -183,17 +183,17 @@ public record JeiDwarfTrade(
                     );
         }
 
-        List<JeiDwarfTrade> result =
+        List<JeiDwarfTradeRecipe> result =
                 new ArrayList<>(
                         outcomes.size()
                 );
 
         for (JeiItemOutcome outcome : outcomes) {
             result.add(
-                    new JeiDwarfTrade(
+                    new JeiDwarfTradeRecipe(
                             recipe,
                             spawnEgg,
-                            tradeChancePerRoll,
+                            tradeSelectionChance,
                             outcome,
                             inputAExamples,
                             inputBExamples,
@@ -338,8 +338,8 @@ public record JeiDwarfTrade(
         return outputChancePerRoll() >= 1.0D;
     }
 
-    public boolean tradeGuaranteedPerRoll() {
-        return tradeChancePerRoll >= 1.0D;
+    public boolean tradeGuaranteed() {
+        return tradeSelectionChance >= 1.0D;
     }
 
     private static @NotNull List<ItemStack> materializeInputs(
@@ -349,9 +349,7 @@ public record JeiDwarfTrade(
                 new ArrayList<>();
 
         for (ItemStack candidate : cost.candidateItems()) {
-            if (candidate == null
-                    || candidate.isEmpty()
-                    || !cost.test(candidate)) {
+            if (candidate.isEmpty() || !cost.test(candidate)) {
                 continue;
             }
 

@@ -105,7 +105,7 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         pooledSalvage(output, tracking, JolCraftItems.BROKEN_PICKAXE.get(), 1, 4, 3, 1, 2);
         pooledSalvage(output, tracking, JolCraftItems.BROKEN_AMULET.get(), 1, 4, 3, 1, 2);
         pooledSalvage(output, tracking, JolCraftItems.BROKEN_BELT.get(), 1, 4, 3, 1, 2);
-        pooledSalvage(output, tracking, JolCraftItems.BROKEN_COINS.get(), 1, 4, 5, 3, 3);
+        pooledSalvage(output, tracking, JolCraftItems.BROKEN_COINS.get(), 1, 3, 5, 3, 3);
         pooledSalvage(output, tracking, JolCraftItems.RUSTY_TONGS.get(), 1, 4, 3, 1, 2);
         pooledSalvage(output, tracking, JolCraftItems.INGOT_MOULD.get(), 1, 4, 3, 1, 2);
         pooledSalvage(output, tracking, JolCraftItems.DEEPSLATE_MUG.get(), 3, 5, 3, 1, 3);

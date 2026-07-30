@@ -338,7 +338,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.GLOWSTONE, 8, 12, 2, 4, 3
+                Items.GLOWSTONE_DUST, 8, 12, 2, 4, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,

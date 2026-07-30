@@ -293,6 +293,32 @@ public final class JeiDrawHelper {
         );
     }
 
+    public static void drawCenteredChance(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            double chance,
+            @NotNull String translationKey,
+            int startX,
+            int width,
+            int y
+    ) {
+        drawCenteredScaledText(
+                graphics,
+                font,
+                Component.translatable(
+                                translationKey,
+                                formatChance(
+                                        chance
+                                )
+                        )
+                        .getString(),
+                startX,
+                width,
+                y,
+                CHANCE_TEXT_SCALE
+        );
+    }
+
     public static void drawCenteredRolls(
             @NotNull GuiGraphics graphics,
             @NotNull Font font,

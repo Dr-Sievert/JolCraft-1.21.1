@@ -16,16 +16,18 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTrade.AmountRange;
+import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeRecipe.AmountRange;
 import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.render.JeiDwarfRenderer;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -37,15 +39,15 @@ import static net.sievert.jolcraft.integration.jei.util.gui.JeiTextures.ARROW_WI
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class JeiDwarfTradeCategory
-        extends AbstractJeiCategory<JeiDwarfTrade> {
+        extends AbstractJeiCategory<JeiDwarfTradeRecipe> {
 
     private static final int WIDTH = 150;
     private static final int HEIGHT = 68;
 
-    private static final int DWARF_CENTER_X = 105;
+    private static final int DWARF_CENTER_X = 107;
     private static final int DWARF_BOTTOM_Y = 55;
     private static final int AMOUNT_Y = 43;
-    private static final int TRADE_CHANCE_Y = 44;
+    private static final int TRADE_CHANCE_Y = 56;
     private static final int CHANCE_Y = 52;
     private static final int ROLLS_Y = 60;
 
@@ -101,7 +103,7 @@ public final class JeiDwarfTradeCategory
         );
     }
 
-    public static @NotNull RecipeType<JeiDwarfTrade> recipeTypeFor(
+    public static @NotNull RecipeType<JeiDwarfTradeRecipe> recipeTypeFor(
             @NotNull DwarfProfession profession
     ) {
         return JeiRecipeTypes.dwarfTrade(
@@ -111,7 +113,7 @@ public final class JeiDwarfTradeCategory
 
     @Override
     protected void drawRecipe(
-            @NotNull JeiDwarfTrade entry,
+            @NotNull JeiDwarfTradeRecipe entry,
             @NotNull IRecipeSlotsView slots,
             @NotNull GuiGraphics graphics,
             double mouseX,
@@ -143,12 +145,19 @@ public final class JeiDwarfTradeCategory
                 layout.arrow()
         );
 
-        if (!entry.tradeGuaranteedPerRoll()) {
+        if (!entry.tradeGuaranteed()) {
+            boolean cumulative =
+                    entry.recipe().tradeGroup()
+                            == TradeGroup.CUMULATIVE_POOL;
+
             JeiDrawHelper.drawCenteredChance(
                     graphics,
                     font,
-                    entry.tradeChancePerRoll(),
-                    layout.arrow().x(),
+                    entry.tradeSelectionChance(),
+                    cumulative
+                            ? JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_TOTAL
+                            : JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_ROLL,
+                    SINGLE_INPUT_LAYOUT.arrow().x() + 10,
                     ARROW_WIDTH,
                     TRADE_CHANCE_Y
             );
@@ -213,19 +222,20 @@ public final class JeiDwarfTradeCategory
     private static void drawHeader(
             @NotNull GuiGraphics graphics,
             @NotNull Font font,
-            @NotNull JeiDwarfTrade entry
+            @NotNull JeiDwarfTradeRecipe entry
     ) {
         Component level =
                 entry.level() != null
                         ? Component.translatable(
-                        DwarfMerchantData.Level.langKeyFromId(
-                                entry.level()
-                                        .getId()
+                                DwarfMerchantData.Level.langKeyFromId(
+                                        entry.level().getId()
+                                )
                         )
-                )
                         : Component.literal(
-                        JolCraftDictionary.GLOBAL
-                );
+                                JolCraftStrings.toTitleCase(
+                                        JolCraftDictionary.GLOBAL
+                                )
+                        );
 
         JeiDwarfRenderer.drawHeader(
                 graphics,
@@ -268,7 +278,7 @@ public final class JeiDwarfTradeCategory
     @Override
     public void setRecipe(
             IRecipeLayoutBuilder builder,
-            JeiDwarfTrade entry,
+            JeiDwarfTradeRecipe entry,
             IFocusGroup focuses
     ) {
         ItemStack egg =
@@ -356,7 +366,7 @@ public final class JeiDwarfTradeCategory
     }
 
     private static @NotNull JeiRecipeLayout layoutFor(
-            @NotNull JeiDwarfTrade entry
+            @NotNull JeiDwarfTradeRecipe entry
     ) {
         return entry.hasInputB()
                 ? TWO_INPUT_LAYOUT

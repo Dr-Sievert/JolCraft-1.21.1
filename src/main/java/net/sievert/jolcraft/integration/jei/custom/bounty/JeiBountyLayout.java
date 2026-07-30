@@ -51,7 +51,7 @@ public final class JeiBountyLayout {
                     ARROW.x()
                             + ARROW_WIDTH
                             + 5,
-                    29
+                    34
             );
 
     public static final JeiPoint ROLLS =

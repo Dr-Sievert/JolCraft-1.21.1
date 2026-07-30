@@ -336,8 +336,7 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
             }
         }
 
-        if (this.shouldRestock()) {
-            this.restock();
+        if (this.shouldRestock() && !this.restock()) {
             this.lastRestockGameTime = this.level().getGameTime();
         }
 
