@@ -16,10 +16,12 @@ import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyReward
 import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyRewardHelper;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskCategory;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskHelper;
+import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel.JeiFermentingBarrelCategory;
+import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel.JeiFermentingBarrelHelper;
+import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_cauldron.JeiFermentingCauldronCategory;
+import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_cauldron.JeiFermentingCauldronHelper;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeCategory;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeHelper;
-import net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron.JeiFermentingCauldronCategory;
-import net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron.JeiFermentingCauldronHelper;
 import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionCategory;
 import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionHelper;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
@@ -70,6 +72,16 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                             catalysts(
                                     () -> new ItemStack(
                                             Blocks.CAULDRON
+                                    )
+                            )
+                    ),
+                    new JeiCategoryDefinition<>(
+                            JeiFermentingBarrelCategory::new,
+                            JeiRecipeTypes.FERMENTING_BARREL,
+                            JeiFermentingBarrelHelper::getRecipes,
+                            catalysts(
+                                    () -> new ItemStack(
+                                            Blocks.BARREL
                                     )
                             )
                     ),

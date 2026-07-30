@@ -34,6 +34,7 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_LAPIDARY_BENCH, "Lapidary Bench");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_HAND_INTERACTION, "Hand Interaction");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_FERMENTING_CAULDRON, "Fermenting Cauldron");
+        putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_FERMENTING_BARREL, "Fermenting Barrel");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_BOUNTY_TASK, "Bounty Task");
         putManual(translations, JolCraftLanguageKeys.JEI_CATEGORY_BOUNTY_REWARD, "Bounty Reward");
 
@@ -42,10 +43,6 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_SPAWN, "Spawn");
 
         // JEI info pages
-        putManual(translations,
-                JolCraftLanguageKeys.JEI_INFO_FERMENTING_BARREL,
-                "Barrels can be used to gradually age dwarven brew and increase the amplitude of stored effects."
-        );
 
         putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET,

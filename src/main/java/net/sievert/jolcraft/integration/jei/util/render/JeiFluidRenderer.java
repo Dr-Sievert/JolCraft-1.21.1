@@ -1,19 +1,18 @@
-package net.sievert.jolcraft.integration.jei.util.gui.render;
+package net.sievert.jolcraft.integration.jei.util.render;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
-import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
-import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import org.jetbrains.annotations.NotNull;
 
 public final class JeiFluidRenderer {
@@ -50,13 +49,22 @@ public final class JeiFluidRenderer {
                                 stillTexture
                         );
 
-        int tint = extensions.getTintColor(fluid);
+        int tint =
+                extensions.getTintColor(
+                        fluid
+                );
 
-        int red = (tint >> 16) & 0xFF;
+        int red =
+                tint >> 16
+                        & 0xFF;
 
-        int green = (tint >> 8) & 0xFF;
+        int green =
+                tint >> 8
+                        & 0xFF;
 
-        int blue = tint & 0xFF;
+        int blue =
+                tint
+                        & 0xFF;
 
         graphics.fill(
                 x,
@@ -120,24 +128,47 @@ public final class JeiFluidRenderer {
                         width,
                         height
                 );
+
+        addPotionTooltip(
+                slot,
+                fluid
+        );
     }
 
-    public static @NotNull FluidStack unfinishedDwarvenBrew() {
-        FluidStack fluid =
-                new FluidStack(
-                        JolCraftFluids
-                                .UNFINISHED_DWARVEN_BREW
-                                .get(),
-                        FluidType.BUCKET_VOLUME
+    private static void addPotionTooltip(
+            @NotNull IRecipeSlotBuilder slot,
+            @NotNull FluidStack fluid
+    ) {
+        PotionContents potionContents =
+                fluid.getOrDefault(
+                        DataComponents.POTION_CONTENTS,
+                        PotionContents.EMPTY
                 );
 
-        fluid.set(
-                JolCraftDataComponents
-                        .BREW_COLOR
-                        .get(),
-                BrewingColors.UNFINISHED_DWARVEN_BREW
-        );
+        if (!potionContents.hasEffects()) {
+            return;
+        }
 
-        return fluid;
+        slot.addRichTooltipCallback(
+                (
+                        recipeSlot,
+                        tooltip
+                ) -> appendPotionTooltip(
+                        tooltip,
+                        potionContents
+                )
+        );
+    }
+
+    private static void appendPotionTooltip(
+            @NotNull ITooltipBuilder tooltip,
+            @NotNull PotionContents potionContents
+    ) {
+        PotionContents.addPotionTooltip(
+                potionContents.getAllEffects(),
+                tooltip::add,
+                1.0F,
+                20.0F
+        );
     }
 }

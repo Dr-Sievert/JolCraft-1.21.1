@@ -459,6 +459,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_CATEGORY_FERMENTING_CAULDRON =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.FERMENTING_CAULDRON);
 
+    public static final String JEI_CATEGORY_FERMENTING_BARREL =
+            category(JolCraftDictionary.JEI, JolCraftBlockIds.FERMENTING_BARREL);
+
     public static final String JEI_CATEGORY_BOUNTY_TASK =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.BOUNTY_TASK);
 
@@ -479,9 +482,6 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String JEI_CATEGORY_INFO_PAGE =
             category(JolCraftDictionary.JEI, us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE));
-
-    public static final String JEI_INFO_FERMENTING_BARREL =
-            category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), JolCraftBlockIds.FERMENTING_BARREL));
 
     public static final String JEI_INFO_REPUTATION_TABLET =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), us(JolCraftDictionary.REPUTATION, JolCraftDictionary.TABLET)));

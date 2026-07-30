@@ -5,8 +5,9 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyRewardRecipe;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskRecipe;
+import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel.JeiFermentingBarrelRecipe;
+import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_cauldron.JeiFermentingCauldronRecipe;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTrade;
-import net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron.JeiFermentingCauldronRecipe;
 import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionRecipe;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageRecipe;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchRecipe;
@@ -31,6 +32,13 @@ public final class JeiRecipeTypes {
                     JolCraft.MOD_ID,
                     JolCraftJeiIds.FERMENTING_CAULDRON,
                     JeiFermentingCauldronRecipe.class
+            );
+
+    public static final RecipeType<JeiFermentingBarrelRecipe> FERMENTING_BARREL =
+            RecipeType.create(
+                    JolCraft.MOD_ID,
+                    JolCraftJeiIds.FERMENTING_BARREL,
+                    JeiFermentingBarrelRecipe.class
             );
 
     public static final RecipeType<JeiHandInteractionRecipe> HAND_INTERACTION =

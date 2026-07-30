@@ -10,6 +10,44 @@ public final class JeiDrawableHelper {
     private JeiDrawableHelper() {
     }
 
+    public static @NotNull IDrawable texture(
+            @NotNull ResourceLocation texture,
+            int width,
+            int height
+    ) {
+        return new IDrawable() {
+
+            @Override
+            public int getWidth() {
+                return width;
+            }
+
+            @Override
+            public int getHeight() {
+                return height;
+            }
+
+            @Override
+            public void draw(
+                    @NotNull GuiGraphics graphics,
+                    int xOffset,
+                    int yOffset
+            ) {
+                graphics.blit(
+                        texture,
+                        xOffset,
+                        yOffset,
+                        0,
+                        0,
+                        width,
+                        height,
+                        width,
+                        height
+                );
+            }
+        };
+    }
+
     public static @NotNull IDrawable sprite(
             @NotNull ResourceLocation sprite,
             int width,

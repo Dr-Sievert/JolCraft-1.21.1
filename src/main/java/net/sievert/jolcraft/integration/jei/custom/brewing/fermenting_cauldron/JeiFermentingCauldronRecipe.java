@@ -1,11 +1,11 @@
-package net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron;
+package net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_cauldron;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,7 +15,8 @@ public record JeiFermentingCauldronRecipe(
         @NotNull ResourceLocation id,
         @NotNull PreviousInput previousInput,
         @NotNull List<ItemStack> ingredientExamples,
-        @NotNull Result result
+        @NotNull Result result,
+        int brewTicks
 ) {
 
     public JeiFermentingCauldronRecipe {
@@ -39,6 +40,12 @@ public record JeiFermentingCauldronRecipe(
                 result,
                 JolCraftDictionary.RESULT
         );
+
+        if (brewTicks < 0) {
+            throw new IllegalArgumentException(
+                    "Brew ticks must not be negative"
+            );
+        }
     }
 
     public sealed interface PreviousInput
@@ -54,7 +61,9 @@ public record JeiFermentingCauldronRecipe(
             examples =
                     JeiStacks.copyRequired(
                             examples,
-                            "examples"
+                            JolCraftStrings.plural(
+                                    JolCraftDictionary.ITEM
+                            )
                     );
         }
     }
@@ -71,7 +80,7 @@ public record JeiFermentingCauldronRecipe(
 
             if (fluid.isEmpty()) {
                 throw new IllegalArgumentException(
-                        "Fluid input must not be empty"
+                        "Previous input fluid must not be empty"
                 );
             }
 
@@ -82,8 +91,7 @@ public record JeiFermentingCauldronRecipe(
 
     public sealed interface Result
             permits ItemResult,
-            FluidResult,
-            EffectResult {
+            FluidResult {
     }
 
     public record ItemResult(
@@ -94,7 +102,9 @@ public record JeiFermentingCauldronRecipe(
             examples =
                     JeiStacks.copyRequired(
                             examples,
-                            "examples"
+                            JolCraftStrings.plural(
+                                    JolCraftDictionary.ITEM
+                            )
                     );
         }
     }
@@ -111,29 +121,12 @@ public record JeiFermentingCauldronRecipe(
 
             if (fluid.isEmpty()) {
                 throw new IllegalArgumentException(
-                        "Fluid result must not be empty"
+                        "Result fluid must not be empty"
                 );
             }
 
             fluid =
                     fluid.copy();
-        }
-    }
-
-    public record EffectResult(
-            @NotNull MobEffectInstance effect
-    ) implements Result {
-
-        public EffectResult {
-            Objects.requireNonNull(
-                    effect,
-                    JolCraftDictionary.EFFECT
-            );
-
-            effect =
-                    new MobEffectInstance(
-                            effect
-                    );
         }
     }
 }

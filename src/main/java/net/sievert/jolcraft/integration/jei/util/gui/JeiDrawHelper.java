@@ -55,6 +55,7 @@ public final class JeiDrawHelper {
             @NotNull GuiGraphics graphics,
             @NotNull JeiPoint point
     ) {
+        //noinspection SuspiciousNameCombination
         graphics.blit(
                 JeiTextures.RIGHT_CLICK,
                 point.x(),

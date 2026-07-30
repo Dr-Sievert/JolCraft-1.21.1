@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.integration.jei.custom.fermenting_cauldron;
+package net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_cauldron;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -6,19 +6,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.integration.jei.util.fluid.JeiBrewingFluids;
 import net.sievert.jolcraft.integration.jei.util.recipe.ItemInputJeiTranslator;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
-import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
-import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
-import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import org.jetbrains.annotations.NotNull;
@@ -59,11 +55,12 @@ public final class JeiFermentingCauldronHelper {
                         JolCraftRecipes
                                 .FERMENTING_CAULDRON_TYPE
                                 .get(),
-                        holder -> List.of(
-                                translate(
-                                        holder
+                        holder ->
+                                List.of(
+                                        translate(
+                                                holder
+                                        )
                                 )
-                        )
                 )
         );
 
@@ -82,8 +79,21 @@ public final class JeiFermentingCauldronHelper {
         FermentingCauldronRecipe recipe =
                 holder.value();
 
+        boolean usesUnfinishedBrewInput =
+                recipe.effect().isPresent()
+                        || (
+                        recipe.outputFluid()
+                                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW
+                                && recipe.finalizeBrew()
+                                && recipe.lastIngredient().isPresent()
+                );
+
         JeiFermentingCauldronRecipe.PreviousInput previousInput =
-                recipe.lastIngredient()
+                usesUnfinishedBrewInput
+                        ? new JeiFermentingCauldronRecipe.FluidInput(
+                        JeiBrewingFluids.unfinishedDwarvenBrew()
+                )
+                        : recipe.lastIngredient()
                         .<JeiFermentingCauldronRecipe.PreviousInput>map(
                                 input ->
                                         new JeiFermentingCauldronRecipe.ItemInput(
@@ -102,106 +112,51 @@ public final class JeiFermentingCauldronHelper {
                                         )
                         );
 
-        JeiFermentingCauldronRecipe.Result result =
-                recipe.effect()
-                        .<JeiFermentingCauldronRecipe.Result>map(
-                                effect ->
-                                        new JeiFermentingCauldronRecipe.EffectResult(
-                                                effect.effect()
-                                        )
-                        )
-                        .orElseGet(
-                                () ->
-                                        new JeiFermentingCauldronRecipe.FluidResult(
-                                                createRecipeOutputFluid(
-                                                        recipe
-                                                )
-                                        )
-                        );
-
         return new JeiFermentingCauldronRecipe(
                 holder.id(),
                 previousInput,
                 ItemInputJeiTranslator.translate(
                         recipe.ingredient()
                 ),
-                result
+                new JeiFermentingCauldronRecipe.FluidResult(
+                        createRecipeOutputFluid(
+                                recipe
+                        )
+                ),
+                recipe.brewTicks()
         );
     }
 
     private static @NotNull FluidStack createRecipeOutputFluid(
             @NotNull FermentingCauldronRecipe recipe
     ) {
-        return switch (recipe.outputFluid()) {
-            case DWARVEN_BREW -> createBrewFluid(
-                    recipe.finalizeBrew()
-                            ? JolCraftFluids.DWARVEN_BREW.get()
-                            : JolCraftFluids.UNFINISHED_DWARVEN_BREW.get(),
-                    recipe.finalizeBrew()
-                            ? BrewingColors.DWARVEN_BREW
-                            : BrewingColors.UNFINISHED_DWARVEN_BREW
-            );
-
-            case YEAST -> createYeastFluid(
-                    recipe.finalizeBrew()
-                            ? JolCraftFluids.YEAST.get()
-                            : JolCraftFluids.UNFINISHED_YEAST.get(),
-                    recipe.finalizeBrew()
-                            ? BrewingColors.YEAST
-                            : BrewingColors.UNFINISHED_YEAST
-            );
-        };
-    }
-
-    private static @NotNull FluidStack createBrewFluid(
-            @NotNull Fluid fluid,
-            int color
-    ) {
         FluidStack result =
-                createColoredFluid(
-                        fluid,
-                        color
+                switch (recipe.outputFluid()) {
+                    case DWARVEN_BREW ->
+                            recipe.finalizeBrew()
+                                    ? JeiBrewingFluids.dwarvenBrew()
+                                    : JeiBrewingFluids.unfinishedDwarvenBrew();
+
+                    case YEAST ->
+                            recipe.finalizeBrew()
+                                    ? JeiBrewingFluids.yeast()
+                                    : JeiBrewingFluids.unfinishedYeast();
+                };
+
+        recipe.effect()
+                .ifPresent(
+                        effect ->
+                                result.set(
+                                        DataComponents.POTION_CONTENTS,
+                                        result.getOrDefault(
+                                                        DataComponents.POTION_CONTENTS,
+                                                        PotionContents.EMPTY
+                                                )
+                                                .withEffectAdded(
+                                                        effect.effect()
+                                                )
+                                )
                 );
-
-        result.set(
-                DataComponents.POTION_CONTENTS,
-                PotionContents.EMPTY
-        );
-
-        if (fluid == JolCraftFluids.DWARVEN_BREW.get()) {
-            result.set(
-                    JolCraftDataComponents.BREW_AGE.get(),
-                    0L
-            );
-        }
-
-        return result;
-    }
-
-    private static @NotNull FluidStack createYeastFluid(
-            @NotNull Fluid fluid,
-            int color
-    ) {
-        return createColoredFluid(
-                fluid,
-                color
-        );
-    }
-
-    private static @NotNull FluidStack createColoredFluid(
-            @NotNull Fluid fluid,
-            int color
-    ) {
-        FluidStack result =
-                new FluidStack(
-                        fluid,
-                        FluidType.BUCKET_VOLUME
-                );
-
-        result.set(
-                JolCraftDataComponents.BREW_COLOR.get(),
-                color
-        );
 
         return result;
     }
@@ -209,26 +164,11 @@ public final class JeiFermentingCauldronHelper {
     private static void addExtractionRecipes(
             @NotNull List<JeiFermentingCauldronRecipe> result
     ) {
-        FluidStack brew =
-                createBrewFluid(
-                        JolCraftFluids.DWARVEN_BREW.get(),
-                        BrewingColors.DWARVEN_BREW
-                );
-
-        FluidStack yeast =
-                createYeastFluid(
-                        JolCraftFluids.YEAST.get(),
-                        BrewingColors.YEAST
-                );
-
         result.add(
                 new JeiFermentingCauldronRecipe(
                         BREW_MUG_EXTRACTION_ID,
                         new JeiFermentingCauldronRecipe.FluidInput(
-                                withAmount(
-                                        brew,
-                                        DwarvenBrewFluidHelper.MUG_VOLUME
-                                )
+                                JeiBrewingFluids.dwarvenBrewMug()
                         ),
                         List.of(
                                 new ItemStack(
@@ -237,11 +177,10 @@ public final class JeiFermentingCauldronHelper {
                         ),
                         new JeiFermentingCauldronRecipe.ItemResult(
                                 List.of(
-                                        new ItemStack(
-                                                JolCraftItems.DWARVEN_BREW.get()
-                                        )
+                                        JeiBrewingFluids.dwarvenBrewItem()
                                 )
-                        )
+                        ),
+                        0
                 )
         );
 
@@ -249,7 +188,7 @@ public final class JeiFermentingCauldronHelper {
                 new JeiFermentingCauldronRecipe(
                         BREW_BUCKET_EXTRACTION_ID,
                         new JeiFermentingCauldronRecipe.FluidInput(
-                                brew
+                                JeiBrewingFluids.dwarvenBrew()
                         ),
                         List.of(
                                 new ItemStack(
@@ -262,7 +201,8 @@ public final class JeiFermentingCauldronHelper {
                                                 JolCraftItems.DWARVEN_BREW_BUCKET.get()
                                         )
                                 )
-                        )
+                        ),
+                        0
                 )
         );
 
@@ -270,8 +210,7 @@ public final class JeiFermentingCauldronHelper {
                 new JeiFermentingCauldronRecipe(
                         YEAST_BOTTLE_EXTRACTION_ID,
                         new JeiFermentingCauldronRecipe.FluidInput(
-                                withAmount(
-                                        yeast,
+                                JeiBrewingFluids.yeast(
                                         JolCraftBrewingItems.YEAST_BOTTLE_VOLUME
                                 )
                         ),
@@ -286,17 +225,9 @@ public final class JeiFermentingCauldronHelper {
                                                 JolCraftItems.YEAST.get()
                                         )
                                 )
-                        )
+                        ),
+                        0
                 )
         );
-    }
-
-    private static @NotNull FluidStack withAmount(
-            @NotNull FluidStack fluid,
-            int amount
-    ) {
-        FluidStack result = fluid.copy();
-        result.setAmount(amount);
-        return result;
     }
 }

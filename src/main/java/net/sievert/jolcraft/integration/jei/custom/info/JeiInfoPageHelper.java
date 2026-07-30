@@ -1,12 +1,10 @@
 package net.sievert.jolcraft.integration.jei.custom.info;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import java.util.List;
@@ -18,11 +16,6 @@ public final class JeiInfoPageHelper {
     public static List<JeiInfoPageRecipe> getRecipes() {
 
         return List.of(
-                new JeiInfoPageRecipe(
-                        Blocks.BARREL,
-                        JolCraftFluids.DWARVEN_BREW.value(),
-                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_FERMENTING_BARREL)
-                ),
                 new JeiInfoPageRecipe(
                         JolCraftTags.Items.REPUTATION_TABLETS,
                         Component.translatable(JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET)

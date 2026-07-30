@@ -16,7 +16,7 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.integration.jei.custom.bounty.AbstractJeiBountyCategory;
 import net.sievert.jolcraft.integration.jei.custom.bounty.JeiBountyLayout;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
-import net.sievert.jolcraft.integration.jei.util.gui.render.JeiEntityRenderer;
+import net.sievert.jolcraft.integration.jei.util.render.JeiEntityRenderer;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator.NumberRange;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;

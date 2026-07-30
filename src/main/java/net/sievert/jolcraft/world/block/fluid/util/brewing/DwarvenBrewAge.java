@@ -116,6 +116,10 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
         return age;
     }
 
+    public long thresholdTicks() {
+        return thresholdTicks;
+    }
+
     public static DwarvenBrewAge byId(String id) {
         return JolCraftEnumHelper.byStringId(
                 DwarvenBrewAge.class,

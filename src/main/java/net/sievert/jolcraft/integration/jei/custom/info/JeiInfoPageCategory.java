@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.integration.jei.custom.info;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -30,7 +29,8 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawableHelper;
+import net.sievert.jolcraft.integration.jei.util.gui.JeiTextures;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -70,11 +70,10 @@ public final class JeiInfoPageCategory
                 );
 
         this.icon =
-                guiHelper.createDrawableIngredient(
-                        VanillaTypes.ITEM_STACK,
-                        new ItemStack(
-                                JolCraftItems.DWARVEN_TOME.get()
-                        )
+                JeiDrawableHelper.texture(
+                        JeiTextures.INFO,
+                        JeiTextures.INFO_SIZE,
+                        JeiTextures.INFO_SIZE
                 );
     }
 

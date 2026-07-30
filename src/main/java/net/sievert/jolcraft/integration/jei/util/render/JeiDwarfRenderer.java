@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.integration.jei.util.gui.render;
+package net.sievert.jolcraft.integration.jei.util.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

@@ -43,6 +43,15 @@ public final class JeiTextures {
                     "hand_left"
             );
 
+    public static final ResourceLocation INFO =
+            JolCraftTextures.jeiRl(
+                    JolCraftTextures.jeiIcon(
+                            JolCraftDictionary.INFO
+                    )
+            );
+
+    public static final int INFO_SIZE = 16;
+
     public static final int ARROW_WIDTH = 22;
     public static final int ARROW_HEIGHT = 16;
 

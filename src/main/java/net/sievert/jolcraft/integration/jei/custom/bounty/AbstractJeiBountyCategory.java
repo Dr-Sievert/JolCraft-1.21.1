@@ -13,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
-import net.sievert.jolcraft.integration.jei.util.gui.render.JeiDwarfRenderer;
+import net.sievert.jolcraft.integration.jei.util.render.JeiDwarfRenderer;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import org.jetbrains.annotations.NotNull;

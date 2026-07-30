@@ -46,6 +46,14 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
+        VanillaRecipeBuilder.shapeless(
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.GUILD_SIGIL.get())
+                )
+                .requires(Items.PURPLE_DYE)
+                .requires(Items.HONEYCOMB)
+                .unlockedByHas(Items.HONEYCOMB)
+                .save(output, folder(), JolCraftItems.GUILD_SIGIL.get());
+
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftBlocks.HEARTH.get())
                 )

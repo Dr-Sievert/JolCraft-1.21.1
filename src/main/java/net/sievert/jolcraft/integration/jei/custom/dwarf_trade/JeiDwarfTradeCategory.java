@@ -19,7 +19,7 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTrade.AmountRange;
 import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
-import net.sievert.jolcraft.integration.jei.util.gui.render.JeiDwarfRenderer;
+import net.sievert.jolcraft.integration.jei.util.render.JeiDwarfRenderer;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
