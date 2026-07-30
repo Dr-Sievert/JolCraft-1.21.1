@@ -5,7 +5,10 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 public record DwarfBaseTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
@@ -39,6 +42,18 @@ public record DwarfBaseTrades(JolCraftDataProvider<RecipeOutput> parent) impleme
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create()
+                        .profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                        .costACoins(100)
+                        .noCostB()
+                        .result(JolCraftItems.DEV_KEY.get())
+                        .maxUses(10)
+                        .dwarfXp(500)
+                        .priceMultiplier(0.05F)
+        );
     }
 }

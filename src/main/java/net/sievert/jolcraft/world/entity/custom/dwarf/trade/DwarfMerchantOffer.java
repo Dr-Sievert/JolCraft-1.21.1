@@ -255,7 +255,12 @@ public class DwarfMerchantOffer {
     }
 
     public ItemStack getBaseCostA() {
-        return this.baseCostA.itemStack();
+        return this.baseCostA.itemStack()
+                .copyWithCount(
+                        this.getBaseCostCount(
+                                this.baseCostA
+                        )
+                );
     }
 
     public ItemStack getCostA() {
@@ -267,10 +272,18 @@ public class DwarfMerchantOffer {
                 );
     }
 
+    private int getBaseCostCount(
+            DwarfItemCost itemCost
+    ) {
+        return itemCost.requiredCount();
+    }
+
     private int getModifiedCostCount(
             DwarfItemCost itemCost
     ) {
-        int count = itemCost.count();
+        int count = this.getBaseCostCount(
+                itemCost
+        );
 
         int demandAdjustment = Math.max(
                 0,
@@ -288,14 +301,18 @@ public class DwarfMerchantOffer {
                         + demandAdjustment
                         + this.specialPriceDiff,
                 1,
-                itemCost.itemStack()
-                        .getMaxStackSize()
+                itemCost.maxAllowedCount()
         );
     }
 
     public ItemStack getCostB() {
-        return this.costB.map(
-                        DwarfItemCost::itemStack
+        return this.costB.map(itemCost ->
+                        itemCost.itemStack()
+                                .copyWithCount(
+                                        this.getBaseCostCount(
+                                                itemCost
+                                        )
+                                )
                 )
                 .orElse(
                         ItemStack.EMPTY
@@ -422,7 +439,9 @@ public class DwarfMerchantOffer {
 
             return secondCost.test(
                     playerOfferB,
-                    secondCost.count()
+                    this.getBaseCostCount(
+                            secondCost
+                    )
             );
         }
 
@@ -454,7 +473,9 @@ public class DwarfMerchantOffer {
 
             if (!secondCost.test(
                     playerOfferB,
-                    secondCost.count()
+                    this.getBaseCostCount(
+                            secondCost
+                    )
             )) {
                 return false;
             }
@@ -516,7 +537,9 @@ public class DwarfMerchantOffer {
 
             if (!secondCost.take(
                     playerOfferB,
-                    secondCost.count()
+                    this.getBaseCostCount(
+                            secondCost
+                    )
             )) {
                 if (offerACoinsBefore >= 0) {
                     playerOfferA.set(

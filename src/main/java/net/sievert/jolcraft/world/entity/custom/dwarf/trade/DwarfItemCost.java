@@ -83,8 +83,24 @@ public record DwarfItemCost(Holder<Item> item, int count, DataComponentPredicate
         return this.item.is(JolCraftTags.Items.COINS);
     }
 
+    public int maxAllowedCount() {
+        return isCoinCost()
+                ? CoinPouchItem.MAX_COINS
+                : this.itemStack.getMaxStackSize();
+    }
+
+    public int requiredCount() {
+        return Math.max(
+                1,
+                Math.min(
+                        this.count,
+                        maxAllowedCount()
+                )
+        );
+    }
+
     public boolean test(ItemStack stack) {
-        return test(stack, this.count);
+        return test(stack, requiredCount());
     }
 
     public boolean test(ItemStack stack, int requiredCount) {

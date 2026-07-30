@@ -17,7 +17,6 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffers;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.world.gui.container.DwarfMerchantContainer;
 import net.sievert.jolcraft.world.gui.slot.DwarfMerchantResultSlot;
-import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -151,12 +150,12 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
 
     private void moveFromInventoryToPaymentSlot(int slot, DwarfItemCost cost) {
         // Prioritize coin pouch
-        if (cost.item().value() == JolCraftItems.GOLD_COIN.get()) {
+        if (cost.isCoinCost()) {
             for (int i = 3; i < 39; i++) {
                 ItemStack stack = this.slots.get(i).getItem();
                 if (!stack.isEmpty()
                         && stack.getItem() instanceof CoinPouchItem
-                        && stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0) >= cost.count()){
+                        && stack.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0) >= cost.requiredCount()){
 
                     ItemStack pouchCopy = stack.copy();
                     pouchCopy.setCount(1);
