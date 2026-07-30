@@ -6,10 +6,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -402,7 +402,7 @@ public record SpannerHandInteractions(
     private static @NotNull LootPoolSingletonContainer.Builder<?> empty(
             int weight
     ) {
-        return EmptyLootItem.emptyItem().setWeight(weight);
+        return  LootItem.lootTableItem(ItemStack.EMPTY.getItem()).setWeight(weight);
     }
 
     private static @NotNull String recipeId(
