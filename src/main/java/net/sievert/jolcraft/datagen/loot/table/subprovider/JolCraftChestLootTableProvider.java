@@ -1,11 +1,13 @@
 package net.sievert.jolcraft.datagen.loot.table.subprovider;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Items;
@@ -20,7 +22,13 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
@@ -264,70 +272,34 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
                                         .add(LootItem.lootTableItem(JolCraftItems.YEAST).setWeight(3))
                                         .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
                                         .apply(
-                                                SetComponentsFunction.setComponent(
-                                                        DataComponents.POTION_CONTENTS,
-                                                        new PotionContents(
-                                                                Optional.empty(),
-                                                                Optional.empty(),
-                                                                List.of(
-                                                                        new MobEffectInstance(
-                                                                                MobEffects.HEALTH_BOOST,
-                                                                                6000,
-                                                                                0
-                                                                        )
-                                                                )
-                                                        )
+                                                vintageBrewComponent(
+                                                        MobEffects.HEALTH_BOOST,
+                                                        6000,
+                                                        3
                                                 )
                                         )
                                         .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
                                         .apply(
-                                                SetComponentsFunction.setComponent(
-                                                        DataComponents.POTION_CONTENTS,
-                                                        new PotionContents(
-                                                                Optional.empty(),
-                                                                Optional.empty(),
-                                                                List.of(
-                                                                        new MobEffectInstance(
-                                                                                MobEffects.DAMAGE_BOOST,
-                                                                                6000,
-                                                                                0
-                                                                        )
-                                                                )
-                                                        )
+                                                vintageBrewComponent(
+                                                        MobEffects.DAMAGE_RESISTANCE,
+                                                        6000,
+                                                        3
                                                 )
                                         )
                                         .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
                                         .apply(
-                                                SetComponentsFunction.setComponent(
-                                                        DataComponents.POTION_CONTENTS,
-                                                        new PotionContents(
-                                                                Optional.empty(),
-                                                                Optional.empty(),
-                                                                List.of(
-                                                                        new MobEffectInstance(
-                                                                                MobEffects.DAMAGE_RESISTANCE,
-                                                                                6000,
-                                                                                0
-                                                                        )
-                                                                )
-                                                        )
+                                                vintageBrewComponent(
+                                                        MobEffects.DAMAGE_BOOST,
+                                                        6000,
+                                                        3
                                                 )
                                         )
                                         .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
                                         .apply(
-                                                SetComponentsFunction.setComponent(
-                                                        DataComponents.POTION_CONTENTS,
-                                                        new PotionContents(
-                                                                Optional.empty(),
-                                                                Optional.empty(),
-                                                                List.of(
-                                                                        new MobEffectInstance(
-                                                                                MobEffects.NIGHT_VISION,
-                                                                                6000,
-                                                                                0
-                                                                        )
-                                                                )
-                                                        )
+                                                vintageBrewComponent(
+                                                        MobEffects.ABSORPTION,
+                                                        6000,
+                                                        3
                                                 )
                                         )
                         ));
@@ -350,5 +322,42 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
         if (tracking != null) {
             tracking.record(this, key.location().getPath());
         }
+    }
+
+    @SuppressWarnings({"rawtypes", "SameParameterValue"})
+    private static SetComponentsFunction.Builder vintageBrewComponent(
+            Holder<MobEffect> effect,
+            int duration,
+            int amplifier
+    ) {
+        FluidStack brew = new FluidStack(
+                JolCraftFluids.DWARVEN_BREW.get(),
+                DwarvenBrewFluidHelper.MUG_VOLUME
+        );
+
+        brew.set(
+                DataComponents.POTION_CONTENTS,
+                new PotionContents(
+                        Optional.empty(),
+                        Optional.empty(),
+                        List.of(
+                                new MobEffectInstance(
+                                        effect,
+                                        duration,
+                                        amplifier
+                                )
+                        )
+                )
+        );
+
+        brew.set(
+                JolCraftDataComponents.BREW_AGE.get(),
+                DwarvenBrewAge.VINTAGE.thresholdTicks()
+        );
+
+        return SetComponentsFunction.setComponent(
+                JolCraftDataComponents.FLUID_CONTENT.get(),
+                SimpleFluidContent.copyOf(brew)
+        );
     }
 }
