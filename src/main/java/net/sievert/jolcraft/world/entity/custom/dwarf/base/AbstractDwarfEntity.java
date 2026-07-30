@@ -586,7 +586,9 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
         SpawnGroupData out = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
 
         if (!level.isClientSide()) {
-            DwarfLoadouts.applySpawnLoadout(this, level, difficulty, out);
+            DwarfLoadouts.applyLoadout(
+                    this
+            );
         }
 
         return out;

@@ -25,6 +25,7 @@ import net.sievert.jolcraft.datagen.config.JolCraftConfigProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -147,17 +148,36 @@ public final class DwarfProfessionConfigProvider
                 DwarfProfessionConfig.DEFAULTS;
 
         return switch (profession) {
+
+            case NONE ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            defaults.voicePitch(),
+
+                            defaults.canReroll(),
+                            defaults.canEndorse(),
+
+                            defaults.showProgressBar(),
+                            defaults.showLevel(),
+
+                            defaults.rules(),
+                            defaults.sounds(),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
             case GUILDMASTER ->
                     new DwarfProfessionConfig(
                             defaults.requiredTier(),
                             defaults.restockTicks(),
-                            0.8F,
+                            0.82F,
+
+                            false,
+                            false,
 
                             false,
                             true,
-
-                            false,
-                            defaults.showLevel(),
 
                             defaults.rules(),
                             soundsBoth(
@@ -168,46 +188,311 @@ public final class DwarfProfessionConfigProvider
                             defaults.tradePools()
                     );
 
+            case HISTORIAN ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            1.02F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents
+                                            .VILLAGER_WORK_LIBRARIAN
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
             case MERCHANT ->
-                    withTradePools(
-                            defaults,
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            1.05F,
+
                             false,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    JolCraftSounds.COIN_STACK.get()
+                            ),
+                            defaults.attributes(),
                             merchantTradePools()
                     );
 
             case SCRAPPER ->
-                    withTradePools(
-                            defaults,
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            1.10F,
+
                             true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents
+                                            .VILLAGER_WORK_TOOLSMITH
+                            ),
+                            defaults.attributes(),
                             scrapperTradePools()
                     );
 
-            default ->
-                    defaults;
+            case BREWMASTER ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            1.1F,
+
+                            false,
+                            true,
+
+                            false,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents
+                                            .VILLAGER_WORK_FLETCHER
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case GUARD ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.85F,
+
+                            false,
+                            true,
+
+                            false,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.VILLAGER_WORK_WEAPONSMITH
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case KEEPER ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            1.0F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.CROP_PLANTED
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case ARTISAN ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            1.04F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    JolCraftSounds.GEM_CUT.get()
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case EXPLORER ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.95F,
+
+                            true,
+                            true,
+
+                            false,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.METAL_HIT
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case MINER ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.90F,
+
+                            false,
+                            true,
+
+                            false,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.VILLAGER_WORK_MASON
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case ALCHEMIST ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            1.0F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.VILLAGER_WORK_CLERIC
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case ARCANIST ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.88F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.EVOKER_CAST_SPELL
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case PRIEST ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.80F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.BUNDLE_INSERT
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+            case BLACKSMITH ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.92F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.VILLAGER_WORK_TOOLSMITH
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+
+            case CHAMPION ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.85F,
+
+                            false,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.VILLAGER_WORK_CARTOGRAPHER
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
+
+
+            case SMELTER ->
+                    new DwarfProfessionConfig(
+                            defaults.requiredTier(),
+                            defaults.restockTicks(),
+                            0.96F,
+
+                            true,
+                            true,
+
+                            true,
+                            true,
+
+                            defaults.rules(),
+                            soundsBoth(
+                                    SoundEvents.GILDED_BLACKSTONE_HIT
+                            ),
+                            defaults.attributes(),
+                            defaults.tradePools()
+                    );
         };
-    }
-
-    private static DwarfProfessionConfig withTradePools(
-            @NotNull DwarfProfessionConfig defaults,
-            boolean canReroll,
-            @NotNull DwarfProfessionTradePoolsConfig tradePools
-    ) {
-        return new DwarfProfessionConfig(
-                defaults.requiredTier(),
-                defaults.restockTicks(),
-                defaults.voicePitch(),
-
-                canReroll,
-                defaults.canEndorse(),
-
-                defaults.showProgressBar(),
-                defaults.showLevel(),
-
-                defaults.rules(),
-                defaults.sounds(),
-                defaults.attributes(),
-                tradePools
-        );
     }
 
     private static DwarfProfessionTradePoolsConfig merchantTradePools() {
@@ -280,6 +565,7 @@ public final class DwarfProfessionConfigProvider
         );
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static Map.Entry<
             TradePoolType,
             DwarfProfessionTradePoolConfig

@@ -53,12 +53,6 @@ public record DwarfMinerBountyTasks(
                 tracking,
                 DwarfMerchantData.Level.NOVICE,
                 builder -> {
-                    builder.slayWeighted(
-                            EntityType.ZOMBIE,
-                            1,
-                            3,
-                            2
-                    );
 
                     builder.collectWeighted(
                             Items.STONE,
@@ -234,7 +228,7 @@ public record DwarfMinerBountyTasks(
                                 SoundEvents.VILLAGER_WORK_CARTOGRAPHER
                         )
                         .sound2(
-                                SoundEvents.VILLAGER_WORK_CARTOGRAPHER
+                                SoundEvents.VILLAGER_WORK_FISHERMAN
                         );
 
         objectives.accept(builder);

@@ -160,11 +160,8 @@ public class PromoteDwarfAction extends InspectDwarfAction {
         promotedDwarf.restoreFrom(dwarf);
         promotedDwarf.setProfession(profession);
 
-        DwarfLoadouts.applySpawnLoadout(
-                promotedDwarf,
-                level,
-                level.getCurrentDifficultyAt(promotedDwarf.blockPosition()),
-                null
+        DwarfLoadouts.applyLoadout(
+                promotedDwarf
         );
 
         dwarf.discard();

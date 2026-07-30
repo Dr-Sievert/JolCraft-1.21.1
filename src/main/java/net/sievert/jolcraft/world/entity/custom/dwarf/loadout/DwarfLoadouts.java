@@ -1,17 +1,13 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.loadout;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumMap;
@@ -24,10 +20,7 @@ public final class DwarfLoadouts {
 
     @FunctionalInterface
     public interface Provider {
-        void apply(AbstractDwarfEntity dwarf,
-                   ServerLevelAccessor level,
-                   DifficultyInstance difficulty,
-                   @Nullable SpawnGroupData spawnGroupData);
+        void apply(AbstractDwarfEntity dwarf);
     }
 
     private static final Map<DwarfProfession, Provider> PROVIDERS =
@@ -67,10 +60,7 @@ public final class DwarfLoadouts {
         PROVIDERS.put(profession, provider);
     }
 
-    public static void applySpawnLoadout(AbstractDwarfEntity dwarf,
-                                         ServerLevelAccessor level,
-                                         DifficultyInstance difficulty,
-                                         @Nullable SpawnGroupData spawnGroupData) {
+    public static void applyLoadout(AbstractDwarfEntity dwarf) {
 
         Provider provider = PROVIDERS.get(dwarf.getProfession());
         if (provider == null) {
@@ -79,56 +69,35 @@ public final class DwarfLoadouts {
             );
         }
 
-        provider.apply(dwarf, level, difficulty, spawnGroupData);
+        provider.apply(dwarf);
     }
 
-    private static void applyNone(AbstractDwarfEntity dwarf,
-                                  ServerLevelAccessor level,
-                                  DifficultyInstance difficulty,
-                                  @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyNone(AbstractDwarfEntity dwarf) {
     }
 
-    private static void applyAlchemist(AbstractDwarfEntity dwarf,
-                                       ServerLevelAccessor level,
-                                       DifficultyInstance difficulty,
-                                       @Nullable SpawnGroupData spawnGroupData) {
-        dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(Items.GLASS_BOTTLE));
+    private static void applyAlchemist(AbstractDwarfEntity dwarf) {
+        dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DEEPSLATE_PESTLE.get()));
     }
 
-    private static void applyArcanist(AbstractDwarfEntity dwarf,
-                                      ServerLevelAccessor level,
-                                      DifficultyInstance difficulty,
-                                      @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyArcanist(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.WOECRYSTAL.get()));
     }
 
-    private static void applyArtisan(AbstractDwarfEntity dwarf,
-                                     ServerLevelAccessor level,
-                                     DifficultyInstance difficulty,
-                                     @Nullable SpawnGroupData spawnGroupData) {
-        dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DEEPSLATE_CHISEL.get()));
+    private static void applyArtisan(AbstractDwarfEntity dwarf) {
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_CHISEL.get()));
     }
 
-    private static void applyBrewmaster(AbstractDwarfEntity dwarf,
-                                        ServerLevelAccessor level,
-                                        DifficultyInstance difficulty,
-                                        @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyBrewmaster(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.GLASS_MUG.get()));
     }
 
-    private static void applyExplorer(AbstractDwarfEntity dwarf,
-                                      ServerLevelAccessor level,
-                                      DifficultyInstance difficulty,
-                                      @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyExplorer(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get()));
         dwarf.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.LEATHER_LEGGINGS));
         dwarf.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.LEATHER_BOOTS));
     }
 
-    private static void applyGuard(AbstractDwarfEntity dwarf,
-                                   ServerLevelAccessor level,
-                                   DifficultyInstance difficulty,
-                                   @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyGuard(AbstractDwarfEntity dwarf) {
         ItemStack weapon = dwarf.getRandom().nextBoolean()
                 ? new ItemStack(JolCraftItems.DEEPSLATE_AXE.get())
                 : new ItemStack(JolCraftItems.DEEPSLATE_WARHAMMER.get());
@@ -136,66 +105,39 @@ public final class DwarfLoadouts {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, weapon);
     }
 
-    private static void applyGuildmaster(AbstractDwarfEntity dwarf,
-                                         ServerLevelAccessor level,
-                                         DifficultyInstance difficulty,
-                                         @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyGuildmaster(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.CONTRACT_SIGNED.get()));
     }
 
-    private static void applyHistorian(AbstractDwarfEntity dwarf,
-                                       ServerLevelAccessor level,
-                                       DifficultyInstance difficulty,
-                                       @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyHistorian(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.DWARVEN_TOME.get()));
     }
 
-    private static void applyKeeper(AbstractDwarfEntity dwarf,
-                                    ServerLevelAccessor level,
-                                    DifficultyInstance difficulty,
-                                    @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyKeeper(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.BARLEY.get()));
     }
 
-    private static void applyMerchant(AbstractDwarfEntity dwarf,
-                                      ServerLevelAccessor level,
-                                      DifficultyInstance difficulty,
-                                      @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyMerchant(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COIN_POUCH.get()));
     }
 
-    private static void applyMiner(AbstractDwarfEntity dwarf,
-                                   ServerLevelAccessor level,
-                                   DifficultyInstance difficulty,
-                                   @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyMiner(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_PICKAXE.get()));
     }
 
-    private static void applyPriest(AbstractDwarfEntity dwarf,
-                                    ServerLevelAccessor level,
-                                    DifficultyInstance difficulty,
-                                    @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyPriest(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.SUNGLEAM.get()));
     }
 
-    private static void applyScrapper(AbstractDwarfEntity dwarf,
-                                      ServerLevelAccessor level,
-                                      DifficultyInstance difficulty,
-                                      @Nullable SpawnGroupData spawnGroupData) {
-        dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
+    private static void applyScrapper(AbstractDwarfEntity dwarf) {
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
     }
 
-    private static void applyBlacksmith(AbstractDwarfEntity dwarf,
-                                        ServerLevelAccessor level,
-                                        DifficultyInstance difficulty,
-                                        @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyBlacksmith(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get()));
     }
 
-    private static void applyChampion(AbstractDwarfEntity dwarf,
-                                      ServerLevelAccessor level,
-                                      DifficultyInstance difficulty,
-                                      @Nullable SpawnGroupData spawnGroupData) {
+    private static void applyChampion(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.MITHRIL_WARHAMMER.get()));
         dwarf.setItemSlot(EquipmentSlot.HEAD, new ItemStack(JolCraftItems.MITHRIL_HELMET.get()));
         dwarf.setItemSlot(EquipmentSlot.CHEST, new ItemStack(JolCraftItems.MITHRIL_CHESTPLATE.get()));
@@ -203,10 +145,7 @@ public final class DwarfLoadouts {
         dwarf.setItemSlot(EquipmentSlot.FEET, new ItemStack(JolCraftItems.MITHRIL_BOOTS.get()));
     }
 
-    private static void applySmelter(AbstractDwarfEntity dwarf,
-                                     ServerLevelAccessor level,
-                                     DifficultyInstance difficulty,
-                                     @Nullable SpawnGroupData spawnGroupData) {
+    private static void applySmelter(AbstractDwarfEntity dwarf) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.IMPURE_MITHRIL.get()));
     }
 }

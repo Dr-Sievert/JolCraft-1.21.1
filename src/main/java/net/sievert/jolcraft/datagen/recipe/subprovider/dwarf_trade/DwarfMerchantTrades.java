@@ -6,7 +6,6 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -18,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("SameParameterValue")
-public record DwarfMerchantTrades(
-        JolCraftDataProvider<RecipeOutput> parent
-) implements RecipeSubProvider {
+public record DwarfMerchantTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
 
     private static final DwarfProfession PROFESSION =
             DwarfProfession.MERCHANT;
@@ -52,21 +49,11 @@ public record DwarfMerchantTrades(
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-        List<DwarfTradeRecipeBuilder> bountyTrades =
-                new ArrayList<>();
-
-        DwarfTradeRecipeBuilder.addBountyTrades(
-                bountyTrades,
+        addBountyTrades(
+                output,
+                tracking,
                 PROFESSION
         );
-
-        for (DwarfTradeRecipeBuilder trade : bountyTrades) {
-            emitOrdered(
-                    output,
-                    tracking,
-                    trade
-            );
-        }
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.TORCH, 1, 2, 12);
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE, Items.COAL, 1, 2, 5);

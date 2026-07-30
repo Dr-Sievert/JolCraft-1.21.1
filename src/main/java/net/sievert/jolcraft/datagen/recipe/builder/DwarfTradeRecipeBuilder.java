@@ -1648,22 +1648,16 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
                 );
     }
 
-    public static void addBountyTrades(
-            @NotNull Collection<? super DwarfTradeRecipeBuilder> builders,
+    public static @NotNull List<DwarfTradeRecipeBuilder> bountyTrades(
             @Nullable DwarfProfession profession
     ) {
-        Objects.requireNonNull(
-                builders,
-                "builders"
-        );
-
         DwarfProfession resolvedProfession =
                 profession != null
                         ? profession
                         : DwarfProfession.NONE;
 
         if (resolvedProfession == DwarfProfession.NONE) {
-            return;
+            return List.of();
         }
 
         String bountyType =
@@ -1674,8 +1668,11 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
                 || bountyType.equals(
                 JolCraftDictionary.NONE
         )) {
-            return;
+            return List.of();
         }
+
+        List<DwarfTradeRecipeBuilder> builders =
+                new ArrayList<>();
 
         for (DwarfMerchantData.Level level
                 : DwarfMerchantData.Level.values()) {
@@ -1712,7 +1709,7 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
                     level.name()
                             .toLowerCase(Locale.ROOT)
                             + "_"
-                            + resolvedProfession.professionName()
+                            + bountyType
                             + "_"
                             + JolCraftDictionary.BOUNTY;
 
@@ -1721,7 +1718,9 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
                             .profession(
                                     resolvedProfession
                             )
-                            .merchantLevel(level)
+                            .merchantLevel(
+                                    level
+                            )
                             .pool(
                                     TradePoolEntry.MAIN
                             )
@@ -1732,15 +1731,21 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
                             .noCostB()
                             .result(
                                     bountyOutput,
-                                    resolvedProfession.professionName()
+                                    bountyType
                                             + "_"
                                             + JolCraftDictionary.BOUNTY
                             )
                             .maxUses(1)
                             .dwarfXp(0)
                             .priceMultiplier(0.0F)
-                            .fileNameOverride(fileName)
+                            .fileNameOverride(
+                                    fileName
+                            )
             );
         }
+
+        return List.copyOf(
+                builders
+        );
     }
 }

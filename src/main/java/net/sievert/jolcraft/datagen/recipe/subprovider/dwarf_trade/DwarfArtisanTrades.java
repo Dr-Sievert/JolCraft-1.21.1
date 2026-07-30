@@ -6,7 +6,6 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -15,9 +14,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import org.jetbrains.annotations.NotNull;
 
-public record DwarfArtisanTrades(
-        JolCraftDataProvider<RecipeOutput> parent
-) implements RecipeSubProvider {
+public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
 
     private static final DwarfProfession PROFESSION =
             DwarfProfession.ARTISAN;

@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.DwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
+import net.sievert.jolcraft.world.entity.custom.dwarf.loadout.DwarfLoadouts;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionHelper;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +72,10 @@ public final class JeiDwarfRenderer {
                         AbstractDwarfEntity.PROFESSION,
                         profession.getId()
                 );
+
+        DwarfLoadouts.applyLoadout(
+                dwarf
+        );
 
         DWARF_CACHE.put(
                 profession,

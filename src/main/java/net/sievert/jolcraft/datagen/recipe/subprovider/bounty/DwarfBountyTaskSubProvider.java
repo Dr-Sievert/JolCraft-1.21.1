@@ -5,6 +5,8 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task.DwarfChampionBountyTasks;
+import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task.DwarfKeeperBountyTasks;
 import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task.DwarfMerchantBountyTasks;
 import net.sievert.jolcraft.datagen.recipe.subprovider.bounty.task.DwarfMinerBountyTasks;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,8 @@ public record DwarfBountyTaskSubProvider(JolCraftDataProvider<RecipeOutput> pare
     @Override
     public @NotNull List<? extends JolCraftSubDataProvider<RecipeOutput>> subProviders() {
         return List.of(
+                new DwarfChampionBountyTasks(this),
+                new DwarfKeeperBountyTasks(this),
                 new DwarfMerchantBountyTasks(this),
                 new DwarfMinerBountyTasks(this)
         );

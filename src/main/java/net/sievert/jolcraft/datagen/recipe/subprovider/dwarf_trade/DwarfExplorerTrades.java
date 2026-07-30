@@ -8,7 +8,6 @@ import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -19,9 +18,7 @@ import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompass
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 
-public record DwarfExplorerTrades(
-        JolCraftDataProvider<RecipeOutput> parent
-) implements RecipeSubProvider {
+public record DwarfExplorerTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
 
     private static final DwarfProfession PROFESSION =
             DwarfProfession.EXPLORER;

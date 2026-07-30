@@ -289,6 +289,14 @@ public final class BountyTaskRecipeBuilder
         return this;
     }
 
+    public BountyTaskRecipeBuilder slayWeighted(
+            @NotNull EntityType<?> entity,
+            int count,
+            int weight
+    ) {
+        return  slayWeighted(entity, count, count, weight);
+    }
+
     @Override
     public @NotNull DataResult<
             JolCraftDataEmission<

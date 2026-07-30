@@ -6,7 +6,6 @@ import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -14,9 +13,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
-public record DwarfKeeperTrades(
-        JolCraftDataProvider<RecipeOutput> parent
-) implements RecipeSubProvider {
+public record DwarfKeeperTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
 
     private static final DwarfProfession PROFESSION =
             DwarfProfession.KEEPER;
@@ -48,6 +45,12 @@ public record DwarfKeeperTrades(
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
+        addBountyTrades(
+                output,
+                tracking,
+                PROFESSION
+        );
+
         emitOrdered(
                 output,
                 tracking,

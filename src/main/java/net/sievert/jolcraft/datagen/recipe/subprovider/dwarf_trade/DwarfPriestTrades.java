@@ -1,12 +1,11 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
-import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
-public record DwarfPriestTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
+public record DwarfPriestTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
 
     public DwarfPriestTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
         this.parent = parent;
