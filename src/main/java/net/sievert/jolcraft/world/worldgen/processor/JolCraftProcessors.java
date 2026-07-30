@@ -43,6 +43,12 @@ public final class JolCraftProcessors {
     public static final ProcessorDef<BookshelfTomeProcessor> BOOKSHELF_TOME =
             registerProcessor(JolCraftProcessorIds.BOOKSHELF_TOME, BookshelfTomeProcessor.CODEC);
 
+    public static final ProcessorDef<RandomFermentingContainerProcessor> RANDOM_FERMENTING_CONTAINER =
+            registerProcessor(
+                    JolCraftProcessorIds.RANDOM_FERMENTING_CONTAINER,
+                    RandomFermentingContainerProcessor.CODEC
+            );
+
     public record ProcessorDef<T extends StructureProcessor>(
             DeferredHolder<StructureProcessorType<?>, StructureProcessorType<T>> type,
             ResourceKey<StructureProcessorList> list

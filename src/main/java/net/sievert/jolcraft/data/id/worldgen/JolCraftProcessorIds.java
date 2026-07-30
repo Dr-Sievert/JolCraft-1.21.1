@@ -15,4 +15,5 @@ public final class JolCraftProcessorIds extends JolCraftIds {
     public static final String RANDOM_CAVE_IN = join(JolCraftDictionary.RANDOM, JolCraftDictionary.CAVE, JolCraftDictionary.IN);
     public static final String LANTERN = JolCraftDictionary.LANTERN;
     public static final String BOOKSHELF_TOME = join(JolCraftTemplatePoolIds.BOOKSHELF, JolCraftDictionary.TOME);
+    public static final String RANDOM_FERMENTING_CONTAINER = join(JolCraftDictionary.RANDOM, JolCraftDictionary.FERMENTING, JolCraftDictionary.CONTAINER);
 }

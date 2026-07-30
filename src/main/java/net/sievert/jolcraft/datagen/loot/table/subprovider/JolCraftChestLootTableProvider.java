@@ -265,44 +265,48 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(3))
-                                        .add(LootItem.lootTableItem(JolCraftItems.GLASS_MUG).setWeight(10))
-                                        .add(LootItem.lootTableItem(Items.WHEAT).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY).setWeight(5).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY_MALT).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(JolCraftItems.YEAST).setWeight(3))
-                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
-                                        .apply(
-                                                vintageBrewComponent(
-                                                        MobEffects.HEALTH_BOOST,
-                                                        6000,
-                                                        3
-                                                )
-                                        )
-                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
-                                        .apply(
-                                                vintageBrewComponent(
-                                                        MobEffects.DAMAGE_RESISTANCE,
-                                                        6000,
-                                                        3
-                                                )
-                                        )
-                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
-                                        .apply(
-                                                vintageBrewComponent(
+                                        .add(LootItem.lootTableItem(JolCraftItems.GLASS_MUG).setWeight(20))
+                                        .add(LootItem.lootTableItem(Items.WHEAT).setWeight(10)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY).setWeight(10)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY_MALT).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.YEAST).setWeight(6))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)
+                                                .apply(vintageBrewComponent(
                                                         MobEffects.DAMAGE_BOOST,
                                                         6000,
                                                         3
+                                                        )
                                                 )
                                         )
-                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1))
-                                        .apply(
-                                                vintageBrewComponent(
-                                                        MobEffects.ABSORPTION,
-                                                        6000,
-                                                        3
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)
+                                                .apply(vintageBrewComponent(
+                                                                MobEffects.DAMAGE_RESISTANCE,
+                                                                6000,
+                                                                3
+                                                        )
                                                 )
                                         )
-                        ));
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)
+                                                .apply(vintageBrewComponent(
+                                                                MobEffects.HEALTH_BOOST,
+                                                                6000,
+                                                                3
+                                                        )
+                                                )
+                                        )
+                                        .add(LootItem.lootTableItem(JolCraftItems.DWARVEN_BREW).setWeight(1)
+                                                .apply(vintageBrewComponent(
+                                                                MobEffects.ABSORPTION,
+                                                                6000,
+                                                                3
+                                                        )
+                                                )
+                                        )
+                        )
+        );
 
         tracking.logTrackedOutputCount(
                 this,

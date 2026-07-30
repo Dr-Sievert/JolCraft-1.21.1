@@ -134,7 +134,7 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
 
         // Structure maps
         putManual(translations, JolCraftStrings.dotted(BuiltInRegistries.ITEM.getKey(Items.FILLED_MAP).getPath(), JolCraftStructureIds.DWARVEN_FORTRESS),
-                "Map to a Dwarven Fortress");
+                "Dwarven Fortress Map");
 
         //Trim Patterns
         addTrimTemplateItems(translations);

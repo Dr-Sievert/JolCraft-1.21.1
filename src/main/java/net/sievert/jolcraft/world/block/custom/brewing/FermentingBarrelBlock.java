@@ -73,6 +73,10 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
             InteractionHand hand,
             BlockHitResult hit
     ) {
+        if (stack.isEmpty()) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         if (blockEntity instanceof FermentingBarrelBlockEntity barrel) {
@@ -95,7 +99,9 @@ public final class FermentingBarrelBlock extends BaseEntityBlock {
                     JolCraftLogTags.BLOCK,
                     "FermentingBarrel at {} has missing/wrong BlockEntity (found={})",
                     JolCraftLogs.roundedPos(pos),
-                    blockEntity == null ? "null" : blockEntity.getClass().getName()
+                    blockEntity == null
+                            ? "null"
+                            : blockEntity.getClass().getName()
             );
         }
 

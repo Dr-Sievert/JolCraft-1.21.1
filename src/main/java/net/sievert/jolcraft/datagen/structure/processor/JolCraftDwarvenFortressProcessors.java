@@ -3,6 +3,8 @@ package net.sievert.jolcraft.datagen.structure.processor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
@@ -12,6 +14,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.structure.util.AbstractProcessorProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
 import net.sievert.jolcraft.world.worldgen.processor.custom.*;
 import net.sievert.jolcraft.world.worldgen.test.custom.RandomNotAirRuleTest;
@@ -163,6 +166,52 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
                 new AddLootTableProcessor(
                         BuiltInRegistries.BLOCK.getKey(Blocks.BARREL),
                         JolCraftLootTables.Chests.SUPPLIES
+                ),
+                new RandomFermentingContainerProcessor(
+                        0.05F,
+                        List.of(
+                                new RandomFermentingContainerProcessor.BrewEntry(
+                                        List.of(
+                                                new MobEffectInstance(
+                                                        MobEffects.DAMAGE_BOOST,
+                                                        6000,
+                                                        3
+                                                )
+                                        ),
+                                        1
+                                ),
+                                new RandomFermentingContainerProcessor.BrewEntry(
+                                        List.of(
+                                                new MobEffectInstance(
+                                                        MobEffects.DAMAGE_RESISTANCE,
+                                                        6000,
+                                                        3
+                                                )
+                                        ),
+                                        1
+                                ),
+                                new RandomFermentingContainerProcessor.BrewEntry(
+                                        List.of(
+                                                new MobEffectInstance(
+                                                        MobEffects.HEALTH_BOOST,
+                                                        6000,
+                                                        3
+                                                )
+                                        ),
+                                        1
+                                ),
+                                new RandomFermentingContainerProcessor.BrewEntry(
+                                        List.of(
+                                                new MobEffectInstance(
+                                                        MobEffects.ABSORPTION,
+                                                        6000,
+                                                        3
+                                                )
+                                        ),
+                                        1
+                                )
+                        ),
+                        DwarvenBrewAge.VINTAGE
                 )
         );
 

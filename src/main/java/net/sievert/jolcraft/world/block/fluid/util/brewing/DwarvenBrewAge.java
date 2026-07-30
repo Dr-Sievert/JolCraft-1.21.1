@@ -1,5 +1,7 @@
 package net.sievert.jolcraft.world.block.fluid.util.brewing;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
@@ -34,6 +36,12 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
             3,
             JolCraftLanguageKeys.BREW_AGE_VINTAGE
     );
+
+    public static final Codec<DwarvenBrewAge> CODEC =
+            Codec.STRING.comapFlatMap(
+                    DwarvenBrewAge::decode,
+                    DwarvenBrewAge::getId
+            );
 
     private final long thresholdTicks;
     private final int amplifierBonus;
@@ -118,6 +126,18 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
 
     public long thresholdTicks() {
         return thresholdTicks;
+    }
+
+    private static DataResult<DwarvenBrewAge> decode(String id) {
+        DwarvenBrewAge age = JolCraftEnumHelper.byStringIdNullable(
+                DwarvenBrewAge.class,
+                id,
+                null
+        );
+
+        return age == null
+                ? DataResult.error(() -> "Unknown dwarven brew age: " + id)
+                : DataResult.success(age);
     }
 
     public static DwarvenBrewAge byId(String id) {
