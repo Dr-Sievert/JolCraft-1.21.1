@@ -78,6 +78,9 @@ public final class JolCraftClientModEvents {
         EntityRenderers.register(JolCraftEntities.DWARF_ALCHEMIST.get(), ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_ALCHEMIST.get())); entityRenderers++;
         EntityRenderers.register(JolCraftEntities.DWARF_ARCANIST.get(), ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_ARCANIST.get())); entityRenderers++;
         EntityRenderers.register(JolCraftEntities.DWARF_PRIEST.get(), ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_PRIEST.get())); entityRenderers++;
+        EntityRenderers.register(JolCraftEntities.DWARF_BLACKSMITH.get(), ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_BLACKSMITH.get())); entityRenderers++;
+        EntityRenderers.register(JolCraftEntities.DWARF_CHAMPION.get(), ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_CHAMPION.get(), 1.1f)); entityRenderers++;
+        EntityRenderers.register(JolCraftEntities.DWARF_SMELTER.get(), ctx -> DwarfRenderer.profession(ctx, JolCraftEntities.DWARF_SMELTER.get())); entityRenderers++;
 
         // Animals
         EntityRenderers.register(JolCraftEntities.MUFFHORN.get(), MuffhornRenderer::new); entityRenderers++;

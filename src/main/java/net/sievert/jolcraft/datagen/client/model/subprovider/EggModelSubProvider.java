@@ -41,6 +41,9 @@ public record EggModelSubProvider(@NotNull JolCraftModelProvider parent) impleme
         builder.delegateItemModel(JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
         builder.delegateItemModel(JolCraftItems.DWARF_ARCANIST_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
         builder.delegateItemModel(JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_BLACKSMITH_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_CHAMPION_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
+        builder.delegateItemModel(JolCraftItems.DWARF_SMELTER_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
 
         builder.delegateItemModel(JolCraftItems.MUFFHORN_SPAWN_EGG.get(), SPAWN_EGG_MODEL);
     }

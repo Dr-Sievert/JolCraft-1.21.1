@@ -56,6 +56,9 @@ public final class DwarfLoadouts {
         register(DwarfProfession.MINER, DwarfLoadouts::applyMiner);
         register(DwarfProfession.PRIEST, DwarfLoadouts::applyPriest);
         register(DwarfProfession.SCRAPPER, DwarfLoadouts::applyScrapper);
+        register(DwarfProfession.BLACKSMITH, DwarfLoadouts::applyBlacksmith);
+        register(DwarfProfession.CHAMPION, DwarfLoadouts::applyChampion);
+        register(DwarfProfession.SMELTER, DwarfLoadouts::applySmelter);
     }
 
     public static void register(DwarfProfession profession, Provider provider) {
@@ -180,5 +183,30 @@ public final class DwarfLoadouts {
                                       DifficultyInstance difficulty,
                                       @Nullable SpawnGroupData spawnGroupData) {
         dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
+    }
+
+    private static void applyBlacksmith(AbstractDwarfEntity dwarf,
+                                        ServerLevelAccessor level,
+                                        DifficultyInstance difficulty,
+                                        @Nullable SpawnGroupData spawnGroupData) {
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get()));
+    }
+
+    private static void applyChampion(AbstractDwarfEntity dwarf,
+                                      ServerLevelAccessor level,
+                                      DifficultyInstance difficulty,
+                                      @Nullable SpawnGroupData spawnGroupData) {
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.MITHRIL_WARHAMMER.get()));
+        dwarf.setItemSlot(EquipmentSlot.HEAD, new ItemStack(JolCraftItems.MITHRIL_HELMET.get()));
+        dwarf.setItemSlot(EquipmentSlot.CHEST, new ItemStack(JolCraftItems.MITHRIL_CHESTPLATE.get()));
+        dwarf.setItemSlot(EquipmentSlot.LEGS, new ItemStack(JolCraftItems.MITHRIL_LEGGINGS.get()));
+        dwarf.setItemSlot(EquipmentSlot.FEET, new ItemStack(JolCraftItems.MITHRIL_BOOTS.get()));
+    }
+
+    private static void applySmelter(AbstractDwarfEntity dwarf,
+                                     ServerLevelAccessor level,
+                                     DifficultyInstance difficulty,
+                                     @Nullable SpawnGroupData spawnGroupData) {
+        dwarf.setItemSlot(EquipmentSlot.OFFHAND, new ItemStack(JolCraftItems.IMPURE_MITHRIL.get()));
     }
 }

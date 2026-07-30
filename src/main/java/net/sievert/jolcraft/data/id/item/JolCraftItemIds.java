@@ -157,6 +157,9 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String DWARF_ALCHEMIST_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.ALCHEMIST, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
     public static final String DWARF_ARCANIST_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.ARCANIST, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
     public static final String DWARF_PRIEST_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.PRIEST, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_BLACKSMITH_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.BLACKSMITH, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_CHAMPION_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.CHAMPION, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
+    public static final String DWARF_SMELTER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.SMELTER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
 
     public static final String MUFFHORN_SPAWN_EGG = join(JolCraftCreatureIds.MUFFHORN, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
 

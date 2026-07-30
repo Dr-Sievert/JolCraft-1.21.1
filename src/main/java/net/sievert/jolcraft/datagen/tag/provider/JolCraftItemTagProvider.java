@@ -318,7 +318,10 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.DWARF_MINER_SPAWN_EGG.get())
                 .add(JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG.get())
                 .add(JolCraftItems.DWARF_ARCANIST_SPAWN_EGG.get())
-                .add(JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get());
+                .add(JolCraftItems.DWARF_PRIEST_SPAWN_EGG.get())
+                .add(JolCraftItems.DWARF_BLACKSMITH_SPAWN_EGG.get())
+                .add(JolCraftItems.DWARF_CHAMPION_SPAWN_EGG.get())
+                .add(JolCraftItems.DWARF_SMELTER_SPAWN_EGG.get());
 
         target.tag(JolCraftTags.Items.CREATURE_SPAWN_EGGS)
                 .add(JolCraftItems.MUFFHORN_SPAWN_EGG.get());

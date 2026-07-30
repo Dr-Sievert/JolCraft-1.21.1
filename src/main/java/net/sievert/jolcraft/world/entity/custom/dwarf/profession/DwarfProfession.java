@@ -24,7 +24,10 @@ public enum DwarfProfession implements JolCraftEnumHelper.StringId {
     MERCHANT(JolCraftDwarfIds.DWARF_MERCHANT),
     MINER(JolCraftDwarfIds.DWARF_MINER),
     PRIEST(JolCraftDwarfIds.DWARF_PRIEST),
-    SCRAPPER(JolCraftDwarfIds.DWARF_SCRAPPER);
+    SCRAPPER(JolCraftDwarfIds.DWARF_SCRAPPER),
+    BLACKSMITH(JolCraftDwarfIds.DWARF_BLACKSMITH),
+    CHAMPION(JolCraftDwarfIds.DWARF_CHAMPION),
+    SMELTER(JolCraftDwarfIds.DWARF_SMELTER);
 
     private final String id;
 

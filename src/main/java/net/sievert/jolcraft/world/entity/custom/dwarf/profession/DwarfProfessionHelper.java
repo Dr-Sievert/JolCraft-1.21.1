@@ -40,6 +40,9 @@ public final class DwarfProfessionHelper {
         TYPES.put(DwarfProfession.MINER, JolCraftEntities.DWARF_MINER);
         TYPES.put(DwarfProfession.PRIEST, JolCraftEntities.DWARF_PRIEST);
         TYPES.put(DwarfProfession.SCRAPPER, JolCraftEntities.DWARF_SCRAPPER);
+        TYPES.put(DwarfProfession.BLACKSMITH, JolCraftEntities.DWARF_BLACKSMITH);
+        TYPES.put(DwarfProfession.CHAMPION, JolCraftEntities.DWARF_CHAMPION);
+        TYPES.put(DwarfProfession.SMELTER, JolCraftEntities.DWARF_SMELTER);
 
         // Spawn eggs
         SPAWN_EGGS.put(DwarfProfession.NONE, JolCraftItems.DWARF_SPAWN_EGG);
@@ -56,6 +59,9 @@ public final class DwarfProfessionHelper {
         SPAWN_EGGS.put(DwarfProfession.ALCHEMIST, JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG);
         SPAWN_EGGS.put(DwarfProfession.ARCANIST, JolCraftItems.DWARF_ARCANIST_SPAWN_EGG);
         SPAWN_EGGS.put(DwarfProfession.PRIEST, JolCraftItems.DWARF_PRIEST_SPAWN_EGG);
+        SPAWN_EGGS.put(DwarfProfession.BLACKSMITH, JolCraftItems.DWARF_BLACKSMITH_SPAWN_EGG);
+        SPAWN_EGGS.put(DwarfProfession.CHAMPION, JolCraftItems.DWARF_CHAMPION_SPAWN_EGG);
+        SPAWN_EGGS.put(DwarfProfession.SMELTER, JolCraftItems.DWARF_SMELTER_SPAWN_EGG);
 
         // Contracts
         CONTRACTS.put(DwarfProfession.NONE, JolCraftItems.CONTRACT_SIGNED);
@@ -72,6 +78,9 @@ public final class DwarfProfessionHelper {
         CONTRACTS.put(DwarfProfession.MINER, JolCraftItems.CONTRACT_MINER);
         CONTRACTS.put(DwarfProfession.PRIEST, JolCraftItems.CONTRACT_PRIEST);
         CONTRACTS.put(DwarfProfession.SCRAPPER, JolCraftItems.CONTRACT_SCRAPPER);
+        CONTRACTS.put(DwarfProfession.BLACKSMITH, JolCraftItems.CONTRACT_BLACKSMITH);
+        CONTRACTS.put(DwarfProfession.CHAMPION, JolCraftItems.CONTRACT_CHAMPION);
+        CONTRACTS.put(DwarfProfession.SMELTER, JolCraftItems.CONTRACT_SMELTER);
     }
 
     public static EntityType<DwarfEntity> getEntityType(DwarfProfession profession) {

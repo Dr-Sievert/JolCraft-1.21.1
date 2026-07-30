@@ -38,6 +38,9 @@ public final class JolCraftEntities {
     public static final Supplier<EntityType<DwarfEntity>> DWARF_MINER = registerDwarf(DwarfProfession.MINER);
     public static final Supplier<EntityType<DwarfEntity>> DWARF_PRIEST = registerDwarf(DwarfProfession.PRIEST);
     public static final Supplier<EntityType<DwarfEntity>> DWARF_SCRAPPER = registerDwarf(DwarfProfession.SCRAPPER);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_BLACKSMITH = registerDwarf(DwarfProfession.BLACKSMITH);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_CHAMPION = registerDwarf(DwarfProfession.CHAMPION);
+    public static final Supplier<EntityType<DwarfEntity>> DWARF_SMELTER = registerDwarf(DwarfProfession.SMELTER);
 
     private static Supplier<EntityType<DwarfEntity>> registerDwarf(DwarfProfession profession) {
         return ENTITY_TYPES.register(

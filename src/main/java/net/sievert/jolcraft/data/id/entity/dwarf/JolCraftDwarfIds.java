@@ -21,6 +21,9 @@ public final class JolCraftDwarfIds extends JolCraftIds {
     public static final String DWARF_MINER       = dwarfProfession(JolCraftDictionary.MINER);
     public static final String DWARF_PRIEST      = dwarfProfession(JolCraftDictionary.PRIEST);
     public static final String DWARF_SCRAPPER    = dwarfProfession(JolCraftDictionary.SCRAPPER);
+    public static final String DWARF_BLACKSMITH  = dwarfProfession(JolCraftDictionary.BLACKSMITH);
+    public static final String DWARF_CHAMPION    = dwarfProfession(JolCraftDictionary.CHAMPION);
+    public static final String DWARF_SMELTER     = dwarfProfession(JolCraftDictionary.SMELTER);
 
     private static String dwarfProfession(String profession) {
         return join(JolCraftDictionary.DWARF, profession);

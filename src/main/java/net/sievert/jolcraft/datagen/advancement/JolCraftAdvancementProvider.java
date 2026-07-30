@@ -70,7 +70,7 @@ public final class JolCraftAdvancementProvider
 
         emissions.add(build(
                 JolCraftAdvancementBuilder.create()
-                        .idPath(JolCraftAdvancementIds.ROOT)
+                        .idPath(JolCraftAdvancementIds.ROOT_1)
                         .root()
                         .icon(Items.CHISELED_DEEPSLATE)
                         .background(
@@ -95,7 +95,7 @@ public final class JolCraftAdvancementProvider
         emissions.add(build(
                 JolCraftAdvancementBuilder.create()
                         .idPath(JolCraftAdvancementIds.READ_LEXICON)
-                        .parent(JolCraft.location(JolCraftAdvancementIds.ROOT))
+                        .parent(JolCraft.location(JolCraftAdvancementIds.ROOT_1))
                         .icon(JolCraftItems.DWARVEN_LEXICON.get())
                         .type(AdvancementType.CHALLENGE)
                         .display(true, true, false)
@@ -430,6 +430,66 @@ public final class JolCraftAdvancementProvider
                 JolCraftAdvancementBuilder.create()
                         .idPath(JolCraftAdvancementIds.REP_4_DUMMY)
                         .dummyChild(JolCraft.location(JolCraftAdvancementIds.REP_4))
+        ));
+
+        emissions.add(build(
+                JolCraftAdvancementBuilder.create()
+                        .idPath(JolCraftAdvancementIds.TRADE_BLACKSMITH)
+                        .parent(JolCraft.location(JolCraftAdvancementIds.REP_4_DUMMY))
+                        .icon(JolCraftItems.MITHRIL_ARTISAN_HAMMER.get())
+                        .type(AdvancementType.TASK)
+                        .display(true, true, false)
+                        .criterion(DwarfTradeTrigger.tradedWithProfession(DwarfProfession.BLACKSMITH))
+        ));
+
+        emissions.add(build(
+                JolCraftAdvancementBuilder.create()
+                        .idPath(JolCraftAdvancementIds.ENDORSE_BLACKSMITH)
+                        .parent(JolCraft.location(JolCraftAdvancementIds.TRADE_BLACKSMITH))
+                        .icon(JolCraftItems.REPUTATION_TABLET_4.get())
+                        .type(AdvancementType.GOAL)
+                        .display(true, true, false)
+                        .criterion(DwarfEndorsementTrigger.endorsedBy(DwarfProfession.BLACKSMITH))
+        ));
+
+        emissions.add(build(
+                JolCraftAdvancementBuilder.create()
+                        .idPath(JolCraftAdvancementIds.TRADE_CHAMPION)
+                        .parent(JolCraft.location(JolCraftAdvancementIds.REP_4_DUMMY))
+                        .icon(JolCraftItems.MITHRIL_WARHAMMER.get())
+                        .type(AdvancementType.TASK)
+                        .display(true, true, false)
+                        .criterion(DwarfTradeTrigger.tradedWithProfession(DwarfProfession.CHAMPION))
+        ));
+
+        emissions.add(build(
+                JolCraftAdvancementBuilder.create()
+                        .idPath(JolCraftAdvancementIds.ENDORSE_CHAMPION)
+                        .parent(JolCraft.location(JolCraftAdvancementIds.TRADE_CHAMPION))
+                        .icon(JolCraftItems.REPUTATION_TABLET_4.get())
+                        .type(AdvancementType.GOAL)
+                        .display(true, true, false)
+                        .criterion(DwarfEndorsementTrigger.endorsedBy(DwarfProfession.CHAMPION))
+        ));
+
+        emissions.add(build(
+                JolCraftAdvancementBuilder.create()
+                        .idPath(JolCraftAdvancementIds.TRADE_SMELTER)
+                        .parent(JolCraft.location(JolCraftAdvancementIds.REP_4_DUMMY))
+                        .icon(JolCraftItems.IMPURE_MITHRIL.get())
+                        .type(AdvancementType.TASK)
+                        .display(true, true, false)
+                        .criterion(DwarfTradeTrigger.tradedWithProfession(DwarfProfession.SMELTER))
+        ));
+
+        emissions.add(build(
+                JolCraftAdvancementBuilder.create()
+                        .idPath(JolCraftAdvancementIds.ENDORSE_SMELTER)
+                        .parent(JolCraft.location(JolCraftAdvancementIds.TRADE_SMELTER))
+                        .icon(JolCraftItems.REPUTATION_TABLET_4.get())
+                        .type(AdvancementType.GOAL)
+                        .display(true, true, false)
+                        .criterion(DwarfEndorsementTrigger.endorsedBy(DwarfProfession.SMELTER))
         ));
 
         JolCraftDataExecutor.execute(target, this, emissions, tracking, true);

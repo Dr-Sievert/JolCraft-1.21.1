@@ -46,6 +46,9 @@ public final class JolCraftModEvents {
         event.put(JolCraftEntities.DWARF_ALCHEMIST.get(), dwarf); entityTypes++;
         event.put(JolCraftEntities.DWARF_ARCANIST.get(), dwarf); entityTypes++;
         event.put(JolCraftEntities.DWARF_PRIEST.get(), dwarf); entityTypes++;
+        event.put(JolCraftEntities.DWARF_BLACKSMITH.get(), dwarf); entityTypes++;
+        event.put(JolCraftEntities.DWARF_CHAMPION.get(), dwarf); entityTypes++;
+        event.put(JolCraftEntities.DWARF_SMELTER.get(), dwarf); entityTypes++;
 
         event.put(JolCraftEntities.MUFFHORN.get(), MuffhornEntity.createAttributes().build()); entityTypes++;
 

@@ -12,7 +12,7 @@ public final class JolCraftAdvancementIds extends JolCraftIds {
     // IDs
     // ---------------------------------------------------------------------
 
-    public static final String ROOT = JolCraftDictionary.ROOT;
+    public static final String ROOT_1 = join(JolCraftDictionary.ROOT, "1");
 
     public static final String READ_LEXICON = join(JolCraftDictionary.READ, JolCraftDictionary.LEXICON);
 

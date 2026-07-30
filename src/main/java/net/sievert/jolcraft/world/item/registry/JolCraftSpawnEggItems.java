@@ -74,6 +74,18 @@ public final class JolCraftSpawnEggItems {
         return registerDwarfEgg(JolCraftItemIds.DWARF_PRIEST_SPAWN_EGG, JolCraftEntities.DWARF_PRIEST, 0xFFF05A);
     }
 
+    public static DeferredItem<Item> registerDwarfBlacksmithSpawnEgg() {
+        return registerDwarfEgg(JolCraftItemIds.DWARF_BLACKSMITH_SPAWN_EGG, JolCraftEntities.DWARF_BLACKSMITH, 0x291E19);
+    }
+
+    public static DeferredItem<Item> registerDwarfChampionSpawnEgg() {
+        return registerDwarfEgg(JolCraftItemIds.DWARF_CHAMPION_SPAWN_EGG, JolCraftEntities.DWARF_CHAMPION, 0x1D1021);
+    }
+
+    public static DeferredItem<Item> registerDwarfSmelterSpawnEgg() {
+        return registerDwarfEgg(JolCraftItemIds.DWARF_SMELTER_SPAWN_EGG, JolCraftEntities.DWARF_SMELTER, 0x33280E);
+    }
+
     public static DeferredItem<Item> registerMuffhornSpawnEgg() {
         return registerEgg(
                 JolCraftItemIds.MUFFHORN_SPAWN_EGG,

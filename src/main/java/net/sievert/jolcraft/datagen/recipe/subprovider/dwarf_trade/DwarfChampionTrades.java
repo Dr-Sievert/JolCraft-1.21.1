@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.data.recipes.RecipeOutput;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
@@ -9,15 +8,11 @@ import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
-public record DwarfBaseTrades(
-        JolCraftDataProvider<RecipeOutput> parent
-) implements RecipeSubProvider {
+public record DwarfChampionTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
-    private static final DwarfProfession PROFESSION = DwarfProfession.NONE;
+    private static final DwarfProfession PROFESSION = DwarfProfession.CHAMPION;
 
-    public DwarfBaseTrades(
-            @NotNull JolCraftDataProvider<RecipeOutput> parent
-    ) {
+    public DwarfChampionTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
         this.parent = parent;
     }
 
@@ -33,7 +28,7 @@ public record DwarfBaseTrades(
 
     @Override
     public @NotNull String folder() {
-        return JolCraftDictionary.BASE;
+        return PROFESSION.professionName();
     }
 
     @Override

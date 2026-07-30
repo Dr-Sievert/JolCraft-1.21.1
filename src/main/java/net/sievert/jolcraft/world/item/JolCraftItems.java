@@ -294,6 +294,9 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> DWARF_ALCHEMIST_SPAWN_EGG = JolCraftSpawnEggItems.registerDwarfAlchemistSpawnEgg();
     public static final DeferredItem<Item> DWARF_ARCANIST_SPAWN_EGG = JolCraftSpawnEggItems.registerDwarfArcanistSpawnEgg();
     public static final DeferredItem<Item> DWARF_PRIEST_SPAWN_EGG = JolCraftSpawnEggItems.registerDwarfPriestSpawnEgg();
+    public static final DeferredItem<Item> DWARF_BLACKSMITH_SPAWN_EGG = JolCraftSpawnEggItems.registerDwarfBlacksmithSpawnEgg();
+    public static final DeferredItem<Item> DWARF_CHAMPION_SPAWN_EGG = JolCraftSpawnEggItems.registerDwarfChampionSpawnEgg();
+    public static final DeferredItem<Item> DWARF_SMELTER_SPAWN_EGG = JolCraftSpawnEggItems.registerDwarfSmelterSpawnEgg();
     public static final DeferredItem<Item> MUFFHORN_SPAWN_EGG = JolCraftSpawnEggItems.registerMuffhornSpawnEgg();
 
     // -------------------------------------------------------------------------

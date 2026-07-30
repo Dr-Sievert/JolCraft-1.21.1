@@ -116,16 +116,12 @@ public class PromoteDwarfAction extends InspectDwarfAction {
             // Tier 4
             Map.entry(JolCraftItems.CONTRACT_ALCHEMIST.get(), JolCraftEntities.DWARF_ALCHEMIST.get()),
             Map.entry(JolCraftItems.CONTRACT_ARCANIST.get(), JolCraftEntities.DWARF_ARCANIST.get()),
-            Map.entry(JolCraftItems.CONTRACT_PRIEST.get(), JolCraftEntities.DWARF_PRIEST.get())
-
-            /*
+            Map.entry(JolCraftItems.CONTRACT_PRIEST.get(), JolCraftEntities.DWARF_PRIEST.get()),
 
             // Tier 5
-            Map.entry(JolCraftItems.CONTRACT_BLACKSMITH.getEntityType(), JolCraftEntities.DWARF_BLACKSMITH.getEntityType()),
-            Map.entry(JolCraftItems.CONTRACT_CHAMPION.getEntityType(), JolCraftEntities.DWARF_CHAMPION.getEntityType()),
-            Map.entry(JolCraftItems.CONTRACT_SMELTER.getEntityType(), JolCraftEntities.DWARF_SMELTER.getEntityType())
-
-            */
+            Map.entry(JolCraftItems.CONTRACT_BLACKSMITH.get(), JolCraftEntities.DWARF_BLACKSMITH.get()),
+            Map.entry(JolCraftItems.CONTRACT_CHAMPION.get(), JolCraftEntities.DWARF_CHAMPION.get()),
+            Map.entry(JolCraftItems.CONTRACT_SMELTER.get(), JolCraftEntities.DWARF_SMELTER.get())
     );
 
     public void transformToProfession() {

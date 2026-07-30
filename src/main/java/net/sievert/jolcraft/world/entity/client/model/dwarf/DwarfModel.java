@@ -169,7 +169,10 @@ public class DwarfModel<T extends AbstractDwarfEntity> extends AbstractHumanoidH
                 || this.activeType == JolCraftEntities.DWARF_BREWMASTER.get()
                 || this.activeType == JolCraftEntities.DWARF_GUILDMASTER.get()
                 || this.activeType == JolCraftEntities.DWARF_SCRAPPER.get()
-                || this.activeType == JolCraftEntities.DWARF_PRIEST.get()) {
+                || this.activeType == JolCraftEntities.DWARF_PRIEST.get()
+                || this.activeType == JolCraftEntities.DWARF_BLACKSMITH.get()
+                || this.activeType == JolCraftEntities.DWARF_CHAMPION.get()
+                || this.activeType == JolCraftEntities.DWARF_SMELTER.get()) {
             DwarfModelHelper.visibleOuterLayer(this);
         }
     }

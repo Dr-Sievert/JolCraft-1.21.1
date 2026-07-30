@@ -131,10 +131,10 @@ public final class JolCraftAdvancementBuilder implements JolCraftEmissionBuilder
                 .display(false, false, true);
     }
 
-    public @NotNull JolCraftAdvancementBuilder dummyChildOfRoot() {
+    public @NotNull JolCraftAdvancementBuilder dummyChildOfFirstRoot() {
         return dummyChild()
-                .parent(JolCraft.location(JolCraftAdvancementIds.ROOT))
-                .criterion(AdvancementTrigger.has(JolCraft.location(JolCraftAdvancementIds.ROOT)));
+                .parent(JolCraft.location(JolCraftAdvancementIds.ROOT_1))
+                .criterion(AdvancementTrigger.has(JolCraft.location(JolCraftAdvancementIds.ROOT_1)));
     }
 
     public @NotNull JolCraftAdvancementBuilder dummyChild(@Nullable ResourceLocation parentId) {

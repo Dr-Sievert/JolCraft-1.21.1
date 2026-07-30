@@ -143,18 +143,26 @@ public class DwarfRenderer<T extends AbstractDwarfEntity> extends MobRenderer<T,
         if (type == JolCraftEntities.DWARF_GUILDMASTER.get()) {
             return new Profile(LAYER_EYE, scale, false);
         }
+
         if (type == JolCraftEntities.DWARF_ALCHEMIST.get()) {
             return new Profile(LAYER_BEARD, scale, false);
         }
-        if (type == JolCraftEntities.DWARF_PRIEST.get() || type == JolCraftEntities.DWARF_ARCANIST.get()) {
+
+        if (type == JolCraftEntities.DWARF_PRIEST.get()
+                || type == JolCraftEntities.DWARF_ARCANIST.get()) {
             return new Profile(LAYER_BEARD, scale, true);
         }
-        if (type == JolCraftEntities.DWARF_EXPLORER.get()) {
-            return new Profile(LAYER_ARMOR | LAYER_BEARD | LAYER_EYE, scale, false);
+
+        if (type == JolCraftEntities.DWARF_EXPLORER.get()
+                || type == JolCraftEntities.DWARF_GUARD.get()
+                || type == JolCraftEntities.DWARF_CHAMPION.get()) {
+            return new Profile(
+                    LAYER_ARMOR | LAYER_BEARD | LAYER_EYE,
+                    scale,
+                    false
+            );
         }
-        if (type == JolCraftEntities.DWARF_GUARD.get()) {
-            return new Profile(LAYER_ARMOR | LAYER_BEARD | LAYER_EYE, scale, false);
-        }
+
         return new Profile(LAYER_BEARD | LAYER_EYE, scale, false);
     }
 

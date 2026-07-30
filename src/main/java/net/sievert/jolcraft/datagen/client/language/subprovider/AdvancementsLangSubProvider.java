@@ -30,7 +30,7 @@ public final class AdvancementsLangSubProvider implements LanguageSubProvider {
     @Override
     public void addTranslations(@NotNull Map<String, String> translations) {
 
-        add(translations, JolCraftAdvancementIds.ROOT,
+        add(translations, JolCraftAdvancementIds.ROOT_1,
                 "The Dwarven Path",
                 "A journey through dwarven halls"
         );
@@ -219,6 +219,36 @@ public final class AdvancementsLangSubProvider implements LanguageSubProvider {
         add(translations, JolCraftAdvancementIds.REP_4_DUMMY,
                 "Legacy Forged",
                 "You are recognized as kin by any dwarf."
+        );
+
+        add(translations, JolCraftAdvancementIds.TRADE_BLACKSMITH,
+                "Strike While Hot",
+                "Trade with a blacksmith"
+        );
+
+        add(translations, JolCraftAdvancementIds.ENDORSE_BLACKSMITH,
+                "Tempered by Fire",
+                "Get endorsed by a master-level blacksmith"
+        );
+
+        add(translations, JolCraftAdvancementIds.TRADE_CHAMPION,
+                "A Hero's Welcome",
+                "Trade with a champion"
+        );
+
+        add(translations, JolCraftAdvancementIds.ENDORSE_CHAMPION,
+                "Battle-Proven",
+                "Get endorsed by a master-level champion"
+        );
+
+        add(translations, JolCraftAdvancementIds.TRADE_SMELTER,
+                "Beneath the Bellows",
+                "Trade with a smelter"
+        );
+
+        add(translations, JolCraftAdvancementIds.ENDORSE_SMELTER,
+                "No Impurities",
+                "Get endorsed by a master-level smelter"
         );
     }
 

@@ -9,15 +9,11 @@ import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
 
-public record DwarfBaseTrades(
-        JolCraftDataProvider<RecipeOutput> parent
-) implements RecipeSubProvider {
+public record DwarfBlacksmithTrades(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
 
-    private static final DwarfProfession PROFESSION = DwarfProfession.NONE;
+    private static final DwarfProfession PROFESSION = DwarfProfession.BLACKSMITH;
 
-    public DwarfBaseTrades(
-            @NotNull JolCraftDataProvider<RecipeOutput> parent
-    ) {
+    public DwarfBlacksmithTrades(@NotNull JolCraftDataProvider<RecipeOutput> parent) {
         this.parent = parent;
     }
 
@@ -33,7 +29,7 @@ public record DwarfBaseTrades(
 
     @Override
     public @NotNull String folder() {
-        return JolCraftDictionary.BASE;
+        return PROFESSION.professionName();
     }
 
     @Override

@@ -29,6 +29,9 @@ public final class JolCraftVanillaCreativeModeTabs {
             event.accept(JolCraftItems.DWARF_ALCHEMIST_SPAWN_EGG);
             event.accept(JolCraftItems.DWARF_ARCANIST_SPAWN_EGG);
             event.accept(JolCraftItems.DWARF_PRIEST_SPAWN_EGG);
+            event.accept(JolCraftItems.DWARF_BLACKSMITH_SPAWN_EGG);
+            event.accept(JolCraftItems.DWARF_CHAMPION_SPAWN_EGG);
+            event.accept(JolCraftItems.DWARF_SMELTER_SPAWN_EGG);
             event.accept(JolCraftItems.MUFFHORN_SPAWN_EGG);
         }
     }
