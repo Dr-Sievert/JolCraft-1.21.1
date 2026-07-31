@@ -34,18 +34,17 @@ public class HopsCropBottomBlock extends CropBlock {
     public static final IntegerProperty AGE = IntegerProperty.create(JolCraftDictionary.AGE, 0, MAX_AGE);
 
     private static final VoxelShape[] SHAPE_BY_AGE = {
-            Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 3.0, 16.0),
             Block.box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 10.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 9.0, 16.0),
             Block.box(0.0, 0.0, 0.0, 16.0, 12.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 14.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0),
+            Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0),
             Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0),
             Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0),
             Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0)
     };
-
     private final Supplier<? extends ItemLike> seedItem;
     private final Supplier<? extends Block> topBlock;
 
@@ -175,14 +174,14 @@ public class HopsCropBottomBlock extends CropBlock {
                     topPos,
                     this.topBlock.get()
                             .defaultBlockState()
-                            .setValue(HopsCropTopBlock.TOP_AGE, topAge),
+                            .setValue(HopsCropTopBlock.AGE, topAge),
                     2
             );
         } else if (topState.is(JolCraftTags.Blocks.HOPS_TOP)
-                && topState.getValue(HopsCropTopBlock.TOP_AGE) != topAge) {
+                && topState.getValue(HopsCropTopBlock.AGE) != topAge) {
             level.setBlock(
                     topPos,
-                    topState.setValue(HopsCropTopBlock.TOP_AGE, topAge),
+                    topState.setValue(HopsCropTopBlock.AGE, topAge),
                     2
             );
         }

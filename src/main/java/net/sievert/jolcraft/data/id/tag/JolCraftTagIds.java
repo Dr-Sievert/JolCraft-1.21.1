@@ -41,6 +41,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String REPUTATION_TABLETS = join(JolCraftDictionary.REPUTATION, plural(JolCraftDictionary.TABLET));
 
     public static final String HOPS = plural(JolCraftDictionary.HOP);
+    public static final String HOPS_SEEDS = join(plural(JolCraftDictionary.HOP), plural(JolCraftDictionary.SEED));
     public static final String HOPS_BREW = join(HOPS, JolCraftDictionary.BREW);
 
     public static final String REPAIRS_DEEPSLATE = join(plural(JolCraftDictionary.REPAIR), JolCraftDictionary.DEEPSLATE);

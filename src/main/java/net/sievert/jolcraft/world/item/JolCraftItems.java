@@ -11,6 +11,7 @@ import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.custom.tool.ArtisanHammerItem;
 import net.sievert.jolcraft.world.item.custom.tool.ChiselItem;
 import net.sievert.jolcraft.world.item.custom.tool.PestleItem;
+import net.sievert.jolcraft.world.item.custom.tool.SpannerItem;
 import net.sievert.jolcraft.world.item.equipment.JolCraftArmorItemSet;
 import net.sievert.jolcraft.world.item.registry.*;
 
@@ -106,8 +107,8 @@ public final class JolCraftItems {
     public static final DeferredItem<ChiselItem> MITHRIL_CHISEL = JolCraftEquipmentItems.registerMithrilChisel();
     public static final DeferredItem<PestleItem> DEEPSLATE_PESTLE = JolCraftEquipmentItems.registerDeepslatePestle();
     public static final DeferredItem<PestleItem> MITHRIL_PESTLE = JolCraftEquipmentItems.registerMithrilPestle();
-    public static final DeferredItem<Item> COPPER_SPANNER = JolCraftEquipmentItems.registerCopperSpanner();
-    public static final DeferredItem<Item> IRON_SPANNER = JolCraftEquipmentItems.registerIronSpanner();
+    public static final DeferredItem<SpannerItem> DEEPSLATE_SPANNER = JolCraftEquipmentItems.registerDeepslateSpanner();
+    public static final DeferredItem<SpannerItem> MITHRIL_SPANNER = JolCraftEquipmentItems.registerMithrilSpanner();
 
     // -------------------------------------------------------------------------
     // Food

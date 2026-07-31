@@ -18,8 +18,7 @@ public final class JolCraftEquipmentItems {
 
     private JolCraftEquipmentItems() {}
 
-    private static final UnaryOperator<Item.Properties> MITHRIL =
-            JolCraftItemRegistryHelper::mithrilProperties;
+    private static final UnaryOperator<Item.Properties> MITHRIL = JolCraftItemRegistryHelper::mithrilProperties;
 
     // -------------------------------------------------------------------------
     // Mithril
@@ -105,12 +104,12 @@ public final class JolCraftEquipmentItems {
         return registerPestle(JolCraftItemIds.MITHRIL_PESTLE, JolCraftMaterials.Material.MITHRIL, MITHRIL);
     }
 
-    public static DeferredItem<Item> registerCopperSpanner() {
-        return registerSpanner(JolCraftItemIds.COPPER_SPANNER, Tiers.GOLD);
+    public static DeferredItem<SpannerItem> registerDeepslateSpanner() {
+        return registerSpanner(JolCraftItemIds.DEEPSLATE_SPANNER, JolCraftMaterials.Material.DEEPSLATE);
     }
 
-    public static DeferredItem<Item> registerIronSpanner() {
-        return registerSpanner(JolCraftItemIds.IRON_SPANNER, Tiers.IRON);
+    public static DeferredItem<SpannerItem> registerMithrilSpanner() {
+        return registerSpanner(JolCraftItemIds.MITHRIL_SPANNER, JolCraftMaterials.Material.MITHRIL, MITHRIL);
     }
 
     // -------------------------------------------------------------------------
@@ -276,10 +275,18 @@ public final class JolCraftEquipmentItems {
         );
     }
 
-    private static DeferredItem<Item> registerSpanner(String id, Tier tier) {
+    private static DeferredItem<SpannerItem> registerSpanner(String id, JolCraftMaterials.Material material) {
+        return registerSpanner(id, material, UnaryOperator.identity());
+    }
+
+    private static DeferredItem<SpannerItem> registerSpanner(
+            String id,
+            JolCraftMaterials.Material material,
+            UnaryOperator<Item.Properties> properties
+    ) {
         return JolCraftItemRegistryHelper.registerItem(
                 id,
-                props -> new SpannerItem(tier, props.stacksTo(1))
+                props -> new SpannerItem(toolMaterial(material), properties.apply(props))
         );
     }
 

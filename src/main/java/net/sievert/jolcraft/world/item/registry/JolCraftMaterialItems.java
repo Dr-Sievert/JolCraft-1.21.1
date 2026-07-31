@@ -3,8 +3,6 @@ package net.sievert.jolcraft.world.item.registry;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipItem;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
 
 public final class JolCraftMaterialItems {
@@ -28,7 +26,7 @@ public final class JolCraftMaterialItems {
     public static DeferredItem<Item> registerMithrilIngot() {
         return JolCraftItemRegistryHelper.registerMithrilItem(
                 JolCraftItemIds.MITHRIL_INGOT,
-                props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS)
+                Item::new
         );
     }
 
@@ -47,10 +45,7 @@ public final class JolCraftMaterialItems {
     }
 
     public static DeferredItem<Item> registerDeepslatePlate() {
-        return JolCraftItemRegistryHelper.registerItem(
-                JolCraftItemIds.DEEPSLATE_PLATE,
-                props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS)
-        );
+        return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.DEEPSLATE_PLATE);
     }
 
     public static DeferredItem<Item> registerDeepslateRod() {
@@ -62,21 +57,14 @@ public final class JolCraftMaterialItems {
     }
 
     public static DeferredItem<Item> registerGeodeSmall() {
-        return registerGeode(JolCraftItemIds.GEODE_SMALL);
+        return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.GEODE_SMALL);
     }
 
     public static DeferredItem<Item> registerGeodeMedium() {
-        return registerGeode(JolCraftItemIds.GEODE_MEDIUM);
+        return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.GEODE_MEDIUM);
     }
 
     public static DeferredItem<Item> registerGeodeLarge() {
-        return registerGeode(JolCraftItemIds.GEODE_LARGE);
-    }
-
-    private static DeferredItem<Item> registerGeode(String id) {
-        return JolCraftItemRegistryHelper.registerItem(
-                id,
-                props -> new SimpleTooltipItem(props, JolCraftLanguageKeys.TOOLTIP_GEODE)
-        );
+        return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.GEODE_LARGE);
     }
 }

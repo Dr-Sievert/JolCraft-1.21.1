@@ -10,13 +10,11 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewBucketItem;
 import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewItem;
-import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipItem;
 import net.sievert.jolcraft.world.item.food.JolCraftFoodProperties;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
 
@@ -29,13 +27,7 @@ public final class JolCraftBrewingItems {
     private JolCraftBrewingItems() {}
 
     public static DeferredItem<Item> registerBarleyMalt() {
-        return JolCraftItemRegistryHelper.registerItem(
-                JolCraftItemIds.BARLEY_MALT,
-                properties -> new SimpleTooltipItem(
-                        properties,
-                        JolCraftLanguageKeys.TOOLTIP_MALT
-                )
-        );
+        return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.BARLEY_MALT);
     }
 
     public static DeferredItem<Item> registerYeast(
@@ -43,7 +35,7 @@ public final class JolCraftBrewingItems {
     ) {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.YEAST,
-                properties -> new SimpleTooltipItem(
+                properties -> new Item(
                         properties
                                 .craftRemainder(
                                         Items.GLASS_BOTTLE
@@ -58,8 +50,7 @@ public final class JolCraftBrewingItems {
                                                         fluid.get()
                                                 )
                                         )
-                                ),
-                        JolCraftLanguageKeys.TOOLTIP_YEAST
+                                )
                 )
         );
     }
@@ -67,11 +58,10 @@ public final class JolCraftBrewingItems {
     public static DeferredItem<Item> registerGlassMug() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.GLASS_MUG,
-                properties -> new SimpleTooltipItem(
+                properties -> new Item(
                         properties.stacksTo(
                                 16
-                        ),
-                        JolCraftLanguageKeys.TOOLTIP_GLASS_MUG
+                        )
                 )
         );
     }

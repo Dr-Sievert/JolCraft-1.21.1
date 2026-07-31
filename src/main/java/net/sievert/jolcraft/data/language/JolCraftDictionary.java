@@ -279,7 +279,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CONTEXT = "context";
     public static final String CONTRACT = "contract";
     public static final String COOLDOWN = "cooldown";
-    public static final String COPPER = "copper";
     public static final String CORNER = "corner";
     public static final String CORRIDOR = "corridor";
     public static final String CORROSION = "corrosion";
@@ -400,7 +399,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String INFO = "info";
     public static final String INIT = "init";
     public static final String INPUT = "input";
-    public static final String INSIDE = "inside";
     public static final String INTERACTION = "interaction";
     public static final String IRON = "iron";
     public static final String IRONHEART = "ironheart";
@@ -612,6 +610,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String VOLUME = "volume";
     public static final String WALL = "wall";
     public static final String WARHAMMER = "warhammer";
+    public static final String WEAPON = "weapon";
     public static final String WEIGHT = "weight";
     public static final String WIDGET = "widget";
     public static final String WOECRYSTAL = "woecrystal";

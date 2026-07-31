@@ -116,18 +116,6 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED =
             tooltip(JolCraftBlockIds.LAPIDARY_BENCH, us(JolCraftDictionary.CUT, pl(JolCraftDictionary.GEM), JolCraftDictionary.LOCKED));
 
-    public static final String TOOLTIP_GEODE =
-            category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.GEODE);
-
-    public static final String TOOLTIP_UNCUT_GEM =
-            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.UNCUT, JolCraftDictionary.GEM));
-
-    public static final String TOOLTIP_ARTISAN_HAMMER =
-            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER));
-
-    public static final String TOOLTIP_CHISEL =
-            category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.CHISEL);
-
     public static final String TOOLTIP_CUT_LOCKED =
             category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.CUT, JolCraftDictionary.LOCKED));
 
@@ -510,9 +498,6 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_INFO_VERDANT =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), JolCraftTagIds.VERDANT));
 
-    public static final String JEI_INFO_MUSHROOM =
-            category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), JolCraftDictionary.MUSHROOM));
-
     public static final String JEI_INFO_FESTERLING =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), JolCraftBlockIds.FESTERLING));
 
@@ -528,17 +513,11 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String UNKNOWN = mod(JolCraftDictionary.UNKNOWN);
 
-    public static final String TOOLTIP_QUILL_EMPTY =
-            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.QUILL_EMPTY);
+    public static final String TOOLTIP_DEEPSLATE_MITHRIL_ORE =
+            category(JolCraftDictionary.TOOLTIP, JolCraftBlockIds.DEEPSLATE_MITHRIL_ORE);
 
     public static final String TOOLTIP_QUILL =
             category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.QUILL);
-
-    public static final String TOOLTIP_QUILL_FULL =
-            category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.QUILL_FULL);
-
-    public static final String TOOLTIP_VANILLA_CROP =
-            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.VANILLA, JolCraftDictionary.CROP));
 
     public static final String TOOLTIP_HOPS_SEEDS =
             category(JolCraftDictionary.TOOLTIP, us(pl(JolCraftDictionary.HOP), pl(JolCraftDictionary.SEED)));
@@ -546,26 +525,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_DEEPSLATE_BULBS =
             category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.DEEPSLATE, pl(JolCraftDictionary.BULB)));
 
-    public static final String TOOLTIP_MALT =
-            category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.MALT);
-
-    public static final String TOOLTIP_HOPS =
-            category(JolCraftDictionary.TOOLTIP, pl(JolCraftDictionary.HOP));
-
-    public static final String TOOLTIP_YEAST =
-            category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.YEAST);
-
-    public static final String TOOLTIP_GLASS_MUG =
-            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.GLASS, JolCraftDictionary.MUG));
-
-    public static final String TOOLTIP_SPANNER =
-            category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.SPANNER);
-
     public static final String TOOLTIP_SALVAGEABLE =
             category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.SALVAGEABLE);
-
-    public static final String TOOLTIP_SALVAGE =
-            category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.SALVAGE);
 
     public static final String BREW_AGE =
             category(JolCraftDictionary.TOOLTIP, JolCraftDataComponentIds.BREW_AGE);
@@ -647,9 +608,4 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // TrimLangSubProvider
     // ---------------------------------------------------------------------
 
-    public static final String TOOLTIP_TRIM_MATERIALS =
-            category(JolCraftDictionary.TOOLTIP, JolCraftTrimIds.TRIM_MATERIAL);
-
-    public static final String TOOLTIP_ATTRIBUTE_TRIM_MATERIALS =
-            category(JolCraftDictionary.TOOLTIP, us(JolCraftDictionary.ATTRIBUTE, JolCraftTrimIds.TRIM_MATERIAL));
 }

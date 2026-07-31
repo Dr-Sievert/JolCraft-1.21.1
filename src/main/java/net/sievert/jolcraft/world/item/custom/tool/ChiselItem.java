@@ -29,20 +29,9 @@ public class ChiselItem extends ToolItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Player player = JolCraftProxy.access().getLocalPlayer();
-
-        if (JolCraftProxy.access().isAltDown()) {
-            if (DwarfLoreAttachmentHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CHISEL)
-                        .withStyle(ChatFormatting.GRAY));
-            } else {
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED)
-                        .withStyle(ChatFormatting.RED));
-            }
-        } else {
-            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
-                    .withStyle(ChatFormatting.DARK_GRAY));
+        if (!DwarfLoreAttachmentHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED).withStyle(ChatFormatting.RED));
         }
-
         super.appendHoverText(stack, context, tooltip, flag);
     }
 }

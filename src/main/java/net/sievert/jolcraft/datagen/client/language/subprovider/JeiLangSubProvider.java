@@ -94,13 +94,23 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
         );
 
         putManual(translations,
-                JolCraftLanguageKeys.JEI_INFO_MUSHROOM,
-                "Can be planted and spreads like a vanilla mushroom. Has no giant variant."
+                JolCraftLanguageKeys.JEI_INFO_FESTERLING,
+                "Can be cultivated with rotten flesh and planted on top of log ends."
         );
 
         putManual(translations,
-                JolCraftLanguageKeys.JEI_INFO_FESTERLING,
-                "Can be cultivated with rotten flesh and planted on top of log ends. It spreads like a vanilla mushroom and has no giant variant."
+                JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS,
+                "Needs two blocks of vertical space and a light level of 8 or less to grow.");
+
+        putManual(translations,
+                JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_BULBS,
+                "Needs a light level of 8 or less and a Y-level of 0 or below to grow. Can only be planted on deepslate, tuff, or verdant soil."
         );
+
+        putManual(translations,
+                JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_MITHRIL_ORE,
+                "Mithril generates only in deepslate between Y -64 and 0, " +
+                "with a triangular distribution concentrated toward the middle of that range. Small, medium, and large veins can appear throughout the Overworld, " +
+                "while additional exposed and fully buried veins are restricted to mountain and hill biomes.");
     }
 }

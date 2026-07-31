@@ -2,6 +2,7 @@ package net.sievert.jolcraft.world.item.client.tooltip.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
@@ -16,7 +17,7 @@ public final class JolCraftTooltipHelper {
     public static Component altKey() {
         Component key = JolCraftProxy.access().getAltKeyComponent();
         if (key == null) {
-            return Component.literal("Alt").withStyle(ChatFormatting.BLUE);
+            return Component.literal(JolCraftDictionary.ALT).withStyle(ChatFormatting.BLUE);
         }
         return key;
     }
@@ -27,26 +28,6 @@ public final class JolCraftTooltipHelper {
         } else {
             tooltip.addAll(fallbackLines);
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, altKey()).withStyle(ChatFormatting.DARK_GRAY));
-        }
-    }
-
-    public static void addAltTooltipCustom(
-            List<Component> tooltip,
-            Supplier<Component> mainSupplier,
-            Supplier<List<Component>> fallbackSupplier,
-            BooleanSupplier showMainPredicate,
-            Supplier<Component> holdHintSupplier
-    ) {
-        if (showMainPredicate.getAsBoolean()) {
-            tooltip.add(mainSupplier.get());
-        } else {
-            List<Component> fallbacks = fallbackSupplier.get();
-            if (fallbacks != null && !fallbacks.isEmpty()) {
-                tooltip.addAll(fallbacks);
-            }
-            if (holdHintSupplier != null) {
-                tooltip.add(holdHintSupplier.get());
-            }
         }
     }
 }

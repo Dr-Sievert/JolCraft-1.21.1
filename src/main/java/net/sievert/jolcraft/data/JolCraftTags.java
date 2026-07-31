@@ -75,6 +75,7 @@ public final class JolCraftTags {
         public static final TagKey<Item> ATTRIBUTE_TRIM_MATERIALS = createTag(JolCraftTagIds.ATTRIBUTE_TRIM_MATERIALS);
         public static final TagKey<Item> PROFESSION_CONTRACTS = createTag(JolCraftTagIds.PROFESSION_CONTRACTS);
         public static final TagKey<Item> REPUTATION_TABLETS = createTag(JolCraftTagIds.REPUTATION_TABLETS);
+        public static final TagKey<Item> HOPS_SEEDS = createTag(JolCraftTagIds.HOPS_SEEDS);
         public static final TagKey<Item> HOPS = createTag(JolCraftTagIds.HOPS);
         public static final TagKey<Item> HOPS_BREW = createTag(JolCraftTagIds.HOPS_BREW);
         public static final TagKey<Item> REPAIRS_DEEPSLATE = createTag(JolCraftTagIds.REPAIRS_DEEPSLATE);

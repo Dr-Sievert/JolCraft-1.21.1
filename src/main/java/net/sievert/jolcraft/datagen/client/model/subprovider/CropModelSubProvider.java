@@ -138,13 +138,13 @@ public record CropModelSubProvider(@NotNull JolCraftModelProvider parent) implem
             @NotNull Block block,
             int... ageToVisualStageMapping
     ) {
-        if (HopsCropTopBlock.TOP_AGE.getPossibleValues().size() != ageToVisualStageMapping.length) {
+        if (HopsCropTopBlock.AGE.getPossibleValues().size() != ageToVisualStageMapping.length) {
             throw new IllegalArgumentException("Mismatch between age property values and visual stage mapping!");
         }
 
         Int2ObjectMap<ResourceLocation> visualStageModels = new Int2ObjectOpenHashMap<>();
 
-        PropertyDispatch dispatch = PropertyDispatch.property(HopsCropTopBlock.TOP_AGE).generate(ageValue -> {
+        PropertyDispatch dispatch = PropertyDispatch.property(HopsCropTopBlock.AGE).generate(ageValue -> {
             int visualStage = ageToVisualStageMapping[ageValue];
             ResourceLocation modelId = visualStageModels.computeIfAbsent(
                     visualStage,

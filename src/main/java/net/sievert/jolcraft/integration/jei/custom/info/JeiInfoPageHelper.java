@@ -54,12 +54,20 @@ public final class JeiInfoPageHelper {
                         Component.translatable(JolCraftLanguageKeys.JEI_INFO_VERDANT)
                 ),
                 new JeiInfoPageRecipe(
-                        JolCraftBlocks.DUSKCAP.get().asItem().getDefaultInstance(),
-                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_MUSHROOM)
-                ),
-                new JeiInfoPageRecipe(
                         JolCraftBlocks.FESTERLING.get().asItem().getDefaultInstance(),
                         Component.translatable(JolCraftLanguageKeys.JEI_INFO_FESTERLING)
+                ),
+                new JeiInfoPageRecipe(
+                        JolCraftItems.DEEPSLATE_BULBS.get().asItem().getDefaultInstance(),
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_BULBS)
+                ),
+                new JeiInfoPageRecipe(
+                        JolCraftTags.Items.HOPS_SEEDS,
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS)
+                ),
+                new JeiInfoPageRecipe(
+                        JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get(),
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_MITHRIL_ORE)
                 )
         );
     }

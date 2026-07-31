@@ -130,7 +130,7 @@ public final class DwarfLoadouts {
     }
 
     private static void applyScrapper(AbstractDwarfEntity dwarf) {
-        dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.COPPER_SPANNER.get()));
+        dwarf.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(JolCraftItems.DEEPSLATE_SPANNER.get()));
     }
 
     private static void applyBlacksmith(AbstractDwarfEntity dwarf) {

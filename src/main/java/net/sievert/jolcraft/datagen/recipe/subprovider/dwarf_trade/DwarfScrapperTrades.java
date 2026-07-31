@@ -61,7 +61,7 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 .tradeGroup(TradeGroup.MAIN)
                 .costACoins(8, 15)
                 .noCostB()
-                .result(JolCraftItems.COPPER_SPANNER)
+                .result(JolCraftItems.DEEPSLATE_SPANNER)
                 .maxUses(3)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)
@@ -69,17 +69,6 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
 
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
-                        .tradeGroup(TradeGroup.MAIN)
-                        .costACoins(24, 32)
-                        .noCostB()
-                        .result(JolCraftItems.IRON_SPANNER)
-                        .maxUses(3)
-                        .dwarfXp(1)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
                         .tradeGroup(TradeGroup.MAIN)
                         .costA(JolCraftItems.SCRAP_HEAP)
                         .noCostB()

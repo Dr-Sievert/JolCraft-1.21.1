@@ -27,24 +27,10 @@ public class UncutGemItem extends Item {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        var client = JolCraftProxy.access();
-        Player player = client.getLocalPlayer();
-
-        if (client.isAltDown()) {
-            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_UNCUT_GEM)
-                    .withStyle(ChatFormatting.GRAY));
-
-            if (player != null && !DwarfLoreAttachmentHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
-                tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED)
-                        .withStyle(ChatFormatting.RED));
-            }
-        } else {
-            tooltip.add(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, JolCraftTooltipHelper.altKey())
-                            .withStyle(ChatFormatting.DARK_GRAY)
-            );
+        Player player = JolCraftProxy.access().getLocalPlayer();
+        if (player != null && !DwarfLoreAttachmentHelper.hasUnlock(player, DwarfLoreKey.ANCIENT_GEMCRAFT)) {
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED).withStyle(ChatFormatting.RED));
         }
-
         super.appendHoverText(stack, context, tooltip, flag);
     }
 

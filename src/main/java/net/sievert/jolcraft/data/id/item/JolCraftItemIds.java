@@ -164,13 +164,15 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String MUFFHORN_SPAWN_EGG = join(JolCraftCreatureIds.MUFFHORN, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
 
     // ---------------------------------------------------------------------
-    // Tools (Gems)
+    // Tools
     // ---------------------------------------------------------------------
 
     public static final String DEEPSLATE_ARTISAN_HAMMER = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
     public static final String MITHRIL_ARTISAN_HAMMER = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
     public static final String DEEPSLATE_CHISEL = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.CHISEL);
     public static final String MITHRIL_CHISEL = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.CHISEL);
+    public static final String DEEPSLATE_SPANNER = join(JolCraftMaterialIds.DEEPSLATE, JolCraftDictionary.SPANNER);
+    public static final String MITHRIL_SPANNER = join(JolCraftMaterialIds.MITHRIL, JolCraftDictionary.SPANNER);
 
     // ---------------------------------------------------------------------
     // Geodes
@@ -301,13 +303,6 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME = join(JolCraftDictionary.UNIDENTIFIED, ANCIENT_DWARVEN_TOME_LEGENDARY);
 
     public static final String LEGENDARY_PAGE = join(JolCraftRarityIds.LEGENDARY, JolCraftDictionary.PAGE);
-
-    // ---------------------------------------------------------------------
-    // Tools
-    // ---------------------------------------------------------------------
-
-    public static final String COPPER_SPANNER = join(JolCraftDictionary.COPPER, JolCraftDictionary.SPANNER);
-    public static final String IRON_SPANNER = join(JolCraftDictionary.IRON, JolCraftDictionary.SPANNER);
 
     // ---------------------------------------------------------------------
     // Scrap

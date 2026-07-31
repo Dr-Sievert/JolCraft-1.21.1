@@ -33,12 +33,6 @@ public final class TrimLangSubProvider implements LanguageSubProvider {
 
     @Override
     public void addTranslations(@NotNull Map<String, String> translations) {
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_TRIM_MATERIALS, "Can be used to trim armor.");
-        putManual(
-                translations,
-                JolCraftLanguageKeys.TOOLTIP_ATTRIBUTE_TRIM_MATERIALS,
-                "Can be used to trim armor with bonus stats."
-        );
 
         for (JolCraftMaterials.Material material : JolCraftMaterials.Material.values()) {
             addTrimMaterial(translations, material.trimKey().location());

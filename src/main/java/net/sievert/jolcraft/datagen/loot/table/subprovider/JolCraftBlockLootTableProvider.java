@@ -237,7 +237,7 @@ public final class JolCraftBlockLootTableProvider
 
         LootItemCondition.Builder isMatureTop = LootItemBlockStatePropertyCondition
                 .hasBlockStateProperties(top)
-                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HopsCropTopBlock.TOP_AGE, 4));
+                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HopsCropTopBlock.AGE, 4));
 
         LootTable.Builder topLoot = LootTable.lootTable()
                 .withPool(LootPool.lootPool()

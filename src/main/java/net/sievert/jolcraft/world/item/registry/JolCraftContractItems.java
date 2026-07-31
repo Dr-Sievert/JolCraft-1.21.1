@@ -6,7 +6,6 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.custom.paper.*;
-import net.sievert.jolcraft.world.item.custom.tooltip.SimpleTooltipItem;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
 
 public final class JolCraftContractItems {
@@ -64,20 +63,29 @@ public final class JolCraftContractItems {
     public static DeferredItem<Item> registerQuillEmpty() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.QUILL_EMPTY,
-                props -> new QuillItem(props.stacksTo(16), JolCraftLanguageKeys.TOOLTIP_QUILL_EMPTY)
+                props -> new QuillItem(props.stacksTo(16), JolCraftLanguageKeys.TOOLTIP_QUILL)
         );
     }
 
     public static DeferredItem<Item> registerQuillSmall(DeferredItem<Item> emptyQuill) {
-        return registerQuill(JolCraftItemIds.QUILL_SMALL, emptyQuill, JolCraftLanguageKeys.TOOLTIP_QUILL);
+        return registerQuill(JolCraftItemIds.QUILL_SMALL, emptyQuill);
     }
 
     public static DeferredItem<Item> registerQuillHalf(DeferredItem<Item> smallQuill) {
-        return registerQuill(JolCraftItemIds.QUILL_HALF, smallQuill, JolCraftLanguageKeys.TOOLTIP_QUILL);
+        return registerQuill(JolCraftItemIds.QUILL_HALF, smallQuill);
     }
 
-    public static DeferredItem<Item> registerQuillFull(DeferredItem<Item> halfQuill) {
-        return registerQuill(JolCraftItemIds.QUILL_FULL, halfQuill, JolCraftLanguageKeys.TOOLTIP_QUILL_FULL);
+    public static DeferredItem<Item> registerQuillFull(
+            DeferredItem<Item> halfQuill
+    ) {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.QUILL_FULL,
+                properties -> new Item(
+                        properties
+                                .stacksTo(1)
+                                .craftRemainder(halfQuill.get())
+                )
+        );
     }
 
     private static DeferredItem<Item> registerProfession(String id) {
@@ -90,14 +98,13 @@ public final class JolCraftContractItems {
 
     private static DeferredItem<Item> registerQuill(
             String id,
-            DeferredItem<Item> craftRemainder,
-            String tooltip
+            DeferredItem<Item> craftRemainder
     ) {
         return JolCraftItemRegistryHelper.registerItem(
                 id,
                 props -> new QuillItem(
                         props.craftRemainder(craftRemainder.get()).stacksTo(1),
-                        tooltip
+                        JolCraftLanguageKeys.TOOLTIP_QUILL
                 )
         );
     }

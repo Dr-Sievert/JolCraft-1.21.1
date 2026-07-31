@@ -248,8 +248,8 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(alchemyTome);
 
 
-                        pOutput.accept(JolCraftItems.COPPER_SPANNER);
-                        pOutput.accept(JolCraftItems.IRON_SPANNER);
+                        pOutput.accept(JolCraftItems.DEEPSLATE_SPANNER);
+                        pOutput.accept(JolCraftItems.MITHRIL_SPANNER);
                         pOutput.accept(JolCraftItems.SCRAP);
                         pOutput.accept(JolCraftItems.SCRAP_HEAP);
                         pOutput.accept(JolCraftItems.EXPIRED_POTION);

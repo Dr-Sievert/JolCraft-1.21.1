@@ -102,8 +102,8 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.MITHRIL_HOE.get());
 
         target.tag(JolCraftTags.Items.SPANNERS)
-                .add(JolCraftItems.COPPER_SPANNER.get())
-                .add(JolCraftItems.IRON_SPANNER.get());
+                .add(JolCraftItems.DEEPSLATE_SPANNER.get())
+                .add(JolCraftItems.MITHRIL_SPANNER.get());
 
         target.tag(JolCraftTags.Items.ARTISAN_HAMMERS)
                 .add(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get())
@@ -169,12 +169,15 @@ public final class JolCraftItemTagProvider
 
         // Plants
 
-        target.tag(Tags.Items.SEEDS)
-                .add(JolCraftItems.BARLEY_SEEDS.get())
+        target.tag(JolCraftTags.Items.HOPS_SEEDS)
                 .add(JolCraftItems.ASGARNIAN_SEEDS.get())
                 .add(JolCraftItems.DUSKHOLD_SEEDS.get())
                 .add(JolCraftItems.KRANDONIAN_SEEDS.get())
                 .add(JolCraftItems.YANILLIAN_SEEDS.get());
+
+        target.tag(Tags.Items.SEEDS)
+                .add(JolCraftItems.BARLEY_SEEDS.get())
+                .addTags(JolCraftTags.Items.HOPS_SEEDS);
 
         target.tag(Tags.Items.CROPS)
                 .add(JolCraftItems.BARLEY.get())

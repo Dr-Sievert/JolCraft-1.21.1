@@ -35,10 +35,6 @@ public final class ContainerLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.CONTAINER_LAPIDARY_BENCH, "Lapidary Bench");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_LAPIDARY_BENCH_CUT_GEMS_LOCKED, "You have no idea how to cut this gem without breaking it.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_GEODE, "Can be broken into dust using an artisan hammer at a lapidary bench.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_UNCUT_GEM, "Can be broken into dust using an artisan hammer or cut using a chisel at a lapidary bench.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_ARTISAN_HAMMER, "Can be used to break geodes and gems at a lapidary bench.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_CHISEL, "Can be used to cut gems at a lapidary bench.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_CUT_LOCKED, "You have not learned how to cut gems!");
 
         // -----------------------------------------------------------------
@@ -54,7 +50,7 @@ public final class ContainerLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.CONTAINER_STRONGBOX, "Strongbox");
         putManual(translations, JolCraftLanguageKeys.CONTAINER_STRONGBOX_LOCKED, "Locked Strongbox");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_LOCKPICK, "Used to pick locks. Will break on failure. Lockpicking is easier when using potions.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_LOCKPICK, "Used to lockpick strongboxes.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_NOT_EMPTY, "This strongbox has items inside.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_LOOT, "This strongbox has loot inside.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_STRONGBOX_SET_LOCKED, "You have locked this strongbox.");

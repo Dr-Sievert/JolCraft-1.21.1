@@ -15,6 +15,7 @@
     "LootPoolEntryContainerAccessor",
     "LootPoolSingletonContainerAccessor",
     "MeleeAttackGoalMixin",
+    "MushroomBlockMixin",
     "RangedBowAttackGoalMixin",
     "RangedCrossbowAttackGoalMixin",
     "SetComponentsFunctionAccessor",
