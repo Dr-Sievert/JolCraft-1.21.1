@@ -16,6 +16,10 @@ public final class JolCraftConfiguredFeatureIds extends JolCraftIds {
     public static final String DUSKCAP_PATCH =
             join(JolCraftBlockIds.DUSKCAP, JolCraftDictionary.PATCH);
 
+    public static final String HUGE_DUSKCAP = JolCraftFeatureIds.HUGE_DUSKCAP;
+
+    public static final String HUGE_FESTERLING = JolCraftFeatureIds.HUGE_FESTERLING;
+
     public static final String DEEPSLATE_BULBS_PATCH =
             join(JolCraftDictionary.DEEPSLATE, JolCraftStrings.plural(JolCraftDictionary.BULB), JolCraftDictionary.PATCH);
 

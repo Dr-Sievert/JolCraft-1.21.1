@@ -66,7 +66,11 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftBlocks.VERDANT_SOIL);
                         pOutput.accept(JolCraftBlocks.VERDANT_FARMLAND);
                         pOutput.accept(JolCraftBlocks.DUSKCAP);
+                        pOutput.accept(JolCraftBlocks.DUSKCAP_BLOCK);
+                        pOutput.accept(JolCraftBlocks.DUSKCAP_STEM);
                         pOutput.accept(JolCraftBlocks.FESTERLING);
+                        pOutput.accept(JolCraftBlocks.FESTERLING_BLOCK);
+                        pOutput.accept(JolCraftBlocks.FESTERLING_STEM);
                         pOutput.accept(JolCraftItems.BARLEY_SEEDS);
                         pOutput.accept(JolCraftItems.BARLEY_SEEDS);
                         pOutput.accept(JolCraftItems.BARLEY);

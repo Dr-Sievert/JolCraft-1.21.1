@@ -64,6 +64,7 @@ public final class DwarfInteractions {
         PROFESSION_HANDLERS.clear();
 
         registerCore(new IgnoreInteractionHandler());
+        registerCore(new DevKeyInteractionHandler());
         registerCore(new LanguageGateInteractionHandler());
         registerCore(new ReputationGateInteractionHandler());
         registerCore(new BusyGateInteractionHandler());

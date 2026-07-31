@@ -26,8 +26,6 @@ public final class JolCraftBlockIds extends JolCraftIds {
 
     public static final String STRONGBOX = JolCraftDictionary.STRONGBOX;
 
-    public static final String STRONGBOX_DUMMY = join(JolCraftDictionary.STRONGBOX, JolCraftDictionary.DUMMY);
-
     public static final String HEARTH = JolCraftDictionary.HEARTH;
 
     public static final String VERDANT_SOIL = join(JolCraftDictionary.VERDANT, JolCraftDictionary.SOIL);
@@ -36,13 +34,21 @@ public final class JolCraftBlockIds extends JolCraftIds {
 
     public static final String DUSKCAP = JolCraftDictionary.DUSKCAP;
 
-    public static final String POTTED_DUSKCAP = join(JolCraftDictionary.POTTED, JolCraftDictionary.DUSKCAP);
+    public static final String POTTED_DUSKCAP = join(JolCraftDictionary.POTTED, DUSKCAP);
+
+    public static final String DUSKCAP_BLOCK = join(DUSKCAP, JolCraftDictionary.BLOCK);
+
+    public static final String DUSKCAP_STEM = join(DUSKCAP, JolCraftDictionary.STEM);
 
     public static final String FESTERLING_CROP = crop(JolCraftDictionary.FESTERLING);
 
     public static final String FESTERLING = JolCraftDictionary.FESTERLING;
 
-    public static final String POTTED_FESTERLING = join(JolCraftDictionary.POTTED, JolCraftDictionary.FESTERLING);
+    public static final String POTTED_FESTERLING = join(JolCraftDictionary.POTTED, FESTERLING);
+
+    public static final String FESTERLING_BLOCK = join(FESTERLING, JolCraftDictionary.BLOCK);
+
+    public static final String FESTERLING_STEM = join(FESTERLING, JolCraftDictionary.STEM);
 
     public static final String BARLEY_BLOCK = block(JolCraftItemIds.BARLEY);
 

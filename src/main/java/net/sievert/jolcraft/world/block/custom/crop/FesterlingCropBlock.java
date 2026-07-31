@@ -138,7 +138,7 @@ public class FesterlingCropBlock extends BushBlock implements BonemealableBlock 
         level.setBlock(
                 pos,
                 JolCraftBlocks.FESTERLING.get().defaultBlockState(),
-                2
+                Block.UPDATE_ALL
         );
 
         for (int particle = 0; particle < 5; particle++) {

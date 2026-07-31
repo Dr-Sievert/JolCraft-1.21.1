@@ -108,9 +108,13 @@ public final class JolCraftBlockLootTableProvider
 
         target.dropSelf(JolCraftBlocks.DUSKCAP.get());
         target.dropPottedContents(JolCraftBlocks.POTTED_DUSKCAP.get());
+        target.add(JolCraftBlocks.DUSKCAP_BLOCK.get(), block -> this.createMushroomBlockDrop(block, JolCraftBlocks.DUSKCAP.get()));
+        target.dropWhenSilkTouch(JolCraftBlocks.DUSKCAP_STEM.get());
 
         target.dropSelf(JolCraftBlocks.FESTERLING.get());
         target.dropPottedContents(JolCraftBlocks.POTTED_FESTERLING.get());
+        target.add(JolCraftBlocks.FESTERLING_BLOCK.get(), block -> this.createMushroomBlockDrop(block, JolCraftBlocks.FESTERLING.get()));
+        target.dropWhenSilkTouch(JolCraftBlocks.FESTERLING_STEM.get());
 
         target.add(JolCraftBlocks.FESTERLING_CROP.get(),
                 LootTable.lootTable()

@@ -634,7 +634,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME, 10, 16, 1, 1, 2
+                JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME, 15, 20, 1, 1, 2
         );
 
 

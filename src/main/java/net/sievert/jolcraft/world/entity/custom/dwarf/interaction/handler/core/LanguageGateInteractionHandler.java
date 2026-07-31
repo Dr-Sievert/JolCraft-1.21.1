@@ -8,6 +8,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteracti
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
+import org.jetbrains.annotations.NotNull;
 
 @MethodsReturnNonnullByDefault
 public final class LanguageGateInteractionHandler
@@ -15,7 +16,7 @@ public final class LanguageGateInteractionHandler
 
     @Override
     public DwarfInteractionOutcome handle(
-            DwarfInteractions.DwarfInteractionContext ctx
+            DwarfInteractions.@NotNull DwarfInteractionContext ctx
     ) {
         if (ctx.isClient()) {
             return DwarfInteractionOutcome.handled();

@@ -78,6 +78,10 @@ public final class JolCraftBlockTagProvider
                 .add(JolCraftBlocks.DEEPSLATE_MORTAR.get());
 
         target.tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(JolCraftBlocks.DUSKCAP_BLOCK.get())
+                .add(JolCraftBlocks.DUSKCAP_STEM.get())
+                .add(JolCraftBlocks.FESTERLING_BLOCK.get())
+                .add(JolCraftBlocks.FESTERLING_STEM.get())
                 .add(JolCraftBlocks.FERMENTING_BARREL.get());
 
         target.tag(BlockTags.NEEDS_IRON_TOOL)

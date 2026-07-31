@@ -35,6 +35,12 @@ public class JolCraftConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> DUSKCAP_PATCH_KEY =
             registerKey(JolCraftConfiguredFeatureIds.DUSKCAP_PATCH);
 
+    public static final ResourceKey<ConfiguredFeature<?, ?>> HUGE_DUSKCAP_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.HUGE_DUSKCAP);
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> HUGE_FESTERLING_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.HUGE_FESTERLING);
+
     public static final ResourceKey<ConfiguredFeature<?, ?>> DEEPSLATE_BULBS_PATCH_KEY =
             registerKey(JolCraftConfiguredFeatureIds.DEEPSLATE_BULBS_PATCH);
 
@@ -74,6 +80,28 @@ public class JolCraftConfiguredFeatures {
                                 Feature.SIMPLE_BLOCK,
                                 new SimpleBlockConfiguration(BlockStateProvider.simple(JolCraftBlocks.DUSKCAP.get()))
                         )
+                )
+        );
+
+        register(
+                context,
+                HUGE_DUSKCAP_KEY,
+                JolCraftFeatures.HUGE_DUSKCAP.get(),
+                new HugeMushroomFeatureConfiguration(
+                        BlockStateProvider.simple(JolCraftBlocks.DUSKCAP_BLOCK.get()),
+                        BlockStateProvider.simple(JolCraftBlocks.DUSKCAP_STEM.get()),
+                        2
+                )
+        );
+
+        register(
+                context,
+                HUGE_FESTERLING_KEY,
+                JolCraftFeatures.HUGE_FESTERLING.get(),
+                new HugeMushroomFeatureConfiguration(
+                        BlockStateProvider.simple(JolCraftBlocks.FESTERLING_BLOCK.get()),
+                        BlockStateProvider.simple(JolCraftBlocks.FESTERLING_STEM.get()),
+                        2
                 )
         );
 

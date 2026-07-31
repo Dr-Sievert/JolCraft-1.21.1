@@ -132,6 +132,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String GLOBAL = "global";
     public static final String HALF = "half";
     public static final String HIGHLIGHTED = "highlighted";
+    public static final String HUGE = "huge";
     public static final String IDENTIFIED = "identified";
     public static final String IMPURE = "impure";
     public static final String INVALID = "invalid";
@@ -399,6 +400,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String INFO = "info";
     public static final String INIT = "init";
     public static final String INPUT = "input";
+    public static final String INSIDE = "inside";
     public static final String INTERACTION = "interaction";
     public static final String IRON = "iron";
     public static final String IRONHEART = "ironheart";
@@ -550,6 +552,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String STAIRS = "stairs";
     public static final String START = "start";
     public static final String STAT = "stat";
+    public static final String STEM = "stem";
     public static final String STOCK = "stock";
     public static final String STONE = "stone";
     public static final String STRANGER = "stranger";

@@ -282,7 +282,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
         var recipes = DwarfTrades.getTradeRecipesForMode(serverLevel, profession, level, this.random, mode);
 
-        JolCraftLogs.info(
+        JolCraftLogs.debug(
                 JolCraftLogTags.ENTITY,
                 "Rebuilding dwarf trades for profession={} level={} mode={} recipeCount={}",
                 profession,
@@ -298,7 +298,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             );
         }
 
-        JolCraftLogs.info(
+        JolCraftLogs.debug(
                 JolCraftLogTags.ENTITY,
                 "Finished rebuilding dwarf trades for profession={} level={} mode={} offerCount={}",
                 profession,
@@ -388,7 +388,9 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
             );
         }
 
-        JolCraftLogs.info(
+        if(additionalGlobalRecipes.isEmpty()) return;
+
+        JolCraftLogs.debug(
                 JolCraftLogTags.ENTITY,
                 "Added global dwarf trades for profession={} level={} previousGlobalCount={} addedGlobalCount={}",
                 profession,

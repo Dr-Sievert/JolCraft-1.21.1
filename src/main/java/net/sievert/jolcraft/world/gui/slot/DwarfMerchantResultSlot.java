@@ -85,7 +85,10 @@ public class DwarfMerchantResultSlot extends Slot {
 
         // Slot A
         if (aCoinsBefore > 0) {
-            int aCoinsAfter = slotA.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+            int aCoinsAfter = slotA.getOrDefault(
+                    JolCraftDataComponents.COIN_POUCH_AMOUNT.get(),
+                    0
+            );
             coinsSpent += Math.max(0, aCoinsBefore - aCoinsAfter);
         } else if (slotA.is(JolCraftTags.Items.COINS)) {
             coinsSpent += Math.max(0, aCountBefore - slotA.getCount());
@@ -93,7 +96,10 @@ public class DwarfMerchantResultSlot extends Slot {
 
         // Slot B
         if (bCoinsBefore > 0) {
-            int bCoinsAfter = slotB.getOrDefault(JolCraftDataComponents.COIN_POUCH_AMOUNT.get(), 0);
+            int bCoinsAfter = slotB.getOrDefault(
+                    JolCraftDataComponents.COIN_POUCH_AMOUNT.get(),
+                    0
+            );
             coinsSpent += Math.max(0, bCoinsBefore - bCoinsAfter);
         } else if (slotB.is(JolCraftTags.Items.COINS)) {
             coinsSpent += Math.max(0, bCountBefore - slotB.getCount());
@@ -106,5 +112,11 @@ public class DwarfMerchantResultSlot extends Slot {
         this.merchant.notifyTrade(offer);
         this.slots.setItem(0, slotA);
         this.slots.setItem(1, slotB);
+
+        if (this.merchant.isClientSide()) {
+            this.merchant.overrideXp(
+                    this.merchant.getDwarfXp() + offer.getXp()
+            );
+        }
     }
 }

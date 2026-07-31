@@ -3,6 +3,7 @@ package net.sievert.jolcraft.world.block;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.HayBlock;
+import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -46,8 +47,12 @@ public final class JolCraftBlocks {
     public static final DeferredBlock<Block> VERDANT_FARMLAND = JolCraftPlantBlocks.registerVerdantFarmland();
     public static final DeferredBlock<DuskcapBlock> DUSKCAP = JolCraftPlantBlocks.registerDuskcap();
     public static final DeferredBlock<FlowerPotBlock> POTTED_DUSKCAP = JolCraftPlantBlocks.registerPottedDuskcap(DUSKCAP);
+    public static final DeferredBlock<HugeMushroomBlock> DUSKCAP_BLOCK = JolCraftPlantBlocks.registerDuskcapBlock();
+    public static final DeferredBlock<HugeMushroomBlock> DUSKCAP_STEM = JolCraftPlantBlocks.registerDuskcapStem();
     public static final DeferredBlock<FesterlingBlock> FESTERLING = JolCraftPlantBlocks.registerFesterling();
     public static final DeferredBlock<FlowerPotBlock> POTTED_FESTERLING = JolCraftPlantBlocks.registerPottedFesterling(FESTERLING);
+    public static final DeferredBlock<HugeMushroomBlock> FESTERLING_BLOCK = JolCraftPlantBlocks.registerFesterlingBlock();
+    public static final DeferredBlock<HugeMushroomBlock> FESTERLING_STEM = JolCraftPlantBlocks.registerFesterlingStem();
 
     public static final DeferredBlock<Block> FESTERLING_CROP = JolCraftCropBlocks.registerFesterlingCrop();
     public static final DeferredBlock<Block> BARLEY_CROP = JolCraftCropBlocks.registerBarleyCrop();

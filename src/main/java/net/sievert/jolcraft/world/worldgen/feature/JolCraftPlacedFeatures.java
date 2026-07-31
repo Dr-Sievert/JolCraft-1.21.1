@@ -54,7 +54,7 @@ public class JolCraftPlacedFeatures {
                 DUSKCAP_PATCH_PLACED_KEY,
                 configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.DUSKCAP_PATCH_KEY),
                 List.of(
-                        RarityFilter.onAverageOnceEvery(5),
+                        RarityFilter.onAverageOnceEvery(3),
                         InSquarePlacement.spread(),
                         HeightRangePlacement.uniform(
                                 VerticalAnchor.absolute(-64),
