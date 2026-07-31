@@ -43,10 +43,10 @@ public record DwarfSmelterTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                 PROFESSION,
                 DwarfMerchantData.Level.MASTER,
                 DwarfLoreKey.COIN_PRESS_MANUAL,
-                20,
-                20,
-                30,
-                30
+                25,
+                35,
+                80,
+                120
         ));
     }
 }

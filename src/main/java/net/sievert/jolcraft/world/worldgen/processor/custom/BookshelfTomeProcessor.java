@@ -37,15 +37,11 @@ public class BookshelfTomeProcessor extends StructureProcessor {
     /**
      * Relative item weights after a book passes its replacement roll:
      *
-     * Unidentified:            75%
-     * Ancient unidentified:   20%
-     * Legendary unidentified:  4%
-     * Ancient lexicon:          1%
      */
     private static final int UNIDENTIFIED_WEIGHT = 75;
-    private static final int ANCIENT_UNIDENTIFIED_WEIGHT = 20;
-    private static final int LEGENDARY_UNIDENTIFIED_WEIGHT = 4;
-    private static final int ANCIENT_LEXICON_WEIGHT = 1;
+    private static final int ANCIENT_UNIDENTIFIED_WEIGHT = 26;
+    private static final int LEGENDARY_UNIDENTIFIED_WEIGHT = 2;
+    private static final int ANCIENT_LEXICON_WEIGHT = 2;
 
     private static final int TOTAL_WEIGHT = UNIDENTIFIED_WEIGHT + ANCIENT_UNIDENTIFIED_WEIGHT + LEGENDARY_UNIDENTIFIED_WEIGHT + ANCIENT_LEXICON_WEIGHT;
 

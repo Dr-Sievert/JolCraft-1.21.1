@@ -43,10 +43,10 @@ public record DwarfBlacksmithTrades(JolCraftDataProvider<RecipeOutput> parent) i
                 PROFESSION,
                 DwarfMerchantData.Level.MASTER,
                 DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE,
-                20,
-                20,
-                30,
-                30
+                25,
+                35,
+                80,
+                120
         ));
     }
 }

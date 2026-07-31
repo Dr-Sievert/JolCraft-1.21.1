@@ -181,14 +181,8 @@ public record DwarfGuildmasterTrades(JolCraftDataProvider<RecipeOutput> parent) 
                         .profession(PROFESSION)
                         .merchantLevel(level)
                         .costACoins(30)
-                        .costB(
-                                JolCraftItems.CONTRACT_SIGNED.get(),
-                                1
-                        )
-                        .result(
-                                contract,
-                                1
-                        )
+                        .costB(JolCraftItems.CONTRACT_SIGNED)
+                        .result(contract)
                         .maxUses(1)
                         .dwarfXp(0)
                         .priceMultiplier(0.05F)

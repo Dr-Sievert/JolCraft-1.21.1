@@ -254,10 +254,10 @@ public record DwarfBrewmasterTrades(JolCraftDataProvider<RecipeOutput> parent) i
                         PROFESSION,
                         DwarfMerchantData.Level.MASTER,
                         DwarfLoreKey.FORGOTTEN_BREW_FORMULAS,
-                        20,
-                        20,
-                        30,
-                        30
+                        25,
+                        35,
+                        80,
+                        120
                 )
         );
     }

@@ -94,10 +94,10 @@ public record DwarfAlchemistTrades(JolCraftDataProvider<RecipeOutput> parent) im
                         PROFESSION,
                         DwarfMerchantData.Level.MASTER,
                         DwarfLoreKey.ALCHEMY_RECIPES,
-                        20,
-                        20,
-                        30,
-                        30
+                        25,
+                        35,
+                        80,
+                        120
                 )
         );
     }

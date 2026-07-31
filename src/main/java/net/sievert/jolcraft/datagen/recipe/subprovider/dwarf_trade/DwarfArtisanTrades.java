@@ -345,10 +345,10 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                         PROFESSION,
                         DwarfMerchantData.Level.MASTER,
                         DwarfLoreKey.ANCIENT_GEMCRAFT,
-                        20,
-                        20,
-                        30,
-                        30
+                        25,
+                        35,
+                        80,
+                        120
                 )
         );
     }

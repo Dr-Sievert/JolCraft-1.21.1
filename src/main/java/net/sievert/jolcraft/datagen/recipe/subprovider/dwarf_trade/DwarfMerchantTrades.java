@@ -71,15 +71,15 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.COAL, 2, 4, 4, 8, 8
+                Items.COAL, 1, 2, 8, 8, 8
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.FLINT, 1, 3, 3, 6, 7
+                Items.FLINT, 1, 2, 12, 12, 7
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.COPPER_INGOT, 3, 5, 2, 4, 5
+                Items.COPPER_INGOT, 1, 2, 6, 6, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
@@ -87,11 +87,11 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.IRON_NUGGET, 2, 4, 9, 18, 7
+                Items.IRON_NUGGET, 1, 2, 18, 18, 7
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.STRING, 2, 4, 3, 6, 6
+                Items.STRING, 1, 2, 12, 12, 6
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
@@ -115,11 +115,11 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.POPPY, 1, 2, 3, 6, 5
+                Items.POPPY, 1, 2, 5, 5, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.DANDELION, 1, 2, 3, 6, 5
+                Items.DANDELION, 1, 2, 5, 5, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
@@ -139,7 +139,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.GLOW_BERRIES, 2, 4, 3, 6, 4
+                Items.GLOW_BERRIES, 2, 4, 10, 10, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
@@ -147,11 +147,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.WHEAT, 3, 5, 6, 12, 7
-        );
-
-        pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.FEATHER, 3, 5, 4, 8, 7
+                Items.WHEAT, 1, 2, 10, 10, 7
         );
 
         // ---------------------------------------------------------------------
@@ -159,11 +155,11 @@ public record DwarfMerchantTrades(
         // ---------------------------------------------------------------------
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                Items.IRON_INGOT, 6, 9, 2, 3, 5
+                Items.IRON_INGOT, 1, 2, 2, 2, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                Items.WHITE_WOOL, 3, 5, 2, 4, 5
+                Items.WHITE_WOOL, 1, 2, 5, 5, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
@@ -171,7 +167,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                JolCraftItems.BARLEY, 3, 5, 6, 12, 7
+                JolCraftItems.BARLEY, 1, 2, 6, 6, 7
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
@@ -183,11 +179,11 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                Items.CARROT, 2, 4, 4, 8, 7
+                Items.CARROT, 1, 2, 8, 8, 7
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                Items.POTATO, 2, 4, 4, 8, 7
+                Items.POTATO, 1, 2, 8, 8, 7
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
@@ -195,7 +191,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                Items.SUGAR_CANE, 2, 4, 4, 8, 6
+                Items.SUGAR_CANE, 2, 4, 10, 10, 6
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
@@ -211,11 +207,11 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                Items.CACTUS, 2, 4, 3, 6, 4
+                Items.CACTUS, 1, 2, 5, 5, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                Items.COCOA_BEANS, 3, 5, 3, 6, 4
+                Items.COCOA_BEANS, 1, 2, 6, 6, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
@@ -243,50 +239,51 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                JolCraftItems.GEODE_SMALL, 5, 9, 1, 1, 3
+                JolCraftBlocks.DUSKCAP, 2, 3, 2, 2, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                JolCraftBlocks.DUSKCAP, 5, 9, 1, 1, 3
+                JolCraftBlocks.FESTERLING, 3, 4, 3, 3, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                JolCraftBlocks.FESTERLING, 5, 9, 1, 1, 3
+                JolCraftItems.PARCHMENT, 3, 6, 2, 4, 5
         );
 
-
-
+        pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
+                Items.FEATHER, 1, 2, 5, 5, 7
+        );
 
         // ---------------------------------------------------------------------
         // Journeyman
         // ---------------------------------------------------------------------
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.GOLD_INGOT, 8, 12, 2, 3, 4
+                Items.GOLD_INGOT, 2, 4, 1, 1, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.LAPIS_LAZULI, 4, 7, 8, 16, 6
+                Items.LAPIS_LAZULI, 3, 6, 10, 10, 6
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.REDSTONE, 4, 7, 8, 16, 6
+                Items.REDSTONE, 2, 4, 10, 10, 6
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.SPIDER_EYE, 3, 5, 3, 6, 4
+                Items.SPIDER_EYE, 2, 3, 1, 1, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.GUNPOWDER, 5, 8, 4, 8, 5
+                Items.GUNPOWDER, 1, 2, 5, 5, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.BONE, 3, 5, 6, 12, 5
+                Items.BONE, 1, 2, 10, 10, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.INK_SAC, 3, 5, 3, 6, 4
+                Items.INK_SAC, 4, 8, 1, 1, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
@@ -294,7 +291,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.MUFFHORN_FUR, 4, 7, 2, 4, 4
+                JolCraftItems.MUFFHORN_FUR, 4, 8, 1, 1, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
@@ -302,11 +299,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.LEATHER, 4, 7, 3, 6, 5
-        );
-
-        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.PARCHMENT, 3, 6, 2, 4, 5
+                Items.LEATHER, 1, 2, 1, 1, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
@@ -334,11 +327,11 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.SLIME_BALL, 7, 11, 2, 4, 4
+                Items.SLIME_BALL, 3, 6, 5, 5, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.GLOWSTONE_DUST, 8, 12, 2, 4, 3
+                Items.GLOWSTONE_DUST, 3, 6, 10, 10, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
@@ -346,11 +339,11 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.GEODE_MEDIUM, 10, 16, 1, 1, 2
+                JolCraftItems.GEODE_SMALL, 10, 20, 1, 1, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                Items.QUARTZ, 5, 8, 6, 12, 5
+                Items.QUARTZ, 2, 4, 10, 10, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
@@ -362,9 +355,7 @@ public record DwarfMerchantTrades(
         );
 
 
-        pooledPotionBuy(
-                output,
-                tracking,
+        pooledPotionBuy(output, tracking,
                 DwarfMerchantData.Level.JOURNEYMAN,
                 Potions.STRONG_HEALING,
                 14,
@@ -373,9 +364,7 @@ public record DwarfMerchantTrades(
         );
 
 
-        pooledPotionBuy(
-                output,
-                tracking,
+        pooledPotionBuy(output, tracking,
                 DwarfMerchantData.Level.JOURNEYMAN,
                 Potions.SWIFTNESS,
                 14,
@@ -389,15 +378,19 @@ public record DwarfMerchantTrades(
         // ---------------------------------------------------------------------
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
+                JolCraftItems.GEODE_MEDIUM, 15, 25, 1, 1, 2
+        );
+
+        pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
                 Items.GOLDEN_APPLE, 16, 24, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                Items.GHAST_TEAR, 14, 22, 1, 1, 2
+                Items.GHAST_TEAR, 10, 20, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                Items.PHANTOM_MEMBRANE, 10, 16, 2, 4, 3
+                Items.PHANTOM_MEMBRANE, 6, 12, 1, 1, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
@@ -413,19 +406,19 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                Items.ENDER_PEARL, 10, 16, 2, 4, 3
+                Items.ENDER_PEARL, 4, 8, 1, 1, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                Items.BLAZE_POWDER, 8, 13, 3, 6, 4
+                Items.BLAZE_POWDER, 4, 8, 1, 1, 4
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                Items.EMERALD, 8, 12, 2, 4, 3
+                Items.EMERALD, 2, 4, 10, 10, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                Items.AMETHYST_SHARD, 6, 10, 4, 8, 5
+                Items.AMETHYST_SHARD, 3, 6, 10, 10, 5
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
@@ -457,7 +450,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.DEEPSLATE_PLATE, 12, 20, 2, 4, 3
+                JolCraftItems.DEEPSLATE_PLATE, 4, 8, 1, 1, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
@@ -473,68 +466,66 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.AEGISCORE_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.AEGISCORE_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.ASHFANG_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.ASHFANG_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.DEEPMARROW_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.DEEPMARROW_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.EARTHBLOOD_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.EARTHBLOOD_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.EMBERGLASS_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.EMBERGLASS_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.FROSTVEIN_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.FROSTVEIN_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.GRIMSTONE_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.GRIMSTONE_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.IRONHEART_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.IRONHEART_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.LUMIERE_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.LUMIERE_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.MOONSHARD_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.MOONSHARD_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.SKYBURROW_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.SKYBURROW_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.SUNGLEAM_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.SUNGLEAM_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.VERDANITE_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.VERDANITE_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
-                JolCraftItems.WOECRYSTAL_DUST, 4, 7, 1, 2, 2
+                JolCraftItems.WOECRYSTAL_DUST, 8, 16, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.EXPERT,
                 JolCraftItems.UNIDENTIFIED_DWARVEN_TOME, 10, 16, 1, 1, 2
         );
 
-        pooledPotionBuy(
-                output,
-                tracking,
+        pooledPotionBuy(output, tracking,
                 DwarfMerchantData.Level.EXPERT,
                 JolCraftPotions.CORROSION,
                 14,
@@ -542,9 +533,7 @@ public record DwarfMerchantTrades(
                 2
         );
 
-        pooledPotionBuy(
-                output,
-                tracking,
+        pooledPotionBuy(output, tracking,
                 DwarfMerchantData.Level.EXPERT,
                 JolCraftPotions.DWARVEN_HASTE,
                 14,
@@ -552,9 +541,7 @@ public record DwarfMerchantTrades(
                 2
         );
 
-        pooledPotionBuy(
-                output,
-                tracking,
+        pooledPotionBuy(output, tracking,
                 DwarfMerchantData.Level.EXPERT,
                 JolCraftPotions.LOCKPICKING,
                 14,
@@ -567,11 +554,11 @@ public record DwarfMerchantTrades(
         // ---------------------------------------------------------------------
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.GEODE_LARGE, 20, 32, 1, 1, 2
+                JolCraftItems.GEODE_LARGE, 20, 40, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                Items.DIAMOND, 24, 38, 1, 3, 1
+                Items.DIAMOND, 14, 28, 1, 1, 1
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
@@ -583,67 +570,67 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                Items.ECHO_SHARD, 28, 46, 1, 1, 1
+                Items.ECHO_SHARD, 20, 40, 1, 1, 1
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                Items.NETHERITE_SCRAP, 48, 76, 1, 1, 1
+                Items.NETHERITE_SCRAP, 30, 60, 1, 1, 1
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.AEGISCORE, 10, 16, 1, 1, 2
+                JolCraftItems.AEGISCORE, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.ASHFANG, 10, 16, 1, 1, 2
+                JolCraftItems.ASHFANG, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.DEEPMARROW, 10, 16, 1, 1, 2
+                JolCraftItems.DEEPMARROW, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.EARTHBLOOD, 10, 16, 1, 1, 2
+                JolCraftItems.EARTHBLOOD, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.EMBERGLASS, 10, 16, 1, 1, 2
+                JolCraftItems.EMBERGLASS, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.FROSTVEIN, 10, 16, 1, 1, 2
+                JolCraftItems.FROSTVEIN, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.GRIMSTONE, 10, 16, 1, 1, 2
+                JolCraftItems.GRIMSTONE, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.IRONHEART, 10, 16, 1, 1, 2
+                JolCraftItems.IRONHEART, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.LUMIERE, 10, 16, 1, 1, 2
+                JolCraftItems.LUMIERE, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.MOONSHARD, 10, 16, 1, 1, 2
+                JolCraftItems.MOONSHARD, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.SKYBURROW, 10, 16, 1, 1, 2
+                JolCraftItems.SKYBURROW, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.SUNGLEAM, 10, 16, 1, 1, 2
+                JolCraftItems.SUNGLEAM, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.VERDANITE, 10, 16, 1, 1, 2
+                JolCraftItems.VERDANITE, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
-                JolCraftItems.WOECRYSTAL, 10, 16, 1, 1, 2
+                JolCraftItems.WOECRYSTAL, 16, 32, 1, 1, 2
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.MASTER,
@@ -651,18 +638,14 @@ public record DwarfMerchantTrades(
         );
 
 
-        pooledCrate(
-                output,
-                tracking,
+        pooledCrate(output, tracking,
                 DwarfMerchantData.Level.MASTER,
                 JolCraftItems.RESTOCK_CRATE.get(),
                 15,
                 30
         );
 
-        pooledCrate(
-                output,
-                tracking,
+        pooledCrate(output, tracking,
                 DwarfMerchantData.Level.MASTER,
                 JolCraftItems.REROLL_CRATE.get(),
                 20,
