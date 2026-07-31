@@ -15,4 +15,8 @@ public final class JolCraftClientPayloadHandlers {
     public static void handleClientboundDelirium(ClientboundDeliriumCursePacket packet, IPayloadContext context) {
         context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
     }
+
+    public static void handleClientboundRewardLootTables(ClientboundRewardLootTablesPacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> JolCraftProxy.access().apply(packet));
+    }
 }

@@ -32,6 +32,7 @@ public final class JeiBountyRewardCategory
             JeiRecipeTypes.BOUNTY_REWARD;
 
     private static final int OUTPUT_AMOUNT_Y = 46;
+    private static final int REWARD_CRATE_Y = 54;
 
     public JeiBountyRewardCategory(
             IGuiHelper guiHelper
@@ -133,6 +134,15 @@ public final class JeiBountyRewardCategory
                                 entry.reward()
                                         .stack()
                         )
+                );
+
+        builder.addSlot(
+                        RecipeIngredientRole.OUTPUT,
+                        JeiBountyLayout.OUTPUT.x(),
+                        REWARD_CRATE_Y
+                )
+                .addItemStack(
+                        entry.rewardCrate()
                 );
     }
 }

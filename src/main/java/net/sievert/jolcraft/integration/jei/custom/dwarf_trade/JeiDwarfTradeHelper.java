@@ -7,8 +7,8 @@ import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigManager;
 import net.sievert.jolcraft.config.custom.dwarf.trade.DwarfProfessionTradePoolConfig;
 import net.sievert.jolcraft.config.custom.dwarf.trade.DwarfProfessionTradePoolsConfig;
 import net.sievert.jolcraft.config.custom.dwarf.trade.TradePoolType;
-import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
-import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.RewardCrateJeiResolver;
+import net.sievert.jolcraft.integration.jei.util.recipe.RewardCrateJeiResolver.ResolvedOutcome;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeAccess;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionHelper;
@@ -101,8 +101,8 @@ public final class JeiDwarfTradeHelper {
                             DwarfTradeRecipe recipe =
                                     holder.value();
 
-                            List<JeiItemOutcome> outcomes =
-                                    ItemOutputJeiTranslator.translate(
+                            List<ResolvedOutcome> outcomes =
+                                    RewardCrateJeiResolver.translate(
                                             recipe.result()
                                     );
 

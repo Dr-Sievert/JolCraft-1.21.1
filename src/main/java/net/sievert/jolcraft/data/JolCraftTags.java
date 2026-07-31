@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
-import net.sievert.jolcraft.util.JolCraftStrings;
 
 import static net.sievert.jolcraft.JolCraft.location;
 
@@ -25,18 +24,6 @@ public final class JolCraftTags {
 
         private static TagKey<Biome> create(String id) {
             return TagKey.create(Registries.BIOME, JolCraft.location(id));
-        }
-
-        private static TagKey<Biome> hasStructure(String structurePath) {
-            if (structurePath == null || structurePath.isEmpty()) {
-                throw new IllegalArgumentException("Structure name path must not be null/empty for has_structure biome tag.");
-            }
-
-            int colon = structurePath.indexOf(':');
-            if (colon >= 0) structurePath = structurePath.substring(colon + 1);
-
-            String tagPath = JolCraftStrings.slashed(JolCraftTagIds.HAS_STRUCTURE, structurePath);
-            return TagKey.create(Registries.BIOME, JolCraft.location(tagPath));
         }
     }
 
@@ -63,7 +50,6 @@ public final class JolCraftTags {
         public static final TagKey<Item> MONSTER_SPAWN_EGGS = createTag(JolCraftTagIds.MONSTER_SPAWN_EGGS);
         public static final TagKey<Item> INK_AND_QUILLS = createTag(JolCraftTagIds.INK_AND_QUILLS);
         public static final TagKey<Item> GEODES = createTag(JolCraftTagIds.GEODES);
-        public static final TagKey<Item> DURABILITY_ENCHANTABLE = createTag(JolCraftTagIds.DURABILITY_ENCHANTABLE);
         public static final TagKey<Item> WARHAMMERS = createTag(JolCraftTagIds.WARHAMMERS);
         public static final TagKey<Item> SPANNERS = createTag(JolCraftTagIds.SPANNERS);
         public static final TagKey<Item> ARTISAN_HAMMERS = createTag(JolCraftTagIds.ARTISAN_HAMMERS);

@@ -42,14 +42,17 @@ public final class JeiDwarfTradeCategory
         extends AbstractJeiCategory<JeiDwarfTradeRecipe> {
 
     private static final int WIDTH = 150;
-    private static final int HEIGHT = 68;
+    private static final int HEIGHT = 88;
 
-    private static final int DWARF_CENTER_X = 107;
+    private static final int DWARF_CENTER_X = 112;
     private static final int DWARF_BOTTOM_Y = 55;
     private static final int AMOUNT_Y = 43;
     private static final int TRADE_CHANCE_Y = 56;
     private static final int CHANCE_Y = 52;
     private static final int ROLLS_Y = 60;
+    private static final int REWARD_CRATE_Y = 49;
+    private static final int CRATE_CHANCE_Y = 70;
+    private static final int CRATE_ROLLS_Y = 78;
 
     private static final JeiRecipeLayout SINGLE_INPUT_LAYOUT =
             JeiRecipeLayout.singleInputToOutput(
@@ -205,7 +208,9 @@ public final class JeiDwarfTradeCategory
                     entry.outputChancePerRoll(),
                     layout.output().x(),
                     SLOT_SIZE,
-                    CHANCE_Y
+                    entry.hasRewardCrate()
+                            ? CRATE_CHANCE_Y
+                            : CHANCE_Y
             );
         }
 
@@ -215,7 +220,9 @@ public final class JeiDwarfTradeCategory
                 entry.outputRolls(),
                 layout.output().x(),
                 SLOT_SIZE,
-                ROLLS_Y
+                entry.hasRewardCrate()
+                        ? CRATE_ROLLS_Y
+                        : ROLLS_Y
         );
     }
 
@@ -338,6 +345,17 @@ public final class JeiDwarfTradeCategory
                 .addItemStack(
                         entry.outputExample()
                 );
+
+        if (entry.hasRewardCrate()) {
+            builder.addSlot(
+                            RecipeIngredientRole.OUTPUT,
+                            layout.output().x(),
+                            REWARD_CRATE_Y
+                    )
+                    .addItemStack(
+                            entry.rewardCrateExample()
+                    );
+        }
     }
 
     private static void addTradeInput(

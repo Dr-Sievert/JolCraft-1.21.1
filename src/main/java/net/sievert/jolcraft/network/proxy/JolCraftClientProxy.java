@@ -11,9 +11,11 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.network.data.client.ClientDeliriumData;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumCursePacket;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPacket;
+import net.sievert.jolcraft.network.packet.s2c.ClientboundRewardLootTablesPacket;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
+import net.sievert.jolcraft.world.loot.custom.reward.client.RewardLootTableClientCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,5 +67,10 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
     @Override
     public void apply(ClientboundDeliriumCursePacket packet) {
         ClientDeliriumData.start(packet.durationTicks());
+    }
+
+    @Override
+    public void apply(ClientboundRewardLootTablesPacket packet) {
+        RewardLootTableClientCache.replace(packet.tables());
     }
 }

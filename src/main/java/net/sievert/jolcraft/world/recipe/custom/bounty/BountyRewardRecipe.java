@@ -12,7 +12,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -106,40 +108,23 @@ public record BountyRewardRecipe(
     }
 
     /**
-     * Generates every configured item reward.
-     *
-     * The input is supplied so reward hooks may inspect or modify behavior
-     * using the redeemed bounty stack.
+     * Converts the existing item-output pools directly into a vanilla loot
+     * table. Bounty reward validation guarantees that every output is an
+     * item output without recipe hooks.
      */
-    public void generateRewards(
-            @NotNull LootContext context,
-            @NotNull BountyRecipeInput input,
-            @NotNull Consumer<ItemStack> output
-    ) {
-        Objects.requireNonNull(
-                context,
-                JolCraftDictionary.CONTEXT
-        );
-
-        Objects.requireNonNull(
-                input,
-                JolCraftDictionary.INPUT
-        );
-
-        Objects.requireNonNull(
-                output,
-                JolCraftDictionary.OUTPUT
-        );
+    public @NotNull LootTable createLootTable() {
+        LootTable table =
+                LootTable.lootTable()
+                        .setParamSet(LootContextParamSets.CHEST)
+                        .build();
 
         for (RecipeOutput reward : rewards) {
-            if (reward instanceof ItemOutput itemOutput) {
-                itemOutput.generate(
-                        context,
-                        input,
-                        output
-                );
-            }
+            table.addPool(
+                    ((ItemOutput) reward).pool()
+            );
         }
+
+        return table;
     }
 
     /**
@@ -446,7 +431,7 @@ public record BountyRewardRecipe(
                     );
                 }
 
-                if (!(reward instanceof ItemOutput)) {
+                if (!(reward instanceof ItemOutput itemOutput)) {
                     int invalidIndex =
                             index;
 
@@ -461,6 +446,18 @@ public record BountyRewardRecipe(
                                     + invalidIndex
                                     + "] must be an item output; got "
                                     + outputType
+                    );
+                }
+
+                if (!itemOutput.hooks().isEmpty()) {
+                    int invalidIndex =
+                            index;
+
+                    return DataResult.error(() ->
+                            REWARDS_KEY
+                                    + "["
+                                    + invalidIndex
+                                    + "] cannot use recipe hooks because reward crates resolve rewards as a vanilla loot table"
                     );
                 }
 

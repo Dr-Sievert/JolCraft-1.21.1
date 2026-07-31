@@ -1,14 +1,20 @@
 package net.sievert.jolcraft.integration.jei.custom.bounty.reward;
 
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
 import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
-import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
@@ -24,45 +30,47 @@ import java.util.Objects;
 public record JeiBountyRewardRecipe(
         @NotNull BountyRewardRecipe recipe,
         @NotNull List<ItemStack> inputs,
-        @NotNull JeiItemOutcome reward
+        @NotNull JeiItemOutcome reward,
+        @NotNull ItemStack rewardCrate
 ) {
 
     public JeiBountyRewardRecipe {
-        Objects.requireNonNull(
-                recipe,
-                JolCraftDictionary.RECIPE
-        );
-
+        Objects.requireNonNull(recipe, JolCraftDictionary.RECIPE);
         Objects.requireNonNull(
                 inputs,
                 JolCraftStrings.plural(JolCraftDictionary.INPUT)
         );
+        Objects.requireNonNull(reward, JolCraftDictionary.REWARD);
+        Objects.requireNonNull(rewardCrate, JolCraftDictionary.CRATE);
 
-        Objects.requireNonNull(
-                reward,
-                JolCraftDictionary.REWARD
-        );
+        inputs =
+                JeiStacks.copyRequired(
+                        inputs,
+                        JolCraftStrings.plural(JolCraftDictionary.INPUT)
+                );
 
-        inputs = JeiStacks.copyRequired(
-                inputs,
-                JolCraftStrings.plural(JolCraftDictionary.INPUT)
-        );
-
+        rewardCrate = rewardCrate.copy();
     }
 
     public static @NotNull List<JeiBountyRewardRecipe> create(
+            @NotNull ResourceLocation recipeId,
             @NotNull BountyRewardRecipe rewardRecipe,
             @NotNull List<BountyTaskRecipe> taskRecipes
     ) {
+        Objects.requireNonNull(recipeId, JolCraftDictionary.ID);
         Objects.requireNonNull(
                 rewardRecipe,
-                JolCraftStrings.underscored(JolCraftDictionary.REWARD, JolCraftDictionary.RECIPE)
+                JolCraftStrings.underscored(
+                        JolCraftDictionary.REWARD,
+                        JolCraftDictionary.RECIPE
+                )
         );
-
         Objects.requireNonNull(
                 taskRecipes,
-                JolCraftStrings.underscored(JolCraftDictionary.TASK, JolCraftStrings.plural(JolCraftDictionary.RECIPE))
-
+                JolCraftStrings.underscored(
+                        JolCraftDictionary.TASK,
+                        JolCraftStrings.plural(JolCraftDictionary.RECIPE)
+                )
         );
 
         List<ItemStack> inputs =
@@ -71,17 +79,22 @@ public record JeiBountyRewardRecipe(
                         taskRecipes
                 );
 
-        List<JeiItemOutcome> rewards =
-                createRewards(
+        ItemStack rewardCrate =
+                createRewardCrate(
+                        recipeId,
                         rewardRecipe
                 );
 
-        return rewards.stream()
-                .map(reward -> new JeiBountyRewardRecipe(
-                        rewardRecipe,
-                        inputs,
-                        reward
-                ))
+        return createRewards(rewardRecipe)
+                .stream()
+                .map(reward ->
+                        new JeiBountyRewardRecipe(
+                                rewardRecipe,
+                                inputs,
+                                reward,
+                                rewardCrate
+                        )
+                )
                 .toList();
     }
 
@@ -91,91 +104,60 @@ public record JeiBountyRewardRecipe(
     ) {
         List<RecipeOutput> objectives =
                 taskRecipes.stream()
-                        .filter(
-                                taskRecipe ->
-                                        taskRecipe.bountyType()
-                                                == rewardRecipe.bountyType()
+                        .filter(taskRecipe ->
+                                taskRecipe.bountyType()
+                                        == rewardRecipe.bountyType()
                         )
-                        .filter(
-                                taskRecipe ->
-                                        taskRecipe.tier()
-                                                == rewardRecipe.tier()
+                        .filter(taskRecipe ->
+                                taskRecipe.tier()
+                                        == rewardRecipe.tier()
                         )
-                        .flatMap(
-                                taskRecipe ->
-                                        taskRecipe.objectives()
-                                                .unwrap()
-                                                .stream()
+                        .flatMap(taskRecipe ->
+                                taskRecipe.objectives()
+                                        .unwrap()
+                                        .stream()
                         )
-                        .map(
-                                WeightedEntry.Wrapper::data
-                        )
+                        .map(WeightedEntry.Wrapper::data)
                         .toList();
 
         ItemStack bounty =
                 objectives.stream()
-                        .filter(
-                                EntityOutput.class::isInstance
-                        )
-                        .map(
-                                EntityOutput.class::cast
-                        )
+                        .filter(EntityOutput.class::isInstance)
+                        .map(EntityOutput.class::cast)
                         .findFirst()
-                        .map(
-                                objective ->
-                                        createEntityBounty(
-                                                rewardRecipe
-                                        )
+                        .map(objective ->
+                                createEntityBounty(rewardRecipe)
                         )
-                        .orElse(
-                                ItemStack.EMPTY
-                        );
+                        .orElse(ItemStack.EMPTY);
 
         ItemStack bountyCrate =
                 objectives.stream()
-                        .filter(
-                                ItemOutput.class::isInstance
-                        )
-                        .map(
-                                ItemOutput.class::cast
-                        )
+                        .filter(ItemOutput.class::isInstance)
+                        .map(ItemOutput.class::cast)
                         .findFirst()
-                        .map(
-                                objective ->
-                                        createItemBounty(
-                                                rewardRecipe
-                                        )
+                        .map(objective ->
+                                createItemBounty(rewardRecipe)
                         )
-                        .orElse(
-                                ItemStack.EMPTY
-                        );
+                        .orElse(ItemStack.EMPTY);
 
         List<ItemStack> inputs = new ArrayList<>(2);
 
         if (!bounty.isEmpty()) {
-            inputs.add(
-                    bounty
-            );
+            inputs.add(bounty);
         }
 
         if (!bountyCrate.isEmpty()) {
-            inputs.add(
-                    bountyCrate
-            );
+            inputs.add(bountyCrate);
         }
 
-        return List.copyOf(
-                inputs
-        );
+        return List.copyOf(inputs);
     }
 
     private static @NotNull ItemStack createEntityBounty(
             @NotNull BountyRewardRecipe rewardRecipe
     ) {
         return createCompletedBounty(
-                new ItemStack(
-                        JolCraftItems.BOUNTY.get()
-                ),
+                new ItemStack(JolCraftItems.BOUNTY.get()),
                 rewardRecipe
         );
     }
@@ -184,9 +166,7 @@ public record JeiBountyRewardRecipe(
             @NotNull BountyRewardRecipe rewardRecipe
     ) {
         return createCompletedBounty(
-                new ItemStack(
-                        JolCraftItems.BOUNTY_CRATE.get()
-                ),
+                new ItemStack(JolCraftItems.BOUNTY_CRATE.get()),
                 rewardRecipe
         );
     }
@@ -216,23 +196,48 @@ public record JeiBountyRewardRecipe(
     private static @NotNull List<JeiItemOutcome> createRewards(
             @NotNull BountyRewardRecipe recipe
     ) {
-        List<JeiItemOutcome> rewards =
-                new ArrayList<>();
+        List<JeiItemOutcome> rewards = new ArrayList<>();
 
         for (RecipeOutput reward : recipe.rewards()) {
-            if (!(reward instanceof ItemOutput itemOutput)) {
-                continue;
-            }
-
             rewards.addAll(
                     ItemOutputJeiTranslator.translate(
-                            itemOutput
+                            (ItemOutput) reward
                     )
             );
         }
 
-        return List.copyOf(
-                rewards
+        return List.copyOf(rewards);
+    }
+
+    private static @NotNull ItemStack createRewardCrate(
+            @NotNull ResourceLocation recipeId,
+            @NotNull BountyRewardRecipe rewardRecipe
+    ) {
+        ItemStack rewardCrate =
+                JolCraftItems.REWARD_CRATE.toStack();
+
+        rewardCrate.set(
+                DataComponents.RARITY,
+                rarityForTier(rewardRecipe.tier())
         );
+
+        rewardCrate.set(
+                JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
+                RewardCrateSource.recipe(recipeId)
+        );
+
+        return rewardCrate;
+    }
+
+    private static @NotNull Rarity rarityForTier(
+            @NotNull DwarfMerchantData.Level tier
+    ) {
+        return switch (tier) {
+            case NOVICE -> Rarity.COMMON;
+            case APPRENTICE -> Rarity.UNCOMMON;
+            case JOURNEYMAN -> Rarity.RARE;
+            case EXPERT -> Rarity.EPIC;
+            case MASTER -> JolCraftEnumExtensions.Rarity.LEGENDARY.getValue();
+        };
     }
 }

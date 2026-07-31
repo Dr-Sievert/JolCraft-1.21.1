@@ -176,6 +176,12 @@ public final class BountyRewardRecipeBuilder
     public BountyRewardRecipeBuilder rewardOutput(
             @NotNull ItemOutput reward
     ) {
+        if (!reward.hooks().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "bounty reward outputs cannot use recipe hooks"
+            );
+        }
+
         flushPendingWeightedRewards();
 
         rewards.add(

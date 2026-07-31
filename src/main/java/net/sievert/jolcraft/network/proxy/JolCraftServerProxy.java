@@ -28,4 +28,7 @@ public final class JolCraftServerProxy implements JolCraftClientAccess {
 
     @Override
     public void apply(ClientboundDeliriumCursePacket packet) {}
+
+    @Override
+    public void apply(ClientboundRewardLootTablesPacket packet) {}
 }

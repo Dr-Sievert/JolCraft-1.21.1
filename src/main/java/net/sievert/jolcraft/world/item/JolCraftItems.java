@@ -101,12 +101,55 @@ public final class JolCraftItems {
     public static final DeferredItem<AxeItem> DEEPSLATE_AXE = JolCraftEquipmentItems.registerDeepslateAxe();
     public static final DeferredItem<HoeItem> DEEPSLATE_HOE = JolCraftEquipmentItems.registerDeepslateHoe();
 
+    // -------------------------------------------------------------------------
+    // Artisan hammers
+    // -------------------------------------------------------------------------
+
+    public static final DeferredItem<ArtisanHammerItem> WOODEN_ARTISAN_HAMMER = JolCraftEquipmentItems.registerWoodenArtisanHammer();
+    public static final DeferredItem<ArtisanHammerItem> STONE_ARTISAN_HAMMER = JolCraftEquipmentItems.registerStoneArtisanHammer();
+    public static final DeferredItem<ArtisanHammerItem> IRON_ARTISAN_HAMMER = JolCraftEquipmentItems.registerIronArtisanHammer();
+    public static final DeferredItem<ArtisanHammerItem> GOLDEN_ARTISAN_HAMMER = JolCraftEquipmentItems.registerGoldenArtisanHammer();
+    public static final DeferredItem<ArtisanHammerItem> DIAMOND_ARTISAN_HAMMER = JolCraftEquipmentItems.registerDiamondArtisanHammer();
+    public static final DeferredItem<ArtisanHammerItem> NETHERITE_ARTISAN_HAMMER = JolCraftEquipmentItems.registerNetheriteArtisanHammer();
     public static final DeferredItem<ArtisanHammerItem> DEEPSLATE_ARTISAN_HAMMER = JolCraftEquipmentItems.registerDeepslateArtisanHammer();
     public static final DeferredItem<ArtisanHammerItem> MITHRIL_ARTISAN_HAMMER = JolCraftEquipmentItems.registerMithrilArtisanHammer();
+
+    // -------------------------------------------------------------------------
+    // Chisels
+    // -------------------------------------------------------------------------
+
+    public static final DeferredItem<ChiselItem> WOODEN_CHISEL = JolCraftEquipmentItems.registerWoodenChisel();
+    public static final DeferredItem<ChiselItem> STONE_CHISEL = JolCraftEquipmentItems.registerStoneChisel();
+    public static final DeferredItem<ChiselItem> IRON_CHISEL = JolCraftEquipmentItems.registerIronChisel();
+    public static final DeferredItem<ChiselItem> GOLDEN_CHISEL = JolCraftEquipmentItems.registerGoldenChisel();
+    public static final DeferredItem<ChiselItem> DIAMOND_CHISEL = JolCraftEquipmentItems.registerDiamondChisel();
+    public static final DeferredItem<ChiselItem> NETHERITE_CHISEL = JolCraftEquipmentItems.registerNetheriteChisel();
     public static final DeferredItem<ChiselItem> DEEPSLATE_CHISEL = JolCraftEquipmentItems.registerDeepslateChisel();
     public static final DeferredItem<ChiselItem> MITHRIL_CHISEL = JolCraftEquipmentItems.registerMithrilChisel();
+
+    // -------------------------------------------------------------------------
+    // Pestles
+    // -------------------------------------------------------------------------
+
+    public static final DeferredItem<PestleItem> WOODEN_PESTLE = JolCraftEquipmentItems.registerWoodenPestle();
+    public static final DeferredItem<PestleItem> STONE_PESTLE = JolCraftEquipmentItems.registerStonePestle();
+    public static final DeferredItem<PestleItem> IRON_PESTLE = JolCraftEquipmentItems.registerIronPestle();
+    public static final DeferredItem<PestleItem> GOLDEN_PESTLE = JolCraftEquipmentItems.registerGoldenPestle();
+    public static final DeferredItem<PestleItem> DIAMOND_PESTLE = JolCraftEquipmentItems.registerDiamondPestle();
+    public static final DeferredItem<PestleItem> NETHERITE_PESTLE = JolCraftEquipmentItems.registerNetheritePestle();
     public static final DeferredItem<PestleItem> DEEPSLATE_PESTLE = JolCraftEquipmentItems.registerDeepslatePestle();
     public static final DeferredItem<PestleItem> MITHRIL_PESTLE = JolCraftEquipmentItems.registerMithrilPestle();
+
+    // -------------------------------------------------------------------------
+    // Spanners
+    // -------------------------------------------------------------------------
+
+    public static final DeferredItem<SpannerItem> WOODEN_SPANNER = JolCraftEquipmentItems.registerWoodenSpanner();
+    public static final DeferredItem<SpannerItem> STONE_SPANNER = JolCraftEquipmentItems.registerStoneSpanner();
+    public static final DeferredItem<SpannerItem> IRON_SPANNER = JolCraftEquipmentItems.registerIronSpanner();
+    public static final DeferredItem<SpannerItem> GOLDEN_SPANNER = JolCraftEquipmentItems.registerGoldenSpanner();
+    public static final DeferredItem<SpannerItem> DIAMOND_SPANNER = JolCraftEquipmentItems.registerDiamondSpanner();
+    public static final DeferredItem<SpannerItem> NETHERITE_SPANNER = JolCraftEquipmentItems.registerNetheriteSpanner();
     public static final DeferredItem<SpannerItem> DEEPSLATE_SPANNER = JolCraftEquipmentItems.registerDeepslateSpanner();
     public static final DeferredItem<SpannerItem> MITHRIL_SPANNER = JolCraftEquipmentItems.registerMithrilSpanner();
 

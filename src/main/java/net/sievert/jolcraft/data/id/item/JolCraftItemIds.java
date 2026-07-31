@@ -75,6 +75,45 @@ public final class JolCraftItemIds extends JolCraftIds {
     );
 
     // ---------------------------------------------------------------------
+    // Custom Tools
+    // ---------------------------------------------------------------------
+    public static final String WOODEN_ARTISAN_HAMMER = join(JolCraftDictionary.WOODEN, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String STONE_ARTISAN_HAMMER = join(JolCraftDictionary.STONE, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String IRON_ARTISAN_HAMMER = join(JolCraftDictionary.IRON, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String GOLDEN_ARTISAN_HAMMER = join(JolCraftDictionary.GOLDEN, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String DIAMOND_ARTISAN_HAMMER = join(JolCraftDictionary.DIAMOND, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String NETHERITE_ARTISAN_HAMMER = join(JolCraftDictionary.NETHERITE, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String DEEPSLATE_ARTISAN_HAMMER = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+    public static final String MITHRIL_ARTISAN_HAMMER = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
+
+    public static final String WOODEN_CHISEL = join(JolCraftDictionary.WOODEN, JolCraftDictionary.CHISEL);
+    public static final String STONE_CHISEL = join(JolCraftDictionary.STONE, JolCraftDictionary.CHISEL);
+    public static final String IRON_CHISEL = join(JolCraftDictionary.IRON, JolCraftDictionary.CHISEL);
+    public static final String GOLDEN_CHISEL = join(JolCraftDictionary.GOLDEN, JolCraftDictionary.CHISEL);
+    public static final String DIAMOND_CHISEL = join(JolCraftDictionary.DIAMOND, JolCraftDictionary.CHISEL);
+    public static final String NETHERITE_CHISEL = join(JolCraftDictionary.NETHERITE, JolCraftDictionary.CHISEL);
+    public static final String DEEPSLATE_CHISEL = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.CHISEL);
+    public static final String MITHRIL_CHISEL = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.CHISEL);
+
+    public static final String WOODEN_SPANNER = join(JolCraftDictionary.WOODEN, JolCraftDictionary.SPANNER);
+    public static final String STONE_SPANNER = join(JolCraftDictionary.STONE, JolCraftDictionary.SPANNER);
+    public static final String IRON_SPANNER = join(JolCraftDictionary.IRON, JolCraftDictionary.SPANNER);
+    public static final String GOLDEN_SPANNER = join(JolCraftDictionary.GOLDEN, JolCraftDictionary.SPANNER);
+    public static final String DIAMOND_SPANNER = join(JolCraftDictionary.DIAMOND, JolCraftDictionary.SPANNER);
+    public static final String NETHERITE_SPANNER = join(JolCraftDictionary.NETHERITE, JolCraftDictionary.SPANNER);
+    public static final String DEEPSLATE_SPANNER = join(JolCraftMaterialIds.DEEPSLATE, JolCraftDictionary.SPANNER);
+    public static final String MITHRIL_SPANNER = join(JolCraftMaterialIds.MITHRIL, JolCraftDictionary.SPANNER);
+
+    public static final String WOODEN_PESTLE = join(JolCraftDictionary.WOODEN, JolCraftDictionary.PESTLE);
+    public static final String STONE_PESTLE = join(JolCraftDictionary.STONE, JolCraftDictionary.PESTLE);
+    public static final String IRON_PESTLE = join(JolCraftDictionary.IRON, JolCraftDictionary.PESTLE);
+    public static final String GOLDEN_PESTLE = join(JolCraftDictionary.GOLDEN, JolCraftDictionary.PESTLE);
+    public static final String DIAMOND_PESTLE = join(JolCraftDictionary.DIAMOND, JolCraftDictionary.PESTLE);
+    public static final String NETHERITE_PESTLE = join(JolCraftDictionary.NETHERITE, JolCraftDictionary.PESTLE);
+    public static final String DEEPSLATE_PESTLE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.PESTLE);
+    public static final String MITHRIL_PESTLE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.PESTLE);
+
+    // ---------------------------------------------------------------------
     // Animal-related
     // ---------------------------------------------------------------------
 
@@ -86,10 +125,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String DEEPSLATE_MORTAR = JolCraftBlockIds.DEEPSLATE_MORTAR;
-    public static final String DEEPSLATE_PESTLE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.PESTLE);
-    public static final String MITHRIL_PESTLE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.PESTLE);
-
-    public static final String INVERIX = "inverix";
+    public static final String INVERIX = JolCraftDictionary.INVERIX;
 
     // ---------------------------------------------------------------------
     // Bounty
@@ -162,17 +198,6 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String DWARF_SMELTER_SPAWN_EGG = join(JolCraftDictionary.DWARF, JolCraftDictionary.SMELTER, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
 
     public static final String MUFFHORN_SPAWN_EGG = join(JolCraftCreatureIds.MUFFHORN, JolCraftDictionary.SPAWN, JolCraftDictionary.EGG);
-
-    // ---------------------------------------------------------------------
-    // Tools
-    // ---------------------------------------------------------------------
-
-    public static final String DEEPSLATE_ARTISAN_HAMMER = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
-    public static final String MITHRIL_ARTISAN_HAMMER = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.ARTISAN, JolCraftDictionary.HAMMER);
-    public static final String DEEPSLATE_CHISEL = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.CHISEL);
-    public static final String MITHRIL_CHISEL = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.CHISEL);
-    public static final String DEEPSLATE_SPANNER = join(JolCraftMaterialIds.DEEPSLATE, JolCraftDictionary.SPANNER);
-    public static final String MITHRIL_SPANNER = join(JolCraftMaterialIds.MITHRIL, JolCraftDictionary.SPANNER);
 
     // ---------------------------------------------------------------------
     // Geodes

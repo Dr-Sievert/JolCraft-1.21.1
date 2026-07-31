@@ -10,22 +10,27 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.client.tooltip.util.JolCraftTooltipHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemHelper;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
+import net.sievert.jolcraft.world.loot.custom.reward.RewardCrateLootResolver;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -44,11 +49,19 @@ public class RewardCrateItem extends Item {
      */
     @Override
     public Component getName(ItemStack stack) {
-        Rarity rarity = stack.get(DataComponents.RARITY);
+        Rarity rarity =
+                stack.getOrDefault(
+                        DataComponents.RARITY,
+                        Rarity.COMMON
+                );
 
         return Component.translatable(
                 JolCraftLanguageKeys.TOOLTIP_RARITY_NAME,
-                Component.translatable(nameForRarity(Objects.requireNonNull(rarity))),
+                Component.translatable(
+                        nameForRarity(
+                                rarity
+                        )
+                ),
                 super.getName(stack)
         );
     }
@@ -59,15 +72,24 @@ public class RewardCrateItem extends Item {
             Player player,
             InteractionHand hand
     ) {
-        ItemStack stack = player.getItemInHand(hand);
+        ItemStack stack =
+                player.getItemInHand(
+                        hand
+                );
 
-        if (emptyRewards(stack)) {
-            return InteractionResultHolder.fail(stack);
+        if (noLootSource(stack)) {
+            return InteractionResultHolder.fail(
+                    stack
+            );
         }
 
-        player.startUsingItem(hand);
+        player.startUsingItem(
+                hand
+        );
 
-        return InteractionResultHolder.consume(stack);
+        return InteractionResultHolder.consume(
+                stack
+        );
     }
 
     @Override
@@ -91,22 +113,37 @@ public class RewardCrateItem extends Item {
             Level level,
             LivingEntity entity
     ) {
-        if (!(entity instanceof ServerPlayer player) || emptyRewards(stack)) {
+        if (!(entity instanceof ServerPlayer player)) {
             return stack;
         }
 
-        List<ItemStack> rewards = stack.get(
-                JolCraftDataComponents.BOUNTY_REWARDS.get()
-        );
+        RewardCrateSource source =
+                stack.get(
+                        JolCraftDataComponents.REWARD_CRATE_SOURCE.get()
+                );
 
-        for (ItemStack reward : Objects.requireNonNull(rewards)) {
+        if (source == null) {
+            return stack;
+        }
+
+        Optional<List<ItemStack>> resolved =
+                RewardCrateLootResolver.generate(
+                        player,
+                        source
+                );
+
+        if (resolved.isEmpty()) {
+            return stack;
+        }
+
+        for (ItemStack reward : resolved.get()) {
             if (reward == null || reward.isEmpty()) {
                 continue;
             }
 
             JolCraftItemInsertionHelper.tryInsertIntoInventoryOrDrop(
                     player,
-                    reward.copy()
+                    reward
             );
         }
 
@@ -127,16 +164,12 @@ public class RewardCrateItem extends Item {
         );
     }
 
-    private static boolean emptyRewards(
+    private static boolean noLootSource(
             ItemStack stack
     ) {
-        List<ItemStack> rewards = stack.get(JolCraftDataComponents.BOUNTY_REWARDS.get());
-
-        if (rewards == null || rewards.isEmpty()) {
-            return true;
-        }
-
-        return rewards.stream().noneMatch(reward -> reward != null && !reward.isEmpty());
+        return !stack.has(
+                JolCraftDataComponents.REWARD_CRATE_SOURCE.get()
+        );
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -147,15 +180,11 @@ public class RewardCrateItem extends Item {
             List<Component> tooltip,
             TooltipFlag flag
     ) {
-        if(emptyRewards(stack)) return;
+        if (noLootSource(stack)) {
+            return;
+        }
 
-        JolCraftTooltipHelper.addAltTooltip(
-                tooltip,
-                Component.translatable(
-                        JolCraftLanguageKeys.TOOLTIP_REWARD_CRATE
-                ).withStyle(ChatFormatting.GRAY),
-                List.of()
-        );
+        Component.translatable(JolCraftLanguageKeys.TOOLTIP_REWARD_CRATE).withStyle(ChatFormatting.GRAY);
 
         super.appendHoverText(
                 stack,

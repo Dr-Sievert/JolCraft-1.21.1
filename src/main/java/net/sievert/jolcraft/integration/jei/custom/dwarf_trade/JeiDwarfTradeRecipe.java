@@ -17,6 +17,7 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.RewardCrateJeiResolver.ResolvedOutcome;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
@@ -35,6 +36,7 @@ public record JeiDwarfTradeRecipe(
         @NotNull DeferredItem<Item> spawnEgg,
         double tradeSelectionChance,
         @NotNull JeiItemOutcome outcome,
+        @Nullable ItemStack rewardCrate,
         @NotNull List<ItemStack> inputAExamples,
         @NotNull List<ItemStack> inputBExamples,
         @NotNull AmountRange inputAmountA,
@@ -71,6 +73,16 @@ public record JeiDwarfTradeRecipe(
                 outcome,
                 JolCraftDictionary.RESULT
         );
+
+        if (rewardCrate != null) {
+            if (rewardCrate.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "rewardCrate must not be empty"
+                );
+            }
+
+            rewardCrate = rewardCrate.copy();
+        }
 
         inputAExamples =
                 copyStacks(
@@ -112,7 +124,7 @@ public record JeiDwarfTradeRecipe(
             @NotNull DwarfTradeRecipe recipe,
             @NotNull DeferredItem<Item> spawnEgg,
             double tradeSelectionChance,
-            @NotNull List<JeiItemOutcome> outcomes
+            @NotNull List<ResolvedOutcome> outcomes
     ) {
         Objects.requireNonNull(
                 recipe,
@@ -188,13 +200,14 @@ public record JeiDwarfTradeRecipe(
                         outcomes.size()
                 );
 
-        for (JeiItemOutcome outcome : outcomes) {
+        for (ResolvedOutcome resolved : outcomes) {
             result.add(
                     new JeiDwarfTradeRecipe(
                             recipe,
                             spawnEgg,
                             tradeSelectionChance,
-                            outcome,
+                            resolved.outcome(),
+                            resolved.rewardCrate(),
                             inputAExamples,
                             inputBExamples,
                             inputAmountA,
@@ -316,6 +329,20 @@ public record JeiDwarfTradeRecipe(
     public @NotNull ItemStack outputExample() {
         return normalizeForJei(
                 outcome.stack()
+        );
+    }
+
+    public boolean hasRewardCrate() {
+        return rewardCrate != null;
+    }
+
+    public @NotNull ItemStack rewardCrateExample() {
+        if (rewardCrate == null) {
+            return ItemStack.EMPTY;
+        }
+
+        return normalizeForJei(
+                rewardCrate
         );
     }
 

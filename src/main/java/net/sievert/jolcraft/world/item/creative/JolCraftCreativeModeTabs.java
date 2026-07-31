@@ -127,8 +127,20 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.MITHRIL_BOOTS);
 
                         pOutput.accept(JolCraftBlocks.LAPIDARY_BENCH);
+                        pOutput.accept(JolCraftItems.WOODEN_ARTISAN_HAMMER);
+                        pOutput.accept(JolCraftItems.STONE_ARTISAN_HAMMER);
+                        pOutput.accept(JolCraftItems.IRON_ARTISAN_HAMMER);
+                        pOutput.accept(JolCraftItems.GOLDEN_ARTISAN_HAMMER);
+                        pOutput.accept(JolCraftItems.DIAMOND_ARTISAN_HAMMER);
+                        pOutput.accept(JolCraftItems.NETHERITE_ARTISAN_HAMMER);
                         pOutput.accept(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER);
                         pOutput.accept(JolCraftItems.MITHRIL_ARTISAN_HAMMER);
+                        pOutput.accept(JolCraftItems.WOODEN_CHISEL);
+                        pOutput.accept(JolCraftItems.STONE_CHISEL);
+                        pOutput.accept(JolCraftItems.IRON_CHISEL);
+                        pOutput.accept(JolCraftItems.GOLDEN_CHISEL);
+                        pOutput.accept(JolCraftItems.DIAMOND_CHISEL);
+                        pOutput.accept(JolCraftItems.NETHERITE_CHISEL);
                         pOutput.accept(JolCraftItems.DEEPSLATE_CHISEL);
                         pOutput.accept(JolCraftItems.MITHRIL_CHISEL);
 
@@ -138,6 +150,12 @@ public final class JolCraftCreativeModeTabs {
                         pOutput.accept(JolCraftItems.GEODE_LARGE);
 
                         pOutput.accept(JolCraftItems.DEEPSLATE_MORTAR_ITEM);
+                        pOutput.accept(JolCraftItems.WOODEN_PESTLE);
+                        pOutput.accept(JolCraftItems.STONE_PESTLE);
+                        pOutput.accept(JolCraftItems.IRON_PESTLE);
+                        pOutput.accept(JolCraftItems.GOLDEN_PESTLE);
+                        pOutput.accept(JolCraftItems.DIAMOND_PESTLE);
+                        pOutput.accept(JolCraftItems.NETHERITE_PESTLE);
                         pOutput.accept(JolCraftItems.DEEPSLATE_PESTLE);
                         pOutput.accept(JolCraftItems.MITHRIL_PESTLE);
 
@@ -247,7 +265,12 @@ public final class JolCraftCreativeModeTabs {
                         LoreHelper.setLoreKey(alchemyTome, DwarfLoreKey.ALCHEMY_RECIPES);
                         pOutput.accept(alchemyTome);
 
-
+                        pOutput.accept(JolCraftItems.WOODEN_SPANNER);
+                        pOutput.accept(JolCraftItems.STONE_SPANNER);
+                        pOutput.accept(JolCraftItems.IRON_SPANNER);
+                        pOutput.accept(JolCraftItems.GOLDEN_SPANNER);
+                        pOutput.accept(JolCraftItems.DIAMOND_SPANNER);
+                        pOutput.accept(JolCraftItems.NETHERITE_SPANNER);
                         pOutput.accept(JolCraftItems.DEEPSLATE_SPANNER);
                         pOutput.accept(JolCraftItems.MITHRIL_SPANNER);
                         pOutput.accept(JolCraftItems.SCRAP);

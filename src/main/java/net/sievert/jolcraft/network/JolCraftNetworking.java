@@ -34,7 +34,8 @@ public final class JolCraftNetworking {
 
         registrar
                 .playToClient(ClientboundDeliriumCursePacket.TYPE, ClientboundDeliriumCursePacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDelirium)
-                .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers);
+                .playToClient(ClientboundDwarfMerchantOffersPacket.TYPE, ClientboundDwarfMerchantOffersPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundDwarfMerchantOffers)
+                .playToClient(ClientboundRewardLootTablesPacket.TYPE, ClientboundRewardLootTablesPacket.CODEC, JolCraftClientPayloadHandlers::handleClientboundRewardLootTables);
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,
                 "Registered networking payloads (protocol version {})",

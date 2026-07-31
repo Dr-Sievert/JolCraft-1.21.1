@@ -24,8 +24,6 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String INK_AND_QUILLS = join(JolCraftDictionary.INK, JolCraftDictionary.AND, plural(JolCraftDictionary.QUILL));
     public static final String GEODES = plural(JolCraftDictionary.GEODE);
 
-    public static final String DURABILITY_ENCHANTABLE = join(JolCraftDictionary.DURABILITY, JolCraftDictionary.ENCHANTABLE);
-
     public static final String WARHAMMERS = plural(JolCraftDictionary.WARHAMMER);
     public static final String SPANNERS = plural(JolCraftDictionary.SPANNER);
     public static final String ARTISAN_HAMMERS = join(JolCraftDictionary.ARTISAN, plural(JolCraftDictionary.HAMMER));

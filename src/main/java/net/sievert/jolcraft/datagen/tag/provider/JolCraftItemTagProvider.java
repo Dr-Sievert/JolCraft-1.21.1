@@ -102,29 +102,50 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.MITHRIL_HOE.get());
 
         target.tag(JolCraftTags.Items.SPANNERS)
+                .add(JolCraftItems.WOODEN_SPANNER.get())
+                .add(JolCraftItems.STONE_SPANNER.get())
+                .add(JolCraftItems.IRON_SPANNER.get())
+                .add(JolCraftItems.GOLDEN_SPANNER.get())
+                .add(JolCraftItems.DIAMOND_SPANNER.get())
+                .add(JolCraftItems.NETHERITE_SPANNER.get())
                 .add(JolCraftItems.DEEPSLATE_SPANNER.get())
                 .add(JolCraftItems.MITHRIL_SPANNER.get());
 
         target.tag(JolCraftTags.Items.ARTISAN_HAMMERS)
+                .add(JolCraftItems.WOODEN_ARTISAN_HAMMER.get())
+                .add(JolCraftItems.STONE_ARTISAN_HAMMER.get())
+                .add(JolCraftItems.IRON_ARTISAN_HAMMER.get())
+                .add(JolCraftItems.GOLDEN_ARTISAN_HAMMER.get())
+                .add(JolCraftItems.DIAMOND_ARTISAN_HAMMER.get())
+                .add(JolCraftItems.NETHERITE_ARTISAN_HAMMER.get())
                 .add(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get())
                 .add(JolCraftItems.MITHRIL_ARTISAN_HAMMER.get());
 
         target.tag(JolCraftTags.Items.CHISELS)
+                .add(JolCraftItems.WOODEN_CHISEL.get())
+                .add(JolCraftItems.STONE_CHISEL.get())
+                .add(JolCraftItems.IRON_CHISEL.get())
+                .add(JolCraftItems.GOLDEN_CHISEL.get())
+                .add(JolCraftItems.DIAMOND_CHISEL.get())
+                .add(JolCraftItems.NETHERITE_CHISEL.get())
                 .add(JolCraftItems.DEEPSLATE_CHISEL.get())
                 .add(JolCraftItems.MITHRIL_CHISEL.get());
 
         target.tag(JolCraftTags.Items.PESTLES)
+                .add(JolCraftItems.WOODEN_PESTLE.get())
+                .add(JolCraftItems.STONE_PESTLE.get())
+                .add(JolCraftItems.IRON_PESTLE.get())
+                .add(JolCraftItems.GOLDEN_PESTLE.get())
+                .add(JolCraftItems.DIAMOND_PESTLE.get())
+                .add(JolCraftItems.NETHERITE_PESTLE.get())
                 .add(JolCraftItems.DEEPSLATE_PESTLE.get())
                 .add(JolCraftItems.MITHRIL_PESTLE.get());
 
-        target.tag(JolCraftTags.Items.DURABILITY_ENCHANTABLE)
+        target.tag(ItemTags.DURABILITY_ENCHANTABLE)
                 .addTags(JolCraftTags.Items.SPANNERS)
                 .addTags(JolCraftTags.Items.ARTISAN_HAMMERS)
                 .addTags(JolCraftTags.Items.CHISELS)
                 .addTags(JolCraftTags.Items.PESTLES);
-
-        target.tag(ItemTags.DURABILITY_ENCHANTABLE)
-                .addTags(JolCraftTags.Items.DURABILITY_ENCHANTABLE);
 
         target.tag(Tags.Items.TOOLS)
                 .addTags(JolCraftTags.Items.SPANNERS)
@@ -479,6 +500,7 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.MITHRIL_BOOTS.get())
                 .add(JolCraftItems.MITHRIL_ARTISAN_HAMMER.get())
                 .add(JolCraftItems.MITHRIL_CHISEL.get())
+                .add(JolCraftItems.MITHRIL_SPANNER.get())
                 .add(JolCraftItems.MITHRIL_PESTLE.get());
 
         // Custom misc

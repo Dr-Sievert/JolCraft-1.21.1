@@ -9,6 +9,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -176,6 +177,59 @@ public final class VanillaRecipeBuilder {
 
         public void save(RecipeOutput out, String folder, ItemLike result) {
             builder.save(out, recipeId(folder, result));
+        }
+
+        public void save(RecipeOutput out, String folder, String path) {
+            builder.save(out, recipeId(folder, path));
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // SMITHING
+    // ---------------------------------------------------------------------
+
+    public static final class Smithing {
+
+        private final SmithingTransformRecipeBuilder builder;
+        private final ItemLike result;
+
+        private Smithing(
+                SmithingTransformRecipeBuilder builder,
+                ItemLike result
+        ) {
+            this.builder = builder;
+            this.result = result;
+        }
+
+        public @NotNull Smithing unlockedBy(String key, Criterion<?> criterion) {
+            builder.unlocks(key, criterion);
+            return this;
+        }
+
+        public @NotNull Smithing unlockedByHas(ItemLike item) {
+            builder.unlocks(
+                    JolCraftStrings.underscored(JolCraftDictionary.HAS, itemPath(item)),
+                    InventoryChangeTrigger.TriggerInstance.hasItems(item)
+            );
+            return this;
+        }
+
+        public void save(RecipeOutput out) {
+            builder.save(
+                    out,
+                    recipeId(itemPath(result) + "_smithing")
+            );
+        }
+
+        public void save(RecipeOutput out, ResourceLocation id) {
+            builder.save(out, id);
+        }
+
+        public void save(RecipeOutput out, String folder) {
+            builder.save(
+                    out,
+                    recipeId(folder, itemPath(result) + "_smithing")
+            );
         }
 
         public void save(RecipeOutput out, String folder, String path) {
@@ -405,5 +459,40 @@ public final class VanillaRecipeBuilder {
 
     public static @NotNull Shapeless shapeless(ShapelessRecipeBuilder builder) {
         return new Shapeless(builder);
+    }
+
+    public static @NotNull Smithing smithing(
+            Ingredient template,
+            Ingredient base,
+            Ingredient addition,
+            RecipeCategory category,
+            ItemLike result
+    ) {
+        return new Smithing(
+                SmithingTransformRecipeBuilder.smithing(
+                        template,
+                        base,
+                        addition,
+                        category,
+                        result.asItem()
+                ),
+                result
+        );
+    }
+
+    public static @NotNull Smithing smithing(
+            ItemLike template,
+            ItemLike base,
+            ItemLike addition,
+            RecipeCategory category,
+            ItemLike result
+    ) {
+        return smithing(
+                Ingredient.of(template),
+                Ingredient.of(base),
+                Ingredient.of(addition),
+                category,
+                result
+        );
     }
 }

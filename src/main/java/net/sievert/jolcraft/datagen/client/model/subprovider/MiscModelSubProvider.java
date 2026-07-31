@@ -54,8 +54,6 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
         builder.handheldItem(JolCraftItems.LOCKPICK.get());
 
         builder.flatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
-        builder.handheldItem(JolCraftItems.DEEPSLATE_PESTLE.get());
-        builder.handheldItem(JolCraftItems.MITHRIL_PESTLE.get());
         builder.flatItem(JolCraftItems.INVERIX.get());
 
         builder.flatItem(JolCraftItems.BOUNTY.get());

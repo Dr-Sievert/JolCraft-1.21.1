@@ -97,15 +97,20 @@ public abstract class AbstractJeiBountyCategory<R>
                 font
         );
 
-        JeiDrawHelper.drawChance(
-                graphics,
-                font,
+        double chancePerRoll =
                 chancePerRoll(
                         entry
-                ),
-                JeiBountyLayout.CHANCE.x(),
-                JeiBountyLayout.CHANCE.y()
-        );
+                );
+
+        if (chancePerRoll < 1.0D) {
+            JeiDrawHelper.drawChance(
+                    graphics,
+                    font,
+                    chancePerRoll,
+                    JeiBountyLayout.CHANCE.x(),
+                    JeiBountyLayout.CHANCE.y()
+            );
+        }
 
         JeiDrawHelper.drawRolls(
                 graphics,

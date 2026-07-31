@@ -26,6 +26,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
@@ -37,8 +38,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -232,31 +231,18 @@ public final class BountyRewardAction extends InspectDwarfAction {
             return;
         }
 
-        BountyRewardRecipe recipe =
+        RecipeHolder<BountyRewardRecipe> recipeHolder =
                 serverLevel.getRecipeManager()
                         .getRecipeFor(
                                 JolCraftRecipes.BOUNTY_REWARD_TYPE.get(),
                                 input,
                                 serverLevel
                         )
-                        .map(RecipeHolder::value)
                         .orElse(null);
 
-        if (recipe == null) {
+        if (recipeHolder == null) {
             return;
         }
-
-        LootContext context =
-                createContext(
-                        serverLevel
-                );
-
-        List<ItemStack> rewards =
-                generateRewards(
-                        recipe,
-                        context,
-                        input
-                );
 
         DwarfProfession redeemType =
                 input.type();
@@ -274,56 +260,55 @@ public final class BountyRewardAction extends InspectDwarfAction {
                 serverLevel.dimension().location()
         );
 
-        if (!rewards.isEmpty()) {
+        ItemStack rewardCrate = JolCraftItems.REWARD_CRATE.toStack();
 
-            ItemStack rewardCrate = JolCraftItems.REWARD_CRATE.toStack();
+        rewardCrate.set(
+                DataComponents.RARITY,
+                rarityForTier(
+                        input.tier()
+                )
+        );
 
-            rewardCrate.set(
-                    DataComponents.RARITY,
-                    rarityForTier(
-                            input.tier()
-                    )
-            );
+        rewardCrate.set(
+                JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
+                RewardCrateSource.recipe(
+                        recipeHolder.id()
+                )
+        );
 
-            rewardCrate.set(
-                    JolCraftDataComponents.BOUNTY_REWARDS.get(),
-                    rewards
-            );
+        Vec3 start =
+                dwarf.position()
+                        .add(
+                                0.0D,
+                                dwarf.getEyeHeight(),
+                                0.0D
+                        );
 
-            Vec3 start =
-                    dwarf.position()
-                            .add(
-                                    0.0D,
-                                    dwarf.getEyeHeight(),
-                                    0.0D
-                            );
+        Vec3 target =
+                player.position()
+                        .add(
+                                0.0D,
+                                player.getBbHeight() * 0.5D,
+                                0.0D
+                        );
 
-            Vec3 target =
-                    player.position()
-                            .add(
-                                    0.0D,
-                                    player.getBbHeight() * 0.5D,
-                                    0.0D
-                            );
+        Vec3 direction =
+                target.subtract(
+                        start
+                );
 
-            Vec3 direction =
-                    target.subtract(
-                            start
-                    );
+        Vec3 velocity =
+                direction.lengthSqr() > 0.0D
+                        ? direction.normalize()
+                        .scale(THROW_SPEED)
+                        : Vec3.ZERO;
 
-            Vec3 velocity =
-                    direction.lengthSqr() > 0.0D
-                            ? direction.normalize()
-                            .scale(THROW_SPEED)
-                            : Vec3.ZERO;
-
-            throwStack(
-                    serverLevel,
-                    start,
-                    velocity,
-                    rewardCrate
-            );
-        }
+        throwStack(
+                serverLevel,
+                start,
+                velocity,
+                rewardCrate
+        );
 
         int xp =
                 xpForTier(
@@ -364,33 +349,6 @@ public final class BountyRewardAction extends InspectDwarfAction {
 
         player.awardStat(
                 JolCraftStats.DWARVEN_BOUNTIES_COMPLETED.get()
-        );
-    }
-
-    private static @NotNull List<ItemStack> generateRewards(
-            @NotNull BountyRewardRecipe recipe,
-            @NotNull LootContext context,
-            @NotNull BountyRecipeInput input
-    ) {
-        List<ItemStack> rewards =
-                new ArrayList<>();
-
-        recipe.generateRewards(
-                context,
-                input,
-                stack -> {
-                    if (stack == null || stack.isEmpty()) {
-                        return;
-                    }
-
-                    rewards.add(
-                            stack.copy()
-                    );
-                }
-        );
-
-        return List.copyOf(
-                rewards
         );
     }
 

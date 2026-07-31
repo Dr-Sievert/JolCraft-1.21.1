@@ -16,4 +16,5 @@ public interface JolCraftClientAccess {
 
     void apply(ClientboundDwarfMerchantOffersPacket packet);
     void apply(ClientboundDeliriumCursePacket packet);
+    void apply(ClientboundRewardLootTablesPacket packet);
 }

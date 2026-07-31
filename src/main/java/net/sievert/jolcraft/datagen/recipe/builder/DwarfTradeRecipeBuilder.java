@@ -2,14 +2,18 @@ package net.sievert.jolcraft.datagen.recipe.builder;
 
 import com.mojang.serialization.DataResult;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -25,6 +29,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
@@ -1064,6 +1069,73 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
         return coinsResult(
                 count,
                 count
+        );
+    }
+
+    /**
+     * Produces a reward crate which rolls a registered loot table when opened.
+     */
+    public @NotNull DwarfTradeRecipeBuilder rewardCrateLootTableResult(
+            @NotNull Rarity rarity,
+            @NotNull ResourceKey<LootTable> lootTable
+    ) {
+        return rewardCrateResult(
+                rarity,
+                RewardCrateSource.lootTable(lootTable),
+                lootTable.location()
+        );
+    }
+
+    /**
+     * Produces a reward crate which resolves a bounty reward recipe when opened.
+     */
+    public @NotNull DwarfTradeRecipeBuilder rewardCrateRecipeResult(
+            @NotNull Rarity rarity,
+            @NotNull ResourceLocation recipeId
+    ) {
+        return rewardCrateResult(
+                rarity,
+                RewardCrateSource.recipe(recipeId),
+                recipeId
+        );
+    }
+
+    private @NotNull DwarfTradeRecipeBuilder rewardCrateResult(
+            @NotNull Rarity rarity,
+            @NotNull RewardCrateSource source,
+            @NotNull ResourceLocation sourceId
+    ) {
+        ItemOutput crateOutput =
+                ItemOutput.item(
+                        LootItem.lootTableItem(
+                                        JolCraftItems.REWARD_CRATE.get()
+                                )
+                                .apply(
+                                        SetComponentsFunction.setComponent(
+                                                DataComponents.RARITY,
+                                                rarity
+                                        )
+                                )
+                                .apply(
+                                        SetComponentsFunction.setComponent(
+                                                JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
+                                                source
+                                        )
+                                )
+                );
+
+        String sourceToken =
+                sourceId.getNamespace()
+                        + "_"
+                        + sourceId.getPath().replace('/', '_');
+
+        return result(
+                crateOutput,
+                sourceToken
+                        + "_"
+                        + JolCraftDictionary.REWARD
+                        + "_"
+                        + JolCraftDictionary.CRATE
         );
     }
 

@@ -31,6 +31,7 @@ public final class JeiBountyRewardHelper {
                                 .get(),
                         holder ->
                                 JeiBountyRewardRecipe.create(
+                                                holder.id(),
                                                 holder.value(),
                                                 taskRecipes
                                         )

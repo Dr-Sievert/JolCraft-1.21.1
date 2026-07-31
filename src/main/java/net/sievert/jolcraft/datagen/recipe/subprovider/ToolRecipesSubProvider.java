@@ -80,6 +80,70 @@ public record ToolRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 JolCraftItems.MITHRIL_WARHAMMER.get()
         );
 
+        artisanHammer(output, Items.OAK_PLANKS, Items.STICK, JolCraftItems.WOODEN_ARTISAN_HAMMER.get());
+        artisanHammer(output, Items.COBBLESTONE, Items.STICK, JolCraftItems.STONE_ARTISAN_HAMMER.get());
+        artisanHammer(output, Items.IRON_INGOT, Items.STICK, JolCraftItems.IRON_ARTISAN_HAMMER.get());
+        artisanHammer(output, Items.GOLD_INGOT, Items.STICK, JolCraftItems.GOLDEN_ARTISAN_HAMMER.get());
+        artisanHammer(output, Items.DIAMOND, Items.STICK, JolCraftItems.DIAMOND_ARTISAN_HAMMER.get());
+
+        VanillaRecipeBuilder.smithing(
+                        Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE,
+                        JolCraftItems.DIAMOND_ARTISAN_HAMMER.get(),
+                        Items.NETHERITE_INGOT,
+                        RecipeCategory.TOOLS,
+                        JolCraftItems.NETHERITE_ARTISAN_HAMMER.get()
+                )
+                .unlockedByHas(Items.NETHERITE_INGOT)
+                .save(output, FOLDER);
+
+        chisel(output, Items.OAK_PLANKS, Items.STICK, JolCraftItems.WOODEN_CHISEL.get());
+        chisel(output, Items.COBBLESTONE, Items.STICK, JolCraftItems.STONE_CHISEL.get());
+        chisel(output, Items.IRON_INGOT, Items.STICK, JolCraftItems.IRON_CHISEL.get());
+        chisel(output, Items.GOLD_INGOT, Items.STICK, JolCraftItems.GOLDEN_CHISEL.get());
+        chisel(output, Items.DIAMOND, Items.STICK, JolCraftItems.DIAMOND_CHISEL.get());
+
+        VanillaRecipeBuilder.smithing(
+                        Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE,
+                        JolCraftItems.DIAMOND_CHISEL.get(),
+                        Items.NETHERITE_INGOT,
+                        RecipeCategory.TOOLS,
+                        JolCraftItems.NETHERITE_CHISEL.get()
+                )
+                .unlockedByHas(Items.NETHERITE_INGOT)
+                .save(output, FOLDER);
+
+        pestle(output, Items.OAK_PLANKS, Items.STICK, JolCraftItems.WOODEN_PESTLE.get());
+        pestle(output, Items.COBBLESTONE, Items.STICK, JolCraftItems.STONE_PESTLE.get());
+        pestle(output, Items.IRON_INGOT, Items.STICK, JolCraftItems.IRON_PESTLE.get());
+        pestle(output, Items.GOLD_INGOT, Items.STICK, JolCraftItems.GOLDEN_PESTLE.get());
+        pestle(output, Items.DIAMOND, Items.STICK, JolCraftItems.DIAMOND_PESTLE.get());
+
+        VanillaRecipeBuilder.smithing(
+                        Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE,
+                        JolCraftItems.DIAMOND_PESTLE.get(),
+                        Items.NETHERITE_INGOT,
+                        RecipeCategory.TOOLS,
+                        JolCraftItems.NETHERITE_PESTLE.get()
+                )
+                .unlockedByHas(Items.NETHERITE_INGOT)
+                .save(output, FOLDER);
+
+        spanner(output, Items.OAK_PLANKS, Items.STICK, JolCraftItems.WOODEN_SPANNER.get());
+        spanner(output, Items.COBBLESTONE, Items.STICK, JolCraftItems.STONE_SPANNER.get());
+        spanner(output, Items.IRON_INGOT, Items.STICK, JolCraftItems.IRON_SPANNER.get());
+        spanner(output, Items.GOLD_INGOT, Items.STICK, JolCraftItems.GOLDEN_SPANNER.get());
+        spanner(output, Items.DIAMOND, Items.STICK, JolCraftItems.DIAMOND_SPANNER.get());
+
+        VanillaRecipeBuilder.smithing(
+                        Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE,
+                        JolCraftItems.DIAMOND_SPANNER.get(),
+                        Items.NETHERITE_INGOT,
+                        RecipeCategory.TOOLS,
+                        JolCraftItems.NETHERITE_SPANNER.get()
+                )
+                .unlockedByHas(Items.NETHERITE_INGOT)
+                .save(output, FOLDER);
+
         artisanHammer(
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
@@ -111,7 +175,7 @@ public record ToolRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
         pestle(
                 output,
                 JolCraftItems.DEEPSLATE_PLATE.get(),
-                JolCraftItems.DEEPSLATE_ROD.get(),
+                Items.STICK,
                 JolCraftItems.DEEPSLATE_PESTLE.get()
         );
 

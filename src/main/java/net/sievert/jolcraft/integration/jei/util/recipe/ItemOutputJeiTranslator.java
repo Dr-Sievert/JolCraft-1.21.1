@@ -47,6 +47,16 @@ public final class ItemOutputJeiTranslator {
     public static @NotNull List<JeiItemOutcome> translate(
             @NotNull LootPool pool
     ) {
+        return translate(
+                pool,
+                List.of()
+        );
+    }
+
+    public static @NotNull List<JeiItemOutcome> translate(
+            @NotNull LootPool pool,
+            @NotNull List<LootItemFunction> tableFunctions
+    ) {
         LootPoolAccessor poolAccessor =
                 (LootPoolAccessor) pool;
 
@@ -92,6 +102,11 @@ public final class ItemOutputJeiTranslator {
         requireUnconditionalFunctions(
                 poolFunctions,
                 "loot pool"
+        );
+
+        requireUnconditionalFunctions(
+                tableFunctions,
+                "loot table"
         );
 
         List<TranslatedEntry> translatedEntries =
@@ -185,6 +200,12 @@ public final class ItemOutputJeiTranslator {
                             poolFunctions
                     );
 
+            count =
+                    applyCountFunctions(
+                            count,
+                            tableFunctions
+                    );
+
             ItemStack displayStack =
                     new ItemStack(
                             entry.item()
@@ -198,6 +219,11 @@ public final class ItemOutputJeiTranslator {
             applyDisplayFunctions(
                     displayStack,
                     poolFunctions
+            );
+
+            applyDisplayFunctions(
+                    displayStack,
+                    tableFunctions
             );
 
             /*
