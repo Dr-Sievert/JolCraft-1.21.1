@@ -243,11 +243,10 @@ public final class DwarfProfessionConfigProvider
 
                             defaults.rules(),
                             soundsBoth(
-                                    SoundEvents
-                                            .VILLAGER_WORK_TOOLSMITH
+                                    SoundEvents.VILLAGER_WORK_TOOLSMITH
                             ),
                             defaults.attributes(),
-                            scrapperTradePools()
+                            defaults.tradePools()
                     );
 
             case BREWMASTER ->
@@ -264,8 +263,7 @@ public final class DwarfProfessionConfigProvider
 
                             defaults.rules(),
                             soundsBoth(
-                                    SoundEvents
-                                            .VILLAGER_WORK_FLETCHER
+                                    SoundEvents.VILLAGER_WORK_FLETCHER
                             ),
                             defaults.attributes(),
                             defaults.tradePools()
@@ -522,31 +520,6 @@ public final class DwarfProfessionConfigProvider
                         Map.of(
                                 DwarfMerchantData.Level.MASTER,
                                 1
-                        ),
-                        TradeRerollType.RESTOCK
-                )
-        );
-    }
-
-    private static DwarfProfessionTradePoolsConfig scrapperTradePools() {
-        return tradePools(
-                pool(
-                        TradePoolType.GLOBAL,
-                        Map.of(
-                                DwarfMerchantData.Level.NOVICE,
-                                SCRAPPER_GLOBAL_ROLLS,
-
-                                DwarfMerchantData.Level.APPRENTICE,
-                                SCRAPPER_GLOBAL_ROLLS,
-
-                                DwarfMerchantData.Level.JOURNEYMAN,
-                                SCRAPPER_GLOBAL_ROLLS,
-
-                                DwarfMerchantData.Level.EXPERT,
-                                SCRAPPER_GLOBAL_ROLLS,
-
-                                DwarfMerchantData.Level.MASTER,
-                                SCRAPPER_GLOBAL_ROLLS
                         ),
                         TradeRerollType.RESTOCK
                 )

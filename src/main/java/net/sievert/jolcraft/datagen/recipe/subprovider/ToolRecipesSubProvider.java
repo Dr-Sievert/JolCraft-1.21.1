@@ -121,6 +121,20 @@ public record ToolRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 JolCraftItems.DEEPSLATE_ROD.get(),
                 JolCraftItems.MITHRIL_PESTLE.get()
         );
+
+        spanner(
+                output,
+                JolCraftItems.DEEPSLATE_PLATE.get(),
+                Items.STICK,
+                JolCraftItems.DEEPSLATE_SPANNER.get()
+        );
+
+        spanner(
+                output,
+                JolCraftItems.MITHRIL_INGOT.get(),
+                JolCraftItems.DEEPSLATE_ROD.get(),
+                JolCraftItems.MITHRIL_SPANNER.get()
+        );
     }
 
     private static void toolSet(
@@ -356,6 +370,37 @@ public record ToolRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 )
                 .pattern(" X")
                 .pattern("B ")
+                .define('B', head)
+                .define('X', rod)
+                .unlockedByHas(head)
+                .save(out, FOLDER, baseId + "_left");
+    }
+
+    private static void spanner(
+            RecipeOutput out,
+            ItemLike head,
+            ItemLike rod,
+            ItemLike outItem
+    ) {
+        String baseId = itemName(outItem);
+
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
+                )
+                .pattern("B ")
+                .pattern("BB")
+                .pattern(" X")
+                .define('B', head)
+                .define('X', rod)
+                .unlockedByHas(head)
+                .save(out, FOLDER, baseId + "_right");
+
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, outItem)
+                )
+                .pattern(" B")
+                .pattern("BB")
+                .pattern("X ")
                 .define('B', head)
                 .define('X', rod)
                 .unlockedByHas(head)
