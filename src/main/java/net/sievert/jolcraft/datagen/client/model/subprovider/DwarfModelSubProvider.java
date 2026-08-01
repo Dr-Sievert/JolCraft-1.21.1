@@ -12,6 +12,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.world.item.client.property.custom.RewardCrateTheme;
+import net.sievert.jolcraft.world.item.component.custom.crate.CrateTheme;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreEntries;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
@@ -42,6 +44,8 @@ public record DwarfModelSubProvider(@NotNull JolCraftModelProvider parent) imple
     private static final String SUB_TABLET = JolCraftDictionary.TABLET;
 
     private static final String SUB_CONTRACT = JolCraftDictionary.CONTRACT;
+
+    private static final String SUB_CRATE = JolCraftDictionary.CRATE;
 
     @Override
     public @NotNull String id() {
@@ -102,6 +106,10 @@ public record DwarfModelSubProvider(@NotNull JolCraftModelProvider parent) imple
         builder.flatItem(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME.get(), JolCraftItems.ANCIENT_DWARVEN_TOME.get(), SUB_TOME);
 
         generateLegendaryTomeModels(builder);
+
+        builder.flatItem(JolCraftItems.RESTOCK_CRATE.get(), SUB_CRATE);
+        builder.flatItem(JolCraftItems.REROLL_CRATE.get(), SUB_CRATE);
+        generateRewardCrateModels(builder);
     }
 
     private static void generateLegendaryTomeModels(@NotNull JolCraftModelBuilder builder) {
@@ -156,6 +164,81 @@ public record DwarfModelSubProvider(@NotNull JolCraftModelProvider parent) imple
             textures.addProperty("layer0", JolCraft.location("item/" + SUB_TOME + "/ancient_dwarven_tome").toString());
             json.add("textures", textures);
 
+            json.add("overrides", overrides);
+            return json;
+        });
+    }
+
+    private static void generateRewardCrateModels(@NotNull JolCraftModelBuilder builder) {
+        Item crateItem = JolCraftItems.REWARD_CRATE.get();
+        ResourceLocation baseModelLoc = ModelLocationUtils.getModelLocation(crateItem);
+
+        JsonArray overrides = new JsonArray();
+
+        for (CrateTheme theme : CrateTheme.values()) {
+            String themeId = theme.getId();
+
+            JolCraftItemProperties.registerKey(
+                    RewardCrateTheme.KEY,
+                    themeId
+            );
+
+            ResourceLocation variantModelLoc = JolCraft.location(
+                    JolCraftStrings.slashed(
+                            JolCraftDictionary.ITEM,
+                            JolCraftDictionary.CRATE,
+                            JolCraftStrings.underscored(
+                                    JolCraftItemIds.REWARD_CRATE,
+                                    themeId
+                            )
+                    )
+            );
+
+            ModelTemplates.FLAT_ITEM.create(
+                    variantModelLoc,
+                    TextureMapping.layer0(variantModelLoc),
+                    builder::addModel
+            );
+
+            JsonObject predicate = new JsonObject();
+            predicate.addProperty(
+                    RewardCrateTheme.KEY.toString(),
+                    JolCraftItemProperties.value(
+                            RewardCrateTheme.KEY,
+                            themeId
+                    )
+            );
+
+            JsonObject override = new JsonObject();
+            override.add("predicate", predicate);
+            override.addProperty(
+                    "model",
+                    variantModelLoc.toString()
+            );
+
+            overrides.add(override);
+        }
+
+        builder.addModel(baseModelLoc, () -> {
+            JsonObject json = new JsonObject();
+            json.addProperty(
+                    "parent",
+                    "minecraft:item/generated"
+            );
+
+            JsonObject textures = new JsonObject();
+            textures.addProperty(
+                    "layer0",
+                    JolCraft.location(
+                            JolCraftStrings.slashed(
+                                    JolCraftDictionary.ITEM,
+                                    JolCraftDictionary.CRATE,
+                                    JolCraftItemIds.REWARD_CRATE
+                            )
+                    ).toString()
+            );
+
+            json.add("textures", textures);
             json.add("overrides", overrides);
             return json;
         });

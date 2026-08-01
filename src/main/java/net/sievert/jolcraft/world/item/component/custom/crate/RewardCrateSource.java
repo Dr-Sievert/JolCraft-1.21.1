@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.component.custom;
+package net.sievert.jolcraft.world.item.component.custom.crate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -23,8 +24,8 @@ public sealed interface RewardCrateSource
         permits RewardCrateSource.LootTableSource,
                 RewardCrateSource.RecipeSource {
 
-    String LOOT_TABLE_TYPE = "loot_table";
-    String RECIPE_TYPE = "recipe";
+    String LOOT_TABLE_TYPE = JolCraftStrings.underscored(JolCraftDictionary.LOOT, JolCraftDictionary.TABLE);
+    String RECIPE_TYPE = JolCraftDictionary.RECIPE;
 
     MapCodec<Raw> RAW_CODEC =
             RecordCodecBuilder.mapCodec(instance ->
@@ -51,10 +52,10 @@ public sealed interface RewardCrateSource
     StreamCodec<RegistryFriendlyByteBuf, RewardCrateSource> STREAM_CODEC =
             StreamCodec.of(
                     (buffer, source) -> {
-                        if (source instanceof LootTableSource lootTable) {
+                        if (source instanceof LootTableSource(ResourceKey<LootTable> lootTable)) {
                             buffer.writeEnum(Kind.LOOT_TABLE);
                             buffer.writeResourceLocation(
-                                    lootTable.lootTable().location()
+                                    lootTable.location()
                             );
                             return;
                         }
@@ -132,20 +133,20 @@ public sealed interface RewardCrateSource
     private static @NotNull DataResult<Raw> encode(
             @NotNull RewardCrateSource source
     ) {
-        if (source instanceof LootTableSource lootTable) {
+        if (source instanceof LootTableSource(ResourceKey<LootTable> lootTable)) {
             return DataResult.success(
                     new Raw(
                             LOOT_TABLE_TYPE,
-                            lootTable.lootTable().location()
+                            lootTable.location()
                     )
             );
         }
 
-        if (source instanceof RecipeSource recipe) {
+        if (source instanceof RecipeSource(ResourceLocation recipeId)) {
             return DataResult.success(
                     new Raw(
                             RECIPE_TYPE,
-                            recipe.recipeId()
+                            recipeId
                     )
             );
         }

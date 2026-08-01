@@ -321,6 +321,12 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String SUPPLY_CRATE =
             category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftDictionary.SUPPLY);
 
+    public static final String EXCAVATION_CRATE =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftDictionary.EXCAVATION);
+
+    public static final String MINING_CRATE =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftDictionary.MINING);
+
     // ---------------------------------------------------------------------
     // DwarvenReputationLangSubProvider
     // ---------------------------------------------------------------------

@@ -122,5 +122,7 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         // -----------------------------------------------------------------
 
         putManual(translations, JolCraftLanguageKeys.SUPPLY_CRATE, "Supply Crate");
+        putManual(translations, JolCraftLanguageKeys.EXCAVATION_CRATE, "Excavation Crate");
+        putManual(translations, JolCraftLanguageKeys.MINING_CRATE, "Mining Crate");
     }
 }

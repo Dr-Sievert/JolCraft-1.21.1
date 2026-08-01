@@ -19,7 +19,7 @@ import net.sievert.jolcraft.mixin.LootPoolSingletonContainerAccessor;
 import net.sievert.jolcraft.mixin.SetComponentsFunctionAccessor;
 import net.sievert.jolcraft.mixin.TagEntryAccessor;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import org.jetbrains.annotations.NotNull;
 

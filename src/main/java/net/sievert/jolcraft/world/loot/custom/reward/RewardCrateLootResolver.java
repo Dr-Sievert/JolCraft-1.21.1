@@ -8,7 +8,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRewardRecipe;
 import org.jetbrains.annotations.NotNull;
 

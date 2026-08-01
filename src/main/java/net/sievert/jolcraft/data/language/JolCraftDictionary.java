@@ -57,6 +57,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String KEEP = "keep";
     public static final String LOCATE = "locate";
     public static final String LOCK = "lock";
+    public static final String MINING = "mining";
     public static final String NEED = "need";
     public static final String OPEN = "open";
     public static final String OVERRIDE = "override";
@@ -162,6 +163,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PROTECTED = "protected";
     public static final String PURE = "pure";
     public static final String RANDOM = "random";
+    public static final String REINFORCED = "reinforced";
     public static final String RESPECTED = "respected";
     public static final String REQUIRED = "required";
     public static final String RIGHT = "right";
@@ -338,6 +340,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String EQUIP = "equip";
     public static final String EQUIPMENT = "equipment";
     public static final String EVENT = "event";
+    public static final String EXCAVATION = "excavation";
     public static final String EXPERIENCE = "experience";
     public static final String EXPLORER = "explorer";
     public static final String EYE = "eye";

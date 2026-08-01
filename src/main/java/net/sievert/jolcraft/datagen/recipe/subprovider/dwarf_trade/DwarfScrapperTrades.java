@@ -74,7 +74,7 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
                 .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
                 .tradeGroup(TradeGroup.MAIN)
-                .costA(JolCraftItems.SCRAP.get(),10, 20)
+                .costA(JolCraftItems.SCRAP.get(),8, 12)
                 .noCostB()
                 .result(JolCraftItems.DEEPSLATE_SPANNER)
                 .maxUses(3)
@@ -104,7 +104,8 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 .noCostB()
                 .rewardCrateLootTableResult(
                         Rarity.UNCOMMON,
-                        JolCraftLootTables.Chests.VANILLA_METAL
+                        JolCraftLootTables.Crates.EXCAVATION,
+                        Component.translatable(JolCraftLanguageKeys.EXCAVATION_CRATE)
                 )
                 .maxUses(1)
                 .dwarfXp(1)
@@ -118,7 +119,8 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 .noCostB()
                 .rewardCrateLootTableResult(
                         Rarity.RARE,
-                        JolCraftLootTables.Chests.VANILLA_GEMS
+                        JolCraftLootTables.Crates.MINING,
+                        Component.translatable(JolCraftLanguageKeys.MINING_CRATE)
                 )
                 .maxUses(1)
                 .dwarfXp(1)

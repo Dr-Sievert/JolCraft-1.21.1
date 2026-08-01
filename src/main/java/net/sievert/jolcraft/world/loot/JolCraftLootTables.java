@@ -8,6 +8,8 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.loot.JolCraftLootTableIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.item.component.custom.crate.CrateTheme;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -70,6 +72,24 @@ public final class JolCraftLootTables {
     }
 
     /* ---------------------------------------------------------------------
+     * Crates
+     * ------------------------------------------------------------------ */
+
+    public static final class Crates {
+
+        public static final ResourceKey<LootTable> EXCAVATION = crate(
+                        CrateTheme.ARCHAEOLOGY,
+                        JolCraftLootTableIds.EXCAVATION
+                );
+
+        public static final ResourceKey<LootTable> MINING = crate(
+                        CrateTheme.REINFORCED,
+                        JolCraftLootTableIds.MINING
+                );
+    }
+
+
+    /* ---------------------------------------------------------------------
      * Archaeology
      * ------------------------------------------------------------------ */
 
@@ -130,6 +150,19 @@ public final class JolCraftLootTables {
 
     private static ResourceKey<LootTable> strongbox(ResourceKey<LootTable> key){
         return inFolder(JolCraftDictionary.STRONGBOX, key);
+    }
+
+    private static ResourceKey<LootTable> crate(
+            @NotNull CrateTheme theme,
+            @NotNull String id
+    ) {
+        return register(
+                JolCraftStrings.slashed(
+                        JolCraftDictionary.CRATE,
+                        theme.getId(),
+                        id
+                )
+        );
     }
 
     private static ResourceKey<LootTable> archaeology(ResourceKey<LootTable> key){

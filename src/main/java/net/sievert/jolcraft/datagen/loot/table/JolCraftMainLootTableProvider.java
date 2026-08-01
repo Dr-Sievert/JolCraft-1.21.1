@@ -32,6 +32,7 @@ public final class JolCraftMainLootTableProvider
                         new SubProviderEntry(JolCraftArchaeologyLootTableProvider::new, LootContextParamSets.ARCHAEOLOGY),
                         new SubProviderEntry(JolCraftBlockLootTableProvider::new, LootContextParamSets.BLOCK),
                         new SubProviderEntry(JolCraftChestLootTableProvider::new, LootContextParamSets.CHEST),
+                        new SubProviderEntry(JolCraftCrateLootTableProvider::new, LootContextParamSets.CHEST),
                         new SubProviderEntry(JolCraftEntityLootTableProvider::new, LootContextParamSets.ENTITY),
                         new SubProviderEntry(JolCraftStrongboxLootTableProvider::new, LootContextParamSets.CHEST),
                         new SubProviderEntry(JolCraftFishingLootTableProvider::new, LootContextParamSets.FISHING)

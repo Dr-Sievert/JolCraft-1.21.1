@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.item.JolCraftItemPropertyIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
@@ -35,6 +36,8 @@ import java.util.Locale;
 public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
 
     private static final String SUB_COIN = JolCraftDictionary.COIN;
+    private static final String SUB_COMPASS = JolCraftDictionary.COMPASS;
+    private static final String SUB_BOUNTY = JolCraftDictionary.BOUNTY;
 
     @Override
     public @NotNull String id() {
@@ -56,11 +59,8 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
         builder.flatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
         builder.flatItem(JolCraftItems.INVERIX.get());
 
-        builder.flatItem(JolCraftItems.BOUNTY.get());
-        builder.flatItem(JolCraftItems.BOUNTY_CRATE.get());
-        builder.flatItem(JolCraftItems.RESTOCK_CRATE.get());
-        builder.flatItem(JolCraftItems.REROLL_CRATE.get());
-        builder.flatItem(JolCraftItems.REWARD_CRATE.get());
+        builder.flatItem(JolCraftItems.BOUNTY.get(), SUB_BOUNTY);
+        builder.flatItem(JolCraftItems.BOUNTY_CRATE.get(), SUB_BOUNTY);
 
         createHearth(builder, JolCraftBlocks.HEARTH.get());
         createManagedLight(builder, JolCraftBlocks.MANAGED_LIGHT.get());
@@ -70,20 +70,20 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
 
         builder.flatItemWithOverlay(
                 JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(),
-                "compass"
+                SUB_COMPASS
         );
 
         builder.handheldItemWithOverlay(
                 JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
-                "compass"
+                SUB_COMPASS
         );
 
         builder.compassItem(
                 JolCraftItems.DEEPSLATE_COMPASS.get(),
                 JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get(),
                 JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
-                JolCraft.location("deepslate_compass_angle"),
-                "compass"
+                JolCraft.location(JolCraftItemPropertyIds.DEEPSLATE_COMPASS_ANGLE),
+                SUB_COMPASS
         );
     }
 

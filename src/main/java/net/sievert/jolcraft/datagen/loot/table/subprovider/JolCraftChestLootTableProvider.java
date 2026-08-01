@@ -192,6 +192,7 @@ public final class JolCraftChestLootTableProvider implements LootTableSubProvide
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
                         .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_MUG.get()).setWeight(2))
                         .add(LootItem.lootTableItem(JolCraftItems.INGOT_MOULD.get()).setWeight(1))
+                        .add(LootItem.lootTableItem(JolCraftItems.GUILD_SIGIL_MOULD.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_TABLET.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get()).setWeight(1))
                         .add(LootItem.lootTableItem(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get()).setWeight(1))

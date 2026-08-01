@@ -17,6 +17,7 @@
     "LootTableAccessor",
     "MeleeAttackGoalMixin",
     "MushroomBlockMixin",
+    "NestedLootTableAccessor",
     "RangedBowAttackGoalMixin",
     "RangedCrossbowAttackGoalMixin",
     "SetComponentsFunctionAccessor",

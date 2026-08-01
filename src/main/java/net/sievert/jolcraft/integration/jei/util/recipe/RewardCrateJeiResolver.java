@@ -4,12 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.mixin.LootTableAccessor;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.loot.custom.reward.client.RewardLootTableClientCache;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Expands deferred reward-crate sources into their possible loot outcomes for JEI.
@@ -142,19 +139,17 @@ public final class RewardCrateJeiResolver {
             @NotNull LootTable table
     ) {
         List<JeiItemOutcome> outcomes =
-                new ArrayList<>();
-
-        LootTableAccessor accessor =
-                (LootTableAccessor) table;
-
-        for (LootPool pool : accessor.jolcraft$getPools()) {
-            outcomes.addAll(
-                    ItemOutputJeiTranslator.translate(
-                            pool,
-                            accessor.jolcraft$getFunctions()
-                    )
-            );
-        }
+                ItemOutputJeiTranslator.translate(
+                        table,
+                        key ->
+                                RewardLootTableClientCache.get(key)
+                                        .orElseThrow(() ->
+                                                new IllegalArgumentException(
+                                                        "Missing synced nested reward loot table for JEI: "
+                                                                + key.location()
+                                                )
+                                        )
+                );
 
         if (outcomes.isEmpty()) {
             throw new IllegalArgumentException(
@@ -162,7 +157,7 @@ public final class RewardCrateJeiResolver {
             );
         }
 
-        return List.copyOf(outcomes);
+        return outcomes;
     }
 
     public record ResolvedOutcome(
@@ -180,10 +175,6 @@ public final class RewardCrateJeiResolver {
                     rewardCrate == null
                             ? null
                             : rewardCrate.copy();
-        }
-
-        public boolean deliveredByRewardCrate() {
-            return rewardCrate != null;
         }
     }
 }

@@ -51,6 +51,13 @@ public final class JolCraftLootTableIds extends JolCraftIds {
     public static final String DWARVEN_FORTRESS_CATACOMBS = join(DWARVEN_FORTRESS, JolCraftTemplatePoolIds.CATACOMBS);
 
     /* ---------------------------------------------------------------------
+     * Crates
+     * ------------------------------------------------------------------ */
+
+    public static final String EXCAVATION = JolCraftDictionary.EXCAVATION;
+    public static final String MINING = JolCraftDictionary.MINING;
+
+    /* ---------------------------------------------------------------------
      * Archaeology
      * ------------------------------------------------------------------ */
 

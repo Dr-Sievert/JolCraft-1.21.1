@@ -15,7 +15,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.component.custom.BountyData;
-import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
 
@@ -94,12 +94,6 @@ public final class JolCraftDataComponents {
                     .networkSynchronized(ByteBufCodecs.BOOL)
             );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RewardCrateSource>> REWARD_CRATE_SOURCE =
-            register(JolCraftDataComponentIds.REWARD_CRATE_SOURCE, builder -> builder
-                    .persistent(RewardCrateSource.CODEC)
-                    .networkSynchronized(RewardCrateSource.STREAM_CODEC)
-            );
-
     // -----------------
     // Compass
     // -----------------
@@ -152,6 +146,12 @@ public final class JolCraftDataComponents {
             register(JolCraftDataComponentIds.COIN_POUCH_AMOUNT, builder -> builder
                     .persistent(Codec.INT)
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
+            );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RewardCrateSource>> REWARD_CRATE_SOURCE =
+            register(JolCraftDataComponentIds.REWARD_CRATE_SOURCE, builder -> builder
+                    .persistent(RewardCrateSource.CODEC)
+                    .networkSynchronized(RewardCrateSource.STREAM_CODEC)
             );
 
     // -----------------
