@@ -437,6 +437,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_TOOLTIP_CHANCE_ROLL =
             tooltip(dot(JolCraftDictionary.CHANCE, JolCraftDictionary.JEI), JolCraftDictionary.ROLL);
 
+    public static final String JEI_TOOLTIP_CHANCE_LEVEL =
+            tooltip(dot(JolCraftDictionary.CHANCE, JolCraftDictionary.JEI), JolCraftDictionary.LEVEL);
+
     public static final String JEI_TOOLTIP_CHANCE_TOTAL =
             tooltip(dot(JolCraftDictionary.CHANCE, JolCraftDictionary.JEI), JolCraftDictionary.TOTAL);
 

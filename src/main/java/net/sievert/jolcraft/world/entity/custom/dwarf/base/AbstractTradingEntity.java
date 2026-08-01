@@ -783,11 +783,11 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
         JolCraftLogs.info(
                 JolCraftLogTags.ENTITY,
-                "{} at {} leveled up to {}",
-                DwarfProfession.getDisplayName(this)
-                        .getString(),
+                "{} at {} in {} leveled up to {}!",
+                DwarfProfession.getDisplayName(this).getString(),
                 JolCraftLogs.roundedPos(this),
-                DwarfMerchantData.Level.fromId(next)
+                this.level().dimension().location(),
+                DwarfMerchantData.Level.fromId(next).name().toLowerCase(Locale.ROOT)
         );
 
         updateTradesForLevelUp();

@@ -41,7 +41,8 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
         //Misc support
 
         putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_SPAWN, "Spawn");
-        putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_ROLL, "Chance per roll: %s");
+        putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_ROLL, "Chance per trade roll: %s");
+        putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_LEVEL, "Chance to get trade at this level: %s");
         putManual(translations, JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_TOTAL, "Chance to get trade at max level: %s");
 
         // JEI info pages

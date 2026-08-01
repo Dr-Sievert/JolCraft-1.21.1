@@ -152,22 +152,23 @@ public final class JeiDwarfTradeCategory
         );
 
         if (!entry.tradeGuaranteed()) {
-            boolean cumulative =
-                    entry.recipe().tradeGroup()
-                            == TradeGroup.CUMULATIVE_POOL;
+            TradeGroup tradeGroup = entry.recipe().tradeGroup();
+            boolean special = tradeGroup != TradeGroup.MAIN;
+
+            String chanceKey = switch (tradeGroup) {
+                case EXACT_LEVEL_POOL -> JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_LEVEL;
+                case CUMULATIVE_POOL -> JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_TOTAL;
+                default -> JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_ROLL;
+            };
 
             JeiDrawHelper.drawCenteredChance(
                     graphics,
                     font,
                     entry.tradeSelectionChance(),
-                    cumulative
-                            ? JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_TOTAL
-                            : JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_ROLL,
-                    SINGLE_INPUT_LAYOUT.arrow().x() + (cumulative ? 30 : 10),
+                    chanceKey,
+                    SINGLE_INPUT_LAYOUT.arrow().x() + (special ? 30 : 10),
                     ARROW_WIDTH,
-                    (entry.hasRewardCrate() || cumulative)
-                            ? 80
-                            : TRADE_CHANCE_Y
+                    (entry.hasRewardCrate() || special) ? 80 : TRADE_CHANCE_Y
             );
         }
 
