@@ -36,6 +36,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -203,75 +204,72 @@ public final class JolCraftJeiPlugin implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(
-            ISubtypeRegistration registration
+            @NotNull ISubtypeRegistration registration
     ) {
         registration.registerSubtypeInterpreter(
-                JolCraftItems
-                        .ANCIENT_DWARVEN_TOME_LEGENDARY
-                        .get(),
-                (
-                        stack,
-                        context
-                ) -> {
+                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
+                (stack, context) -> {
                     String loreKey =
                             stack.get(
-                                    JolCraftDataComponents
-                                            .DWARF_LORE_KEY
-                                            .get()
+                                    JolCraftDataComponents.DWARF_LORE_KEY.get()
                             );
 
                     return loreKey != null
-                            ? loreKey.toLowerCase(
-                            Locale.ROOT
-                    )
+                            ? loreKey.toLowerCase(Locale.ROOT)
                             : JolCraftDictionary.EMPTY;
                 }
         );
 
         registration.registerSubtypeInterpreter(
-                JolCraftItems
-                        .DEEPSLATE_COMPASS_DIAL
-                        .get(),
-                (
-                        stack,
-                        context
-                ) -> {
+                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get(),
+                (stack, context) -> {
                     String group =
                             stack.get(
-                                    JolCraftDataComponents
-                                            .STRUCTURE_GROUP
-                                            .get()
+                                    JolCraftDataComponents.STRUCTURE_GROUP.get()
                             );
 
-                    if (group == null
-                            || group.isEmpty()) {
-                        group =
-                                JolCraftDictionary.UNKNOWN;
+                    if (group == null || group.isEmpty()) {
+                        group = JolCraftDictionary.UNKNOWN;
                     } else {
-                        group =
-                                group.toLowerCase(
-                                        Locale.ROOT
-                                );
+                        group = group.toLowerCase(Locale.ROOT);
                     }
 
                     DeepslateCompassDialColor compassColor =
                             stack.get(
-                                    JolCraftDataComponents
-                                            .DEEPSLATE_COMPASS_DIAL_COLOR
-                                            .get()
+                                    JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get()
                             );
 
                     String rgb =
                             compassColor != null
-                                    ? Integer.toString(
-                                    compassColor.color()
-                            )
+                                    ? Integer.toString(compassColor.color())
                                     : JolCraftDictionary.DEFAULT;
 
                     return JolCraftStrings.underscored(
                             group,
                             rgb
                     );
+                }
+        );
+
+        registration.registerSubtypeInterpreter(
+                JolCraftItems.REWARD_CRATE.get(),
+                (stack, context) -> {
+                    RewardCrateSource source =
+                            stack.get(
+                                    JolCraftDataComponents.REWARD_CRATE_SOURCE.get()
+                            );
+
+                    if (source instanceof RewardCrateSource.LootTableSource(
+                            net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable> lootTable
+                    )) {
+                        return JolCraftStrings.underscored(JolCraftDictionary.LOOT, JolCraftDictionary.TABLE) + ":" + lootTable.location();
+                    }
+
+                    if (source instanceof RewardCrateSource.RecipeSource(ResourceLocation recipeId)) {
+                        return JolCraftDictionary.RECIPE + ":" + recipeId;
+                    }
+
+                    return JolCraftDictionary.EMPTY;
                 }
         );
     }
