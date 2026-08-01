@@ -357,10 +357,17 @@ public record JeiDwarfTradeRecipe(
         return outcome.chancePerRoll();
     }
 
-    public int outputRolls() {
-        return outcome.rolls();
+    public int outputMinRolls() {
+        return outcome.minRolls();
     }
 
+    public int outputMaxRolls() {
+        return outcome.maxRolls();
+    }
+
+    public boolean outputHasMultipleRolls() {
+        return outcome.hasMultipleRolls();
+    }
     public boolean outputGuaranteedPerRoll() {
         return outputChancePerRoll() >= 1.0D;
     }

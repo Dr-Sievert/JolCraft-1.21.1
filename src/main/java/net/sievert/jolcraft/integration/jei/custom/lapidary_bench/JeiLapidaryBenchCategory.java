@@ -108,7 +108,7 @@ public final class JeiLapidaryBenchCategory
         );
 
         if (outcome.chancePerRoll() < 1.0D
-                || outcome.rolls() > 1) {
+                || outcome.hasMultipleRolls()) {
             JeiDrawHelper.drawCenteredChance(
                     graphics,
                     font,
@@ -122,7 +122,8 @@ public final class JeiLapidaryBenchCategory
         JeiDrawHelper.drawCenteredRolls(
                 graphics,
                 font,
-                outcome.rolls(),
+                outcome.minRolls(),
+                outcome.maxRolls(),
                 LAYOUT.output().x(),
                 SLOT_SIZE,
                 ROLLS_Y

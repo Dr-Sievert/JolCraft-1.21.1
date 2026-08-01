@@ -115,7 +115,10 @@ public abstract class AbstractJeiBountyCategory<R>
         JeiDrawHelper.drawRolls(
                 graphics,
                 font,
-                rolls(
+                minRolls(
+                        entry
+                ),
+                maxRolls(
                         entry
                 ),
                 JeiBountyLayout.ROLLS.x(),
@@ -165,7 +168,11 @@ public abstract class AbstractJeiBountyCategory<R>
             @NotNull R entry
     );
 
-    protected abstract int rolls(
+    protected abstract int minRolls(
+            @NotNull R entry
+    );
+
+    protected abstract int maxRolls(
             @NotNull R entry
     );
 

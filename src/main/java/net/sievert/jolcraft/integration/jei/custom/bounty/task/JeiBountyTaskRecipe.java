@@ -187,11 +187,22 @@ public record JeiBountyTaskRecipe(
         };
     }
 
-    public int rolls() {
+    public int minRolls() {
         return switch (objective) {
             case ItemObjective itemObjective ->
                     itemObjective.outcome()
-                            .rolls();
+                            .minRolls();
+
+            case EntityObjective ignored ->
+                    1;
+        };
+    }
+
+    public int maxRolls() {
+        return switch (objective) {
+            case ItemObjective itemObjective ->
+                    itemObjective.outcome()
+                            .maxRolls();
 
             case EntityObjective ignored ->
                     1;

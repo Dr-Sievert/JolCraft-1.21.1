@@ -78,11 +78,19 @@ public final class JeiBountyRewardCategory
     }
 
     @Override
-    protected int rolls(
+    protected int minRolls(
             @NotNull JeiBountyRewardRecipe entry
     ) {
         return entry.reward()
-                .rolls();
+                .minRolls();
+    }
+
+    @Override
+    protected int maxRolls(
+            @NotNull JeiBountyRewardRecipe entry
+    ) {
+        return entry.reward()
+                .maxRolls();
     }
 
     @Override

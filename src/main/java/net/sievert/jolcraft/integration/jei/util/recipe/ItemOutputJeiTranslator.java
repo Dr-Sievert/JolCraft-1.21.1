@@ -84,13 +84,12 @@ public final class ItemOutputJeiTranslator {
             return List.of();
         }
 
-        int rolls =
-                JeiNumberRangeTranslator.requireConstantInt(
-                        pool.getRolls(),
-                        "loot-pool rolls"
+        JeiNumberRangeTranslator.NumberRange rolls =
+                JeiNumberRangeTranslator.translate(
+                        pool.getRolls()
                 );
 
-        if (rolls <= 0) {
+        if (rolls.min() <= 0) {
             throw new IllegalArgumentException(
                     "loot-pool rolls must be positive"
             );
@@ -151,6 +150,14 @@ public final class ItemOutputJeiTranslator {
                 continue;
             }
 
+            if (singleton instanceof
+                    net.minecraft.world.level.storage.loot.entries.EmptyLootItem) {
+                totalWeight +=
+                        weight;
+
+                continue;
+            }
+
             List<Item> items =
                     resolveItems(
                             singleton
@@ -190,10 +197,6 @@ public final class ItemOutputJeiTranslator {
                             entry.functions()
                     );
 
-            /*
-             * Vanilla applies entry-level functions first,
-             * followed by pool-level functions.
-             */
             count =
                     applyCountFunctions(
                             count,
@@ -226,10 +229,6 @@ public final class ItemOutputJeiTranslator {
                     tableFunctions
             );
 
-            /*
-             * The display stack represents the output item and its components.
-             * Quantity is displayed separately through minCount/maxCount.
-             */
             displayStack.setCount(
                     1
             );
@@ -241,7 +240,8 @@ public final class ItemOutputJeiTranslator {
                             count.max(),
                             entry.weight(),
                             totalWeight,
-                            rolls
+                            rolls.min(),
+                            rolls.max()
                     )
             );
         }

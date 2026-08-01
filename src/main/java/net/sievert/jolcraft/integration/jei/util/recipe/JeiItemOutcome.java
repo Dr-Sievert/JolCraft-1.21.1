@@ -9,8 +9,10 @@ public record JeiItemOutcome(
         int maxCount,
         int weight,
         int totalWeight,
-        int rolls
+        int minRolls,
+        int maxRolls
 ) {
+
     public JeiItemOutcome {
         if (minCount < 0) {
             throw new IllegalArgumentException(
@@ -36,9 +38,15 @@ public record JeiItemOutcome(
             );
         }
 
-        if (rolls <= 0) {
+        if (minRolls <= 0) {
             throw new IllegalArgumentException(
-                    "rolls must be positive"
+                    "minRolls must be positive"
+            );
+        }
+
+        if (maxRolls < minRolls) {
+            throw new IllegalArgumentException(
+                    "maxRolls must be at least minRolls"
             );
         }
     }
@@ -52,5 +60,13 @@ public record JeiItemOutcome(
 
     public boolean hasCountRange() {
         return minCount != maxCount;
+    }
+
+    public boolean hasRollRange() {
+        return minRolls != maxRolls;
+    }
+
+    public boolean hasMultipleRolls() {
+        return maxRolls > 1;
     }
 }

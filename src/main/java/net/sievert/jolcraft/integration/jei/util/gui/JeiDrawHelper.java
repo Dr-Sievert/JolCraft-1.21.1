@@ -252,11 +252,12 @@ public final class JeiDrawHelper {
     public static void drawRolls(
             @NotNull GuiGraphics graphics,
             @NotNull Font font,
-            int rolls,
+            int minRolls,
+            int maxRolls,
             int x,
             int y
     ) {
-        if (rolls <= 1) {
+        if (maxRolls <= 1) {
             return;
         }
 
@@ -264,12 +265,67 @@ public final class JeiDrawHelper {
                 graphics,
                 font,
                 formatRolls(
-                        rolls
+                        minRolls,
+                        maxRolls
                 ),
                 x,
                 y,
                 CHANCE_TEXT_SCALE
         );
+    }
+
+    public static void drawCenteredRolls(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            int minRolls,
+            int maxRolls,
+            int startX,
+            int width,
+            int y
+    ) {
+        if (maxRolls <= 1) {
+            return;
+        }
+
+        drawCenteredScaledText(
+                graphics,
+                font,
+                formatRolls(
+                        minRolls,
+                        maxRolls
+                ),
+                startX,
+                width,
+                y,
+                CHANCE_TEXT_SCALE
+        );
+    }
+
+    public static @NotNull String formatRolls(
+            int minRolls,
+            int maxRolls
+    ) {
+        if (minRolls <= 0) {
+            throw new IllegalArgumentException(
+                    "minRolls must be positive"
+            );
+        }
+
+        if (maxRolls < minRolls) {
+            throw new IllegalArgumentException(
+                    "maxRolls must be at least minRolls"
+            );
+        }
+
+        if (minRolls == maxRolls) {
+            return "Rolls: "
+                    + minRolls;
+        }
+
+        return "Rolls: "
+                + minRolls
+                + "-"
+                + maxRolls;
     }
 
     public static void drawCenteredChance(

@@ -292,7 +292,7 @@ public final class JeiHandInteractionCategory
                 outcome.chancePerRoll();
 
         if (chancePerRoll < 1.0D
-                || outcome.rolls() > 1) {
+                || outcome.hasMultipleRolls()) {
             JeiDrawHelper.drawChance(
                     graphics,
                     font,
@@ -305,7 +305,8 @@ public final class JeiHandInteractionCategory
         JeiDrawHelper.drawRolls(
                 graphics,
                 font,
-                outcome.rolls(),
+                outcome.minRolls(),
+                outcome.maxRolls(),
                 CHANCE.x(),
                 CHANCE.y() + 8
         );

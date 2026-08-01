@@ -81,6 +81,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SLOW = "slow";
     public static final String SNEAK = "sneak";
     public static final String SPAWN = "spawn";
+    public static final String SUPPLY = "supply";
     public static final String TALK = "talk";
     public static final String TEST = "test";
     public static final String TRACK = "track";

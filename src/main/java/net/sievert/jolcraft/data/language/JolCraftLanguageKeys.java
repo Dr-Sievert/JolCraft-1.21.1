@@ -318,8 +318,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_CRATE_NO_OFFERS_DWARF =
             tooltip(JolCraftDictionary.CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.OFFER), JolCraftDictionary.DWARF));
 
-    public static final String TOOLTIP_JADE_DWARF_PROFESSION =
-            tooltip(JolCraftDictionary.JADE, us(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION));
+    public static final String SUPPLY_CRATE =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftDictionary.SUPPLY);
 
     // ---------------------------------------------------------------------
     // DwarvenReputationLangSubProvider
@@ -423,6 +423,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String JADE_CONFIG_DWARF_PROFESSION =
             jadeConfig(us(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION));
+
+    public static final String TOOLTIP_JADE_DWARF_PROFESSION =
+            tooltip(JolCraftDictionary.JADE, us(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION));
 
     // ---------------------------------------------------------------------
     // JeiLangSubProvider

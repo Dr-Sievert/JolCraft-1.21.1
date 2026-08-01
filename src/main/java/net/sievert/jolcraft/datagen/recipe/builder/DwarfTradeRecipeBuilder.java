@@ -5,6 +5,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -1077,12 +1078,26 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
      */
     public @NotNull DwarfTradeRecipeBuilder rewardCrateLootTableResult(
             @NotNull Rarity rarity,
+            @NotNull ResourceKey<LootTable> lootTable,
+            @Nullable Component displayName
+    ) {
+        return rewardCrateResult(
+                rarity,
+                RewardCrateSource.lootTable(lootTable),
+                lootTable.location(),
+                displayName
+        );
+    }
+
+    public @NotNull DwarfTradeRecipeBuilder rewardCrateLootTableResult(
+            @NotNull Rarity rarity,
             @NotNull ResourceKey<LootTable> lootTable
     ) {
         return rewardCrateResult(
                 rarity,
                 RewardCrateSource.lootTable(lootTable),
-                lootTable.location()
+                lootTable.location(),
+                null
         );
     }
 
@@ -1091,43 +1106,74 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
      */
     public @NotNull DwarfTradeRecipeBuilder rewardCrateRecipeResult(
             @NotNull Rarity rarity,
+            @NotNull ResourceLocation recipeId,
+            @Nullable Component displayName
+    ) {
+        return rewardCrateResult(
+                rarity,
+                RewardCrateSource.recipe(recipeId),
+                recipeId,
+                displayName
+        );
+    }
+
+    public @NotNull DwarfTradeRecipeBuilder rewardCrateRecipeResult(
+            @NotNull Rarity rarity,
             @NotNull ResourceLocation recipeId
     ) {
         return rewardCrateResult(
                 rarity,
                 RewardCrateSource.recipe(recipeId),
-                recipeId
+                recipeId,
+                null
         );
     }
 
     private @NotNull DwarfTradeRecipeBuilder rewardCrateResult(
             @NotNull Rarity rarity,
             @NotNull RewardCrateSource source,
-            @NotNull ResourceLocation sourceId
+            @NotNull ResourceLocation sourceId,
+            @Nullable Component displayName
     ) {
+        LootItem.Builder<?> crate =
+                LootItem.lootTableItem(
+                                JolCraftItems.REWARD_CRATE.get()
+                        )
+                        .apply(
+                                SetComponentsFunction.setComponent(
+                                        DataComponents.RARITY,
+                                        rarity
+                                )
+                        )
+                        .apply(
+                                SetComponentsFunction.setComponent(
+                                        JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
+                                        source
+                                )
+                        );
+
+        if (displayName != null) {
+            crate.apply(
+                    SetComponentsFunction.setComponent(
+                            DataComponents.CUSTOM_NAME,
+                            displayName
+                    )
+            );
+        }
+
         ItemOutput crateOutput =
                 ItemOutput.item(
-                        LootItem.lootTableItem(
-                                        JolCraftItems.REWARD_CRATE.get()
-                                )
-                                .apply(
-                                        SetComponentsFunction.setComponent(
-                                                DataComponents.RARITY,
-                                                rarity
-                                        )
-                                )
-                                .apply(
-                                        SetComponentsFunction.setComponent(
-                                                JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
-                                                source
-                                        )
-                                )
+                        crate
                 );
 
         String sourceToken =
                 sourceId.getNamespace()
                         + "_"
-                        + sourceId.getPath().replace('/', '_');
+                        + sourceId.getPath()
+                        .replace(
+                                '/',
+                                '_'
+                        );
 
         return result(
                 crateOutput,

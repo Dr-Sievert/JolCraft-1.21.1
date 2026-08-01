@@ -8,10 +8,8 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.mixin.LootTableAccessor;
-import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
-import net.sievert.jolcraft.world.loot.custom.reward.RewardCrateSourceFinder;
 import net.sievert.jolcraft.world.loot.custom.reward.client.RewardLootTableClientCache;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
@@ -34,48 +32,48 @@ public final class RewardCrateJeiResolver {
     public static @NotNull List<ResolvedOutcome> translate(
             @NotNull ItemOutput output
     ) {
-        Objects.requireNonNull(output, JolCraftDictionary.OUTPUT);
-
-        Set<RewardCrateSource> sources =
-                RewardCrateSourceFinder.find(output);
-
-        if (sources.isEmpty()) {
-            return ItemOutputJeiTranslator.translate(output)
-                    .stream()
-                    .map(outcome ->
-                            new ResolvedOutcome(
-                                    outcome,
-                                    null
-                            )
-                    )
-                    .toList();
-        }
+        Objects.requireNonNull(
+                output,
+                JolCraftDictionary.OUTPUT
+        );
 
         List<ResolvedOutcome> resolved =
                 new ArrayList<>();
 
-        for (RewardCrateSource source : sources) {
-            ItemStack crate =
-                    new ItemStack(
-                            JolCraftItems.REWARD_CRATE.get()
+        for (JeiItemOutcome outcome :
+                ItemOutputJeiTranslator.translate(output)) {
+            ItemStack outputStack =
+                    outcome.stack();
+
+            RewardCrateSource source =
+                    outputStack.get(
+                            JolCraftDataComponents.REWARD_CRATE_SOURCE.get()
                     );
 
-            crate.set(
-                    JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
-                    source
-            );
+            if (source == null) {
+                resolved.add(
+                        new ResolvedOutcome(
+                                outcome,
+                                null
+                        )
+                );
+
+                continue;
+            }
 
             for (JeiItemOutcome reward : resolve(source)) {
                 resolved.add(
                         new ResolvedOutcome(
                                 reward,
-                                crate
+                                outputStack
                         )
                 );
             }
         }
 
-        return List.copyOf(resolved);
+        return List.copyOf(
+                resolved
+        );
     }
 
     private static @NotNull List<JeiItemOutcome> resolve(

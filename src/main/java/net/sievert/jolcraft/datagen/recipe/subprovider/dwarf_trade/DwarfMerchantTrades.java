@@ -239,11 +239,11 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                JolCraftBlocks.DUSKCAP, 2, 3, 2, 2, 3
+                JolCraftBlocks.DUSKCAP, 6, 8, 1, 2, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,
-                JolCraftBlocks.FESTERLING, 3, 4, 3, 3, 3
+                JolCraftBlocks.FESTERLING, 5, 7, 1, 2, 3
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.APPRENTICE,

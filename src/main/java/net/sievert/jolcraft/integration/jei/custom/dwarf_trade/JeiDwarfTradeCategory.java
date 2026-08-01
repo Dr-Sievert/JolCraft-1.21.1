@@ -46,13 +46,16 @@ public final class JeiDwarfTradeCategory
 
     private static final int DWARF_CENTER_X = 108;
     private static final int DWARF_BOTTOM_Y = 55;
+
     private static final int AMOUNT_Y = 43;
     private static final int TRADE_CHANCE_Y = 56;
     private static final int CHANCE_Y = 52;
     private static final int ROLLS_Y = 60;
+
     private static final int REWARD_CRATE_Y = 49;
     private static final int CRATE_CHANCE_Y = 70;
-    private static final int CRATE_ROLLS_Y = 78;
+    private static final int CRATE_ROLLS_Y = 55;
+    private static final int CRATE_ROLLS_GAP = 2;
 
     private static final JeiRecipeLayout SINGLE_INPUT_LAYOUT =
             JeiRecipeLayout.singleInputToOutput(
@@ -202,29 +205,72 @@ public final class JeiDwarfTradeCategory
                 layout.output().x()
         );
 
+        if (entry.hasRewardCrate()) {
+            drawRewardCrateDetails(
+                    graphics,
+                    font,
+                    entry,
+                    layout
+            );
+
+            return;
+        }
+
         if (!entry.outputGuaranteedPerRoll()
-                || entry.outputRolls() > 1) {
+                || entry.outputHasMultipleRolls()) {
             JeiDrawHelper.drawCenteredChance(
                     graphics,
                     font,
                     entry.outputChancePerRoll(),
                     layout.output().x(),
                     SLOT_SIZE,
-                    entry.hasRewardCrate()
-                            ? CRATE_CHANCE_Y
-                            : CHANCE_Y
+                    CHANCE_Y
             );
         }
 
         JeiDrawHelper.drawCenteredRolls(
                 graphics,
                 font,
-                entry.outputRolls(),
+                entry.outputMinRolls(),
+                entry.outputMaxRolls(),
                 layout.output().x(),
                 SLOT_SIZE,
-                entry.hasRewardCrate()
-                        ? CRATE_ROLLS_Y
-                        : ROLLS_Y
+                ROLLS_Y
+        );
+    }
+
+    private static void drawRewardCrateDetails(
+            @NotNull GuiGraphics graphics,
+            @NotNull Font font,
+            @NotNull JeiDwarfTradeRecipe entry,
+            @NotNull JeiRecipeLayout layout
+    ) {
+        int crateX =
+                rewardCrateX(
+                        layout
+                );
+
+        if (!entry.outputGuaranteedPerRoll()
+                || entry.outputHasMultipleRolls()) {
+            JeiDrawHelper.drawCenteredChance(
+                    graphics,
+                    font,
+                    entry.outputChancePerRoll(),
+                    layout.arrow().x(),
+                    ARROW_WIDTH,
+                    CRATE_CHANCE_Y
+            );
+        }
+
+        JeiDrawHelper.drawRolls(
+                graphics,
+                font,
+                entry.outputMinRolls(),
+                entry.outputMaxRolls(),
+                crateX
+                        + SLOT_SIZE
+                        + CRATE_ROLLS_GAP,
+                CRATE_ROLLS_Y
         );
     }
 
@@ -236,15 +282,15 @@ public final class JeiDwarfTradeCategory
         Component level =
                 entry.level() != null
                         ? Component.translatable(
-                                DwarfMerchantData.Level.langKeyFromId(
-                                        entry.level().getId()
-                                )
+                        DwarfMerchantData.Level.langKeyFromId(
+                                entry.level().getId()
                         )
+                )
                         : Component.literal(
-                                JolCraftStrings.toTitleCase(
-                                        JolCraftDictionary.GLOBAL
-                                )
-                        );
+                        JolCraftStrings.toTitleCase(
+                                JolCraftDictionary.GLOBAL
+                        )
+                );
 
         JeiDwarfRenderer.drawHeader(
                 graphics,
@@ -351,7 +397,9 @@ public final class JeiDwarfTradeCategory
         if (entry.hasRewardCrate()) {
             builder.addSlot(
                             RecipeIngredientRole.OUTPUT,
-                            layout.output().x(),
+                            rewardCrateX(
+                                    layout
+                            ),
                             REWARD_CRATE_Y
                     )
                     .addItemStack(
@@ -383,6 +431,16 @@ public final class JeiDwarfTradeCategory
                     )
             );
         }
+    }
+
+    private static int rewardCrateX(
+            @NotNull JeiRecipeLayout layout
+    ) {
+        return layout.arrow().x()
+                + (
+                ARROW_WIDTH
+                        - SLOT_SIZE
+        ) / 2;
     }
 
     private static @NotNull JeiRecipeLayout layoutFor(

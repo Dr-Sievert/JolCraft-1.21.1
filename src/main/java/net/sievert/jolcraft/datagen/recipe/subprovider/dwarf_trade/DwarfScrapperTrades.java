@@ -1,8 +1,10 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Rarity;
 import net.sievert.jolcraft.data.JolCraftEnumExtensions;
+import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
@@ -87,7 +89,8 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 .noCostB()
                 .rewardCrateLootTableResult(
                         Rarity.COMMON,
-                        JolCraftLootTables.Chests.SUPPLIES
+                        JolCraftLootTables.Chests.SUPPLIES,
+                        Component.translatable(JolCraftLanguageKeys.SUPPLY_CRATE)
                 )
                 .maxUses(1)
                 .dwarfXp(1)
@@ -128,7 +131,7 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 .costA(JolCraftItems.SCRAP.get(), 30, 40)
                 .noCostB()
                 .rewardCrateLootTableResult(
-                        JolCraftEnumExtensions.Rarity.LEGENDARY.getValue(),
+                        Rarity.EPIC,
                         JolCraftLootTables.Chests.DWARVEN_TOMES
                 )
                 .maxUses(1)
