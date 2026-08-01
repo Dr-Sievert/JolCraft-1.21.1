@@ -42,18 +42,6 @@ public record DwarfBaseTrades(JolCraftDataProvider<RecipeOutput> parent) impleme
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
-                        .costACoins(100)
-                        .noCostB()
-                        .result(JolCraftItems.DEV_KEY.get())
-                        .maxUses(10)
-                        .dwarfXp(500)
-                        .priceMultiplier(0.05F)
-        );
+
     }
 }

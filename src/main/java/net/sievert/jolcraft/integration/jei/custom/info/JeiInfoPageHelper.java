@@ -68,6 +68,10 @@ public final class JeiInfoPageHelper {
                 new JeiInfoPageRecipe(
                         JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get(),
                         Component.translatable(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_MITHRIL_ORE)
+                ),
+                new JeiInfoPageRecipe(
+                        JolCraftTags.Items.PARTIAL_CONTRACTS,
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_CONTRACTS)
                 )
         );
     }

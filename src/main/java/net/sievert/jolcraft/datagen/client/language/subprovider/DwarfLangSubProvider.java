@@ -90,20 +90,6 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_STONE_LOCKED, "The stone is marked with unfamiliar symbols.");
 
         // -----------------------------------------------------------------
-        // Contract keys
-        // -----------------------------------------------------------------
-
-        putManual(translations,
-                JolCraftLanguageKeys.TOOLTIP_WRITTEN_CONTRACT,
-                "Given to dwarves without professions to get signed contracts. " +
-                        "Signed contracts are used to buy profession contracts from a guildmaster. " +
-                        "If given to a dwarf with a profession, they will create a contract for that profession."
-        );
-
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_SIGNED_CONTRACT, "Signed contracts are used to buy profession contracts from a guildmaster.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_PROFESSION_CONTRACT, "Profession contracts can be given to dwarves without professions to set their profession.");
-
-        // -----------------------------------------------------------------
         // Dwarf
         // -----------------------------------------------------------------
 
@@ -113,12 +99,6 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_PROMOTE, "This dwarf cannot be promoted.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARF_CANNOT_SIGN, "This dwarf cannot sign contracts.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARF_GUARD_PROMOTION, "Guard promoted to %s!");
-
-        // -----------------------------------------------------------------
-        // Jade
-        // -----------------------------------------------------------------
-
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_JADE_DWARF_PROFESSION, "Profession: %s");
 
         // -----------------------------------------------------------------
         // Crates

@@ -59,6 +59,7 @@ public final class JolCraftTags {
         public static final TagKey<Item> GEM_CUT = createTag(JolCraftTagIds.CUT_GEMS);
         public static final TagKey<Item> GEM_DUST = createTag(JolCraftTagIds.GEM_DUSTS);
         public static final TagKey<Item> ATTRIBUTE_TRIM_MATERIALS = createTag(JolCraftTagIds.ATTRIBUTE_TRIM_MATERIALS);
+        public static final TagKey<Item> PARTIAL_CONTRACTS = createTag(JolCraftTagIds.PARTIAL_CONTRACTS);
         public static final TagKey<Item> PROFESSION_CONTRACTS = createTag(JolCraftTagIds.PROFESSION_CONTRACTS);
         public static final TagKey<Item> REPUTATION_TABLETS = createTag(JolCraftTagIds.REPUTATION_TABLETS);
         public static final TagKey<Item> HOPS_SEEDS = createTag(JolCraftTagIds.HOPS_SEEDS);

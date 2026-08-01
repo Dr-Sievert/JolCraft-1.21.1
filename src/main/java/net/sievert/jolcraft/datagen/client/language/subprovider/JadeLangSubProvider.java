@@ -31,6 +31,8 @@ public final class JadeLangSubProvider implements LanguageSubProvider {
     public void addTranslations(
             @NotNull Map<String, String> translations
     ) {
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_JADE_DWARF_PROFESSION, "Profession: %s");
+
         putManual(
                 translations,
                 JolCraftLanguageKeys.JADE_CONFIG_FERMENTING_BARREL,

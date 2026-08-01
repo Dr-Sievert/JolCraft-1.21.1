@@ -12,7 +12,6 @@ import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.id.item.JolCraftCreativeTabIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
-import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.id.sound.JolCraftSoundIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
@@ -264,14 +263,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS =
             tooltip(JolCraftAttachmentIds.DWARF_LORE, pl(JolCraftDictionary.GEM));
 
-    public static final String TOOLTIP_WRITTEN_CONTRACT =
-            tooltip(JolCraftDictionary.CONTRACT, JolCraftDictionary.WRITTEN);
-
-    public static final String TOOLTIP_SIGNED_CONTRACT =
-            tooltip(JolCraftDictionary.CONTRACT, JolCraftDictionary.SIGNED);
-
-    public static final String TOOLTIP_PROFESSION_CONTRACT =
-            tooltip(JolCraftDictionary.CONTRACT, JolCraftDictionary.PROFESSION);
+    public static final String TOOLTIP_CONTRACTS =
+            category(JolCraftDictionary.TOOLTIP, pl(JolCraftDictionary.CONTRACT));
 
     public static final String MERCHANT_TITLE = dot(JolCraftDictionary.MERCHANT, JolCraftDictionary.TITLE);
     public static final String MERCHANT_TRADES = dot(JolCraftDictionary.MERCHANT, pl(JolCraftDictionary.TRADE));

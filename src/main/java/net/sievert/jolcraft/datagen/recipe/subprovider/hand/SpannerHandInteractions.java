@@ -66,6 +66,8 @@ public record SpannerHandInteractions(
                 tracking,
                 JolCraftTags.Items.GENERAL_SALVAGE,
                 SoundEvents.ITEM_BREAK,
+                3,
+                6,
                 0.75F,
                 1.25F
         );
@@ -75,6 +77,8 @@ public record SpannerHandInteractions(
                 tracking,
                 JolCraftTags.Items.TEXTILE_SALVAGE,
                 SoundEvents.WOOL_BREAK,
+                1,
+                2,
                 0.75F,
                 1.25F
         );
@@ -84,6 +88,8 @@ public record SpannerHandInteractions(
                 tracking,
                 JolCraftTags.Items.REDSTONE_SALVAGE,
                 SoundEvents.ITEM_BREAK,
+                6,
+                9,
                 0.75F,
                 1.45F
         );
@@ -93,6 +99,8 @@ public record SpannerHandInteractions(
                 tracking,
                 JolCraftTags.Items.IRON_SALVAGE,
                 SoundEvents.METAL_BREAK,
+                9,
+                15,
                 0.75F,
                 1.60F
         );
@@ -102,6 +110,8 @@ public record SpannerHandInteractions(
                 tracking,
                 JolCraftTags.Items.DEEPSLATE_SALVAGE,
                 SoundEvents.DEEPSLATE_BREAK,
+                12,
+                18,
                 0.75F,
                 1.25F
         );
@@ -111,6 +121,8 @@ public record SpannerHandInteractions(
                 tracking,
                 JolCraftTags.Items.GOLD_SALVAGE,
                 SoundEvents.METAL_BREAK,
+                6,
+                12,
                 0.75F,
                 1.70F
         );
@@ -120,6 +132,8 @@ public record SpannerHandInteractions(
                 tracking,
                 JolCraftTags.Items.MITHRIL_SALVAGE,
                 SoundEvents.NETHERITE_BLOCK_BREAK,
+                36,
+                50,
                 0.75F,
                 1.25F
         );
@@ -130,6 +144,8 @@ public record SpannerHandInteractions(
             @NotNull JolCraftDataTracking tracking,
             @NotNull TagKey<Item> salvageTag,
             @NotNull SoundEvent successEvent,
+            int minDamage,
+            int maxDamage,
             float successVolume,
             float successPitch
     ) {
@@ -146,7 +162,7 @@ public record SpannerHandInteractions(
                         .actionA(
                                 new ItemInputAction(
                                         ItemInputAction.Type.DAMAGE,
-                                        1
+                                        minDamage, maxDamage
                                 )
                         )
                         .ingredientB(
@@ -196,7 +212,7 @@ public record SpannerHandInteractions(
                             JolCraftItems.SCRAP.get(),
                             1
                     ),
-                    empty(1)
+                    empty(19)
             );
         }
 
@@ -204,22 +220,18 @@ public record SpannerHandInteractions(
                 JolCraftTags.Items.TEXTILE_SALVAGE
         )) {
             return itemOutput(
-                    2,
+                    1,
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
                             2,
-                            60
+                            1
                     ),
                     entry(
                             Items.STRING,
-                            35
+                            4
                     ),
-                    entry(
-                            Items.LEATHER,
-                            15
-                    ),
-                    empty(1)
+                    empty(15)
             );
         }
 
@@ -227,22 +239,22 @@ public record SpannerHandInteractions(
                 JolCraftTags.Items.REDSTONE_SALVAGE
         )) {
             return itemOutput(
-                    2,
+                    1,
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
-                            3,
-                            60
-                    ),
-                    entry(
-                            Items.REDSTONE,
-                            30
+                            2,
+                            2
                     ),
                     entry(
                             JolCraftItems.SCRAP_HEAP.get(),
+                            1
+                    ),
+                    entry(
+                            Items.REDSTONE,
                             5
                     ),
-                    empty(1)
+                    empty(12)
             );
         }
 
@@ -250,28 +262,28 @@ public record SpannerHandInteractions(
                 JolCraftTags.Items.IRON_SALVAGE
         )) {
             return itemOutput(
-                    3,
+                    2,
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
-                            4,
-                            60
+                            3,
+                            2
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP_HEAP.get(),
+                            1
                     ),
                     entry(
                             Items.IRON_NUGGET,
                             2,
                             4,
-                            50
+                            2
                     ),
                     entry(
                             Items.IRON_INGOT,
-                            15
+                            1
                     ),
-                    entry(
-                            JolCraftItems.SCRAP_HEAP.get(),
-                            10
-                    ),
-                    empty(1)
+                    empty(14)
             );
         }
 
@@ -283,14 +295,18 @@ public record SpannerHandInteractions(
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
-                            4,
-                            60
+                            3,
+                            2
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP_HEAP.get(),
+                            1
                     ),
                     entry(
                             JolCraftItems.DEEPSLATE_PLATE.get(),
-                            15
+                            1
                     ),
-                    empty(1)
+                    empty(16)
             );
         }
 
@@ -298,28 +314,28 @@ public record SpannerHandInteractions(
                 JolCraftTags.Items.GOLD_SALVAGE
         )) {
             return itemOutput(
-                    3,
+                    2,
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
-                            5,
-                            60
+                            3,
+                            2
+                    ),
+                    entry(
+                            JolCraftItems.SCRAP_HEAP.get(),
+                            1
                     ),
                     entry(
                             Items.GOLD_NUGGET,
                             2,
                             4,
-                            50
+                            2
                     ),
                     entry(
                             Items.GOLD_INGOT,
-                            15
+                            1
                     ),
-                    entry(
-                            JolCraftItems.SCRAP_HEAP.get(),
-                            20
-                    ),
-                    empty(1)
+                    empty(14)
             );
         }
 
@@ -331,19 +347,20 @@ public record SpannerHandInteractions(
                     entry(
                             JolCraftItems.SCRAP.get(),
                             1,
-                            10,
-                            60
+                            5,
+                            3
                     ),
                     entry(
                             JolCraftItems.SCRAP_HEAP.get(),
-                            30
+                            2
                     ),
                     entry(
                             JolCraftItems.MITHRIL_NUGGET.get(),
                             1,
                             4,
-                            15
-                    )
+                            1
+                    ),
+                    empty(14)
             );
         }
 

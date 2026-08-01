@@ -435,6 +435,11 @@ public final class JolCraftItemTagProvider
 
         // Dwarf
 
+        target.tag(JolCraftTags.Items.PARTIAL_CONTRACTS)
+                .add(JolCraftItems.CONTRACT_BLANK.get())
+                .add(JolCraftItems.CONTRACT_WRITTEN.get())
+                .add(JolCraftItems.CONTRACT_SIGNED.get());
+
         target.tag(JolCraftTags.Items.PROFESSION_CONTRACTS)
                 .add(JolCraftItems.CONTRACT_GUILDMASTER.get())
                 .add(JolCraftItems.CONTRACT_MERCHANT.get())

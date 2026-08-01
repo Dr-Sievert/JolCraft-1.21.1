@@ -44,7 +44,7 @@ public final class JeiDwarfTradeCategory
     private static final int WIDTH = 150;
     private static final int HEIGHT = 88;
 
-    private static final int DWARF_CENTER_X = 112;
+    private static final int DWARF_CENTER_X = 108;
     private static final int DWARF_BOTTOM_Y = 55;
     private static final int AMOUNT_Y = 43;
     private static final int TRADE_CHANCE_Y = 56;

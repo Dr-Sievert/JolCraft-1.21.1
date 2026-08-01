@@ -48,9 +48,10 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
 
         putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET,
-                "To gain endorsements, give your reputation tablet to a master-level dwarf with a profession. " +
-                        "Endorsements are unique per profession and can only be gained once. To advance to the next reputation level, " +
-                        "you need endorsements from dwarves with professions. When you have enough, hand over your tablet to a guildmaster to update it."
+                "To advance in dwarven reputation you need endorsements from dwarves. " +
+                        "Give your tablet to a dwarf you helped become a master of their profession. " +
+                            "Endorsements are unique per profession and can only be gained once. " +
+                                "Once you reach the required amount of endorsements for the next reputation tier hand in your tablet to a guildmaster."
         );
 
         putManual(translations,
@@ -74,12 +75,13 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
 
         putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_DWARVEN_LEXICON,
-                "Can be used to learn dwarvish. Found in mineshafts or stronghold libraries. Can be bought from master librarians."
+                "Can be used to learn dwarvish. Found in abandoned mineshafts or stronghold libraries. Can be bought from master librarians. " +
+                        "Can rarely be found while fishing in dwarven biomes."
         );
 
         putManual(translations,
                 JolCraftLanguageKeys.JEI_INFO_ANCIENT_DWARVEN_LEXICON,
-                "Can be used to learn ancient dwarvish. Found in ancient dwarven ruins."
+                "Can be used to learn ancient dwarvish. Rarely found in dwarven bookshelves, dwarven archeology excavations or when fishing in dwarven biomes."
         );
 
         putManual(translations,
@@ -112,5 +114,13 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
                 "Mithril generates only in deepslate between Y -64 and 0, " +
                 "with a triangular distribution concentrated toward the middle of that range. Small, medium, and large veins can appear throughout the Overworld, " +
                 "while additional exposed and fully buried veins are restricted to mountain and hill biomes.");
+
+        putManual(translations,
+                JolCraftLanguageKeys.TOOLTIP_CONTRACTS,
+                "Blank contracts are crafted from paper and can be written on using ink and quill. " +
+                        "Written contracts are given to dwarves without professions to get signed contracts. " +
+                            "Signed contracts can be transformed into profession contracts at a guildmaster. " +
+                                "Profession contracts can be given to a dwarf without a profession to set their profession."
+        );
     }
 }

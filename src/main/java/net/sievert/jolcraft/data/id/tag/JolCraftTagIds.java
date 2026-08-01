@@ -35,6 +35,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String GEM_DUSTS = join(JolCraftDictionary.GEM, plural(JolCraftDictionary.DUST));
 
     public static final String ATTRIBUTE_TRIM_MATERIALS = join(JolCraftDictionary.ATTRIBUTE, JolCraftDictionary.TRIM, plural(JolCraftDictionary.MATERIAL));
+    public static final String PARTIAL_CONTRACTS = join(JolCraftDictionary.PARTIAL, plural(JolCraftDictionary.CONTRACT));
     public static final String PROFESSION_CONTRACTS = join(JolCraftDictionary.PROFESSION, plural(JolCraftDictionary.CONTRACT));
     public static final String REPUTATION_TABLETS = join(JolCraftDictionary.REPUTATION, plural(JolCraftDictionary.TABLET));
 
