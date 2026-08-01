@@ -160,9 +160,11 @@ public final class JeiDwarfTradeCategory
                     cumulative
                             ? JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_TOTAL
                             : JolCraftLanguageKeys.JEI_TOOLTIP_CHANCE_ROLL,
-                    SINGLE_INPUT_LAYOUT.arrow().x() + 10,
+                    SINGLE_INPUT_LAYOUT.arrow().x() + (cumulative ? 30 : 10),
                     ARROW_WIDTH,
-                    TRADE_CHANCE_Y
+                    (entry.hasRewardCrate() || cumulative)
+                            ? 80
+                            : TRADE_CHANCE_Y
             );
         }
 

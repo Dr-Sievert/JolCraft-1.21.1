@@ -246,7 +246,7 @@ public final class DwarfProfessionConfigProvider
                                     SoundEvents.VILLAGER_WORK_TOOLSMITH
                             ),
                             defaults.attributes(),
-                            defaults.tradePools()
+                            scrapperTradePools()
                     );
 
             case BREWMASTER ->
@@ -518,6 +518,31 @@ public final class DwarfProfessionConfigProvider
                 pool(
                         TradePoolType.EXACT_LEVEL,
                         Map.of(
+                                DwarfMerchantData.Level.MASTER,
+                                1
+                        ),
+                        TradeRerollType.RESTOCK
+                )
+        );
+    }
+
+    private static DwarfProfessionTradePoolsConfig scrapperTradePools() {
+        return tradePools(
+                pool(
+                        TradePoolType.CUMULATIVE,
+                        Map.of(
+                                DwarfMerchantData.Level.NOVICE,
+                                1,
+
+                                DwarfMerchantData.Level.APPRENTICE,
+                                1,
+
+                                DwarfMerchantData.Level.JOURNEYMAN,
+                                1,
+
+                                DwarfMerchantData.Level.EXPERT,
+                                1,
+
                                 DwarfMerchantData.Level.MASTER,
                                 1
                         ),

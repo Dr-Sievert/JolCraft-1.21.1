@@ -17,6 +17,22 @@ public final class JeiInfoPageHelper {
 
         return List.of(
                 new JeiInfoPageRecipe(
+                        JolCraftItems.DWARVEN_LEXICON.get().getDefaultInstance(),
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_DWARVEN_LEXICON)
+                ),
+                new JeiInfoPageRecipe(
+                        JolCraftItems.ANCIENT_DWARVEN_LEXICON.get().getDefaultInstance(),
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_ANCIENT_DWARVEN_LEXICON)
+                ),
+                new JeiInfoPageRecipe(
+                        JolCraftItems.COIN_POUCH.get().getDefaultInstance(),
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_COIN_POUCH)
+                ),
+                new JeiInfoPageRecipe(
+                        JolCraftTags.Items.PARTIAL_CONTRACTS,
+                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_CONTRACTS)
+                ),
+                new JeiInfoPageRecipe(
                         JolCraftTags.Items.REPUTATION_TABLETS,
                         Component.translatable(JolCraftLanguageKeys.JEI_INFO_REPUTATION_TABLET)
                 ),
@@ -34,24 +50,8 @@ public final class JeiInfoPageHelper {
                         JolCraftItemIds.DEEPSLATE_COMPASS
                 ),
                 new JeiInfoPageRecipe(
-                        JolCraftItems.COIN_POUCH.get().getDefaultInstance(),
-                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_COIN_POUCH)
-                ),
-                new JeiInfoPageRecipe(
-                        JolCraftItems.DWARVEN_LEXICON.get().getDefaultInstance(),
-                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_DWARVEN_LEXICON)
-                ),
-                new JeiInfoPageRecipe(
-                        JolCraftItems.ANCIENT_DWARVEN_LEXICON.get().getDefaultInstance(),
-                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_ANCIENT_DWARVEN_LEXICON)
-                ),
-                new JeiInfoPageRecipe(
                         JolCraftBlocks.HEARTH.get().asItem().getDefaultInstance(),
                         Component.translatable(JolCraftLanguageKeys.JEI_INFO_HEARTH)
-                ),
-                JeiInfoPageRecipe.fromBlockTag(
-                        JolCraftTags.Blocks.VERDANT,
-                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_VERDANT)
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftBlocks.FESTERLING.get().asItem().getDefaultInstance(),
@@ -65,13 +65,13 @@ public final class JeiInfoPageHelper {
                         JolCraftTags.Items.HOPS_SEEDS,
                         Component.translatable(JolCraftLanguageKeys.TOOLTIP_HOPS_SEEDS)
                 ),
+                JeiInfoPageRecipe.fromBlockTag(
+                        JolCraftTags.Blocks.VERDANT,
+                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_VERDANT)
+                ),
                 new JeiInfoPageRecipe(
                         JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get(),
                         Component.translatable(JolCraftLanguageKeys.TOOLTIP_DEEPSLATE_MITHRIL_ORE)
-                ),
-                new JeiInfoPageRecipe(
-                        JolCraftTags.Items.PARTIAL_CONTRACTS,
-                        Component.translatable(JolCraftLanguageKeys.TOOLTIP_CONTRACTS)
                 )
         );
     }

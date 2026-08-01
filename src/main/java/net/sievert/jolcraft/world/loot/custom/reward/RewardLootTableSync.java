@@ -40,8 +40,8 @@ public final class RewardLootTableSync {
                     RewardCrateSourceFinder.find(
                             holder.value().result()
                     )) {
-                if (source instanceof RewardCrateSource.LootTableSource direct) {
-                    referenced.add(direct.lootTable());
+                if (source instanceof RewardCrateSource.LootTableSource(ResourceKey<LootTable> lootTable)) {
+                    referenced.add(lootTable);
                 }
             }
         }

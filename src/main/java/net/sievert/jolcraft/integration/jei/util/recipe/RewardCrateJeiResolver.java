@@ -6,9 +6,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.mixin.LootTableAccessor;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.RewardCrateSource;
+import net.sievert.jolcraft.world.loot.custom.reward.RewardCrateSourceFinder;
 import net.sievert.jolcraft.world.loot.custom.reward.client.RewardLootTableClientCache;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
@@ -19,9 +22,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
- * Expands reward-crate item outputs into their possible loot outcomes for JEI.
+ * Expands deferred reward-crate sources into their possible loot outcomes for JEI.
  */
 public final class RewardCrateJeiResolver {
 
@@ -30,30 +34,36 @@ public final class RewardCrateJeiResolver {
     public static @NotNull List<ResolvedOutcome> translate(
             @NotNull ItemOutput output
     ) {
-        Objects.requireNonNull(output, "output");
+        Objects.requireNonNull(output, JolCraftDictionary.OUTPUT);
 
-        List<ResolvedOutcome> resolved = new ArrayList<>();
+        Set<RewardCrateSource> sources =
+                RewardCrateSourceFinder.find(output);
 
-        for (JeiItemOutcome outcome :
-                ItemOutputJeiTranslator.translate(output)) {
-            ItemStack stack = outcome.stack();
-            RewardCrateSource source =
-                    stack.get(
-                            JolCraftDataComponents.REWARD_CRATE_SOURCE.get()
+        if (sources.isEmpty()) {
+            return ItemOutputJeiTranslator.translate(output)
+                    .stream()
+                    .map(outcome ->
+                            new ResolvedOutcome(
+                                    outcome,
+                                    null
+                            )
+                    )
+                    .toList();
+        }
+
+        List<ResolvedOutcome> resolved =
+                new ArrayList<>();
+
+        for (RewardCrateSource source : sources) {
+            ItemStack crate =
+                    new ItemStack(
+                            JolCraftItems.REWARD_CRATE.get()
                     );
 
-            if (source == null) {
-                resolved.add(
-                        new ResolvedOutcome(
-                                outcome,
-                                null
-                        )
-                );
-                continue;
-            }
-
-            ItemStack crate = stack.copy();
-            crate.setCount(1);
+            crate.set(
+                    JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
+                    source
+            );
 
             for (JeiItemOutcome reward : resolve(source)) {
                 resolved.add(
@@ -71,14 +81,16 @@ public final class RewardCrateJeiResolver {
     private static @NotNull List<JeiItemOutcome> resolve(
             @NotNull RewardCrateSource source
     ) {
-        if (source instanceof RewardCrateSource.LootTableSource direct) {
+        if (source instanceof RewardCrateSource.LootTableSource(
+                net.minecraft.resources.ResourceKey<LootTable> lootTable
+        )) {
             LootTable table =
                     RewardLootTableClientCache.get(
-                            direct.lootTable()
+                            lootTable
                     ).orElseThrow(() ->
                             new IllegalArgumentException(
                                     "Missing synced reward loot table for JEI: "
-                                            + direct.lootTable().location()
+                                            + lootTable.location()
                             )
                     );
 
@@ -88,7 +100,8 @@ public final class RewardCrateJeiResolver {
         RewardCrateSource.RecipeSource recipeSource =
                 (RewardCrateSource.RecipeSource) source;
 
-        ClientLevel level = Minecraft.getInstance().level;
+        ClientLevel level =
+                Minecraft.getInstance().level;
 
         if (level == null) {
             throw new IllegalStateException(
@@ -113,7 +126,8 @@ public final class RewardCrateJeiResolver {
             );
         }
 
-        List<JeiItemOutcome> outcomes = new ArrayList<>();
+        List<JeiItemOutcome> outcomes =
+                new ArrayList<>();
 
         for (RecipeOutput reward : recipe.rewards()) {
             outcomes.addAll(
@@ -129,7 +143,8 @@ public final class RewardCrateJeiResolver {
     private static @NotNull List<JeiItemOutcome> translate(
             @NotNull LootTable table
     ) {
-        List<JeiItemOutcome> outcomes = new ArrayList<>();
+        List<JeiItemOutcome> outcomes =
+                new ArrayList<>();
 
         LootTableAccessor accessor =
                 (LootTableAccessor) table;
@@ -158,10 +173,15 @@ public final class RewardCrateJeiResolver {
     ) {
 
         public ResolvedOutcome {
-            Objects.requireNonNull(outcome, "outcome");
-            rewardCrate = rewardCrate == null
-                    ? null
-                    : rewardCrate.copy();
+            Objects.requireNonNull(
+                    outcome,
+                    "outcome"
+            );
+
+            rewardCrate =
+                    rewardCrate == null
+                            ? null
+                            : rewardCrate.copy();
         }
 
         public boolean deliveredByRewardCrate() {
