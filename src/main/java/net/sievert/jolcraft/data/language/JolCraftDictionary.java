@@ -44,6 +44,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String DEMAND = "demand";
     public static final String DYE = "dye";
     public static final String ENDORSE = "endorse";
+    public static final String FARMING = "farming";
     public static final String FILL = "fill";
     public static final String FINALIZE = "finalize";
     public static final String FISHING = "fishing";
@@ -201,6 +202,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String AEGISCORE = "aegiscore";
     public static final String AGE = "age";
     public static final String AIR = "air";
+    public static final String ALCHEMY = "alchemy";
     public static final String ALCHEMIST = "alchemist";
     public static final String ALT = "alt";
     public static final String AMOUNT = "amount";
@@ -255,6 +257,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BULB = "bulb";
     public static final String BUSH = "bush";
     public static final String BUSY = "busy";
+    public static final String CACHE = "cache";
     public static final String CANDLE = "candle";
     public static final String CATACOMB = "catacomb";
     public static final String CATALYST = "catalyst";
@@ -542,6 +545,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SIGIL = "sigil";
     public static final String SIZE = "size";
     public static final String SKYBURROW = "skyburrow";
+    public static final String SLAYER = "slayer";
     public static final String SLOT = "slot";
     public static final String SMELTER = "smelter";
     public static final String SMITHING = "smithing";

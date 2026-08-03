@@ -3,6 +3,7 @@ package net.sievert.jolcraft.data.language;
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
 import net.sievert.jolcraft.data.id.item.JolCraftRarityIds;
+import net.sievert.jolcraft.data.id.loot.JolCraftLootTableIds;
 import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
@@ -319,13 +320,34 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
             tooltip(JolCraftDictionary.CRATE, us(JolCraftDictionary.NO, pl(JolCraftDictionary.OFFER), JolCraftDictionary.DWARF));
 
     public static final String SUPPLY_CRATE =
-            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftDictionary.SUPPLY);
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.SUPPLY_CRATE);
 
-    public static final String EXCAVATION_CRATE =
-            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftDictionary.EXCAVATION);
+    public static final String ALCHEMY_SUPPLIES =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.ALCHEMY_SUPPLIES);
 
-    public static final String MINING_CRATE =
-            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftDictionary.MINING);
+    public static final String DWARVEN_FORTRESS_EXCAVATION =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.DWARVEN_FORTRESS_EXCAVATION);
+
+    public static final String ARTISAN_SUPPLIES =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.ARTISAN_SUPPLIES);
+
+    public static final String FARMING_SUPPLIES =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.FARMING_SUPPLIES);
+
+    public static final String MINING_CACHE =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.MINING_CACHE);
+
+    public static final String FISHING_LOOT =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.FISHING_LOOT);
+
+    public static final String BLACKSMITH_SUPPLIES =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.BLACKSMITH_SUPPLIES);
+
+    public static final String MONSTER_SLAYER_LOOT =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.MONSTER_SLAYER_LOOT);
+
+    public static final String VAULT_LOOT =
+            category(us(JolCraftDictionary.CRATE, JolCraftDictionary.NAME), JolCraftLootTableIds.VAULT_LOOT);
 
     // ---------------------------------------------------------------------
     // DwarvenReputationLangSubProvider

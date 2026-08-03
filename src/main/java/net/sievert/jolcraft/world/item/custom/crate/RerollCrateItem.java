@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.item.custom.bounty;
+package net.sievert.jolcraft.world.item.custom.crate;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -14,8 +14,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class RestockCrateItem extends Item {
-    public RestockCrateItem(Properties properties) {
+public class RerollCrateItem extends Item {
+    public RerollCrateItem(Properties properties) {
         super(properties);
     }
 
@@ -24,7 +24,7 @@ public class RestockCrateItem extends Item {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         JolCraftTooltipHelper.addAltTooltip(
                 tooltip,
-                Component.translatable(JolCraftLanguageKeys.TOOLTIP_RESTOCK_CRATE).withStyle(ChatFormatting.GRAY),
+                Component.translatable(JolCraftLanguageKeys.TOOLTIP_REROLL_CRATE).withStyle(ChatFormatting.GRAY),
                 List.of()
         );
         super.appendHoverText(stack, context, tooltip, flag);

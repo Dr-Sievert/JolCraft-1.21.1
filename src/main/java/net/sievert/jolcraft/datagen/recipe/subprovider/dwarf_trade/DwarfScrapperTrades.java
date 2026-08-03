@@ -1,8 +1,11 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
@@ -12,7 +15,11 @@ import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
+import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,11 +94,18 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 .tradeGroup(TradeGroup.CUMULATIVE_POOL)
                 .costA(JolCraftItems.SCRAP.get(), 5, 10)
                 .noCostB()
-                .rewardCrateLootTableResult(
-                        Rarity.COMMON,
-                        JolCraftLootTables.Chests.SUPPLIES,
-                        Component.translatable(JolCraftLanguageKeys.SUPPLY_CRATE)
-                )
+                .rewardCrateResult(RewardCrateType.SUPPLY_CRATE)
+                .maxUses(1)
+                .dwarfXp(1)
+                .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                .tradeGroup(TradeGroup.CUMULATIVE_POOL)
+                .costA(JolCraftItems.SCRAP.get(), 10, 15)
+                .noCostB()
+                .rewardCrateResult(RewardCrateType.FARMING_SUPPLIES)
                 .maxUses(1)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)
@@ -100,13 +114,31 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
                 .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
                 .tradeGroup(TradeGroup.CUMULATIVE_POOL)
-                .costA(JolCraftItems.SCRAP.get(), 10, 15)
+                .costA(JolCraftItems.SCRAP.get(), 20, 25)
                 .noCostB()
-                .rewardCrateLootTableResult(
-                        Rarity.UNCOMMON,
-                        JolCraftLootTables.Crates.EXCAVATION,
-                        Component.translatable(JolCraftLanguageKeys.EXCAVATION_CRATE)
-                )
+                .rewardCrateResult(RewardCrateType.FISHING_LOOT)
+                .maxUses(1)
+                .dwarfXp(1)
+                .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
+                .tradeGroup(TradeGroup.CUMULATIVE_POOL)
+                .costA(JolCraftItems.SCRAP.get(), 20, 25)
+                .noCostB()
+                .rewardCrateResult(RewardCrateType.MONSTER_SLAYER_LOOT)
+                .maxUses(1)
+                .dwarfXp(1)
+                .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
+                .tradeGroup(TradeGroup.CUMULATIVE_POOL)
+                .costA(JolCraftItems.SCRAP.get(), 20, 25)
+                .noCostB()
+                .rewardCrateResult(RewardCrateType.ALCHEMY_SUPPLIES)
                 .maxUses(1)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)
@@ -117,11 +149,18 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 .tradeGroup(TradeGroup.CUMULATIVE_POOL)
                 .costA(JolCraftItems.SCRAP.get(), 20, 25)
                 .noCostB()
-                .rewardCrateLootTableResult(
-                        Rarity.RARE,
-                        JolCraftLootTables.Crates.MINING,
-                        Component.translatable(JolCraftLanguageKeys.MINING_CRATE)
-                )
+                .rewardCrateResult(RewardCrateType.DWARVEN_FORTRESS_EXCAVATION)
+                .maxUses(1)
+                .dwarfXp(1)
+                .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
+                .tradeGroup(TradeGroup.CUMULATIVE_POOL)
+                .costA(JolCraftItems.SCRAP.get(), 20, 25)
+                .noCostB()
+                .rewardCrateResult(RewardCrateType.MINING_CACHE)
                 .maxUses(1)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)
@@ -130,12 +169,9 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
                 .merchantLevel(DwarfMerchantData.Level.EXPERT)
                 .tradeGroup(TradeGroup.CUMULATIVE_POOL)
-                .costA(JolCraftItems.SCRAP.get(), 30, 40)
+                .costA(JolCraftItems.SCRAP.get(), 20, 25)
                 .noCostB()
-                .rewardCrateLootTableResult(
-                        Rarity.EPIC,
-                        JolCraftLootTables.Chests.DWARVEN_TOMES
-                )
+                .rewardCrateResult(RewardCrateType.BLACKSMITH_SUPPLIES)
                 .maxUses(1)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)
@@ -144,12 +180,9 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
                 .merchantLevel(DwarfMerchantData.Level.EXPERT)
                 .tradeGroup(TradeGroup.CUMULATIVE_POOL)
-                .costA(JolCraftItems.SCRAP.get(), 30, 40)
+                .costA(JolCraftItems.SCRAP.get(), 20, 25)
                 .noCostB()
-                .rewardCrateLootTableResult(
-                        Rarity.EPIC,
-                        JolCraftLootTables.Chests.UNCUT_GEMS
-                )
+                .rewardCrateResult(RewardCrateType.ARTISAN_SUPPLIES)
                 .maxUses(1)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)
@@ -158,12 +191,9 @@ public record DwarfScrapperTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
                 .merchantLevel(DwarfMerchantData.Level.MASTER)
                 .tradeGroup(TradeGroup.CUMULATIVE_POOL)
-                .costA(JolCraftItems.SCRAP.get(), 45, 55)
+                .costA(JolCraftItems.SCRAP.get(), 20, 25)
                 .noCostB()
-                .rewardCrateLootTableResult(
-                        JolCraftEnumExtensions.Rarity.LEGENDARY.getValue(),
-                        JolCraftLootTables.Chests.GEODES
-                )
+                .rewardCrateResult(RewardCrateType.VAULT_LOOT)
                 .maxUses(1)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)

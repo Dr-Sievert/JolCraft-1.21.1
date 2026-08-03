@@ -90,7 +90,7 @@ public final class JolCraftPlayerAttributeHelper {
         JolCraftLogs.debug(
                 JolCraftLogTags.PLAYER,
                 "XP boosted: player={}, base={}, bonus={}, boost={}%",
-                player.getDisplayName(),
+                player.getDisplayName().getString(),
                 baseAmount,
                 bonus,
                 JolCraftLogs.pct1(boost)
@@ -121,8 +121,8 @@ public final class JolCraftPlayerAttributeHelper {
             if (existing.isRemoved()) {
                 JolCraftLogs.debug(
                         JolCraftLogTags.PLAYER,
-                        "Clearing radiant (removed) for {} in {}",
-                        uuid,
+                        "Clearing radiant (removed) for player {} in {}",
+                        player.getDisplayName().getString(),
                         level.dimension().location()
                 );
                 ACTIVE_RADIANT_ENTITIES.remove(uuid);
@@ -130,8 +130,8 @@ public final class JolCraftPlayerAttributeHelper {
             } else if (existing.level() != level) {
                 JolCraftLogs.debug(
                         JolCraftLogTags.PLAYER,
-                        "Clearing radiant (dimension change) for {} old={} new={}",
-                        uuid,
+                        "Clearing radiant (dimension change) for player {} old={} new={}",
+                        player.getDisplayName().getString(),
                         existing.level().dimension().location(),
                         level.dimension().location()
                 );
@@ -146,7 +146,7 @@ public final class JolCraftPlayerAttributeHelper {
                 JolCraftLogs.debug(
                         JolCraftLogTags.PLAYER,
                         "Removing radiant for player {} (pieces={})",
-                        uuid,
+                        player.getDisplayName().getString(),
                         pieces
                 );
 
@@ -171,7 +171,7 @@ public final class JolCraftPlayerAttributeHelper {
                 JolCraftLogs.debug(
                         JolCraftLogTags.PLAYER,
                         "Recovered untracked radiant for player {} in {}",
-                        uuid,
+                        player.getDisplayName().getString(),
                         level.dimension().location()
                 );
 
@@ -181,7 +181,7 @@ public final class JolCraftPlayerAttributeHelper {
                 JolCraftLogs.debug(
                         JolCraftLogTags.PLAYER,
                         "Creating radiant for player {} (pieces={}, lightLevel={}, dim={})",
-                        uuid,
+                        player.getDisplayName().getString(),
                         pieces,
                         lightLevel,
                         level.dimension().location()
@@ -197,7 +197,7 @@ public final class JolCraftPlayerAttributeHelper {
                     JolCraftLogs.warn(
                             JolCraftLogTags.PLAYER,
                             "Failed to add radiant entity for player {} in {}",
-                            uuid,
+                            player.getDisplayName().getString(),
                             level.dimension().location()
                     );
                     return;
@@ -315,12 +315,12 @@ public final class JolCraftPlayerAttributeHelper {
 
             if (lootable.getLootTable() == null) {
                 int addedCount = addChestLoot(player, serverLevel, lootable, pending);
-                double chance = player.getAttributeValue(JolCraftAttributes.CHEST_LOOT_INCREASE);
+                double chance = player.getAttributeValue(JolCraftAttributes.CONTAINER_LOOT_INCREASE);
 
                 JolCraftLogs.debug(
                         JolCraftLogTags.PLAYER,
                         "Chest loot added: player={}, chestPos={}, chance={}%, addedCount={}",
-                        player.getUUID(),
+                        player.getDisplayName().getString(),
                         pending.pos(),
                         JolCraftLogs.pct1(chance),
                         addedCount
@@ -341,7 +341,7 @@ public final class JolCraftPlayerAttributeHelper {
             RandomizableContainerBlockEntity lootable,
             PendingChestLoot pending
     ) {
-        double chance = player.getAttributeValue(JolCraftAttributes.CHEST_LOOT_INCREASE);
+        double chance = player.getAttributeValue(JolCraftAttributes.CONTAINER_LOOT_INCREASE);
         MinecraftServer server = serverLevel.getServer();
         LootTable table = server.reloadableRegistries().getLootTable(pending.table());
 
@@ -405,7 +405,7 @@ public final class JolCraftPlayerAttributeHelper {
             JolCraftLogs.debug(
                     JolCraftLogTags.PLAYER,
                     "Extra crop drop: player={}, pos={}, chance={}%, count={}, items={}",
-                    player.getUUID(),
+                    player.getDisplayName(),
                     JolCraftLogs.roundedPos(pos),
                     JolCraftLogs.pct1(chance),
                     extraCount,

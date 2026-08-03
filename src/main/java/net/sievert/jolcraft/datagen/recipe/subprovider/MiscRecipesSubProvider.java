@@ -235,9 +235,9 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .save(output, folder(), JolCraftItems.MUFFHORN_FUR.getId().getPath() + "s_from_block");
 
         VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftBlocks.VERDANT_SOIL.get())
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftBlocks.VERDANT_SOIL.get(), 4)
                 )
-                .requires(Blocks.MUD)
+                .requires(Blocks.MUD, 4)
                 .requires(JolCraftItems.VERDANITE_DUST.get())
                 .unlockedByHas(JolCraftItems.VERDANITE_DUST.get())
                 .save(output, folder(), JolCraftBlocks.VERDANT_SOIL.get());

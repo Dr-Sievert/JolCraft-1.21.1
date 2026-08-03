@@ -97,7 +97,7 @@ public final class JolCraftModEvents {
 
         event.add(EntityType.PLAYER, JolCraftAttributes.EXPERIENCE_INCREASE); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.CROP_LOOT_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.CHEST_LOOT_INCREASE); added++;
+        event.add(EntityType.PLAYER, JolCraftAttributes.CONTAINER_LOOT_INCREASE); added++;
         event.add(EntityType.PLAYER, JolCraftAttributes.ITEM_USE_SPEED); added++;
 
         return added;

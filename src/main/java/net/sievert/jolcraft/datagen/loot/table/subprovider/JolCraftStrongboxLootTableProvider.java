@@ -109,12 +109,12 @@ public final class JolCraftStrongboxLootTableProvider
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1))
                                         .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY).setWeight(1))
-                                        .apply(
+                                            .apply(
                                                 SetComponentsFunction.setComponent(
                                                         JolCraftDataComponents.DWARF_LORE_KEY.get(),
                                                         LoreHelper.toLoreKeyString(DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE)
                                                 )
-                                        )
+                                            )
                                         .add(EmptyLootItem.emptyItem().setWeight(9))
                         )
         );

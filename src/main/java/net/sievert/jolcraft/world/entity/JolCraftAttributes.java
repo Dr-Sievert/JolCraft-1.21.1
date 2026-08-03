@@ -44,8 +44,8 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> CROP_LOOT_INCREASE =
             registerPercent(JolCraftAttributeIds.CROP_LOOT_INCREASE, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> CHEST_LOOT_INCREASE =
-            registerPercent(JolCraftAttributeIds.CHEST_LOOT_INCREASE, 1.0D);
+    public static final DeferredHolder<Attribute, Attribute> CONTAINER_LOOT_INCREASE =
+            registerPercent(JolCraftAttributeIds.CONTAINER_LOOT_INCREASE, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> RADIANT =
             registerInt(JolCraftAttributeIds.RADIANT, 4);

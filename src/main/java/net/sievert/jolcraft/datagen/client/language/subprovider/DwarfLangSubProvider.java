@@ -6,6 +6,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -122,7 +123,14 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         // -----------------------------------------------------------------
 
         putManual(translations, JolCraftLanguageKeys.SUPPLY_CRATE, "Supply Crate");
-        putManual(translations, JolCraftLanguageKeys.EXCAVATION_CRATE, "Excavation Crate");
-        putManual(translations, JolCraftLanguageKeys.MINING_CRATE, "Mining Crate");
+        putManual(translations, JolCraftLanguageKeys.ALCHEMY_SUPPLIES, "Alchemy Supplies");
+        putManual(translations, JolCraftLanguageKeys.DWARVEN_FORTRESS_EXCAVATION, "Dwarven Fortress Excavation");
+        putManual(translations, JolCraftLanguageKeys.ARTISAN_SUPPLIES, "Artisan Supplies");
+        putManual(translations, JolCraftLanguageKeys.FARMING_SUPPLIES, "Farming Supplies");
+        putManual(translations, JolCraftLanguageKeys.MINING_CACHE, "Mining Cache");
+        putManual(translations, JolCraftLanguageKeys.FISHING_LOOT, "Fishing Loot");
+        putManual(translations, JolCraftLanguageKeys.BLACKSMITH_SUPPLIES, "Blacksmith Supplies");
+        putManual(translations, JolCraftLanguageKeys.MONSTER_SLAYER_LOOT, "Monster Slayer Loot");
+        putManual(translations, JolCraftLanguageKeys.VAULT_LOOT, "Vault Loot");
     }
 }

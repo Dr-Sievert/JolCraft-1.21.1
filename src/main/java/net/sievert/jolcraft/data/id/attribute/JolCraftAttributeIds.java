@@ -11,7 +11,7 @@ public final class JolCraftAttributeIds extends JolCraftIds {
     public static final String EXPERIENCE_INCREASE = join(JolCraftDictionary.EXPERIENCE, JolCraftDictionary.INCREASE);
     public static final String SLOW_RESISTANCE = join(JolCraftDictionary.SLOW, JolCraftDictionary.RESISTANCE);
     public static final String CROP_LOOT_INCREASE = join(JolCraftDictionary.CROP, JolCraftDictionary.LOOT, JolCraftDictionary.INCREASE);
-    public static final String CHEST_LOOT_INCREASE = join(JolCraftDictionary.CHEST, JolCraftDictionary.LOOT, JolCraftDictionary.INCREASE);
+    public static final String CONTAINER_LOOT_INCREASE = join(JolCraftDictionary.CONTAINER, JolCraftDictionary.LOOT, JolCraftDictionary.INCREASE);
     public static final String RADIANT = JolCraftEntityObjectIds.RADIANT;
     public static final String ARMOR_PENETRATION = join(JolCraftDictionary.ARMOR, JolCraftDictionary.PENETRATION);
     public static final String MAGIC_RESISTANCE = join(JolCraftDictionary.MAGIC, JolCraftDictionary.RESISTANCE);

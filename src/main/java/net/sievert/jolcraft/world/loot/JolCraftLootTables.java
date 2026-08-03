@@ -77,17 +77,53 @@ public final class JolCraftLootTables {
 
     public static final class Crates {
 
-        public static final ResourceKey<LootTable> EXCAVATION = crate(
-                        CrateTheme.ARCHAEOLOGY,
-                        JolCraftLootTableIds.EXCAVATION
-                );
+        public static final ResourceKey<LootTable> SUPPLY_CRATE = crate(register(JolCraftLootTableIds.SUPPLY_CRATE));
 
-        public static final ResourceKey<LootTable> MINING = crate(
-                        CrateTheme.REINFORCED,
-                        JolCraftLootTableIds.MINING
-                );
+        public static final ResourceKey<LootTable> ALCHEMY_SUPPLIES = crate(
+                CrateTheme.ALCHEMY,
+                JolCraftLootTableIds.ALCHEMY_SUPPLIES
+        );
+
+        public static final ResourceKey<LootTable> DWARVEN_FORTRESS_EXCAVATION = crate(
+                CrateTheme.ARCHAEOLOGY,
+                JolCraftLootTableIds.DWARVEN_FORTRESS_EXCAVATION
+        );
+
+        public static final ResourceKey<LootTable> ARTISAN_SUPPLIES = crate(
+                CrateTheme.ARTISAN,
+                JolCraftLootTableIds.ARTISAN_SUPPLIES
+        );
+
+        public static final ResourceKey<LootTable> FARMING_SUPPLIES = crate(
+                CrateTheme.GARDEN,
+                JolCraftLootTableIds.FARMING_SUPPLIES
+        );
+
+        public static final ResourceKey<LootTable> MINING_CACHE = crate(
+                CrateTheme.MINING,
+                JolCraftLootTableIds.MINING_CACHE
+        );
+
+        public static final ResourceKey<LootTable> FISHING_LOOT = crate(
+                CrateTheme.OCEAN,
+                JolCraftLootTableIds.FISHING_LOOT
+        );
+
+        public static final ResourceKey<LootTable> BLACKSMITH_SUPPLIES = crate(
+                CrateTheme.REINFORCED,
+                JolCraftLootTableIds.BLACKSMITH_SUPPLIES
+        );
+
+        public static final ResourceKey<LootTable> MONSTER_SLAYER_LOOT = crate(
+                CrateTheme.SLAYER,
+                JolCraftLootTableIds.MONSTER_SLAYER_LOOT
+        );
+
+        public static final ResourceKey<LootTable> VAULT_LOOT = crate(
+                CrateTheme.TREASURE,
+                JolCraftLootTableIds.VAULT_LOOT
+        );
     }
-
 
     /* ---------------------------------------------------------------------
      * Archaeology
@@ -150,6 +186,10 @@ public final class JolCraftLootTables {
 
     private static ResourceKey<LootTable> strongbox(ResourceKey<LootTable> key){
         return inFolder(JolCraftDictionary.STRONGBOX, key);
+    }
+
+    private static ResourceKey<LootTable> crate(ResourceKey<LootTable> key){
+        return inFolder(JolCraftDictionary.CRATE, key);
     }
 
     private static ResourceKey<LootTable> crate(

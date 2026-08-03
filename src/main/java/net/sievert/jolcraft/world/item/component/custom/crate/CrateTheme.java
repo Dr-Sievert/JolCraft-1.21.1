@@ -8,8 +8,15 @@ import javax.annotation.Nullable;
 
 public enum CrateTheme implements JolCraftEnumHelper.StringId {
 
+    ALCHEMY(JolCraftDictionary.ALCHEMY),
     ARCHAEOLOGY(JolCraftDictionary.ARCHAEOLOGY),
-    REINFORCED(JolCraftDictionary.REINFORCED);
+    ARTISAN(JolCraftDictionary.ARTISAN),
+    GARDEN(JolCraftDictionary.GARDEN),
+    MINING(JolCraftDictionary.MINING),
+    OCEAN(JolCraftDictionary.OCEAN),
+    REINFORCED(JolCraftDictionary.REINFORCED),
+    SLAYER(JolCraftDictionary.SLAYER),
+    TREASURE(JolCraftDictionary.TREASURE);
 
     private final String id;
 

@@ -574,17 +574,8 @@ public final class ItemOutputJeiTranslator {
                         ((SetComponentsFunctionAccessor) setComponents)
                                 .jolcraft$getComponents();
 
-                stack.applyComponentsAndValidate(
-                        components
-                );
-
-                continue;
+                stack.applyComponentsAndValidate(components);
             }
-
-            throw new IllegalArgumentException(
-                    "Unsupported display loot function for JEI translation: "
-                            + function.getClass().getName()
-            );
         }
     }
 

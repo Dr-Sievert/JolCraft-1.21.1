@@ -5,6 +5,9 @@ import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.world.item.custom.bounty.*;
+import net.sievert.jolcraft.world.item.custom.crate.RerollCrateItem;
+import net.sievert.jolcraft.world.item.custom.crate.RestockCrateItem;
+import net.sievert.jolcraft.world.item.custom.crate.RewardCrateItem;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
 
 import java.util.function.Function;

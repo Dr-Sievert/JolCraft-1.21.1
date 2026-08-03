@@ -31,6 +31,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
@@ -1074,71 +1075,25 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
     }
 
     /**
-     * Produces a reward crate which rolls a registered loot table when opened.
+     * Produces a predefined reward crate.
      */
-    public @NotNull DwarfTradeRecipeBuilder rewardCrateLootTableResult(
-            @NotNull Rarity rarity,
-            @NotNull ResourceKey<LootTable> lootTable,
-            @Nullable Component displayName
+    public @NotNull DwarfTradeRecipeBuilder rewardCrateResult(
+            @NotNull RewardCrateType crate
     ) {
         return rewardCrateResult(
-                rarity,
-                RewardCrateSource.lootTable(lootTable),
-                lootTable.location(),
-                displayName
-        );
-    }
-
-    public @NotNull DwarfTradeRecipeBuilder rewardCrateLootTableResult(
-            @NotNull Rarity rarity,
-            @NotNull ResourceKey<LootTable> lootTable
-    ) {
-        return rewardCrateResult(
-                rarity,
-                RewardCrateSource.lootTable(lootTable),
-                lootTable.location(),
-                null
-        );
-    }
-
-    /**
-     * Produces a reward crate which resolves a bounty reward recipe when opened.
-     */
-    public @NotNull DwarfTradeRecipeBuilder rewardCrateRecipeResult(
-            @NotNull Rarity rarity,
-            @NotNull ResourceLocation recipeId,
-            @Nullable Component displayName
-    ) {
-        return rewardCrateResult(
-                rarity,
-                RewardCrateSource.recipe(recipeId),
-                recipeId,
-                displayName
-        );
-    }
-
-    public @NotNull DwarfTradeRecipeBuilder rewardCrateRecipeResult(
-            @NotNull Rarity rarity,
-            @NotNull ResourceLocation recipeId
-    ) {
-        return rewardCrateResult(
-                rarity,
-                RewardCrateSource.recipe(recipeId),
-                recipeId,
-                null
+                crate.rarity(),
+                crate.lootTable(),
+                crate.displayName()
         );
     }
 
     private @NotNull DwarfTradeRecipeBuilder rewardCrateResult(
             @NotNull Rarity rarity,
-            @NotNull RewardCrateSource source,
-            @NotNull ResourceLocation sourceId,
+            @NotNull ResourceKey<LootTable> lootTable,
             @Nullable Component displayName
     ) {
-        LootItem.Builder<?> crate =
-                LootItem.lootTableItem(
-                                JolCraftItems.REWARD_CRATE.get()
-                        )
+        LootItem.Builder<?> rewardCrate =
+                LootItem.lootTableItem(JolCraftItems.REWARD_CRATE.get())
                         .apply(
                                 SetComponentsFunction.setComponent(
                                         DataComponents.RARITY,
@@ -1148,12 +1103,12 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
                         .apply(
                                 SetComponentsFunction.setComponent(
                                         JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
-                                        source
+                                        RewardCrateSource.lootTable(lootTable)
                                 )
                         );
 
         if (displayName != null) {
-            crate.apply(
+            rewardCrate.apply(
                     SetComponentsFunction.setComponent(
                             DataComponents.CUSTOM_NAME,
                             displayName
@@ -1161,23 +1116,11 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
             );
         }
 
-        ItemOutput crateOutput =
-                ItemOutput.item(
-                        crate
-                );
-
-        String sourceToken =
-                sourceId.getNamespace()
-                        + "_"
-                        + sourceId.getPath()
-                        .replace(
-                                '/',
-                                '_'
-                        );
-
         return result(
-                crateOutput,
-                sourceToken
+                ItemOutput.item(rewardCrate),
+                lootTable.location().getNamespace()
+                        + "_"
+                        + lootTable.location().getPath().replace('/', '_')
                         + "_"
                         + JolCraftDictionary.REWARD
                         + "_"

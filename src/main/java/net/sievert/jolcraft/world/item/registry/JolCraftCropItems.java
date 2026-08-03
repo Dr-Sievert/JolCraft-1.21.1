@@ -2,6 +2,7 @@ package net.sievert.jolcraft.world.item.registry;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemNameBlockItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -18,7 +19,7 @@ public final class JolCraftCropItems {
     public static DeferredItem<Item> registerBarleySeeds() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.BARLEY_SEEDS,
-                props -> new BlockItem(
+                props -> new ItemNameBlockItem(
                         JolCraftBlocks.BARLEY_CROP.get(),
                         props
                 )

@@ -41,7 +41,7 @@ public final class JolCraftTrimAttributes {
         out.put(JolCraftTrimMaterials.Attribute.MOONSHARD, allSlots(JolCraftAttributes.MOON_SHIELD, 1, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.RUSTAGATE, allSlots(JolCraftAttributes.ARMOR_PENETRATION, 0.15, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.SKYBURROW, allSlots(JolCraftAttributes.ITEM_USE_SPEED, 0.25, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.SUNGLEAM, allSlots(JolCraftAttributes.CHEST_LOOT_INCREASE, 0.1, AttributeModifier.Operation.ADD_VALUE));
+        out.put(JolCraftTrimMaterials.Attribute.SUNGLEAM, allSlots(JolCraftAttributes.CONTAINER_LOOT_INCREASE, 0.1, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.VERDANITE, allSlots(JolCraftAttributes.CROP_LOOT_INCREASE, 0.25, AttributeModifier.Operation.ADD_VALUE));
         out.put(JolCraftTrimMaterials.Attribute.WOECRYSTAL, allSlots(JolCraftAttributes.MAGIC_RESISTANCE, 0.1, AttributeModifier.Operation.ADD_VALUE));
 

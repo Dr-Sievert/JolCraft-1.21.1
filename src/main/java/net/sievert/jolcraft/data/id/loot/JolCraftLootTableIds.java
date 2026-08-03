@@ -54,8 +54,17 @@ public final class JolCraftLootTableIds extends JolCraftIds {
      * Crates
      * ------------------------------------------------------------------ */
 
-    public static final String EXCAVATION = JolCraftDictionary.EXCAVATION;
-    public static final String MINING = JolCraftDictionary.MINING;
+    public static final String SUPPLY_CRATE = join(JolCraftDictionary.SUPPLY, JolCraftDictionary.CRATE);
+
+    public static final String ALCHEMY_SUPPLIES = suppliesCrate(JolCraftDictionary.ALCHEMY);
+    public static final String DWARVEN_FORTRESS_EXCAVATION = join(JolCraftStructureIds.DWARVEN_FORTRESS, JolCraftDictionary.EXCAVATION);
+    public static final String ARTISAN_SUPPLIES = suppliesCrate(JolCraftDictionary.ARTISAN);
+    public static final String FARMING_SUPPLIES = suppliesCrate(JolCraftDictionary.FARMING);
+    public static final String MINING_CACHE = join(JolCraftDictionary.MINING, JolCraftDictionary.CACHE);
+    public static final String FISHING_LOOT = join(JolCraftDictionary.FISHING, JolCraftDictionary.LOOT);
+    public static final String BLACKSMITH_SUPPLIES = suppliesCrate(JolCraftDictionary.BLACKSMITH);
+    public static final String MONSTER_SLAYER_LOOT = join(JolCraftDictionary.MONSTER, JolCraftDictionary.SLAYER, JolCraftDictionary.LOOT);
+    public static final String VAULT_LOOT = join(JolCraftDictionary.VAULT, JolCraftDictionary.LOOT);
 
     /* ---------------------------------------------------------------------
      * Archaeology
@@ -71,4 +80,8 @@ public final class JolCraftLootTableIds extends JolCraftIds {
     public static final String FISHING = JolCraftDictionary.FISHING;
     public static final String JUNK = JolCraftDictionary.JUNK;
     public static final String TREASURE = JolCraftDictionary.TREASURE;
+
+    private static String suppliesCrate(String type){
+        return join(type, JolCraftDictionary.SUPPLIES);
+    }
 }
