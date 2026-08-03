@@ -57,7 +57,7 @@ public enum RewardCrateType {
 
 
     FISHING_LOOT(
-            Rarity.UNCOMMON,
+            Rarity.COMMON,
             JolCraftLootTables.Crates.FISHING_LOOT,
             Component.translatable(JolCraftLanguageKeys.FISHING_LOOT)
     ),

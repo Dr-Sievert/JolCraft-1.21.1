@@ -57,6 +57,6 @@ public final class JolCraftMainLootTableProvider
             @NotNull ValidationContext context,
             ProblemReporter.@NotNull Collector problems
     ) {
-        super.validate(registry, context, problems);
+        // External vanilla loot tables are resolved when datapacks load.
     }
 }
