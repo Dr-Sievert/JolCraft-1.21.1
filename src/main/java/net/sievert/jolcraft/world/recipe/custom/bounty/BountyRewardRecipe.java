@@ -3,10 +3,14 @@ package net.sievert.jolcraft.world.recipe.custom.bounty;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -16,11 +20,14 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
@@ -125,6 +132,60 @@ public record BountyRewardRecipe(
         }
 
         return table;
+    }
+
+    /**
+     * Creates the reward crate represented by this bounty reward recipe.
+     */
+    public @NotNull ItemStack createRewardCrate(
+            @NotNull ResourceLocation recipeId
+    ) {
+        Objects.requireNonNull(
+                recipeId,
+                JolCraftDictionary.ID
+        );
+
+        ItemStack rewardCrate =
+                JolCraftItems.REWARD_CRATE.toStack();
+
+        rewardCrate.set(
+                DataComponents.RARITY,
+                rewardCrateRarity()
+        );
+
+        rewardCrate.set(
+                DataComponents.CUSTOM_NAME,
+                Component.literal(
+                                JolCraftStrings.toTitleCase(
+                                        bountyType.professionName()
+                                )
+                                        + " "
+                        )
+                        .append(
+                                Component.translatable(
+                                        JolCraftItems.REWARD_CRATE.get()
+                                                .getDescriptionId()
+                                )
+                        )
+        );
+
+        rewardCrate.set(
+                JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
+                RewardCrateSource.recipe(recipeId)
+        );
+
+        return rewardCrate;
+    }
+
+    private @NotNull Rarity rewardCrateRarity() {
+        return switch (tier) {
+            case NOVICE -> Rarity.COMMON;
+            case APPRENTICE -> Rarity.UNCOMMON;
+            case JOURNEYMAN -> Rarity.RARE;
+            case EXPERT -> Rarity.EPIC;
+            case MASTER ->
+                    JolCraftEnumExtensions.Rarity.LEGENDARY.getValue();
+        };
     }
 
     /**

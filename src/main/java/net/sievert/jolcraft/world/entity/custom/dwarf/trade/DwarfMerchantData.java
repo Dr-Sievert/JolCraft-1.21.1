@@ -19,6 +19,8 @@ public record DwarfMerchantData(int level) {
         EXPERT(4),
         MASTER(5);
 
+        public static final Codec<Level> CODEC = Codec.intRange(NOVICE.getId(), MASTER.getId()).xmap(Level::fromId, Level::getId);
+
         private final int level;
 
         Level(int level) {
@@ -35,7 +37,11 @@ public record DwarfMerchantData(int level) {
         }
 
         public static Level fromId(int level) {
-            return JolCraftEnumHelper.byIntIdExact(Level.class, level, NOVICE);
+            return JolCraftEnumHelper.byIntIdExact(
+                    Level.class,
+                    level,
+                    NOVICE
+            );
         }
 
         public String langKey() {
@@ -54,11 +60,18 @@ public record DwarfMerchantData(int level) {
     public static final int MIN_MERCHANT_LEVEL = 1;
     public static final int MAX_MERCHANT_LEVEL = 5;
 
-    private static final int[] NEXT_LEVEL_XP_THRESHOLDS = new int[]{0, 10, 70, 150, 250};
+    private static final int[] NEXT_LEVEL_XP_THRESHOLDS =
+            new int[]{0, 10, 70, 150, 250};
 
-    public static final Codec<DwarfMerchantData> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(Codec.INT.fieldOf(JolCraftDictionary.LEVEL).orElse(MIN_MERCHANT_LEVEL).forGetter(DwarfMerchantData::level)).apply(instance, DwarfMerchantData::new)
-    );
+    public static final Codec<DwarfMerchantData> CODEC =
+            RecordCodecBuilder.create(instance ->
+                    instance.group(
+                            Codec.INT
+                                    .fieldOf(JolCraftDictionary.LEVEL)
+                                    .orElse(MIN_MERCHANT_LEVEL)
+                                    .forGetter(DwarfMerchantData::level)
+                    ).apply(instance, DwarfMerchantData::new)
+            );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DwarfMerchantData> STREAM_CODEC =
             StreamCodec.composite(
@@ -76,11 +89,15 @@ public record DwarfMerchantData(int level) {
     }
 
     public static int getMinXpPerLevel(int level) {
-        return canLevelUp(level) ? NEXT_LEVEL_XP_THRESHOLDS[level - 1] : 0;
+        return canLevelUp(level)
+                ? NEXT_LEVEL_XP_THRESHOLDS[level - 1]
+                : 0;
     }
 
     public static int getMaxXpPerLevel(int level) {
-        return canLevelUp(level) ? NEXT_LEVEL_XP_THRESHOLDS[level] : 0;
+        return canLevelUp(level)
+                ? NEXT_LEVEL_XP_THRESHOLDS[level]
+                : 0;
     }
 
     public static boolean canLevelUp(int level) {
@@ -88,7 +105,10 @@ public record DwarfMerchantData(int level) {
     }
 
     private static int clampLevel(int level) {
-        if (level < MIN_MERCHANT_LEVEL) return MIN_MERCHANT_LEVEL;
+        if (level < MIN_MERCHANT_LEVEL) {
+            return MIN_MERCHANT_LEVEL;
+        }
+
         return Math.min(level, MAX_MERCHANT_LEVEL);
     }
 }

@@ -40,16 +40,11 @@ public final class EndorseInteractionHandler
         }
 
         if (
-                dwarf.getProfession()
-                        == DwarfProfession.GUILDMASTER
+                dwarf.getProfession() == DwarfProfession.GUILDMASTER
         ) {
             return DwarfInteractionOutcome.pass();
         }
 
-        /*
-         * The profession is permanently configured not to
-         * provide endorsements.
-         */
         if (!DwarfProfessionTraits.canEndorseFlag(
                 dwarf.getProfession()
         )) {
@@ -90,11 +85,7 @@ public final class EndorseInteractionHandler
             return DwarfInteractionOutcome.handled();
         }
 
-        /*
-         * The profession can endorse, but this dwarf has not
-         * satisfied its current endorsement rule.
-         */
-        if (!dwarf.canEndorse()) {
+        if (!player.isCreative() && !dwarf.canEndorse()) {
             player.displayClientMessage(
                     Component.translatable(
                             JolCraftLanguageKeys

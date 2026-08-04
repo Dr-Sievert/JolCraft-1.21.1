@@ -41,10 +41,7 @@ import java.util.concurrent.CompletableFuture;
 public final class DwarfProfessionConfigProvider
         implements JolCraftSubDataProvider<CachedOutput> {
 
-    private static final Codec<DwarfProfessionConfig> CODEC =
-            DwarfProfessionConfig.CODEC;
-
-    private static final int SCRAPPER_GLOBAL_ROLLS = 4;
+    private static final Codec<DwarfProfessionConfig> CODEC = DwarfProfessionConfig.CODEC;
 
     private final JolCraftConfigProvider parent;
 
@@ -156,7 +153,7 @@ public final class DwarfProfessionConfigProvider
                             defaults.voicePitch(),
 
                             defaults.canReroll(),
-                            defaults.canEndorse(),
+                            false,
 
                             defaults.showProgressBar(),
                             defaults.showLevel(),

@@ -1,20 +1,15 @@
 package net.sievert.jolcraft.integration.jei.custom.bounty.reward;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
-import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.integration.jei.util.item.JeiStacks;
 import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
 import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.recipe.base.output.RecipeOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EntityOutput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
@@ -80,9 +75,8 @@ public record JeiBountyRewardRecipe(
                 );
 
         ItemStack rewardCrate =
-                createRewardCrate(
-                        recipeId,
-                        rewardRecipe
+                rewardRecipe.createRewardCrate(
+                        recipeId
                 );
 
         return createRewards(rewardRecipe)
@@ -209,35 +203,4 @@ public record JeiBountyRewardRecipe(
         return List.copyOf(rewards);
     }
 
-    private static @NotNull ItemStack createRewardCrate(
-            @NotNull ResourceLocation recipeId,
-            @NotNull BountyRewardRecipe rewardRecipe
-    ) {
-        ItemStack rewardCrate =
-                JolCraftItems.REWARD_CRATE.toStack();
-
-        rewardCrate.set(
-                DataComponents.RARITY,
-                rarityForTier(rewardRecipe.tier())
-        );
-
-        rewardCrate.set(
-                JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
-                RewardCrateSource.recipe(recipeId)
-        );
-
-        return rewardCrate;
-    }
-
-    private static @NotNull Rarity rarityForTier(
-            @NotNull DwarfMerchantData.Level tier
-    ) {
-        return switch (tier) {
-            case NOVICE -> Rarity.COMMON;
-            case APPRENTICE -> Rarity.UNCOMMON;
-            case JOURNEYMAN -> Rarity.RARE;
-            case EXPERT -> Rarity.EPIC;
-            case MASTER -> JolCraftEnumExtensions.Rarity.LEGENDARY.getValue();
-        };
-    }
 }

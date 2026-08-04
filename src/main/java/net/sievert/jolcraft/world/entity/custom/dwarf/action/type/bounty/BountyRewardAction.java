@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.world.entity.custom.dwarf.action.type.bounty;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -9,13 +8,11 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfActionType;
@@ -24,9 +21,6 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractTradingEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
-import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
@@ -260,21 +254,11 @@ public final class BountyRewardAction extends InspectDwarfAction {
                 serverLevel.dimension().location()
         );
 
-        ItemStack rewardCrate = JolCraftItems.REWARD_CRATE.toStack();
-
-        rewardCrate.set(
-                DataComponents.RARITY,
-                rarityForTier(
-                        input.tier()
-                )
-        );
-
-        rewardCrate.set(
-                JolCraftDataComponents.REWARD_CRATE_SOURCE.get(),
-                RewardCrateSource.recipe(
-                        recipeHolder.id()
-                )
-        );
+        ItemStack rewardCrate =
+                recipeHolder.value()
+                        .createRewardCrate(
+                                recipeHolder.id()
+                        );
 
         Vec3 start =
                 dwarf.position()
@@ -380,18 +364,6 @@ public final class BountyRewardAction extends InspectDwarfAction {
             case JOURNEYMAN -> 50;
             case EXPERT -> 65;
             case MASTER -> 80;
-        };
-    }
-
-    private static @NotNull Rarity rarityForTier(
-            @NotNull DwarfMerchantData.Level tier
-    ) {
-        return switch (tier) {
-            case NOVICE -> Rarity.COMMON;
-            case APPRENTICE -> Rarity.UNCOMMON;
-            case JOURNEYMAN -> Rarity.RARE;
-            case EXPERT -> Rarity.EPIC;
-            case MASTER -> JolCraftEnumExtensions.Rarity.LEGENDARY.getValue();
         };
     }
 
