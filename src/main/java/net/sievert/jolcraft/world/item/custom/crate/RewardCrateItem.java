@@ -2,7 +2,6 @@ package net.sievert.jolcraft.world.item.custom.crate;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -12,13 +11,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.JolCraftEnumExtensions;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
@@ -26,7 +23,6 @@ import net.sievert.jolcraft.world.item.inventory.JolCraftItemHelper;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.loot.custom.reward.RewardCrateLootResolver;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -42,28 +38,6 @@ public class RewardCrateItem extends Item {
             Properties properties
     ) {
         super(properties);
-    }
-
-    /**
-     * Prefixes the reward crate name with its current rarity tier.
-     */
-    @Override
-    public Component getName(ItemStack stack) {
-        Rarity rarity =
-                stack.getOrDefault(
-                        DataComponents.RARITY,
-                        Rarity.COMMON
-                );
-
-        return Component.translatable(
-                JolCraftLanguageKeys.TOOLTIP_RARITY_NAME,
-                Component.translatable(
-                        nameForRarity(
-                                rarity
-                        )
-                ),
-                super.getName(stack)
-        );
     }
 
     @Override
@@ -192,20 +166,5 @@ public class RewardCrateItem extends Item {
                 tooltip,
                 flag
         );
-    }
-
-    private static @NotNull String nameForRarity(
-            @NotNull Rarity rarity
-    ) {
-        if (rarity == JolCraftEnumExtensions.Rarity.LEGENDARY.getValue()) {
-            return JolCraftLanguageKeys.RARITY_LEGENDARY;
-        }
-
-        return switch (rarity) {
-            case COMMON -> JolCraftLanguageKeys.RARITY_COMMON;
-            case UNCOMMON -> JolCraftLanguageKeys.RARITY_UNCOMMON;
-            case RARE -> JolCraftLanguageKeys.RARITY_RARE;
-            case EPIC -> JolCraftLanguageKeys.RARITY_EPIC;
-        };
     }
 }

@@ -19,11 +19,12 @@ import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawableHelper;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiPoint;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiTextures;
-import net.sievert.jolcraft.integration.jei.util.render.JeiEffectRenderer;
-import net.sievert.jolcraft.integration.jei.util.render.JeiEntityRenderer;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiLootConditionTooltip;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
+import net.sievert.jolcraft.integration.jei.util.render.JeiEffectRenderer;
+import net.sievert.jolcraft.integration.jei.util.render.JeiEntityRenderer;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInputAction;
 import org.jetbrains.annotations.NotNull;
 
@@ -421,16 +422,23 @@ public final class JeiHandInteractionCategory
                         entry.ingredientBExamples()
                 );
 
+        //noinspection DeconstructionCanBeUsed
         if (entry.result()
                 instanceof JeiHandInteractionRecipe.ItemResult itemResult) {
-            builder.addSlot(
-                            RecipeIngredientRole.OUTPUT,
-                            LAYOUT.output().x(),
-                            LAYOUT.output().y()
-                    )
-                    .addItemStack(
-                            itemResult.example()
-                    );
+            var outputSlot =
+                    builder.addSlot(
+                                    RecipeIngredientRole.OUTPUT,
+                                    LAYOUT.output().x(),
+                                    LAYOUT.output().y()
+                            )
+                            .addItemStack(
+                                    itemResult.example()
+                            );
+
+            JeiLootConditionTooltip.add(
+                    outputSlot,
+                    itemResult.outcome()
+            );
 
             return;
         }

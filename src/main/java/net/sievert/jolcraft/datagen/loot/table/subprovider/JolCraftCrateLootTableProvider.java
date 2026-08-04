@@ -181,7 +181,7 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(3))
+                                        .setRolls(ConstantValue.exactly(5))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_GEMS).setWeight(18))
                                         .add(LootItem.lootTableItem(Items.COAL).setWeight(15)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))
@@ -203,6 +203,7 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(5))
                                         .add(NestedLootTable.lootTableReference(BuiltInLootTables.FISHING_FISH).setWeight(289))
                                         .add(NestedLootTable.lootTableReference(BuiltInLootTables.FISHING_JUNK).setWeight(34))
                                         .add(NestedLootTable.lootTableReference(BuiltInLootTables.FISHING_TREASURE).setWeight(17))
@@ -268,7 +269,7 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(3))
+                                        .setRolls(ConstantValue.exactly(1))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_VAULT))
                         )
         );

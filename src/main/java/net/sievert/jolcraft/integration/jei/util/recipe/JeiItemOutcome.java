@@ -1,7 +1,10 @@
 package net.sievert.jolcraft.integration.jei.util.recipe;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public record JeiItemOutcome(
         @NotNull ItemStack stack,
@@ -10,10 +13,13 @@ public record JeiItemOutcome(
         int weight,
         int totalWeight,
         int minRolls,
-        int maxRolls
+        int maxRolls,
+        @NotNull List<LootItemCondition> conditions
 ) {
 
     public JeiItemOutcome {
+        conditions = List.copyOf(conditions);
+
         if (minCount < 0) {
             throw new IllegalArgumentException(
                     "minCount must be at least 0"
@@ -56,6 +62,10 @@ public record JeiItemOutcome(
      */
     public double chancePerRoll() {
         return (double) weight / totalWeight;
+    }
+
+    public boolean hasConditions() {
+        return !conditions.isEmpty();
     }
 
     public boolean hasCountRange() {

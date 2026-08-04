@@ -43,6 +43,11 @@ public final class JeiTextures {
                     "hand_left"
             );
 
+    public static final ResourceLocation UNSEEN_NOTIFICATION =
+            ResourceLocation.withDefaultNamespace(
+                    "icon/unseen_notification"
+            );
+
     public static final ResourceLocation INFO =
             JolCraftTextures.jeiRl(
                     JolCraftTextures.jeiIcon(
@@ -51,6 +56,7 @@ public final class JeiTextures {
             );
 
     public static final int INFO_SIZE = 16;
+    public static final int UNSEEN_NOTIFICATION_SIZE = 10;
 
     public static final int ARROW_WIDTH = 22;
     public static final int ARROW_HEIGHT = 16;

@@ -15,6 +15,7 @@ import net.sievert.jolcraft.integration.jei.custom.bounty.AbstractJeiBountyCateg
 import net.sievert.jolcraft.integration.jei.custom.bounty.JeiBountyLayout;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiLootConditionTooltip;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -132,17 +133,23 @@ public final class JeiBountyRewardCategory
             @NotNull IRecipeLayoutBuilder builder,
             @NotNull JeiBountyRewardRecipe entry
     ) {
-        builder.addSlot(
-                        RecipeIngredientRole.OUTPUT,
-                        JeiBountyLayout.OUTPUT.x(),
-                        JeiBountyLayout.OUTPUT.y()
-                )
-                .addItemStacks(
-                        List.of(
-                                entry.reward()
-                                        .stack()
+        var outputSlot =
+                builder.addSlot(
+                                RecipeIngredientRole.OUTPUT,
+                                JeiBountyLayout.OUTPUT.x(),
+                                JeiBountyLayout.OUTPUT.y()
                         )
-                );
+                        .addItemStacks(
+                                List.of(
+                                        entry.reward()
+                                                .stack()
+                                )
+                        );
+
+        JeiLootConditionTooltip.add(
+                outputSlot,
+                entry.reward()
+        );
 
         builder.addSlot(
                         RecipeIngredientRole.OUTPUT,

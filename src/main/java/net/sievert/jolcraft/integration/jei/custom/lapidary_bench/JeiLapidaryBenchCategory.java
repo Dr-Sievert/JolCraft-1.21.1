@@ -17,6 +17,7 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiLootConditionTooltip;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -154,13 +155,19 @@ public final class JeiLapidaryBenchCategory
                         recipe.toolExamples()
                 );
 
-        builder.addSlot(
-                        RecipeIngredientRole.OUTPUT,
-                        LAYOUT.output().x(),
-                        LAYOUT.output().y()
-                )
-                .addItemStack(
-                        recipe.outputExample()
-                );
+        var outputSlot =
+                builder.addSlot(
+                                RecipeIngredientRole.OUTPUT,
+                                LAYOUT.output().x(),
+                                LAYOUT.output().y()
+                        )
+                        .addItemStack(
+                                recipe.outputExample()
+                        );
+
+        JeiLootConditionTooltip.add(
+                outputSlot,
+                recipe.outcome()
+        );
     }
 }

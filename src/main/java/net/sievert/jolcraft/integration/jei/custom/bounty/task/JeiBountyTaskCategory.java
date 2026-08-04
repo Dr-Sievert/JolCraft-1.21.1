@@ -18,6 +18,7 @@ import net.sievert.jolcraft.integration.jei.custom.bounty.JeiBountyLayout;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.render.JeiEntityRenderer;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiLootConditionTooltip;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiNumberRangeTranslator.NumberRange;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
@@ -217,16 +218,23 @@ public final class JeiBountyTaskCategory
             @NotNull JeiBountyTaskRecipe entry
     ) {
         switch (entry.objective()) {
-            case JeiBountyTaskRecipe.ItemObjective itemObjective ->
-                    builder.addSlot(
-                                    RecipeIngredientRole.OUTPUT,
-                                    JeiBountyLayout.OUTPUT.x(),
-                                    JeiBountyLayout.OUTPUT.y()
-                            )
-                            .addItemStack(
-                                    itemObjective.outcome()
-                                            .stack()
-                            );
+            case JeiBountyTaskRecipe.ItemObjective itemObjective -> {
+                var outputSlot =
+                        builder.addSlot(
+                                        RecipeIngredientRole.OUTPUT,
+                                        JeiBountyLayout.OUTPUT.x(),
+                                        JeiBountyLayout.OUTPUT.y()
+                                )
+                                .addItemStack(
+                                        itemObjective.outcome()
+                                                .stack()
+                                );
+
+                JeiLootConditionTooltip.add(
+                        outputSlot,
+                        itemObjective.outcome()
+                );
+            }
 
             case JeiBountyTaskRecipe.EntityObjective entityObjective -> {
                 SpawnEggItem egg =

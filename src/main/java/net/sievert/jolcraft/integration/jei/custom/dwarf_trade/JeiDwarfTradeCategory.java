@@ -20,6 +20,7 @@ import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeReci
 import net.sievert.jolcraft.integration.jei.util.AbstractJeiCategory;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawHelper;
 import net.sievert.jolcraft.integration.jei.util.render.JeiDwarfRenderer;
+import net.sievert.jolcraft.integration.jei.util.recipe.JeiLootConditionTooltip;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeLayout;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -386,14 +387,20 @@ public final class JeiDwarfTradeCategory
             );
         }
 
-        builder.addSlot(
-                        RecipeIngredientRole.OUTPUT,
-                        layout.output().x(),
-                        layout.output().y()
-                )
-                .addItemStack(
-                        entry.outputExample()
-                );
+        var outputSlot =
+                builder.addSlot(
+                                RecipeIngredientRole.OUTPUT,
+                                layout.output().x(),
+                                layout.output().y()
+                        )
+                        .addItemStack(
+                                entry.outputExample()
+                        );
+
+        JeiLootConditionTooltip.add(
+                outputSlot,
+                entry.outcome()
+        );
 
         if (entry.hasRewardCrate()) {
             builder.addSlot(

@@ -21,6 +21,7 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.sievert.jolcraft.mixin.LootItemAccessor;
 import net.sievert.jolcraft.mixin.LootItemConditionalFunctionAccessor;
@@ -139,11 +140,6 @@ public final class ItemOutputJeiTranslator {
         LootPoolAccessor poolAccessor =
                 (LootPoolAccessor) pool;
 
-        requireNoConditions(
-                poolAccessor.jolcraft$getConditions(),
-                "loot pool"
-        );
-
         int bonusRolls =
                 JeiNumberRangeTranslator.requireConstantInt(
                         poolAccessor.jolcraft$getBonusRolls(),
@@ -192,12 +188,18 @@ public final class ItemOutputJeiTranslator {
 
         int totalWeight = 0;
 
+        List<LootItemCondition> poolConditions =
+                List.copyOf(
+                        poolAccessor.jolcraft$getConditions()
+                );
+
         for (LootPoolEntryContainer entry : entries) {
-            requireNoConditions(
-                    ((LootPoolEntryContainerAccessor) entry)
-                            .jolcraft$getConditions(),
-                    "loot entry"
-            );
+            List<LootItemCondition> entryConditions =
+                    combineConditions(
+                            poolConditions,
+                            ((LootPoolEntryContainerAccessor) entry)
+                                    .jolcraft$getConditions()
+                    );
 
             if (!(entry instanceof LootPoolSingletonContainer singleton)) {
                 throw unsupportedEntry(entry);
@@ -248,6 +250,7 @@ public final class ItemOutputJeiTranslator {
                     new PreparedEntry(
                             singleton,
                             entryFunctions,
+                            entryConditions,
                             weight,
                             items
                     )
@@ -331,6 +334,10 @@ public final class ItemOutputJeiTranslator {
                                     multiplyRolls(
                                             rolls.max(),
                                             nestedOutcome.maxRolls()
+                                    ),
+                                    combineConditions(
+                                            prepared.conditions(),
+                                            nestedOutcome.conditions()
                                     )
                             )
                     );
@@ -368,7 +375,8 @@ public final class ItemOutputJeiTranslator {
                                 prepared.weight(),
                                 totalWeight,
                                 rolls.min(),
-                                rolls.max()
+                                rolls.max(),
+                                prepared.conditions()
                         )
                 );
             }
@@ -602,16 +610,27 @@ public final class ItemOutputJeiTranslator {
         }
     }
 
-    private static void requireNoConditions(
-            @NotNull List<?> conditions,
-            @NotNull String owner
+    private static @NotNull List<LootItemCondition> combineConditions(
+            @NotNull List<LootItemCondition> first,
+            @NotNull List<LootItemCondition> second
     ) {
-        if (!conditions.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "JEI translation does not support conditional "
-                            + owner
-            );
+        if (first.isEmpty()) {
+            return List.copyOf(second);
         }
+
+        if (second.isEmpty()) {
+            return List.copyOf(first);
+        }
+
+        List<LootItemCondition> combined =
+                new ArrayList<>(
+                        first.size() + second.size()
+                );
+
+        combined.addAll(first);
+        combined.addAll(second);
+
+        return List.copyOf(combined);
     }
 
     private static @NotNull CountRange readNumberRange(
@@ -745,6 +764,7 @@ public final class ItemOutputJeiTranslator {
     private record PreparedEntry(
             @NotNull LootPoolSingletonContainer entry,
             @NotNull List<LootItemFunction> functions,
+            @NotNull List<LootItemCondition> conditions,
             int weight,
             @NotNull List<Item> items
     ) {}

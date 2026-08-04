@@ -528,6 +528,83 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_INFO_FESTERLING =
             category(JolCraftDictionary.JEI, dot(us(JolCraftDictionary.INFO, JolCraftDictionary.PAGE), JolCraftBlockIds.FESTERLING));
 
+    //Conditions
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_LINE =
+            jeiLootCondition(JolCraftDictionary.LINE);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_DETAIL =
+            jeiLootCondition(JolCraftDictionary.DETAIL);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_SEPARATOR =
+            jeiLootCondition(JolCraftDictionary.SEPARATOR);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_COORDINATES =
+            jeiLootCondition(pl(JolCraftDictionary.COORDINATE));
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_PERCENT =
+            jeiLootCondition(JolCraftDictionary.PERCENT);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_CONDITION =
+            jeiLootCondition(JolCraftDictionary.CONDITION);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_DETAILS =
+            jeiLootCondition(pl(JolCraftDictionary.DETAIL));
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_LOCATION =
+            jeiLootCondition(JolCraftDictionary.LOCATION);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_BIOME =
+            jeiLootCondition(JolCraftDictionary.BIOME);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_STRUCTURE =
+            jeiLootCondition(JolCraftDictionary.STRUCTURE);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_DIMENSION =
+            jeiLootCondition(JolCraftDictionary.DIMENSION);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_POSITION =
+            jeiLootCondition(JolCraftDictionary.POSITION);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_LIGHT =
+            jeiLootCondition(JolCraftDictionary.LIGHT);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_BLOCK =
+            jeiLootCondition(JolCraftDictionary.BLOCK);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_FLUID =
+            jeiLootCondition(JolCraftDictionary.FLUID);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_SMOKEY =
+            jeiLootCondition(JolCraftDictionary.SMOKEY);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_CAN_SEE_SKY =
+            jeiLootCondition(
+                    us(
+                            JolCraftDictionary.CAN,
+                            JolCraftDictionary.SEE,
+                            JolCraftDictionary.SKY
+                    )
+            );
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_OFFSET =
+            jeiLootCondition(JolCraftDictionary.OFFSET);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_ANY =
+            jeiLootCondition(JolCraftDictionary.ANY);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_RESTRICTED =
+            jeiLootCondition(JolCraftDictionary.RESTRICTED);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_YES =
+            jeiLootCondition(JolCraftDictionary.YES);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_NO =
+            jeiLootCondition(JolCraftDictionary.NO);
+
+    public static final String JEI_TOOLTIP_LOOT_CONDITION_NONE =
+            jeiLootCondition(JolCraftDictionary.NONE);
+
     // ---------------------------------------------------------------------
     // MiscLangSubProvider
     // ---------------------------------------------------------------------
@@ -634,5 +711,36 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // ---------------------------------------------------------------------
     // TrimLangSubProvider
     // ---------------------------------------------------------------------
+
+
+    private static final String JEI_LOOT_CONDITION =
+            dot(
+                    JolCraftDictionary.JEI,
+                    us(
+                            JolCraftDictionary.LOOT,
+                            JolCraftDictionary.CONDITION
+                    )
+            );
+
+    private static String jeiLootCondition(
+            String value
+    ) {
+        return tooltip(
+                JEI_LOOT_CONDITION,
+                value
+        );
+    }
+
+    public static String jeiLootConditionField(
+            String field
+    ) {
+        return tooltip(
+                JEI_LOOT_CONDITION,
+                dot(
+                        JolCraftDictionary.FIELD,
+                        field
+                )
+        );
+    }
 
 }

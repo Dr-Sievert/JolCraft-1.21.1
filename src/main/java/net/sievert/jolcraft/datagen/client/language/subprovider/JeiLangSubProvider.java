@@ -123,5 +123,153 @@ public final class JeiLangSubProvider implements LanguageSubProvider {
                             "Signed contracts can be transformed into profession contracts at a guildmaster. " +
                                 "Profession contracts can be given to a dwarf without a profession to set their profession."
         );
+
+        // Loot conditions
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_LINE,
+                "%1$s: %2$s"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_DETAIL,
+                "%1$s=%2$s"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_SEPARATOR,
+                ", "
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_COORDINATES,
+                "%1$s, %2$s, %3$s"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_PERCENT,
+                "%1$s%%"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_CONDITION,
+                "Condition"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_DETAILS,
+                "Details"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_LOCATION,
+                "Location"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_BIOME,
+                "Biome"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_STRUCTURE,
+                "Structure"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_DIMENSION,
+                "Dimension"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_POSITION,
+                "Position"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_LIGHT,
+                "Light"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_BLOCK,
+                "Block"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_FLUID,
+                "Fluid"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_SMOKEY,
+                "Smokey"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_CAN_SEE_SKY,
+                "Can See Sky"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_OFFSET,
+                "Offset"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_ANY,
+                "Any"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_RESTRICTED,
+                "Restricted"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_YES,
+                "Yes"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_NO,
+                "No"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.JEI_TOOLTIP_LOOT_CONDITION_NONE,
+                "None"
+        );
+
+        putManual(
+                translations,
+                JolCraftLanguageKeys.jeiLootConditionField(
+                        JolCraftDictionary.CHANCE
+                ),
+                "Chance"
+        );
     }
 }
