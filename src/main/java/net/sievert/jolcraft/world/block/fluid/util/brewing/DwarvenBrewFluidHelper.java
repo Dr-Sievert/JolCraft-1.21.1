@@ -27,14 +27,14 @@ public final class DwarvenBrewFluidHelper {
 
     public static final float DEFAULT_BREWING_SPEED = 1.0F;
 
-    public static final float STRONG_BREWING_SPEED = 1.5F;
+    public static final float BREWING_SPEED_1_5 = 1.5F;
     public static final float BREWING_SPEED_2_0 = 2.0F;
     public static final float BREWING_SPEED_2_5 = 2.5F;
     public static final float BREWING_SPEED_3_0 = 3.0F;
 
     public static final List<Float> BREWING_SPEED_TIERS = List.of(
             DEFAULT_BREWING_SPEED,
-            STRONG_BREWING_SPEED,
+            BREWING_SPEED_1_5,
             BREWING_SPEED_2_0,
             BREWING_SPEED_2_5,
             BREWING_SPEED_3_0
@@ -269,16 +269,14 @@ public final class DwarvenBrewFluidHelper {
 
     /**
      * Normalizes the standard components carried by a recognized brewing fluid.
-     *
-     * @return whether the fluid was changed
      */
-    public static boolean normalizeBrewingFluid(
+    public static void normalizeBrewingFluid(
             FluidStack fluid
     ) {
         if (fluid.isEmpty()
                 || (!isFinishedBrewingFluid(fluid)
                 && !isUnfinishedBrewingFluid(fluid))) {
-            return false;
+            return;
         }
 
         FluidStack original = fluid.copy();
@@ -344,7 +342,7 @@ public final class DwarvenBrewFluidHelper {
             );
         }
 
-        return !FluidStack.isSameFluidSameComponents(
+        FluidStack.isSameFluidSameComponents(
                 original,
                 fluid
         );
@@ -516,22 +514,6 @@ public final class DwarvenBrewFluidHelper {
     ) {
         return findBrewingSpeed(stack)
                 .orElse(DEFAULT_BREWING_SPEED);
-    }
-
-    public static Optional<Float> findContainedBrewingSpeed(
-            ItemStack stack
-    ) {
-        return findBrewingSpeed(
-                stack
-        );
-    }
-
-    public static float getContainedBrewingSpeed(
-            ItemStack stack
-    ) {
-        return getBrewingSpeed(
-                stack
-        );
     }
 
     public static void copyBrewingSpeed(

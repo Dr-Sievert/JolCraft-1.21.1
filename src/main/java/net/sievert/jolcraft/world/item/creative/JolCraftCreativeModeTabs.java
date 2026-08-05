@@ -216,7 +216,6 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.BARLEY_SEEDS);
                         output.accept(JolCraftItems.BARLEY);
                         output.accept(JolCraftBlocks.BARLEY_BLOCK);
-                        output.accept(JolCraftItems.BARLEY_MALT);
                         output.accept(JolCraftItems.ASGARNIAN_SEEDS);
                         output.accept(JolCraftItems.DUSKHOLD_SEEDS);
                         output.accept(JolCraftItems.KRANDONIAN_SEEDS);
@@ -234,6 +233,8 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.DEEPSLATE_BULBS);
                         output.accept(JolCraftBlocks.VERDANT_SOIL);
                         output.accept(JolCraftBlocks.VERDANT_FARMLAND);
+
+                        output.accept(JolCraftItems.BARLEY_MALT);
 
                         for (float brewingSpeed : DwarvenBrewFluidHelper.BREWING_SPEED_TIERS) {
                             addYeastVariants(
@@ -259,7 +260,14 @@ public final class JolCraftCreativeModeTabs {
                         );
 
                         output.accept(JolCraftItems.GLASS_MUG);
-                        output.accept(JolCraftItems.DWARVEN_BREW);
+
+                        output.accept(
+                                JolCraftBrewingItems.createDwarvenBrewStack(
+                                       DwarvenBrewAge.FRESH
+                                )
+                        );
+
+                        output.accept(JolCraftItems.INVERIX);
 
                         output.accept(JolCraftItems.DEEPSLATE_MORTAR_ITEM);
                         output.accept(JolCraftItems.WOODEN_PESTLE);
@@ -270,8 +278,6 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.NETHERITE_PESTLE);
                         output.accept(JolCraftItems.DEEPSLATE_PESTLE);
                         output.accept(JolCraftItems.MITHRIL_PESTLE);
-
-                        output.accept(JolCraftItems.INVERIX);
 
                         output.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
 

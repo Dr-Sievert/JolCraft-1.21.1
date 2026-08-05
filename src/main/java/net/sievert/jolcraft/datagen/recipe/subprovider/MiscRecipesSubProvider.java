@@ -66,7 +66,7 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .pattern("BBB")
                 .define('B', JolCraftItems.BARLEY)
                 .unlockedByHas(JolCraftItems.BARLEY)
-                .save(output, folder(), JolCraftItems.BARLEY);
+                .save(output, folder(), "bread_from_barley");
 
         VanillaRecipeBuilder.shapeless(
                         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.GUILD_SIGIL.get())
@@ -78,15 +78,27 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .save(output, folder(), JolCraftItems.GUILD_SIGIL.get());
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftBlocks.HEARTH.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftBlocks.HEARTH)
                 )
-                .pattern(" X ")
-                .pattern("BBB")
+                .pattern("BXB")
+                .pattern("BZB")
                 .pattern("B B")
                 .define('B', Blocks.DEEPSLATE_TILES)
                 .define('X', Blocks.DEEPSLATE_TILE_WALL)
+                .define('Z', JolCraftItems.DEEPSLATE_PLATE)
                 .unlockedByHas(Blocks.DEEPSLATE_TILES)
                 .save(output, folder(), JolCraftBlocks.HEARTH.get());
+
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftBlocks.LAPIDARY_BENCH)
+                )
+                .pattern("XBX")
+                .pattern("BBB")
+                .pattern("BBB")
+                .define('B', Blocks.POLISHED_DEEPSLATE)
+                .define('X', JolCraftItems.DEEPSLATE_PLATE)
+                .unlockedByHas(JolCraftItems.DEEPSLATE_PLATE)
+                .save(output, folder(), JolCraftBlocks.LAPIDARY_BENCH);
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
@@ -293,13 +305,13 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                         DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
                 ),
                 Items.FERMENTED_SPIDER_EYE,
-                DwarvenBrewFluidHelper.STRONG_BREWING_SPEED
+                DwarvenBrewFluidHelper.BREWING_SPEED_1_5
         );
 
         yeastCulture(
                 output,
                 yeastCultureIngredient(
-                        DwarvenBrewFluidHelper.STRONG_BREWING_SPEED
+                        DwarvenBrewFluidHelper.BREWING_SPEED_1_5
                 ),
                 Items.NETHER_WART,
                 DwarvenBrewFluidHelper.BREWING_SPEED_2_0

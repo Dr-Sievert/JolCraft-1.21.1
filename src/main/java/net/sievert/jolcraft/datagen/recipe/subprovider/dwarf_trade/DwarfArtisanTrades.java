@@ -7,7 +7,6 @@ import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
-import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -281,28 +280,6 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                                 DwarfMerchantData.Level.APPRENTICE
                         )
                         .costACoins(
-                                10,
-                                20
-                        )
-                        .noCostB()
-                        .result(
-                                JolCraftBlocks.LAPIDARY_BENCH.get(),
-                                1
-                        )
-                        .maxUses(3)
-                        .dwarfXp(10)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.JOURNEYMAN
-                        )
-                        .costACoins(
                                 2,
                                 4
                         )
@@ -322,7 +299,7 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
                         .merchantLevel(
-                                DwarfMerchantData.Level.EXPERT
+                                DwarfMerchantData.Level.JOURNEYMAN
                         )
                         .costACoins(
                                 2,
