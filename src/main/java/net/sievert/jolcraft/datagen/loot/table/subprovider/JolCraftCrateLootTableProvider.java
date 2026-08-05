@@ -223,7 +223,7 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                                             .apply(
                                                 SetComponentsFunction.setComponent(
                                                         JolCraftDataComponents.DWARF_LORE_KEY.get(),
-                                                        LoreHelper.toLoreKeyString(DwarfLoreKey.ANCIENT_GEMCRAFT)
+                                                        LoreHelper.toLoreKeyString(DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE)
                                                 )
                                             )
 

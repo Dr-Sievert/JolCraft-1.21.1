@@ -623,6 +623,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String UNKNOWN = mod(JolCraftDictionary.UNKNOWN);
 
+    public static final String LOCKED = mod(JolCraftDictionary.LOCKED);
+    public static final String UNLOCKED = mod(JolCraftDictionary.UNLOCKED);
+
     public static final String TOOLTIP_DEEPSLATE_MITHRIL_ORE =
             category(JolCraftDictionary.TOOLTIP, JolCraftBlockIds.DEEPSLATE_MITHRIL_ORE);
 

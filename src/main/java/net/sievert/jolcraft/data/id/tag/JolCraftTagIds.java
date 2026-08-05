@@ -50,7 +50,10 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String REPAIRS_MITHRIL = join(plural(JolCraftDictionary.REPAIR), JolCraftDictionary.MITHRIL);
     public static final String MITHRIL_ITEMS = join(JolCraftDictionary.MITHRIL, plural(JolCraftDictionary.ITEM));
 
-    public static final String SALVAGE = join(JolCraftDictionary.SALVAGE);
+    public static final String GLOBAL_SALVAGE = join(JolCraftDictionary.GLOBAL, JolCraftDictionary.SALVAGE);
+    public static final String SALVAGE = JolCraftDictionary.SALVAGE;
+    public static final String SPECIAL_SALVAGE = join(JolCraftDictionary.SPECIAL, JolCraftDictionary.SALVAGE);
+
     public static final String GENERAL_SALVAGE = join(JolCraftDictionary.GENERAL, JolCraftDictionary.SALVAGE);
     public static final String DEEPSLATE_SALVAGE = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.SALVAGE);
     public static final String TEXTILE_SALVAGE = join(JolCraftDictionary.TEXTILE, JolCraftDictionary.SALVAGE);
@@ -58,6 +61,13 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String IRON_SALVAGE = join(JolCraftDictionary.IRON, JolCraftDictionary.SALVAGE);
     public static final String GOLD_SALVAGE = join(JolCraftDictionary.GOLD, JolCraftDictionary.SALVAGE);
     public static final String MITHRIL_SALVAGE = join(JolCraftDictionary.MITHRIL, JolCraftDictionary.SALVAGE);
+
+    public static final String SPECIAL_GENERAL_SALVAGE = join(JolCraftDictionary.SPECIAL, GENERAL_SALVAGE);
+    public static final String SPECIAL_DEEPSLATE_SALVAGE = join(JolCraftDictionary.SPECIAL, DEEPSLATE_SALVAGE);
+    public static final String SPECIAL_TEXTILE_SALVAGE = join(JolCraftDictionary.SPECIAL, TEXTILE_SALVAGE);
+    public static final String SPECIAL_IRON_SALVAGE = join(JolCraftDictionary.SPECIAL, IRON_SALVAGE);
+    public static final String SPECIAL_GOLD_SALVAGE = join(JolCraftDictionary.SPECIAL, GOLD_SALVAGE);
+    public static final String SPECIAL_MITHRIL_SALVAGE = join(JolCraftDictionary.SPECIAL, MITHRIL_SALVAGE);
 
     // ---------------------------------------------------------------------
     // Block

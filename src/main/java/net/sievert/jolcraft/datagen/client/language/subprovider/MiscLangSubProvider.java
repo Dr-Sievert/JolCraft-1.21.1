@@ -36,6 +36,9 @@ public final class MiscLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.UNKNOWN, "Unknown");
 
+        putManual(translations, JolCraftLanguageKeys.LOCKED, "Locked");
+        putManual(translations, JolCraftLanguageKeys.UNLOCKED, "Unlocked");
+
         // Items / blocks
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_QUILL, "Can be filled by right-clicking a squid.");

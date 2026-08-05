@@ -58,7 +58,7 @@ public abstract class AbstractBountyTaskItem extends Item implements IItemExtens
 
     /** Whether to show the "Hold Alt" hint line at the bottom. */
     protected boolean showHoldKeyHint(ItemStack stack) {
-        return true;
+        return supportsAltTooltip(stack);
     }
 
     /**

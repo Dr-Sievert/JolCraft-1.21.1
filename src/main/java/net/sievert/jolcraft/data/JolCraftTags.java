@@ -72,7 +72,10 @@ public final class JolCraftTags {
         public static final TagKey<Item> MITHRIL_ITEMS = createTag(JolCraftTagIds.MITHRIL_ITEMS);
 
         // Salvage
-        public static final TagKey<Item> GLOBAL_SALVAGE = createTag(JolCraftTagIds.SALVAGE);
+        public static final TagKey<Item> GLOBAL_SALVAGE = createTag(JolCraftTagIds.GLOBAL_SALVAGE);
+        public static final TagKey<Item> SALVAGE = createTag(JolCraftTagIds.SALVAGE);
+        public static final TagKey<Item> SPECIAL_SALVAGE = createTag(JolCraftTagIds.SPECIAL_SALVAGE);
+
         public static final TagKey<Item> GENERAL_SALVAGE = createTag(JolCraftTagIds.GENERAL_SALVAGE);
         public static final TagKey<Item> DEEPSLATE_SALVAGE = createTag(JolCraftTagIds.DEEPSLATE_SALVAGE);
         public static final TagKey<Item> TEXTILE_SALVAGE = createTag(JolCraftTagIds.TEXTILE_SALVAGE);
@@ -80,6 +83,13 @@ public final class JolCraftTags {
         public static final TagKey<Item> IRON_SALVAGE = createTag(JolCraftTagIds.IRON_SALVAGE);
         public static final TagKey<Item> GOLD_SALVAGE = createTag(JolCraftTagIds.GOLD_SALVAGE);
         public static final TagKey<Item> MITHRIL_SALVAGE = createTag(JolCraftTagIds.MITHRIL_SALVAGE);
+
+        public static final TagKey<Item> SPECIAL_GENERAL_SALVAGE = createTag(JolCraftTagIds.SPECIAL_GENERAL_SALVAGE);
+        public static final TagKey<Item> SPECIAL_DEEPSLATE_SALVAGE = createTag(JolCraftTagIds.SPECIAL_DEEPSLATE_SALVAGE);
+        public static final TagKey<Item> SPECIAL_TEXTILE_SALVAGE = createTag(JolCraftTagIds.SPECIAL_TEXTILE_SALVAGE);
+        public static final TagKey<Item> SPECIAL_IRON_SALVAGE = createTag(JolCraftTagIds.SPECIAL_IRON_SALVAGE);
+        public static final TagKey<Item> SPECIAL_GOLD_SALVAGE = createTag(JolCraftTagIds.SPECIAL_GOLD_SALVAGE);
+        public static final TagKey<Item> SPECIAL_MITHRIL_SALVAGE = createTag(JolCraftTagIds.SPECIAL_MITHRIL_SALVAGE);
 
         private static TagKey<Item> createTag(String id) {
             return ItemTags.create(JolCraft.location(id));

@@ -92,18 +92,18 @@ public final class JolCraftStrongboxLootTableProvider
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SMITHING_SALVAGE).setWeight(30))
-                                        .add(LootItem.lootTableItem(Items.COAL).setWeight(19))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_METAL).setWeight(15))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DWARVEN_METAL).setWeight(14))
-                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_CHAINWEAVE).setWeight(3))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DEEPSLATE_ARMOR).setWeight(5))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DEEPSLATE_GEAR).setWeight(5))
-                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER).setWeight(5))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SMITHING_SALVAGE).setWeight(92))
+                                        .add(LootItem.lootTableItem(Items.COAL).setWeight(59))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_METAL).setWeight(46))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DWARVEN_METAL).setWeight(43))
+                                        .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_CHAINWEAVE).setWeight(9))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DEEPSLATE_ARMOR).setWeight(15))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.DEEPSLATE_GEAR).setWeight(15))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER).setWeight(15))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_ARMOR).setWeight(1))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_GEAR).setWeight(1))
                                         .add(LootItem.lootTableItem(JolCraftItems.MITHRIL_ARTISAN_HAMMER).setWeight(1))
-                                        .add(LootItem.lootTableItem(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE).setWeight(3))
                         )
                         .withPool(
                                 LootPool.lootPool()
@@ -125,15 +125,48 @@ public final class JolCraftStrongboxLootTableProvider
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get()).setWeight(50)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_GEMS).setWeight(12))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(32)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_ARMOR).setWeight(3))
-                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_GEAR).setWeight(3))
-                                                .apply(EnchantWithLevelsFunction.enchantWithLevels(this.registries, UniformGenerator.between(5.0F, 30.0F)))
+                                        .add(
+                                                LootItem.lootTableItem(JolCraftItems.GOLD_COIN.get())
+                                                        .setWeight(105)
+                                                        .apply(
+                                                                SetItemCountFunction.setCount(
+                                                                        UniformGenerator.between(1, 5)
+                                                                )
+                                                        )
+                                        )
+                                        .add(
+                                                NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_GEMS)
+                                                        .setWeight(68)
+                                        )
+                                        .add(
+                                                NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS)
+                                                        .setWeight(25)
+                                                        .apply(
+                                                                SetItemCountFunction.setCount(
+                                                                        UniformGenerator.between(1, 3)
+                                                                )
+                                                        )
+                                        )
+                                        .add(
+                                                NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_ARMOR)
+                                                        .setWeight(1)
+                                                        .apply(
+                                                                EnchantWithLevelsFunction.enchantWithLevels(
+                                                                        this.registries,
+                                                                        UniformGenerator.between(5.0F, 30.0F)
+                                                                )
+                                                        )
+                                        )
+                                        .add(
+                                                NestedLootTable.lootTableReference(JolCraftLootTables.Chests.MITHRIL_GEAR)
+                                                        .setWeight(1)
+                                                        .apply(
+                                                                EnchantWithLevelsFunction.enchantWithLevels(
+                                                                        this.registries,
+                                                                        UniformGenerator.between(5.0F, 30.0F)
+                                                                )
+                                                        )
+                                        )
                         )
                         .withPool(
                                 LootPool.lootPool()

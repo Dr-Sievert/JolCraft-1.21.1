@@ -91,7 +91,7 @@ public class BountyCrateItem extends AbstractBountyTaskItem {
 
         if (type == null && tier == null) {
             tooltip.add(Component.translatable(JolCraftLanguageKeys.TOOLTIP_BOUNTY_INVALID)
-                    .withStyle(ChatFormatting.RED));
+                    .withStyle(ChatFormatting.GRAY));
         }
     }
 

@@ -368,7 +368,9 @@ public final class JolCraftItemTagProvider
                 .add(Items.CHAINMAIL_HELMET)
                 .add(Items.CHAINMAIL_CHESTPLATE)
                 .add(Items.CHAINMAIL_LEGGINGS)
-                .add(Items.CHAINMAIL_BOOTS)
+                .add(Items.CHAINMAIL_BOOTS);
+
+        target.tag(JolCraftTags.Items.SPECIAL_GENERAL_SALVAGE)
                 .add(JolCraftItems.EXPIRED_POTION.get());
 
         target.tag(JolCraftTags.Items.DEEPSLATE_SALVAGE)
@@ -389,22 +391,24 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftBlocks.LAPIDARY_BENCH.get().asItem())
                 .add(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
                 .add(JolCraftItems.STRONGBOX_ITEM.get())
-                .add(JolCraftItems.DEEPSLATE_BOOTS.get())
-                .add(JolCraftItems.DEEPSLATE_BOOTS.get())
+                .add(JolCraftItems.GUILD_SIGIL_MOULD.get());
+
+        target.tag(JolCraftTags.Items.SPECIAL_DEEPSLATE_SALVAGE)
                 .add(JolCraftItems.BROKEN_DEEPSLATE_PLATES.get())
                 .add(JolCraftItems.BROKEN_DEEPSLATE_PICKAXE_HEAD.get())
                 .add(JolCraftItems.BROKEN_DEEPSLATE_GEAR.get())
                 .add(JolCraftItems.DEEPSLATE_MUG.get())
                 .add(JolCraftItems.BROKEN_TABLET.get())
-                .add(JolCraftItems.INGOT_MOULD.get())
-                .add(JolCraftItems.GUILD_SIGIL_MOULD.get());
+                .add(JolCraftItems.INGOT_MOULD.get());
 
         target.tag(JolCraftTags.Items.TEXTILE_SALVAGE)
                 .add(Items.LEATHER_HELMET)
                 .add(Items.LEATHER_CHESTPLATE)
                 .add(Items.LEATHER_LEGGINGS)
                 .add(Items.LEATHER_BOOTS)
-                .add(Items.LEATHER_HORSE_ARMOR)
+                .add(Items.LEATHER_HORSE_ARMOR);
+
+        target.tag(JolCraftTags.Items.SPECIAL_TEXTILE_SALVAGE)
                 .add(JolCraftItems.OLD_FABRIC.get());
 
         target.tag(JolCraftTags.Items.REDSTONE_SALVAGE)
@@ -450,7 +454,9 @@ public final class JolCraftItemTagProvider
                 .add(Items.ACTIVATOR_RAIL)
                 .add(Items.DETECTOR_RAIL)
                 .add(Items.CRAFTER)
-                .add(Items.HOPPER)
+                .add(Items.HOPPER);
+
+        target.tag(JolCraftTags.Items.SPECIAL_IRON_SALVAGE)
                 .add(JolCraftItems.BROKEN_PICKAXE.get())
                 .add(JolCraftItems.BROKEN_AMULET.get())
                 .add(JolCraftItems.RUSTY_TONGS.get());
@@ -475,7 +481,9 @@ public final class JolCraftItemTagProvider
                 .add(Items.GOLDEN_CARROT)
                 .add(Items.GOLDEN_APPLE)
                 .add(Items.ENCHANTED_GOLDEN_APPLE)
-                .add(Items.TOTEM_OF_UNDYING)
+                .add(Items.TOTEM_OF_UNDYING);
+
+        target.tag(JolCraftTags.Items.SPECIAL_GOLD_SALVAGE)
                 .add(JolCraftItems.BROKEN_BELT.get())
                 .add(JolCraftItems.BROKEN_COINS.get());
 
@@ -492,18 +500,33 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.MITHRIL_HELMET.get())
                 .add(JolCraftItems.MITHRIL_CHESTPLATE.get())
                 .add(JolCraftItems.MITHRIL_LEGGINGS.get())
-                .add(JolCraftItems.MITHRIL_BOOTS.get())
+                .add(JolCraftItems.MITHRIL_BOOTS.get());
+
+        target.tag(JolCraftTags.Items.SPECIAL_MITHRIL_SALVAGE)
                 .add(JolCraftItems.BROKEN_MITHRIL_PLATE.get())
                 .add(JolCraftItems.BROKEN_MITHRIL_SWORD.get())
                 .add(JolCraftItems.MITHRIL_SCRAP.get());
 
-        target.tag(JolCraftTags.Items.GLOBAL_SALVAGE)
+        target.tag(JolCraftTags.Items.SALVAGE)
                 .addTag(JolCraftTags.Items.GENERAL_SALVAGE)
                 .addTag(JolCraftTags.Items.TEXTILE_SALVAGE)
                 .addTag(JolCraftTags.Items.REDSTONE_SALVAGE)
                 .addTag(JolCraftTags.Items.IRON_SALVAGE)
+                .addTag(JolCraftTags.Items.DEEPSLATE_SALVAGE)
                 .addTag(JolCraftTags.Items.GOLD_SALVAGE)
                 .addTag(JolCraftTags.Items.MITHRIL_SALVAGE);
+
+        target.tag(JolCraftTags.Items.SPECIAL_SALVAGE)
+                .addTag(JolCraftTags.Items.SPECIAL_GENERAL_SALVAGE)
+                .addTag(JolCraftTags.Items.SPECIAL_TEXTILE_SALVAGE)
+                .addTag(JolCraftTags.Items.SPECIAL_IRON_SALVAGE)
+                .addTag(JolCraftTags.Items.SPECIAL_DEEPSLATE_SALVAGE)
+                .addTag(JolCraftTags.Items.SPECIAL_GOLD_SALVAGE)
+                .addTag(JolCraftTags.Items.SPECIAL_MITHRIL_SALVAGE);
+
+        target.tag(JolCraftTags.Items.GLOBAL_SALVAGE)
+                .addTag(JolCraftTags.Items.SALVAGE)
+                .addTag(JolCraftTags.Items.SPECIAL_SALVAGE);
 
         // Dwarf
 

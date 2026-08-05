@@ -69,7 +69,7 @@ public class JolCraftPlacedFeatures {
                 DEEPSLATE_BULBS_PLACED_KEY,
                 configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.DEEPSLATE_BULBS_PATCH_KEY),
                 List.of(
-                        CountPlacement.of(3),
+                        RarityFilter.onAverageOnceEvery(2),
                         InSquarePlacement.spread(),
                         HeightRangePlacement.uniform(
                                 VerticalAnchor.absolute(-64),
@@ -77,7 +77,10 @@ public class JolCraftPlacedFeatures {
                         ),
                         BlockPredicateFilter.forPredicate(
                                 BlockPredicate.allOf(
-                                        BlockPredicate.matchesTag(new Vec3i(0, -1, 0), JolCraftTags.Blocks.DEEPSLATE_BULBS_PLANTABLE),
+                                        BlockPredicate.matchesTag(
+                                                new Vec3i(0, -1, 0),
+                                                JolCraftTags.Blocks.DEEPSLATE_BULBS_PLANTABLE
+                                        ),
                                         new DarknessPredicate(8)
                                 )
                         ),
