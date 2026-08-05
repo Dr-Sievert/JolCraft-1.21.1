@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;
@@ -37,8 +38,8 @@ import java.util.function.Consumer;
 /**
  * Defines a single fermenting cauldron recipe step.
  *
- * Recipes may optionally require the previous ingredient, contribute potion effects, control brewing timing and color,
- * choose the output fluid and optionally finalize the brew.
+ * Recipes may optionally require the previous ingredient, contribute potion effects, control brewing timing, color,
+ * maximum age and brewing speed, choose the output fluid and optionally finalize the brew.
  */
 public record FermentingCauldronRecipe(
         ItemInput ingredient,
@@ -47,6 +48,8 @@ public record FermentingCauldronRecipe(
         int brewTicks,
         int bubbleTicks,
         int brewColor,
+        Optional<DwarvenBrewAge> maxBrewAge,
+        Optional<Float> brewingSpeed,
         OutputFluid outputFluid,
         boolean finalizeBrew
 ) implements CustomRecipe<FermentingCauldronRecipeInput> {
@@ -54,6 +57,12 @@ public record FermentingCauldronRecipe(
     public static final int DEFAULT_BREW_TICKS = 1;
     public static final int DEFAULT_BUBBLE_TICKS = 1;
     public static final int DEFAULT_BREW_COLOR = -1;
+
+    public static final Optional<DwarvenBrewAge> DEFAULT_MAX_BREW_AGE =
+            Optional.empty();
+
+    public static final Optional<Float> DEFAULT_BREWING_SPEED =
+            Optional.empty();
 
     public static final OutputFluid DEFAULT_OUTPUT_FLUID =
             OutputFluid.DWARVEN_BREW;
@@ -82,6 +91,19 @@ public record FermentingCauldronRecipe(
                     )
             );
 
+    private static final String MAX_BREW_AGE_KEY =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.MAX,
+                    JolCraftDictionary.BREW,
+                    JolCraftDictionary.AGE
+            );
+
+    private static final String BREWING_SPEED_KEY =
+            JolCraftStrings.underscored(
+                    JolCraftDictionary.BREWING,
+                    JolCraftDictionary.SPEED
+            );
+
     private static final String OUTPUT_FLUID_KEY =
             "output_fluid";
 
@@ -108,6 +130,18 @@ public record FermentingCauldronRecipe(
                 Objects.requireNonNullElse(
                         effect,
                         Optional.empty()
+                );
+
+        maxBrewAge =
+                Objects.requireNonNullElse(
+                        maxBrewAge,
+                        DEFAULT_MAX_BREW_AGE
+                );
+
+        brewingSpeed =
+                Objects.requireNonNullElse(
+                        brewingSpeed,
+                        DEFAULT_BREWING_SPEED
                 );
 
         outputFluid =
@@ -252,7 +286,8 @@ public record FermentingCauldronRecipe(
 
     public enum OutputFluid {
         DWARVEN_BREW,
-        YEAST;
+        YEAST,
+        TANNIN;
 
         public static final Codec<OutputFluid> CODEC =
                 Codec.STRING.comapFlatMap(
@@ -341,6 +376,31 @@ public record FermentingCauldronRecipe(
                         EFFECT_OUTPUT_STREAM_CODEC
                 );
 
+        private static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                Optional<DwarvenBrewAge>
+                > OPTIONAL_MAX_BREW_AGE_STREAM_CODEC =
+                optional(
+                        DwarvenBrewAge.STREAM_CODEC
+                );
+
+        private static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                Float
+                > BREWING_SPEED_STREAM_CODEC =
+                StreamCodec.of(
+                        RegistryFriendlyByteBuf::writeFloat,
+                        RegistryFriendlyByteBuf::readFloat
+                );
+
+        private static final StreamCodec<
+                RegistryFriendlyByteBuf,
+                Optional<Float>
+                > OPTIONAL_BREWING_SPEED_STREAM_CODEC =
+                optional(
+                        BREWING_SPEED_STREAM_CODEC
+                );
+
         public static final MapCodec<FermentingCauldronRecipe> CODEC =
                 RecordCodecBuilder
                         .<FermentingCauldronRecipe>mapCodec(instance ->
@@ -395,6 +455,22 @@ public record FermentingCauldronRecipe(
                                                         )
                                                         .forGetter(
                                                                 FermentingCauldronRecipe::brewColor
+                                                        ),
+
+                                                DwarvenBrewAge.CODEC
+                                                        .optionalFieldOf(
+                                                                MAX_BREW_AGE_KEY
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::maxBrewAge
+                                                        ),
+
+                                                Codec.FLOAT
+                                                        .optionalFieldOf(
+                                                                BREWING_SPEED_KEY
+                                                        )
+                                                        .forGetter(
+                                                                FermentingCauldronRecipe::brewingSpeed
                                                         ),
 
                                                 OutputFluid.CODEC
@@ -466,6 +542,14 @@ public record FermentingCauldronRecipe(
                                     recipe.effect(),
                                     JolCraftDictionary.EFFECT
                             )
+                            .require(
+                                    recipe.maxBrewAge(),
+                                    MAX_BREW_AGE_KEY
+                            )
+                            .require(
+                                    recipe.brewingSpeed(),
+                                    BREWING_SPEED_KEY
+                            )
                             .rule(
                                     recipe.brewTicks() >= 1,
                                     () -> BREW_TICKS_KEY
@@ -496,17 +580,47 @@ public record FermentingCauldronRecipe(
                 return base;
             }
 
-            if (recipe.outputFluid() == OutputFluid.YEAST
-                    && !recipe.finalizeBrew()) {
+            if (recipe.brewingSpeed().isPresent()
+                    && recipe.outputFluid() != OutputFluid.YEAST) {
                 return DataResult.error(
-                        () -> "yeast output must finalize the process"
+                        () -> BREWING_SPEED_KEY
+                                + " is only supported for yeast output"
                 );
             }
 
-            if (recipe.outputFluid() == OutputFluid.YEAST
+            if (recipe.brewingSpeed()
+                    .filter(speed -> !Float.isFinite(speed)
+                            || speed <= 0.0F)
+                    .isPresent()) {
+                return DataResult.error(
+                        () -> BREWING_SPEED_KEY
+                                + " must be finite and > 0"
+                );
+            }
+
+            if (recipe.maxBrewAge().isPresent()
+                    && recipe.outputFluid() != OutputFluid.TANNIN) {
+                return DataResult.error(
+                        () -> MAX_BREW_AGE_KEY
+                                + " is only supported for tannin output"
+                );
+            }
+
+            if (recipe.maxBrewAge()
+                    .filter(age -> age.ordinal()
+                            < DwarvenBrewAge.MATURED.ordinal())
+                    .isPresent()) {
+                return DataResult.error(
+                        () -> MAX_BREW_AGE_KEY
+                                + " must be matured or vintage"
+                );
+            }
+
+            if (recipe.outputFluid() != OutputFluid.DWARVEN_BREW
                     && recipe.effect().isPresent()) {
                 return DataResult.error(
-                        () -> "yeast output cannot define a brew effect"
+                        () -> recipe.outputFluid().getId()
+                                + " output cannot define a brew effect"
                 );
             }
 
@@ -571,6 +685,16 @@ public record FermentingCauldronRecipe(
                     recipe.brewColor()
             );
 
+            OPTIONAL_MAX_BREW_AGE_STREAM_CODEC.encode(
+                    buffer,
+                    recipe.maxBrewAge()
+            );
+
+            OPTIONAL_BREWING_SPEED_STREAM_CODEC.encode(
+                    buffer,
+                    recipe.brewingSpeed()
+            );
+
             buffer.writeEnum(
                     recipe.outputFluid()
             );
@@ -596,6 +720,12 @@ public record FermentingCauldronRecipe(
                     buffer.readVarInt(),
                     buffer.readVarInt(),
                     buffer.readInt(),
+                    OPTIONAL_MAX_BREW_AGE_STREAM_CODEC.decode(
+                            buffer
+                    ),
+                    OPTIONAL_BREWING_SPEED_STREAM_CODEC.decode(
+                            buffer
+                    ),
                     buffer.readEnum(
                             OutputFluid.class
                     ),

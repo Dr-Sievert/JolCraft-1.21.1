@@ -272,10 +272,12 @@ public final class JolCraftItems {
     // -------------------------------------------------------------------------
 
     public static final DeferredItem<Item> BARLEY_MALT = JolCraftBrewingItems.registerBarleyMalt();
+    public static final DeferredItem<Item> YEAST_CULTURE = JolCraftBrewingItems.registerYeastCulture();
     public static final DeferredItem<Item> YEAST = JolCraftBrewingItems.registerYeast(JolCraftFluids.YEAST);
+    public static final DeferredItem<Item> TANNIN = JolCraftBrewingItems.registerTannin(JolCraftFluids.TANNIN);
     public static final DeferredItem<Item> GLASS_MUG = JolCraftBrewingItems.registerGlassMug();
-    public static final DeferredItem<Item> DWARVEN_BREW = JolCraftBrewingItems.registerDwarvenBrew(GLASS_MUG, JolCraftFluids.DWARVEN_BREW);
-    public static final DeferredItem<Item> DWARVEN_BREW_BUCKET = JolCraftBrewingItems.registerDwarvenBrewBucket(JolCraftFluids.DWARVEN_BREW);
+    public static final DeferredItem<Item> DWARVEN_BREW = JolCraftBrewingItems.registerDwarvenBrew(GLASS_MUG);
+    public static final DeferredItem<Item> DWARVEN_BREW_BUCKET = JolCraftBrewingItems.registerDwarvenBrewBucket();
 
     // -------------------------------------------------------------------------
     // Bounty

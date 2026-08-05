@@ -125,6 +125,12 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI =
             tooltip(JolCraftBlockIds.FERMENTING_CAULDRON, us(JolCraftDictionary.LOCKED, JolCraftDictionary.MULTI));
 
+    public static final String TOOLTIP_BREWING_SPEED =
+            tooltip(JolCraftDictionary.BREWING, JolCraftDictionary.SPEED);
+
+    public static final String TOOLTIP_MAX_BREW_AGE =
+            category(JolCraftDictionary.TOOLTIP, JolCraftDataComponentIds.MAX_BREW_AGE);
+
     public static final String CONTAINER_STRONGBOX =
             category(JolCraftDictionary.CONTAINER, JolCraftDictionary.STRONGBOX);
 
@@ -632,11 +638,11 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_SALVAGEABLE =
             category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.SALVAGEABLE);
 
+    public static final String PREFIX_NAME =
+            category(JolCraftDictionary.PREFIX, JolCraftDictionary.NAME);
+
     public static final String BREW_AGE =
             category(JolCraftDictionary.TOOLTIP, JolCraftDataComponentIds.BREW_AGE);
-
-    public static final String BREW_AGE_NAME =
-            category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.NAME);
 
     public static final String BARREL_BREW_AGE =
             category(JolCraftDictionary.BARREL, JolCraftDataComponentIds.BREW_AGE);
@@ -652,6 +658,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String BREW_AGE_VINTAGE =
             category(JolCraftDataComponentIds.BREW_AGE, JolCraftDictionary.VINTAGE);
+
+    public static final String REFINED =
+            category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.REFINED);
 
     // ---------------------------------------------------------------------
     // SubtitleLangSubProvider

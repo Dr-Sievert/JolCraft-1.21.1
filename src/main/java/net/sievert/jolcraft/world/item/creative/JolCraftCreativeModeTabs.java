@@ -9,6 +9,10 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
 import net.sievert.jolcraft.data.id.item.JolCraftCreativeTabIds;
@@ -16,8 +20,8 @@ import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -41,56 +45,70 @@ public final class JolCraftCreativeModeTabs {
                             output.accept(JolCraftItems.DEV_KEY);
                         }
 
-                        output.accept(JolCraftItems.GOLD_COIN);
-                        output.accept(JolCraftItems.COIN_POUCH);
                         output.accept(JolCraftItems.DWARVEN_LEXICON);
                         output.accept(JolCraftItems.ANCIENT_DWARVEN_LEXICON);
+                        output.accept(JolCraftItems.GOLD_COIN);
+                        output.accept(JolCraftItems.COIN_POUCH);
+
                         output.accept(JolCraftItems.REPUTATION_TABLET_0);
                         output.accept(JolCraftItems.REPUTATION_TABLET_1);
                         output.accept(JolCraftItems.REPUTATION_TABLET_2);
                         output.accept(JolCraftItems.REPUTATION_TABLET_3);
                         output.accept(JolCraftItems.REPUTATION_TABLET_4);
 
-                        output.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
+                        output.accept(JolCraftItems.QUILL_EMPTY);
+                        output.accept(JolCraftItems.QUILL_FULL);
+                        output.accept(JolCraftItems.PARCHMENT);
+                        output.accept(JolCraftItems.CONTRACT_BLANK);
+                        output.accept(JolCraftItems.CONTRACT_WRITTEN);
+                        output.accept(JolCraftItems.CONTRACT_SIGNED);
+                        output.accept(JolCraftItems.GUILD_SIGIL_MOULD);
+                        output.accept(JolCraftItems.GUILD_SIGIL);
+                        output.accept(JolCraftItems.CONTRACT_GUILDMASTER);
+                        output.accept(JolCraftItems.CONTRACT_MERCHANT);
+                        output.accept(JolCraftItems.CONTRACT_HISTORIAN);
+                        output.accept(JolCraftItems.CONTRACT_SCRAPPER);
+                        output.accept(JolCraftItems.CONTRACT_GUARD);
+                        output.accept(JolCraftItems.CONTRACT_EXPLORER);
+                        output.accept(JolCraftItems.CONTRACT_KEEPER);
+                        output.accept(JolCraftItems.CONTRACT_MINER);
+                        output.accept(JolCraftItems.CONTRACT_BREWMASTER);
+                        output.accept(JolCraftItems.CONTRACT_ARTISAN);
+                        output.accept(JolCraftItems.CONTRACT_ALCHEMIST);
+                        output.accept(JolCraftItems.CONTRACT_ARCANIST);
+                        output.accept(JolCraftItems.CONTRACT_PRIEST);
+                        output.accept(JolCraftItems.CONTRACT_CHAMPION);
+                        output.accept(JolCraftItems.CONTRACT_BLACKSMITH);
+                        output.accept(JolCraftItems.CONTRACT_SMELTER);
 
-                        for (DeepslateCompassStructureGroup group : DeepslateCompassStructureGroup.values()) {
-                            addCompassDialVariant(output, group);
-                        }
+                        output.accept(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME);
+                        output.accept(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME);
+                        output.accept(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME);
+                        output.accept(JolCraftItems.LEGENDARY_PAGE);
+
+                        addLegendaryTome(output, DwarfLoreKey.ANCIENT_GEMCRAFT);
+                        addLegendaryTome(output, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
+                        addLegendaryTome(output, DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE);
+                        addLegendaryTome(output, DwarfLoreKey.COIN_PRESS_MANUAL);
+                        addLegendaryTome(output, DwarfLoreKey.ALCHEMY_RECIPES);
 
                         output.accept(JolCraftBlocks.HEARTH);
                         output.accept(JolCraftItems.STRONGBOX_ITEM);
                         output.accept(JolCraftItems.LOCKPICK);
 
-                        output.accept(JolCraftBlocks.VERDANT_SOIL);
-                        output.accept(JolCraftBlocks.VERDANT_FARMLAND);
-                        output.accept(JolCraftBlocks.DUSKCAP);
-                        output.accept(JolCraftBlocks.DUSKCAP_BLOCK);
-                        output.accept(JolCraftBlocks.DUSKCAP_STEM);
-                        output.accept(JolCraftBlocks.FESTERLING);
-                        output.accept(JolCraftBlocks.FESTERLING_BLOCK);
-                        output.accept(JolCraftBlocks.FESTERLING_STEM);
-                        output.accept(JolCraftItems.BARLEY_SEEDS);
-                        output.accept(JolCraftItems.BARLEY_SEEDS);
-                        output.accept(JolCraftItems.BARLEY);
-                        output.accept(JolCraftBlocks.BARLEY_BLOCK);
-                        output.accept(JolCraftItems.BARLEY_MALT);
-                        output.accept(JolCraftItems.ASGARNIAN_SEEDS);
-                        output.accept(JolCraftItems.DUSKHOLD_SEEDS);
-                        output.accept(JolCraftItems.KRANDONIAN_SEEDS);
-                        output.accept(JolCraftItems.YANILLIAN_SEEDS);
-                        output.accept(JolCraftItems.ASGARNIAN_HOPS);
-                        output.accept(JolCraftItems.DUSKHOLD_HOPS);
-                        output.accept(JolCraftItems.KRANDONIAN_HOPS);
-                        output.accept(JolCraftItems.YANILLIAN_HOPS);
-                        output.accept(JolCraftItems.YEAST);
-                        output.accept(JolCraftItems.GLASS_MUG);
-                        output.accept(JolCraftItems.DWARVEN_BREW);
+                        output.accept(JolCraftItems.BOUNTY);
+                        output.accept(JolCraftItems.BOUNTY_CRATE);
+                        output.accept(JolCraftItems.RESTOCK_CRATE);
+                        output.accept(JolCraftItems.REROLL_CRATE);
 
-                        output.accept(JolCraftItems.MUFFHORN_MILK_BUCKET);
+                        for (RewardCrateType crate : RewardCrateType.values()) {
+                            addCrate(output, crate);
+                        }
+
                         output.accept(JolCraftItems.MUFFHORN_FUR);
                         output.accept(JolCraftBlocks.MUFFHORN_FUR_BLOCK);
+                        output.accept(JolCraftItems.MUFFHORN_MILK_BUCKET);
 
-                        output.accept(JolCraftItems.DEEPSLATE_BULBS);
                         output.accept(JolCraftItems.DEEPSLATE_PLATE);
                         output.accept(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK);
                         output.accept(JolCraftItems.DEEPSLATE_ROD);
@@ -124,40 +142,12 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.MITHRIL_LEGGINGS);
                         output.accept(JolCraftItems.MITHRIL_BOOTS);
 
-                        output.accept(JolCraftBlocks.LAPIDARY_BENCH);
-                        output.accept(JolCraftItems.WOODEN_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.STONE_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.IRON_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.GOLDEN_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.DIAMOND_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.NETHERITE_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.MITHRIL_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.WOODEN_CHISEL);
-                        output.accept(JolCraftItems.STONE_CHISEL);
-                        output.accept(JolCraftItems.IRON_CHISEL);
-                        output.accept(JolCraftItems.GOLDEN_CHISEL);
-                        output.accept(JolCraftItems.DIAMOND_CHISEL);
-                        output.accept(JolCraftItems.NETHERITE_CHISEL);
-                        output.accept(JolCraftItems.DEEPSLATE_CHISEL);
-                        output.accept(JolCraftItems.MITHRIL_CHISEL);
+                        output.accept(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE);
 
                         output.accept(JolCraftBlocks.GEODE_BLOCK);
                         output.accept(JolCraftItems.GEODE_SMALL);
                         output.accept(JolCraftItems.GEODE_MEDIUM);
                         output.accept(JolCraftItems.GEODE_LARGE);
-
-                        output.accept(JolCraftItems.DEEPSLATE_MORTAR_ITEM);
-                        output.accept(JolCraftItems.WOODEN_PESTLE);
-                        output.accept(JolCraftItems.STONE_PESTLE);
-                        output.accept(JolCraftItems.IRON_PESTLE);
-                        output.accept(JolCraftItems.GOLDEN_PESTLE);
-                        output.accept(JolCraftItems.DIAMOND_PESTLE);
-                        output.accept(JolCraftItems.NETHERITE_PESTLE);
-                        output.accept(JolCraftItems.DEEPSLATE_PESTLE);
-                        output.accept(JolCraftItems.MITHRIL_PESTLE);
-
-                        output.accept(JolCraftItems.INVERIX);
 
                         output.accept(JolCraftItems.AEGISCORE);
                         output.accept(JolCraftItems.AEGISCORE_CUT);
@@ -205,66 +195,89 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.WOECRYSTAL_CUT);
                         output.accept(JolCraftItems.WOECRYSTAL_DUST);
 
-                        output.accept(JolCraftItems.FORGE_ARMOR_TRIM_SMITHING_TEMPLATE);
+                        output.accept(JolCraftBlocks.LAPIDARY_BENCH);
+                        output.accept(JolCraftItems.WOODEN_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.STONE_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.IRON_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.GOLDEN_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.DIAMOND_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.NETHERITE_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.MITHRIL_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.WOODEN_CHISEL);
+                        output.accept(JolCraftItems.STONE_CHISEL);
+                        output.accept(JolCraftItems.IRON_CHISEL);
+                        output.accept(JolCraftItems.GOLDEN_CHISEL);
+                        output.accept(JolCraftItems.DIAMOND_CHISEL);
+                        output.accept(JolCraftItems.NETHERITE_CHISEL);
+                        output.accept(JolCraftItems.DEEPSLATE_CHISEL);
+                        output.accept(JolCraftItems.MITHRIL_CHISEL);
 
-                        output.accept(JolCraftItems.QUILL_EMPTY);
-                        output.accept(JolCraftItems.QUILL_FULL);
-                        output.accept(JolCraftItems.PARCHMENT);
-                        output.accept(JolCraftItems.CONTRACT_BLANK);
-                        output.accept(JolCraftItems.CONTRACT_WRITTEN);
-                        output.accept(JolCraftItems.CONTRACT_SIGNED);
-                        output.accept(JolCraftItems.GUILD_SIGIL_MOULD);
-                        output.accept(JolCraftItems.GUILD_SIGIL);
-                        output.accept(JolCraftItems.CONTRACT_GUILDMASTER);
-                        output.accept(JolCraftItems.CONTRACT_MERCHANT);
-                        output.accept(JolCraftItems.CONTRACT_HISTORIAN);
-                        output.accept(JolCraftItems.CONTRACT_SCRAPPER);
-                        output.accept(JolCraftItems.CONTRACT_GUARD);
-                        output.accept(JolCraftItems.CONTRACT_EXPLORER);
-                        output.accept(JolCraftItems.CONTRACT_KEEPER);
-                        output.accept(JolCraftItems.CONTRACT_MINER);
-                        output.accept(JolCraftItems.CONTRACT_BREWMASTER);
-                        output.accept(JolCraftItems.CONTRACT_ARTISAN);
-                        output.accept(JolCraftItems.CONTRACT_ALCHEMIST);
-                        output.accept(JolCraftItems.CONTRACT_ARCANIST);
-                        output.accept(JolCraftItems.CONTRACT_PRIEST);
-                        output.accept(JolCraftItems.CONTRACT_CHAMPION);
-                        output.accept(JolCraftItems.CONTRACT_BLACKSMITH);
-                        output.accept(JolCraftItems.CONTRACT_SMELTER);
+                        output.accept(JolCraftItems.BARLEY_SEEDS);
+                        output.accept(JolCraftItems.BARLEY);
+                        output.accept(JolCraftBlocks.BARLEY_BLOCK);
+                        output.accept(JolCraftItems.BARLEY_MALT);
+                        output.accept(JolCraftItems.ASGARNIAN_SEEDS);
+                        output.accept(JolCraftItems.DUSKHOLD_SEEDS);
+                        output.accept(JolCraftItems.KRANDONIAN_SEEDS);
+                        output.accept(JolCraftItems.YANILLIAN_SEEDS);
+                        output.accept(JolCraftItems.ASGARNIAN_HOPS);
+                        output.accept(JolCraftItems.DUSKHOLD_HOPS);
+                        output.accept(JolCraftItems.KRANDONIAN_HOPS);
+                        output.accept(JolCraftItems.YANILLIAN_HOPS);
+                        output.accept(JolCraftBlocks.DUSKCAP);
+                        output.accept(JolCraftBlocks.DUSKCAP_BLOCK);
+                        output.accept(JolCraftBlocks.DUSKCAP_STEM);
+                        output.accept(JolCraftBlocks.FESTERLING);
+                        output.accept(JolCraftBlocks.FESTERLING_BLOCK);
+                        output.accept(JolCraftBlocks.FESTERLING_STEM);
+                        output.accept(JolCraftItems.DEEPSLATE_BULBS);
+                        output.accept(JolCraftBlocks.VERDANT_SOIL);
+                        output.accept(JolCraftBlocks.VERDANT_FARMLAND);
 
-                        output.accept(JolCraftItems.BOUNTY);
-                        output.accept(JolCraftItems.BOUNTY_CRATE);
-                        output.accept(JolCraftItems.RESTOCK_CRATE);
-                        output.accept(JolCraftItems.REROLL_CRATE);
-
-                        for (RewardCrateType crate : RewardCrateType.values()) {
-                            addCrate(output, crate);
+                        for (float brewingSpeed : DwarvenBrewFluidHelper.BREWING_SPEED_TIERS) {
+                            addYeastVariants(
+                                    output,
+                                    brewingSpeed
+                            );
                         }
 
-                        output.accept(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME);
-                        output.accept(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME);
-                        output.accept(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME);
-                        output.accept(JolCraftItems.LEGENDARY_PAGE);
+                        output.accept(
+                                JolCraftBrewingItems.createTanninStack(
+                                        JolCraftItems.TANNIN.get(),
+                                        JolCraftFluids.TANNIN.get(),
+                                        DwarvenBrewAge.MATURED
+                                )
+                        );
 
-                        ItemStack gemTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        LoreHelper.setLoreKey(gemTome, DwarfLoreKey.ANCIENT_GEMCRAFT);
-                        output.accept(gemTome);
+                        output.accept(
+                                JolCraftBrewingItems.createTanninStack(
+                                        JolCraftItems.TANNIN.get(),
+                                        JolCraftFluids.REFINED_TANNIN.get(),
+                                        DwarvenBrewAge.VINTAGE
+                                )
+                        );
 
-                        ItemStack brewTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        LoreHelper.setLoreKey(brewTome, DwarfLoreKey.FORGOTTEN_BREW_FORMULAS);
-                        output.accept(brewTome);
+                        output.accept(JolCraftItems.GLASS_MUG);
+                        output.accept(JolCraftItems.DWARVEN_BREW);
 
-                        ItemStack forgeTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        LoreHelper.setLoreKey(forgeTome, DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE);
-                        output.accept(forgeTome);
+                        output.accept(JolCraftItems.DEEPSLATE_MORTAR_ITEM);
+                        output.accept(JolCraftItems.WOODEN_PESTLE);
+                        output.accept(JolCraftItems.STONE_PESTLE);
+                        output.accept(JolCraftItems.IRON_PESTLE);
+                        output.accept(JolCraftItems.GOLDEN_PESTLE);
+                        output.accept(JolCraftItems.DIAMOND_PESTLE);
+                        output.accept(JolCraftItems.NETHERITE_PESTLE);
+                        output.accept(JolCraftItems.DEEPSLATE_PESTLE);
+                        output.accept(JolCraftItems.MITHRIL_PESTLE);
 
-                        ItemStack coinTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        LoreHelper.setLoreKey(coinTome, DwarfLoreKey.COIN_PRESS_MANUAL);
-                        output.accept(coinTome);
+                        output.accept(JolCraftItems.INVERIX);
 
-                        ItemStack alchemyTome = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
-                        LoreHelper.setLoreKey(alchemyTome, DwarfLoreKey.ALCHEMY_RECIPES);
-                        output.accept(alchemyTome);
+                        output.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
+
+                        for (DeepslateCompassStructureGroup group : DeepslateCompassStructureGroup.values()) {
+                            addCompassDialVariant(output, group);
+                        }
 
                         output.accept(JolCraftItems.WOODEN_SPANNER);
                         output.accept(JolCraftItems.STONE_SPANNER);
@@ -298,6 +311,36 @@ public final class JolCraftCreativeModeTabs {
                         }
 
                     }).build());
+
+    private static void addLegendaryTome(
+            CreativeModeTab.Output output,
+            DwarfLoreKey loreKey
+    ) {
+        ItemStack stack = new ItemStack(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get());
+
+        LoreHelper.setLoreKey(stack, loreKey);
+
+        output.accept(stack);
+    }
+
+    private static void addYeastVariants(
+            CreativeModeTab.Output output,
+            float brewingSpeed
+    ) {
+        output.accept(
+                JolCraftBrewingItems.createYeastCultureStack(
+                        JolCraftItems.YEAST_CULTURE.get(),
+                        brewingSpeed
+                )
+        );
+
+        output.accept(
+                JolCraftBrewingItems.createYeastStack(
+                        JolCraftItems.YEAST.get(),
+                        brewingSpeed
+                )
+        );
+    }
 
     private static void addCompassDialVariant(
             CreativeModeTab.Output output,

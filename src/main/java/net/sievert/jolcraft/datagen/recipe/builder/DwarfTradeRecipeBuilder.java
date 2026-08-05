@@ -1,6 +1,8 @@
 package net.sievert.jolcraft.datagen.recipe.builder;
 
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,6 +12,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -21,11 +24,14 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftOrderedEmissionBuilder;
 import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
 import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -34,6 +40,7 @@ import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
+import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeCost;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
@@ -45,6 +52,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
+import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -71,6 +79,7 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
             TradeStats.DEFAULT;
 
     private @Nullable String fileNameOverride;
+    private @Nullable String fileNameSuffix;
 
     /*
      * Naming metadata is stored by the builder rather than inferred from the
@@ -1233,6 +1242,17 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
         return this;
     }
 
+    public @NotNull DwarfTradeRecipeBuilder fileNameSuffix(
+            @Nullable String suffix
+    ) {
+        this.fileNameSuffix =
+                suffix == null || suffix.isBlank()
+                        ? null
+                        : suffix;
+
+        return this;
+    }
+
     public @NotNull DwarfTradeRecipeBuilder costAName(
             @Nullable String token
     ) {
@@ -1508,8 +1528,13 @@ public final class DwarfTradeRecipeBuilder implements JolCraftOrderedEmissionBui
             }
         }
 
-        DataResult<String> built =
-                name.build();
+        DataResult<String> built = name.build();
+
+        if (fileNameSuffix != null) {
+            built = built.map(fileName ->
+                    fileName + "_" + fileNameSuffix
+            );
+        }
 
         if (errors.isEmpty()) {
             return built;

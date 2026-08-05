@@ -6,6 +6,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHandler;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 
 public final class JolCraftCapabilities {
 
@@ -21,7 +22,8 @@ public final class JolCraftCapabilities {
                         context
                 ) -> new DwarvenBrewFluidHandler(
                         stack,
-                        JolCraftItems.GLASS_MUG.get()
+                        JolCraftItems.GLASS_MUG.get(),
+                        DwarvenBrewFluidHelper::isFinishedBrew
                 ),
                 JolCraftItems.DWARVEN_BREW.get()
         );
@@ -33,9 +35,36 @@ public final class JolCraftCapabilities {
                         context
                 ) -> new DwarvenBrewFluidHandler(
                         stack,
-                        Items.BUCKET
+                        Items.BUCKET,
+                        DwarvenBrewFluidHelper::isFinishedBrew
                 ),
                 JolCraftItems.DWARVEN_BREW_BUCKET.get()
+        );
+
+        event.registerItem(
+                Capabilities.FluidHandler.ITEM,
+                (
+                        stack,
+                        context
+                ) -> new DwarvenBrewFluidHandler(
+                        stack,
+                        Items.GLASS_BOTTLE,
+                        DwarvenBrewFluidHelper::isFinishedYeast
+                ),
+                JolCraftItems.YEAST.get()
+        );
+
+        event.registerItem(
+                Capabilities.FluidHandler.ITEM,
+                (
+                        stack,
+                        context
+                ) -> new DwarvenBrewFluidHandler(
+                        stack,
+                        Items.GLASS_BOTTLE,
+                        DwarvenBrewFluidHelper::isFinishedTannin
+                ),
+                JolCraftItems.TANNIN.get()
         );
 
         event.registerBlockEntity(

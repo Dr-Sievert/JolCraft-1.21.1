@@ -14,8 +14,24 @@ public final class BrewingColors {
             0x40B14A
     );
 
+    public static final int YEAST_CULTURE = argb(
+            0x7EB140
+    );
+
     public static final int UNFINISHED_YEAST = argb(
             0x7EB140
+    );
+
+    public static final int TANNIN = argb(
+            0x7C4B4B
+    );
+
+    public static final int REFINED_TANNIN = argb(
+            0x3D2525
+    );
+
+    public static final int UNFINISHED_TANNIN = argb(
+            0x835A5A
     );
 
     public static final int ASGARNIAN_HOPS = argb(

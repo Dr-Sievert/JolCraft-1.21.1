@@ -52,6 +52,7 @@ public final class ComponentPreservingShapelessRecipeBuilder {
     private final ArrayList<DataComponentType<?>> keep = new ArrayList<>();
     private final ArrayList<DataComponentType<?>> remove = new ArrayList<>();
     private final ArrayList<DataComponentType<?>> baseRequire = new ArrayList<>();
+    private final ArrayList<Ingredient> suppressRemainder = new ArrayList<>();
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private String group = "";
@@ -178,6 +179,30 @@ public final class ComponentPreservingShapelessRecipeBuilder {
         return this;
     }
 
+    public @NotNull ComponentPreservingShapelessRecipeBuilder suppressRemainder(
+            Ingredient ingredient
+    ) {
+        if (!ingredient.isEmpty()) {
+            this.suppressRemainder.add(ingredient);
+        }
+        return this;
+    }
+
+    public @NotNull ComponentPreservingShapelessRecipeBuilder suppressRemainders(
+            List<Ingredient> ingredients
+    ) {
+        if (ingredients.isEmpty()) {
+            return this;
+        }
+
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient != null && !ingredient.isEmpty()) {
+                this.suppressRemainder.add(ingredient);
+            }
+        }
+        return this;
+    }
+
     public @NotNull ComponentPreservingShapelessRecipeBuilder unlocks(String key, Criterion<?> criterion) {
         if (key.isBlank()) {
             return this;
@@ -258,7 +283,8 @@ public final class ComponentPreservingShapelessRecipeBuilder {
                 List.copyOf(this.remove),
                 List.copyOf(this.baseRequire),
                 this.removeAll,
-                this.set
+                this.set,
+                List.copyOf(this.suppressRemainder)
         );
     }
 }

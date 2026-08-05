@@ -2,6 +2,7 @@ package net.sievert.jolcraft.data.id.tag;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -41,7 +42,9 @@ public final class JolCraftTagIds extends JolCraftIds {
 
     public static final String HOPS = plural(JolCraftDictionary.HOP);
     public static final String HOPS_SEEDS = join(plural(JolCraftDictionary.HOP), plural(JolCraftDictionary.SEED));
-    public static final String HOPS_BREW = join(HOPS, JolCraftDictionary.BREW);
+    public static final String UNFINISHED_BREW = join(JolCraftDictionary.UNFINISHED, JolCraftDictionary.BREW);
+    public static final String YEAST_BREW = join(JolCraftItemIds.YEAST, JolCraftDictionary.BREW);
+    public static final String TANNIN_BREW = join(JolCraftDictionary.TANNIN, JolCraftDictionary.BREW);
 
     public static final String REPAIRS_DEEPSLATE = join(plural(JolCraftDictionary.REPAIR), JolCraftDictionary.DEEPSLATE);
     public static final String REPAIRS_MITHRIL = join(plural(JolCraftDictionary.REPAIR), JolCraftDictionary.MITHRIL);

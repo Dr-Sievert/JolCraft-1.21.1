@@ -14,6 +14,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.item.component.custom.BountyData;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
@@ -175,6 +176,18 @@ public final class JolCraftDataComponents {
             register(JolCraftDataComponentIds.BREW_AGE, builder -> builder
                     .persistent(Codec.LONG)
                     .networkSynchronized(ByteBufCodecs.VAR_LONG)
+            );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DwarvenBrewAge>> MAX_BREW_AGE =
+            register(JolCraftDataComponentIds.MAX_BREW_AGE, builder -> builder
+                    .persistent(DwarvenBrewAge.CODEC)
+                    .networkSynchronized(DwarvenBrewAge.STREAM_CODEC)
+            );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BREWING_SPEED =
+            register(JolCraftDataComponentIds.BREWING_SPEED, builder -> builder
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
             );
 
     // -----------------

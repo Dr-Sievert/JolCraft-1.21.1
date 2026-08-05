@@ -20,7 +20,12 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String DWARVEN_HASTE = JolCraftEffectIds.DWARVEN_HASTE;
     public static final String LONG_DWARVEN_HASTE = longPotion(DWARVEN_HASTE);
     public static final String STRONG_DWARVEN_HASTE = strongPotion(DWARVEN_HASTE);
+
     public static final String STRONG_LUCK = strongPotion(MobEffects.LUCK.unwrapKey().orElseThrow().location().getPath());
+
+    public static final String BULWARK = JolCraftEffectIds.BULWARK;
+    public static final String LONG_BULWARK = longPotion(BULWARK);
+    public static final String STRONG_BULWARK = strongPotion(BULWARK);
 
     // Harmful
     public static final String ATAXIA_CURSE = JolCraftEffectIds.ATAXIA_CURSE;

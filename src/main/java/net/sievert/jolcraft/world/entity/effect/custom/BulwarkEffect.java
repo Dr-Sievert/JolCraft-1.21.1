@@ -3,14 +3,9 @@ package net.sievert.jolcraft.world.entity.effect.custom;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 
+public class BulwarkEffect extends MobEffect {
 
-public class LockpickingEffect extends MobEffect {
-
-    public LockpickingEffect(MobEffectCategory category, int color) {
+    public BulwarkEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
 }
-
-
-
-

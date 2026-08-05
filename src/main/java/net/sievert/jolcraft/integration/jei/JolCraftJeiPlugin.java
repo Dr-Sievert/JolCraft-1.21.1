@@ -6,9 +6,13 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -32,6 +36,7 @@ import net.sievert.jolcraft.integration.jei.util.JeiCategoryDefinition;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
@@ -260,17 +265,101 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                             );
 
                     if (source instanceof RewardCrateSource.LootTableSource(
-                            net.minecraft.resources.ResourceKey<net.minecraft.world.level.storage.loot.LootTable> lootTable
+                            ResourceKey<LootTable> lootTable
                     )) {
-                        return JolCraftStrings.underscored(JolCraftDictionary.LOOT, JolCraftDictionary.TABLE) + ":" + lootTable.location();
+                        return JolCraftStrings.underscored(
+                                JolCraftDictionary.LOOT,
+                                JolCraftDictionary.TABLE
+                        ) + ":" + lootTable.location();
                     }
 
-                    if (source instanceof RewardCrateSource.RecipeSource(ResourceLocation recipeId)) {
+                    if (source instanceof RewardCrateSource.RecipeSource(
+                            ResourceLocation recipeId
+                    )) {
                         return JolCraftDictionary.RECIPE + ":" + recipeId;
                     }
 
                     return JolCraftDictionary.EMPTY;
                 }
+        );
+
+        registration.registerSubtypeInterpreter(
+                JolCraftItems.TANNIN.get(),
+                (stack, context) -> {
+                    var handler =
+                            stack.getCapability(
+                                    Capabilities.FluidHandler.ITEM
+                            );
+
+                    if (handler == null) {
+                        return JolCraftDictionary.EMPTY;
+                    }
+
+                    var fluid =
+                            handler.drain(
+                                    Integer.MAX_VALUE,
+                                    IFluidHandler.FluidAction.SIMULATE
+                            );
+
+                    if (fluid.isEmpty()) {
+                        return JolCraftDictionary.EMPTY;
+                    }
+
+                    var maxAge =
+                            fluid.getOrDefault(
+                                    JolCraftDataComponents.MAX_BREW_AGE.get(),
+                                    DwarvenBrewAge.MATURED
+                            );
+
+                    return JolCraftStrings.underscored(
+                            net.minecraft.core.registries.BuiltInRegistries.FLUID
+                                    .getKey(fluid.getFluid())
+                                    .getPath(),
+                            maxAge.getId()
+                    );
+                }
+        );
+
+        registration.registerSubtypeInterpreter(
+                JolCraftItems.YEAST.get(),
+                (stack, context) -> {
+                    var handler =
+                            stack.getCapability(
+                                    Capabilities.FluidHandler.ITEM
+                            );
+
+                    if (handler == null) {
+                        return JolCraftDictionary.EMPTY;
+                    }
+
+                    var fluid =
+                            handler.drain(
+                                    Integer.MAX_VALUE,
+                                    IFluidHandler.FluidAction.SIMULATE
+                            );
+
+                    if (fluid.isEmpty()) {
+                        return JolCraftDictionary.EMPTY;
+                    }
+
+                    float speed =
+                            fluid.getOrDefault(
+                                    JolCraftDataComponents.BREWING_SPEED.get(),
+                                    1.0F
+                            );
+
+                    return Float.toString(speed);
+                }
+        );
+
+        registration.registerSubtypeInterpreter(
+                JolCraftItems.YEAST_CULTURE.get(),
+                (stack, context) -> Float.toString(
+                        stack.getOrDefault(
+                                JolCraftDataComponents.BREWING_SPEED.get(),
+                                1.0F
+                        )
+                )
         );
     }
 }

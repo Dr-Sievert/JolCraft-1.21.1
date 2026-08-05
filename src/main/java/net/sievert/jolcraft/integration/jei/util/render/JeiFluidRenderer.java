@@ -2,17 +2,15 @@ package net.sievert.jolcraft.integration.jei.util.render;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingTooltipHelper;
 import org.jetbrains.annotations.NotNull;
 
 public final class JeiFluidRenderer {
@@ -129,46 +127,16 @@ public final class JeiFluidRenderer {
                         height
                 );
 
-        addPotionTooltip(
-                slot,
-                fluid
-        );
-    }
-
-    private static void addPotionTooltip(
-            @NotNull IRecipeSlotBuilder slot,
-            @NotNull FluidStack fluid
-    ) {
-        PotionContents potionContents =
-                fluid.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
-                );
-
-        if (!potionContents.hasEffects()) {
-            return;
-        }
-
         slot.addRichTooltipCallback(
                 (
                         recipeSlot,
                         tooltip
-                ) -> appendPotionTooltip(
-                        tooltip,
-                        potionContents
+                ) -> BrewingTooltipHelper.appendFluidTooltip(
+                        fluid,
+                        tooltip::add,
+                        1.0F,
+                        20.0F
                 )
-        );
-    }
-
-    private static void appendPotionTooltip(
-            @NotNull ITooltipBuilder tooltip,
-            @NotNull PotionContents potionContents
-    ) {
-        PotionContents.addPotionTooltip(
-                potionContents.getAllEffects(),
-                tooltip::add,
-                1.0F,
-                20.0F
         );
     }
 }

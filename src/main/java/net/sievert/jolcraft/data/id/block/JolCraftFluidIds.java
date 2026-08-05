@@ -13,5 +13,9 @@ public class JolCraftFluidIds extends JolCraftIds {
 
     public static final String YEAST = JolCraftItemIds.YEAST;
     public static final String UNFINISHED_YEAST= join(JolCraftDictionary.UNFINISHED, YEAST);
+
+    public static final String TANNIN = JolCraftItemIds.TANNIN;
+    public static final String REFINED_TANNIN = join(JolCraftDictionary.REFINED, TANNIN);
+    public static final String UNFINISHED_TANNIN = join(JolCraftDictionary.UNFINISHED, TANNIN);
 }
 

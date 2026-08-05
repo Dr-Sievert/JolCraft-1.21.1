@@ -2,12 +2,13 @@ package net.sievert.jolcraft.world.block.fluid.util.brewing;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
 import net.sievert.jolcraft.util.JolCraftEnumHelper;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 
 import java.util.Locale;
 
@@ -43,6 +44,12 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
                     DwarvenBrewAge::getId
             );
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, DwarvenBrewAge> STREAM_CODEC =
+            StreamCodec.of(
+                    FriendlyByteBuf::writeEnum,
+                    buffer -> buffer.readEnum(DwarvenBrewAge.class)
+            );
+
     private final long thresholdTicks;
     private final int amplifierBonus;
     private final String translationKey;
@@ -74,13 +81,9 @@ public enum DwarvenBrewAge implements JolCraftEnumHelper.StringId {
      * Resolves the brew age stored in an item's fluid contents.
      */
     public static DwarvenBrewAge fromStack(ItemStack stack) {
-        return FluidUtil.getFluidContained(stack)
-                .map(fluid -> fromTicks(
-                        fluid.getOrDefault(
-                                JolCraftDataComponents.BREW_AGE.get(),
-                                0L
-                        )
-                ))
+        return DwarvenBrewFluidHelper.findContainedBrew(stack)
+                .map(DwarvenBrewFluidHelper::getAge)
+                .map(DwarvenBrewAge::fromTicks)
                 .orElse(FRESH);
     }
 

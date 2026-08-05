@@ -16,7 +16,7 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String DWARVEN_HASTE = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.HASTE);
     public static final String RADIANT = JolCraftEntityObjectIds.RADIANT;
     public static final String MOON_SHIELD = JolCraftAttributeIds.MOON_SHIELD;
-
+    public static final String BULWARK = JolCraftDictionary.BULWARK;
 
     // Harmful
     public static final String ATAXIA_CURSE = join(JolCraftDictionary.ATAXIA, JolCraftDictionary.CURSE);

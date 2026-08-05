@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidActionResult;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -50,15 +51,11 @@ public final class DwarvenBrewInteractionHelper {
         FluidStack storedFluid = fluidHandler.getFluidInTank(0);
 
         if (usedItem.is(JolCraftItems.GLASS_MUG.get())) {
-            int amount = DwarvenBrewFluidHelper.getMugDrainAmount(
-                    storedFluid.getAmount()
-            );
-
             return canExtract(
                     fluidHandler,
-                    amount,
+                    DwarvenBrewFluidHelper.MUG_VOLUME,
                     hasFinishedFluid,
-                    true
+                    JolCraftFluids.DWARVEN_BREW.get()
             ) ? ItemInteractionResult.SUCCESS : ItemInteractionResult.FAIL;
         }
 
@@ -70,15 +67,19 @@ public final class DwarvenBrewInteractionHelper {
         }
 
         if (usedItem.is(Items.GLASS_BOTTLE)) {
-            return canExtract(
+            Fluid expectedFluid = getBottleFluid(storedFluid);
+
+            return expectedFluid != null
+                    && canExtract(
                     fluidHandler,
-                    JolCraftBrewingItems.YEAST_BOTTLE_VOLUME,
+                    JolCraftBrewingItems.BOTTLE_VOLUME,
                     hasFinishedFluid,
-                    false
+                    expectedFluid
             ) ? ItemInteractionResult.SUCCESS : ItemInteractionResult.FAIL;
         }
 
-        if (storedFluid.is(JolCraftFluids.YEAST.get())) {
+        if (storedFluid.is(JolCraftFluids.YEAST.get())
+                || DwarvenBrewFluidHelper.isFinishedTannin(storedFluid)) {
             return ItemInteractionResult.FAIL;
         }
 
@@ -137,11 +138,9 @@ public final class DwarvenBrewInteractionHelper {
                     usedItem,
                     fluidHandler,
                     JolCraftItems.DWARVEN_BREW.get(),
-                    DwarvenBrewFluidHelper.getMugDrainAmount(
-                            storedFluid.getAmount()
-                    ),
+                    DwarvenBrewFluidHelper.MUG_VOLUME,
                     hasFinishedFluid,
-                    true
+                    JolCraftFluids.DWARVEN_BREW.get()
             );
         }
 
@@ -157,6 +156,12 @@ public final class DwarvenBrewInteractionHelper {
         }
 
         if (usedItem.is(Items.GLASS_BOTTLE)) {
+            Fluid expectedFluid = getBottleFluid(storedFluid);
+
+            if (expectedFluid == null) {
+                return ItemInteractionResult.FAIL;
+            }
+
             return tryExtract(
                     level,
                     pos,
@@ -164,10 +169,12 @@ public final class DwarvenBrewInteractionHelper {
                     hand,
                     usedItem,
                     fluidHandler,
-                    JolCraftItems.YEAST.get(),
-                    JolCraftBrewingItems.YEAST_BOTTLE_VOLUME,
+                    DwarvenBrewFluidHelper.isFinishedTannin(storedFluid)
+                            ? JolCraftItems.TANNIN.get()
+                            : JolCraftItems.YEAST.get(),
+                    JolCraftBrewingItems.BOTTLE_VOLUME,
                     hasFinishedFluid,
-                    false
+                    expectedFluid
             );
         }
 
@@ -273,7 +280,7 @@ public final class DwarvenBrewInteractionHelper {
     }
 
     /**
-     * Extracts a fixed amount of finished brew or yeast into the supplied
+     * Extracts a fixed amount of finished brew, yeast or tannin into the supplied
      * empty container.
      */
     private static ItemInteractionResult tryExtract(
@@ -286,13 +293,13 @@ public final class DwarvenBrewInteractionHelper {
             Item filledContainer,
             int amount,
             boolean hasFinishedFluid,
-            boolean brew
+            Fluid expectedFluid
     ) {
         if (!canExtract(
                 fluidHandler,
                 amount,
                 hasFinishedFluid,
-                brew
+                expectedFluid
         )) {
             return ItemInteractionResult.FAIL;
         }
@@ -303,20 +310,13 @@ public final class DwarvenBrewInteractionHelper {
         );
 
         if (extracted.getAmount() != amount
-                || !isExpectedFluid(
-                extracted,
-                brew
-        )) {
+                || !extracted.is(expectedFluid)) {
             return ItemInteractionResult.FAIL;
         }
 
-        ItemStack result = new ItemStack(filledContainer);
-
-        result.set(
-                JolCraftDataComponents.FLUID_CONTENT.get(),
-                SimpleFluidContent.copyOf(
-                        extracted
-                )
+        ItemStack result = createFilledContainer(
+                filledContainer,
+                extracted
         );
 
         giveFilledContainer(
@@ -340,8 +340,7 @@ public final class DwarvenBrewInteractionHelper {
     }
 
     /**
-     * Returns the amount from a filled brew mug that the supplied handler can
-     * accept, including the one-millibucket rounding correction.
+     * Returns whether a full brew mug can be inserted into the supplied handler.
      */
     private static int getBrewMugFillAmount(
             ItemStack usedItem,
@@ -357,40 +356,17 @@ public final class DwarvenBrewInteractionHelper {
             FluidStack mugBrew,
             IFluidHandler fluidHandler
     ) {
-        if (mugBrew.isEmpty()) {
+        if (mugBrew.getAmount() != DwarvenBrewFluidHelper.MUG_VOLUME) {
             return 0;
         }
-
-        int mugAmount = mugBrew.getAmount();
-
-        if (mugAmount != DwarvenBrewFluidHelper.MUG_VOLUME
-                && mugAmount != DwarvenBrewFluidHelper.FIRST_MUG_VOLUME) {
-            return 0;
-        }
-
-        int remainingCapacity = fluidHandler.getTankCapacity(0)
-                - fluidHandler.getFluidInTank(0).getAmount();
-
-        int fillAmount = mugAmount;
-
-        if (mugAmount == DwarvenBrewFluidHelper.MUG_VOLUME
-                && remainingCapacity == DwarvenBrewFluidHelper.FIRST_MUG_VOLUME) {
-            fillAmount = DwarvenBrewFluidHelper.FIRST_MUG_VOLUME;
-        } else if (remainingCapacity < mugAmount) {
-            return 0;
-        }
-
-        FluidStack insertedBrew = mugBrew.copy();
-
-        insertedBrew.setAmount(fillAmount);
 
         int accepted = fluidHandler.fill(
-                insertedBrew,
+                mugBrew,
                 IFluidHandler.FluidAction.SIMULATE
         );
 
-        return accepted == fillAmount
-                ? fillAmount
+        return accepted == DwarvenBrewFluidHelper.MUG_VOLUME
+                ? DwarvenBrewFluidHelper.MUG_VOLUME
                 : 0;
     }
 
@@ -402,7 +378,7 @@ public final class DwarvenBrewInteractionHelper {
             IFluidHandler fluidHandler,
             int amount,
             boolean hasFinishedFluid,
-            boolean brew
+            Fluid expectedFluid
     ) {
         if (!hasFinishedFluid || amount <= 0) {
             return false;
@@ -414,10 +390,7 @@ public final class DwarvenBrewInteractionHelper {
         );
 
         return simulated.getAmount() == amount
-                && isExpectedFluid(
-                simulated,
-                brew
-        );
+                && simulated.is(expectedFluid);
     }
 
     /**
@@ -497,6 +470,47 @@ public final class DwarvenBrewInteractionHelper {
     }
 
     /**
+     * Creates canonical brewing containers so extracted yeast and tannin use
+     * the same component data as creative and generated variants.
+     */
+    private static ItemStack createFilledContainer(
+            Item filledContainer,
+            FluidStack extracted
+    ) {
+        if (filledContainer == JolCraftItems.YEAST.get()) {
+            return JolCraftBrewingItems.createYeastStack(
+                    filledContainer,
+                    DwarvenBrewFluidHelper.getBrewingSpeed(
+                            extracted
+                    )
+            );
+        }
+
+        if (filledContainer == JolCraftItems.TANNIN.get()) {
+            return JolCraftBrewingItems.createTanninStack(
+                    filledContainer,
+                    extracted.getFluid(),
+                    DwarvenBrewFluidHelper.getMaxAge(
+                            extracted
+                    )
+            );
+        }
+
+        ItemStack result = new ItemStack(
+                filledContainer
+        );
+
+        result.set(
+                JolCraftDataComponents.FLUID_CONTENT.get(),
+                SimpleFluidContent.copyOf(
+                        extracted
+                )
+        );
+
+        return result;
+    }
+
+    /**
      * Consumes the used container when required and inserts the filled
      * replacement into the player's inventory or drops it nearby.
      */
@@ -522,16 +536,21 @@ public final class DwarvenBrewInteractionHelper {
         );
     }
 
-    /**
-     * Returns whether the extracted fluid matches the expected finished
-     * brewing fluid.
-     */
-    private static boolean isExpectedFluid(
-            FluidStack fluid,
-            boolean brew
+    private static Fluid getBottleFluid(
+            FluidStack storedFluid
     ) {
-        return brew
-                ? fluid.is(JolCraftFluids.DWARVEN_BREW.get())
-                : fluid.is(JolCraftFluids.YEAST.get());
+        if (storedFluid.is(JolCraftFluids.YEAST.get())) {
+            return JolCraftFluids.YEAST.get();
+        }
+
+        if (storedFluid.is(JolCraftFluids.TANNIN.get())) {
+            return JolCraftFluids.TANNIN.get();
+        }
+
+        if (storedFluid.is(JolCraftFluids.REFINED_TANNIN.get())) {
+            return JolCraftFluids.REFINED_TANNIN.get();
+        }
+
+        return null;
     }
 }

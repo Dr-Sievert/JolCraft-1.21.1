@@ -47,6 +47,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String DYE = "dye";
     public static final String ENDORSE = "endorse";
     public static final String FARMING = "farming";
+    public static final String FERMENT = "ferment";
     public static final String FILL = "fill";
     public static final String FINALIZE = "finalize";
     public static final String FISHING = "fishing";
@@ -166,6 +167,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PROTECTED = "protected";
     public static final String PURE = "pure";
     public static final String RANDOM = "random";
+    public static final String REFINED = "refined";
     public static final String REINFORCED = "reinforced";
     public static final String REQUIRED = "required";
     public static final String RESTRICTED = "restricted";
@@ -258,6 +260,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BUBBLE = "bubble";
     public static final String BUCKET = "bucket";
     public static final String BULB = "bulb";
+    public static final String BULWARK = "bulwark";
     public static final String BUSH = "bush";
     public static final String BUSY = "busy";
     public static final String CACHE = "cache";
@@ -289,6 +292,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CONTENT = "content";
     public static final String CONTEXT = "context";
     public static final String CONTRACT = "contract";
+    public static final String CULTURE = "culture";
     public static final String COOLDOWN = "cooldown";
     public static final String COORDINATE = "coordinate";
     public static final String CORNER = "corner";
@@ -589,6 +593,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TAB = "tab";
     public static final String TABLE = "table";
     public static final String TABLET = "tablet";
+    public static final String TANNIN = "tannin";
     public static final String TAG = "tag";
     public static final String TANK = "tank";
     public static final String TARGET = "target";

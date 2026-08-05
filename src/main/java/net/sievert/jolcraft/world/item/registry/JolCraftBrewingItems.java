@@ -1,18 +1,27 @@
 package net.sievert.jolcraft.world.item.registry;
 
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.custom.brewing.TanninItem;
+import net.sievert.jolcraft.world.item.custom.brewing.YeastCultureItem;
+import net.sievert.jolcraft.world.item.custom.brewing.YeastItem;
 import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewBucketItem;
 import net.sievert.jolcraft.world.item.custom.food.brewing.DwarvenBrewItem;
 import net.sievert.jolcraft.world.item.food.JolCraftFoodProperties;
@@ -22,7 +31,7 @@ import java.util.function.Supplier;
 
 public final class JolCraftBrewingItems {
 
-    public static final int YEAST_BOTTLE_VOLUME = 250;
+    public static final int BOTTLE_VOLUME = 250;
 
     private JolCraftBrewingItems() {}
 
@@ -30,12 +39,31 @@ public final class JolCraftBrewingItems {
         return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.BARLEY_MALT);
     }
 
+    public static DeferredItem<Item> registerYeastCulture() {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.YEAST_CULTURE,
+                properties -> new YeastCultureItem(
+                        properties
+                                .craftRemainder(
+                                        Items.GLASS_BOTTLE
+                                )
+                                .stacksTo(
+                                        16
+                                )
+                                .component(
+                                        JolCraftDataComponents.BREWING_SPEED.get(),
+                                        DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
+                                )
+                )
+        );
+    }
+
     public static DeferredItem<Item> registerYeast(
             Supplier<? extends Fluid> fluid
     ) {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.YEAST,
-                properties -> new Item(
+                properties -> new YeastItem(
                         properties
                                 .craftRemainder(
                                         Items.GLASS_BOTTLE
@@ -55,6 +83,32 @@ public final class JolCraftBrewingItems {
         );
     }
 
+    public static DeferredItem<Item> registerTannin(
+            Supplier<? extends Fluid> fluid
+    ) {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.TANNIN,
+                properties -> new TanninItem(
+                        properties
+                                .craftRemainder(
+                                        Items.GLASS_BOTTLE
+                                )
+                                .stacksTo(
+                                        16
+                                )
+                                .component(
+                                        JolCraftDataComponents.FLUID_CONTENT.get(),
+                                        SimpleFluidContent.copyOf(
+                                                createTanninFluid(
+                                                        fluid.get(),
+                                                        DwarvenBrewAge.MATURED
+                                                )
+                                        )
+                                )
+                )
+        );
+    }
+
     public static DeferredItem<Item> registerGlassMug() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.GLASS_MUG,
@@ -67,8 +121,7 @@ public final class JolCraftBrewingItems {
     }
 
     public static DeferredItem<Item> registerDwarvenBrew(
-            DeferredItem<Item> glassMug,
-            Supplier<? extends Fluid> fluid
+            DeferredItem<Item> glassMug
     ) {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.DWARVEN_BREW,
@@ -85,8 +138,7 @@ public final class JolCraftBrewingItems {
                                 .component(
                                         JolCraftDataComponents.FLUID_CONTENT.get(),
                                         SimpleFluidContent.copyOf(
-                                                createBrewFluid(
-                                                        fluid.get(),
+                                                DwarvenBrewFluidHelper.createDwarvenBrew(
                                                         DwarvenBrewFluidHelper.MUG_VOLUME
                                                 )
                                         )
@@ -95,9 +147,7 @@ public final class JolCraftBrewingItems {
         );
     }
 
-    public static DeferredItem<Item> registerDwarvenBrewBucket(
-            Supplier<? extends Fluid> fluid
-    ) {
+    public static DeferredItem<Item> registerDwarvenBrewBucket() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.DWARVEN_BREW_BUCKET,
                 properties -> new DwarvenBrewBucketItem(
@@ -110,8 +160,7 @@ public final class JolCraftBrewingItems {
                                 .component(
                                         JolCraftDataComponents.FLUID_CONTENT.get(),
                                         SimpleFluidContent.copyOf(
-                                                createBrewFluid(
-                                                        fluid.get(),
+                                                DwarvenBrewFluidHelper.createDwarvenBrew(
                                                         FluidType.BUCKET_VOLUME
                                                 )
                                         )
@@ -120,13 +169,101 @@ public final class JolCraftBrewingItems {
         );
     }
 
-    private static FluidStack createYeastFluid(
+    public static ItemStack createYeastCultureStack(
+            ItemLike item,
+            float brewingSpeed
+    ) {
+        ItemStack stack = new ItemStack(
+                item
+        );
+
+        stack.set(
+                JolCraftDataComponents.BREWING_SPEED.get(),
+                brewingSpeed
+        );
+
+        return stack;
+    }
+
+    public static ItemStack createYeastStack(
+            ItemLike item,
+            float brewingSpeed
+    ) {
+        FluidStack fluid = createYeastFluid(
+                JolCraftFluids.YEAST.get()
+        );
+
+        fluid.set(
+                JolCraftDataComponents.BREWING_SPEED.get(),
+                brewingSpeed
+        );
+
+        return createFilledBrewingStack(
+                item,
+                fluid
+        );
+    }
+
+    public static ItemStack createTanninStack(
+            ItemLike item,
+            Fluid fluid,
+            DwarvenBrewAge maxAge
+    ) {
+        return createFilledBrewingStack(
+                item,
+                createTanninFluid(
+                        fluid,
+                        maxAge
+                )
+        );
+    }
+
+    private static ItemStack createFilledBrewingStack(
+            ItemLike item,
+            FluidStack fluid
+    ) {
+        ItemStack stack = new ItemStack(
+                item
+        );
+
+        stack.set(
+                JolCraftDataComponents.FLUID_CONTENT.get(),
+                SimpleFluidContent.copyOf(
+                        fluid
+                )
+        );
+
+        return stack;
+    }
+
+    public static ItemStack createDwarvenBrewStack(
+            DwarvenBrewAge age
+    ) {
+        return createFilledBrewingStack(
+                JolCraftItems.DWARVEN_BREW,
+                DwarvenBrewFluidHelper.createDwarvenBrew(
+                        DwarvenBrewFluidHelper.MUG_VOLUME,
+                        age,
+                        DwarvenBrewFluidHelper.DEFAULT_MAX_AGE,
+                        DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED,
+                        PotionContents.EMPTY.withEffectAdded(
+                                new MobEffectInstance(
+                                        MobEffects.DAMAGE_BOOST,
+                                        600,
+                                        age.amplifierBonus()
+                                )
+                        )
+                )
+        );
+    }
+
+    public static FluidStack createYeastFluid(
             Fluid fluid
     ) {
         FluidStack yeast =
                 new FluidStack(
                         fluid,
-                        YEAST_BOTTLE_VOLUME
+                        BOTTLE_VOLUME
                 );
 
         yeast.set(
@@ -134,34 +271,36 @@ public final class JolCraftBrewingItems {
                 BrewingColors.YEAST
         );
 
+        yeast.set(
+                JolCraftDataComponents.BREWING_SPEED.get(),
+                DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
+        );
+
         return yeast;
     }
 
-    private static FluidStack createBrewFluid(
+    public static FluidStack createTanninFluid(
             Fluid fluid,
-            int amount
+            DwarvenBrewAge maxAge
     ) {
-        FluidStack brew =
+        FluidStack tannin =
                 new FluidStack(
                         fluid,
-                        amount
+                        BOTTLE_VOLUME
                 );
 
-        brew.set(
+        tannin.set(
                 JolCraftDataComponents.BREW_COLOR.get(),
-                BrewingColors.DWARVEN_BREW
+                fluid == JolCraftFluids.REFINED_TANNIN.get()
+                        ? BrewingColors.REFINED_TANNIN
+                        : BrewingColors.TANNIN
         );
 
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                0L
+        tannin.set(
+                JolCraftDataComponents.MAX_BREW_AGE.get(),
+                maxAge
         );
 
-        brew.set(
-                DataComponents.POTION_CONTENTS,
-                PotionContents.EMPTY
-        );
-
-        return brew;
+        return tannin;
     }
 }

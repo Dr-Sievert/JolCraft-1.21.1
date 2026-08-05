@@ -4,6 +4,7 @@ import net.minecraft.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.data.models.blockstates.Variant;
 import net.minecraft.data.models.blockstates.VariantProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.JolCraft;
@@ -33,7 +34,22 @@ public record BrewingModelSubProvider(@NotNull JolCraftModelProvider parent) imp
             @NotNull JolCraftDataTracking tracking
     ) {
         builder.handheldItem(JolCraftItems.BARLEY_MALT.get(), SUB_BREWING);
-        builder.flatItem(JolCraftItems.YEAST.get(), SUB_BREWING);
+
+        potionBottle(
+                builder,
+                JolCraftItems.YEAST_CULTURE.get()
+        );
+
+        potionBottle(
+                builder,
+                JolCraftItems.YEAST.get()
+        );
+
+        potionBottle(
+                builder,
+                JolCraftItems.TANNIN.get()
+        );
+
         builder.flatItem(JolCraftItems.GLASS_MUG.get(), SUB_BREWING);
 
         fermentingCauldron(builder);
@@ -49,6 +65,17 @@ public record BrewingModelSubProvider(@NotNull JolCraftModelProvider parent) imp
                 JolCraftItems.DWARVEN_BREW_BUCKET.get(),
                 ResourceLocation.withDefaultNamespace("item/bucket"),
                 JolCraft.location("item/brewing/dwarven_brew_bucket")
+        );
+    }
+
+    private static void potionBottle(
+            @NotNull JolCraftModelBuilder builder,
+            @NotNull Item item
+    ) {
+        builder.layeredItem(
+                item,
+                ResourceLocation.withDefaultNamespace("item/potion_overlay"),
+                ResourceLocation.withDefaultNamespace("item/potion")
         );
     }
 

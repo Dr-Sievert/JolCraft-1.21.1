@@ -37,6 +37,10 @@ public final class JolCraftVanillaRecipeEvents {
         builder.addMix(JolCraftPotions.LOCKPICKING, Items.REDSTONE, JolCraftPotions.LONG_LOCKPICKING); recipes++;
         builder.addMix(JolCraftPotions.LOCKPICKING, Items.GLOWSTONE_DUST, JolCraftPotions.STRONG_LOCKPICKING); recipes++;
 
+        builder.addMix(Potions.AWKWARD, JolCraftItems.YANILLIAN_HOPS.asItem(), JolCraftPotions.BULWARK); recipes++;
+        builder.addMix(JolCraftPotions.BULWARK, Items.REDSTONE, JolCraftPotions.LONG_BULWARK); recipes++;
+        builder.addMix(JolCraftPotions.BULWARK, Items.GLOWSTONE_DUST, JolCraftPotions.STRONG_BULWARK); recipes++;
+
         builder.addMix(Potions.AWKWARD, JolCraftItems.EARTHBLOOD_DUST.asItem(), JolCraftPotions.DWARVEN_HASTE); recipes++;
         builder.addMix(JolCraftPotions.DWARVEN_HASTE, Items.REDSTONE, JolCraftPotions.LONG_DWARVEN_HASTE); recipes++;
         builder.addMix(JolCraftPotions.DWARVEN_HASTE, Items.GLOWSTONE_DUST, JolCraftPotions.STRONG_DWARVEN_HASTE); recipes++;

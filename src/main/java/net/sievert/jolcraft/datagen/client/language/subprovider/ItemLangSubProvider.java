@@ -41,6 +41,8 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
         //Items
 
         putManual(translations, JolCraftItems.YEAST, "Brewing Yeast");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_BREWING_SPEED, "Brewing Speed: %sx");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_MAX_BREW_AGE, "Maximum Brew Age: %s");
 
         putSame(translations, "Ink and Quill",
                 JolCraftItems.QUILL_FULL,

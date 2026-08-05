@@ -1,64 +1,26 @@
 package net.sievert.jolcraft.integration.jade.util;
 
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingTooltipHelper;
 import snownee.jade.api.ITooltip;
 
 /**
- * Shared helper for displaying Dwarven brew information in Jade tooltips.
+ * Shared helper for displaying brewing information in Jade tooltips.
  */
 public final class JolCraftJadeBrewingTooltipHelper {
 
     private JolCraftJadeBrewingTooltipHelper() {}
 
     /**
-     * Adds the brew's aging stage and potion effects to a Jade tooltip.
+     * Adds the fluid's age, brewing properties and potion effects.
      */
     public static void addBrewInfo(
             ITooltip tooltip,
             FluidStack brew
     ) {
-        if (brew.isEmpty()) {
-            return;
-        }
-
-        if (brew.has(
-                JolCraftDataComponents.BREW_AGE.get()
-        )) {
-            long ageTicks =
-                    brew.getOrDefault(
-                            JolCraftDataComponents.BREW_AGE.get(),
-                            0L
-                    );
-
-            DwarvenBrewAge age =
-                    DwarvenBrewAge.fromTicks(
-                            ageTicks
-                    );
-
-            tooltip.add(
-                    Component.translatable(
-                            JolCraftLanguageKeys.BREW_AGE,
-                            Component.translatable(
-                                    age.translationKey()
-                            )
-                    )
-            );
-        }
-
-        PotionContents contents =
-                brew.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
-                );
-
-        contents.addPotionTooltip(
+        BrewingTooltipHelper.appendFluidTooltip(
+                brew,
                 tooltip::add,
                 1.0F,
                 (float) JolCraftTimeHelper.TICKS_PER_SECOND

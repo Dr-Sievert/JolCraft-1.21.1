@@ -35,6 +35,7 @@ import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.world.recipe.base.condition.JolCraftRecipeConditionTypes;
+import net.sievert.jolcraft.world.recipe.base.input.JolCraftIngredientTypes;
 import net.sievert.jolcraft.world.recipe.base.output.JolCraftRecipeOutputTypes;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.worldgen.feature.JolCraftFeatures;
@@ -75,6 +76,7 @@ public class JolCraft {
         JolCraftAttachments.register(modEventBus);
         JolCraftStats.register(modEventBus);
         JolCraftRecipes.register(modEventBus);
+        JolCraftIngredientTypes.register(modEventBus);
         JolCraftAttributes.register(modEventBus);
         JolCraftFeatures.register(modEventBus);
         JolCraftStructures.STRUCTURE_TYPES.register(modEventBus);

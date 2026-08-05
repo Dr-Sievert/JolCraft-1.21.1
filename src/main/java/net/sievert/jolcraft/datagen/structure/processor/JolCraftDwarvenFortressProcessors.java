@@ -15,6 +15,7 @@ import net.sievert.jolcraft.datagen.structure.util.AbstractProcessorProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.loot.JolCraftLootTables;
 import net.sievert.jolcraft.world.worldgen.processor.custom.*;
 import net.sievert.jolcraft.world.worldgen.test.custom.RandomNotAirRuleTest;
@@ -183,7 +184,7 @@ public final class JolCraftDwarvenFortressProcessors extends AbstractProcessorPr
                                 new RandomFermentingContainerProcessor.BrewEntry(
                                         List.of(
                                                 new MobEffectInstance(
-                                                        MobEffects.DAMAGE_RESISTANCE,
+                                                        JolCraftEffects.BULWARK,
                                                         6000,
                                                         3
                                                 )

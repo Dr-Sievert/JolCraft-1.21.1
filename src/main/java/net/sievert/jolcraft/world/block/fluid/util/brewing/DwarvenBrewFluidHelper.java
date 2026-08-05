@@ -13,23 +13,145 @@ import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Shared utility for identifying, comparing, aging and merging dwarven brew fluids.
  */
 public final class DwarvenBrewFluidHelper {
 
-    public static final int MUGS_PER_BUCKET = 3;
+    public static final int MUG_VOLUME = FluidType.BUCKET_VOLUME / 2;
 
-    public static final int MUG_VOLUME = FluidType.BUCKET_VOLUME / MUGS_PER_BUCKET;
+    public static final DwarvenBrewAge DEFAULT_MAX_AGE = DwarvenBrewAge.AGED;
 
-    /**
-     * The first mug poured from a full bucket is slightly larger so that three
-     * pours consume the bucket exactly without rounding loss.
-     */
-    public static final int FIRST_MUG_VOLUME = FluidType.BUCKET_VOLUME - MUG_VOLUME * 2;
+    public static final float DEFAULT_BREWING_SPEED = 1.0F;
+
+    public static final float STRONG_BREWING_SPEED = 1.5F;
+    public static final float BREWING_SPEED_2_0 = 2.0F;
+    public static final float BREWING_SPEED_2_5 = 2.5F;
+    public static final float BREWING_SPEED_3_0 = 3.0F;
+
+    public static final List<Float> BREWING_SPEED_TIERS = List.of(
+            DEFAULT_BREWING_SPEED,
+            STRONG_BREWING_SPEED,
+            BREWING_SPEED_2_0,
+            BREWING_SPEED_2_5,
+            BREWING_SPEED_3_0
+    );
 
     private DwarvenBrewFluidHelper() {}
+
+    // =====================================================================
+    // Canonical brew creation
+    // =====================================================================
+
+    public static FluidStack createDwarvenBrew(
+            int amount
+    ) {
+        return createDwarvenBrew(
+                amount,
+                BrewingColors.DWARVEN_BREW,
+                0L,
+                DEFAULT_MAX_AGE,
+                DEFAULT_BREWING_SPEED,
+                PotionContents.EMPTY
+        );
+    }
+
+    public static FluidStack createDwarvenBrew(
+            int amount,
+            DwarvenBrewAge age,
+            DwarvenBrewAge maxAge,
+            float brewingSpeed,
+            PotionContents potionContents
+    ) {
+        return createDwarvenBrew(
+                amount,
+                BrewingColors.DWARVEN_BREW,
+                age.thresholdTicks(),
+                maxAge,
+                brewingSpeed,
+                potionContents
+        );
+    }
+
+    public static FluidStack createDwarvenBrew(
+            int amount,
+            int brewColor,
+            long brewAge,
+            DwarvenBrewAge maxBrewAge,
+            float brewingSpeed,
+            PotionContents potionContents
+    ) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException(
+                    "Brew amount must be positive"
+            );
+        }
+
+        long age = Math.max(
+                0L,
+                brewAge
+        );
+
+        DwarvenBrewAge currentAge = DwarvenBrewAge.fromTicks(
+                age
+        );
+
+        DwarvenBrewAge requestedMaxAge = Objects.requireNonNull(
+                maxBrewAge,
+                "maxBrewAge"
+        );
+
+        DwarvenBrewAge resolvedMaxAge =
+                currentAge.ordinal() > requestedMaxAge.ordinal()
+                        ? currentAge
+                        : requestedMaxAge;
+
+        float resolvedBrewingSpeed =
+                Float.isFinite(brewingSpeed)
+                        && brewingSpeed > 0.0F
+                        ? brewingSpeed
+                        : DEFAULT_BREWING_SPEED;
+
+        FluidStack brew = new FluidStack(
+                JolCraftFluids.DWARVEN_BREW.get(),
+                amount
+        );
+
+        brew.set(
+                JolCraftDataComponents.BREW_COLOR.get(),
+                BrewingColors.argb(
+                        brewColor
+                )
+        );
+
+        brew.set(
+                JolCraftDataComponents.BREW_AGE.get(),
+                age
+        );
+
+        brew.set(
+                JolCraftDataComponents.MAX_BREW_AGE.get(),
+                resolvedMaxAge
+        );
+
+        brew.set(
+                JolCraftDataComponents.BREWING_SPEED.get(),
+                resolvedBrewingSpeed
+        );
+
+        brew.set(
+                DataComponents.POTION_CONTENTS,
+                Objects.requireNonNull(
+                        potionContents,
+                        "potionContents"
+                )
+        );
+
+        return brew;
+    }
 
     // =====================================================================
     // Fluid identification
@@ -71,73 +193,59 @@ public final class DwarvenBrewFluidHelper {
         );
     }
 
+    public static boolean isFinishedTannin(
+            FluidStack fluid
+    ) {
+        return !fluid.isEmpty()
+                && (fluid.is(
+                JolCraftFluids.TANNIN.get()
+        )
+                || fluid.is(
+                JolCraftFluids.REFINED_TANNIN.get()
+        ));
+    }
+
+    public static boolean isUnfinishedTannin(
+            FluidStack fluid
+    ) {
+        return !fluid.isEmpty()
+                && fluid.is(
+                JolCraftFluids.UNFINISHED_TANNIN.get()
+        );
+    }
+
     public static boolean isFinishedBrewingFluid(
             FluidStack fluid
     ) {
         return isFinishedBrew(fluid)
-                || isFinishedYeast(fluid);
+                || isFinishedYeast(fluid)
+                || isFinishedTannin(fluid);
     }
 
     public static boolean isUnfinishedBrewingFluid(
             FluidStack fluid
     ) {
         return isUnfinishedBrew(fluid)
-                || isUnfinishedYeast(fluid);
+                || isUnfinishedYeast(fluid)
+                || isUnfinishedTannin(fluid);
     }
 
-    /**
-     * Returns whether the supplied item directly represents, or contains,
-     * finished dwarven brew.
-     */
-    public static boolean containsDwarvenBrew(
+    public static Optional<FluidStack> findContainedBrew(
             ItemStack stack
     ) {
         if (stack.isEmpty()) {
-            return false;
-        }
-
-        if (stack.is(JolCraftItems.DWARVEN_BREW.get())) {
-            return true;
+            return Optional.empty();
         }
 
         return FluidUtil.getFluidContained(stack)
-                .filter(
-                        fluid -> fluid.is(
-                                JolCraftFluids.DWARVEN_BREW.get()
-                        )
-                ).isPresent();
+                .filter(DwarvenBrewFluidHelper::isFinishedBrew);
     }
 
-    // =====================================================================
-    // Mug volumes
-    // =====================================================================
-
-    /**
-     * Returns the amount that should be drained for the next mug pour.
-     *
-     * A full bucket uses a slightly larger first pour so that all three mugs
-     * empty the container exactly.
-     */
-    public static int getMugDrainAmount(
-            int storedAmount
+    public static boolean containsDwarvenBrew(
+            ItemStack stack
     ) {
-        if (storedAmount == FluidType.BUCKET_VOLUME) {
-            return FIRST_MUG_VOLUME;
-        }
-
-        if (storedAmount >= MUG_VOLUME
-                && storedAmount <= FIRST_MUG_VOLUME) {
-            return storedAmount;
-        }
-
-        return storedAmount >= MUG_VOLUME
-                ? MUG_VOLUME
-                : 0;
+        return findContainedBrew(stack).isPresent();
     }
-
-    // =====================================================================
-    // Mug conversion
-    // =====================================================================
 
     /**
      * Extracts the contained brew from a filled dwarven brew mug.
@@ -149,7 +257,297 @@ public final class DwarvenBrewFluidHelper {
             return FluidStack.EMPTY;
         }
 
-        return FluidUtil.getFluidContained(mug).filter(DwarvenBrewFluidHelper::isFinishedBrew).map(FluidStack::copy).orElse(FluidStack.EMPTY);
+        return findContainedBrew(mug)
+                .map(FluidStack::copy)
+                .orElse(FluidStack.EMPTY);
+    }
+
+
+    // =====================================================================
+    // Component normalization
+    // =====================================================================
+
+    /**
+     * Normalizes the standard components carried by a recognized brewing fluid.
+     *
+     * @return whether the fluid was changed
+     */
+    public static boolean normalizeBrewingFluid(
+            FluidStack fluid
+    ) {
+        if (fluid.isEmpty()
+                || (!isFinishedBrewingFluid(fluid)
+                && !isUnfinishedBrewingFluid(fluid))) {
+            return false;
+        }
+
+        FluidStack original = fluid.copy();
+
+        if (!fluid.has(JolCraftDataComponents.BREW_COLOR.get())) {
+            fluid.set(
+                    JolCraftDataComponents.BREW_COLOR.get(),
+                    defaultColor(fluid)
+            );
+        }
+
+        if (isFinishedBrew(fluid)) {
+            fluid.set(
+                    JolCraftDataComponents.BREW_AGE.get(),
+                    getAge(fluid)
+            );
+        } else {
+            fluid.remove(
+                    JolCraftDataComponents.BREW_AGE.get()
+            );
+        }
+
+        if (isFinishedBrew(fluid)
+                || isUnfinishedBrew(fluid)
+                || isFinishedTannin(fluid)
+                || isUnfinishedTannin(fluid)) {
+            fluid.set(
+                    JolCraftDataComponents.MAX_BREW_AGE.get(),
+                    getMaxAge(fluid)
+            );
+        } else {
+            fluid.remove(
+                    JolCraftDataComponents.MAX_BREW_AGE.get()
+            );
+        }
+
+        if (isFinishedBrew(fluid)
+                || isUnfinishedBrew(fluid)
+                || isFinishedYeast(fluid)
+                || isUnfinishedYeast(fluid)) {
+            fluid.set(
+                    JolCraftDataComponents.BREWING_SPEED.get(),
+                    getBrewingSpeed(fluid)
+            );
+        } else {
+            fluid.remove(
+                    JolCraftDataComponents.BREWING_SPEED.get()
+            );
+        }
+
+        if (isFinishedBrew(fluid)
+                || isUnfinishedBrew(fluid)) {
+            fluid.set(
+                    DataComponents.POTION_CONTENTS,
+                    fluid.getOrDefault(
+                            DataComponents.POTION_CONTENTS,
+                            PotionContents.EMPTY
+                    )
+            );
+        } else {
+            fluid.remove(
+                    DataComponents.POTION_CONTENTS
+            );
+        }
+
+        return !FluidStack.isSameFluidSameComponents(
+                original,
+                fluid
+        );
+    }
+
+    private static int defaultColor(
+            FluidStack fluid
+    ) {
+        if (isFinishedBrew(fluid)) {
+            return BrewingColors.DWARVEN_BREW;
+        }
+
+        if (isUnfinishedBrew(fluid)) {
+            return BrewingColors.UNFINISHED_DWARVEN_BREW;
+        }
+
+        if (isFinishedYeast(fluid)) {
+            return BrewingColors.YEAST;
+        }
+
+        if (isUnfinishedYeast(fluid)) {
+            return BrewingColors.UNFINISHED_YEAST;
+        }
+
+        if (fluid.is(JolCraftFluids.REFINED_TANNIN.get())) {
+            return BrewingColors.REFINED_TANNIN;
+        }
+
+        if (fluid.is(JolCraftFluids.TANNIN.get())) {
+            return BrewingColors.TANNIN;
+        }
+
+        return BrewingColors.UNFINISHED_TANNIN;
+    }
+
+    // =====================================================================
+    // Maximum age
+    // =====================================================================
+
+    public static DwarvenBrewAge getMaxAge(
+            FluidStack fluid
+    ) {
+        DwarvenBrewAge currentAge = DwarvenBrewAge.fromTicks(
+                getAge(fluid)
+        );
+
+        DwarvenBrewAge defaultMaxAge;
+
+        if (fluid.is(
+                JolCraftFluids.REFINED_TANNIN.get()
+        )) {
+            defaultMaxAge = DwarvenBrewAge.VINTAGE;
+        } else if (isFinishedTannin(fluid)
+                || isUnfinishedTannin(fluid)) {
+            defaultMaxAge = DwarvenBrewAge.MATURED;
+        } else {
+            defaultMaxAge = currentAge.ordinal() > DEFAULT_MAX_AGE.ordinal()
+                    ? currentAge
+                    : DEFAULT_MAX_AGE;
+        }
+
+        DwarvenBrewAge storedMaxAge = fluid.getOrDefault(
+                JolCraftDataComponents.MAX_BREW_AGE.get(),
+                defaultMaxAge
+        );
+
+        DwarvenBrewAge resolvedMaxAge =
+                defaultMaxAge.ordinal() > storedMaxAge.ordinal()
+                        ? defaultMaxAge
+                        : storedMaxAge;
+
+        return currentAge.ordinal() > resolvedMaxAge.ordinal()
+                ? currentAge
+                : resolvedMaxAge;
+    }
+
+    public static Optional<DwarvenBrewAge> findContainedMaxAge(
+            ItemStack stack
+    ) {
+        return FluidUtil.getFluidContained(stack)
+                .filter(fluid -> fluid.has(
+                                JolCraftDataComponents.MAX_BREW_AGE.get()
+                        )
+                                || isFinishedBrew(fluid)
+                                || isUnfinishedBrew(fluid)
+                                || isFinishedTannin(fluid)
+                                || isUnfinishedTannin(fluid))
+                .map(DwarvenBrewFluidHelper::getMaxAge);
+    }
+
+    public static DwarvenBrewAge getContainedMaxAge(
+            ItemStack stack
+    ) {
+        return findContainedMaxAge(stack)
+                .orElse(DEFAULT_MAX_AGE);
+    }
+
+    public static void raiseMaxAge(
+            FluidStack fluid,
+            DwarvenBrewAge maxAge
+    ) {
+        DwarvenBrewAge current = getMaxAge(fluid);
+
+        fluid.set(
+                JolCraftDataComponents.MAX_BREW_AGE.get(),
+                current.ordinal() >= maxAge.ordinal()
+                        ? current
+                        : maxAge
+        );
+    }
+
+    public static void copyMaxAge(
+            FluidStack source,
+            FluidStack target
+    ) {
+        if (!source.has(JolCraftDataComponents.MAX_BREW_AGE.get())) {
+            return;
+        }
+
+        target.set(
+                JolCraftDataComponents.MAX_BREW_AGE.get(),
+                getMaxAge(source)
+        );
+    }
+
+    // =====================================================================
+    // Brewing speed
+    // =====================================================================
+
+    public static float getBrewingSpeed(
+            FluidStack fluid
+    ) {
+        float speed = fluid.getOrDefault(
+                JolCraftDataComponents.BREWING_SPEED.get(),
+                DEFAULT_BREWING_SPEED
+        );
+
+        return Float.isFinite(speed) && speed > 0.0F
+                ? speed
+                : DEFAULT_BREWING_SPEED;
+    }
+
+    public static Optional<Float> findBrewingSpeed(
+            ItemStack stack
+    ) {
+        Float directSpeed = stack.get(
+                JolCraftDataComponents.BREWING_SPEED.get()
+        );
+
+        if (directSpeed != null
+                && Float.isFinite(directSpeed)
+                && directSpeed > 0.0F) {
+            return Optional.of(
+                    directSpeed
+            );
+        }
+
+        return FluidUtil.getFluidContained(stack)
+                .filter(fluid -> fluid.has(
+                                JolCraftDataComponents.BREWING_SPEED.get()
+                        )
+                                || isFinishedYeast(fluid)
+                                || isUnfinishedYeast(fluid))
+                .map(DwarvenBrewFluidHelper::getBrewingSpeed);
+    }
+
+    public static float getBrewingSpeed(
+            ItemStack stack
+    ) {
+        return findBrewingSpeed(stack)
+                .orElse(DEFAULT_BREWING_SPEED);
+    }
+
+    public static Optional<Float> findContainedBrewingSpeed(
+            ItemStack stack
+    ) {
+        return findBrewingSpeed(
+                stack
+        );
+    }
+
+    public static float getContainedBrewingSpeed(
+            ItemStack stack
+    ) {
+        return getBrewingSpeed(
+                stack
+        );
+    }
+
+    public static void copyBrewingSpeed(
+            FluidStack source,
+            FluidStack target
+    ) {
+        if (!source.has(
+                JolCraftDataComponents.BREWING_SPEED.get()
+        )) {
+            return;
+        }
+
+        target.set(
+                JolCraftDataComponents.BREWING_SPEED.get(),
+                getBrewingSpeed(source)
+        );
     }
 
     // =====================================================================
@@ -206,6 +604,14 @@ public final class DwarvenBrewFluidHelper {
         return fresh;
     }
 
+    public static boolean canAgeFurther(
+            FluidStack brew
+    ) {
+        return isFinishedBrew(brew)
+                && getAge(brew)
+                < getMaxAge(brew).thresholdTicks();
+    }
+
     /**
      * Adds age directly to the supplied stack and applies any newly earned
      * amplifier increases.
@@ -222,9 +628,20 @@ public final class DwarvenBrewFluidHelper {
                 brew
         );
 
-        long currentAgeTicks = addClamped(
-                previousAgeTicks,
-                addedTicks
+        long maxAgeTicks = getMaxAge(
+                brew
+        ).thresholdTicks();
+
+        if (previousAgeTicks >= maxAgeTicks) {
+            return;
+        }
+
+        long currentAgeTicks = Math.min(
+                maxAgeTicks,
+                addClamped(
+                        previousAgeTicks,
+                        addedTicks
+                )
         );
 
         if (currentAgeTicks <= previousAgeTicks) {
@@ -330,11 +747,14 @@ public final class DwarvenBrewFluidHelper {
             return FluidStack.EMPTY;
         }
 
-        long mergedAge = weightedAverageAge(
-                getAge(stored),
-                stored.getAmount(),
-                getAge(incoming),
-                actualIncomingAmount
+        long mergedAge = Math.min(
+                getMaxAge(stored).thresholdTicks(),
+                weightedAverageAge(
+                        getAge(stored),
+                        stored.getAmount(),
+                        getAge(incoming),
+                        actualIncomingAmount
+                )
         );
 
         FluidStack merged = withoutAging(stored);
@@ -366,6 +786,9 @@ public final class DwarvenBrewFluidHelper {
     ) {
         FluidStack normalized = brew.copy();
 
+        normalizeMaxAgeComponent(normalized);
+        normalizeBrewingSpeedComponent(normalized);
+
         normalized.remove(JolCraftDataComponents.BREW_AGE.get());
 
         return normalized;
@@ -378,6 +801,9 @@ public final class DwarvenBrewFluidHelper {
 
         int amplifierBonus = DwarvenBrewAge.fromTicks(getAge(normalized)).amplifierBonus();
 
+        normalizeMaxAgeComponent(normalized);
+        normalizeBrewingSpeedComponent(normalized);
+
         normalized.remove(JolCraftDataComponents.BREW_AGE.get());
 
         adjustBrewEffects(
@@ -386,6 +812,34 @@ public final class DwarvenBrewFluidHelper {
         );
 
         return normalized;
+    }
+
+    private static void normalizeMaxAgeComponent(
+            FluidStack fluid
+    ) {
+        if (isFinishedBrew(fluid)
+                || isUnfinishedBrew(fluid)
+                || isFinishedTannin(fluid)
+                || isUnfinishedTannin(fluid)) {
+            fluid.set(
+                    JolCraftDataComponents.MAX_BREW_AGE.get(),
+                    getMaxAge(fluid)
+            );
+        }
+    }
+
+    private static void normalizeBrewingSpeedComponent(
+            FluidStack fluid
+    ) {
+        if (isFinishedBrew(fluid)
+                || isUnfinishedBrew(fluid)
+                || isFinishedYeast(fluid)
+                || isUnfinishedYeast(fluid)) {
+            fluid.set(
+                    JolCraftDataComponents.BREWING_SPEED.get(),
+                    getBrewingSpeed(fluid)
+            );
+        }
     }
 
     private static void applyAgeAmplifierIncrease(

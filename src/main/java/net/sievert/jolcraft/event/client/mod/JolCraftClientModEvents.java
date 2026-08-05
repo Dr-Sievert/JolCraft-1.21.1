@@ -204,6 +204,24 @@ public final class JolCraftClientModEvents {
                 JolCraftFluids.UNFINISHED_YEAST_TYPE.get(),
                 BrewingColors.UNFINISHED_YEAST
         );
+
+        registerTintedFluid(
+                event,
+                JolCraftFluids.TANNIN_TYPE.get(),
+                BrewingColors.TANNIN
+        );
+
+        registerTintedFluid(
+                event,
+                JolCraftFluids.REFINED_TANNIN_TYPE.get(),
+                BrewingColors.REFINED_TANNIN
+        );
+
+        registerTintedFluid(
+                event,
+                JolCraftFluids.UNFINISHED_TANNIN_TYPE.get(),
+                BrewingColors.UNFINISHED_TANNIN
+        );
     }
 
     private static void registerTintedFluid(

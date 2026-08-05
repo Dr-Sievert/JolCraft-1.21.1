@@ -283,6 +283,8 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String YANILLIAN_HOPS = join(JolCraftDictionary.YANILLIAN, plural(JolCraftDictionary.HOP));
 
     public static final String YEAST = JolCraftDictionary.YEAST;
+    public static final String YEAST_CULTURE = join(YEAST, JolCraftDictionary.CULTURE);
+    public static final String TANNIN = JolCraftDictionary.TANNIN;
     public static final String GLASS_MUG = join(JolCraftDictionary.GLASS, JolCraftDictionary.MUG);
     public static final String DWARVEN_BREW = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.BREW);
     public static final String DWARVEN_BREW_BUCKET = join(DWARVEN_BREW, JolCraftDictionary.BUCKET);

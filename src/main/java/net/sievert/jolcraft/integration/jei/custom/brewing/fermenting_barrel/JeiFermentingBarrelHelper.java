@@ -1,15 +1,18 @@
 package net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.integration.jei.util.fluid.JeiBrewingFluids;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class JeiFermentingBarrelHelper {
@@ -43,54 +46,92 @@ public final class JeiFermentingBarrelHelper {
     }
 
     public static @NotNull List<JeiFermentingBarrelRecipe> getRecipes() {
-        return List.of(
-                agingRecipe(
-                        FRESH_TO_AGED_ID,
-                        DwarvenBrewAge.FRESH,
-                        DwarvenBrewAge.AGED
-                ),
-                agingRecipe(
-                        AGED_TO_MATURE_ID,
-                        DwarvenBrewAge.AGED,
-                        DwarvenBrewAge.MATURED
-                ),
-                agingRecipe(
-                        MATURE_TO_VINTAGE_ID,
-                        DwarvenBrewAge.MATURED,
-                        DwarvenBrewAge.VINTAGE
-                ),
-                mugExtractionRecipe(),
+        List<JeiFermentingBarrelRecipe> result =
+                new ArrayList<>();
+
+        addAgingRecipes(
+                result,
+                FRESH_TO_AGED_ID,
+                DwarvenBrewAge.FRESH,
+                DwarvenBrewAge.AGED
+        );
+
+        addAgingRecipes(
+                result,
+                AGED_TO_MATURE_ID,
+                DwarvenBrewAge.AGED,
+                DwarvenBrewAge.MATURED
+        );
+
+        addAgingRecipes(
+                result,
+                MATURE_TO_VINTAGE_ID,
+                DwarvenBrewAge.MATURED,
+                DwarvenBrewAge.VINTAGE
+        );
+
+        result.add(
+                mugExtractionRecipe()
+        );
+
+        result.add(
                 bucketExtractionRecipe()
+        );
+
+        return List.copyOf(
+                result
+        );
+    }
+
+    private static void addAgingRecipes(
+            @NotNull List<JeiFermentingBarrelRecipe> result,
+            @NotNull ResourceLocation id,
+            @NotNull DwarvenBrewAge inputAge,
+            @NotNull DwarvenBrewAge outputAge
+    ) {
+        result.add(
+                agingRecipe(
+                        id,
+                        inputAge,
+                        outputAge,
+                        DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
+                )
         );
     }
 
     private static @NotNull JeiFermentingBarrelRecipe agingRecipe(
             @NotNull ResourceLocation id,
             @NotNull DwarvenBrewAge inputAge,
-            @NotNull DwarvenBrewAge outputAge
+            @NotNull DwarvenBrewAge outputAge,
+            float brewingSpeed
     ) {
         return new JeiFermentingBarrelRecipe(
                 id,
                 new JeiFermentingBarrelRecipe.AgingProcess(
                         stage(
-                                inputAge
+                                inputAge,
+                                outputAge,
+                                brewingSpeed
                         ),
                         stage(
-                                outputAge
+                                outputAge,
+                                outputAge,
+                                brewingSpeed
                         )
                 )
         );
     }
 
     private static @NotNull JeiFermentingBarrelRecipe.Stage stage(
-            @NotNull DwarvenBrewAge age
+            @NotNull DwarvenBrewAge age,
+            @NotNull DwarvenBrewAge maxAge,
+            float brewingSpeed
     ) {
         return new JeiFermentingBarrelRecipe.Stage(
-                Component.translatable(
-                        age.translationKey()
-                ),
                 JeiBrewingFluids.dwarvenBrew(
                         age,
+                        maxAge,
+                        brewingSpeed,
                         JeiBrewingFluids.displayStrengthEffect(
                                 age.amplifierBonus()
                         )
@@ -102,14 +143,28 @@ public final class JeiFermentingBarrelHelper {
         return new JeiFermentingBarrelRecipe(
                 BREW_MUG_EXTRACTION_ID,
                 new JeiFermentingBarrelRecipe.ExtractionProcess(
-                        JeiBrewingFluids.dwarvenBrewMug(),
+                        JeiBrewingFluids.dwarvenBrew(
+                                DwarvenBrewFluidHelper.MUG_VOLUME,
+                                DwarvenBrewAge.VINTAGE,
+                                DwarvenBrewAge.VINTAGE,
+                                DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED,
+                                PotionContents.EMPTY.withEffectAdded(
+                                        JeiBrewingFluids.displayStrengthEffect(
+                                                DwarvenBrewAge.VINTAGE.amplifierBonus()
+                                        )
+                                )
+                        ),
                         List.of(
                                 new ItemStack(
                                         JolCraftItems.GLASS_MUG.get()
                                 )
                         ),
                         List.of(
-                                JeiBrewingFluids.dwarvenBrewItem()
+                                JeiBrewingFluids.dwarvenBrewItem(
+                                        DwarvenBrewAge.VINTAGE,
+                                        DwarvenBrewAge.VINTAGE,
+                                        DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
+                                )
                         )
                 )
         );
@@ -119,15 +174,23 @@ public final class JeiFermentingBarrelHelper {
         return new JeiFermentingBarrelRecipe(
                 BREW_BUCKET_EXTRACTION_ID,
                 new JeiFermentingBarrelRecipe.ExtractionProcess(
-                        JeiBrewingFluids.dwarvenBrew(),
+                        JeiBrewingFluids.dwarvenBrew(
+                                FluidType.BUCKET_VOLUME,
+                                DwarvenBrewAge.VINTAGE,
+                                DwarvenBrewAge.VINTAGE,
+                                DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED,
+                                PotionContents.EMPTY
+                        ),
                         List.of(
                                 new ItemStack(
                                         Items.BUCKET
                                 )
                         ),
                         List.of(
-                                new ItemStack(
-                                        JolCraftItems.DWARVEN_BREW_BUCKET.get()
+                                JeiBrewingFluids.dwarvenBrewBucket(
+                                        DwarvenBrewAge.VINTAGE,
+                                        DwarvenBrewAge.VINTAGE,
+                                        DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
                                 )
                         )
                 )

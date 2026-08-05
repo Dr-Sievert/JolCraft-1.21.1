@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -25,6 +26,9 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
@@ -309,8 +313,35 @@ public final class FermentingCauldronProcess {
         startBrew(
                 level,
                 pos,
-                recipe.brewTicks(),
+                resolveBrewTicks(
+                        ingredient,
+                        recipe
+                ),
                 recipe.bubbleTicks()
+        );
+    }
+
+    private static int resolveBrewTicks(
+            ItemStack ingredient,
+            FermentingCauldronRecipe recipe
+    ) {
+        if (!recipe.finalizeBrew()
+                || recipe.outputFluid()
+                != FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+            return recipe.brewTicks();
+        }
+
+        float brewingSpeed =
+                DwarvenBrewFluidHelper.getBrewingSpeed(
+                        ingredient
+                );
+
+        return Math.max(
+                1,
+                (int) Math.ceil(
+                        recipe.brewTicks()
+                                / (double) brewingSpeed
+                )
         );
     }
 
@@ -503,6 +534,29 @@ public final class FermentingCauldronProcess {
     public FluidStack createUnfinishedBrewFluid(
             int amount
     ) {
+        return createUnfinishedBrewFluid(
+                amount,
+                FluidStack.EMPTY,
+                null
+        );
+    }
+
+    public FluidStack createUnfinishedBrewFluid(
+            int amount,
+            FluidStack previousFluid
+    ) {
+        return createUnfinishedBrewFluid(
+                amount,
+                previousFluid,
+                null
+        );
+    }
+
+    public FluidStack createUnfinishedBrewFluid(
+            int amount,
+            FluidStack previousFluid,
+            FermentingCauldronRecipe recipe
+    ) {
         FluidStack fluid =
                 new FluidStack(
                         switch (outputFluid) {
@@ -514,6 +568,10 @@ public final class FermentingCauldronProcess {
                                     JolCraftFluids
                                             .UNFINISHED_YEAST
                                             .get();
+                            case TANNIN ->
+                                    JolCraftFluids
+                                            .UNFINISHED_TANNIN
+                                            .get();
                         },
                         clampFluidAmount(
                                 amount
@@ -522,6 +580,18 @@ public final class FermentingCauldronProcess {
 
         applyFluidComponents(
                 fluid
+        );
+
+        applyMaxBrewAge(
+                fluid,
+                previousFluid,
+                recipe
+        );
+
+        applyBrewingSpeed(
+                fluid,
+                previousFluid,
+                recipe
         );
 
         return fluid;
@@ -560,20 +630,35 @@ public final class FermentingCauldronProcess {
      * Creates finished brewing fluid containing the current process color and effects. Finished dwarven brew begins at age zero.
      */
     public FluidStack createFinishedBrewFluid(
-            int amount
+            int amount,
+            FluidStack unfinishedFluid
     ) {
+        if (outputFluid
+                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+            return DwarvenBrewFluidHelper.createDwarvenBrew(
+                    clampFluidAmount(
+                            amount
+                    ),
+                    currentColor,
+                    0L,
+                    DwarvenBrewFluidHelper.getMaxAge(
+                            unfinishedFluid
+                    ),
+                    DwarvenBrewFluidHelper.getBrewingSpeed(
+                            unfinishedFluid
+                    ),
+                    createPotionContents()
+            );
+        }
+
         FluidStack fluid =
                 new FluidStack(
-                        switch (outputFluid) {
-                            case DWARVEN_BREW ->
-                                    JolCraftFluids
-                                            .DWARVEN_BREW
-                                            .get();
-                            case YEAST ->
-                                    JolCraftFluids
-                                            .YEAST
-                                            .get();
-                        },
+                        outputFluid
+                                == FermentingCauldronRecipe.OutputFluid.YEAST
+                                ? JolCraftFluids.YEAST.get()
+                                : finishedTanninFluid(
+                                        unfinishedFluid
+                                ),
                         clampFluidAmount(
                                 amount
                         )
@@ -584,10 +669,46 @@ public final class FermentingCauldronProcess {
         );
 
         if (outputFluid
-                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+                == FermentingCauldronRecipe.OutputFluid.YEAST) {
             fluid.set(
-                    JolCraftDataComponents.BREW_AGE.get(),
-                    0L
+                    JolCraftDataComponents.BREW_COLOR.get(),
+                    BrewingColors.YEAST
+            );
+        }
+
+        if (outputFluid
+                == FermentingCauldronRecipe.OutputFluid.TANNIN) {
+            fluid.set(
+                    JolCraftDataComponents.BREW_COLOR.get(),
+                    fluid.is(
+                            JolCraftFluids.REFINED_TANNIN.get()
+                    )
+                            ? BrewingColors.REFINED_TANNIN
+                            : BrewingColors.TANNIN
+            );
+        }
+
+        if (outputFluid
+                != FermentingCauldronRecipe.OutputFluid.YEAST) {
+            DwarvenBrewFluidHelper.copyMaxAge(
+                    unfinishedFluid,
+                    fluid
+            );
+
+            ensureDefaultMaxBrewAge(
+                    fluid
+            );
+        }
+
+        if (outputFluid
+                != FermentingCauldronRecipe.OutputFluid.TANNIN) {
+            DwarvenBrewFluidHelper.copyBrewingSpeed(
+                    unfinishedFluid,
+                    fluid
+            );
+
+            ensureDefaultBrewingSpeed(
+                    fluid
             );
         }
 
@@ -613,7 +734,127 @@ public final class FermentingCauldronProcess {
                                     .UNFINISHED_YEAST
                                     .get()
                     );
+            case TANNIN ->
+                    fluid.is(
+                            JolCraftFluids
+                                    .UNFINISHED_TANNIN
+                                    .get()
+                    );
         };
+    }
+
+    private void applyMaxBrewAge(
+            FluidStack fluid,
+            FluidStack previousFluid,
+            FermentingCauldronRecipe recipe
+    ) {
+        DwarvenBrewFluidHelper.copyMaxAge(
+                previousFluid,
+                fluid
+        );
+
+        if (recipe != null) {
+            recipe.maxBrewAge().ifPresent(
+                    age -> DwarvenBrewFluidHelper.raiseMaxAge(
+                            fluid,
+                            age
+                    )
+            );
+        }
+
+        if (outputFluid
+                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+            DwarvenBrewFluidHelper.findContainedMaxAge(
+                    lastIngredient
+            ).ifPresent(
+                    age -> DwarvenBrewFluidHelper.raiseMaxAge(
+                            fluid,
+                            age
+                    )
+            );
+        }
+
+        if (outputFluid
+                != FermentingCauldronRecipe.OutputFluid.YEAST) {
+            ensureDefaultMaxBrewAge(
+                    fluid
+            );
+        }
+    }
+
+    private void applyBrewingSpeed(
+            FluidStack fluid,
+            FluidStack previousFluid,
+            FermentingCauldronRecipe recipe
+    ) {
+        if (outputFluid
+                == FermentingCauldronRecipe.OutputFluid.TANNIN) {
+            return;
+        }
+
+        DwarvenBrewFluidHelper.copyBrewingSpeed(
+                previousFluid,
+                fluid
+        );
+
+        if (recipe != null) {
+            recipe.brewingSpeed().ifPresent(
+                    speed -> fluid.set(
+                            JolCraftDataComponents.BREWING_SPEED.get(),
+                            speed
+                    )
+            );
+        }
+
+        if (outputFluid
+                == FermentingCauldronRecipe.OutputFluid.YEAST
+                || outputFluid
+                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+            DwarvenBrewFluidHelper.findBrewingSpeed(
+                    lastIngredient
+            ).ifPresent(
+                    speed -> fluid.set(
+                            JolCraftDataComponents.BREWING_SPEED.get(),
+                            speed
+                    )
+            );
+        }
+
+        ensureDefaultBrewingSpeed(
+                fluid
+        );
+    }
+
+    private static void ensureDefaultBrewingSpeed(
+            FluidStack fluid
+    ) {
+        if (fluid.has(
+                JolCraftDataComponents.BREWING_SPEED.get()
+        )) {
+            return;
+        }
+
+        fluid.set(
+                JolCraftDataComponents.BREWING_SPEED.get(),
+                DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
+        );
+    }
+
+    private void ensureDefaultMaxBrewAge(
+            FluidStack fluid
+    ) {
+        if (fluid.has(
+                JolCraftDataComponents.MAX_BREW_AGE.get()
+        )) {
+            return;
+        }
+
+        fluid.set(
+                JolCraftDataComponents.MAX_BREW_AGE.get(),
+                outputFluid == FermentingCauldronRecipe.OutputFluid.TANNIN
+                        ? DwarvenBrewAge.MATURED
+                        : DwarvenBrewFluidHelper.DEFAULT_MAX_AGE
+        );
     }
 
     private static int clampFluidAmount(
@@ -628,6 +869,18 @@ public final class FermentingCauldronProcess {
         );
     }
 
+    private static Fluid finishedTanninFluid(
+            FluidStack unfinishedFluid
+    ) {
+        return DwarvenBrewFluidHelper.getMaxAge(
+                        unfinishedFluid
+                )
+                .ordinal()
+                >= DwarvenBrewAge.VINTAGE.ordinal()
+                ? JolCraftFluids.REFINED_TANNIN.get()
+                : JolCraftFluids.TANNIN.get();
+    }
+
     /**
      * Writes the current brew color and effects onto the supplied fluid and removes any stale aging data.
      */
@@ -639,10 +892,17 @@ public final class FermentingCauldronProcess {
                 currentColor
         );
 
-        fluid.set(
-                DataComponents.POTION_CONTENTS,
-                createPotionContents()
-        );
+        if (outputFluid
+                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+            fluid.set(
+                    DataComponents.POTION_CONTENTS,
+                    createPotionContents()
+            );
+        } else {
+            fluid.remove(
+                    DataComponents.POTION_CONTENTS
+            );
+        }
 
         fluid.remove(
                 JolCraftDataComponents.BREW_AGE.get()

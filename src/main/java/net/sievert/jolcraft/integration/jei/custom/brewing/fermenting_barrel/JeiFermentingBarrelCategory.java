@@ -8,7 +8,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_CONTENT_SIZE;
-import static net.sievert.jolcraft.integration.jei.util.gui.JeiGuiConstants.SLOT_SIZE;
 import static net.sievert.jolcraft.integration.jei.util.gui.JeiTextures.ARROW_WIDTH;
 
 @ParametersAreNonnullByDefault
@@ -39,7 +37,6 @@ public final class JeiFermentingBarrelCategory
     private static final int WIDTH = 124;
     private static final int HEIGHT = 52;
 
-    private static final int TITLE_Y = 1;
     private static final int AGING_SLOT_Y = 13;
     private static final int CLOCK_Y = 34;
 
@@ -148,23 +145,6 @@ public final class JeiFermentingBarrelCategory
                 CLOCK_Y
         );
 
-        JeiDrawHelper.drawCenteredText(
-                graphics,
-                Minecraft.getInstance().font,
-                process.input().title(),
-                AGING_LAYOUT.inputA().x()
-                        + SLOT_SIZE / 2.0F,
-                TITLE_Y
-        );
-
-        JeiDrawHelper.drawCenteredText(
-                graphics,
-                Minecraft.getInstance().font,
-                process.output().title(),
-                AGING_LAYOUT.output().x()
-                        + SLOT_SIZE / 2.0F,
-                TITLE_Y
-        );
     }
 
     private void drawExtractionProcess(

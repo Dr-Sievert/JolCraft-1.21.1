@@ -57,6 +57,18 @@ public final class JolCraftPotions {
             () -> new Potion(JolCraftPotionIds.STRONG_LUCK,
                     new MobEffectInstance(MobEffects.LUCK, 6000, 1)));
 
+    public static final Holder<Potion> BULWARK = POTIONS.register(JolCraftPotionIds.BULWARK,
+            () -> new Potion(JolCraftPotionIds.BULWARK,
+                    new MobEffectInstance(JolCraftEffects.BULWARK, 600, 0)));
+
+    public static final Holder<Potion> LONG_BULWARK = POTIONS.register(JolCraftPotionIds.LONG_BULWARK,
+            () -> new Potion(JolCraftPotionIds.LONG_BULWARK,
+                    new MobEffectInstance(JolCraftEffects.BULWARK, 1200, 0)));
+
+    public static final Holder<Potion> STRONG_BULWARK = POTIONS.register(JolCraftPotionIds.STRONG_BULWARK,
+            () -> new Potion(JolCraftPotionIds.STRONG_BULWARK,
+                    new MobEffectInstance(JolCraftEffects.BULWARK, 600, 1)));
+
     // Harmful
 
     public static final Holder<Potion> ATAXIA_CURSE = POTIONS.register(JolCraftPotionIds.ATAXIA_CURSE,

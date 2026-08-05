@@ -1,6 +1,5 @@
 package net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -52,16 +51,10 @@ public record JeiFermentingBarrelRecipe(
     }
 
     public record Stage(
-            @NotNull Component title,
             @NotNull FluidStack brew
     ) {
 
         public Stage {
-            Objects.requireNonNull(
-                    title,
-                    JolCraftDictionary.TITLE
-            );
-
             Objects.requireNonNull(
                     brew,
                     JolCraftDictionary.FLUID

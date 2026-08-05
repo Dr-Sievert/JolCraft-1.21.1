@@ -1,25 +1,21 @@
-package net.sievert.jolcraft.world.item.custom.food.brewing;
+package net.sievert.jolcraft.world.item.custom.brewing;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingTooltipHelper;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-/**
- * A capability-backed brew container. It intentionally does not extend
- * BucketItem because brew components cannot survive placement as a world fluid.
- */
-public final class DwarvenBrewBucketItem extends Item {
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public final class YeastItem extends Item {
 
-    public DwarvenBrewBucketItem(
-            Properties properties
-    ) {
-        super(
-                properties
-        );
+    public YeastItem(Properties properties) {
+        super(properties);
     }
 
     @Override

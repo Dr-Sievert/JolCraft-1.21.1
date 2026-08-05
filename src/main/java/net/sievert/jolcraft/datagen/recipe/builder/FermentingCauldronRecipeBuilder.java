@@ -7,6 +7,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftEmissionBuilder;
 import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.EffectOutput;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipe;
@@ -37,6 +38,12 @@ public final class FermentingCauldronRecipeBuilder
 
     private int brewColor =
             FermentingCauldronRecipe.DEFAULT_BREW_COLOR;
+
+    private Optional<DwarvenBrewAge> maxBrewAge =
+            FermentingCauldronRecipe.DEFAULT_MAX_BREW_AGE;
+
+    private Optional<Float> brewingSpeed =
+            FermentingCauldronRecipe.DEFAULT_BREWING_SPEED;
 
     private FermentingCauldronRecipe.OutputFluid outputFluid =
             FermentingCauldronRecipe.DEFAULT_OUTPUT_FLUID;
@@ -133,24 +140,28 @@ public final class FermentingCauldronRecipeBuilder
         return this;
     }
 
+    public FermentingCauldronRecipeBuilder maxBrewAge(
+            @NotNull DwarvenBrewAge maxBrewAge
+    ) {
+        this.maxBrewAge = Optional.of(maxBrewAge);
+
+        return this;
+    }
+
+    public FermentingCauldronRecipeBuilder brewingSpeed(
+            float brewingSpeed
+    ) {
+        this.brewingSpeed = Optional.of(brewingSpeed);
+
+        return this;
+    }
+
     public FermentingCauldronRecipeBuilder outputFluid(
             @NotNull FermentingCauldronRecipe.OutputFluid outputFluid
     ) {
         this.outputFluid = outputFluid;
 
         return this;
-    }
-
-    public FermentingCauldronRecipeBuilder dwarvenBrew() {
-        return outputFluid(
-                FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW
-        );
-    }
-
-    public FermentingCauldronRecipeBuilder yeast() {
-        return outputFluid(
-                FermentingCauldronRecipe.OutputFluid.YEAST
-        );
     }
 
     public FermentingCauldronRecipeBuilder finalizeBrew(
@@ -185,6 +196,8 @@ public final class FermentingCauldronRecipeBuilder
                         brewTicks,
                         bubbleTicks,
                         brewColor,
+                        maxBrewAge,
+                        brewingSpeed,
                         outputFluid,
                         finalizeBrew
                 );

@@ -64,7 +64,9 @@ public final class JolCraftTags {
         public static final TagKey<Item> REPUTATION_TABLETS = createTag(JolCraftTagIds.REPUTATION_TABLETS);
         public static final TagKey<Item> HOPS_SEEDS = createTag(JolCraftTagIds.HOPS_SEEDS);
         public static final TagKey<Item> HOPS = createTag(JolCraftTagIds.HOPS);
-        public static final TagKey<Item> HOPS_BREW = createTag(JolCraftTagIds.HOPS_BREW);
+        public static final TagKey<Item> UNFINISHED_BREW = createTag(JolCraftTagIds.UNFINISHED_BREW);
+        public static final TagKey<Item> YEAST_BREW = createTag(JolCraftTagIds.YEAST_BREW);
+        public static final TagKey<Item> TANNIN_BREW = createTag(JolCraftTagIds.TANNIN_BREW);
         public static final TagKey<Item> REPAIRS_DEEPSLATE = createTag(JolCraftTagIds.REPAIRS_DEEPSLATE);
         public static final TagKey<Item> REPAIRS_MITHRIL = createTag(JolCraftTagIds.REPAIRS_MITHRIL);
         public static final TagKey<Item> MITHRIL_ITEMS = createTag(JolCraftTagIds.MITHRIL_ITEMS);

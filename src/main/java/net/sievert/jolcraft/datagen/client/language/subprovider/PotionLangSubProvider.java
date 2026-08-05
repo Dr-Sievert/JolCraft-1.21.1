@@ -35,7 +35,7 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations,  JolCraftPotions.ANCIENT_MEMORY, "Ancient Memory", true, false);
         addPotion(translations,  JolCraftPotions.LOCKPICKING, "Lockpicking", true, true);
         addPotion(translations,  JolCraftPotions.DWARVEN_HASTE, "Mining", true, true);
-
+        addPotion(translations,  JolCraftPotions.BULWARK, "Bulwark", true, true);
 
         addPotion(translations,  JolCraftPotions.ATAXIA_CURSE, "Ataxia", false, false);
         addPotion(translations,  JolCraftPotions.CURSED_WOUND, "Cursed Wound", false, false);

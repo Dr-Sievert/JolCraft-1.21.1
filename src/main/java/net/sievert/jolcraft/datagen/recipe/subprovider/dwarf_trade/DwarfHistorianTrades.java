@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
@@ -45,19 +44,6 @@ public record DwarfHistorianTrades(JolCraftDataProvider<RecipeOutput> parent) im
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-
-        // NOVICE
-
-        emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
-                .merchantLevel(DwarfMerchantData.Level.NOVICE)
-                .costACoins(1, 2)
-                .noCostB()
-                .result(Items.PAPER, 3, 5)
-                .maxUses(3)
-                .dwarfXp(1)
-                .priceMultiplier(0.05F)
-        );
-
         emitOrdered(output, tracking, trade(
                 DwarfMerchantData.Level.NOVICE,
                 JolCraftItems.DWARVEN_TOME_COMMON,
@@ -90,10 +76,48 @@ public record DwarfHistorianTrades(JolCraftDataProvider<RecipeOutput> parent) im
                 125
         ));
 
-        // APPRENTICE
+        emitOrdered(output, tracking, trade(
+                DwarfMerchantData.Level.NOVICE,
+                JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON,
+                6,
+                10,
+                5
+        ));
+
+        emitOrdered(output, tracking, trade(
+                DwarfMerchantData.Level.NOVICE,
+                JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON,
+                8,
+                10,
+                35
+        ));
+
+        emitOrdered(output, tracking, trade(
+                DwarfMerchantData.Level.NOVICE,
+                JolCraftItems.ANCIENT_DWARVEN_TOME_RARE,
+                13,
+                10,
+                75
+        ));
+
+        emitOrdered(output, tracking, trade(
+                DwarfMerchantData.Level.NOVICE,
+                JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC,
+                25,
+                10,
+                125
+        ));
+
+        emitOrdered(output, tracking, trade(
+                DwarfMerchantData.Level.NOVICE,
+                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY,
+                50,
+                10,
+                250
+        ));
 
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
-                .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
+                .merchantLevel(DwarfMerchantData.Level.NOVICE)
                 .costACoins(1, 3)
                 .noCostB()
                 .result(JolCraftItems.PARCHMENT, 1, 3)
@@ -112,52 +136,8 @@ public record DwarfHistorianTrades(JolCraftDataProvider<RecipeOutput> parent) im
                 .priceMultiplier(0.05F)
         );
 
-        // JOURNEYMAN
-
-        emitOrdered(output, tracking, trade(
-                DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.ANCIENT_DWARVEN_TOME_COMMON,
-                6,
-                10,
-                5
-        ));
-
-        emitOrdered(output, tracking, trade(
-                DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.ANCIENT_DWARVEN_TOME_UNCOMMON,
-                8,
-                10,
-                35
-        ));
-
-        emitOrdered(output, tracking, trade(
-                DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.ANCIENT_DWARVEN_TOME_RARE,
-                13,
-                10,
-                75
-        ));
-
-        emitOrdered(output, tracking, trade(
-                DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC,
-                25,
-                10,
-                125
-        ));
-
-        emitOrdered(output, tracking, trade(
-                DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY,
-                50,
-                10,
-                250
-        ));
-
-        // EXPERT
-
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.create().profession(PROFESSION)
-                .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                .merchantLevel(DwarfMerchantData.Level.JOURNEYMAN)
                 .costACoins(8, 12)
                 .noCostB()
                 .result(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME)
@@ -176,7 +156,10 @@ public record DwarfHistorianTrades(JolCraftDataProvider<RecipeOutput> parent) im
                 .priceMultiplier(0.05F)
         );
 
-        // MASTER
+        buyLegendaryPages(output, tracking,
+                16,
+                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY
+        );
 
         buyLegendaryPages(output, tracking,
                 1,
@@ -196,11 +179,6 @@ public record DwarfHistorianTrades(JolCraftDataProvider<RecipeOutput> parent) im
         buyLegendaryPages(output, tracking,
                 8,
                 JolCraftItems.ANCIENT_DWARVEN_TOME_EPIC
-        );
-
-        buyLegendaryPages(output, tracking,
-                16,
-                JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY
         );
     }
 

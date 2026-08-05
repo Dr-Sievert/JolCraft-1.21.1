@@ -16,10 +16,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Advances nearby brewing block entities after players skip time by sleeping.
+ * Advances nearby brewing block entities after the world skips time through sleeping.
  *
- * Only loaded chunks around sleeping players are processed to avoid scanning
- * the entire world.
+ * Only loaded chunks around online players are processed to avoid scanning
+ * the entire world while matching the global world-time skip.
  */
 public final class BrewingSleepHandler {
 
@@ -163,11 +163,12 @@ public final class BrewingSleepHandler {
                 return;
             }
 
-            barrel.fastForwardAge(
+            if (barrel.fastForwardAge(
                     skippedTicks
-            );
+            )) {
+                advancedCounts[1]++;
+            }
 
-            advancedCounts[1]++;
             return;
         }
 

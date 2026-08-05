@@ -8,9 +8,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.client.color.custom.BrewColor;
 import net.sievert.jolcraft.world.item.client.color.custom.DialColor;
+import net.sievert.jolcraft.world.item.client.color.custom.FluidColor;
 
 @OnlyIn(Dist.CLIENT)
 public final class JolCraftItemColors {
@@ -51,18 +52,41 @@ public final class JolCraftItemColors {
 
         colors += register(
                 event,
-                JolCraftItems.DWARVEN_BREW.get(),
-                (stack, tintIndex) -> tintIndex == 1
-                        ? BrewColor.color(stack)
+                JolCraftItems.YEAST_CULTURE.get(),
+                (stack, tintIndex) -> tintIndex == 0
+                        ? FluidColor.brewingSpeedColor(stack)
                         : NO_TINT
         );
 
+        colors += register(
+                event,
+                JolCraftItems.YEAST.get(),
+                (stack, tintIndex) -> tintIndex == 0
+                        ? FluidColor.color(stack, BrewingColors.YEAST)
+                        : NO_TINT
+        );
+
+        colors += register(
+                event,
+                JolCraftItems.TANNIN.get(),
+                (stack, tintIndex) -> tintIndex == 0
+                        ? FluidColor.color(stack, BrewingColors.TANNIN)
+                        : NO_TINT
+        );
+
+        colors += register(
+                event,
+                JolCraftItems.DWARVEN_BREW.get(),
+                (stack, tintIndex) -> tintIndex == 1
+                        ? FluidColor.color(stack, BrewingColors.DWARVEN_BREW)
+                        : NO_TINT
+        );
 
         colors += register(
                 event,
                 JolCraftItems.DWARVEN_BREW_BUCKET.get(),
                 (stack, tintIndex) -> tintIndex == 1
-                        ? BrewColor.color(stack)
+                        ? FluidColor.color(stack, BrewingColors.DWARVEN_BREW)
                         : NO_TINT
         );
 

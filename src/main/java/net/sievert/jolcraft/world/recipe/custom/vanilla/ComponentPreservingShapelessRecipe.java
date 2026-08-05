@@ -58,6 +58,9 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
     /** Set/update components after copy stage. */
     private final DataComponentPatch set;
 
+    /** Ingredients whose normal crafting remainder should be suppressed. */
+    private final List<Ingredient> suppressRemainder;
+
     public static final ComponentPreservingShapelessRecipe EMPTY =
             new ComponentPreservingShapelessRecipe(
                     "",
@@ -69,7 +72,8 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                     List.of(),
                     List.of(),
                     false,
-                    EMPTY_PATCH
+                    EMPTY_PATCH,
+                    List.of()
             );
 
     public ComponentPreservingShapelessRecipe(
@@ -84,6 +88,34 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
             boolean removeAll,
             DataComponentPatch set
     ) {
+        this(
+                group,
+                category,
+                base,
+                ingredients,
+                result,
+                keep,
+                remove,
+                baseRequire,
+                removeAll,
+                set,
+                List.of()
+        );
+    }
+
+    public ComponentPreservingShapelessRecipe(
+            String group,
+            CraftingBookCategory category,
+            Ingredient base,
+            List<Ingredient> ingredients,
+            ItemStack result,
+            List<DataComponentType<?>> keep,
+            List<DataComponentType<?>> remove,
+            List<DataComponentType<?>> baseRequire,
+            boolean removeAll,
+            DataComponentPatch set,
+            List<Ingredient> suppressRemainder
+    ) {
         this.group = group == null ? "" : group;
         this.category = category != null ? category : CraftingBookCategory.MISC;
         this.base = base;
@@ -94,6 +126,7 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
         this.baseRequire = sanitizeComponentTypes(baseRequire);
         this.removeAll = removeAll;
         this.set = set != null ? set : EMPTY_PATCH;
+        this.suppressRemainder = sanitizeIngredients(suppressRemainder);
     }
 
     @Override
@@ -141,6 +174,10 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
 
     public DataComponentPatch set() {
         return set;
+    }
+
+    public List<Ingredient> suppressRemainder() {
+        return suppressRemainder;
     }
 
     @Override
@@ -247,6 +284,48 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
     }
 
     @Override
+    public @NotNull NonNullList<ItemStack> getRemainingItems(
+            @NotNull CraftingInput input
+    ) {
+        NonNullList<ItemStack> remaining =
+                NonNullList.withSize(
+                        input.size(),
+                        ItemStack.EMPTY
+                );
+
+        for (int i = 0; i < input.size(); i++) {
+            ItemStack stack = input.getItem(i);
+
+            if (stack.isEmpty() || suppressesRemainder(stack)) {
+                continue;
+            }
+
+            ItemStack remainder = stack.getCraftingRemainingItem();
+
+            if (!remainder.isEmpty()) {
+                remaining.set(
+                        i,
+                        remainder
+                );
+            }
+        }
+
+        return remaining;
+    }
+
+    private boolean suppressesRemainder(
+            ItemStack stack
+    ) {
+        for (Ingredient ingredient : suppressRemainder) {
+            if (ingredient.test(stack)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean canCraftInDimensions(int width, int height) {
         return width * height >= (1 + ingredients.size());
     }
@@ -310,6 +389,7 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                 JolCraftStrings.underscored(JolCraftDictionary.REMOVE, JolCraftDictionary.ALL);
         private static final String KEY_BASE_REQUIRE =
                 JolCraftStrings.underscored(JolCraftDictionary.BASE, JolCraftStrings.plural(JolCraftDictionary.REQUIREMENT));
+        private static final String KEY_SUPPRESS_REMAINDER = "suppress_remainder";
 
         private static final int MAX_INGREDIENTS =
                 Math.max(1, ShapedRecipePattern.getMaxWidth() * ShapedRecipePattern.getMaxHeight());
@@ -348,7 +428,11 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                                         .forGetter(ComponentPreservingShapelessRecipe::removeAll),
 
                                 DataComponentPatch.CODEC.optionalFieldOf(KEY_SET, EMPTY_PATCH)
-                                        .forGetter(ComponentPreservingShapelessRecipe::set)
+                                        .forGetter(ComponentPreservingShapelessRecipe::set),
+
+                                Codec.lazyInitialized(() -> Ingredient.CODEC.listOf(0, MAX_INGREDIENTS))
+                                        .optionalFieldOf(KEY_SUPPRESS_REMAINDER, List.of())
+                                        .forGetter(ComponentPreservingShapelessRecipe::suppressRemainder)
                         ).apply(inst, ComponentPreservingShapelessRecipe::new))
                         .flatXmap(Serializer::validate, DataResult::success);
 
@@ -365,6 +449,10 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                             DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, recipe.baseRequire);
                             ByteBufCodecs.BOOL.encode(buf, recipe.removeAll);
                             DataComponentPatch.STREAM_CODEC.encode(buf, recipe.set);
+                            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).encode(
+                                    buf,
+                                    recipe.suppressRemainder
+                            );
                         },
                         buf -> {
                             String group = ByteBufCodecs.STRING_UTF8.decode(buf);
@@ -377,6 +465,8 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                             List<DataComponentType<?>> baseRequire = DataComponentType.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
                             boolean removeAll = ByteBufCodecs.BOOL.decode(buf);
                             DataComponentPatch set = DataComponentPatch.STREAM_CODEC.decode(buf);
+                            List<Ingredient> suppressRemainder =
+                                    Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
 
                             ComponentPreservingShapelessRecipe built =
                                     new ComponentPreservingShapelessRecipe(
@@ -389,7 +479,8 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                                             remove,
                                             baseRequire,
                                             removeAll,
-                                            set
+                                            set,
+                                            suppressRemainder
                                     );
 
                             return validate(built).error().isPresent()
@@ -434,7 +525,8 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                     .require(recipe.keep(), KEY_KEEP)
                     .require(recipe.remove(), KEY_REMOVE)
                     .require(recipe.baseRequire(), KEY_BASE_REQUIRE)
-                    .require(recipe.set(), KEY_SET);
+                    .require(recipe.set(), KEY_SET)
+                    .require(recipe.suppressRemainder(), KEY_SUPPRESS_REMAINDER);
 
             DataResult<ComponentPreservingShapelessRecipe> base = v.done();
             if (base.error().isPresent()) return base;
@@ -480,6 +572,18 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
                 if (req.get(i) == null) {
                     int idx = i;
                     return DataResult.error(() -> KEY_BASE_REQUIRE + " contains null at index " + idx);
+                }
+            }
+
+            List<Ingredient> suppress = recipe.suppressRemainder();
+            for (int i = 0; i < suppress.size(); i++) {
+                Ingredient ingredient = suppress.get(i);
+
+                if (ingredient == null || ingredient.isEmpty()) {
+                    int idx = i;
+                    return DataResult.error(
+                            () -> KEY_SUPPRESS_REMAINDER + " contains empty at index " + idx
+                    );
                 }
             }
 

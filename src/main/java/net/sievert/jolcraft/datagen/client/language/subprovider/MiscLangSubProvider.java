@@ -42,12 +42,15 @@ public final class MiscLangSubProvider implements LanguageSubProvider {
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_SALVAGEABLE, "Salvageable");
 
-        putManual(translations, JolCraftLanguageKeys.BREW_AGE, "Age: %s");
+        putManual(translations, JolCraftLanguageKeys.PREFIX_NAME, "%1$s %2$s");
+
+        putManual(translations, JolCraftLanguageKeys.REFINED, "Refined");
+
+        putManual(translations, JolCraftLanguageKeys.BREW_AGE, "Brew Age: %s");
         putManual(translations, JolCraftLanguageKeys.BREW_AGE_FRESH, "Fresh");
         putManual(translations, JolCraftLanguageKeys.BARREL_BREW_AGE, "This barrel contains %s dwarven brew.");
         putManual(translations, JolCraftLanguageKeys.BREW_AGE_AGED, "Aged");
         putManual(translations, JolCraftLanguageKeys.BREW_AGE_MATURED, "Matured");
         putManual(translations, JolCraftLanguageKeys.BREW_AGE_VINTAGE, "Vintage");
-        putManual(translations, JolCraftLanguageKeys.BREW_AGE_NAME, "%1$s %2$s");
     }
 }

@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -19,7 +18,6 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -421,7 +419,11 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         brewTank.setFluid(
-                process.createUnfinishedBrewFluid(brewAmount)
+                process.createUnfinishedBrewFluid(
+                        brewAmount,
+                        brewTank.getFluid(),
+                        recipe
+                )
         );
 
         onBrewTankChanged();
@@ -476,7 +478,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
         }
 
         FluidStack finishedBrew = process.createFinishedBrewFluid(
-                brewTank.getFluidAmount()
+                brewTank.getFluidAmount(),
+                brewTank.getFluid()
         );
 
         process.clear();
@@ -693,7 +696,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     /**
      * Validates the stored fluid and normalizes its amount and components.
      *
-     * @return whether invalid fluid was removed
+     * @return whether the stored fluid was changed
      */
     private boolean sanitizeLoadedTank() {
         FluidStack brew = brewTank.getFluid();
@@ -704,13 +707,8 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
 
         FluidStack original = brew.copy();
 
-        boolean finished =
-                DwarvenBrewFluidHelper.isFinishedBrewingFluid(brew);
-
-        boolean unfinished =
-                DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(brew);
-
-        if (!finished && !unfinished) {
+        if (!DwarvenBrewFluidHelper.isFinishedBrewingFluid(brew)
+                && !DwarvenBrewFluidHelper.isUnfinishedBrewingFluid(brew)) {
             JolCraftLogs.warn(
                     JolCraftLogTags.BLOCK_ENTITY,
                     "FermentingCauldron at {} loaded invalid fluid '{}' (clearing)",
@@ -745,24 +743,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 )
         );
 
-        if (DwarvenBrewFluidHelper.isFinishedBrew(brew)) {
-            brew.set(
-                    JolCraftDataComponents.BREW_AGE.get(),
-                    0L
-            );
-        } else {
-            brew.remove(
-                    JolCraftDataComponents.BREW_AGE.get()
-            );
-        }
-
-        brew.set(
-                DataComponents.POTION_CONTENTS,
-                brew.getOrDefault(
-                        DataComponents.POTION_CONTENTS,
-                        PotionContents.EMPTY
-                )
-        );
+        DwarvenBrewFluidHelper.normalizeBrewingFluid(brew);
 
         return original.getAmount() != brew.getAmount()
                 || !FluidStack.isSameFluidSameComponents(
@@ -863,7 +844,38 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                         level
                 )
                 .map(RecipeHolder::value)
+                .filter(recipe -> canApplyRecipe(
+                        usedItem,
+                        recipe
+                ))
                 .orElse(null);
+    }
+
+    private boolean canApplyRecipe(
+            ItemStack usedItem,
+            FermentingCauldronRecipe recipe
+    ) {
+        if (recipe.finalizeBrew()
+                && recipe.outputFluid()
+                == FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW
+                && !process.hasEffects()) {
+            return false;
+        }
+
+        if (!usedItem.is(JolCraftItems.TANNIN.get())
+                || recipe.outputFluid()
+                != FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW) {
+            return true;
+        }
+
+        return DwarvenBrewFluidHelper.findContainedMaxAge(
+                        usedItem
+                )
+                .map(maxAge -> maxAge.ordinal()
+                        > DwarvenBrewFluidHelper.getMaxAge(
+                        brewTank.getFluid()
+                ).ordinal())
+                .orElse(false);
     }
 
     /**
@@ -955,7 +967,10 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             HolderLookup.Provider registries
     ) {
         FluidStack clientFluid = process.hasUnfinishedState()
-                ? process.createUnfinishedBrewFluid(getBrewAmount())
+                ? process.createUnfinishedBrewFluid(
+                        getBrewAmount(),
+                        brewTank.getFluid()
+                )
                 : brewTank.getFluid();
 
         if (!clientFluid.isEmpty()) {
@@ -1157,7 +1172,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
     }
 
     /**
-     * Returns the dwarven brew fluid representation exposed to Jade.
+     * Returns the brewing fluid representation exposed to Jade.
      */
     public FluidStack getJadeBrewFluid() {
         FluidStack stored = brewTank.getFluid();
@@ -1166,14 +1181,24 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             return DwarvenBrewFluidHelper.withFreshAge(stored);
         }
 
-        if (process.getOutputFluid()
+        if (DwarvenBrewFluidHelper.isFinishedYeast(stored)
+                || DwarvenBrewFluidHelper.isFinishedTannin(stored)) {
+            return stored.copy();
+        }
+
+        if (!process.hasUnfinishedState()
+                || (process.getOutputFluid()
                 != FermentingCauldronRecipe.OutputFluid.DWARVEN_BREW
-                || !process.hasUnfinishedState()) {
+                && process.getOutputFluid()
+                != FermentingCauldronRecipe.OutputFluid.YEAST
+                && process.getOutputFluid()
+                != FermentingCauldronRecipe.OutputFluid.TANNIN)) {
             return FluidStack.EMPTY;
         }
 
         return process.createUnfinishedBrewFluid(
-                getBrewAmount()
+                getBrewAmount(),
+                stored
         );
     }
 

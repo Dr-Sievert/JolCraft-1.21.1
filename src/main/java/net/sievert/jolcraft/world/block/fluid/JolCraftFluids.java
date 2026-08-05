@@ -165,6 +165,96 @@ public final class JolCraftFluids {
             );
 
     // =====================================================================
+    // Finished tannin
+    // =====================================================================
+
+    public static final DeferredHolder<FluidType, FluidType> TANNIN_TYPE =
+            FLUID_TYPES.register(
+                    JolCraftFluidIds.TANNIN,
+                    () -> new FluidType(
+                            FluidType.Properties.create()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> TANNIN =
+            FLUIDS.register(
+                    JolCraftFluidIds.TANNIN,
+                    () -> new BaseFlowingFluid.Source(
+                            createTanninProperties()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_TANNIN =
+            FLUIDS.register(
+                    flowingId(
+                            JolCraftFluidIds.TANNIN
+                    ),
+                    () -> new BaseFlowingFluid.Flowing(
+                            createTanninProperties()
+                    )
+            );
+
+    // =====================================================================
+    // Finished refined tannin
+    // =====================================================================
+
+    public static final DeferredHolder<FluidType, FluidType> REFINED_TANNIN_TYPE =
+            FLUID_TYPES.register(
+                    JolCraftFluidIds.REFINED_TANNIN,
+                    () -> new FluidType(
+                            FluidType.Properties.create()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> REFINED_TANNIN =
+            FLUIDS.register(
+                    JolCraftFluidIds.REFINED_TANNIN,
+                    () -> new BaseFlowingFluid.Source(
+                            createRefinedTanninProperties()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_REFINED_TANNIN =
+            FLUIDS.register(
+                    flowingId(
+                            JolCraftFluidIds.REFINED_TANNIN
+                    ),
+                    () -> new BaseFlowingFluid.Flowing(
+                            createRefinedTanninProperties()
+                    )
+            );
+
+    // =====================================================================
+    // Unfinished tannin
+    // =====================================================================
+
+    public static final DeferredHolder<FluidType, FluidType> UNFINISHED_TANNIN_TYPE =
+            FLUID_TYPES.register(
+                    JolCraftFluidIds.UNFINISHED_TANNIN,
+                    () -> new FluidType(
+                            FluidType.Properties.create()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> UNFINISHED_TANNIN =
+            FLUIDS.register(
+                    JolCraftFluidIds.UNFINISHED_TANNIN,
+                    () -> new BaseFlowingFluid.Source(
+                            createUnfinishedTanninProperties()
+                    )
+            );
+
+    public static final DeferredHolder<Fluid, FlowingFluid> FLOWING_UNFINISHED_TANNIN =
+            FLUIDS.register(
+                    flowingId(
+                            JolCraftFluidIds.UNFINISHED_TANNIN
+                    ),
+                    () -> new BaseFlowingFluid.Flowing(
+                            createUnfinishedTanninProperties()
+                    )
+            );
+
+    // =====================================================================
     // Properties
     // =====================================================================
 
@@ -199,6 +289,30 @@ public final class JolCraftFluids {
                 UNFINISHED_YEAST_TYPE,
                 UNFINISHED_YEAST,
                 FLOWING_UNFINISHED_YEAST
+        );
+    }
+
+    private static BaseFlowingFluid.Properties createTanninProperties() {
+        return createProperties(
+                TANNIN_TYPE,
+                TANNIN,
+                FLOWING_TANNIN
+        );
+    }
+
+    private static BaseFlowingFluid.Properties createRefinedTanninProperties() {
+        return createProperties(
+                REFINED_TANNIN_TYPE,
+                REFINED_TANNIN,
+                FLOWING_REFINED_TANNIN
+        );
+    }
+
+    private static BaseFlowingFluid.Properties createUnfinishedTanninProperties() {
+        return createProperties(
+                UNFINISHED_TANNIN_TYPE,
+                UNFINISHED_TANNIN,
+                FLOWING_UNFINISHED_TANNIN
         );
     }
 

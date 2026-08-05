@@ -217,9 +217,17 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.KRANDONIAN_HOPS.get())
                 .add(JolCraftItems.YANILLIAN_HOPS.get());
 
-        target.tag(JolCraftTags.Items.HOPS_BREW)
+        target.tag(JolCraftTags.Items.UNFINISHED_BREW)
                 .addTags(JolCraftTags.Items.HOPS)
-                .add(JolCraftItems.BARLEY_MALT.get());
+                .add(JolCraftItems.BARLEY_MALT.get())
+                .add(JolCraftItems.TANNIN.get());
+
+        target.tag(JolCraftTags.Items.YEAST_BREW)
+                .add(JolCraftItems.YEAST_CULTURE.get());
+
+        target.tag(JolCraftTags.Items.TANNIN_BREW)
+                .add(Items.COCOA_BEANS)
+                .add(Items.CHORUS_FRUIT);
 
         // Materials
 

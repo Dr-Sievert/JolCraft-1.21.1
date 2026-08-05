@@ -60,7 +60,6 @@ public final class DwarfTrades {
             this.recipe = recipeHolder.value();
         }
 
-        @SuppressWarnings("deprecation")
         @Nullable
         public DwarfMerchantOffer getOffer(
                 AbstractTradingEntity trader
@@ -175,20 +174,20 @@ public final class DwarfTrades {
                     recipe.stats();
 
             DwarfItemCost costA =
-                    new DwarfItemCost(
-                            costAStack.getItem().builtInRegistryHolder(),
-                            costAStack.getCount(),
-                            DataComponentPredicate.allOf(costAStack.getComponents())
+                    createItemCost(
+                            recipe.costA(),
+                            costAStack
                     );
 
             Optional<DwarfItemCost> costB =
-                    costBStack.map(stack ->
-                            new DwarfItemCost(
-                                    stack.getItem().builtInRegistryHolder(),
-                                    stack.getCount(),
-                                    DataComponentPredicate.allOf(stack.getComponents())
+                    recipe.costB() != null
+                            ? Optional.of(
+                            createItemCost(
+                                    recipe.costB(),
+                                    costBStack.get()
                             )
-                    );
+                    )
+                            : Optional.empty();
 
             return new DwarfMerchantOffer(
                     costA,
@@ -201,6 +200,21 @@ public final class DwarfTrades {
                     0,
                     recipeHolder.id(),
                     groupOf(recipe)
+            );
+        }
+
+        @SuppressWarnings("deprecation")
+        private static @NotNull DwarfItemCost createItemCost(
+                @NotNull TradeCost cost,
+                @NotNull ItemStack representative
+        ) {
+            return new DwarfItemCost(
+                    representative.getItem().builtInRegistryHolder(),
+                    representative.getCount(),
+                    DataComponentPredicate.allOf(
+                            representative.getComponents()
+                    ),
+                    cost.ingredient()
             );
         }
 

@@ -18,7 +18,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingTooltipHelper;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -61,7 +61,7 @@ public class DwarvenBrewItem extends PotionItem {
     @Override
     public Component getName(ItemStack stack) {
         return Component.translatable(
-                JolCraftLanguageKeys.BREW_AGE_NAME,
+                JolCraftLanguageKeys.PREFIX_NAME,
                 Component.translatable(
                         DwarvenBrewAge.fromStack(stack).translationKey()
                 ),
@@ -80,20 +80,10 @@ public class DwarvenBrewItem extends PotionItem {
             List<Component> tooltip,
             TooltipFlag flag
     ) {
-        FluidStack brew = DwarvenBrewFluidHelper.getBrewFromMug(stack);
-
-        if (!brew.isEmpty()) {
-            PotionContents contents = brew.getOrDefault(
-                    DataComponents.POTION_CONTENTS,
-                    PotionContents.EMPTY
-            );
-
-            contents.addPotionTooltip(
-                    tooltip::add,
-                    1.0F,
-                    (float) JolCraftTimeHelper.TICKS_PER_SECOND
-            );
-        }
+        BrewingTooltipHelper.appendItemFluidTooltip(
+                stack,
+                tooltip::add
+        );
 
         super.appendHoverText(
                 stack,

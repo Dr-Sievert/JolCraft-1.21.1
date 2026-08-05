@@ -59,6 +59,17 @@ public final class JolCraftEffects {
             () -> new MoonShieldEffect(MobEffectCategory.BENEFICIAL, 0xadb4a7)
     );
 
+    public static final Holder<MobEffect> BULWARK = MOB_EFFECTS.register(
+            JolCraftEffectIds.BULWARK,
+            () -> new BulwarkEffect(MobEffectCategory.BENEFICIAL, 0x777f91)
+                    .addAttributeModifier(
+                            Attributes.ARMOR,
+                            JolCraft.location(JolCraftEffectIds.BULWARK),
+                            0.05D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                    )
+    );
+
     // Harmful
 
     private static final int CURSE_COLOR = 0x7510a3;

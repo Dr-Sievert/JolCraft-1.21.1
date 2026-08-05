@@ -21,7 +21,11 @@ public final class FermentingBarrelAging {
                     JolCraftDictionary.TIME
             );
 
+    private static final String NBT_AGE_REMAINDER =
+            "age_remainder";
+
     private long lastAgeTime = -1L;
+    private double ageRemainder;
 
     // =====================================================================
     // Projection
@@ -41,12 +45,21 @@ public final class FermentingBarrelAging {
 
         FluidStack current = storedBrew.copy();
 
-        long elapsedTicks = getElapsedTicks(currentGameTime);
+        if (!DwarvenBrewFluidHelper.canAgeFurther(current)) {
+            return current;
+        }
 
-        if (elapsedTicks > 0L) {
+        long elapsedTicks = getElapsedTicks(currentGameTime);
+        long addedAge = getScaledAgeTicks(
+                current,
+                elapsedTicks,
+                false
+        );
+
+        if (addedAge > 0L) {
             DwarvenBrewFluidHelper.addAgeInPlace(
                     current,
-                    elapsedTicks
+                    addedAge
             );
         }
 
@@ -66,7 +79,8 @@ public final class FermentingBarrelAging {
             FluidStack storedBrew,
             long currentGameTime
     ) {
-        if (storedBrew.isEmpty()) {
+        if (storedBrew.isEmpty()
+                || !DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
             return clear();
         }
 
@@ -82,12 +96,24 @@ public final class FermentingBarrelAging {
             return false;
         }
 
-        DwarvenBrewFluidHelper.addAgeInPlace(
+        long addedAge = getScaledAgeTicks(
                 storedBrew,
-                elapsedTicks
+                elapsedTicks,
+                true
         );
 
+        if (addedAge > 0L) {
+            DwarvenBrewFluidHelper.addAgeInPlace(
+                    storedBrew,
+                    addedAge
+            );
+        }
+
         lastAgeTime = currentGameTime;
+
+        if (!DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
+            clear();
+        }
 
         return true;
     }
@@ -103,7 +129,8 @@ public final class FermentingBarrelAging {
             long skippedTicks
     ) {
         if (storedBrew.isEmpty()
-                || skippedTicks <= 0L) {
+                || skippedTicks <= 0L
+                || !DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
             return false;
         }
 
@@ -112,18 +139,34 @@ public final class FermentingBarrelAging {
                 currentGameTime
         );
 
-        DwarvenBrewFluidHelper.addAgeInPlace(
+        if (!DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
+            return true;
+        }
+
+        long addedAge = getScaledAgeTicks(
                 storedBrew,
-                skippedTicks
+                skippedTicks,
+                true
         );
 
+        if (addedAge > 0L) {
+            DwarvenBrewFluidHelper.addAgeInPlace(
+                    storedBrew,
+                    addedAge
+            );
+        }
+
         lastAgeTime = currentGameTime;
+
+        if (!DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
+            clear();
+        }
 
         return true;
     }
 
     /**
-     * Advances the brew to the next age threshold.
+     * Advances the brew to the next permitted age threshold.
      *
      * @return whether the brew advanced
      */
@@ -131,7 +174,8 @@ public final class FermentingBarrelAging {
             FluidStack storedBrew,
             long currentGameTime
     ) {
-        if (storedBrew.isEmpty()) {
+        if (storedBrew.isEmpty()
+                || !DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
             return false;
         }
 
@@ -140,9 +184,18 @@ public final class FermentingBarrelAging {
                 currentGameTime
         );
 
-        long currentAge = DwarvenBrewFluidHelper.getAge(storedBrew);
+        if (!DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
+            return false;
+        }
 
-        long nextAge = getNextAgeThreshold(currentAge);
+        long currentAge = DwarvenBrewFluidHelper.getAge(storedBrew);
+        long maxAge = DwarvenBrewFluidHelper.getMaxAge(
+                storedBrew
+        ).thresholdTicks();
+        long nextAge = Math.min(
+                maxAge,
+                getNextAgeThreshold(currentAge)
+        );
 
         if (nextAge <= currentAge) {
             return false;
@@ -154,6 +207,11 @@ public final class FermentingBarrelAging {
         );
 
         lastAgeTime = currentGameTime;
+        ageRemainder = 0.0D;
+
+        if (!DwarvenBrewFluidHelper.canAgeFurther(storedBrew)) {
+            clear();
+        }
 
         return true;
     }
@@ -163,14 +221,14 @@ public final class FermentingBarrelAging {
     // =====================================================================
 
     /**
-     * Starts the aging timer when brew is present or clears it when the barrel
-     * is empty.
+     * Starts the aging timer while the supplied brew can still age.
      */
     public void ensureTimerStarted(
-            boolean hasBrew,
+            FluidStack brew,
             long currentGameTime
     ) {
-        if (!hasBrew) {
+        if (brew.isEmpty()
+                || !DwarvenBrewFluidHelper.canAgeFurther(brew)) {
             clear();
 
             return;
@@ -182,27 +240,18 @@ public final class FermentingBarrelAging {
     }
 
     /**
-     * Resets the aging timer to the supplied game time.
-     */
-    public void reset(
-            long currentGameTime
-    ) {
-        lastAgeTime = currentGameTime;
-    }
-
-    /**
-     * Clears the aging timer.
+     * Clears the aging timer and fractional age progress.
      *
-     * @return whether the timer was active
+     * @return whether the timer or remainder was active
      */
     public boolean clear() {
-        if (lastAgeTime < 0L) {
-            return false;
-        }
+        boolean changed = lastAgeTime >= 0L
+                || ageRemainder > 0.0D;
 
         lastAgeTime = -1L;
+        ageRemainder = 0.0D;
 
-        return true;
+        return changed;
     }
 
     // =====================================================================
@@ -221,21 +270,29 @@ public final class FermentingBarrelAging {
                     lastAgeTime
             );
         }
+
+        if (ageRemainder > 0.0D) {
+            tag.putDouble(
+                    NBT_AGE_REMAINDER,
+                    ageRemainder
+            );
+        }
     }
 
     /**
-     * Loads the aging timer from NBT when the barrel still contains brew.
+     * Loads the aging timer when the stored brew can still age.
      */
     public void load(
             CompoundTag tag,
-            boolean hasBrew
+            FluidStack brew
     ) {
-        if (!hasBrew
+        if (brew.isEmpty()
+                || !DwarvenBrewFluidHelper.canAgeFurther(brew)
                 || !tag.contains(
                 NBT_LAST_AGE_TIME,
                 Tag.TAG_LONG
         )) {
-            lastAgeTime = -1L;
+            clear();
 
             return;
         }
@@ -246,16 +303,29 @@ public final class FermentingBarrelAging {
                         NBT_LAST_AGE_TIME
                 )
         );
+
+        double loadedRemainder = tag.contains(
+                NBT_AGE_REMAINDER,
+                Tag.TAG_DOUBLE
+        )
+                ? tag.getDouble(NBT_AGE_REMAINDER)
+                : 0.0D;
+
+        ageRemainder = Double.isFinite(loadedRemainder)
+                ? Math.max(
+                        0.0D,
+                        Math.min(
+                                Math.nextDown(1.0D),
+                                loadedRemainder
+                        )
+                )
+                : 0.0D;
     }
 
     // =====================================================================
     // Internal helpers
     // =====================================================================
 
-    /**
-     * Returns the non-negative number of ticks elapsed since aging was last
-     * committed.
-     */
     private long getElapsedTicks(
             long currentGameTime
     ) {
@@ -269,9 +339,40 @@ public final class FermentingBarrelAging {
         );
     }
 
-    /**
-     * Returns the next age threshold after the supplied brew age.
-     */
+    private long getScaledAgeTicks(
+            FluidStack brew,
+            long elapsedTicks,
+            boolean consumeRemainder
+    ) {
+        if (elapsedTicks <= 0L) {
+            return 0L;
+        }
+
+        double scaledAge = elapsedTicks
+                * (double) DwarvenBrewFluidHelper.getBrewingSpeed(brew)
+                + ageRemainder;
+
+        if (!Double.isFinite(scaledAge)
+                || scaledAge >= Long.MAX_VALUE) {
+            if (consumeRemainder) {
+                ageRemainder = 0.0D;
+            }
+
+            return Long.MAX_VALUE;
+        }
+
+        long wholeTicks = Math.max(
+                0L,
+                (long) Math.floor(scaledAge)
+        );
+
+        if (consumeRemainder) {
+            ageRemainder = scaledAge - wholeTicks;
+        }
+
+        return wholeTicks;
+    }
+
     private static long getNextAgeThreshold(
             long currentAge
     ) {

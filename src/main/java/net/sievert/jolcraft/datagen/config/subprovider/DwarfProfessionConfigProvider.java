@@ -2,6 +2,7 @@ package net.sievert.jolcraft.datagen.config.subprovider;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.sounds.SoundEvent;
@@ -74,7 +75,7 @@ public final class DwarfProfessionConfigProvider
             @NotNull CachedOutput target,
             @Nullable PackOutput packOutput,
             @Nullable CompletableFuture<
-                    net.minecraft.core.HolderLookup.Provider
+                    HolderLookup.Provider
                     > lookupProvider,
             @Nullable ExistingFileHelper existingFileHelper,
             @NotNull JolCraftDataTracking tracking
@@ -255,7 +256,7 @@ public final class DwarfProfessionConfigProvider
                             false,
                             true,
 
-                            false,
+                            true,
                             true,
 
                             defaults.rules(),

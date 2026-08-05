@@ -1,20 +1,34 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider;
 
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
+import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
+import net.sievert.jolcraft.datagen.recipe.builder.vanilla.ComponentPreservingShapelessRecipeBuilder;
 import net.sievert.jolcraft.datagen.recipe.builder.vanilla.VanillaRecipeBuilder;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import org.jetbrains.annotations.NotNull;
 
 public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) implements RecipeSubProvider {
@@ -46,6 +60,14 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.BREAD)
+                )
+                .pattern("BBB")
+                .define('B', JolCraftItems.BARLEY)
+                .unlockedByHas(JolCraftItems.BARLEY)
+                .save(output, folder(), JolCraftItems.BARLEY);
+
         VanillaRecipeBuilder.shapeless(
                         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.GUILD_SIGIL.get())
                 )
@@ -258,6 +280,49 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .unlockedByHas(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
                 .save(output, folder(), JolCraftItems.INVERIX.getId().getPath() + "_charcoal");
 
+        yeastCulture(
+                output,
+                waterBottleIngredient(),
+                Items.BROWN_MUSHROOM,
+                DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
+        );
+
+        yeastCulture(
+                output,
+                yeastCultureIngredient(
+                        DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
+                ),
+                Items.FERMENTED_SPIDER_EYE,
+                DwarvenBrewFluidHelper.STRONG_BREWING_SPEED
+        );
+
+        yeastCulture(
+                output,
+                yeastCultureIngredient(
+                        DwarvenBrewFluidHelper.STRONG_BREWING_SPEED
+                ),
+                Items.NETHER_WART,
+                DwarvenBrewFluidHelper.BREWING_SPEED_2_0
+        );
+
+        yeastCulture(
+                output,
+                yeastCultureIngredient(
+                        DwarvenBrewFluidHelper.BREWING_SPEED_2_0
+                ),
+                JolCraftItems.EMBERGLASS_DUST.get(),
+                DwarvenBrewFluidHelper.BREWING_SPEED_2_5
+        );
+
+        yeastCulture(
+                output,
+                yeastCultureIngredient(
+                        DwarvenBrewFluidHelper.BREWING_SPEED_2_5
+                ),
+                Items.DRAGON_BREATH,
+                DwarvenBrewFluidHelper.BREWING_SPEED_3_0
+        );
+
         VanillaRecipeBuilder.Cooking.smelting(
                         JolCraftItems.BARLEY.get(),
                         RecipeCategory.FOOD,
@@ -278,4 +343,103 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .unlockedByHas(JolCraftItems.BARLEY.get())
                 .save(output, folder());
     }
+
+    private void yeastCulture(
+            @NotNull RecipeOutput output,
+            @NotNull Ingredient base,
+            @NotNull ItemLike ingredient,
+            float brewingSpeed
+    ) {
+        ComponentPreservingShapelessRecipeBuilder.create(
+                        CraftingBookCategory.MISC,
+                        base
+                )
+                .result(
+                        JolCraftBrewingItems.createYeastCultureStack(
+                                JolCraftItems.YEAST_CULTURE.get(),
+                                brewingSpeed
+                        )
+                )
+                .clearCopiedComponents()
+                .suppressRemainder(
+                        base
+                )
+                .ingredient(
+                        Ingredient.of(
+                                ingredient
+                        )
+                )
+                .unlocks(
+                        hasName(
+                                ingredient
+                        ),
+                        hasItem(
+                                ingredient
+                        )
+                )
+                .save(
+                        output,
+                        JolCraft.location(
+                                JolCraftStrings.slashed(
+                                        folder(),
+                                        JolCraftItems.YEAST_CULTURE.getId().getPath()
+                                                + "_"
+                                                + itemPath(ingredient)
+                                )
+                        )
+                );
+    }
+
+    private static Ingredient waterBottleIngredient() {
+        return DataComponentIngredient.of(
+                false,
+                PotionContents.createItemStack(
+                        Items.POTION,
+                        Potions.WATER
+                )
+        );
+    }
+
+    private static Ingredient yeastCultureIngredient(
+            float brewingSpeed
+    ) {
+        return DataComponentIngredient.of(
+                false,
+                JolCraftBrewingItems.createYeastCultureStack(
+                        JolCraftItems.YEAST_CULTURE.get(),
+                        brewingSpeed
+                )
+        );
+    }
+
+    private static String hasName(
+            @NotNull ItemLike item
+    ) {
+        return JolCraftStrings.underscored(
+                JolCraftDictionary.HAS,
+                itemPath(
+                        item
+                )
+        );
+    }
+
+    private static Criterion<?> hasItem(
+            @NotNull ItemLike item
+    ) {
+        return InventoryChangeTrigger.TriggerInstance.hasItems(
+                item
+        );
+    }
+
+    private static String itemPath(
+            @NotNull ItemLike item
+    ) {
+        return BuiltInRegistries.ITEM
+                .getKey(
+                        item.asItem()
+                )
+                .getPath()
+                .replace('/', '_');
+    }
+
 }

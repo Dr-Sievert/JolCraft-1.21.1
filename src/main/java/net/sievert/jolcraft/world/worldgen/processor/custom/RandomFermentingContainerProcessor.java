@@ -6,7 +6,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -25,9 +24,9 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.brewing.FermentingBarrelBlock;
-import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.worldgen.processor.JolCraftProcessors;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,11 +178,6 @@ public final class RandomFermentingContainerProcessor extends StructureProcessor
             BrewEntry entry,
             DwarvenBrewAge age
     ) {
-        FluidStack brew = new FluidStack(
-                JolCraftFluids.DWARVEN_BREW.get(),
-                FluidType.BUCKET_VOLUME
-        );
-
         List<MobEffectInstance> effects = new ArrayList<>(
                 entry.effects().size()
         );
@@ -194,21 +188,20 @@ public final class RandomFermentingContainerProcessor extends StructureProcessor
             );
         }
 
-        brew.set(
-                DataComponents.POTION_CONTENTS,
+        return DwarvenBrewFluidHelper.createDwarvenBrew(
+                FluidType.BUCKET_VOLUME,
+                BrewingColors.DWARVEN_BREW,
+                age.thresholdTicks(),
+                age.ordinal() > DwarvenBrewAge.AGED.ordinal()
+                        ? age
+                        : DwarvenBrewAge.AGED,
+                DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED,
                 new PotionContents(
                         Optional.empty(),
                         Optional.empty(),
                         List.copyOf(effects)
                 )
         );
-
-        brew.set(
-                JolCraftDataComponents.BREW_AGE.get(),
-                age.thresholdTicks()
-        );
-
-        return brew;
     }
 
     private static CompoundTag createBrewNbt(
