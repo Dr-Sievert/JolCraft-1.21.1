@@ -1,16 +1,9 @@
 package net.sievert.jolcraft.world.item.registry;
 
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.ShovelItem;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.*;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.world.item.custom.instrument.WarHornItem;
 import net.sievert.jolcraft.world.item.custom.tool.ArtisanHammerItem;
 import net.sievert.jolcraft.world.item.custom.tool.ChiselItem;
 import net.sievert.jolcraft.world.item.custom.tool.PestleItem;
@@ -432,6 +425,19 @@ public final class JolCraftEquipmentItems {
                 toolMaterial(JolCraftMaterials.Material.MITHRIL),
                 MITHRIL,
                 PestleItem::new
+        );
+    }
+
+    // -------------------------------------------------------------------------
+    // Other
+    // -------------------------------------------------------------------------
+
+    public static DeferredItem<WarHornItem> registerWarHorn() {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.WAR_HORN,
+                properties -> new WarHornItem(
+                        properties.stacksTo(1)
+                )
         );
     }
 

@@ -30,6 +30,8 @@ public final class JolCraftSoundIds extends JolCraftIds {
     public static final String COIN_STACK = JolCraftStrings.underscored(JolCraftDictionary.COIN, JolCraftDictionary.STACK);
     public static final String COIN_SINGLE = JolCraftStrings.underscored(JolCraftDictionary.COIN, JolCraftDictionary.SINGLE);
 
+    public static final String WAR_HORN = JolCraftItemIds.WAR_HORN;
+
     // Entity
     public static final String DWARF_AMBIENT = JolCraftStrings.underscored(JolCraftDwarfIds.DWARF, JolCraftDictionary.AMBIENT);
     public static final String DWARF_HURT = JolCraftStrings.underscored(JolCraftDwarfIds.DWARF, JolCraftDictionary.HURT);

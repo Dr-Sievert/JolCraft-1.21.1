@@ -668,6 +668,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String REFINED =
             category(JolCraftDictionary.TOOLTIP, JolCraftDictionary.REFINED);
 
+    public static final String INSTRUMENT_WAR_HORN =
+            instrument(JolCraftItemIds.WAR_HORN);
+
     // ---------------------------------------------------------------------
     // SubtitleLangSubProvider
     // ---------------------------------------------------------------------
@@ -722,6 +725,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String SUBTITLE_CURSE =
             subtitleFromSoundId(JolCraftSoundIds.CURSE);
+
+    public static final String SUBTITLE_WAR_HORN =
+            subtitleFromSoundId(JolCraftSoundIds.WAR_HORN);
 
     // ---------------------------------------------------------------------
     // TrimLangSubProvider

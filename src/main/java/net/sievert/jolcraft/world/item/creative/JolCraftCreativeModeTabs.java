@@ -108,6 +108,7 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.MUFFHORN_FUR);
                         output.accept(JolCraftBlocks.MUFFHORN_FUR_BLOCK);
                         output.accept(JolCraftItems.MUFFHORN_MILK_BUCKET);
+                        output.accept(JolCraftItems.WAR_HORN);
 
                         output.accept(JolCraftItems.DEEPSLATE_PLATE);
                         output.accept(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK);

@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
@@ -54,173 +53,8 @@ public record DwarfKeeperTrades(JolCraftDataProvider<RecipeOutput> parent) imple
         emitOrdered(
                 output,
                 tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costACoins(
-                                1,
-                                2
-                        )
-                        .noCostB()
-                        .result(
-                                JolCraftItems.BARLEY_SEEDS.get(),
-                                1,
-                                3
-                        )
-                        .maxUses(10)
-                        .dwarfXp(1)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.APPRENTICE
-                        )
-                        .costA(
-                                JolCraftItems.BARLEY.get(),
-                                15,
-                                22
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                1,
-                                2
-                        )
-                        .maxUses(10)
-                        .dwarfXp(25)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.JOURNEYMAN
-                        )
-                        .costA(
-                                JolCraftItems.MUFFHORN_FUR.get(),
-                                1
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                2,
-                                4
-                        )
-                        .maxUses(15)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.JOURNEYMAN
-                        )
-                        .costA(
-                                JolCraftItems.MUFFHORN_MILK_BUCKET.get(),
-                                1
-                        )
-                        .noCostB()
-                        .coinsResult(5)
-                        .maxUses(10)
-                        .dwarfXp(30)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.EXPERT
-                        )
-                        .costA(
-                                JolCraftItems.DEEPSLATE_BULBS.get(),
-                                1,
-                                2
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                3,
-                                5
-                        )
-                        .maxUses(10)
-                        .dwarfXp(30)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.MASTER
-                        )
-                        .costACoins(
-                                2,
-                                5
-                        )
-                        .noCostB()
-                        .result(
-                                Items.BONE_MEAL,
-                                3,
-                                5
-                        )
-                        .maxUses(5)
-                        .dwarfXp(1)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.MASTER
-                        )
-                        .costACoins(
-                                5,
-                                9
-                        )
-                        .noCostB()
-                        .result(
-                                JolCraftItems.DEEPSLATE_BULBS.get(),
-                                1,
-                                5
-                        )
-                        .maxUses(3)
-                        .dwarfXp(0)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
                 seedTrade(
-                        DwarfMerchantData.Level.MASTER,
-                        JolCraftItems.ASGARNIAN_SEEDS.get()
-                )
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                seedTrade(
-                        DwarfMerchantData.Level.MASTER,
+                        DwarfMerchantData.Level.APPRENTICE,
                         JolCraftItems.DUSKHOLD_SEEDS.get()
                 )
         );
@@ -229,7 +63,16 @@ public record DwarfKeeperTrades(JolCraftDataProvider<RecipeOutput> parent) imple
                 output,
                 tracking,
                 seedTrade(
-                        DwarfMerchantData.Level.MASTER,
+                        DwarfMerchantData.Level.JOURNEYMAN,
+                        JolCraftItems.YANILLIAN_SEEDS.get()
+                )
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                seedTrade(
+                        DwarfMerchantData.Level.EXPERT,
                         JolCraftItems.KRANDONIAN_SEEDS.get()
                 )
         );
@@ -239,7 +82,7 @@ public record DwarfKeeperTrades(JolCraftDataProvider<RecipeOutput> parent) imple
                 tracking,
                 seedTrade(
                         DwarfMerchantData.Level.MASTER,
-                        JolCraftItems.YANILLIAN_SEEDS.get()
+                        JolCraftItems.ASGARNIAN_SEEDS.get()
                 )
         );
     }
@@ -251,14 +94,11 @@ public record DwarfKeeperTrades(JolCraftDataProvider<RecipeOutput> parent) imple
         return DwarfTradeRecipeBuilder.create()
                 .profession(PROFESSION)
                 .merchantLevel(level)
-                .costACoins(5)
+                .costACoins(10)
                 .noCostB()
-                .result(
-                        seed,
-                        1
-                )
-                .maxUses(3)
-                .dwarfXp(0)
+                .result(seed)
+                .maxUses(5)
+                .dwarfXp(1)
                 .priceMultiplier(0.05F);
     }
 }

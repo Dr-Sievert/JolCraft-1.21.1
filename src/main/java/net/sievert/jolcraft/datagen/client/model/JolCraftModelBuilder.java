@@ -27,7 +27,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.sievert.jolcraft.JolCraft;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -634,5 +633,79 @@ public final class JolCraftModelBuilder {
                                 .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
                                 .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                 );
+    }
+
+    public void instrumentItem(@NotNull Item item) {
+        ResourceLocation model =
+                ModelLocationUtils.getModelLocation(item);
+
+        ResourceLocation tootingModel =
+                model.withPrefix("tooting_");
+
+        ResourceLocation texture =
+                itemTexture(item);
+
+        addModel(
+                tootingModel,
+                () -> {
+                    JsonObject json = new JsonObject();
+                    json.addProperty(
+                            "parent",
+                            "minecraft:item/tooting_goat_horn"
+                    );
+
+                    JsonObject textures = new JsonObject();
+                    textures.addProperty(
+                            "layer0",
+                            texture.toString()
+                    );
+                    json.add("textures", textures);
+
+                    return json;
+                }
+        );
+
+        addModel(
+                model,
+                () -> {
+                    JsonObject json = new JsonObject();
+                    json.addProperty(
+                            "parent",
+                            "minecraft:item/goat_horn"
+                    );
+
+                    JsonObject textures = new JsonObject();
+                    textures.addProperty(
+                            "layer0",
+                            texture.toString()
+                    );
+                    json.add("textures", textures);
+
+                    JsonObject predicate = new JsonObject();
+                    predicate.addProperty(
+                            "tooting",
+                            1.0F
+                    );
+
+                    JsonObject override = new JsonObject();
+                    override.add(
+                            "predicate",
+                            predicate
+                    );
+                    override.addProperty(
+                            "model",
+                            tootingModel.toString()
+                    );
+
+                    JsonArray overrides = new JsonArray();
+                    overrides.add(override);
+                    json.add(
+                            "overrides",
+                            overrides
+                    );
+
+                    return json;
+                }
+        );
     }
 }

@@ -8,6 +8,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.item.custom.instrument.WarHornItem;
 import net.sievert.jolcraft.world.item.custom.tool.ArtisanHammerItem;
 import net.sievert.jolcraft.world.item.custom.tool.ChiselItem;
 import net.sievert.jolcraft.world.item.custom.tool.PestleItem;
@@ -35,6 +36,7 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> EMPTY_DEEPSLATE_COMPASS = JolCraftCoreItems.registerEmptyDeepslateCompass();
     public static final DeferredItem<Item> DEEPSLATE_COMPASS = JolCraftCoreItems.registerDeepslateCompass();
     public static final DeferredItem<Item> DEEPSLATE_COMPASS_DIAL = JolCraftCoreItems.registerDeepslateCompassDial();
+    public static final DeferredItem<WarHornItem> WAR_HORN = JolCraftEquipmentItems.registerWarHorn();
 
     public static final DeferredItem<Item> REPUTATION_TABLET_0 = JolCraftCoreItems.registerReputationTablet0();
     public static final DeferredItem<Item> REPUTATION_TABLET_1 = JolCraftCoreItems.registerReputationTablet1();

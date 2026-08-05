@@ -116,6 +116,14 @@ public final class JolCraftSoundProvider extends SoundDefinitionsProvider
         );
 
         addCurseRange(JolCraftSounds.CURSE, JolCraftLanguageKeys.SUBTITLE_CURSE, 1, 10);
+
+        addItemSingle(JolCraftSounds.WAR_HORN, JolCraftLanguageKeys.SUBTITLE_WAR_HORN);
+    }
+
+    private void addItemSingle(Supplier<SoundEvent> event, String subtitleKey) {
+        String id = idPath(event);
+        ResourceLocation resourceLocation = mod(JolCraftStrings.slashed(JolCraftDictionary.ITEM, id));
+        addSingle(event, subtitleKey, resourceLocation);
     }
 
     private void addDwarfVariants(Supplier<SoundEvent> event, String subtitleKey, int count) {

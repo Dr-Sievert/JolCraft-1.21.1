@@ -18,10 +18,7 @@ import net.sievert.jolcraft.datagen.config.JolCraftConfigProvider;
 import net.sievert.jolcraft.datagen.loot.glm.JolCraftGlobalLootModifierProvider;
 import net.sievert.jolcraft.datagen.loot.table.JolCraftMainLootTableProvider;
 import net.sievert.jolcraft.datagen.recipe.JolCraftRecipeProvider;
-import net.sievert.jolcraft.datagen.tag.provider.JolCraftBiomeTagProvider;
-import net.sievert.jolcraft.datagen.tag.provider.JolCraftBlockTagProvider;
-import net.sievert.jolcraft.datagen.tag.provider.JolCraftItemTagProvider;
-import net.sievert.jolcraft.datagen.tag.provider.JolCraftStructureTagProvider;
+import net.sievert.jolcraft.datagen.tag.provider.*;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 
@@ -73,6 +70,11 @@ public final class JolCraftDataGenerator {
                     existingFileHelper
             ));
             generator.addProvider(true, new JolCraftStructureTagProvider(
+                    packOutput,
+                    lookupProvider,
+                    existingFileHelper
+            ));
+            generator.addProvider(true, new JolCraftInstrumentTagProvider(
                     packOutput,
                     lookupProvider,
                     existingFileHelper

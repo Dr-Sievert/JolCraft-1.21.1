@@ -101,6 +101,17 @@ public final class JolCraftItemProperties {
                 )
         );
 
+        props += register(
+                JolCraftItems.WAR_HORN.get(),
+                ResourceLocation.withDefaultNamespace("tooting"),
+                (stack, level, entity, seed) ->
+                        entity != null
+                                && entity.isUsingItem()
+                                && entity.getUseItem() == stack
+                                ? 1.0F
+                                : 0.0F
+        );
+
         JolCraftLogs.info(
                 JolCraftLogTags.INIT,
                 "Registered {} item properties",

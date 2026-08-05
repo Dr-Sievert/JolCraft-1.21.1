@@ -38,6 +38,8 @@ public final class JolCraftSounds {
     public static final Supplier<SoundEvent> COIN_STACK = registerSoundEvent(JolCraftSoundIds.COIN_STACK);
     public static final Supplier<SoundEvent> COIN_SINGLE = registerSoundEvent(JolCraftSoundIds.COIN_SINGLE);
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> WAR_HORN = registerSoundEventHolder(JolCraftSoundIds.WAR_HORN);
+
     // Entity
     public static final Supplier<SoundEvent> DWARF_AMBIENT = registerSoundEvent(JolCraftSoundIds.DWARF_AMBIENT);
     public static final Supplier<SoundEvent> DWARF_HURT = registerSoundEvent(JolCraftSoundIds.DWARF_HURT);

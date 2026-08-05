@@ -18,6 +18,7 @@ import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.loot.glm.subprovider.JolCraftArchaeologyGlobalLootModifierProvider;
+import net.sievert.jolcraft.datagen.loot.glm.subprovider.JolCraftBlockGlobalLootModifierProvider;
 import net.sievert.jolcraft.datagen.loot.glm.subprovider.JolCraftChestGlobalLootModifierProvider;
 import net.sievert.jolcraft.datagen.loot.glm.subprovider.JolCraftFishingGlobalLootModifierProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -43,6 +44,7 @@ public final class JolCraftGlobalLootModifierProvider
         this.lookupProvider = lookupProvider;
         this.subProviders = List.of(
                 new JolCraftArchaeologyGlobalLootModifierProvider(this),
+                new JolCraftBlockGlobalLootModifierProvider(this),
                 new JolCraftChestGlobalLootModifierProvider(this),
                 new JolCraftFishingGlobalLootModifierProvider(this)
         );

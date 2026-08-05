@@ -63,14 +63,14 @@ public record DwarfMerchantBountyRewards(
                                     4,
                                     6
                             ),
-                            10
+                            8
                     );
 
                     builder.reward(
                             give(
                                     JolCraftItems.RESTOCK_CRATE.get()
                             ),
-                            2
+                            1
                     );
 
                     builder.reward(
@@ -93,7 +93,7 @@ public record DwarfMerchantBountyRewards(
                                     7,
                                     10
                             ),
-                            8
+                            7
                     );
 
                     builder.reward(
@@ -137,7 +137,7 @@ public record DwarfMerchantBountyRewards(
                             give(
                                     JolCraftItems.REROLL_CRATE.get()
                             ),
-                            1
+                            2
                     );
                 }
         );
@@ -153,21 +153,21 @@ public record DwarfMerchantBountyRewards(
                                     20,
                                     27
                             ),
-                            4
+                            5
                     );
 
                     builder.reward(
                             give(
                                     JolCraftItems.RESTOCK_CRATE.get()
                             ),
-                            2
+                            3
                     );
 
                     builder.reward(
                             give(
                                     JolCraftItems.REROLL_CRATE.get()
                             ),
-                            1
+                            2
                     );
                 }
         );
@@ -183,21 +183,21 @@ public record DwarfMerchantBountyRewards(
                                     30,
                                     39
                             ),
-                            2
+                            4
                     );
 
                     builder.reward(
                             give(
                                     JolCraftItems.RESTOCK_CRATE.get()
                             ),
-                            2
+                            3
                     );
 
                     builder.reward(
                             give(
                                     JolCraftItems.REROLL_CRATE.get()
                             ),
-                            1
+                            3
                     );
                 }
         );

@@ -14,6 +14,7 @@ import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.RecipeSubProvider;
 import net.sievert.jolcraft.datagen.recipe.builder.BountyRewardRecipeBuilder;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -54,71 +55,135 @@ public record DwarfKeeperBountyRewards(JolCraftDataProvider<RecipeOutput> parent
                 output,
                 tracking,
                 DwarfMerchantData.Level.NOVICE,
-                builder -> builder.reward(
-                        give(
-                                JolCraftItems.GOLD_COIN.get(),
-                                4,
-                                6
-                        ),
-                        10
-                )
+                builder -> {
+                    builder.reward(
+                            give(
+                                    JolCraftItems.GOLD_COIN.get(),
+                                    4,
+                                    6
+                            ),
+                            9
+                    );
+
+                    builder.reward(
+                            give(
+                                    JolCraftBlocks.VERDANT_SOIL.get().asItem()
+                            ),
+                            1
+                    );
+                }
         );
 
         emitTier(
                 output,
                 tracking,
                 DwarfMerchantData.Level.APPRENTICE,
-                builder -> builder.reward(
-                        give(
-                                JolCraftItems.GOLD_COIN.get(),
-                                7,
-                                10
-                        ),
-                        8
-                )
+                builder -> {
+                    builder.reward(
+                            give(
+                                    JolCraftItems.GOLD_COIN.get(),
+                                    7,
+                                    10
+                            ),
+                            7
+                    );
+
+                    builder.reward(
+                            give(
+                                    JolCraftBlocks.VERDANT_SOIL.get().asItem(),
+                                    1,
+                                    2
+
+                            ),
+                            1
+                    );
+                }
         );
 
         emitTier(
                 output,
                 tracking,
                 DwarfMerchantData.Level.JOURNEYMAN,
-                builder -> builder.reward(
-                        give(
-                                JolCraftItems.GOLD_COIN.get(),
-                                12,
-                                16
-                        ),
-                        6
-                )
+                builder -> {
+                    builder.reward(
+                            give(
+                                    JolCraftItems.GOLD_COIN.get(),
+                                    12,
+                                    16
+                            ),
+                            5
+                    );
+
+                    builder.reward(
+                            give(
+                                    JolCraftBlocks.VERDANT_SOIL.get().asItem(),
+                                    1,
+                                    3
+
+                            ),
+                            1
+                    );
+                }
         );
 
         emitTier(
                 output,
                 tracking,
                 DwarfMerchantData.Level.EXPERT,
-                builder -> builder.reward(
-                        give(
-                                JolCraftItems.GOLD_COIN.get(),
-                                20,
-                                27
-                        ),
-                        4
-                )
+                builder -> {
+                    builder.reward(
+                            give(
+                                    JolCraftItems.GOLD_COIN.get(),
+                                    20,
+                                    27
+                            ),
+                            3
+                    );
+
+                    builder.reward(
+                            give(
+                                    JolCraftBlocks.VERDANT_SOIL.get().asItem(),
+                                    1,
+                                    4
+
+                            ),
+                            1
+                    );
+                }
         );
 
         emitTier(
                 output,
                 tracking,
                 DwarfMerchantData.Level.MASTER,
-                builder -> builder.reward(
-                        give(
-                                JolCraftItems.GOLD_COIN.get(),
-                                30,
-                                39
-                        ),
-                        2
-                )
+                builder -> {
+                    builder.reward(
+                            give(
+                                    JolCraftItems.GOLD_COIN.get(),
+                                    30,
+                                    39
+                            ),
+                            1
+                    );
+
+                    builder.reward(
+                            give(
+                                    JolCraftBlocks.VERDANT_SOIL.get().asItem(),
+                                    1,
+                                    5
+
+                            ),
+                            1
+                    );
+                }
         );
+    }
+
+    private static @NotNull
+    LootPoolSingletonContainer.Builder<?> give(
+            @NotNull Item item
+    ) {
+        return LootItem.lootTableItem(item);
     }
 
     private static @NotNull

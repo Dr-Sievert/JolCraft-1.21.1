@@ -760,6 +760,14 @@ public record DwarfMerchantTrades(
 
         pooledPotionBuy(output, tracking,
                 DwarfMerchantData.Level.EXPERT,
+                JolCraftPotions.BULWARK,
+                14,
+                20,
+                3
+        );
+
+        pooledPotionBuy(output, tracking,
+                DwarfMerchantData.Level.EXPERT,
                 JolCraftPotions.DWARVEN_HASTE,
                 14,
                 20,

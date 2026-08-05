@@ -38,10 +38,12 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
+import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -212,6 +214,16 @@ public final class JolCraftJeiPlugin implements IModPlugin {
             @NotNull ISubtypeRegistration registration
     ) {
         registration.registerSubtypeInterpreter(
+                JolCraftItems.BOUNTY.get(),
+                (stack, context) -> bountySubtype(stack)
+        );
+
+        registration.registerSubtypeInterpreter(
+                JolCraftItems.BOUNTY_CRATE.get(),
+                (stack, context) -> bountySubtype(stack)
+        );
+
+        registration.registerSubtypeInterpreter(
                 JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY.get(),
                 (stack, context) -> {
                     String loreKey =
@@ -361,5 +373,20 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                         )
                 )
         );
+    }
+
+    private static @NotNull String bountySubtype(
+            @NotNull ItemStack stack
+    ) {
+        DwarfProfession profession = BountyRecipe.getType(stack);
+        DwarfMerchantData.Level tier = BountyRecipe.getTier(stack);
+
+        if (profession == null || tier == null) {
+            return JolCraftDictionary.EMPTY;
+        }
+
+        return profession.getId()
+                + ":"
+                + tier.name().toLowerCase(Locale.ROOT);
     }
 }

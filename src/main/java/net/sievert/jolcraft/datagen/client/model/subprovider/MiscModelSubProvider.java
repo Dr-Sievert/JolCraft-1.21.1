@@ -85,6 +85,10 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
                 JolCraft.location(JolCraftItemPropertyIds.DEEPSLATE_COMPASS_ANGLE),
                 SUB_COMPASS
         );
+
+        builder.instrumentItem(
+                JolCraftItems.WAR_HORN.get()
+        );
     }
 
     private static void generateCoinPouchModel(@NotNull JolCraftModelBuilder builder) {

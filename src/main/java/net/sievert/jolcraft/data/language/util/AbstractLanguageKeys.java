@@ -103,6 +103,11 @@ public abstract class AbstractLanguageKeys {
         );
     }
 
+    /** "instrument.<modid>.<name>" */
+    public static String instrument(String id) {
+        return category(JolCraftDictionary.INSTRUMENT, id);
+    }
+
     protected static String subtitleFromSoundId(String soundId) {
         return subtitle(soundId.replace('_', '.'));
     }

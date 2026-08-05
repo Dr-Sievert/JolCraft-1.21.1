@@ -29,6 +29,8 @@ public final class JolCraftItemIds extends JolCraftIds {
     public static final String EMPTY_DEEPSLATE_COMPASS = join(JolCraftDictionary.EMPTY, DEEPSLATE_COMPASS);
     public static final String DEEPSLATE_COMPASS_DIAL = join(DEEPSLATE_COMPASS, JolCraftDictionary.DIAL);
 
+    public static final String WAR_HORN = join(JolCraftDictionary.WAR, JolCraftDictionary.HORN);
+
     // ---------------------------------------------------------------------
     // Materials / Armors / Tools
     // ---------------------------------------------------------------------

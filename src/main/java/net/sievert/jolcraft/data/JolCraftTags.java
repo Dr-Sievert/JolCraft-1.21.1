@@ -4,12 +4,15 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.id.tag.JolCraftTagIds;
+import net.sievert.jolcraft.util.JolCraftStrings;
 
 import static net.sievert.jolcraft.JolCraft.location;
 
@@ -115,5 +118,16 @@ public final class JolCraftTags {
         private static TagKey<Structure> create(String id) {
             return TagKey.create(Registries.STRUCTURE, location(id));
         }
+    }
+
+    public static final class Instruments {
+
+        public static final TagKey<Instrument> WAR_HORNS =
+                TagKey.create(
+                        Registries.INSTRUMENT,
+                        JolCraft.location(JolCraftStrings.plural(JolCraftItemIds.WAR_HORN))
+                );
+
+        private Instruments() {}
     }
 }

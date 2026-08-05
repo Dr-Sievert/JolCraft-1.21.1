@@ -13,6 +13,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.sievert.jolcraft.config.JolCraftConfigs;
 import net.sievert.jolcraft.world.block.fluid.util.JolCraftCauldronInteractions;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.item.instrument.JolCraftInstruments;
 import net.sievert.jolcraft.world.item.registry.JolCraftMapDecorationTypes;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -71,6 +72,7 @@ public class JolCraft {
         JolCraftSounds.register(modEventBus);
         JolCraftEffects.register(modEventBus);
         JolCraftPotions.register(modEventBus);
+        JolCraftInstruments.register(modEventBus);
         JolCraftProcessors.register(modEventBus);
         JolCraftBlockPredicateTypes.register(modEventBus);
         JolCraftAttachments.register(modEventBus);

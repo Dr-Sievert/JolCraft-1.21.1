@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
@@ -51,11 +52,12 @@ public record DwarfGuardTrades(JolCraftDataProvider<RecipeOutput> parent) implem
                                 DwarfMerchantData.Level.MASTER
                         )
                         .costA(
-                                JolCraftItems.AEGISCORE.get(),
-                                1
+                                Items.GOAT_HORN
                         )
-                        .noCostB()
-                        .coinsResult(30)
+                        .costB(
+                                JolCraftItems.AEGISCORE
+                        )
+                        .result(JolCraftItems.WAR_HORN)
                         .maxUses(1)
                         .dwarfXp(0)
                         .priceMultiplier(0.05F)
