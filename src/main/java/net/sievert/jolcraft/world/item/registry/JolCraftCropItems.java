@@ -37,7 +37,7 @@ public final class JolCraftCropItems {
     public static DeferredItem<Item> registerAsgarnianSeeds() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.ASGARNIAN_SEEDS,
-                props -> new BlockItem(
+                props -> new ItemNameBlockItem(
                         JolCraftBlocks.ASGARNIAN_CROP_BOTTOM.get(),
                         props
                 )
@@ -51,7 +51,7 @@ public final class JolCraftCropItems {
     public static DeferredItem<Item> registerDuskholdSeeds() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.DUSKHOLD_SEEDS,
-                props -> new BlockItem(
+                props -> new ItemNameBlockItem(
                         JolCraftBlocks.DUSKHOLD_CROP_BOTTOM.get(),
                         props
                 )
@@ -65,7 +65,7 @@ public final class JolCraftCropItems {
     public static DeferredItem<Item> registerKrandonianSeeds() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.KRANDONIAN_SEEDS,
-                props -> new BlockItem(
+                props -> new ItemNameBlockItem(
                         JolCraftBlocks.KRANDONIAN_CROP_BOTTOM.get(),
                         props
                 )
@@ -79,7 +79,7 @@ public final class JolCraftCropItems {
     public static DeferredItem<Item> registerYanillianSeeds() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.YANILLIAN_SEEDS,
-                props -> new BlockItem(
+                props -> new ItemNameBlockItem(
                         JolCraftBlocks.YANILLIAN_CROP_BOTTOM.get(),
                         props
                 )

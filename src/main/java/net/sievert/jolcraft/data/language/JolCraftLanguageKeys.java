@@ -455,6 +455,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JADE_CONFIG_FERMENTING_CAULDRON =
             jadeConfig(JolCraftBlockIds.FERMENTING_CAULDRON);
 
+    public static final String JADE_CONFIG_STRONGBOX =
+            jadeConfig(JolCraftBlockIds.STRONGBOX);
+
     public static final String JADE_CONFIG_DWARF_PROFESSION =
             jadeConfig(us(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION));
 

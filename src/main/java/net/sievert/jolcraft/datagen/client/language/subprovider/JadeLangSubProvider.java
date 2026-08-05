@@ -47,6 +47,12 @@ public final class JadeLangSubProvider implements LanguageSubProvider {
 
         putManual(
                 translations,
+                JolCraftLanguageKeys.JADE_CONFIG_STRONGBOX,
+                JolCraftStrings.toTitleCase(JolCraftBlockIds.STRONGBOX)
+        );
+
+        putManual(
+                translations,
                 JolCraftLanguageKeys.JADE_CONFIG_DWARF_PROFESSION,
                 JolCraftStrings.toTitleCase(JolCraftStrings.underscored(JolCraftDwarfIds.DWARF, JolCraftDirectoryIds.PROFESSION))
         );
