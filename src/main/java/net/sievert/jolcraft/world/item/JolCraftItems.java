@@ -36,6 +36,7 @@ public final class JolCraftItems {
     public static final DeferredItem<Item> EMPTY_DEEPSLATE_COMPASS = JolCraftCoreItems.registerEmptyDeepslateCompass();
     public static final DeferredItem<Item> DEEPSLATE_COMPASS = JolCraftCoreItems.registerDeepslateCompass();
     public static final DeferredItem<Item> DEEPSLATE_COMPASS_DIAL = JolCraftCoreItems.registerDeepslateCompassDial();
+    public static final DeferredItem<Item> DIAL_DUST = JolCraftCoreItems.registerDialDust();
     public static final DeferredItem<WarHornItem> WAR_HORN = JolCraftEquipmentItems.registerWarHorn();
 
     public static final DeferredItem<Item> REPUTATION_TABLET_0 = JolCraftCoreItems.registerReputationTablet0();

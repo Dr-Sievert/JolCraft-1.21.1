@@ -74,8 +74,8 @@ public final class JolCraftDamageTypeTagProvider
             @NotNull JolCraftDataTracking tracking
     ) {
         target.tag(JolCraftTags.DamageTypes.CURSE)
-                .add(JolCraftDamageTypes.CURSED_WOUND)
-                .add(JolCraftDamageTypes.VITALITY_CURSE);
+                .addOptional(JolCraftDamageTypes.CURSED_WOUND.location())
+                .addOptional(JolCraftDamageTypes.VITALITY_CURSE.location());
 
         target.tag(Tags.DamageTypes.IS_MAGIC)
                 .addTag(JolCraftTags.DamageTypes.CURSE);
@@ -84,9 +84,9 @@ public final class JolCraftDamageTypeTagProvider
                 .addTag(JolCraftTags.DamageTypes.CURSE);
 
         target.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS)
-                .add(JolCraftDamageTypes.VITALITY_CURSE);
+                .addOptional(JolCraftDamageTypes.VITALITY_CURSE.location());
 
         target.tag(DamageTypeTags.BYPASSES_RESISTANCE)
-                .add(JolCraftDamageTypes.VITALITY_CURSE);
+                .addOptional(JolCraftDamageTypes.VITALITY_CURSE.location());
     }
 }

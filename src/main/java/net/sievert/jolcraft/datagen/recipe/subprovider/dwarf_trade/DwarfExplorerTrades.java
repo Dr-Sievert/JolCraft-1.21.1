@@ -68,7 +68,20 @@ public record DwarfExplorerTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                         .result(JolCraftItems.EMPTY_DEEPSLATE_COMPASS)
                         .maxUses(3)
                         .dwarfXp(1)
-                        .priceMultiplier(0.0F)
+                        .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create()
+                        .profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                        .costA(JolCraftItems.DIAL_DUST)
+                        .coinsResult(1)
+                        .maxUses(25)
+                        .dwarfXp(10)
+                        .priceMultiplier(0.05F)
         );
 
         addDialTrade(

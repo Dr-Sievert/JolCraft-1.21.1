@@ -86,6 +86,8 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
                 SUB_COMPASS
         );
 
+        builder.flatItem(JolCraftItems.DIAL_DUST.get(), SUB_COMPASS);
+
         builder.instrumentItem(
                 JolCraftItems.WAR_HORN.get()
         );

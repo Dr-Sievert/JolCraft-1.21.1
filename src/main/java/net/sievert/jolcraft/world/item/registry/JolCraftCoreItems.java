@@ -88,6 +88,14 @@ public final class JolCraftCoreItems {
         );
     }
 
+    public static DeferredItem<Item> registerDialDust() {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.DIAL_DUST,
+                Item::new,
+                new Item.Properties().rarity(Rarity.UNCOMMON)
+        );
+    }
+
     public static DeferredItem<Item> registerReputationTablet0() {
         return registerReputationTablet(
                 JolCraftItemIds.REPUTATION_TABLET_0,
