@@ -336,7 +336,7 @@ public final class DwarfProfessionConfigProvider
                             true,
                             true,
 
-                            false,
+                            true,
                             true,
 
                             defaults.rules(),
@@ -573,7 +573,13 @@ public final class DwarfProfessionConfigProvider
                                 DwarfMerchantData.Level.NOVICE,
                                 1,
 
+                                DwarfMerchantData.Level.APPRENTICE,
+                                1,
+
                                 DwarfMerchantData.Level.JOURNEYMAN,
+                                1,
+
+                                DwarfMerchantData.Level.EXPERT,
                                 1,
 
                                 DwarfMerchantData.Level.MASTER,

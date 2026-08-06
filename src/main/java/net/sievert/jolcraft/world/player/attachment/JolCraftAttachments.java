@@ -59,7 +59,7 @@ public final class JolCraftAttachments {
 
     public static final Supplier<AttachmentType<DiscoveredStructuresAttachment>> DISCOVERED_STRUCTURES =
             ATTACHMENT_TYPES.register(JolCraftAttachmentIds.DISCOVERED_STRUCTURES, () ->
-                    AttachmentType.builder(DiscoveredStructuresAttachment::new)
+                    AttachmentType.builder(() -> new DiscoveredStructuresAttachment())
                             .serialize(DiscoveredStructuresAttachment.CODEC)
                             .sync(DiscoveredStructuresAttachment.STREAM_CODEC)
                             .copyOnDeath()

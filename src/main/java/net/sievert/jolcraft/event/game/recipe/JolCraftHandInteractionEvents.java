@@ -20,6 +20,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParams;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
@@ -198,7 +199,7 @@ public final class JolCraftHandInteractionEvents {
                         continue;
                     }
 
-                    giveOrDrop(
+                    JolCraftItemInsertionHelper.tryInsertIntoInventoryOrDrop(
                             player,
                             stack
                     );
@@ -311,18 +312,6 @@ public final class JolCraftHandInteractionEvents {
         }
 
         return spawnedAny;
-    }
-
-    private static void giveOrDrop(
-            @NotNull ServerPlayer player,
-            @NotNull ItemStack stack
-    ) {
-        if (!player.getInventory().add(stack)) {
-            player.drop(
-                    stack,
-                    false
-            );
-        }
     }
 
     private static void playSoundOutput(

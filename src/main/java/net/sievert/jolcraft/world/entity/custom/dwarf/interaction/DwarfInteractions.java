@@ -83,11 +83,6 @@ public final class DwarfInteractions {
         );
 
         register(
-                DwarfProfession.EXPLORER,
-                new ExplorerInteractionHandler()
-        );
-
-        register(
                 DwarfProfession.GUILDMASTER,
                 new GuildmasterInteractionHandler()
         );

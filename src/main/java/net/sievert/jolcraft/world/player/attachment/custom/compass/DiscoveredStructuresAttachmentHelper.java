@@ -15,7 +15,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureCheckResult;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
@@ -28,7 +27,6 @@ import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.player.JolCraftStats;
 import net.sievert.jolcraft.world.player.attachment.JolCraftAttachments;
 import net.sievert.jolcraft.world.player.attachment.base.JolCraftAttachmentHelper;
-import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,12 +37,6 @@ import java.util.Set;
 public final class DiscoveredStructuresAttachmentHelper extends JolCraftAttachmentHelper<DiscoveredStructuresAttachment> {
 
     private static final DiscoveredStructuresAttachmentHelper INSTANCE = new DiscoveredStructuresAttachmentHelper();
-
-    private static final Map<ResourceLocation, Integer> STRUCTURE_SCORES = Map.of(
-            BuiltinStructures.TRAIL_RUINS.location(), 25,
-            BuiltinStructures.ANCIENT_CITY.location(), 100,
-            JolCraftStructures.DWARVEN_FORTRESS.id(), 100
-    );
 
     private DiscoveredStructuresAttachmentHelper() {}
 
@@ -104,32 +96,23 @@ public final class DiscoveredStructuresAttachmentHelper extends JolCraftAttachme
     }
 
     /**
-     * SERVER-SIDE: Add a structure location and structure-based discovery score.
+     * SERVER-SIDE: Adds a newly discovered structure location.
      */
-    public static void addDiscoveredStructureServer(ServerPlayer player, GlobalPos pos, ResourceLocation structureId) {
-        if (player == null || pos == null || structureId == null) {
-            return;
+    public static boolean addDiscoveredStructureServer(ServerPlayer player, GlobalPos pos) {
+        if (player == null || pos == null) {
+            return false;
         }
 
         DiscoveredStructuresAttachment current = get(player);
         DiscoveredStructuresAttachment updated = current.withDiscovered(pos);
 
         if (updated == current) {
-            return;
+            return false;
         }
-
-        int score = STRUCTURE_SCORES.getOrDefault(structureId, 50);
-        updated = updated.withAddedScore(score);
 
         set(player, updated);
         player.awardStat(JolCraftStats.STRUCTURES_DISCOVERED.get());
-    }
-
-    /**
-     * Get the player's current structure discovery score.
-     */
-    public static int getDiscoveryScore(ServerPlayer player) {
-        return player == null ? 0 : get(player).getScore();
+        return true;
     }
 
     private record StructurePlacements(

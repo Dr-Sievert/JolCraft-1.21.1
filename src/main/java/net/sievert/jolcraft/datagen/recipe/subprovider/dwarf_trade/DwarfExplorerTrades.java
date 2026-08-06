@@ -1,9 +1,11 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
@@ -58,6 +60,19 @@ public record DwarfExplorerTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                        .costA(JolCraftItems.DIAL_DUST)
+                        .coinsResult(3)
+                        .maxUses(25)
+                        .dwarfXp(10)
+                        .priceMultiplier(0.0F)
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create()
+                        .profession(PROFESSION)
                         .merchantLevel(DwarfMerchantData.Level.NOVICE
                         )
                         .costACoins(
@@ -74,13 +89,16 @@ public record DwarfExplorerTrades(JolCraftDataProvider<RecipeOutput> parent) imp
         emitOrdered(
                 output,
                 tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
-                        .costA(JolCraftItems.DIAL_DUST)
-                        .coinsResult(1)
-                        .maxUses(25)
-                        .dwarfXp(10)
+                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .costACoins(
+                                8,
+                                16
+                        )
+                        .noCostB()
+                        .rewardCrateResult(RewardCrateType.FISHING_LOOT)
+                        .maxUses(1)
+                        .dwarfXp(1)
                         .priceMultiplier(0.05F)
         );
 
@@ -155,22 +173,6 @@ public record DwarfExplorerTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                 12,
                 16
         );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
-                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
-                        .costACoins(
-                                8,
-                                16
-                        )
-                        .noCostB()
-                        .rewardCrateResult(RewardCrateType.FISHING_LOOT)
-                        .maxUses(1)
-                        .dwarfXp(1)
-                        .priceMultiplier(0.05F)
-        );
     }
 
     private void addDialTrade(
@@ -224,10 +226,23 @@ public record DwarfExplorerTrades(JolCraftDataProvider<RecipeOutput> parent) imp
                                 minCost,
                                 maxCost
                         )
-                        .costB(JolCraftItems.DEEPSLATE_COMPASS_DIAL)
+                        .costB(
+                                DwarfTradeRecipeBuilder.cost(
+                                        DataComponentIngredient.of(
+                                                true,
+                                       new ItemStack(JolCraftItems.DEEPSLATE_COMPASS_DIAL.get().getDefaultInstance().getItem())
+                                        ),
+                                        1,
+                                        1
+                                )
+                        )
+                        .costBName(JolCraftItems.DEEPSLATE_COMPASS_DIAL.getId().getPath())
                         .result(
                                 dialOutput,
-                                JolCraftStrings.underscored(group.getId() + JolCraftItemIds.DEEPSLATE_COMPASS_DIAL)
+                                JolCraftStrings.underscored(
+                                        group.getId(),
+                                        JolCraftItemIds.DEEPSLATE_COMPASS_DIAL
+                                )
                         )
                         .maxUses(1)
                         .dwarfXp(1)

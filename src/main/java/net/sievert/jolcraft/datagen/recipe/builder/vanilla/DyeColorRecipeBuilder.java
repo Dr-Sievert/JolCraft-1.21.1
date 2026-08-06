@@ -6,6 +6,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -80,7 +81,7 @@ public final class DyeColorRecipeBuilder {
 
         return ComponentPreservingShapelessRecipeBuilder
                 .create(category, Ingredient.of(baseItem))
-                .result(new net.minecraft.world.item.ItemStack(baseItem))
+                .result(new ItemStack(baseItem))
                 .ingredient(Ingredient.of(DyeItem.byColor(dyeColor)))
                 .set(set.build());
     }
@@ -93,7 +94,7 @@ public final class DyeColorRecipeBuilder {
         ComponentPreservingShapelessRecipeBuilder builder =
                 ComponentPreservingShapelessRecipeBuilder
                         .create(category, Ingredient.of(baseItem))
-                        .result(new net.minecraft.world.item.ItemStack(baseItem))
+                        .result(new ItemStack(baseItem))
                         .requireBaseHas(DataComponents.DYED_COLOR)
                         .remove(DataComponents.DYED_COLOR);
 

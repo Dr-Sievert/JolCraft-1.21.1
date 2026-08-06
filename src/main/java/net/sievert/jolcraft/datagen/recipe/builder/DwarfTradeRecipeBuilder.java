@@ -1,8 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.builder;
 
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,14 +22,11 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.neoforged.neoforge.common.crafting.ICustomIngredient;
-import net.neoforged.neoforge.fluids.FluidUtil;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftOrderedEmissionBuilder;
 import net.sievert.jolcraft.datagen.base.output.JolCraftDataEmission;
 import net.sievert.jolcraft.datagen.base.output.JolCraftFileNameBuilder;
-import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -40,7 +35,6 @@ import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.item.lore.util.LoreHelper;
-import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeCost;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe.TradeGroup;
@@ -52,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
-import java.util.stream.Stream;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

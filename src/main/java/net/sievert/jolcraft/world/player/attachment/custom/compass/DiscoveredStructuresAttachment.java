@@ -6,8 +6,8 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.sievert.jolcraft.world.player.attachment.base.JolCraftSyncedAttachment;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.world.player.attachment.base.JolCraftSyncedAttachment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -20,35 +20,28 @@ public final class DiscoveredStructuresAttachment extends JolCraftSyncedAttachme
             RecordCodecBuilder.create(instance -> instance.group(
                     GlobalPos.CODEC.listOf()
                             .fieldOf(JolCraftDictionary.DISCOVERED)
-                            .forGetter(DiscoveredStructuresAttachment::discoveredList),
-                    Codec.INT
-                            .fieldOf(JolCraftDictionary.SCORE)
-                            .forGetter(DiscoveredStructuresAttachment::getScore)
+                            .forGetter(DiscoveredStructuresAttachment::discoveredList)
             ).apply(instance, DiscoveredStructuresAttachment::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DiscoveredStructuresAttachment> STREAM_CODEC =
             StreamCodec.composite(
                     GlobalPos.STREAM_CODEC.apply(ByteBufCodecs.list()),
                     DiscoveredStructuresAttachment::discoveredList,
-                    ByteBufCodecs.INT,
-                    DiscoveredStructuresAttachment::getScore,
                     DiscoveredStructuresAttachment::new
             );
 
     private final Set<GlobalPos> discovered;
-    private final int discoveryScore;
 
     public DiscoveredStructuresAttachment() {
-        this(Set.of(), 0);
+        this(Set.of());
     }
 
-    public DiscoveredStructuresAttachment(@NotNull List<GlobalPos> discovered, int discoveryScore) {
-        this(new HashSet<>(discovered), discoveryScore);
+    public DiscoveredStructuresAttachment(@NotNull List<GlobalPos> discovered) {
+        this(new HashSet<>(discovered));
     }
 
-    public DiscoveredStructuresAttachment(@NotNull Set<GlobalPos> discovered, int discoveryScore) {
+    public DiscoveredStructuresAttachment(@NotNull Set<GlobalPos> discovered) {
         this.discovered = Set.copyOf(discovered);
-        this.discoveryScore = discoveryScore;
     }
 
     public boolean isDiscovered(GlobalPos pos) {
@@ -59,10 +52,6 @@ public final class DiscoveredStructuresAttachment extends JolCraftSyncedAttachme
         return discovered;
     }
 
-    public int getScore() {
-        return discoveryScore;
-    }
-
     public @NotNull DiscoveredStructuresAttachment withDiscovered(GlobalPos pos) {
         if (pos == null || discovered.contains(pos)) {
             return this;
@@ -70,14 +59,7 @@ public final class DiscoveredStructuresAttachment extends JolCraftSyncedAttachme
 
         Set<GlobalPos> updated = new HashSet<>(discovered);
         updated.add(pos);
-        return new DiscoveredStructuresAttachment(updated, discoveryScore);
-    }
-
-    public @NotNull DiscoveredStructuresAttachment withAddedScore(int amount) {
-        if (amount == 0) {
-            return this;
-        }
-        return new DiscoveredStructuresAttachment(discovered, discoveryScore + amount);
+        return new DiscoveredStructuresAttachment(updated);
     }
 
     private List<GlobalPos> discoveredList() {

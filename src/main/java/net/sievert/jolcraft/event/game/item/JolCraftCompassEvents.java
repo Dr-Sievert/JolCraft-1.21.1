@@ -3,8 +3,8 @@ package net.sievert.jolcraft.event.game.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -29,6 +29,9 @@ import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
+import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
@@ -40,7 +43,13 @@ import org.jetbrains.annotations.Nullable;
 public final class JolCraftCompassEvents {
 
     private record Compass(@NotNull ItemStack stack, @NotNull InteractionHand hand, @NotNull CompassData data) {}
-    private record CompassData(@NotNull GlobalPos target, @NotNull ResourceLocation structureKey) {}
+
+    private record CompassData(
+            @NotNull GlobalPos target,
+            @NotNull ResourceLocation structureKey,
+            @NotNull DeepslateCompassStructureGroup structureGroup
+    ) {}
+
     private static final JolCraftRuntime.StateCache<BlockPos> LAST_PLAYER_POS = new JolCraftRuntime.StateCache<>();
 
     public static void cleanupPlayer(ServerPlayer player) {
@@ -79,7 +88,6 @@ public final class JolCraftCompassEvents {
 
     @Nullable
     private static Compass findActiveCompass(ServerPlayer player) {
-
         ItemStack main = player.getMainHandItem();
         CompassData data = getCompassData(main);
         if (data != null) {
@@ -101,13 +109,17 @@ public final class JolCraftCompassEvents {
 
         GlobalPos target = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_TARGET);
         String structureId = stack.get(JolCraftDataComponents.STRUCTURE_GROUP);
+        DeepslateCompassDialColor dialColor = stack.get(JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR);
 
-        if (target == null || structureId == null || structureId.isEmpty()) return null;
+        if (target == null || structureId == null || structureId.isEmpty() || dialColor == null) return null;
 
         ResourceLocation structureKey = ResourceLocation.tryParse(structureId);
-        if (structureKey == null) return null;
+        DeepslateCompassStructureGroup structureGroup =
+                DeepslateCompassStructureGroup.byColor(dialColor.color());
 
-        return new CompassData(target, structureKey);
+        if (structureKey == null || structureGroup == null) return null;
+
+        return new CompassData(target, structureKey, structureGroup);
     }
 
     private static boolean isInsidePlayerStructure(
@@ -160,11 +172,11 @@ public final class JolCraftCompassEvents {
         CompassData data = compass.data();
         GlobalPos target = data.target();
         ResourceLocation structureKey = data.structureKey();
-        String structureId = structureKey.toString();
 
-        if (DiscoveredStructuresAttachmentHelper.get(player).isDiscovered(target)) {
+        if (!DiscoveredStructuresAttachmentHelper.addDiscoveredStructureServer(player, target)) {
             player.displayClientMessage(
-                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_ALREADY_DISCOVERED).withStyle(ChatFormatting.RED),
+                    Component.translatable(JolCraftLanguageKeys.TOOLTIP_STRUCTURE_ALREADY_DISCOVERED)
+                            .withStyle(ChatFormatting.RED),
                     true
             );
             replaceWithEmptyCompass(player, compass);
@@ -172,27 +184,29 @@ public final class JolCraftCompassEvents {
             return;
         }
 
-        DiscoveredStructuresAttachmentHelper.addDiscoveredStructureServer(
-                player,
-                target,
-                structureKey
-        );
-
+        int dustCount = data.structureGroup().discoveryDust(structureKey);
         replaceWithEmptyCompass(player, compass);
+        JolCraftItemInsertionHelper.tryInsertIntoInventoryOrDrop(
+                player,
+                new ItemStack(JolCraftItems.DIAL_DUST.get(), dustCount)
+        );
 
         player.displayClientMessage(
                 Component.translatable(
                         JolCraftLanguageKeys.TOOLTIP_STRUCTURE_DISCOVERED,
-                        Component.translatable(JolCraftLanguageKeys.tooltipStructure(structureId)).withStyle(ChatFormatting.BLUE)
+                        Component.translatable(JolCraftLanguageKeys.tooltipStructure(structureKey.toString()))
+                                .withStyle(ChatFormatting.BLUE)
                 ).withStyle(ChatFormatting.GRAY),
                 true
         );
 
         JolCraftLogs.info(
                 JolCraftLogTags.PLAYER,
-                "Structure discovered: player={}, structure={}, pos={}, dimension={}",
+                "Structure discovered: player={}, structure={}, dial={}, dial_dust={}, pos={}, dimension={}",
                 player.getDisplayName(),
                 structureKey,
+                data.structureGroup().getId(),
+                dustCount,
                 JolCraftLogs.roundedPos(target.pos()),
                 target.dimension().location()
         );
@@ -203,7 +217,6 @@ public final class JolCraftCompassEvents {
 
     private static void replaceWithEmptyCompass(ServerPlayer player, Compass compass) {
         ItemStack original = compass.stack();
-
         ItemStack empty = new ItemStack(JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get());
 
         var dye = original.get(DataComponents.DYED_COLOR);
