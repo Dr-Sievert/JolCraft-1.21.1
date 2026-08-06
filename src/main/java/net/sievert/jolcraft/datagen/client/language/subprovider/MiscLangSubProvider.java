@@ -39,7 +39,7 @@ public final class MiscLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.LOCKED, "Locked");
         putManual(translations, JolCraftLanguageKeys.UNLOCKED, "Unlocked");
 
-        putManual(translations, JolCraftLanguageKeys.INSTRUMENT_WAR_HORN, "Call to Arms");
+        putManual(translations, JolCraftLanguageKeys.INSTRUMENT_WAR_HORN, "Mountain's Resolve");
 
         // Items / blocks
 

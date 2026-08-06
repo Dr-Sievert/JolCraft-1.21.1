@@ -10,14 +10,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.EffectCures;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.world.entity.effect.cure.JolCraftEffectCures;
 import net.sievert.jolcraft.world.item.instrument.JolCraftInstruments;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class WarHornItem extends InstrumentItem {
 
     private static final double CURE_RADIUS = 10.0D;
+    private static final int COOLDOWN_TICKS = 30 * 20;
 
     public WarHornItem(Properties properties) {
         super(properties, JolCraftTags.Instruments.WAR_HORNS);
@@ -40,37 +40,48 @@ public class WarHornItem extends InstrumentItem {
         InteractionResultHolder<ItemStack> result =
                 super.use(level, player, usedHand);
 
-        if (!level.isClientSide && result.getResult().consumesAction()) {
+        if (!result.getResult().consumesAction()) {
+            return result;
+        }
+
+        player.getCooldowns().addCooldown(
+                this,
+                COOLDOWN_TICKS
+        );
+
+        if (!level.isClientSide) {
             level.getEntitiesOfClass(
                     Player.class,
                     player.getBoundingBox().inflate(CURE_RADIUS),
                     Player::isAlive
-            ).forEach(WarHornItem::clearDefaultHarmfulEffects);
+            ).forEach(WarHornItem::clearCurableHarmfulEffects);
         }
 
         return result;
     }
 
-    private static void clearDefaultHarmfulEffects(
+    private static void clearCurableHarmfulEffects(
             @NotNull Player player
     ) {
-        List<MobEffectInstance> removableEffects =
-                player.getActiveEffects()
-                        .stream()
-                        .filter(effect ->
-                                effect.getEffect()
-                                        .value()
-                                        .getCategory()
-                                        == MobEffectCategory.HARMFUL
-                        )
-                        .filter(effect ->
-                                effect.getCures()
-                                        .equals(EffectCures.DEFAULT_CURES)
-                        )
-                        .toList();
+        player.getActiveEffects()
+                .stream()
+                .filter(WarHornItem::isCurableHarmfulEffect)
+                .map(MobEffectInstance::getEffect)
+                .toList()
+                .forEach(player::removeEffect);
+    }
 
-        removableEffects.forEach(
-                effect -> player.removeEffect(effect.getEffect())
+    private static boolean isCurableHarmfulEffect(
+            @NotNull MobEffectInstance effect
+    ) {
+        return effect.getEffect()
+                .value()
+                .getCategory()
+                == MobEffectCategory.HARMFUL
+                && (
+                effect.getCures().contains(EffectCures.MILK)
+                        || effect.getCures().contains(EffectCures.PROTECTED_BY_TOTEM)
+                        || effect.getCures().contains(JolCraftEffectCures.WAR_HORN)
         );
     }
 }
