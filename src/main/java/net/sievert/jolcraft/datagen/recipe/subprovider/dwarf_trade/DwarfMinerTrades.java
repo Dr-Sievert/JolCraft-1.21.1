@@ -4,7 +4,11 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
+import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
+import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import org.jetbrains.annotations.NotNull;
 
 public record DwarfMinerTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
@@ -42,6 +46,63 @@ public record DwarfMinerTrades(JolCraftDataProvider<RecipeOutput> parent) implem
                 output,
                 tracking,
                 PROFESSION
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create()
+                        .profession(PROFESSION)
+                        .merchantLevel(
+                                DwarfMerchantData.Level.APPRENTICE
+                        )
+                        .costACoins(
+                                6,
+                                12
+                        )
+                        .noCostB()
+                        .result(
+                                JolCraftItems.DEEPSLATE_SHOVEL.get(),
+                                1
+                        )
+                        .maxUses(3)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create()
+                        .profession(PROFESSION)
+                        .merchantLevel(
+                                DwarfMerchantData.Level.JOURNEYMAN
+                        )
+                        .costACoins(
+                                10,
+                                14
+                        )
+                        .noCostB()
+                        .result(
+                                JolCraftItems.DEEPSLATE_PICKAXE
+                        )
+                        .maxUses(3)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
+                        PROFESSION,
+                        DwarfMerchantData.Level.MASTER,
+                        DwarfLoreKey.MINING_RHYTHM,
+                        25,
+                        35,
+                        80,
+                        120
+                )
         );
     }
 }

@@ -324,7 +324,7 @@ public final class DwarfProfessionConfigProvider
                                     JolCraftSounds.GEM_CUT.get()
                             ),
                             defaults.attributes(),
-                            defaults.tradePools()
+                            artisanTradePools()
                     );
 
             case EXPLORER ->
@@ -543,6 +543,22 @@ public final class DwarfProfessionConfigProvider
 
                                 DwarfMerchantData.Level.MASTER,
                                 1
+                        ),
+                        TradeRerollType.RESTOCK
+                )
+        );
+    }
+
+    private static DwarfProfessionTradePoolsConfig artisanTradePools() {
+        return tradePools(
+                pool(
+                        TradePoolType.CUMULATIVE,
+                        Map.of(
+                                DwarfMerchantData.Level.NOVICE,
+                                5,
+
+                                DwarfMerchantData.Level.APPRENTICE,
+                                5
                         ),
                         TradeRerollType.RESTOCK
                 )

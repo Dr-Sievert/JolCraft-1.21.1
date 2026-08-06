@@ -11,6 +11,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
+import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import org.jetbrains.annotations.NotNull;
 
 public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) implements DwarfTradeSubProvider {
@@ -45,231 +46,156 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
-        sellGem(
+
+        //Vanilla
+
+        sellVanillaGem(output, tracking,
+                Items.LAPIS_LAZULI,
+                3,
+                5,
+                1,
+                2,
+                1
+        );
+
+        sellVanillaGem(output, tracking,
+                Items.QUARTZ,
+                3,
+                5,
+                2,
+                3,
+                1
+        );
+
+        sellVanillaGem(output, tracking,
+                Items.PRISMARINE_SHARD,
+                2,
+                4,
+                2,
+                4,
+                2
+        );
+
+        sellVanillaGem(output, tracking,
+                Items.AMETHYST_SHARD,
+                2,
+                4,
+                2,
+                4,
+                2
+        );
+
+        sellVanillaGem(output, tracking,
+                Items.EMERALD,
+                2,
+                3,
+                3,
+                4,
+                3
+        );
+
+        sellVanillaGem(output, tracking,
+                Items.DIAMOND,
+                1,
+                2,
+                4,
+                6,
+                5
+        );
+
+        //Custom Gems
+
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.AEGISCORE.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.ASHFANG.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.DEEPMARROW.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.EARTHBLOOD.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.EMBERGLASS.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.FROSTVEIN.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.GRIMSTONE.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.IRONHEART.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.LUMIERE.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.MOONSHARD.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.RUSTAGATE.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.SKYBURROW.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.SUNGLEAM.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.VERDANITE.get()
         );
 
-        sellGem(
+        sellCustomGem(
                 output,
                 tracking,
                 JolCraftItems.WOECRYSTAL.get()
         );
 
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                Items.DIAMOND,
-                                1
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                5,
-                                7
-                        )
-                        .maxUses(5)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                Items.EMERALD,
-                                1
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                3,
-                                5
-                        )
-                        .maxUses(5)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                Items.AMETHYST_SHARD,
-                                2,
-                                4
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                2,
-                                4
-                        )
-                        .maxUses(5)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                Items.LAPIS_LAZULI,
-                                3,
-                                5
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                1,
-                                2
-                        )
-                        .maxUses(5)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                Items.PRISMARINE_SHARD,
-                                3,
-                                5
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                2,
-                                3
-                        )
-                        .maxUses(5)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
-
-        emitOrdered(
-                output,
-                tracking,
-                DwarfTradeRecipeBuilder.create()
-                        .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                Items.QUARTZ,
-                                3,
-                                5
-                        )
-                        .noCostB()
-                        .coinsResult(
-                                2,
-                                5
-                        )
-                        .maxUses(5)
-                        .dwarfXp(5)
-                        .priceMultiplier(0.05F)
-        );
+        //Extras
 
         emitOrdered(
                 output,
@@ -280,16 +206,15 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                                 DwarfMerchantData.Level.APPRENTICE
                         )
                         .costACoins(
-                                2,
-                                4
+                                3,
+                                5
                         )
                         .noCostB()
                         .result(
-                                JolCraftItems.DEEPSLATE_ARTISAN_HAMMER.get(),
-                                1
+                                JolCraftItems.DEEPSLATE_ARTISAN_HAMMER
                         )
                         .maxUses(3)
-                        .dwarfXp(10)
+                        .dwarfXp(1)
                         .priceMultiplier(0.05F)
         );
 
@@ -302,16 +227,15 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                                 DwarfMerchantData.Level.JOURNEYMAN
                         )
                         .costACoins(
-                                2,
-                                4
+                                3,
+                                5
                         )
                         .noCostB()
                         .result(
-                                JolCraftItems.DEEPSLATE_CHISEL.get(),
-                                1
+                                JolCraftItems.DEEPSLATE_CHISEL
                         )
                         .maxUses(3)
-                        .dwarfXp(10)
+                        .dwarfXp(1)
                         .priceMultiplier(0.05F)
         );
 
@@ -330,7 +254,39 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
         );
     }
 
-    private void sellGem(
+    private void sellVanillaGem(
+            @NotNull RecipeOutput output,
+            @NotNull JolCraftDataTracking tracking,
+            @NotNull ItemLike gem,
+            int minAmount,
+            int maxAmount,
+            int minCoins,
+            int maxCoins,
+            int dwarfXp
+    ) {
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.NOVICE)
+                        .tradeGroup(DwarfTradeRecipe.TradeGroup.CUMULATIVE_POOL)
+                        .costA(
+                                gem,
+                                minAmount,
+                                maxAmount
+                        )
+                        .noCostB()
+                        .coinsResult(
+                                minCoins,
+                                maxCoins
+                        )
+                        .maxUses(20)
+                        .dwarfXp(dwarfXp)
+                        .priceMultiplier(0.05F)
+        );
+    }
+
+    private void sellCustomGem(
             @NotNull RecipeOutput output,
             @NotNull JolCraftDataTracking tracking,
             @NotNull ItemLike gem
@@ -340,20 +296,16 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                 tracking,
                 DwarfTradeRecipeBuilder.create()
                         .profession(PROFESSION)
-                        .merchantLevel(
-                                DwarfMerchantData.Level.NOVICE
-                        )
-                        .costA(
-                                gem,
-                                1
-                        )
+                        .merchantLevel(DwarfMerchantData.Level.APPRENTICE)
+                        .tradeGroup(DwarfTradeRecipe.TradeGroup.CUMULATIVE_POOL)
+                        .costA(gem)
                         .noCostB()
                         .coinsResult(
-                                8,
-                                15
+                                4,
+                                8
                         )
-                        .maxUses(5)
-                        .dwarfXp(10)
+                        .maxUses(10)
+                        .dwarfXp(25)
                         .priceMultiplier(0.05F)
         );
     }

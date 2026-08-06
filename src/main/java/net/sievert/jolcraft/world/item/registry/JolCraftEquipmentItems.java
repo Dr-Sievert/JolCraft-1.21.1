@@ -435,8 +435,9 @@ public final class JolCraftEquipmentItems {
     public static DeferredItem<WarHornItem> registerWarHorn() {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.WAR_HORN,
-                properties -> new WarHornItem(
-                        properties.stacksTo(1)
+                properties -> new WarHornItem(properties
+                        .stacksTo(1)
+                        .rarity(Rarity.UNCOMMON)
                 )
         );
     }

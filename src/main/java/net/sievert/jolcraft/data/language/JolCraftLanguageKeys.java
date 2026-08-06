@@ -270,6 +270,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS =
             tooltip(JolCraftAttachmentIds.DWARF_LORE, pl(JolCraftDictionary.GEM));
 
+    public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_MINING =
+            tooltip(JolCraftAttachmentIds.DWARF_LORE, JolCraftDictionary.MINING);
+
     public static final String TOOLTIP_CONTRACTS =
             category(JolCraftDictionary.TOOLTIP, pl(JolCraftDictionary.CONTRACT));
 

@@ -132,6 +132,7 @@ public final class LoreLangSubProvider implements LanguageSubProvider {
         add(translations,  DwarfLoreKey.FORGOTTEN_BREW_FORMULAS, "Formulas of Dwarven Brews, Vaults of Stonehearth");
         add(translations,  DwarfLoreKey.COIN_PRESS_MANUAL, "Coin Press Manual, Bank of Barak-Zul");
         add(translations,  DwarfLoreKey.ALCHEMY_RECIPES, "Codex Alchemica, Transcribed by the Final Thaumaturge");
+        add(translations,  DwarfLoreKey.MINING_RHYTHM, "Rhythm of the Deep, First Mining Guild");
     }
 
     private void add(Map<String, String> translations, DwarfLoreKey key, String text) {

@@ -77,6 +77,10 @@ public final class JolCraftBlockTagProvider
                 .add(JolCraftBlocks.FERMENTING_CAULDRON.get())
                 .add(JolCraftBlocks.DEEPSLATE_MORTAR.get());
 
+        target.tag(BlockTags.MINEABLE_WITH_SHOVEL)
+                .add(JolCraftBlocks.VERDANT_SOIL.get())
+                .add(JolCraftBlocks.VERDANT_FARMLAND.get());
+
         target.tag(BlockTags.MINEABLE_WITH_AXE)
                 .add(JolCraftBlocks.DUSKCAP_BLOCK.get())
                 .add(JolCraftBlocks.DUSKCAP_STEM.get())
@@ -84,13 +88,13 @@ public final class JolCraftBlockTagProvider
                 .add(JolCraftBlocks.FESTERLING_STEM.get())
                 .add(JolCraftBlocks.FERMENTING_BARREL.get());
 
+        target.tag(BlockTags.MINEABLE_WITH_HOE)
+                .add(JolCraftBlocks.BARLEY_BLOCK.get());
+
         target.tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(JolCraftBlocks.GEODE_BLOCK.get())
                 .add(JolCraftBlocks.DEEPSLATE_BULBS_CROP.get())
                 .add(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get());
-
-        target.tag(BlockTags.MINEABLE_WITH_HOE)
-                .add(JolCraftBlocks.BARLEY_BLOCK.get());
 
         target.tag(BlockTags.MUSHROOM_GROW_BLOCK)
                 .add(JolCraftBlocks.VERDANT_SOIL.get());

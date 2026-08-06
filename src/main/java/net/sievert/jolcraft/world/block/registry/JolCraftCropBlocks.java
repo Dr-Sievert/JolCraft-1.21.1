@@ -52,6 +52,7 @@ public final class JolCraftCropBlocks {
                         .strength(3.5F, 6.0F)
                         .sound(SoundType.DEEPSLATE)
                         .pushReaction(PushReaction.DESTROY)
+                        .requiresCorrectToolForDrops()
                 )
         );
     }

@@ -96,6 +96,19 @@ public class LegendaryAncientDwarvenTomeItem extends AncientDwarvenTomeItem {
                     playUnlockSounds(player);
                 }
             }
+            case MINING_RHYTHM -> {
+                if (DwarfLoreAttachmentHelper.hasUnlockBypassCreative(player, DwarfLoreKey.MINING_RHYTHM)) {
+                    showEmptyUnlockMessage(player);
+                    playIdentifyFailSound(player);
+                } else {
+                    DwarfLoreAttachmentHelper.addUnlock(player, DwarfLoreKey.MINING_RHYTHM);
+                    player.displayClientMessage(
+                            Component.translatable(JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_MINING).withStyle(ChatFormatting.GREEN),
+                            true
+                    );
+                    playUnlockSounds(player);
+                }
+            }
             default -> {
                 showEmptyUnlockMessage(player);
                 playIdentifyFailSound(player);

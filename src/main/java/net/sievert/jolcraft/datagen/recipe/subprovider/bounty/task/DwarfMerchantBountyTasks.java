@@ -60,7 +60,7 @@ public record DwarfMerchantBountyTasks(
                     collect(builder, Items.TORCH, 8, 16);
                     collect(builder, Items.COAL, 8, 12);
                     collect(builder, Items.FLINT, 6, 12);
-                    collect(builder, Items.COPPER_INGOT, 6, 6);
+                    collect(builder, Items.COPPER_INGOT, 3, 6);
                     collect(builder, Items.IRON_NUGGET, 14, 20);
                     collect(builder, Blocks.COBBLED_DEEPSLATE, 16, 32);
 
@@ -181,7 +181,6 @@ public record DwarfMerchantBountyTasks(
                     collect(builder, Items.LEATHER, 3, 5);
                     collect(builder, Items.SLIME_BALL, 2, 4);
 
-                    collect(builder, JolCraftItems.YEAST, 1, 2);
                     collect(builder, JolCraftItems.INVERIX, 1, 2);
                     collect(builder, JolCraftItems.CONTRACT_BLANK, 1, 2);
                     collect(builder, JolCraftItems.LOCKPICK, 5, 10);

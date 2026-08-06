@@ -91,6 +91,7 @@ public final class JolCraftCreativeModeTabs {
                         addLegendaryTome(output, DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE);
                         addLegendaryTome(output, DwarfLoreKey.COIN_PRESS_MANUAL);
                         addLegendaryTome(output, DwarfLoreKey.ALCHEMY_RECIPES);
+                        addLegendaryTome(output, DwarfLoreKey.MINING_RHYTHM);
 
                         output.accept(JolCraftBlocks.HEARTH);
                         output.accept(JolCraftItems.STRONGBOX_ITEM);

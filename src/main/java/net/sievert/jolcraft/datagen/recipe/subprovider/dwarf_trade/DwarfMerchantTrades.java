@@ -81,7 +81,7 @@ public record DwarfMerchantTrades(
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
-                Items.COPPER_INGOT, 2, 4, 6, 6
+                Items.COPPER_INGOT, 2, 4, 3, 6
         );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.NOVICE,
@@ -489,10 +489,6 @@ public record DwarfMerchantTrades(
         );
 
         // Utility & Crafting
-
-        pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
-                JolCraftItems.YEAST, 6, 9, 1, 2
-        );
 
         pooledBuy(output, tracking, DwarfMerchantData.Level.JOURNEYMAN,
                 JolCraftItems.INVERIX, 5, 8, 1, 2

@@ -112,6 +112,7 @@ public final class DwarfLoreEntries {
             Map.entry(DwarfLoreKey.ANCIENT_GEMCRAFT,         new DwarfLoreEntry(DwarfLoreKey.ANCIENT_GEMCRAFT,         LoreAge.ANCIENT, JolCraftEnumExtensions.Rarity.LEGENDARY.getValue())),
             Map.entry(DwarfLoreKey.FORGOTTEN_BREW_FORMULAS,  new DwarfLoreEntry(DwarfLoreKey.FORGOTTEN_BREW_FORMULAS,  LoreAge.ANCIENT, JolCraftEnumExtensions.Rarity.LEGENDARY.getValue())),
             Map.entry(DwarfLoreKey.COIN_PRESS_MANUAL,        new DwarfLoreEntry(DwarfLoreKey.COIN_PRESS_MANUAL,        LoreAge.ANCIENT, JolCraftEnumExtensions.Rarity.LEGENDARY.getValue())),
-            Map.entry(DwarfLoreKey.ALCHEMY_RECIPES,          new DwarfLoreEntry(DwarfLoreKey.ALCHEMY_RECIPES,          LoreAge.ANCIENT, JolCraftEnumExtensions.Rarity.LEGENDARY.getValue()))
+            Map.entry(DwarfLoreKey.ALCHEMY_RECIPES,          new DwarfLoreEntry(DwarfLoreKey.ALCHEMY_RECIPES,          LoreAge.ANCIENT, JolCraftEnumExtensions.Rarity.LEGENDARY.getValue())),
+            Map.entry(DwarfLoreKey.MINING_RHYTHM,new DwarfLoreEntry(DwarfLoreKey.MINING_RHYTHM,LoreAge.ANCIENT, JolCraftEnumExtensions.Rarity.LEGENDARY.getValue()))
     );
 }

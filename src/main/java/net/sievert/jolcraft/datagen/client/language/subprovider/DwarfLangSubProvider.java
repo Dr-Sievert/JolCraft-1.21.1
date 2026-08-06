@@ -6,7 +6,6 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.client.language.LanguageSubProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 
-import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -81,6 +80,7 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_EMPTY, "This tome contains no knowledge useful to you.");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_BREW, "You can now brew with multiple ingredients!");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS, "You can now cut gems using a chisel!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_MINING, "You learned how to channel Rhythm of the Deep!");
 
         // -----------------------------------------------------------------
         // Locked item variants

@@ -7,6 +7,7 @@
     "BrushItemMixin",
     "ConfiguredFeatureMixin",
     "CropBlockMixin",
+    "DiggerItemMixin",
     "JigsawPlacementMixin",
     "JigsawPlacementPlacerMixin",
     "LootItemAccessor",

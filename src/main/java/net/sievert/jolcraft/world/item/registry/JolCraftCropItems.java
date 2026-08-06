@@ -98,8 +98,7 @@ public final class JolCraftCropItems {
         return JolCraftItemRegistryHelper.registerItem(
                 JolCraftItemIds.DEEPSLATE_BULBS,
                 props -> new BlockItem(
-                        JolCraftBlocks.DEEPSLATE_BULBS_CROP.get(),
-                        props
+                        JolCraftBlocks.DEEPSLATE_BULBS_CROP.get(), props
                 )
         );
     }
