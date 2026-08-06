@@ -50,18 +50,32 @@ public record JeiHandInteractionRecipe(
     }
 
     public record ItemResult(
-            @NotNull JeiItemOutcome outcome
+            @NotNull JeiItemOutcome outcome,
+            @NotNull List<ItemStack> examples
     ) implements Result {
+
+        public ItemResult(
+                @NotNull JeiItemOutcome outcome
+        ) {
+            this(
+                    outcome,
+                    List.of(
+                            outcome.stack()
+                    )
+            );
+        }
 
         public ItemResult {
             Objects.requireNonNull(
                     outcome,
                     "outcome"
             );
-        }
 
-        public @NotNull ItemStack example() {
-            return outcome.stack().copy();
+            examples =
+                    JeiStacks.copyRequired(
+                            examples,
+                            "examples"
+                    );
         }
     }
 

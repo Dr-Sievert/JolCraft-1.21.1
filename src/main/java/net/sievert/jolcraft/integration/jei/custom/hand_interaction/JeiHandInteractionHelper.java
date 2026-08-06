@@ -1,7 +1,12 @@
 package net.sievert.jolcraft.integration.jei.custom.hand_interaction;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.integration.jei.util.recipe.ItemInputJeiTranslator;
 import net.sievert.jolcraft.integration.jei.util.recipe.ItemOutputJeiTranslator;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiItemOutcome;
@@ -121,65 +126,57 @@ public final class JeiHandInteractionHelper {
             @NotNull List<ItemStack> ingredientBExamples,
             @NotNull List<JeiItemOutcome> outcomes
     ) {
-        List<JeiHandInteractionRecipe> result =
-                new ArrayList<>();
+        List<JeiHandInteractionRecipe> result = new ArrayList<>();
 
-        for (DeepslateCompassStructureGroup group :
-                DeepslateCompassStructureGroup.values()) {
-            ItemStack dial =
-                    new ItemStack(
-                            JolCraftItems.DEEPSLATE_COMPASS_DIAL.get()
-                    );
+        for (DeepslateCompassStructureGroup group
+                : DeepslateCompassStructureGroup.values()) {
+            ItemStack dial = new ItemStack(
+                    JolCraftItems.DEEPSLATE_COMPASS_DIAL.get()
+            );
 
             DeepslateCompassDialColor dialColor =
-                    new DeepslateCompassDialColor(
-                            group.color()
-                    );
+                    new DeepslateCompassDialColor(group.color());
 
             dial.set(
                     JolCraftDataComponents.STRUCTURE_GROUP.get(),
                     group.getId()
             );
-
             dial.set(
                     JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(),
                     dialColor
             );
 
-            List<ItemStack> ingredientA =
-                    replaceDialExamples(
-                            ingredientAExamples,
-                            dial
-                    );
-
-            List<ItemStack> ingredientB =
-                    replaceDialExamples(
-                            ingredientBExamples,
-                            dial
-                    );
+            List<ItemStack> ingredientA = replaceDialExamples(
+                    ingredientAExamples,
+                    dial
+            );
+            List<ItemStack> ingredientB = replaceDialExamples(
+                    ingredientBExamples,
+                    dial
+            );
 
             for (JeiItemOutcome outcome : outcomes) {
-                if (!outcome.stack().is(
-                        JolCraftItems.DEEPSLATE_COMPASS.get()
-                )) {
+                if (!outcome.stack().is(JolCraftItems.DEEPSLATE_COMPASS.get())) {
                     continue;
                 }
 
-                ItemStack compass =
-                        outcome.stack()
-                                .copyWithCount(1);
+                List<ItemStack> compassExamples = group.structures()
+                        .stream()
+                        .map(structure -> {
+                            ItemStack compass = outcome.stack().copyWithCount(1);
 
-                compass.set(
-                        JolCraftDataComponents.STRUCTURE_GROUP.get(),
-                        group.displayStructure()
-                                .location()
-                                .toString()
-                );
+                            compass.set(
+                                    JolCraftDataComponents.STRUCTURE_GROUP.get(),
+                                    structure.location().toString()
+                            );
+                            compass.set(
+                                    JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(),
+                                    dialColor
+                            );
 
-                compass.set(
-                        JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(),
-                        dialColor
-                );
+                            return compass;
+                        })
+                        .toList();
 
                 result.add(
                         new JeiHandInteractionRecipe(
@@ -187,14 +184,64 @@ public final class JeiHandInteractionHelper {
                                 ingredientA,
                                 ingredientB,
                                 new JeiHandInteractionRecipe.ItemResult(
-                                        copyOutcome(
-                                                outcome,
-                                                compass
-                                        )
+                                        outcome,
+                                        compassExamples
                                 )
                         )
                 );
             }
+        }
+
+        return List.copyOf(result);
+    }
+
+    private static @NotNull List<ItemStack> compassExamples(
+            @NotNull Registry<Structure> structures,
+            @NotNull DeepslateCompassStructureGroup group,
+            @NotNull ItemStack baseCompass,
+            @NotNull DeepslateCompassDialColor dialColor
+    ) {
+        Iterable<Holder<Structure>> taggedStructures =
+                structures.getTag(
+                                group.structureTag()
+                        )
+                        .orElse(null);
+
+        if (taggedStructures == null) {
+            return List.of();
+        }
+
+        List<ItemStack> result =
+                new ArrayList<>();
+
+        for (Holder<Structure> holder : taggedStructures) {
+            ResourceLocation structureId =
+                    holder.unwrapKey()
+                            .map(
+                                    ResourceKey::location
+                            )
+                            .orElse(null);
+
+            if (structureId == null) {
+                continue;
+            }
+
+            ItemStack compass =
+                    baseCompass.copyWithCount(1);
+
+            compass.set(
+                    JolCraftDataComponents.STRUCTURE_GROUP.get(),
+                    structureId.toString()
+            );
+
+            compass.set(
+                    JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get(),
+                    dialColor
+            );
+
+            result.add(
+                    compass
+            );
         }
 
         return List.copyOf(
@@ -223,22 +270,6 @@ public final class JeiHandInteractionHelper {
 
         return List.copyOf(
                 replaced
-        );
-    }
-
-    private static @NotNull JeiItemOutcome copyOutcome(
-            @NotNull JeiItemOutcome outcome,
-            @NotNull ItemStack stack
-    ) {
-        return new JeiItemOutcome(
-                stack,
-                outcome.minCount(),
-                outcome.maxCount(),
-                outcome.weight(),
-                outcome.totalWeight(),
-                outcome.minRolls(),
-                outcome.maxRolls(),
-                outcome.conditions()
         );
     }
 

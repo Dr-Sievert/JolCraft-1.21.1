@@ -3,7 +3,6 @@ package net.sievert.jolcraft.datagen.tag.provider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.StructureTagsProvider;
-import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
@@ -11,6 +10,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.tag.JolCraftMainTagProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,12 +44,20 @@ public final class JolCraftStructureTagProvider
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        generate(this, null, CompletableFuture.completedFuture(provider), existingFileHelper);
+        generate(
+                this,
+                null,
+                CompletableFuture.completedFuture(provider),
+                existingFileHelper
+        );
 
         JolCraftDataTracking.logExplicitCount(
                 this,
                 this.builders.size(),
-                JolCraftStrings.spaced(tagType(), JolCraftStrings.plural(domain().getId()))
+                JolCraftStrings.spaced(
+                        tagType(),
+                        JolCraftStrings.plural(domain().getId())
+                )
         );
     }
 
@@ -67,56 +75,17 @@ public final class JolCraftStructureTagProvider
         target.tag(JolCraftTags.Structures.ON_DWARVEN_FORTRESS_EXPLORER_MAPS)
                 .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
 
-        target.tag(JolCraftTags.Structures.DWARVEN)
-                .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
+        for (DeepslateCompassStructureGroup group
+                : DeepslateCompassStructureGroup.values()) {
+            var tag = target.tag(group.structureTag());
 
-        target.tag(JolCraftTags.Structures.VILLAGES)
-                .add(BuiltinStructures.VILLAGE_PLAINS)
-                .add(BuiltinStructures.VILLAGE_DESERT)
-                .add(BuiltinStructures.VILLAGE_SAVANNA)
-                .add(BuiltinStructures.VILLAGE_SNOWY)
-                .add(BuiltinStructures.VILLAGE_TAIGA);
-
-        target.tag(JolCraftTags.Structures.PILLAGERS)
-                .add(BuiltinStructures.PILLAGER_OUTPOST)
-                .add(BuiltinStructures.WOODLAND_MANSION);
-
-        target.tag(JolCraftTags.Structures.NETHER_PORTALS)
-                .add(BuiltinStructures.RUINED_PORTAL_STANDARD)
-                .add(BuiltinStructures.RUINED_PORTAL_DESERT)
-                .add(BuiltinStructures.RUINED_PORTAL_MOUNTAIN)
-                .add(BuiltinStructures.RUINED_PORTAL_JUNGLE)
-                .add(BuiltinStructures.RUINED_PORTAL_SWAMP)
-                .add(BuiltinStructures.RUINED_PORTAL_OCEAN);
-
-        target.tag(JolCraftTags.Structures.SURFACE)
-                .addTag(JolCraftTags.Structures.VILLAGES)
-                .addTag(JolCraftTags.Structures.PILLAGERS)
-                .addTag(JolCraftTags.Structures.NETHER_PORTALS)
-                .add(BuiltinStructures.MINESHAFT_MESA)
-                .add(BuiltinStructures.JUNGLE_TEMPLE)
-                .add(BuiltinStructures.DESERT_PYRAMID)
-                .add(BuiltinStructures.IGLOO)
-                .add(BuiltinStructures.SWAMP_HUT);
-
-        target.tag(JolCraftTags.Structures.RUINS)
-                .add(BuiltinStructures.TRAIL_RUINS)
-                .add(BuiltinStructures.OCEAN_RUIN_COLD)
-                .add(BuiltinStructures.OCEAN_RUIN_WARM);
-
-        target.tag(JolCraftTags.Structures.OCEAN)
-                .add(BuiltinStructures.BURIED_TREASURE)
-                .add(BuiltinStructures.SHIPWRECK)
-                .add(BuiltinStructures.SHIPWRECK_BEACHED)
-                .add(BuiltinStructures.OCEAN_RUIN_COLD)
-                .add(BuiltinStructures.OCEAN_RUIN_WARM)
-                .add(BuiltinStructures.OCEAN_MONUMENT);
-
-        target.tag(JolCraftTags.Structures.UNDERGROUND)
-                .add(BuiltinStructures.MINESHAFT)
-                .add(BuiltinStructures.ANCIENT_CITY)
-                .add(BuiltinStructures.TRIAL_CHAMBERS)
-                .add(BuiltinStructures.STRONGHOLD)
-                .addOptional(JolCraftStructures.DWARVEN_FORTRESS.id());
+            for (var structure : group.structures()) {
+                if (structure.location().getNamespace().equals(JolCraft.MOD_ID)) {
+                    tag.addOptional(structure.location());
+                } else {
+                    tag.add(structure);
+                }
+            }
+        }
     }
 }

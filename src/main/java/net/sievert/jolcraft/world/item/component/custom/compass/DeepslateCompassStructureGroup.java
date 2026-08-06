@@ -10,55 +10,110 @@ import net.sievert.jolcraft.util.JolCraftEnumHelper;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringId {
 
     DWARVEN(
             JolCraftTags.Structures.DWARVEN,
-            JolCraftStructures.DWARVEN_FORTRESS.key(),
+            List.of(
+                    JolCraftStructures.DWARVEN_FORTRESS.key()
+            ),
             0xFF242424,
             6
     ),
     VILLAGES(
             JolCraftTags.Structures.VILLAGES,
-            BuiltinStructures.VILLAGE_PLAINS,
+            List.of(
+                    BuiltinStructures.VILLAGE_PLAINS,
+                    BuiltinStructures.VILLAGE_DESERT,
+                    BuiltinStructures.VILLAGE_SAVANNA,
+                    BuiltinStructures.VILLAGE_SNOWY,
+                    BuiltinStructures.VILLAGE_TAIGA
+            ),
             0xFFB37B62,
             2
     ),
     PILLAGERS(
             JolCraftTags.Structures.PILLAGERS,
-            BuiltinStructures.PILLAGER_OUTPOST,
+            List.of(
+                    BuiltinStructures.PILLAGER_OUTPOST,
+                    BuiltinStructures.WOODLAND_MANSION
+            ),
             0xFF8E9393,
             3
     ),
     NETHER_PORTALS(
             JolCraftTags.Structures.NETHER_PORTALS,
-            BuiltinStructures.RUINED_PORTAL_STANDARD,
+            List.of(
+                    BuiltinStructures.RUINED_PORTAL_STANDARD,
+                    BuiltinStructures.RUINED_PORTAL_DESERT,
+                    BuiltinStructures.RUINED_PORTAL_MOUNTAIN,
+                    BuiltinStructures.RUINED_PORTAL_JUNGLE,
+                    BuiltinStructures.RUINED_PORTAL_SWAMP,
+                    BuiltinStructures.RUINED_PORTAL_OCEAN
+            ),
             0xFF271E3D,
             2
     ),
     SURFACE(
             JolCraftTags.Structures.SURFACE,
-            BuiltinStructures.JUNGLE_TEMPLE,
+            List.of(
+                    BuiltinStructures.VILLAGE_PLAINS,
+                    BuiltinStructures.VILLAGE_DESERT,
+                    BuiltinStructures.VILLAGE_SAVANNA,
+                    BuiltinStructures.VILLAGE_SNOWY,
+                    BuiltinStructures.VILLAGE_TAIGA,
+                    BuiltinStructures.PILLAGER_OUTPOST,
+                    BuiltinStructures.WOODLAND_MANSION,
+                    BuiltinStructures.RUINED_PORTAL_STANDARD,
+                    BuiltinStructures.RUINED_PORTAL_DESERT,
+                    BuiltinStructures.RUINED_PORTAL_MOUNTAIN,
+                    BuiltinStructures.RUINED_PORTAL_JUNGLE,
+                    BuiltinStructures.RUINED_PORTAL_SWAMP,
+                    BuiltinStructures.RUINED_PORTAL_OCEAN,
+                    BuiltinStructures.MINESHAFT_MESA,
+                    BuiltinStructures.JUNGLE_TEMPLE,
+                    BuiltinStructures.DESERT_PYRAMID,
+                    BuiltinStructures.IGLOO,
+                    BuiltinStructures.SWAMP_HUT
+            ),
             0xFF61A137,
             1
     ),
     RUINS(
             JolCraftTags.Structures.RUINS,
-            BuiltinStructures.TRAIL_RUINS,
+            List.of(
+                    BuiltinStructures.TRAIL_RUINS,
+                    BuiltinStructures.OCEAN_RUIN_COLD,
+                    BuiltinStructures.OCEAN_RUIN_WARM
+            ),
             0xFFA54926,
             3
     ),
     OCEAN(
             JolCraftTags.Structures.OCEAN,
-            BuiltinStructures.SHIPWRECK,
+            List.of(
+                    BuiltinStructures.BURIED_TREASURE,
+                    BuiltinStructures.SHIPWRECK,
+                    BuiltinStructures.SHIPWRECK_BEACHED,
+                    BuiltinStructures.OCEAN_RUIN_COLD,
+                    BuiltinStructures.OCEAN_RUIN_WARM,
+                    BuiltinStructures.OCEAN_MONUMENT
+            ),
             0xFF2332C3,
             3
     ),
     UNDERGROUND(
             JolCraftTags.Structures.UNDERGROUND,
-            BuiltinStructures.MINESHAFT,
+            List.of(
+                    BuiltinStructures.MINESHAFT,
+                    BuiltinStructures.ANCIENT_CITY,
+                    BuiltinStructures.TRIAL_CHAMBERS,
+                    BuiltinStructures.STRONGHOLD,
+                    JolCraftStructures.DWARVEN_FORTRESS.key()
+            ),
             0xFF111B21,
             4
     );
@@ -74,18 +129,18 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
     );
 
     private final TagKey<Structure> structureTag;
-    private final ResourceKey<Structure> displayStructure;
+    private final List<ResourceKey<Structure>> structures;
     private final int color;
     private final int discoveryDust;
 
     DeepslateCompassStructureGroup(
             TagKey<Structure> structureTag,
-            ResourceKey<Structure> displayStructure,
+            List<ResourceKey<Structure>> structures,
             int color,
             int discoveryDust
     ) {
         this.structureTag = structureTag;
-        this.displayStructure = displayStructure;
+        this.structures = List.copyOf(structures);
         this.color = color;
         this.discoveryDust = discoveryDust;
     }
@@ -99,8 +154,8 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
         return this.structureTag;
     }
 
-    public ResourceKey<Structure> displayStructure() {
-        return this.displayStructure;
+    public List<ResourceKey<Structure>> structures() {
+        return this.structures;
     }
 
     public int color() {
@@ -108,7 +163,8 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
     }
 
     public int discoveryDust(ResourceLocation structureId) {
-        return this.discoveryDust + STRUCTURE_DUST_BONUSES.getOrDefault(structureId, 0);
+        return this.discoveryDust
+                + STRUCTURE_DUST_BONUSES.getOrDefault(structureId, 0);
     }
 
     public static @Nullable DeepslateCompassStructureGroup byId(

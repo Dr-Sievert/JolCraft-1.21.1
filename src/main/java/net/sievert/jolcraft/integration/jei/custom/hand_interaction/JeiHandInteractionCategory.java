@@ -282,18 +282,14 @@ public final class JeiHandInteractionCategory
             @NotNull Font font,
             @NotNull JeiHandInteractionRecipe entry
     ) {
-        if (!(entry.result()
-                instanceof JeiHandInteractionRecipe.ItemResult(
-                JeiItemOutcome outcome
-        ))) {
+        if (!(entry.result() instanceof JeiHandInteractionRecipe.ItemResult itemResult)) {
             return;
         }
 
-        double chancePerRoll =
-                outcome.chancePerRoll();
+        JeiItemOutcome outcome = itemResult.outcome();
+        double chancePerRoll = outcome.chancePerRoll();
 
-        if (chancePerRoll < 1.0D
-                || outcome.hasMultipleRolls()) {
+        if (chancePerRoll < 1.0D || outcome.hasMultipleRolls()) {
             JeiDrawHelper.drawChance(
                     graphics,
                     font,
@@ -342,10 +338,9 @@ public final class JeiHandInteractionCategory
             @NotNull Font font,
             @NotNull JeiHandInteractionRecipe entry
     ) {
-        if (entry.result()
-                instanceof JeiHandInteractionRecipe.ItemResult(
-                JeiItemOutcome outcome
-        )) {
+        if (entry.result() instanceof JeiHandInteractionRecipe.ItemResult itemResult) {
+            JeiItemOutcome outcome = itemResult.outcome();
+
             JeiDrawHelper.drawAmountRange(
                     graphics,
                     font,
@@ -358,8 +353,7 @@ public final class JeiHandInteractionCategory
             return;
         }
 
-        if (entry.result()
-                instanceof JeiHandInteractionRecipe.EntityResult entityResult) {
+        if (entry.result() instanceof JeiHandInteractionRecipe.EntityResult entityResult) {
             JeiDrawHelper.drawAmountRange(
                     graphics,
                     font,
@@ -431,8 +425,8 @@ public final class JeiHandInteractionCategory
                                     LAYOUT.output().x(),
                                     LAYOUT.output().y()
                             )
-                            .addItemStack(
-                                    itemResult.example()
+                            .addItemStacks(
+                                    itemResult.examples()
                             );
 
             JeiLootConditionTooltip.add(
