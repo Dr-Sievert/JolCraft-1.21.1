@@ -8,5 +8,4 @@ public class RadiantEffect extends MobEffect {
     public RadiantEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
-
 }

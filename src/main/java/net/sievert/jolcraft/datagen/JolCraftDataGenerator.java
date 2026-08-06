@@ -74,6 +74,11 @@ public final class JolCraftDataGenerator {
                     lookupProvider,
                     existingFileHelper
             ));
+            generator.addProvider(true, new JolCraftDamageTypeTagProvider(
+                    packOutput,
+                    lookupProvider,
+                    existingFileHelper
+            ));
             generator.addProvider(true, new JolCraftInstrumentTagProvider(
                     packOutput,
                     lookupProvider,

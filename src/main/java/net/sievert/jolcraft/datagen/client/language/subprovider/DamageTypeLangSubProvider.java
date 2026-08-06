@@ -14,11 +14,17 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class DamageTypeLangSubProvider implements LanguageSubProvider {
 
-    private static final String DEATH_ATTACK_PREFIX = JolCraftStrings.dotted(JolCraftDictionary.DEATH, JolCraftDictionary.ATTACK);
+    private static final String DEATH_ATTACK_PREFIX = JolCraftStrings.dotted(
+            JolCraftDictionary.DEATH,
+            JolCraftDictionary.ATTACK
+    );
 
     @Override
     public @NotNull String id() {
-        return JolCraftStrings.underscored(JolCraftDictionary.DAMAGE, JolCraftStrings.plural(JolCraftDictionary.TYPE));
+        return JolCraftStrings.underscored(
+                JolCraftDictionary.DAMAGE,
+                JolCraftStrings.plural(JolCraftDictionary.TYPE)
+        );
     }
 
     @Override
@@ -30,11 +36,17 @@ public class DamageTypeLangSubProvider implements LanguageSubProvider {
     public void addTranslations(@NotNull Map<String, String> translations) {
         putDeathAttack(
                 translations,
+                JolCraftDamageTypeIds.CURSED_WOUND,
+                "%1$s was consumed by a cursed wound",
+                "%1$s was consumed by a cursed wound while fighting %2$s"
+        );
+
+        putDeathAttack(
+                translations,
                 JolCraftDamageTypeIds.VITALITY_CURSE,
                 "%1$s succumbed to a vitality curse",
                 "%1$s succumbed to a vitality curse while fighting %2$s"
         );
-
     }
 
     private void putDeathAttack(
@@ -52,6 +64,9 @@ public class DamageTypeLangSubProvider implements LanguageSubProvider {
     }
 
     private @NotNull String deathAttackPlayer(@NotNull String id) {
-        return JolCraftStrings.dotted(deathAttack(id), JolCraftDictionary.PLAYER);
+        return JolCraftStrings.dotted(
+                deathAttack(id),
+                JolCraftDictionary.PLAYER
+        );
     }
 }

@@ -44,7 +44,13 @@ public final class JolCraftClientAtaxiaHelper {
         if (key == null) return;
 
         if (event.getAction() == InputConstants.PRESS) {
-            float chance = Math.min(0.20F + 0.20F * ataxia.getAmplifier(), 1.0F);
+            MobEffectInstance hex = player.getEffect(JolCraftEffects.HEX);
+            int hexLevel = hex == null ? 0 : hex.getAmplifier() + 1;
+
+            float chance = Math.min(
+                    (0.20F + 0.20F * ataxia.getAmplifier()) * Math.scalb(1.0F, hexLevel),
+                    1.0F
+            );
 
             if (player.getRandom().nextFloat() < chance) {
                 mappings.put(key, randomDifferent(player.getRandom(), key));

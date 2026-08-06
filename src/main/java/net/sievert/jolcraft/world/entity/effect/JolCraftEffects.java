@@ -108,11 +108,11 @@ public final class JolCraftEffects {
             JolCraftEffectIds.VITALITY_CURSE,
             () -> new VitalityCurseEffect(MobEffectCategory.HARMFUL, CURSE_COLOR)
                     .addAttributeModifier(
-                    Attributes.MAX_HEALTH,
-                    JolCraft.location(JolCraftEffectIds.VITALITY_CURSE),
-                    -0.2D,
-                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-            )
+                            Attributes.MAX_HEALTH,
+                            JolCraft.location(JolCraftEffectIds.VITALITY_CURSE),
+                            -0.2D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                    )
     );
 
     public static final Holder<MobEffect> DISARMED = MOB_EFFECTS.register(

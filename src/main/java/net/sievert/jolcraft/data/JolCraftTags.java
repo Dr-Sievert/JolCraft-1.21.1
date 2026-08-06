@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
@@ -19,28 +20,6 @@ import static net.sievert.jolcraft.JolCraft.location;
 public final class JolCraftTags {
 
     private JolCraftTags() {}
-
-    public static final class Biomes {
-
-        public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_HILLS);
-        public static final TagKey<Biome> DWARVEN = create(JolCraftTagIds.DWARVEN);
-
-        private static TagKey<Biome> create(String id) {
-            return TagKey.create(Registries.BIOME, JolCraft.location(id));
-        }
-    }
-
-    public static final class Blocks {
-
-        public static final TagKey<Block> DEEPSLATE_BULBS_PLANTABLE = createTag(JolCraftTagIds.DEEPSLATE_BULBS_PLANTABLE);
-        public static final TagKey<Block> VERDANT = createTag(JolCraftTagIds.VERDANT);
-        public static final TagKey<Block> HOPS_BOTTOM = createTag(JolCraftTagIds.HOPS_BOTTOM);
-        public static final TagKey<Block> HOPS_TOP = createTag(JolCraftTagIds.HOPS_TOP);
-
-        private static TagKey<Block> createTag(String id) {
-            return BlockTags.create(JolCraft.location(id));
-        }
-    }
 
     public static final class Items {
 
@@ -99,6 +78,28 @@ public final class JolCraftTags {
         }
     }
 
+    public static final class Blocks {
+
+        public static final TagKey<Block> DEEPSLATE_BULBS_PLANTABLE = createTag(JolCraftTagIds.DEEPSLATE_BULBS_PLANTABLE);
+        public static final TagKey<Block> VERDANT = createTag(JolCraftTagIds.VERDANT);
+        public static final TagKey<Block> HOPS_BOTTOM = createTag(JolCraftTagIds.HOPS_BOTTOM);
+        public static final TagKey<Block> HOPS_TOP = createTag(JolCraftTagIds.HOPS_TOP);
+
+        private static TagKey<Block> createTag(String id) {
+            return BlockTags.create(JolCraft.location(id));
+        }
+    }
+
+    public static final class Biomes {
+
+        public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_HILLS);
+        public static final TagKey<Biome> DWARVEN = create(JolCraftTagIds.DWARVEN);
+
+        private static TagKey<Biome> create(String id) {
+            return TagKey.create(Registries.BIOME, JolCraft.location(id));
+        }
+    }
+
     public interface Structures {
 
         TagKey<Structure> FEATURE_PROTECTED = create(JolCraftTagIds.FEATURE_PROTECTED);
@@ -114,10 +115,23 @@ public final class JolCraftTags {
         TagKey<Structure> UNDERGROUND = create(JolCraftTagIds.UNDERGROUND);
         TagKey<Structure> NETHER_PORTALS = create(JolCraftTagIds.NETHER_PORTALS);
 
-
         private static TagKey<Structure> create(String id) {
             return TagKey.create(Registries.STRUCTURE, location(id));
         }
+    }
+
+    public static final class DamageTypes {
+
+        public static final TagKey<DamageType> CURSE = create(JolCraftTagIds.CURSE);
+
+        private static TagKey<DamageType> create(String id) {
+            return TagKey.create(
+                    Registries.DAMAGE_TYPE,
+                    JolCraft.location(id)
+            );
+        }
+
+        private DamageTypes() {}
     }
 
     public static final class Instruments {

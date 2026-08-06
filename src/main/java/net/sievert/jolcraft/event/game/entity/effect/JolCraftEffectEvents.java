@@ -106,7 +106,7 @@ public class JolCraftEffectEvents {
         int amplifier = effect.getAmplifier();
 
         float originalSpeed = event.getOriginalSpeed();
-        float newSpeed = originalSpeed * (1.0F + 0.2F * (amplifier + 1));
+        float newSpeed = originalSpeed * (1.0F + 0.40F * (1 + amplifier));
         event.setNewSpeed(newSpeed);
     }
 

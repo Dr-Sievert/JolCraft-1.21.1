@@ -112,4 +112,10 @@ public final class JolCraftTagIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String MOUNTAINS_HILLS = join(plural(JolCraftDictionary.MOUNTAIN), JolCraftDictionary.AND, plural(JolCraftDictionary.HILL));
+
+    // ---------------------------------------------------------------------
+    // Damage Type
+    // ---------------------------------------------------------------------
+
+    public static final String CURSE = JolCraftDictionary.CURSE;
 }
