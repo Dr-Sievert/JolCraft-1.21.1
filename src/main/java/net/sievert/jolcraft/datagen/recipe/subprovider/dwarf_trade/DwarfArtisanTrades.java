@@ -10,6 +10,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import org.jetbrains.annotations.NotNull;
@@ -235,6 +236,22 @@ public record DwarfArtisanTrades(JolCraftDataProvider<RecipeOutput> parent) impl
                                 JolCraftItems.DEEPSLATE_CHISEL
                         )
                         .maxUses(3)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .costACoins(
+                                25,
+                                45
+                        )
+                        .noCostB()
+                        .rewardCrateResult(RewardCrateType.ARTISAN_SUPPLIES)
+                        .maxUses(1)
                         .dwarfXp(1)
                         .priceMultiplier(0.05F)
         );

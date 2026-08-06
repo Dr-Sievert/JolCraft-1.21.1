@@ -86,33 +86,6 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
             List<DataComponentType<?>> remove,
             List<DataComponentType<?>> baseRequire,
             boolean removeAll,
-            DataComponentPatch set
-    ) {
-        this(
-                group,
-                category,
-                base,
-                ingredients,
-                result,
-                keep,
-                remove,
-                baseRequire,
-                removeAll,
-                set,
-                List.of()
-        );
-    }
-
-    public ComponentPreservingShapelessRecipe(
-            String group,
-            CraftingBookCategory category,
-            Ingredient base,
-            List<Ingredient> ingredients,
-            ItemStack result,
-            List<DataComponentType<?>> keep,
-            List<DataComponentType<?>> remove,
-            List<DataComponentType<?>> baseRequire,
-            boolean removeAll,
             DataComponentPatch set,
             List<Ingredient> suppressRemainder
     ) {
@@ -331,8 +304,16 @@ public final class ComponentPreservingShapelessRecipe implements CraftingRecipe 
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
-        return result.copy();
+    public @NotNull ItemStack getResultItem(
+            HolderLookup.@NotNull Provider registries
+    ) {
+        ItemStack preview = result.copy();
+
+        if (!set.isEmpty()) {
+            preview.applyComponents(set);
+        }
+
+        return preview;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

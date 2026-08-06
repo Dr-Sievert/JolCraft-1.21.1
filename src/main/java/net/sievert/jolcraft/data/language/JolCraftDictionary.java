@@ -141,6 +141,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String HUGE = "huge";
     public static final String IDENTIFIED = "identified";
     public static final String IMPURE = "impure";
+    public static final String INACTIVE = "inactive";
     public static final String INVALID = "invalid";
     public static final String KNOWN = "known";
     public static final String LARGE = "large";

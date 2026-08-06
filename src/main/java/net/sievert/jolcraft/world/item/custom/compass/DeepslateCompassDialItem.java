@@ -36,7 +36,7 @@ public class DeepslateCompassDialItem extends Item {
             tooltip.add(
                     Component.translatable(JolCraftStrings.dotted(TAG_TRANSLATION_PREFIX, structureId)).withStyle(ChatFormatting.BLUE));
         } else {
-            tooltip.add(Component.translatable(JolCraftLanguageKeys.UNKNOWN).withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.translatable(JolCraftLanguageKeys.INACTIVE).withStyle(ChatFormatting.GRAY));
         }
     }
 }

@@ -628,6 +628,7 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
             category(JolCraftDictionary.TOOLTIP, JolCraftItemIds.DEV_KEY);
 
     public static final String UNKNOWN = mod(JolCraftDictionary.UNKNOWN);
+    public static final String INACTIVE = mod(JolCraftDictionary.INACTIVE);
 
     public static final String LOCKED = mod(JolCraftDictionary.LOCKED);
     public static final String UNLOCKED = mod(JolCraftDictionary.UNLOCKED);

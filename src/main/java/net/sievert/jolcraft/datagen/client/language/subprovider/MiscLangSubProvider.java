@@ -35,7 +35,7 @@ public final class MiscLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_HOLD_KEY, "Hold %s for more info");
 
         putManual(translations, JolCraftLanguageKeys.UNKNOWN, "Unknown");
-
+        putManual(translations, JolCraftLanguageKeys.INACTIVE, "Inactive");
         putManual(translations, JolCraftLanguageKeys.LOCKED, "Locked");
         putManual(translations, JolCraftLanguageKeys.UNLOCKED, "Unlocked");
 

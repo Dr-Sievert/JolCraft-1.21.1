@@ -7,6 +7,7 @@ import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,6 +40,22 @@ public record DwarfBlacksmithTrades(JolCraftDataProvider<RecipeOutput> parent) i
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .costACoins(
+                                25,
+                                45
+                        )
+                        .noCostB()
+                        .rewardCrateResult(RewardCrateType.BLACKSMITH_SUPPLIES)
+                        .maxUses(1)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
+        );
+
         emitOrdered(output, tracking, DwarfTradeRecipeBuilder.buyLegendaryLoreTome(
                 PROFESSION,
                 DwarfMerchantData.Level.MASTER,

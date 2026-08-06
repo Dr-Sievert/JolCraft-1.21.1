@@ -344,7 +344,7 @@ public final class DwarfProfessionConfigProvider
                                     SoundEvents.METAL_HIT
                             ),
                             defaults.attributes(),
-                            defaults.tradePools()
+                            explorerTradePools()
                     );
 
             case MINER ->
@@ -564,6 +564,26 @@ public final class DwarfProfessionConfigProvider
                 )
         );
     }
+
+    private static DwarfProfessionTradePoolsConfig explorerTradePools() {
+        return tradePools(
+                pool(
+                        TradePoolType.CUMULATIVE,
+                        Map.of(
+                                DwarfMerchantData.Level.NOVICE,
+                                1,
+
+                                DwarfMerchantData.Level.JOURNEYMAN,
+                                1,
+
+                                DwarfMerchantData.Level.MASTER,
+                                1
+                        ),
+                        TradeRerollType.RESTOCK
+                )
+        );
+    }
+
 
     @SafeVarargs
     private static DwarfProfessionTradePoolsConfig tradePools(

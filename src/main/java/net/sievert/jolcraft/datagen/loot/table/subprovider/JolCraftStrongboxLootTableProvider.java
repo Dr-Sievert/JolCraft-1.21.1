@@ -115,7 +115,7 @@ public final class JolCraftStrongboxLootTableProvider
                                                         LoreHelper.toLoreKeyString(DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE)
                                                 )
                                             )
-                                        .add(EmptyLootItem.emptyItem().setWeight(9))
+                                        .add(EmptyLootItem.emptyItem().setWeight(99))
                         )
         );
 
@@ -206,7 +206,7 @@ public final class JolCraftStrongboxLootTableProvider
                                                         LoreHelper.toLoreKeyString(DwarfLoreKey.ALCHEMY_RECIPES)
                                                 )
                                         )
-                                        .add(EmptyLootItem.emptyItem().setWeight(9))
+                                        .add(EmptyLootItem.emptyItem().setWeight(99))
                         )
         );
 
@@ -245,10 +245,10 @@ public final class JolCraftStrongboxLootTableProvider
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(UniformGenerator.between(1, 4))
-                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME).setWeight(30))
-                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME).setWeight(10))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_DWARVEN_TOME).setWeight(50))
+                                        .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_ANCIENT_DWARVEN_TOME).setWeight(20))
                                         .add(LootItem.lootTableItem(JolCraftItems.UNIDENTIFIED_LEGENDARY_ANCIENT_DWARVEN_TOME).setWeight(1))
-                                        .add(EmptyLootItem.emptyItem().setWeight(9))
+                                        .add(EmptyLootItem.emptyItem().setWeight(29))
                         )
         );
 

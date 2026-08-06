@@ -2,7 +2,6 @@ package net.sievert.jolcraft.integration.jei.custom.info;
 
 import net.minecraft.network.chat.Component;
 import net.sievert.jolcraft.data.JolCraftTags;
-import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -39,15 +38,6 @@ public final class JeiInfoPageHelper {
                 new JeiInfoPageRecipe(
                         JolCraftItems.STRONGBOX_ITEM.get().getDefaultInstance(),
                         Component.translatable(JolCraftLanguageKeys.JEI_INFO_STRONGBOX)
-                ),
-                new JeiInfoPageRecipe(
-                        List.of(
-                                JolCraftItems.EMPTY_DEEPSLATE_COMPASS.get().getDefaultInstance(),
-                                JolCraftItems.DEEPSLATE_COMPASS_DIAL.get().getDefaultInstance(),
-                                JolCraftItems.DEEPSLATE_COMPASS.get().getDefaultInstance()
-                        ),
-                        Component.translatable(JolCraftLanguageKeys.JEI_INFO_DEEPSLATE_COMPASS),
-                        JolCraftItemIds.DEEPSLATE_COMPASS
                 ),
                 new JeiInfoPageRecipe(
                         JolCraftBlocks.HEARTH.get().asItem().getDefaultInstance(),

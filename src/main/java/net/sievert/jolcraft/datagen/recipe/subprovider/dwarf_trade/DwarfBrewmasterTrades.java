@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.datagen.recipe.subprovider.dwarf_trade;
 
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -14,7 +13,7 @@ import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.world.item.registry.JolCraftBrewingItems;
 import net.sievert.jolcraft.world.recipe.base.input.custom.BrewAgeIngredient;
@@ -204,6 +203,22 @@ public record DwarfBrewmasterTrades(JolCraftDataProvider<RecipeOutput> parent) i
                 .maxUses(5)
                 .dwarfXp(1)
                 .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .costACoins(
+                                8,
+                                16
+                        )
+                        .noCostB()
+                        .rewardCrateResult(RewardCrateType.SUPPLY_CRATE)
+                        .maxUses(1)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
         );
 
         emitOrdered(

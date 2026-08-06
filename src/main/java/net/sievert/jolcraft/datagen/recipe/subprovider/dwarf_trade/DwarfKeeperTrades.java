@@ -9,6 +9,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("SameParameterValue")
@@ -75,6 +76,22 @@ public record DwarfKeeperTrades(JolCraftDataProvider<RecipeOutput> parent) imple
                         DwarfMerchantData.Level.EXPERT,
                         JolCraftItems.KRANDONIAN_SEEDS.get()
                 )
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .costACoins(
+                                8,
+                                16
+                        )
+                        .noCostB()
+                        .rewardCrateResult(RewardCrateType.FARMING_SUPPLIES)
+                        .maxUses(1)
+                        .dwarfXp(1)
+                        .priceMultiplier(0.05F)
         );
 
         emitOrdered(

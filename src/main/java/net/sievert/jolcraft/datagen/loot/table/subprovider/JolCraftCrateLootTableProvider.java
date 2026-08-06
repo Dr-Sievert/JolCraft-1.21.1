@@ -9,6 +9,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.minecraft.world.level.storage.loot.functions.*;
@@ -85,14 +86,19 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SUPPLIES).setWeight(49))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.SUPPLIES).setWeight(1))
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1))
                                         .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY).setWeight(1))
-                                            .apply(
+                                        .apply(
                                                 SetComponentsFunction.setComponent(
                                                         JolCraftDataComponents.DWARF_LORE_KEY.get(),
                                                         LoreHelper.toLoreKeyString(DwarfLoreKey.FORGOTTEN_BREW_FORMULAS)
                                                 )
-                                            )
+                                        )
+                                        .add(EmptyLootItem.emptyItem().setWeight(99))
                         )
         );
 
@@ -103,21 +109,40 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(LootItem.lootTableItem(JolCraftItems.INVERIX).setWeight(12)
+                                        .add(LootItem.lootTableItem(JolCraftItems.INVERIX).setWeight(1)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(JolCraftBlocks.DUSKCAP).setWeight(12)
+                                        .add(LootItem.lootTableItem(JolCraftBlocks.DUSKCAP).setWeight(1)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.REDSTONE).setWeight(12)
+                                        .add(LootItem.lootTableItem(JolCraftItems.BROKEN_COINS).setWeight(1)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.GLOWSTONE_DUST).setWeight(12)
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPMARROW_DUST).setWeight(1)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.EARTHBLOOD_DUST).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.RUSTAGATE_DUST).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.SUNGLEAM_DUST).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.YANILLIAN_HOPS).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(Items.REDSTONE).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(Items.GLOWSTONE_DUST).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                        .add(LootItem.lootTableItem(Items.BLAZE_POWDER).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1))
                                         .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY).setWeight(1))
-                                            .apply(
+                                        .apply(
                                                 SetComponentsFunction.setComponent(
                                                         JolCraftDataComponents.DWARF_LORE_KEY.get(),
                                                         LoreHelper.toLoreKeyString(DwarfLoreKey.ALCHEMY_RECIPES)
                                                 )
-                                            )
+                                        )
+                                        .add(EmptyLootItem.emptyItem().setWeight(99))
                         )
         );
 
@@ -127,7 +152,7 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_COMMON).setWeight(19))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_COMMON).setWeight(99))
                                         .add(NestedLootTable.lootTableReference(JolCraftLootTables.Archaeology.DWARVEN_FORTRESS_RARE).setWeight(1))
                         )
         );
@@ -138,15 +163,20 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_GEMS).setWeight(32))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(17))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.VANILLA_GEMS).setWeight(2))
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Chests.UNCUT_GEMS).setWeight(1))
+                        )
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1))
                                         .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY).setWeight(1))
-                                            .apply(
+                                        .apply(
                                                 SetComponentsFunction.setComponent(
                                                         JolCraftDataComponents.DWARF_LORE_KEY.get(),
                                                         LoreHelper.toLoreKeyString(DwarfLoreKey.ANCIENT_GEMCRAFT)
                                                 )
-                                            )
+                                        )
+                                        .add(EmptyLootItem.emptyItem().setWeight(99))
                         )
         );
 
@@ -156,23 +186,65 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY_SEEDS).setWeight(8)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))
+                                        .add(LootItem.lootTableItem(Items.WHEAT_SEEDS).setWeight(12)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.BEETROOT_SEEDS).setWeight(12)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.BARLEY_SEEDS).setWeight(12)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+
+                                        .add(LootItem.lootTableItem(Items.PUMPKIN_SEEDS).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.MELON_SEEDS).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.CARROT).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.POTATO).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.SUGAR_CANE).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.RED_MUSHROOM).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.BROWN_MUSHROOM).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftBlocks.FESTERLING).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+                                        .add(LootItem.lootTableItem(Items.COCOA_BEANS).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.CACTUS).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.SWEET_BERRIES).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.GLOW_BERRIES).setWeight(6)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+
+                                        .add(LootItem.lootTableItem(Items.NETHER_WART).setWeight(3)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.CRIMSON_FUNGUS).setWeight(3)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.WARPED_FUNGUS).setWeight(3)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(JolCraftBlocks.DUSKCAP).setWeight(3)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_BULBS).setWeight(3)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
+
+                                        .add(LootItem.lootTableItem(Items.CHORUS_FRUIT).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.TORCHFLOWER_SEEDS).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
+                                        .add(LootItem.lootTableItem(Items.PITCHER_POD).setWeight(1)
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 5))))
                                         .add(LootItem.lootTableItem(JolCraftItems.ASGARNIAN_SEEDS).setWeight(1)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
                                         .add(LootItem.lootTableItem(JolCraftItems.DUSKHOLD_SEEDS).setWeight(1)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
                                         .add(LootItem.lootTableItem(JolCraftItems.KRANDONIAN_SEEDS).setWeight(1)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
                                         .add(LootItem.lootTableItem(JolCraftItems.YANILLIAN_SEEDS).setWeight(1)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(JolCraftItems.DEEPSLATE_BULBS).setWeight(2)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
-                                        .add(LootItem.lootTableItem(JolCraftBlocks.DUSKCAP).setWeight(2)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
-                                        .add(LootItem.lootTableItem(JolCraftBlocks.FESTERLING).setWeight(2)
-                                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
-                                        .add(LootItem.lootTableItem(JolCraftBlocks.VERDANT_SOIL).setWeight(1))
+                                        .add(LootItem.lootTableItem(JolCraftBlocks.VERDANT_SOIL).setWeight(1)
+                                            .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
                         )
         );
 
@@ -218,15 +290,7 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(1))
-                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_FORGE).setWeight(9))
-                                        .add(LootItem.lootTableItem(JolCraftItems.ANCIENT_DWARVEN_TOME_LEGENDARY).setWeight(1))
-                                            .apply(
-                                                SetComponentsFunction.setComponent(
-                                                        JolCraftDataComponents.DWARF_LORE_KEY.get(),
-                                                        LoreHelper.toLoreKeyString(DwarfLoreKey.MITHRIL_FORGE_TECHNIQUE)
-                                                )
-                                            )
-
+                                        .add(NestedLootTable.lootTableReference(JolCraftLootTables.Strongbox.DWARVEN_FORTRESS_FORGE).setWeight(1))
                         )
         );
 
@@ -236,29 +300,29 @@ public final class JolCraftCrateLootTableProvider implements LootTableSubProvide
                         .withPool(
                                 LootPool.lootPool()
                                         .setRolls(ConstantValue.exactly(5))
-                                        .add(LootItem.lootTableItem(Items.ROTTEN_FLESH).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.ROTTEN_FLESH).setWeight(12)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))
-                                        .add(LootItem.lootTableItem(Items.BONE).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.BONE).setWeight(12)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))
-                                        .add(LootItem.lootTableItem(Items.GUNPOWDER).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.GUNPOWDER).setWeight(10)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))
-                                        .add(LootItem.lootTableItem(Items.SPIDER_EYE).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.SLIME_BALL).setWeight(8)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.SLIME_BALL).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.SPIDER_EYE).setWeight(6)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.PRISMARINE_SHARD).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.PRISMARINE_SHARD).setWeight(5)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(3, 5))))
-                                        .add(LootItem.lootTableItem(Items.PRISMARINE_CRYSTALS).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.PRISMARINE_CRYSTALS).setWeight(5)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.ENDER_PEARL).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.ENDER_PEARL).setWeight(4)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.BLAZE_ROD).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.BLAZE_ROD).setWeight(4)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.BREEZE_ROD).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.BREEZE_ROD).setWeight(4)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
-                                        .add(LootItem.lootTableItem(Items.GHAST_TEAR).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.GHAST_TEAR).setWeight(3)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
-                                        .add(LootItem.lootTableItem(Items.SHULKER_SHELL).setWeight(1)
+                                        .add(LootItem.lootTableItem(Items.SHULKER_SHELL).setWeight(2)
                                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
                                         .add(LootItem.lootTableItem(Items.TOTEM_OF_UNDYING).setWeight(1))
                         )

@@ -600,18 +600,16 @@ public final class JeiInfoPageCategory
             int slotX,
             int slotY
     ) {
-
         List<ItemStack> group =
                 recipe.getGroupStacks(
-                registryAccess
-        );
+                        registryAccess
+                );
 
         if (group.isEmpty()) {
             return;
         }
 
-        int slotSpacing =
-                20;
+        int slotSpacing = 20;
 
         int totalWidth =
                 slotSpacing
@@ -625,10 +623,7 @@ public final class JeiInfoPageCategory
             ItemStack stack =
                     group.get(i);
 
-            if (
-                    stack == null
-                            || stack.isEmpty()
-            ) {
+            if (stack == null || stack.isEmpty()) {
                 continue;
             }
 

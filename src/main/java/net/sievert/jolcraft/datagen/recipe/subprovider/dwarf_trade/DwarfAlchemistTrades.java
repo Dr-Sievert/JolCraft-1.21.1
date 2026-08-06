@@ -8,6 +8,7 @@ import net.sievert.jolcraft.datagen.recipe.builder.DwarfTradeRecipeBuilder;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateType;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,6 +85,22 @@ public record DwarfAlchemistTrades(JolCraftDataProvider<RecipeOutput> parent) im
                         )
                         .maxUses(6)
                         .dwarfXp(0)
+                        .priceMultiplier(0.05F)
+        );
+
+        emitOrdered(
+                output,
+                tracking,
+                DwarfTradeRecipeBuilder.create().profession(PROFESSION)
+                        .merchantLevel(DwarfMerchantData.Level.EXPERT)
+                        .costACoins(
+                                12,
+                                25
+                        )
+                        .noCostB()
+                        .rewardCrateResult(RewardCrateType.ALCHEMY_SUPPLIES)
+                        .maxUses(1)
+                        .dwarfXp(1)
                         .priceMultiplier(0.05F)
         );
 

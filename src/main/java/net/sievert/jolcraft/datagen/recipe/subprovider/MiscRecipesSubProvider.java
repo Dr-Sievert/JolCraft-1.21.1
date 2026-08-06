@@ -292,6 +292,26 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .unlockedByHas(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
                 .save(output, folder(), JolCraftItems.INVERIX.getId().getPath() + "_charcoal");
 
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_COMPASS_DIAL)
+                )
+                .pattern(" X")
+                .pattern("B ")
+                .define('B', JolCraftItems.DEEPSLATE_PLATE)
+                .define('X', Items.REDSTONE)
+                .unlockedByHas(JolCraftItems.DEEPSLATE_PLATE)
+                .save(output, folder(), JolCraftItems.DEEPSLATE_COMPASS_DIAL.getId().getPath() + "_right");
+
+        VanillaRecipeBuilder.shaped(
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_COMPASS_DIAL)
+                )
+                .pattern("X ")
+                .pattern(" B")
+                .define('B', JolCraftItems.DEEPSLATE_PLATE)
+                .define('X', Items.REDSTONE)
+                .unlockedByHas(JolCraftItems.DEEPSLATE_PLATE)
+                .save(output, folder(), JolCraftItems.DEEPSLATE_COMPASS_DIAL.getId().getPath() + "_left");
+
         yeastCulture(
                 output,
                 waterBottleIngredient(),

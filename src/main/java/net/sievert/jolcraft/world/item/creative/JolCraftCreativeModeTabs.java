@@ -282,6 +282,7 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.MITHRIL_PESTLE);
 
                         output.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
+                        output.accept(JolCraftItems.DEEPSLATE_COMPASS_DIAL);
 
                         for (DeepslateCompassStructureGroup group : DeepslateCompassStructureGroup.values()) {
                             addCompassDialVariant(output, group);
