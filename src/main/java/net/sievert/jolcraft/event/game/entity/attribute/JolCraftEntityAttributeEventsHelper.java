@@ -25,6 +25,8 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
+import net.sievert.jolcraft.world.util.JolCraftDimensionHelper;
+import net.sievert.jolcraft.world.util.JolCraftTimeHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,45 +80,80 @@ public final class JolCraftEntityAttributeEventsHelper {
     }
 
     private static void tickFrostvein(LivingEntity entity) {
-        AttributeInstance speed = entity.getAttribute(Attributes.MOVEMENT_SPEED);
+        AttributeInstance speed =
+                entity.getAttribute(Attributes.MOVEMENT_SPEED);
+
         if (speed == null) return;
 
-        double resist = Mth.clamp(entity.getAttributeValue(JolCraftAttributes.SLOW_RESISTANCE), 0.0D, 1.0D);
-        MobEffectInstance slow = entity.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
+        double resist = Mth.clamp(
+                entity.getAttributeValue(JolCraftAttributes.SLOW_RESISTANCE),
+                0.0D,
+                1.0D
+        );
+
+        MobEffectInstance slow =
+                entity.getEffect(MobEffects.MOVEMENT_SLOWDOWN);
 
         if (slow == null) {
-            if (FROSTVEIN_CACHE.remove(entity.getUUID()) != null) {
-                speed.removeModifier(FROSTVEIN_ID);
-            }
+            FROSTVEIN_CACHE.remove(entity.getUUID());
+            speed.removeModifier(FROSTVEIN_ID);
             return;
         }
 
         int amp = slow.getAmplifier();
 
-        double slowAmount = -0.15D * (amp + 1);
-        double vanillaMultiplier = 1.0D + slowAmount;
-        if (vanillaMultiplier <= 0.0D) return;
+        double slowAmount =
+                -0.15D * (amp + 1);
 
-        double desiredSlowAmount = slowAmount * (1.0D - resist);
-        double desiredMultiplier = 1.0D + desiredSlowAmount;
-        double extra = (desiredMultiplier / vanillaMultiplier) - 1.0D;
+        double vanillaMultiplier =
+                1.0D + slowAmount;
 
-        if (shouldIgnoreAttribute(entity, extra, FROSTVEIN_CACHE, FROSTVEIN_ID, speed)) {
+        if (vanillaMultiplier <= 0.0D) {
+            FROSTVEIN_CACHE.remove(entity.getUUID());
+            speed.removeModifier(FROSTVEIN_ID);
             return;
         }
 
-        double originalSlow = 0.15D * (amp + 1);
-        double actualSlow = originalSlow * (1.0D - resist);
-        double oldSpeed = speed.getValue();
+        double desiredSlowAmount =
+                slowAmount * (1.0D - resist);
+
+        double desiredMultiplier =
+                1.0D + desiredSlowAmount;
+
+        double extra =
+                desiredMultiplier / vanillaMultiplier - 1.0D;
+
+        if (shouldIgnoreAttribute(
+                entity,
+                extra,
+                FROSTVEIN_CACHE,
+                FROSTVEIN_ID,
+                speed
+        )) {
+            return;
+        }
+
+        double originalSlow =
+                0.15D * (amp + 1);
+
+        double actualSlow =
+                originalSlow * (1.0D - resist);
+
+        double oldSpeed =
+                speed.getValue();
 
         speed.removeModifier(FROSTVEIN_ID);
-        speed.addTransientModifier(new AttributeModifier(
-                FROSTVEIN_ID,
-                extra,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-        ));
 
-        double newSpeed = speed.getValue();
+        speed.addTransientModifier(
+                new AttributeModifier(
+                        FROSTVEIN_ID,
+                        extra,
+                        AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                )
+        );
+
+        double newSpeed =
+                speed.getValue();
 
         JolCraftLogs.debug(
                 JolCraftLogTags.PLAYER,
@@ -268,8 +305,7 @@ public final class JolCraftEntityAttributeEventsHelper {
                 entity.getAttributeValue(JolCraftAttributes.MOON_SHIELD)
         );
 
-        MobEffectInstance current =
-                entity.getEffect(JolCraftEffects.MOON_SHIELD);
+        MobEffectInstance current = entity.getEffect(JolCraftEffects.MOON_SHIELD);
 
         if (maxStacks <= 0) {
             if (current != null) {
@@ -295,7 +331,7 @@ public final class JolCraftEntityAttributeEventsHelper {
             return;
         }
 
-        if (entity.level().isDay()) {
+        if (JolCraftTimeHelper.isDay(entity) || !JolCraftDimensionHelper.isEnd(entity)) {
             if (current != null) {
                 entity.removeEffect(JolCraftEffects.MOON_SHIELD);
             }

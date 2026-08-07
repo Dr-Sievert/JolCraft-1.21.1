@@ -34,8 +34,8 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
     private static final int MIN_REPEAT_DELAY = 400;
     private static final int REPEAT_DELAY_RANGE = 400;
 
-    private static final double CURSE_VULNERABILITY_RANGE_REDUCTION = 0.25D;
-    private static final double MAX_DELAY_CURSE_VULNERABILITY = 4.0D;
+    private static final double DELAY_RANGE_REDUCTION = 0.25D;
+    private static final double MAX_DELAY_SCALING = 4.0D;
 
     private static final Map<UUID, Integer> EPISODE_TIMERS =
             new ConcurrentHashMap<>();
@@ -59,9 +59,9 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
         super.onEffectAdded(entity, amplifier);
 
         if (entity instanceof ServerPlayer player) {
-            EPISODE_TIMERS.put(
+            EPISODE_TIMERS.putIfAbsent(
                     player.getUUID(),
-                    createInitialDelay(player)
+                    createInitialDelay(player, amplifier)
             );
         }
     }
@@ -88,7 +88,7 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
 
         int timer = EPISODE_TIMERS.computeIfAbsent(
                 playerId,
-                __ -> createInitialDelay(player)
+                __ -> createInitialDelay(player, amplifier)
         );
 
         if (timer > 0) {
@@ -100,7 +100,7 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
 
         EPISODE_TIMERS.put(
                 playerId,
-                createRepeatDelay(player)
+                createRepeatDelay(player, amplifier)
         );
 
         return true;
@@ -172,45 +172,56 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
         );
     }
 
-    private static int createInitialDelay(Player player) {
-        int range = scaledDelayRange(
-                player,
-                INITIAL_DELAY_RANGE
-        );
-
+    private static int createInitialDelay(
+            Player player,
+            int amplifier
+    ) {
         return MIN_INITIAL_DELAY
-                + randomRange(player, range);
+                + randomRange(
+                player,
+                scaledDelayRange(
+                        player,
+                        INITIAL_DELAY_RANGE,
+                        amplifier
+                )
+        );
     }
 
-    private static int createRepeatDelay(Player player) {
-        int range = scaledDelayRange(
-                player,
-                REPEAT_DELAY_RANGE
-        );
-
+    private static int createRepeatDelay(
+            Player player,
+            int amplifier
+    ) {
         return MIN_REPEAT_DELAY
-                + randomRange(player, range);
+                + randomRange(
+                player,
+                scaledDelayRange(
+                        player,
+                        REPEAT_DELAY_RANGE,
+                        amplifier
+                )
+        );
     }
 
     private static int scaledDelayRange(
             Player player,
-            int baseRange
+            int baseRange,
+            int amplifier
     ) {
-        double curseVulnerability = Math.min(
+        double scaling = Math.min(
                 Math.max(
                         0.0D,
                         player.getAttributeValue(
                                 JolCraftAttributes.CURSE_VULNERABILITY
                         )
-                ),
-                MAX_DELAY_CURSE_VULNERABILITY
+                ) + amplifier,
+                MAX_DELAY_SCALING
         );
 
         return (int) Math.round(
                 baseRange
                         * (1.0D
-                        - CURSE_VULNERABILITY_RANGE_REDUCTION
-                        * curseVulnerability)
+                        - DELAY_RANGE_REDUCTION
+                        * scaling)
         );
     }
 

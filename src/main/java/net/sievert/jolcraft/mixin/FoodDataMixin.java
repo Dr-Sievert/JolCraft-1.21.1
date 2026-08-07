@@ -70,12 +70,15 @@ public abstract class FoodDataMixin {
             String type,
             float currentValue
     ) {
-        MobEffectInstance endurance = player.getEffect(JolCraftEffects.ENDURANCE);
+        MobEffectInstance endurance =
+                player.getEffect(JolCraftEffects.ENDURANCE);
+
         if (endurance == null) {
             return false;
         }
 
         int level = endurance.getAmplifier() + 1;
+
         float preventionChance = Math.min(
                 ENDURANCE_CHANCE_PER_LEVEL * level,
                 1.0F
@@ -90,7 +93,6 @@ public abstract class FoodDataMixin {
                 "Endurance prevented {} loss for player {}. Prevention chance={}%, current value={}.",
                 type,
                 player.getName().getString(),
-                level,
                 JolCraftLogs.pct1(preventionChance),
                 currentValue
         );

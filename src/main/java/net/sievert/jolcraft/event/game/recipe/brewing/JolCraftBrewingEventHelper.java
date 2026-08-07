@@ -9,9 +9,14 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.world.recipe.custom.vanilla.JolCraftBrewingRecipe;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class JolCraftBrewingEventHelper {
+
+    private static final Map<Holder<Potion>, SpecialBrewingRecipe> SPECIAL_RECIPES =
+            new LinkedHashMap<>();
 
     private JolCraftBrewingEventHelper() {}
 
@@ -106,6 +111,12 @@ public final class JolCraftBrewingEventHelper {
                         PotionContents.createItemStack(Items.POTION, result)
                 )
         );
+
+        SPECIAL_RECIPES.put(
+                result,
+                new SpecialBrewingRecipe(input, ingredient, result)
+        );
+
         return 1;
     }
 
@@ -149,4 +160,14 @@ public final class JolCraftBrewingEventHelper {
         builder.addMix(potion, Items.GLOWSTONE_DUST, strongPotion);
         return 2;
     }
+
+    public static List<SpecialBrewingRecipe> getSpecialRecipes() {
+        return List.copyOf(SPECIAL_RECIPES.values());
+    }
+
+    public record SpecialBrewingRecipe(
+            ItemLike input,
+            ItemLike ingredient,
+            Holder<Potion> potion
+    ) {}
 }

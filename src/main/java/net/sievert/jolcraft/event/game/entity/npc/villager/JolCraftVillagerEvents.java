@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game.entity.villager;
+package net.sievert.jolcraft.event.game.entity.npc.villager;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.core.BlockPos;
@@ -14,11 +14,8 @@ import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -30,16 +27,14 @@ import net.sievert.jolcraft.world.item.registry.JolCraftMapDecorationTypes;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftVillagerEvents {
+public final class JolCraftVillagerEvents {
 
-    @SubscribeEvent
+    private JolCraftVillagerEvents() {}
+
     public static void onVillagerCrateInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         JolCraftVillagerCrateEventsHelper.onInteract(event);
     }
 
-    @SubscribeEvent
     public static void addVillagerTrades(final VillagerTradesEvent event) {
         Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
         int added = 0;
@@ -47,12 +42,16 @@ public class JolCraftVillagerEvents {
         if (event.getType() == VillagerProfession.LIBRARIAN) {
             trades.get(5).add((pTrader, pRandom) -> {
                 int baseCost = 32 + pRandom.nextInt(33);
+
                 return new MerchantOffer(
                         new ItemCost(Items.EMERALD, baseCost),
                         new ItemStack(JolCraftItems.DWARVEN_LEXICON.get(), 1),
-                        1, 1, 0.05f
+                        1,
+                        1,
+                        0.05F
                 );
             });
+
             added++;
         }
 
@@ -83,12 +82,14 @@ public class JolCraftVillagerEvents {
                 );
 
                 MapItem.renderBiomePreviewMap(serverLevel, map);
+
                 MapItemSavedData.addTargetDecoration(
                         map,
                         fortressPos,
                         JolCraftStructureIds.DWARVEN_FORTRESS,
                         JolCraftMapDecorationTypes.DWARVEN
                 );
+
                 map.set(
                         DataComponents.ITEM_NAME,
                         Component.translatable(
@@ -102,14 +103,20 @@ public class JolCraftVillagerEvents {
                 );
 
                 return new MerchantOffer(
-                        new ItemCost(Items.EMERALD, 32 + pRandom.nextInt(33)),
-                        Optional.of(new ItemCost(Items.MAP)),
+                        new ItemCost(
+                                Items.EMERALD,
+                                32 + pRandom.nextInt(33)
+                        ),
+                        Optional.of(
+                                new ItemCost(Items.MAP)
+                        ),
                         map,
                         1,
                         30,
                         0.2F
                 );
             });
+
             added++;
         }
 

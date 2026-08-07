@@ -206,6 +206,35 @@ public final class JolCraftBrewingEvents {
                 JolCraftPotions.STRONG_LUNAR
         );
 
+        // Sunfire
+
+        recipes += addMix(builder,
+                Potions.FIRE_RESISTANCE,
+                JolCraftItems.SUNGLEAM_DUST,
+                JolCraftPotions.SUNFIRE,
+                JolCraftPotions.LONG_SUNFIRE,
+                JolCraftPotions.STRONG_SUNFIRE
+        );
+
+        // Vitality
+
+        recipes += addStartMix(builder,
+                JolCraftItems.EMBERGLASS_DUST,
+                JolCraftPotions.VITALITY,
+                JolCraftPotions.LONG_VITALITY,
+                JolCraftPotions.STRONG_VITALITY
+        );
+
+        // Radiant
+
+        recipes += addStartMix(builder,
+                JolCraftItems.LUMIERE_DUST,
+                JolCraftPotions.RADIANT,
+                JolCraftPotions.LONG_RADIANT,
+                JolCraftPotions.STRONG_RADIANT
+        );
+
+
         // Magic Resistance
 
         recipes += addStartMix(builder,

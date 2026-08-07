@@ -1,7 +1,7 @@
 package net.sievert.jolcraft.integration.jade.util;
 
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
+import net.sievert.jolcraft.world.util.JolCraftTimeHelper;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingTooltipHelper;
 import snownee.jade.api.ITooltip;
 

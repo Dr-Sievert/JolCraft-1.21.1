@@ -94,6 +94,18 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_LUNAR = longPotion(LUNAR);
     public static final String STRONG_LUNAR = strongPotion(LUNAR);
 
+    public static final String RADIANT = JolCraftEffectIds.RADIANT;
+    public static final String LONG_RADIANT = longPotion(RADIANT);
+    public static final String STRONG_RADIANT = strongPotion(RADIANT);
+
+    public static final String SUNFIRE = JolCraftEffectIds.SUNFIRE;
+    public static final String LONG_SUNFIRE = longPotion(SUNFIRE);
+    public static final String STRONG_SUNFIRE = strongPotion(SUNFIRE);
+
+    public static final String VITALITY = JolCraftEffectIds.VITALITY;
+    public static final String LONG_VITALITY = longPotion(VITALITY);
+    public static final String STRONG_VITALITY = strongPotion(VITALITY);
+
     // Harmful
     public static final String ATAXIA_CURSE = JolCraftEffectIds.ATAXIA_CURSE;
     public static final String CURSED_WOUND = JolCraftEffectIds.CURSED_WOUND;

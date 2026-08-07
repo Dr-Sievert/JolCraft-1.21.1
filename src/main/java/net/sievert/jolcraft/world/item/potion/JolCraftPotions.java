@@ -271,6 +271,42 @@ public final class JolCraftPotions {
             () -> new Potion(JolCraftPotionIds.STRONG_LUNAR,
                     new MobEffectInstance(JolCraftEffects.LUNAR, 1800, 1)));
 
+    public static final Holder<Potion> SUNFIRE = POTIONS.register(JolCraftPotionIds.SUNFIRE,
+            () -> new Potion(JolCraftPotionIds.SUNFIRE,
+                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 3600, 0)));
+
+    public static final Holder<Potion> LONG_SUNFIRE = POTIONS.register(JolCraftPotionIds.LONG_SUNFIRE,
+            () -> new Potion(JolCraftPotionIds.LONG_SUNFIRE,
+                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_SUNFIRE = POTIONS.register(JolCraftPotionIds.STRONG_SUNFIRE,
+            () -> new Potion(JolCraftPotionIds.STRONG_SUNFIRE,
+                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 1800, 1)));
+
+    public static final Holder<Potion> RADIANT = POTIONS.register(JolCraftPotionIds.RADIANT,
+            () -> new Potion(JolCraftPotionIds.RADIANT,
+                    new MobEffectInstance(JolCraftEffects.RADIANT, 3600, 0)));
+
+    public static final Holder<Potion> LONG_RADIANT = POTIONS.register(JolCraftPotionIds.LONG_RADIANT,
+            () -> new Potion(JolCraftPotionIds.LONG_RADIANT,
+                    new MobEffectInstance(JolCraftEffects.RADIANT, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_RADIANT = POTIONS.register(JolCraftPotionIds.STRONG_RADIANT,
+            () -> new Potion(JolCraftPotionIds.STRONG_RADIANT,
+                    new MobEffectInstance(JolCraftEffects.RADIANT, 1800, 1)));
+
+    public static final Holder<Potion> VITALITY = POTIONS.register(JolCraftPotionIds.VITALITY,
+            () -> new Potion(JolCraftPotionIds.VITALITY,
+                    new MobEffectInstance(JolCraftEffects.VITALITY, 3600, 0)));
+
+    public static final Holder<Potion> LONG_VITALITY = POTIONS.register(JolCraftPotionIds.LONG_VITALITY,
+            () -> new Potion(JolCraftPotionIds.LONG_VITALITY,
+                    new MobEffectInstance(JolCraftEffects.VITALITY, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_VITALITY = POTIONS.register(JolCraftPotionIds.STRONG_VITALITY,
+            () -> new Potion(JolCraftPotionIds.STRONG_VITALITY,
+                    new MobEffectInstance(JolCraftEffects.VITALITY, 1800, 1)));
+
     // -------------------------------------------------------------------------
     // Harmful
     // -------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game.entity.villager;
+package net.sievert.jolcraft.event.game.entity.npc.villager;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

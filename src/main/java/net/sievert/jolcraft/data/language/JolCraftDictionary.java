@@ -373,6 +373,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FERMENTING = "fermenting";
     public static final String FESTERLING = "festerling";
     public static final String FIELD = "field";
+    public static final String FIRE = "fire";
     public static final String FLOWER = "flower";
     public static final String FLUID = "fluid";
     public static final String FOOT = "foot";
@@ -599,6 +600,8 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String STRUCTURE = "structure";
     public static final String SUBTITLE = "subtitle";
     public static final String SUBTYPE = "subtype";
+    public static final String SUNFIRE = "sunfire";
+    public static final String SUN = "sun";
     public static final String SUNGLEAM = "sungleam";
     public static final String SUPPLIES = "supplies";
     public static final String SURFACE = "surface";

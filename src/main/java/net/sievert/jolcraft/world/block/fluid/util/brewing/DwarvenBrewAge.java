@@ -7,7 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.event.game.world.time.JolCraftTimeHelper;
+import net.sievert.jolcraft.world.util.JolCraftTimeHelper;
 import net.sievert.jolcraft.util.JolCraftEnumHelper;
 
 import java.util.Locale;

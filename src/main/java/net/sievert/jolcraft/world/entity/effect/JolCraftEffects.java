@@ -341,6 +341,34 @@ public final class JolCraftEffects {
                     )
     );
 
+    public static final Holder<MobEffect> SUNFIRE = MOB_EFFECTS.register(
+            JolCraftEffectIds.SUNFIRE,
+            () -> new SunfireEffect(MobEffectCategory.BENEFICIAL, 0xf4d919)
+                    .addAttributeModifier(
+                            JolCraftAttributes.SUN_FIRE_DAMAGE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.SUNFIRE, JolCraftDictionary.EFFECT)),
+                            4.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> VITALITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.VITALITY,
+            () -> new VitalityEffect(MobEffectCategory.BENEFICIAL, 0xa74f43)
+                    .addAttributeModifier(
+                            Attributes.MAX_HEALTH,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.VITALITY, JolCraftDictionary.EFFECT)),
+                            0.10D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                    )
+                    .addAttributeModifier(
+                            Attributes.MAX_ABSORPTION,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.VITALITY, JolCraftDictionary.EFFECT)),
+                            2.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
     // -------------------------------------------------------------------------
     // Harmful
     // -------------------------------------------------------------------------

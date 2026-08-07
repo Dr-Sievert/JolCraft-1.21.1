@@ -80,6 +80,7 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.CROP_LOOT_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.EXPERIENCE_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.CURSE_VULNERABILITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.SUN_FIRE_DAMAGE);
 
         return added;
     }
