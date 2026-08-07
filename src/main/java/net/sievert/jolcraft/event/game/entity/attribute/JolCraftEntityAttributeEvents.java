@@ -28,8 +28,8 @@ public final class JolCraftEntityAttributeEvents {
     }
 
     @SubscribeEvent
-    public static void onArmorPenetration(LivingIncomingDamageEvent event) {
-        JolCraftEntityAttributeHelper.applyArmorPenetration(event);
+    public static void handleLivingDamage(LivingIncomingDamageEvent event) {
+        JolCraftEntityAttributeHelper.applyIncomingDamageModifiers(event);
     }
 
     @SubscribeEvent

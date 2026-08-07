@@ -27,6 +27,37 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_BULWARK = longPotion(BULWARK);
     public static final String STRONG_BULWARK = strongPotion(BULWARK);
 
+    public static final String ALCHEMIST_FOCUS = JolCraftEffectIds.ALCHEMIST_FOCUS;
+    public static final String LONG_ALCHEMIST_FOCUS = longPotion(ALCHEMIST_FOCUS);
+    public static final String STRONG_ALCHEMIST_FOCUS = strongPotion(ALCHEMIST_FOCUS);
+
+    public static final String ANCHOR = JolCraftEffectIds.ANCHOR;
+    public static final String LONG_ANCHOR = longPotion(ANCHOR);
+
+    public static final String DEXTERITY = JolCraftEffectIds.DEXTERITY;
+    public static final String LONG_DEXTERITY = longPotion(DEXTERITY);
+    public static final String STRONG_DEXTERITY = strongPotion(DEXTERITY);
+
+    public static final String DWARVEN_RAGE = JolCraftEffectIds.DWARVEN_RAGE;
+    public static final String LONG_DWARVEN_RAGE = longPotion(DWARVEN_RAGE);
+    public static final String STRONG_DWARVEN_RAGE = strongPotion(DWARVEN_RAGE);
+
+    public static final String ENDURANCE = JolCraftEffectIds.ENDURANCE;
+    public static final String LONG_ENDURANCE = longPotion(ENDURANCE);
+    public static final String STRONG_ENDURANCE = strongPotion(ENDURANCE);
+
+    public static final String MAGIC_RESISTANCE = JolCraftEffectIds.MAGIC_RESISTANCE;
+    public static final String LONG_MAGIC_RESISTANCE = longPotion(MAGIC_RESISTANCE);
+    public static final String STRONG_MAGIC_RESISTANCE = strongPotion(MAGIC_RESISTANCE);
+
+    public static final String MARKSMAN = JolCraftEffectIds.MARKSMAN;
+    public static final String LONG_MARKSMAN = longPotion(MARKSMAN);
+    public static final String STRONG_MARKSMAN = strongPotion(MARKSMAN);
+
+    public static final String STONE_SKIN = JolCraftEffectIds.STONE_SKIN;
+    public static final String LONG_STONE_SKIN = longPotion(STONE_SKIN);
+    public static final String STRONG_STONE_SKIN = strongPotion(STONE_SKIN);
+
     // Harmful
     public static final String ATAXIA_CURSE = JolCraftEffectIds.ATAXIA_CURSE;
     public static final String CURSED_WOUND = JolCraftEffectIds.CURSED_WOUND;

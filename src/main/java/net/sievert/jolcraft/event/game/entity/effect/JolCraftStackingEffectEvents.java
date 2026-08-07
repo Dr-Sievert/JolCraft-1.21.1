@@ -27,6 +27,7 @@ public final class JolCraftStackingEffectEvents {
     private static final JolCraftRuntime.Guard FRAILTY_GUARD = new JolCraftRuntime.Guard();
     private static final JolCraftRuntime.Guard HEX_GUARD = new JolCraftRuntime.Guard();
     private static final JolCraftRuntime.Guard VITALITY_GUARD = new JolCraftRuntime.Guard();
+    private static final JolCraftRuntime.Guard WOUND_GUARD = new JolCraftRuntime.Guard();
 
     @SubscribeEvent
     public static void onAddedStackingEffect(MobEffectEvent.Added event) {
@@ -67,6 +68,10 @@ public final class JolCraftStackingEffectEvents {
         if (addedEffect.is(JolCraftEffects.VITALITY_CURSE)) {
             applyStackingEffect(entity, addedEffect, oldEffect, VITALITY_GUARD, 4);
         }
+
+        if (addedEffect.is(JolCraftEffects.CURSED_WOUND)) {
+            applyStackingEffect(entity, addedEffect, oldEffect, WOUND_GUARD, -1);
+        }
     }
 
     private static void applyStackingEffect(
@@ -104,6 +109,7 @@ public final class JolCraftStackingEffectEvents {
                     || addedEffect.is(JolCraftEffects.DELIRIUM_CURSE)
                     || addedEffect.is(JolCraftEffects.FAMINE_CURSE)
                     || addedEffect.is(JolCraftEffects.FRAILTY_CURSE)
+                    || addedEffect.is(JolCraftEffects.CURSED_WOUND)
                     || addedEffect.is(JolCraftEffects.HEX)
                     || addedEffect.is(JolCraftEffects.VITALITY_CURSE)) {
                 PlaySound.curse(entity);

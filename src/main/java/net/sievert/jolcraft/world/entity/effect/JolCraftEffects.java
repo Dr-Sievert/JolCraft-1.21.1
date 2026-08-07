@@ -14,12 +14,14 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.entity.effect.custom.*;
-import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.DisarmedEffect;
-import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.RootedEffect;
-import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.StunnedEffect;
-import net.sievert.jolcraft.world.entity.effect.custom.crowd_control.SuppressedEffect;
-import net.sievert.jolcraft.world.entity.effect.custom.curse.*;
+import net.sievert.jolcraft.world.entity.JolCraftAttributes;
+import net.sievert.jolcraft.world.entity.effect.custom.beneficial.*;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.CorrosionEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.DisarmedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.RootedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.StunnedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.SuppressedEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.*;
 
 public final class JolCraftEffects {
 
@@ -47,6 +49,12 @@ public final class JolCraftEffects {
     public static final Holder<MobEffect> DWARVEN_HASTE = MOB_EFFECTS.register(
             JolCraftEffectIds.DWARVEN_HASTE,
             () -> new DwarvenHasteEffect(MobEffectCategory.BENEFICIAL, 0x2bc7ac)
+                    .addAttributeModifier(
+                            Attributes.MINING_EFFICIENCY,
+                            JolCraft.location(JolCraftEffectIds.DWARVEN_HASTE),
+                            0.40D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_BASE
+                    )
     );
 
     public static final Holder<MobEffect> RADIANT = MOB_EFFECTS.register(
@@ -68,6 +76,76 @@ public final class JolCraftEffects {
                             0.05D,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
                     )
+    );
+
+    public static final Holder<MobEffect> ALCHEMIST_FOCUS = MOB_EFFECTS.register(
+            JolCraftEffectIds.ALCHEMIST_FOCUS,
+            () -> new AlchemistFocusEffect(MobEffectCategory.BENEFICIAL, 0xca008b)
+    );
+
+    public static final Holder<MobEffect> ANCHOR = MOB_EFFECTS.register(
+            JolCraftEffectIds.ANCHOR,
+            () -> new AnchorEffect(MobEffectCategory.BENEFICIAL, 0x4b5660)
+                    .addAttributeModifier(
+                            Attributes.KNOCKBACK_RESISTANCE,
+                            JolCraft.location(JolCraftEffectIds.ANCHOR),
+                            1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> DEXTERITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.DEXTERITY,
+            () -> new DexterityEffect(MobEffectCategory.BENEFICIAL, 0xe2aa65)
+                    .addAttributeModifier(
+                            JolCraftAttributes.ITEM_USE_SPEED,
+                            JolCraft.location(JolCraftEffectIds.DEXTERITY),
+                            0.20D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> DWARVEN_RAGE = MOB_EFFECTS.register(
+            JolCraftEffectIds.DWARVEN_RAGE,
+            () -> new DwarvenRageEffect(MobEffectCategory.BENEFICIAL, 0x411515)
+                    .addAttributeModifier(
+                    Attributes.ATTACK_SPEED,
+                    DwarvenRageEffect.ATTACK_SPEED_MODIFIER_ID,
+                    0.0D,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_BASE
+            )
+    );
+
+    public static final Holder<MobEffect> ENDURANCE = MOB_EFFECTS.register(
+            JolCraftEffectIds.ENDURANCE,
+            () -> new EnduranceEffect(MobEffectCategory.BENEFICIAL, 0x9a5e57)
+    );
+
+    public static final Holder<MobEffect> MAGIC_RESISTANCE = MOB_EFFECTS.register(
+            JolCraftEffectIds.MAGIC_RESISTANCE,
+            () -> new MagicResistanceEffect(MobEffectCategory.BENEFICIAL, 0x25b7b8)
+                    .addAttributeModifier(
+                            JolCraftAttributes.MAGIC_RESISTANCE,
+                            JolCraft.location(JolCraftEffectIds.MAGIC_RESISTANCE),
+                            0.10D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> MARKSMAN = MOB_EFFECTS.register(
+            JolCraftEffectIds.MARKSMAN,
+            () -> new MarksmanEffect(MobEffectCategory.BENEFICIAL, 0x15561b)
+                    .addAttributeModifier(
+                            JolCraftAttributes.PROJECTILE_DAMAGE,
+                            JolCraft.location(JolCraftEffectIds.MARKSMAN),
+                            1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> STONE_SKIN = MOB_EFFECTS.register(
+            JolCraftEffectIds.STONE_SKIN,
+            () -> new StoneSkinEffect(MobEffectCategory.BENEFICIAL, 0x52555a)
     );
 
     // Harmful

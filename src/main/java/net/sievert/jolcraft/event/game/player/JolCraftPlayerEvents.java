@@ -28,7 +28,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.data.custom.PendingStatData;
-import net.sievert.jolcraft.world.entity.effect.custom.curse.DeliriumCurseEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;

@@ -74,6 +74,7 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_TOTAL);
         added += addToAllLivingEntities(event, JolCraftAttributes.MOON_SHIELD);
+        added += addToAllLivingEntities(event, JolCraftAttributes.PROJECTILE_DAMAGE);
 
         return added;
     }

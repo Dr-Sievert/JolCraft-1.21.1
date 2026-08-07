@@ -1,0 +1,31 @@
+package net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control;
+
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.neoforged.neoforge.common.EffectCure;
+import net.sievert.jolcraft.world.entity.effect.cure.JolCraftEffectCures;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+
+public class AbstractCrowdControlEffect extends MobEffect {
+
+    protected AbstractCrowdControlEffect(MobEffectCategory category, int color) {
+        super(category, color);
+    }
+
+    @Override
+    public void fillEffectCures(
+            @NotNull Set<EffectCure> cures,
+            @NotNull MobEffectInstance effectInstance
+    ) {
+        super.fillEffectCures(
+                cures,
+                effectInstance
+        );
+
+        cures.add(JolCraftEffectCures.WAR_HORN
+        );
+    }
+}

@@ -2,6 +2,7 @@ package net.sievert.jolcraft.event.game.entity.attribute;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -194,6 +196,11 @@ public final class JolCraftEntityAttributeHelper {
                 oldArmor,
                 newArmor
         );
+    }
+
+    public static void applyIncomingDamageModifiers(LivingIncomingDamageEvent event) {
+        applyProjectileDamage(event);
+        applyArmorPenetration(event);
     }
 
     public static void applyFinalDamageReductions(LivingDamageEvent.Pre event) {
@@ -436,6 +443,34 @@ public final class JolCraftEntityAttributeHelper {
 
                     return newReduction;
                 }
+        );
+    }
+
+    private static void applyProjectileDamage(LivingIncomingDamageEvent event) {
+        DamageSource source = event.getSource();
+
+        if (!source.is(DamageTypeTags.IS_PROJECTILE)
+                || !(source.getDirectEntity() instanceof AbstractArrow)
+                || !(source.getEntity() instanceof LivingEntity attacker)) {
+            return;
+        }
+
+        double bonus = attacker.getAttributeValue(JolCraftAttributes.PROJECTILE_DAMAGE);
+        if (bonus <= 0.0D) return;
+
+        float originalDamage = event.getAmount();
+        float modifiedDamage = originalDamage + (float) bonus;
+
+        event.setAmount(modifiedDamage);
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Projectile damage increased: attacker={}, target={}, bonus={}, originalDmg={}, finalDmg={}",
+                attacker.getDisplayName().getString(),
+                event.getEntity().getDisplayName().getString(),
+                bonus,
+                originalDamage,
+                modifiedDamage
         );
     }
 }

@@ -8,6 +8,7 @@
     "ConfiguredFeatureMixin",
     "CropBlockMixin",
     "DiggerItemMixin",
+    "FoodDataMixin",
     "JigsawPlacementMixin",
     "JigsawPlacementPlacerMixin",
     "LootItemAccessor",

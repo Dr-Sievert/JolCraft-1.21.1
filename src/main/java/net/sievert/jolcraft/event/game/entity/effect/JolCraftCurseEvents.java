@@ -42,15 +42,26 @@ public final class JolCraftCurseEvents {
     public static void onCursedWoundHeal(LivingHealEvent event) {
         LivingEntity entity = event.getEntity();
 
-        if (!entity.hasEffect(JolCraftEffects.CURSED_WOUND)) return;
+        MobEffectInstance cursedWound = entity.getEffect(JolCraftEffects.CURSED_WOUND);
+        if (cursedWound == null) return;
 
         event.setCanceled(true);
 
-        MobEffectInstance hex = entity.getEffect(JolCraftEffects.HEX);
-        if (hex == null || !(entity.level() instanceof ServerLevel level)) return;
+        int amplifier = cursedWound.getAmplifier();
+        if (amplifier <= 0 || !(entity.level() instanceof ServerLevel level)) {
+            return;
+        }
 
-        int effectiveHexLevel = Math.min(hex.getAmplifier(), 3) + 1;
-        float backlashDamage = event.getAmount() * 0.25F * effectiveHexLevel;
+        MobEffectInstance hex = entity.getEffect(JolCraftEffects.HEX);
+        int hexLevel = hex == null
+                ? 0
+                : Math.min(hex.getAmplifier() + 1, MAX_RELEVANT_HEX_LEVEL);
+
+        float backlashDamage =
+                event.getAmount()
+                        * 0.20F
+                        * amplifier
+                        * Math.scalb(1.0F, hexLevel);
 
         if (backlashDamage <= 0.0F) return;
 
