@@ -9,7 +9,6 @@ import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachment;
-import net.sievert.jolcraft.world.player.attachment.custom.effect.AlchemistFocusAttachment;
 import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachment;
 import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachment;
 import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachment;
@@ -69,14 +68,6 @@ public final class JolCraftAttachments {
                             .serialize(DiscoveredStructuresAttachment.CODEC)
                             .sync(DiscoveredStructuresAttachment.STREAM_CODEC)
                             .copyOnDeath()
-                            .build()
-            );
-
-    public static final Supplier<AttachmentType<AlchemistFocusAttachment>> ALCHEMIST_FOCUS =
-            ATTACHMENT_TYPES.register(
-                    JolCraftAttachmentIds.ALCHEMIST_FOCUS,
-                    () -> AttachmentType.builder(AlchemistFocusAttachment::new)
-                            .serialize(AlchemistFocusAttachment.CODEC)
                             .build()
             );
 

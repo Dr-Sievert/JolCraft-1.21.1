@@ -18,6 +18,7 @@
     "LootPoolSingletonContainerAccessor",
     "LootTableAccessor",
     "MeleeAttackGoalMixin",
+    "MobEffectInstanceAccessor",
     "MushroomBlockMixin",
     "NestedLootTableAccessor",
     "PoisonMobEffectMixin",

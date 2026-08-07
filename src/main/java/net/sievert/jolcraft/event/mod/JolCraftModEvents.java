@@ -58,10 +58,8 @@ public final class JolCraftModEvents {
     @SubscribeEvent
     public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
         int allEntities = addLivingEntityAttributes(event);
-        int playerOnly = addPlayerOnlyAttributes(event);
 
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} attribute entries for all living entities", allEntities);
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} player-only attributes", playerOnly);
+        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} attribute entries for living entities", allEntities);
     }
 
     private static int addLivingEntityAttributes(EntityAttributeModificationEvent event) {
@@ -71,11 +69,17 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_PENETRATION);
         added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.POISON_RESISTANCE);
-        added += addToAllLivingEntities(event, JolCraftAttributes.ATTACK_DAMAGE_INCREASE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.TENACITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.FOCUS);
         added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_RESISTANCE);
-        added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_TOTAL);
         added += addToAllLivingEntities(event, JolCraftAttributes.MOON_SHIELD);
         added += addToAllLivingEntities(event, JolCraftAttributes.PROJECTILE_DAMAGE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.LOCKPICKING);
+        added += addToAllLivingEntities(event, JolCraftAttributes.ITEM_USE_SPEED);
+        added += addToAllLivingEntities(event, JolCraftAttributes.CONTAINER_LOOT_INCREASE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.CROP_LOOT_INCREASE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.EXPERIENCE_INCREASE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.CURSE_VULNERABILITY);
 
         return added;
     }
@@ -90,17 +94,6 @@ public final class JolCraftModEvents {
             event.add(type, attribute);
             added++;
         }
-
-        return added;
-    }
-
-    private static int addPlayerOnlyAttributes(EntityAttributeModificationEvent event) {
-        int added = 0;
-
-        event.add(EntityType.PLAYER, JolCraftAttributes.EXPERIENCE_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.CROP_LOOT_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.CONTAINER_LOOT_INCREASE); added++;
-        event.add(EntityType.PLAYER, JolCraftAttributes.ITEM_USE_SPEED); added++;
 
         return added;
     }

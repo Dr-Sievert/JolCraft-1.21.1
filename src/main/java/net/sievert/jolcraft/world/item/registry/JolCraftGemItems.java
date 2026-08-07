@@ -17,6 +17,8 @@ import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimAttributes;
 import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimMaterials;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
 
+import java.util.List;
+
 public final class JolCraftGemItems {
 
     private JolCraftGemItems() {}
@@ -132,9 +134,10 @@ public final class JolCraftGemItems {
             String dustId,
             JolCraftTrimMaterials.Attribute trimMaterialAttribute
     ) {
-        JolCraftTrimAttributes.TrimAttribute trimAttribute = JolCraftTrimAttributes.getTrimAttribute(trimMaterialAttribute);
-
-        ItemAttributeModifiers modifiers = buildGemAttribute(uncutId, trimAttribute);
+        ItemAttributeModifiers modifiers = buildGemAttributes(
+                uncutId,
+                JolCraftTrimAttributes.getTrimAttributes(trimMaterialAttribute)
+        );
 
         return new GemSet(
                 JolCraftItemRegistryHelper.registerItem(
@@ -153,21 +156,31 @@ public final class JolCraftGemItems {
         );
     }
 
-    private static ItemAttributeModifiers buildGemAttribute(
+    private static ItemAttributeModifiers buildGemAttributes(
             String gemId,
-            JolCraftTrimAttributes.TrimAttribute trimAttribute
+            List<JolCraftTrimAttributes.TrimAttribute> attributes
     ) {
-        ResourceLocation id = JolCraft.location(
-                JolCraftStrings.underscored(JolCraftDictionary.GEM, gemId)
-        );
+        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
 
-        return ItemAttributeModifiers.builder()
-                .add(
-                        trimAttribute.attribute(),
-                        new AttributeModifier(id, trimAttribute.amount(), trimAttribute.operation()),
-                        EquipmentSlotGroup.ARMOR
-                )
-                .build();
+        for (int i = 0; i < attributes.size(); i++) {
+            JolCraftTrimAttributes.TrimAttribute attribute = attributes.get(i);
+
+            ResourceLocation id = JolCraft.location(
+                    JolCraftStrings.underscored(
+                            JolCraftDictionary.GEM,
+                            gemId,
+                            Integer.toString(i)
+                    )
+            );
+
+            builder.add(
+                    attribute.attribute(),
+                    new AttributeModifier(id, attribute.amount(), attribute.operation()),
+                    EquipmentSlotGroup.ARMOR
+            );
+        }
+
+        return builder.build();
     }
 
     public record GemSet(

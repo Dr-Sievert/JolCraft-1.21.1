@@ -18,22 +18,22 @@ public final class JolCraftEntityAttributeEvents {
     @SubscribeEvent
     public static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
-        JolCraftEntityAttributeHelper.clearTrackedAttributes(entity);
+        JolCraftEntityAttributeEventsHelper.clearTrackedAttributes(entity);
     }
 
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
-        JolCraftEntityAttributeHelper.tickAttributes(entity);
+        JolCraftEntityAttributeEventsHelper.tickAttributes(entity);
     }
 
     @SubscribeEvent
     public static void handleLivingDamage(LivingIncomingDamageEvent event) {
-        JolCraftEntityAttributeHelper.applyIncomingDamageModifiers(event);
+        JolCraftEntityAttributeEventsHelper.applyIncomingDamageModifiers(event);
     }
 
     @SubscribeEvent
     public static void handleDamageReductions(LivingDamageEvent.Pre event) {
-        JolCraftEntityAttributeHelper.applyFinalDamageReductions(event);
+        JolCraftEntityAttributeEventsHelper.applyFinalDamageReductions(event);
     }
 }

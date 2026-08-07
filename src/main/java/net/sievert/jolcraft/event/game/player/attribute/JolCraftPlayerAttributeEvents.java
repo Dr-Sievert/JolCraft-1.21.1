@@ -19,56 +19,56 @@ public final class JolCraftPlayerAttributeEvents {
 
     @SubscribeEvent
     public static void onXpChange(PlayerXpEvent.XpChange event) {
-        JolCraftPlayerAttributeHelper.applyXpIncrease(event);
+        JolCraftPlayerAttributeEventsHelper.applyXpIncrease(event);
     }
 
     @SubscribeEvent
     public static void onPlayerRadiantTick(PlayerTickEvent.Post event) {
-        JolCraftPlayerAttributeHelper.tickRadiantEntity(event);
+        JolCraftPlayerAttributeEventsHelper.tickRadiantEntity(event);
     }
 
     @SubscribeEvent
     public static void onLevelTickRadiantAura(LevelTickEvent.Post event) {
-        JolCraftPlayerAttributeHelper.tickRadiantAura(event);
+        JolCraftPlayerAttributeEventsHelper.tickRadiantAura(event);
     }
 
     @SubscribeEvent
     public static void onRightContainerBlock(PlayerInteractEvent.RightClickBlock event) {
-        JolCraftPlayerAttributeHelper.trackChestLoot(event);
+        JolCraftPlayerAttributeEventsHelper.trackChestLoot(event);
     }
 
     @SubscribeEvent
     public static void onContainerOpen(PlayerContainerEvent.Open event) {
-        JolCraftPlayerAttributeHelper.applyChestLootIncrease(event);
+        JolCraftPlayerAttributeEventsHelper.applyChestLootIncrease(event);
     }
 
     @SubscribeEvent
     public static void onContainerClose(PlayerContainerEvent.Close event) {
-        JolCraftPlayerAttributeHelper.clearChestLootTracking(event);
+        JolCraftPlayerAttributeEventsHelper.clearChestLootTracking(event);
     }
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        JolCraftPlayerAttributeHelper.applyCropLootIncrease(event);
+        JolCraftPlayerAttributeEventsHelper.applyCropLootIncrease(event);
     }
 
     @SubscribeEvent
     public static void onUseItemStart(LivingEntityUseItemEvent.Start event) {
-        JolCraftPlayerAttributeHelper.applyItemUseSpeedStart(event);
+        JolCraftPlayerAttributeEventsHelper.applyItemUseSpeedStart(event);
     }
 
     @SubscribeEvent
     public static void onUseTick(LivingEntityUseItemEvent.Tick event) {
-        JolCraftPlayerAttributeHelper.applyItemUseSpeedTick(event);
+        JolCraftPlayerAttributeEventsHelper.applyItemUseSpeedTick(event);
     }
 
     @SubscribeEvent
     public static void onUseStop(LivingEntityUseItemEvent.Stop event) {
-        JolCraftPlayerAttributeHelper.stopItemUseSpeed(event);
+        JolCraftPlayerAttributeEventsHelper.stopItemUseSpeed(event);
     }
 
     @SubscribeEvent
     public static void onUseFinish(LivingEntityUseItemEvent.Finish event) {
-        JolCraftPlayerAttributeHelper.finishItemUseSpeed(event);
+        JolCraftPlayerAttributeEventsHelper.finishItemUseSpeed(event);
     }
 }

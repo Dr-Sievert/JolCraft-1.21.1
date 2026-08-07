@@ -36,7 +36,7 @@ public class JolCraftVillagerEvents {
 
     @SubscribeEvent
     public static void onVillagerCrateInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        JolCraftVillagerCrateHelper.onInteract(event);
+        JolCraftVillagerCrateEventsHelper.onInteract(event);
     }
 
     @SubscribeEvent

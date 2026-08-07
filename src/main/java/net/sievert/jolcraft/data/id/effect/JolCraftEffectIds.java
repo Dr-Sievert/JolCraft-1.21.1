@@ -12,7 +12,7 @@ public final class JolCraftEffectIds extends JolCraftIds {
     // Beneficial
     public static final String HOMESTEAD = JolCraftDictionary.HOMESTEAD;
     public static final String ANCIENT_MEMORY = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.MEMORY);
-    public static final String LOCKPICKING = JolCraftDictionary.LOCKPICKING;
+    public static final String LOCKPICKING = JolCraftAttributeIds.LOCKPICKING;
     public static final String DWARVEN_HASTE = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.HASTE);
     public static final String RADIANT = JolCraftEntityObjectIds.RADIANT;
     public static final String MOON_SHIELD = JolCraftAttributeIds.MOON_SHIELD;
@@ -24,9 +24,16 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String ENDURANCE = JolCraftDictionary.ENDURANCE;
     public static final String MAGIC_RESISTANCE = JolCraftAttributeIds.MAGIC_RESISTANCE;
     public static final String POISON_RESISTANCE = JolCraftAttributeIds.POISON_RESISTANCE;
+    public static final String SLOW_RESISTANCE = JolCraftAttributeIds.SLOW_RESISTANCE;
+    public static final String TENACITY = JolCraftAttributeIds.TENACITY;
     public static final String MARKSMAN = JolCraftDictionary.MARKSMAN;
+    public static final String HOARD = JolCraftDictionary.HOARD;
+    public static final String PIERCING = JolCraftDictionary.PIERCING;
     public static final String STONE_SKIN = join(JolCraftDictionary.STONE, JolCraftDictionary.SKIN);
-
+    public static final String WISDOM = JolCraftDictionary.WISDOM;
+    public static final String MIGHT = JolCraftDictionary.MIGHT;
+    public static final String HARVEST = JolCraftDictionary.HARVEST;
+    public static final String LUNAR = JolCraftDictionary.LUNAR;
 
     // Harmful
     public static final String ATAXIA_CURSE = join(JolCraftDictionary.ATAXIA, JolCraftDictionary.CURSE);

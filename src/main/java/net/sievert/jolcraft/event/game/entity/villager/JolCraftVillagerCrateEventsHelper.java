@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class JolCraftVillagerCrateHelper {
+public final class JolCraftVillagerCrateEventsHelper {
 
     private static final int COOLDOWN_TICKS = 60;
 
-    private JolCraftVillagerCrateHelper() {}
+    private JolCraftVillagerCrateEventsHelper() {}
 
     public static void onInteract(PlayerInteractEvent.EntityInteractSpecific event) {
         Player player = event.getEntity();

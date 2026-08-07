@@ -13,63 +13,91 @@ import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 
+@SuppressWarnings("unused")
 public final class JolCraftAttributes {
 
     private JolCraftAttributes() {}
 
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, JolCraft.MOD_ID);
 
+    // Positive
+
     public static final DeferredHolder<Attribute, Attribute> EXPERIENCE_INCREASE =
-            registerPercentage(JolCraftAttributeIds.EXPERIENCE_INCREASE, 2048.0D);
+            registerPositivePercentage(JolCraftAttributeIds.EXPERIENCE_INCREASE, 2048.0D);
 
     public static final DeferredHolder<Attribute, Attribute> SLOW_RESISTANCE =
-            registerPercentage(JolCraftAttributeIds.SLOW_RESISTANCE, 1.0D);
+            registerPositivePercentage(JolCraftAttributeIds.SLOW_RESISTANCE, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> CROP_LOOT_INCREASE =
-            registerPercentage(JolCraftAttributeIds.CROP_LOOT_INCREASE, 2048.0D);
+            registerPositivePercentage(JolCraftAttributeIds.CROP_LOOT_INCREASE, 2048.0D);
 
     public static final DeferredHolder<Attribute, Attribute> CONTAINER_LOOT_INCREASE =
-            registerPercentage(JolCraftAttributeIds.CONTAINER_LOOT_INCREASE, 2048.0D);
+            registerPositivePercentage(JolCraftAttributeIds.CONTAINER_LOOT_INCREASE, 2048.0D);
 
     public static final DeferredHolder<Attribute, Attribute> RADIANT =
-            registerDouble(JolCraftAttributeIds.RADIANT, 4);
+            registerPositiveDouble(JolCraftAttributeIds.RADIANT, 4);
 
     public static final DeferredHolder<Attribute, Attribute> ARMOR_PENETRATION =
-            registerPercentage(JolCraftAttributeIds.ARMOR_PENETRATION, 1.0D);
+            registerPositivePercentage(JolCraftAttributeIds.ARMOR_PENETRATION, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> MAGIC_RESISTANCE =
-            registerPercentage(JolCraftAttributeIds.MAGIC_RESISTANCE, 1.0D);
+            registerPositivePercentage(JolCraftAttributeIds.MAGIC_RESISTANCE, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> POISON_RESISTANCE =
-            registerPercentage(JolCraftAttributeIds.POISON_RESISTANCE, 1.0D);
+            registerPositivePercentage(JolCraftAttributeIds.POISON_RESISTANCE, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> ARMOR_TOTAL =
-            registerPercentage(JolCraftAttributeIds.ARMOR_TOTAL, 2048.0D);
+    public static final DeferredHolder<Attribute, Attribute> TENACITY =
+            registerPositivePercentage(JolCraftAttributeIds.TENACITY, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> ATTACK_DAMAGE_INCREASE =
-            registerPercentage(JolCraftAttributeIds.ATTACK_DAMAGE_INCREASE, 2048.0D);
+    public static final DeferredHolder<Attribute, Attribute> FOCUS =
+            registerPositivePercentage(JolCraftAttributeIds.FOCUS, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> ITEM_USE_SPEED =
-            registerPercentage(JolCraftAttributeIds.ITEM_USE_SPEED, 1.0D);
+            registerPositivePercentage(JolCraftAttributeIds.ITEM_USE_SPEED, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> MOON_SHIELD =
-            registerDouble(JolCraftAttributeIds.MOON_SHIELD, 4);
+            registerPositiveDouble(JolCraftAttributeIds.MOON_SHIELD, 6);
 
     public static final DeferredHolder<Attribute, Attribute> PROJECTILE_DAMAGE =
-            registerDouble(JolCraftAttributeIds.PROJECTILE_DAMAGE, 2048.0D);
+            registerPositiveDouble(JolCraftAttributeIds.PROJECTILE_DAMAGE, 2048.0D);
 
-    private static DeferredHolder<Attribute, Attribute> registerPercentage(String id, double max) {
+    public static final DeferredHolder<Attribute, Attribute> LOCKPICKING =
+            registerPositiveDouble(JolCraftAttributeIds.LOCKPICKING, 2048.0D);
+
+    // Negative
+
+    public static final DeferredHolder<Attribute, Attribute> CURSE_VULNERABILITY =
+            registerNegativeDouble(JolCraftAttributeIds.CURSE_VULNERABILITY, 2048.0D);
+
+    // Helpers
+
+    private static DeferredHolder<Attribute, Attribute> registerPositivePercentage(String id, double max) {
         return ATTRIBUTES.register(id, () ->
                 new PercentageAttribute(AbstractLanguageKeys.attribute(id), 0.0D, 0.0D, max)
                         .setSyncable(true).setSentiment(Attribute.Sentiment.POSITIVE)
         );
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private static DeferredHolder<Attribute, Attribute> registerDouble(String id, double max) {
+
+    private static DeferredHolder<Attribute, Attribute> registerPositiveDouble(String id, double max) {
         return ATTRIBUTES.register(id, () ->
                 new RangedAttribute(AbstractLanguageKeys.attribute(id), 0.0D, 0.0D, max)
                         .setSyncable(true).setSentiment(Attribute.Sentiment.POSITIVE)
+        );
+    }
+
+    private static DeferredHolder<Attribute, Attribute> registerNegativePercentage(String id, double max) {
+        return ATTRIBUTES.register(id, () ->
+                new PercentageAttribute(AbstractLanguageKeys.attribute(id), 0.0D, 0.0D, max)
+                        .setSyncable(true).setSentiment(Attribute.Sentiment.NEGATIVE)
+        );
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static DeferredHolder<Attribute, Attribute> registerNegativeDouble(String id, double max) {
+        return ATTRIBUTES.register(id, () ->
+                new RangedAttribute(AbstractLanguageKeys.attribute(id), 0.0D, 0.0D, max)
+                        .setSyncable(true).setSentiment(Attribute.Sentiment.NEGATIVE)
         );
     }
 

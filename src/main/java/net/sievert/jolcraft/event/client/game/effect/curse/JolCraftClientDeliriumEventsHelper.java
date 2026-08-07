@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public final class JolCraftClientDeliriumHelper {
+public final class JolCraftClientDeliriumEventsHelper {
 
-    private JolCraftClientDeliriumHelper() {}
+    private JolCraftClientDeliriumEventsHelper() {}
 
     private static final float VOLUME = 0.10F;
     private static final float PITCH = 0.65F;

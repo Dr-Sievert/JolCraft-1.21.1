@@ -2,6 +2,7 @@ package net.sievert.jolcraft.integration.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
@@ -32,6 +33,7 @@ import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchCategory;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchHelper;
+import net.sievert.jolcraft.integration.jei.custom.vanilla.brewing.JeiBrewingRecipeHelper;
 import net.sievert.jolcraft.integration.jei.util.JeiCategoryDefinition;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -187,6 +189,11 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                     registration
             );
         }
+
+        registration.addRecipes(
+                RecipeTypes.BREWING,
+                JeiBrewingRecipeHelper.getRecipes(registration)
+        );
     }
 
     @Override

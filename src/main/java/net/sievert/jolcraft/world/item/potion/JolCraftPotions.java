@@ -151,6 +151,18 @@ public final class JolCraftPotions {
             () -> new Potion(JolCraftPotionIds.STRONG_POISON_RESISTANCE,
                     new MobEffectInstance(JolCraftEffects.POISON_RESISTANCE, 1800, 1)));
 
+    public static final Holder<Potion> SLOW_RESISTANCE = POTIONS.register(JolCraftPotionIds.SLOW_RESISTANCE,
+            () -> new Potion(JolCraftPotionIds.SLOW_RESISTANCE,
+                    new MobEffectInstance(JolCraftEffects.SLOW_RESISTANCE, 3600, 0)));
+
+    public static final Holder<Potion> LONG_SLOW_RESISTANCE = POTIONS.register(JolCraftPotionIds.LONG_SLOW_RESISTANCE,
+            () -> new Potion(JolCraftPotionIds.LONG_SLOW_RESISTANCE,
+                    new MobEffectInstance(JolCraftEffects.SLOW_RESISTANCE, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_SLOW_RESISTANCE = POTIONS.register(JolCraftPotionIds.STRONG_SLOW_RESISTANCE,
+            () -> new Potion(JolCraftPotionIds.STRONG_SLOW_RESISTANCE,
+                    new MobEffectInstance(JolCraftEffects.SLOW_RESISTANCE, 1800, 1)));
+
     public static final Holder<Potion> MARKSMAN = POTIONS.register(JolCraftPotionIds.MARKSMAN,
             () -> new Potion(JolCraftPotionIds.MARKSMAN,
                     new MobEffectInstance(JolCraftEffects.MARKSMAN, 3600, 0)));
@@ -174,6 +186,90 @@ public final class JolCraftPotions {
     public static final Holder<Potion> STRONG_STONE_SKIN = POTIONS.register(JolCraftPotionIds.STRONG_STONE_SKIN,
             () -> new Potion(JolCraftPotionIds.STRONG_STONE_SKIN,
                     new MobEffectInstance(JolCraftEffects.STONE_SKIN, 600, 1)));
+
+    public static final Holder<Potion> HOARD = POTIONS.register(JolCraftPotionIds.HOARD,
+            () -> new Potion(JolCraftPotionIds.HOARD,
+                    new MobEffectInstance(JolCraftEffects.HOARD, 6000, 0)));
+
+    public static final Holder<Potion> LONG_HOARD = POTIONS.register(JolCraftPotionIds.LONG_HOARD,
+            () -> new Potion(JolCraftPotionIds.LONG_HOARD,
+                    new MobEffectInstance(JolCraftEffects.HOARD, 12000, 0)));
+
+    public static final Holder<Potion> STRONG_HOARD = POTIONS.register(JolCraftPotionIds.STRONG_HOARD,
+            () -> new Potion(JolCraftPotionIds.STRONG_HOARD,
+                    new MobEffectInstance(JolCraftEffects.HOARD, 3000, 1)));
+
+    public static final Holder<Potion> PIERCING = POTIONS.register(JolCraftPotionIds.PIERCING,
+            () -> new Potion(JolCraftPotionIds.PIERCING,
+                    new MobEffectInstance(JolCraftEffects.PIERCING, 3600, 0)));
+
+    public static final Holder<Potion> LONG_PIERCING = POTIONS.register(JolCraftPotionIds.LONG_PIERCING,
+            () -> new Potion(JolCraftPotionIds.LONG_PIERCING,
+                    new MobEffectInstance(JolCraftEffects.PIERCING, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_PIERCING = POTIONS.register(JolCraftPotionIds.STRONG_PIERCING,
+            () -> new Potion(JolCraftPotionIds.STRONG_PIERCING,
+                    new MobEffectInstance(JolCraftEffects.PIERCING, 1800, 1)));
+
+    public static final Holder<Potion> TENACITY = POTIONS.register(JolCraftPotionIds.TENACITY,
+            () -> new Potion(JolCraftPotionIds.TENACITY,
+                    new MobEffectInstance(JolCraftEffects.TENACITY, 3600, 0)));
+
+    public static final Holder<Potion> LONG_TENACITY = POTIONS.register(JolCraftPotionIds.LONG_TENACITY,
+            () -> new Potion(JolCraftPotionIds.LONG_TENACITY,
+                    new MobEffectInstance(JolCraftEffects.TENACITY, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_TENACITY = POTIONS.register(JolCraftPotionIds.STRONG_TENACITY,
+            () -> new Potion(JolCraftPotionIds.STRONG_TENACITY,
+                    new MobEffectInstance(JolCraftEffects.TENACITY, 1800, 1)));
+
+    public static final Holder<Potion> WISDOM = POTIONS.register(JolCraftPotionIds.WISDOM,
+            () -> new Potion(JolCraftPotionIds.WISDOM,
+                    new MobEffectInstance(JolCraftEffects.WISDOM, 3600, 0)));
+
+    public static final Holder<Potion> LONG_WISDOM = POTIONS.register(JolCraftPotionIds.LONG_WISDOM,
+            () -> new Potion(JolCraftPotionIds.LONG_WISDOM,
+                    new MobEffectInstance(JolCraftEffects.WISDOM, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_WISDOM = POTIONS.register(JolCraftPotionIds.STRONG_WISDOM,
+            () -> new Potion(JolCraftPotionIds.STRONG_WISDOM,
+                    new MobEffectInstance(JolCraftEffects.WISDOM, 1800, 1)));
+
+    public static final Holder<Potion> MIGHT = POTIONS.register(JolCraftPotionIds.MIGHT,
+            () -> new Potion(JolCraftPotionIds.MIGHT,
+                    new MobEffectInstance(JolCraftEffects.MIGHT, 3600, 0)));
+
+    public static final Holder<Potion> LONG_MIGHT = POTIONS.register(JolCraftPotionIds.LONG_MIGHT,
+            () -> new Potion(JolCraftPotionIds.LONG_MIGHT,
+                    new MobEffectInstance(JolCraftEffects.MIGHT, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_MIGHT = POTIONS.register(JolCraftPotionIds.STRONG_MIGHT,
+            () -> new Potion(JolCraftPotionIds.STRONG_MIGHT,
+                    new MobEffectInstance(JolCraftEffects.MIGHT, 1800, 1)));
+
+    public static final Holder<Potion> HARVEST = POTIONS.register(JolCraftPotionIds.HARVEST,
+            () -> new Potion(JolCraftPotionIds.HARVEST,
+                    new MobEffectInstance(JolCraftEffects.HARVEST, 3600, 0)));
+
+    public static final Holder<Potion> LONG_HARVEST = POTIONS.register(JolCraftPotionIds.LONG_HARVEST,
+            () -> new Potion(JolCraftPotionIds.LONG_HARVEST,
+                    new MobEffectInstance(JolCraftEffects.HARVEST, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_HARVEST = POTIONS.register(JolCraftPotionIds.STRONG_HARVEST,
+            () -> new Potion(JolCraftPotionIds.STRONG_HARVEST,
+                    new MobEffectInstance(JolCraftEffects.HARVEST, 1800, 1)));
+
+    public static final Holder<Potion> LUNAR = POTIONS.register(JolCraftPotionIds.LUNAR,
+            () -> new Potion(JolCraftPotionIds.LUNAR,
+                    new MobEffectInstance(JolCraftEffects.LUNAR, 3600, 0)));
+
+    public static final Holder<Potion> LONG_LUNAR = POTIONS.register(JolCraftPotionIds.LONG_LUNAR,
+            () -> new Potion(JolCraftPotionIds.LONG_LUNAR,
+                    new MobEffectInstance(JolCraftEffects.LUNAR, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_LUNAR = POTIONS.register(JolCraftPotionIds.STRONG_LUNAR,
+            () -> new Potion(JolCraftPotionIds.STRONG_LUNAR,
+                    new MobEffectInstance(JolCraftEffects.LUNAR, 1800, 1)));
 
     // -------------------------------------------------------------------------
     // Harmful
@@ -209,7 +305,7 @@ public final class JolCraftPotions {
             () -> new Potion(JolCraftPotionIds.VITALITY_CURSE,
                     new MobEffectInstance(JolCraftEffects.VITALITY_CURSE, 3000, 0)));
 
-    // Crows Control
+    // Crowd Control
 
     public static final Holder<Potion> DISARMED = POTIONS.register(JolCraftPotionIds.DISARMED,
             () -> new Potion(JolCraftPotionIds.DISARMED,

@@ -10,11 +10,14 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 
 public final class DwarvenRageEffect extends MobEffect {
 
-    public static final ResourceLocation ATTACK_SPEED_MODIFIER_ID = JolCraft.location(JolCraftEffectIds.DWARVEN_RAGE);
+    public static final ResourceLocation DWARVEN_RAGE_EFFECT_MODIFIER_ID =
+            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.DWARVEN_RAGE, JolCraftDictionary.EFFECT));
 
     private static final double ATTACK_SPEED_BONUS_PER_HEALTH_STEP = 0.025D;
     private static final int MAX_MISSING_HEALTH_STEPS = 8;
@@ -56,15 +59,15 @@ public final class DwarvenRageEffect extends MobEffect {
 
         double bonus = missingHealthSteps * ATTACK_SPEED_BONUS_PER_HEALTH_STEP * (amplifier + 1);
 
-        AttributeModifier currentModifier = attackSpeed.getModifier(ATTACK_SPEED_MODIFIER_ID);
+        AttributeModifier currentModifier = attackSpeed.getModifier(DWARVEN_RAGE_EFFECT_MODIFIER_ID);
 
         if (currentModifier != null && Double.compare(currentModifier.amount(), bonus) == 0) {
             return;
         }
 
-        attackSpeed.removeModifier(ATTACK_SPEED_MODIFIER_ID);
+        attackSpeed.removeModifier(DWARVEN_RAGE_EFFECT_MODIFIER_ID);
         attackSpeed.addPermanentModifier(new AttributeModifier(
-                ATTACK_SPEED_MODIFIER_ID,
+                DWARVEN_RAGE_EFFECT_MODIFIER_ID,
                 bonus,
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE
         ));

@@ -54,13 +54,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public final class JolCraftPlayerAttributeHelper {
+public final class JolCraftPlayerAttributeEventsHelper {
 
     private static final Map<UUID, RadiantEntity> ACTIVE_RADIANT_ENTITIES = new HashMap<>();
     private static final Map<UUID, PendingChestLoot> CHEST_LOOT_TO_REROLL = new HashMap<>();
     private static final Map<UUID, Double> ITEM_USE_SPEED_PROGRESS = new HashMap<>();
 
-    private JolCraftPlayerAttributeHelper() {}
+    private JolCraftPlayerAttributeEventsHelper() {}
 
     public static void clearPlayerTracking(UUID uuid) {
         RadiantEntity radiant = ACTIVE_RADIANT_ENTITIES.remove(uuid);
@@ -378,6 +378,8 @@ public final class JolCraftPlayerAttributeHelper {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
 
         Player player = event.getPlayer();
+        if(player.isCreative()) return;
+
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
 
@@ -404,14 +406,46 @@ public final class JolCraftPlayerAttributeHelper {
         if (extraCount > 0) {
             JolCraftLogs.debug(
                     JolCraftLogTags.PLAYER,
-                    "Extra crop drop: player={}, pos={}, chance={}%, count={}, items={}",
-                    player.getDisplayName(),
-                    JolCraftLogs.roundedPos(pos),
-                    JolCraftLogs.pct1(chance),
+                    "Player {} got extra {} crop(s) ({}) at {} in {}. Chance: {}%. ",
+                    player.getDisplayName().getString(),
                     extraCount,
-                    extraItems
+                    extraItems,
+                    JolCraftLogs.roundedPos(pos),
+                    player.level().dimension().location(),
+                    JolCraftLogs.pct1(chance)
+
             );
         }
+    }
+
+    private static boolean isEligibleCropDrop(ItemStack stack) {
+        return !stack.isEmpty() && stack.is(Tags.Items.CROPS);
+    }
+
+    private static boolean isEligibleHarvestBlock(BlockState state) {
+        return isFullyGrownCrop(state) || state.is(Blocks.MELON);
+    }
+
+    private static boolean isFullyGrownCrop(BlockState state) {
+        Block block = state.getBlock();
+
+        if (block instanceof CropBlock crop) {
+            return crop.isMaxAge(state);
+        }
+
+        IntegerProperty ageProp = null;
+        for (Property<?> prop : state.getProperties()) {
+            if (prop instanceof IntegerProperty ip && prop.getName().equals(JolCraftDictionary.AGE)) {
+                ageProp = ip;
+                break;
+            }
+        }
+
+        if (ageProp == null) return false;
+
+        int age = state.getValue(ageProp);
+        int maxAge = ageProp.getPossibleValues().stream().max(Integer::compareTo).orElse(age);
+        return age >= maxAge;
     }
 
     public static void applyItemUseSpeedStart(LivingEntityUseItemEvent.Start event) {
@@ -504,36 +538,6 @@ public final class JolCraftPlayerAttributeHelper {
         }
 
         ITEM_USE_SPEED_PROGRESS.put(uuid, progress);
-    }
-
-    private static boolean isEligibleCropDrop(ItemStack stack) {
-        return !stack.isEmpty() && stack.is(Tags.Items.CROPS);
-    }
-
-    private static boolean isEligibleHarvestBlock(BlockState state) {
-        return isFullyGrownCrop(state) || state.is(Blocks.MELON);
-    }
-
-    private static boolean isFullyGrownCrop(BlockState state) {
-        Block block = state.getBlock();
-
-        if (block instanceof CropBlock crop) {
-            return crop.isMaxAge(state);
-        }
-
-        IntegerProperty ageProp = null;
-        for (Property<?> prop : state.getProperties()) {
-            if (prop instanceof IntegerProperty ip && prop.getName().equals(JolCraftDictionary.AGE)) {
-                ageProp = ip;
-                break;
-            }
-        }
-
-        if (ageProp == null) return false;
-
-        int age = state.getValue(ageProp);
-        int maxAge = ageProp.getPossibleValues().stream().max(Integer::compareTo).orElse(age);
-        return age >= maxAge;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

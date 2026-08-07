@@ -53,13 +53,14 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FINALIZE = "finalize";
     public static final String FISHING = "fishing";
     public static final String FOCUS = "focus";
+    public static final String HARVEST = "harvest";
     public static final String HAS = "has";
     public static final String HEX = "hex";
+    public static final String HOARD = "hoard";
     public static final String HOLD = "hold";
     public static final String IDENTIFY = "identify";
     public static final String INCREASE = "increase";
     public static final String INJECT = "inject";
-    public static final String JUMP = "jump";
     public static final String KEEP = "keep";
     public static final String LOCATE = "locate";
     public static final String LOCK = "lock";
@@ -67,6 +68,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String NEED = "need";
     public static final String OPEN = "open";
     public static final String OVERRIDE = "override";
+    public static final String PIERCING = "piercing";
     public static final String PLACE = "place";
     public static final String PLAY = "play";
     public static final String PROMOTE = "promote";
@@ -152,6 +154,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String LIT = "lit";
     public static final String LOCKED = "locked";
     public static final String LONG = "long";
+    public static final String LUNAR = "lunar";
     public static final String MAIN = "main";
     public static final String MANAGED = "managed";
     public static final String MATURED = "matured";
@@ -469,11 +472,12 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MENU = "menu";
     public static final String MERCHANT = "merchant";
     public static final String METAL = "metal";
-    public static final String MISC = "misc";
+    public static final String MIGHT = "might";
     public static final String MILK = "milk";
     public static final String MIN = "min";
     public static final String MINER = "miner";
     public static final String MITHRIL = "mithril";
+    public static final String MISC = "misc";
     public static final String MODEL = "model";
     public static final String MODIFIER = "modifier";
     public static final String MONSTER = "monster";
@@ -482,7 +486,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String MORTAR = "mortar";
     public static final String MOULD = "mould";
     public static final String MOUNTAIN = "mountain";
-    public static final String MOVEMENT = "movement";
     public static final String MUG = "mug";
     public static final String MULTI = "multi";
     public static final String MULTIPLIER = "multiplier";
@@ -591,7 +594,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String STOCK = "stock";
     public static final String STONE = "stone";
     public static final String STRANGER = "stranger";
-    public static final String STRENGTH = "strength";
     public static final String STRIKETHROUGH = "strikethrough";
     public static final String STRONGBOX = "strongbox";
     public static final String STRUCTURE = "structure";
@@ -610,6 +612,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TARGET = "target";
     public static final String TASK = "task";
     public static final String TEMPLATE = "template";
+    public static final String TENACITY = "tenacity";
     public static final String TEXTILE = "textile";
     public static final String TEXTURE = "texture";
     public static final String TICK = "tick";
@@ -623,7 +626,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String TOOL = "tool";
     public static final String TOOLTIP = "tooltip";
     public static final String TOP = "top";
-    public static final String TOUGHNESS = "toughness";
     public static final String TOWER = "tower";
     public static final String TOWN = "town";
     public static final String TOTAL = "total";
@@ -646,12 +648,14 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String VOICE = "voice";
     public static final String VOID = "void";
     public static final String VOLUME = "volume";
+    public static final String VULNERABILITY = "vulnerability";
     public static final String WALL = "wall";
     public static final String WAR = "war";
     public static final String WARHAMMER = "warhammer";
     public static final String WEAPON = "weapon";
     public static final String WEIGHT = "weight";
     public static final String WIDGET = "widget";
+    public static final String WISDOM = "wisdom";
     public static final String WOECRYSTAL = "woecrystal";
     public static final String WORLDGEN = "worldgen";
     public static final String WOUND = "wound";

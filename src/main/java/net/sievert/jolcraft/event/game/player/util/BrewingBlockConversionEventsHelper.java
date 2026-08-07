@@ -26,9 +26,9 @@ import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCauldronRecipeInput;
 
 @SuppressWarnings("deprecation")
-public final class BrewingBlockConversionHelper {
+public final class BrewingBlockConversionEventsHelper {
 
-    private BrewingBlockConversionHelper() {}
+    private BrewingBlockConversionEventsHelper() {}
 
     /**
      * Converts eligible vanilla brewing containers before their normal

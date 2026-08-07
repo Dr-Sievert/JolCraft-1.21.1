@@ -30,33 +30,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class JolCraftEntityAttributeHelper {
+@SuppressWarnings("SameParameterValue")
+public final class JolCraftEntityAttributeEventsHelper {
 
-    private static final ResourceLocation ASHFANG_ID = JolCraft.location(JolCraftAttributeIds.ATTACK_DAMAGE_INCREASE);
     private static final ResourceLocation FROSTVEIN_ID = JolCraft.location(JolCraftAttributeIds.SLOW_RESISTANCE);
-    private static final ResourceLocation IRONHEART_ID = JolCraft.location(JolCraftAttributeIds.ARMOR_TOTAL);
 
-    private static final Map<UUID, Double> ASHFANG_CACHE = new HashMap<>();
     private static final Map<UUID, Double> FROSTVEIN_CACHE = new HashMap<>();
-    private static final Map<UUID, Double> IRONHEART_CACHE = new HashMap<>();
 
-    private JolCraftEntityAttributeHelper() {}
+    private JolCraftEntityAttributeEventsHelper() {}
 
     public static void tickAttributes(LivingEntity entity) {
         if (entity.level().isClientSide()) return;
 
-        tickAshfang(entity);
         tickFrostvein(entity);
-        tickIronheart(entity);
         tickMoonShield(entity);
     }
 
     public static void clearTrackedAttributes(LivingEntity entity) {
         UUID uuid = entity.getUUID();
 
-        ASHFANG_CACHE.remove(uuid);
         FROSTVEIN_CACHE.remove(uuid);
-        IRONHEART_CACHE.remove(uuid);
     }
 
     private static boolean shouldIgnoreAttribute(
@@ -82,37 +75,6 @@ public final class JolCraftEntityAttributeHelper {
 
         cache.put(uuid, value);
         return false;
-    }
-
-    private static void tickAshfang(LivingEntity entity) {
-        AttributeInstance attackDamage = entity.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (attackDamage == null) return;
-
-        double boost = Mth.clamp(entity.getAttributeValue(JolCraftAttributes.ATTACK_DAMAGE_INCREASE), 0.0D, 1.0D);
-
-        if (shouldIgnoreAttribute(entity, boost, ASHFANG_CACHE, ASHFANG_ID, attackDamage)) {
-            return;
-        }
-
-        double oldDamage = attackDamage.getValue();
-
-        attackDamage.removeModifier(ASHFANG_ID);
-        attackDamage.addTransientModifier(new AttributeModifier(
-                ASHFANG_ID,
-                boost,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-        ));
-
-        double newDamage = attackDamage.getValue();
-
-        JolCraftLogs.debug(
-                JolCraftLogTags.PLAYER,
-                "Ashfang attack damage increase triggered: entity={}, boost={}%, oldDamage={}, newDamage={}",
-                entity.getDisplayName().getString(),
-                JolCraftLogs.pct1(boost),
-                oldDamage,
-                newDamage
-        );
     }
 
     private static void tickFrostvein(LivingEntity entity) {
@@ -164,37 +126,6 @@ public final class JolCraftEntityAttributeHelper {
                 JolCraftLogs.pct1(actualSlow),
                 oldSpeed,
                 newSpeed
-        );
-    }
-
-    private static void tickIronheart(LivingEntity entity) {
-        AttributeInstance armor = entity.getAttribute(Attributes.ARMOR);
-        if (armor == null) return;
-
-        double bonus = entity.getAttributeValue(JolCraftAttributes.ARMOR_TOTAL);
-
-        if (shouldIgnoreAttribute(entity, bonus, IRONHEART_CACHE, IRONHEART_ID, armor)) {
-            return;
-        }
-
-        double oldArmor = armor.getValue();
-
-        armor.removeModifier(IRONHEART_ID);
-        armor.addTransientModifier(new AttributeModifier(
-                IRONHEART_ID,
-                bonus,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-        ));
-
-        double newArmor = armor.getValue();
-
-        JolCraftLogs.debug(
-                JolCraftLogTags.PLAYER,
-                "Ironheart armor total triggered: entity={}, bonusArmor={}, oldArmor={}, newArmor={}",
-                entity.getDisplayName().getString(),
-                bonus,
-                oldArmor,
-                newArmor
         );
     }
 
@@ -333,8 +264,12 @@ public final class JolCraftEntityAttributeHelper {
     }
 
     private static void tickMoonShield(LivingEntity entity) {
-        int maxStacks = Mth.floor(entity.getAttributeValue(JolCraftAttributes.MOON_SHIELD));
-        MobEffectInstance current = entity.getEffect(JolCraftEffects.MOON_SHIELD);
+        int maxStacks = Mth.floor(
+                entity.getAttributeValue(JolCraftAttributes.MOON_SHIELD)
+        );
+
+        MobEffectInstance current =
+                entity.getEffect(JolCraftEffects.MOON_SHIELD);
 
         if (maxStacks <= 0) {
             if (current != null) {
@@ -346,6 +281,8 @@ public final class JolCraftEntityAttributeHelper {
         int maxAmplifier = maxStacks - 1;
 
         if (current != null && current.getAmplifier() > maxAmplifier) {
+            entity.removeEffect(JolCraftEffects.MOON_SHIELD);
+
             entity.addEffect(new MobEffectInstance(
                     JolCraftEffects.MOON_SHIELD,
                     MobEffectInstance.INFINITE_DURATION,
@@ -354,6 +291,7 @@ public final class JolCraftEntityAttributeHelper {
                     false,
                     true
             ));
+
             return;
         }
 
@@ -364,7 +302,7 @@ public final class JolCraftEntityAttributeHelper {
             return;
         }
 
-        if ((entity.tickCount % 100) != 0) return;
+        if ((entity.tickCount % 200) != 0) return;
 
         if (current == null) {
             entity.addEffect(new MobEffectInstance(

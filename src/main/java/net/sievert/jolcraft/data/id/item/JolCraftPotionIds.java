@@ -54,6 +54,10 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_POISON_RESISTANCE = longPotion(POISON_RESISTANCE);
     public static final String STRONG_POISON_RESISTANCE = strongPotion(POISON_RESISTANCE);
 
+    public static final String SLOW_RESISTANCE = JolCraftEffectIds.SLOW_RESISTANCE;
+    public static final String LONG_SLOW_RESISTANCE = longPotion(SLOW_RESISTANCE);
+    public static final String STRONG_SLOW_RESISTANCE = strongPotion(SLOW_RESISTANCE);
+
     public static final String MARKSMAN = JolCraftEffectIds.MARKSMAN;
     public static final String LONG_MARKSMAN = longPotion(MARKSMAN);
     public static final String STRONG_MARKSMAN = strongPotion(MARKSMAN);
@@ -61,6 +65,34 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String STONE_SKIN = JolCraftEffectIds.STONE_SKIN;
     public static final String LONG_STONE_SKIN = longPotion(STONE_SKIN);
     public static final String STRONG_STONE_SKIN = strongPotion(STONE_SKIN);
+
+    public static final String HOARD = JolCraftEffectIds.HOARD;
+    public static final String LONG_HOARD = longPotion(HOARD);
+    public static final String STRONG_HOARD = strongPotion(HOARD);
+
+    public static final String PIERCING = JolCraftEffectIds.PIERCING;
+    public static final String LONG_PIERCING = longPotion(PIERCING);
+    public static final String STRONG_PIERCING = strongPotion(PIERCING);
+
+    public static final String TENACITY = JolCraftEffectIds.TENACITY;
+    public static final String LONG_TENACITY = longPotion(TENACITY);
+    public static final String STRONG_TENACITY = strongPotion(TENACITY);
+
+    public static final String WISDOM = JolCraftEffectIds.WISDOM;
+    public static final String LONG_WISDOM = longPotion(WISDOM);
+    public static final String STRONG_WISDOM = strongPotion(WISDOM);
+
+    public static final String MIGHT = JolCraftEffectIds.MIGHT;
+    public static final String LONG_MIGHT = longPotion(MIGHT);
+    public static final String STRONG_MIGHT = strongPotion(MIGHT);
+
+    public static final String HARVEST = JolCraftEffectIds.HARVEST;
+    public static final String LONG_HARVEST = longPotion(HARVEST);
+    public static final String STRONG_HARVEST = strongPotion(HARVEST);
+
+    public static final String LUNAR = JolCraftEffectIds.LUNAR;
+    public static final String LONG_LUNAR = longPotion(LUNAR);
+    public static final String STRONG_LUNAR = strongPotion(LUNAR);
 
     // Harmful
     public static final String ATAXIA_CURSE = JolCraftEffectIds.ATAXIA_CURSE;

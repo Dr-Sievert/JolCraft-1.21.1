@@ -20,8 +20,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.event.game.item.JolCraftCompassEvents;
-import net.sievert.jolcraft.event.game.player.attribute.JolCraftPlayerAttributeHelper;
-import net.sievert.jolcraft.event.game.player.util.BrewingBlockConversionHelper;
+import net.sievert.jolcraft.event.game.player.attribute.JolCraftPlayerAttributeEventsHelper;
+import net.sievert.jolcraft.event.game.player.util.BrewingBlockConversionEventsHelper;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.network.util.SyncHelper;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -74,7 +74,7 @@ public final class JolCraftPlayerEvents {
 
         DeliriumCurseEffect.cleanupRuntime(player);
         JolCraftServerPayloadHandlers.cleanupPlayer(player);
-        JolCraftPlayerAttributeHelper.clearPlayerTracking(player.getUUID());
+        JolCraftPlayerAttributeEventsHelper.clearPlayerTracking(player.getUUID());
         JolCraftCompassEvents.cleanupPlayer(player);
     }
 
@@ -127,7 +127,7 @@ public final class JolCraftPlayerEvents {
             return;
         }
 
-        BrewingBlockConversionHelper.tryHandle(
+        BrewingBlockConversionEventsHelper.tryHandle(
                 event
         );
     }

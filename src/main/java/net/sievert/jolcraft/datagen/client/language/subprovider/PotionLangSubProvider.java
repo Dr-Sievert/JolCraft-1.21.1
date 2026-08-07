@@ -43,14 +43,22 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations,  JolCraftPotions.ENDURANCE, "Endurance", true, true);
         addPotion(translations,  JolCraftPotions.MAGIC_RESISTANCE, "Magic Resistance", true, true);
         addPotion(translations,  JolCraftPotions.POISON_RESISTANCE, "Poison Resistance", true, true);
+        addPotion(translations,  JolCraftPotions.SLOW_RESISTANCE, "Slow Resistance", true, true);
         addPotion(translations,  JolCraftPotions.MARKSMAN, "Marksman", true, true);
         addPotion(translations,  JolCraftPotions.STONE_SKIN, "Stone Skin", true, true);
+        addPotion(translations,  JolCraftPotions.HOARD, "Hoarding", true, true);
+        addPotion(translations,  JolCraftPotions.PIERCING, "Piercing", true, true);
+        addPotion(translations,  JolCraftPotions.TENACITY, "Tenacity", true, true);
+        addPotion(translations,  JolCraftPotions.WISDOM, "Wisdom", true, true);
+        addPotion(translations,  JolCraftPotions.MIGHT, "Might", true, true);
+        addPotion(translations,  JolCraftPotions.HARVEST, "Harvest", true, true);
+        addPotion(translations,  JolCraftPotions.LUNAR, "the Moon", true, true);
 
-        addPotion(translations,  JolCraftPotions.ATAXIA_CURSE, "Ataxia", false, false);
-        addPotion(translations,  JolCraftPotions.CURSED_WOUND, "Cursed Wound", false, false);
-        addPotion(translations,  JolCraftPotions.DELIRIUM_CURSE, "Delirium", false, false);
-        addPotion(translations,  JolCraftPotions.FAMINE_CURSE, "Famine", false, false);
-        addPotion(translations,  JolCraftPotions.FRAILTY_CURSE, "Frailty", false, false);
+        addPotion(translations,  JolCraftPotions.ATAXIA_CURSE, "Ataxia Cursing", false, false);
+        addPotion(translations,  JolCraftPotions.CURSED_WOUND, "Cursing Wound", false, false);
+        addPotion(translations,  JolCraftPotions.DELIRIUM_CURSE, "Delirium Cursing", false, false);
+        addPotion(translations,  JolCraftPotions.FAMINE_CURSE, "Famine Cursing", false, false);
+        addPotion(translations,  JolCraftPotions.FRAILTY_CURSE, "Frailty Cursing", false, false);
         addPotion(translations,  JolCraftPotions.HEX, "Hex", false, false);
         addPotion(translations,  JolCraftPotions.VITALITY_CURSE, "Vitality Cursing", false, false);
 

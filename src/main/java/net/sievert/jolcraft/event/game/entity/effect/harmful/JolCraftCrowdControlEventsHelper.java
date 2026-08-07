@@ -1,20 +1,16 @@
-package net.sievert.jolcraft.event.game.entity.effect;
+package net.sievert.jolcraft.event.game.entity.effect.harmful;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public class JolCraftCrowdControlEvents {
+public final class JolCraftCrowdControlEventsHelper {
 
-    @SubscribeEvent
-    public static void onCrowdControlledLivingEntity(EntityTickEvent.Post event) {
+    private JolCraftCrowdControlEventsHelper() {}
+
+    public static void onEntityTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
         if (entity.level().isClientSide()) return;
 
@@ -24,7 +20,6 @@ public class JolCraftCrowdControlEvents {
 
         if (!rooted && !suppressed && !stunned) return;
 
-
         if (stunned) {
             applyStunned(entity);
             return;
@@ -33,7 +28,6 @@ public class JolCraftCrowdControlEvents {
         if (rooted) {
             applyRooted(entity);
         }
-
 
         if (suppressed) {
             applySuppressed(entity);
@@ -76,8 +70,6 @@ public class JolCraftCrowdControlEvents {
     }
 
     private static void disableActions(LivingEntity entity) {
-        if (entity.isUsingItem() && !JolCraftEquipmentHelper.isRangedWeapon(entity.getMainHandItem())) {
-            entity.stopUsingItem();
-        }
+        if (entity.isUsingItem() && !JolCraftEquipmentHelper.isRangedWeapon(entity.getMainHandItem())) {entity.stopUsingItem();}
     }
 }

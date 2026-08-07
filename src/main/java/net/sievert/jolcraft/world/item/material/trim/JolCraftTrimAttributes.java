@@ -18,39 +18,97 @@ import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class JolCraftTrimAttributes {
 
-    private JolCraftTrimAttributes(){}
+    private JolCraftTrimAttributes() {}
 
     private static final Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> ATTRIBUTES = buildAttributes();
 
     private static Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> buildAttributes() {
-        Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> out = new EnumMap<>(JolCraftTrimMaterials.Attribute.class);
+        Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> out =
+                new EnumMap<>(JolCraftTrimMaterials.Attribute.class);
 
-        out.put(JolCraftTrimMaterials.Attribute.AEGISCORE, allSlots(Attributes.ARMOR_TOUGHNESS, 0.5, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.ASHFANG, allSlots(JolCraftAttributes.ATTACK_DAMAGE_INCREASE, 0.05, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.DEEPMARROW, allSlots(JolCraftAttributes.EXPERIENCE_INCREASE, 0.125, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.EARTHBLOOD, allSlots(Attributes.MINING_EFFICIENCY, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
-        out.put(JolCraftTrimMaterials.Attribute.EMBERGLASS, allSlots(Attributes.MAX_HEALTH, 2.0, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.FROSTVEIN, allSlots(JolCraftAttributes.SLOW_RESISTANCE, 0.2, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.GRIMSTONE, allSlots(Attributes.ATTACK_SPEED, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
-        out.put(JolCraftTrimMaterials.Attribute.IRONHEART, allSlots(JolCraftAttributes.ARMOR_TOTAL, 0.05, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.LUMIERE, allSlots(JolCraftAttributes.RADIANT, 1, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.MOONSHARD, allSlots(JolCraftAttributes.MOON_SHIELD, 1, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.RUSTAGATE, allSlots(JolCraftAttributes.ARMOR_PENETRATION, 0.15, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.SKYBURROW, allSlots(JolCraftAttributes.ITEM_USE_SPEED, 0.20, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.SUNGLEAM, allSlots(JolCraftAttributes.CONTAINER_LOOT_INCREASE, 0.1, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.VERDANITE, allSlots(JolCraftAttributes.CROP_LOOT_INCREASE, 0.25, AttributeModifier.Operation.ADD_VALUE));
-        out.put(JolCraftTrimMaterials.Attribute.WOECRYSTAL, allSlots(JolCraftAttributes.MAGIC_RESISTANCE, 0.1, AttributeModifier.Operation.ADD_VALUE));
+        out.put(
+                JolCraftTrimMaterials.Attribute.AEGISCORE,
+                attributes(
+                        new TrimAttribute(
+                                Attributes.ARMOR,
+                                1.25D,
+                                AttributeModifier.Operation.ADD_VALUE
+                        ),
+                        new TrimAttribute(
+                                Attributes.ARMOR_TOUGHNESS,
+                                0.5D,
+                                AttributeModifier.Operation.ADD_VALUE
+                        )
+                )
+        );
+
+        out.put(JolCraftTrimMaterials.Attribute.ASHFANG,
+                attributes(Attributes.ATTACK_DAMAGE, 0.05D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+
+        out.put(JolCraftTrimMaterials.Attribute.DEEPMARROW,
+                attributes(JolCraftAttributes.EXPERIENCE_INCREASE, 0.125D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.EARTHBLOOD,
+                attributes(Attributes.MINING_EFFICIENCY, 2.0D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.EMBERGLASS,
+                attributes(Attributes.MAX_HEALTH, 2.0D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.FROSTVEIN,
+                attributes(JolCraftAttributes.SLOW_RESISTANCE, 0.20D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.GRIMSTONE,
+                attributes(Attributes.ATTACK_SPEED, 0.05D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+
+        out.put(JolCraftTrimMaterials.Attribute.IRONHEART,
+                attributes(
+                        new TrimAttribute(
+                                Attributes.ARMOR,
+                                0.05D,
+                                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                        ), new TrimAttribute(
+                                Attributes.ARMOR_TOUGHNESS,
+                                0.05D,
+                                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                        )
+                )
+        );
+
+        out.put(JolCraftTrimMaterials.Attribute.LUMIERE,
+                attributes(JolCraftAttributes.RADIANT, 1.0D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.MOONSHARD,
+                attributes(JolCraftAttributes.MOON_SHIELD, 1.0D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.RUSTAGATE,
+                attributes(JolCraftAttributes.ARMOR_PENETRATION, 0.20D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.SKYBURROW,
+                attributes(JolCraftAttributes.ITEM_USE_SPEED, 0.20D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.SUNGLEAM,
+                attributes(JolCraftAttributes.CONTAINER_LOOT_INCREASE, 0.10D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.VERDANITE,
+                attributes(JolCraftAttributes.CROP_LOOT_INCREASE, 0.125D, AttributeModifier.Operation.ADD_VALUE));
+
+        out.put(JolCraftTrimMaterials.Attribute.WOECRYSTAL,
+                attributes(JolCraftAttributes.MAGIC_RESISTANCE, 0.10D, AttributeModifier.Operation.ADD_VALUE));
 
         return Map.copyOf(out);
     }
 
     public static void applyAttribute(@NotNull ItemStack stack, @NotNull ArmorTrim trim) {
-        JolCraftTrimMaterials.Attribute match = getAttributeTrim(trim);
-        TrimAttribute attr = getTrimAttribute(match);
+        List<TrimAttribute> attributes = getTrimAttributes(getAttributeTrim(trim));
 
         EquipmentSlot slot = getSlotForArmor(stack);
         if (slot == null) {
@@ -64,33 +122,42 @@ public final class JolCraftTrimAttributes {
 
         modifiers = removeOldTrimModifiers(modifiers);
 
-        ResourceLocation modifierId = trimModifierId(slot);
+        for (int i = 0; i < attributes.size(); i++) {
+            TrimAttribute attribute = attributes.get(i);
 
-        modifiers = modifiers.withModifierAdded(
-                attr.attribute(),
-                new AttributeModifier(modifierId, attr.amount(), attr.operation()),
-                EquipmentSlotGroup.bySlot(slot)
-        );
+            modifiers = modifiers.withModifierAdded(
+                    attribute.attribute(),
+                    new AttributeModifier(
+                            trimModifierId(slot, i),
+                            attribute.amount(),
+                            attribute.operation()
+                    ),
+                    EquipmentSlotGroup.bySlot(slot)
+            );
+        }
 
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers);
     }
+
     private static JolCraftTrimMaterials.Attribute getAttributeTrim(@NotNull ArmorTrim trim) {
         ResourceLocation id = trim.material().unwrapKey()
                 .map(ResourceKey::location)
                 .orElseThrow(() -> new IllegalStateException("Trim material has no registry key: " + trim));
 
         return Arrays.stream(JolCraftTrimMaterials.Attribute.values())
-                .filter(attr -> attr.getId().equals(id.getPath()))
+                .filter(attribute -> attribute.getId().equals(id.getPath()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Unknown attribute trim material: " + id));
     }
 
-    public static TrimAttribute getTrimAttribute(@NotNull JolCraftTrimMaterials.Attribute trim) {
-        List<TrimAttribute> list = ATTRIBUTES.get(trim);
-        if (list == null || list.isEmpty()) {
+    public static List<TrimAttribute> getTrimAttributes(@NotNull JolCraftTrimMaterials.Attribute trim) {
+        List<TrimAttribute> attributes = ATTRIBUTES.get(trim);
+
+        if (attributes == null || attributes.isEmpty()) {
             throw new IllegalStateException("Missing attribute definition for: " + trim);
         }
-        return list.getFirst();
+
+        return attributes;
     }
 
     private static ItemAttributeModifiers removeOldTrimModifiers(@NotNull ItemAttributeModifiers modifiers) {
@@ -121,7 +188,8 @@ public final class JolCraftTrimAttributes {
         }
 
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (trimModifierId(slot).equals(id)) {
+            if (id.getNamespace().equals(JolCraft.MOD_ID)
+                    && id.getPath().startsWith("attribute_trim_" + slot.getName())) {
                 return true;
             }
         }
@@ -130,9 +198,10 @@ public final class JolCraftTrimAttributes {
     }
 
     private static @NotNull ResourceLocation trimModifierId(
-            @NotNull EquipmentSlot slot
+            @NotNull EquipmentSlot slot,
+            int index
     ) {
-        return JolCraft.location("attribute_trim_" + slot.getName());
+        return JolCraft.location("attribute_trim_" + slot.getName() + "_" + index);
     }
 
     public static EquipmentSlot getSlotForArmor(ItemStack stack) {
@@ -140,20 +209,21 @@ public final class JolCraftTrimAttributes {
         return type == null ? null : type.getSlot();
     }
 
-    private static List<TrimAttribute> allSlots(
+    private static List<TrimAttribute> attributes(
             Holder<Attribute> attribute,
             double amount,
             AttributeModifier.Operation operation
     ) {
-        return JolCraftEquipmentHelper.PLAYER_ARMOR_TYPES.stream()
-                .map(type -> new TrimAttribute(attribute, amount, operation, type.getSlot()))
-                .toList();
+        return List.of(new TrimAttribute(attribute, amount, operation));
+    }
+
+    private static List<TrimAttribute> attributes(TrimAttribute... attributes) {
+        return List.of(attributes);
     }
 
     public record TrimAttribute(
             Holder<Attribute> attribute,
             double amount,
-            AttributeModifier.Operation operation,
-            EquipmentSlot slot
+            AttributeModifier.Operation operation
     ) {}
 }

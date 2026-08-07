@@ -14,6 +14,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumCursePacket;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
@@ -33,10 +34,11 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
     private static final int MIN_REPEAT_DELAY = 400;
     private static final int REPEAT_DELAY_RANGE = 400;
 
-    private static final float HEX_RANGE_REDUCTION = 0.25F;
-    private static final int MAX_HEX_DELAY_SCALING = 4;
+    private static final double CURSE_VULNERABILITY_RANGE_REDUCTION = 0.25D;
+    private static final double MAX_DELAY_CURSE_VULNERABILITY = 4.0D;
 
-    private static final Map<UUID, Integer> EPISODE_TIMERS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Integer> EPISODE_TIMERS =
+            new ConcurrentHashMap<>();
 
     private static final String NBT_EPISODE_END = JolCraftStrings.underscored(
             JolCraftDictionary.DELIRIUM,
@@ -57,7 +59,10 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
         super.onEffectAdded(entity, amplifier);
 
         if (entity instanceof ServerPlayer player) {
-            EPISODE_TIMERS.put(player.getUUID(), createInitialDelay(player));
+            EPISODE_TIMERS.put(
+                    player.getUUID(),
+                    createInitialDelay(player)
+            );
         }
     }
 
@@ -71,13 +76,16 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
             return true;
         }
 
-        MobEffectInstance effect = player.getEffect(JolCraftEffects.DELIRIUM_CURSE);
+        MobEffectInstance effect =
+                player.getEffect(JolCraftEffects.DELIRIUM_CURSE);
+
         if (effect == null || effect.getDuration() <= 1) {
             cleanupRuntime(player);
             return true;
         }
 
         UUID playerId = player.getUUID();
+
         int timer = EPISODE_TIMERS.computeIfAbsent(
                 playerId,
                 __ -> createInitialDelay(player)
@@ -89,41 +97,63 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
         }
 
         triggerEpisode(player, level);
-        EPISODE_TIMERS.put(playerId, createRepeatDelay(player));
+
+        EPISODE_TIMERS.put(
+                playerId,
+                createRepeatDelay(player)
+        );
+
         return true;
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(
+            int duration,
+            int amplifier
+    ) {
         return true;
     }
 
     public static int getRemainingEpisodeTicks(ServerPlayer player) {
         long now = player.level().getGameTime();
         long end = getEpisodeEnd(player);
-        return (int) Math.max(0L, end - now);
+
+        return (int) Math.max(
+                0L,
+                end - now
+        );
     }
 
-    private static void triggerEpisode(ServerPlayer player, ServerLevel level) {
-        player.addEffect(new MobEffectInstance(
-                MobEffects.BLINDNESS,
-                EPISODE_TICKS,
-                0,
-                false,
-                false,
-                false
-        ));
+    private static void triggerEpisode(
+            ServerPlayer player,
+            ServerLevel level
+    ) {
+        player.addEffect(
+                new MobEffectInstance(
+                        MobEffects.BLINDNESS,
+                        EPISODE_TICKS,
+                        0,
+                        false,
+                        false,
+                        false
+                )
+        );
 
-        player.addEffect(new MobEffectInstance(
-                MobEffects.CONFUSION,
-                EPISODE_TICKS,
-                0,
-                false,
-                false,
-                false
-        ));
+        player.addEffect(
+                new MobEffectInstance(
+                        MobEffects.CONFUSION,
+                        EPISODE_TICKS,
+                        0,
+                        false,
+                        false,
+                        false
+                )
+        );
 
-        setEpisodeEnd(player, level.getGameTime() + EPISODE_TICKS);
+        setEpisodeEnd(
+                player,
+                level.getGameTime() + EPISODE_TICKS
+        );
 
         JolCraftNetworking.sendToClient(
                 player,
@@ -143,33 +173,54 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
     }
 
     private static int createInitialDelay(Player player) {
-        int range = scaledDelayRange(player, INITIAL_DELAY_RANGE);
-        return MIN_INITIAL_DELAY + randomRange(player, range);
+        int range = scaledDelayRange(
+                player,
+                INITIAL_DELAY_RANGE
+        );
+
+        return MIN_INITIAL_DELAY
+                + randomRange(player, range);
     }
 
     private static int createRepeatDelay(Player player) {
-        int range = scaledDelayRange(player, REPEAT_DELAY_RANGE);
-        return MIN_REPEAT_DELAY + randomRange(player, range);
-    }
-
-    private static int scaledDelayRange(Player player, int baseRange) {
-        MobEffectInstance hex = player.getEffect(JolCraftEffects.HEX);
-        if (hex == null) {
-            return baseRange;
-        }
-
-        int hexLevel = Math.min(
-                hex.getAmplifier() + 1,
-                MAX_HEX_DELAY_SCALING
+        int range = scaledDelayRange(
+                player,
+                REPEAT_DELAY_RANGE
         );
 
-        return Math.round(
-                baseRange * (1.0F - HEX_RANGE_REDUCTION * hexLevel)
+        return MIN_REPEAT_DELAY
+                + randomRange(player, range);
+    }
+
+    private static int scaledDelayRange(
+            Player player,
+            int baseRange
+    ) {
+        double curseVulnerability = Math.min(
+                Math.max(
+                        0.0D,
+                        player.getAttributeValue(
+                                JolCraftAttributes.CURSE_VULNERABILITY
+                        )
+                ),
+                MAX_DELAY_CURSE_VULNERABILITY
+        );
+
+        return (int) Math.round(
+                baseRange
+                        * (1.0D
+                        - CURSE_VULNERABILITY_RANGE_REDUCTION
+                        * curseVulnerability)
         );
     }
 
-    private static int randomRange(Player player, int range) {
-        return range > 0 ? player.getRandom().nextInt(range) : 0;
+    private static int randomRange(
+            Player player,
+            int range
+    ) {
+        return range > 0
+                ? player.getRandom().nextInt(range)
+                : 0;
     }
 
     private static long getEpisodeEnd(Player player) {
@@ -177,11 +228,19 @@ public class DeliriumCurseEffect extends AbstractCurseEffect {
         return data.getLong(NBT_EPISODE_END);
     }
 
-    private static void setEpisodeEnd(Player player, long endTick) {
-        player.getPersistentData().putLong(NBT_EPISODE_END, endTick);
+    private static void setEpisodeEnd(
+            Player player,
+            long endTick
+    ) {
+        player.getPersistentData().putLong(
+                NBT_EPISODE_END,
+                endTick
+        );
     }
 
     private static void clearEpisodeEnd(Player player) {
-        player.getPersistentData().remove(NBT_EPISODE_END);
+        player.getPersistentData().remove(
+                NBT_EPISODE_END
+        );
     }
 }
