@@ -22,7 +22,8 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String DEXTERITY = JolCraftDictionary.DEXTERITY;
     public static final String DWARVEN_RAGE = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.RAGE);
     public static final String ENDURANCE = JolCraftDictionary.ENDURANCE;
-    public static final String MAGIC_RESISTANCE = join(JolCraftDictionary.MAGIC, JolCraftDictionary.RESISTANCE);
+    public static final String MAGIC_RESISTANCE = JolCraftAttributeIds.MAGIC_RESISTANCE;
+    public static final String POISON_RESISTANCE = JolCraftAttributeIds.POISON_RESISTANCE;
     public static final String MARKSMAN = JolCraftDictionary.MARKSMAN;
     public static final String STONE_SKIN = join(JolCraftDictionary.STONE, JolCraftDictionary.SKIN);
 

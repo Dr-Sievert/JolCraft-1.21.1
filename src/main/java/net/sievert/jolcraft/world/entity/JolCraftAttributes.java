@@ -40,6 +40,9 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> MAGIC_RESISTANCE =
             registerPercentage(JolCraftAttributeIds.MAGIC_RESISTANCE, 1.0D);
 
+    public static final DeferredHolder<Attribute, Attribute> POISON_RESISTANCE =
+            registerPercentage(JolCraftAttributeIds.POISON_RESISTANCE, 1.0D);
+
     public static final DeferredHolder<Attribute, Attribute> ARMOR_TOTAL =
             registerPercentage(JolCraftAttributeIds.ARMOR_TOTAL, 2048.0D);
 

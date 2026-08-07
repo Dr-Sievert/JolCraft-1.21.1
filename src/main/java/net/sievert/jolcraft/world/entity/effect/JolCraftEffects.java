@@ -126,8 +126,19 @@ public final class JolCraftEffects {
             () -> new MagicResistanceEffect(MobEffectCategory.BENEFICIAL, 0x25b7b8)
                     .addAttributeModifier(
                             JolCraftAttributes.MAGIC_RESISTANCE,
-                            JolCraft.location(JolCraftEffectIds.MAGIC_RESISTANCE),
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.MAGIC_RESISTANCE, JolCraftDictionary.EFFECT)),
                             0.10D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> POISON_RESISTANCE = MOB_EFFECTS.register(
+            JolCraftEffectIds.POISON_RESISTANCE,
+            () -> new PoisonResistanceEffect(MobEffectCategory.BENEFICIAL,0x538b30)
+                    .addAttributeModifier(
+                            JolCraftAttributes.POISON_RESISTANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.POISON_RESISTANCE, JolCraftDictionary.EFFECT)),
+                            0.25D,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );

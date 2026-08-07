@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
@@ -18,6 +19,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
+import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.player.attachment.custom.effect.AlchemistFocusAttachmentHelper;
 import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachmentHelper;
@@ -339,6 +341,33 @@ public class JolCraftEffectEvents {
         if (player.blockPosition().distSqr(pos)
                 > HearthBlockEntity.RADIUS_SQ) {
             player.removeEffect(JolCraftEffects.HOMESTEAD);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPoisonApplicable(MobEffectEvent.Applicable event) {
+        MobEffectInstance effect = event.getEffectInstance();
+
+        if (!effect.is(MobEffects.POISON)) {
+            return;
+        }
+
+        LivingEntity entity = event.getEntity();
+        double resistance = entity.getAttributeValue(JolCraftAttributes.POISON_RESISTANCE);
+
+        if (resistance <= 0.0D) {
+            return;
+        }
+
+        if (resistance >= 1.0D || entity.getRandom().nextDouble() < resistance) {
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.ENTITY,
+                    "{} resisted poison application with {}% resistance",
+                    entity.getName().getString(),
+                    JolCraftLogs.pct1(resistance)
+            );
         }
     }
 }

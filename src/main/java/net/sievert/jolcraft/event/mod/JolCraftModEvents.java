@@ -70,6 +70,7 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.RADIANT);
         added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_PENETRATION);
         added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.POISON_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.ATTACK_DAMAGE_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_TOTAL);

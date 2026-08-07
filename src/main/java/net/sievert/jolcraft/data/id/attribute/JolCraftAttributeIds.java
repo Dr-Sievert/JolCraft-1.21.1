@@ -15,9 +15,10 @@ public final class JolCraftAttributeIds extends JolCraftIds {
     public static final String RADIANT = JolCraftEntityObjectIds.RADIANT;
     public static final String ARMOR_PENETRATION = join(JolCraftDictionary.ARMOR, JolCraftDictionary.PENETRATION);
     public static final String MAGIC_RESISTANCE = join(JolCraftDictionary.MAGIC, JolCraftDictionary.RESISTANCE);
+    public static final String POISON_RESISTANCE = join(JolCraftDictionary.POISON, JolCraftDictionary.RESISTANCE);
     public static final String ARMOR_TOTAL = join(JolCraftDictionary.ARMOR, JolCraftDictionary.TOTAL);
     public static final String ATTACK_DAMAGE_INCREASE = join(JolCraftDictionary.ATTACK, JolCraftDictionary.DAMAGE, JolCraftDictionary.INCREASE);
     public static final String ITEM_USE_SPEED = join(JolCraftDictionary.ITEM, JolCraftDictionary.USE, JolCraftDictionary.SPEED);
     public static final String MOON_SHIELD = join(JolCraftDictionary.MOON, JolCraftDictionary.SHIELD);
-    public static final String PROJECTILE_DAMAGE = join(JolCraftDictionary.PROJECT, JolCraftDictionary.DAMAGE);
+    public static final String PROJECTILE_DAMAGE = join(JolCraftDictionary.PROJECTILE, JolCraftDictionary.DAMAGE);
 }

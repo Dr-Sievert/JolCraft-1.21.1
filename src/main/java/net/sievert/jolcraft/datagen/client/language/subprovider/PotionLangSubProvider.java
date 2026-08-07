@@ -42,6 +42,7 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations,  JolCraftPotions.DWARVEN_RAGE, "Dwarven Rage", true, true);
         addPotion(translations,  JolCraftPotions.ENDURANCE, "Endurance", true, true);
         addPotion(translations,  JolCraftPotions.MAGIC_RESISTANCE, "Magic Resistance", true, true);
+        addPotion(translations,  JolCraftPotions.POISON_RESISTANCE, "Poison Resistance", true, true);
         addPotion(translations,  JolCraftPotions.MARKSMAN, "Marksman", true, true);
         addPotion(translations,  JolCraftPotions.STONE_SKIN, "Stone Skin", true, true);
 

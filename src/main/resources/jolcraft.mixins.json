@@ -20,6 +20,7 @@
     "MeleeAttackGoalMixin",
     "MushroomBlockMixin",
     "NestedLootTableAccessor",
+    "PoisonMobEffectMixin",
     "RangedBowAttackGoalMixin",
     "RangedCrossbowAttackGoalMixin",
     "SetComponentsFunctionAccessor",

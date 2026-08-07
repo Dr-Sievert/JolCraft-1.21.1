@@ -139,6 +139,18 @@ public final class JolCraftPotions {
             () -> new Potion(JolCraftPotionIds.STRONG_MAGIC_RESISTANCE,
                     new MobEffectInstance(JolCraftEffects.MAGIC_RESISTANCE, 1800, 1)));
 
+    public static final Holder<Potion> POISON_RESISTANCE = POTIONS.register(JolCraftPotionIds.POISON_RESISTANCE,
+            () -> new Potion(JolCraftPotionIds.POISON_RESISTANCE,
+                    new MobEffectInstance(JolCraftEffects.POISON_RESISTANCE, 3600, 0)));
+
+    public static final Holder<Potion> LONG_POISON_RESISTANCE = POTIONS.register(JolCraftPotionIds.LONG_POISON_RESISTANCE,
+            () -> new Potion(JolCraftPotionIds.LONG_POISON_RESISTANCE,
+                    new MobEffectInstance(JolCraftEffects.POISON_RESISTANCE, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_POISON_RESISTANCE = POTIONS.register(JolCraftPotionIds.STRONG_POISON_RESISTANCE,
+            () -> new Potion(JolCraftPotionIds.STRONG_POISON_RESISTANCE,
+                    new MobEffectInstance(JolCraftEffects.POISON_RESISTANCE, 1800, 1)));
+
     public static final Holder<Potion> MARKSMAN = POTIONS.register(JolCraftPotionIds.MARKSMAN,
             () -> new Potion(JolCraftPotionIds.MARKSMAN,
                     new MobEffectInstance(JolCraftEffects.MARKSMAN, 3600, 0)));

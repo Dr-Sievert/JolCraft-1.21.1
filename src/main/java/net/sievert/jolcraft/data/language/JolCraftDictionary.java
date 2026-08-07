@@ -522,6 +522,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PLAYER = "player";
     public static final String PLUGIN = "plugin";
     public static final String PNG = "png";
+    public static final String POISON = "poison";
     public static final String POOL = "pool";
     public static final String PORTAL = "portal";
     public static final String POSITION = "position";

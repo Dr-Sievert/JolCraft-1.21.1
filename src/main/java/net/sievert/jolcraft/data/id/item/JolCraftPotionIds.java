@@ -50,6 +50,10 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_MAGIC_RESISTANCE = longPotion(MAGIC_RESISTANCE);
     public static final String STRONG_MAGIC_RESISTANCE = strongPotion(MAGIC_RESISTANCE);
 
+    public static final String POISON_RESISTANCE = JolCraftEffectIds.POISON_RESISTANCE;
+    public static final String LONG_POISON_RESISTANCE = longPotion(POISON_RESISTANCE);
+    public static final String STRONG_POISON_RESISTANCE = strongPotion(POISON_RESISTANCE);
+
     public static final String MARKSMAN = JolCraftEffectIds.MARKSMAN;
     public static final String LONG_MARKSMAN = longPotion(MARKSMAN);
     public static final String STRONG_MARKSMAN = strongPotion(MARKSMAN);
