@@ -1,56 +1,57 @@
 package net.sievert.jolcraft.event.game.player;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
+import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.event.game.item.JolCraftCompassEvents;
-import net.sievert.jolcraft.event.game.player.attribute.JolCraftPlayerAttributeEventsHelper;
-import net.sievert.jolcraft.event.game.player.util.BrewingBlockConversionEventsHelper;
+import net.sievert.jolcraft.event.game.player.attribute.JolCraftPlayerAttributeEvents;
+import net.sievert.jolcraft.event.game.player.util.JolCraftCoinPickupEventsHelper;
+import net.sievert.jolcraft.event.game.player.util.JolCraftPlantingEventsHelper;
+import net.sievert.jolcraft.event.game.recipe.JolCraftHandInteractionEvents;
+import net.sievert.jolcraft.event.game.recipe.brewing.BrewingBlockConversionEventsHelper;
 import net.sievert.jolcraft.network.handler.JolCraftServerPayloadHandlers;
 import net.sievert.jolcraft.network.util.SyncHelper;
-import net.sievert.jolcraft.util.log.JolCraftLogTags;
-import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.data.custom.PendingStatData;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
-import net.sievert.jolcraft.world.item.JolCraftItems;
-import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
 import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
-import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class JolCraftPlayerEvents {
 
+    private JolCraftPlayerEvents() {}
+
     @SubscribeEvent
-    public static void onAdvancementEarned(AdvancementEvent.AdvancementEarnEvent event) {
+    public static void onAdvancementEarned(
+            AdvancementEvent.AdvancementEarnEvent event
+    ) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        JolCraftCriteriaTriggers.HAS_ADVANCEMENT.trigger(player, event.getAdvancement().id());
+
+        JolCraftCriteriaTriggers.HAS_ADVANCEMENT.trigger(
+                player,
+                event.getAdvancement().id()
+        );
     }
 
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        PendingStatData.awardPending(serverPlayer);
-        SyncHelper.syncAll(serverPlayer);
+        PendingStatData.awardPending(player);
+        SyncHelper.syncAll(player);
     }
 
     @SubscribeEvent
@@ -67,6 +68,76 @@ public final class JolCraftPlayerEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        JolCraftCompassEvents.onCompassTick(event);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onCriticalHit(CriticalHitEvent event) {
+        JolCraftPlayerAttributeEvents.onCriticalHit(event);
+    }
+
+    @SubscribeEvent
+    public static void onXpChange(PlayerXpEvent.XpChange event) {
+        JolCraftPlayerAttributeEvents.onXpChange(event);
+    }
+
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        JolCraftPlayerAttributeEvents.onRightContainerBlock(event);
+        JolCraftPlantingEventsHelper.tryHandle(event);
+
+        if (!event.isCanceled()) {
+            BrewingBlockConversionEventsHelper.tryHandle(event);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        JolCraftHandInteractionEvents.onHandInteractionRecipe(event);
+    }
+
+    @SubscribeEvent
+    public static void onContainerOpen(PlayerContainerEvent.Open event) {
+        JolCraftPlayerAttributeEvents.onContainerOpen(event);
+    }
+
+    @SubscribeEvent
+    public static void onContainerClose(PlayerContainerEvent.Close event) {
+        JolCraftPlayerAttributeEvents.onContainerClose(event);
+    }
+
+    @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        JolCraftPlayerAttributeEvents.onBlockBreak(event);
+    }
+
+    @SubscribeEvent
+    public static void onUseItemStart(LivingEntityUseItemEvent.Start event) {
+        JolCraftPlayerAttributeEvents.onUseItemStart(event);
+    }
+
+    @SubscribeEvent
+    public static void onUseTick(LivingEntityUseItemEvent.Tick event) {
+        JolCraftPlayerAttributeEvents.onUseTick(event);
+    }
+
+    @SubscribeEvent
+    public static void onUseStop(LivingEntityUseItemEvent.Stop event) {
+        JolCraftPlayerAttributeEvents.onUseStop(event);
+    }
+
+    @SubscribeEvent
+    public static void onUseFinish(LivingEntityUseItemEvent.Finish event) {
+        JolCraftPlayerAttributeEvents.onUseFinish(event);
+    }
+
+    @SubscribeEvent
+    public static void onItemPickup(ItemEntityPickupEvent.Pre event) {
+        JolCraftCoinPickupEventsHelper.onItemPickup(event);
+    }
+
     private static void cleanupPlayer(ServerPlayer player) {
         if (player.containerMenu instanceof DwarfMerchantMenu menu) {
             menu.getTrader().setTradingPlayer(null);
@@ -74,99 +145,7 @@ public final class JolCraftPlayerEvents {
 
         DeliriumCurseEffect.cleanupRuntime(player);
         JolCraftServerPayloadHandlers.cleanupPlayer(player);
-        JolCraftPlayerAttributeEventsHelper.clearPlayerTracking(player.getUUID());
+        JolCraftPlayerAttributeEvents.clearPlayerTracking(player.getUUID());
         JolCraftCompassEvents.cleanupPlayer(player);
-    }
-
-    @SuppressWarnings("deprecation")
-    @SubscribeEvent
-    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (!(event.getLevel() instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        var player = event.getEntity();
-        var pos = event.getPos();
-        var state = serverLevel.getBlockState(pos);
-        var used = event.getItemStack();
-
-        if (used.is(Items.ROTTEN_FLESH)) {
-            BlockPos above = pos.above();
-
-            boolean onLog = (event.getFace() == Direction.UP
-                    && state.is(BlockTags.LOGS)
-                    && state.hasProperty(BlockStateProperties.AXIS)
-                    && state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y);
-
-            boolean onSoil = (event.getFace() == Direction.UP && (state.is(JolCraftBlocks.VERDANT_SOIL.get())));
-
-            boolean canPlant = onLog || onSoil;
-
-            if (canPlant && serverLevel.getBlockState(above).isAir()) {
-
-                serverLevel.setBlock(above, JolCraftBlocks.FESTERLING_CROP.get().defaultBlockState(), 3);
-
-                JolCraftLogs.debug(JolCraftLogTags.PLAYER,
-                        "Planted festerling. player={} pos={} on={} face={} item={}",
-                        player.getUUID(),
-                        JolCraftLogs.roundedPos(above),
-                        state.getBlock().builtInRegistryHolder().key().location(),
-                        event.getFace(),
-                        used.getItem().builtInRegistryHolder().key().location());
-
-                JolCraftSoundHelper.block(serverLevel, above, SoundEvents.CROP_PLANTED, 1.0F, 1.0F);
-
-                if (!player.isCreative()) used.shrink(1);
-
-                event.setCancellationResult(InteractionResult.SUCCESS);
-                event.setCanceled(true);
-            }
-        }
-
-        if (event.isCanceled()) {
-            return;
-        }
-
-        BrewingBlockConversionEventsHelper.tryHandle(
-                event
-        );
-    }
-
-    @SubscribeEvent
-    public static void onItemPickup(ItemEntityPickupEvent.Pre event) {
-        ItemEntity itemEntity = event.getItemEntity();
-        ItemStack groundStack = itemEntity.getItem();
-        Player player = event.getPlayer();
-
-        if (!groundStack.is(JolCraftItems.GOLD_COIN.get()) || itemEntity.hasPickUpDelay()) {
-            return;
-        }
-
-        int remaining = groundStack.getCount();
-
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack inventoryStack = player.getInventory().getItem(slot);
-
-            if (!inventoryStack.is(JolCraftItems.COIN_POUCH.get())) {
-                continue;
-            }
-
-            remaining -= CoinPouchItem.insertCoins(
-                    inventoryStack,
-                    remaining,
-                    player
-            );
-
-            if (remaining <= 0) {
-                break;
-            }
-        }
-
-        if (remaining == groundStack.getCount()) {
-            return;
-        }
-
-        groundStack.setCount(remaining);
-        JolCraftSoundHelper.player(player, SoundEvents.ITEM_PICKUP);
     }
 }

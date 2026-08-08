@@ -1,11 +1,9 @@
 package net.sievert.jolcraft.integration.jei.custom.vanilla.brewing;
 
 import mezz.jei.api.recipe.vanilla.IJeiBrewingRecipe;
-import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.alchemy.Potions;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.event.game.recipe.brewing.JolCraftBrewingEventHelper;
@@ -18,13 +16,7 @@ public final class JeiBrewingRecipeHelper {
 
     private JeiBrewingRecipeHelper() {}
 
-    private static final List<ItemStack> FIRST_STEP_INPUTS = List.of(
-            PotionContents.createItemStack(Items.POTION, Potions.WATER)
-    );
-
-    public static List<IJeiBrewingRecipe> getRecipes(
-            IRecipeRegistration registration
-    ) {
+    public static List<IJeiBrewingRecipe> getRecipes() {
         List<IJeiBrewingRecipe> recipes = new ArrayList<>();
 
         for (JolCraftBrewingEventHelper.SpecialBrewingRecipe recipe
@@ -46,20 +38,6 @@ public final class JeiBrewingRecipeHelper {
             ItemStack output = PotionContents.createItemStack(
                     Items.POTION,
                     recipe.potion()
-            );
-
-            registration.getVanillaRecipeFactory().createBrewingRecipe(
-                    ingredients,
-                    FIRST_STEP_INPUTS,
-                    output,
-                    JolCraft.location(
-                            JolCraftStrings.slashed(
-                                    JolCraftDictionary.JEI,
-                                    JolCraftDictionary.BREWING,
-                                    JolCraftDictionary.START,
-                                    potionId
-                            )
-                    )
             );
 
             recipes.add(

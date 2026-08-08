@@ -14,10 +14,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
@@ -37,11 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(
-        modid = JolCraft.MOD_ID,
-        bus = EventBusSubscriber.Bus.GAME
-)
 public final class JolCraftHandInteractionEvents {
 
     private static final int HAND_INTERACTION_COOLDOWN_TICKS = 10;
@@ -54,7 +46,6 @@ public final class JolCraftHandInteractionEvents {
 
     private JolCraftHandInteractionEvents() {}
 
-    @SubscribeEvent
     public static void onHandInteractionRecipe(
             PlayerInteractEvent.RightClickItem event
     ) {

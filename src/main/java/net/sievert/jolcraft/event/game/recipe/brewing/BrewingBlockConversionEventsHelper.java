@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game.player.util;
+package net.sievert.jolcraft.event.game.recipe.brewing;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

@@ -100,7 +100,6 @@ public final class JolCraftPotionIds extends JolCraftIds {
 
     public static final String SUNFIRE = JolCraftEffectIds.SUNFIRE;
     public static final String LONG_SUNFIRE = longPotion(SUNFIRE);
-    public static final String STRONG_SUNFIRE = strongPotion(SUNFIRE);
 
     public static final String CONFLAGRATION = JolCraftEffectIds.CONFLAGRATION;
     public static final String LONG_CONFLAGRATION = longPotion(CONFLAGRATION);

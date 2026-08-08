@@ -8,12 +8,14 @@ import net.sievert.jolcraft.event.game.recipe.brewing.JolCraftBrewingEvents;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
-public final class JolCraftVanillaRecipeEvents {
+public final class JolCraftRecipeEvents {
 
-    private JolCraftVanillaRecipeEvents() {}
+    private JolCraftRecipeEvents() {}
 
     @SubscribeEvent
-    public static void addVanillaBrewingRecipes(RegisterBrewingRecipesEvent event) {
+    public static void onRegisterBrewingRecipes(
+            RegisterBrewingRecipesEvent event
+    ) {
         JolCraftBrewingEvents.register(event.getBuilder());
     }
 }

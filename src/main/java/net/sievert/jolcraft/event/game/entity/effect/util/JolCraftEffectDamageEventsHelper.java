@@ -1,53 +1,23 @@
-package net.sievert.jolcraft.event.game.entity.util;
+package net.sievert.jolcraft.event.game.entity.effect.util;
 
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
-import net.sievert.jolcraft.world.util.JolCraftDimensionHelper;
-import net.sievert.jolcraft.world.util.JolCraftTimeHelper;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.entity.JolCraftAttributes;
-import net.sievert.jolcraft.world.entity.damage.JolCraftDamageTypes;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
-import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.AbstractCrowdControlEffect;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 
 import java.util.Map;
 
-public final class JolCraftEntityDamageEventsHelper {
+public final class JolCraftEffectDamageEventsHelper {
 
-    private JolCraftEntityDamageEventsHelper() {}
+    private JolCraftEffectDamageEventsHelper() {}
 
-    public static void onEffectApplicable(MobEffectEvent.Applicable event) {
-        LivingEntity entity = event.getEntity();
-        MobEffectInstance effect = event.getEffectInstance();
-
-        if (!(effect.getEffect().value() instanceof AbstractCrowdControlEffect)) return;
-
-        double tenacity = entity.getAttributeValue(JolCraftAttributes.TENACITY);
-        if (tenacity < 1.0D) return;
-
-        event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-
-        JolCraftLogs.debug(
-                JolCraftLogTags.ENTITY,
-                "{} resisted {} application with {}% tenacity",
-                entity.getName().getString(),
-                effect.getEffect().unwrapKey()
-                        .map(ResourceKey::location)
-                        .orElse(null),
-                JolCraftLogs.pct1(tenacity)
-        );
-    }
-
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+    public static void applyEarlyFlatDefenses(LivingIncomingDamageEvent event) {
         LivingEntity entity = event.getEntity();
         MobEffectInstance stoneSkin = entity.getEffect(JolCraftEffects.STONE_SKIN);
 
@@ -56,8 +26,7 @@ public final class JolCraftEntityDamageEventsHelper {
         int level = stoneSkin.getAmplifier() + 1;
         float originalDamage = event.getAmount();
         float reduction = 3.0F * level;
-        float modifiedDamage =
-                Math.max(0.0F, originalDamage - reduction);
+        float modifiedDamage = Math.max(0.0F, originalDamage - reduction);
 
         event.setAmount(modifiedDamage);
 
@@ -98,49 +67,9 @@ public final class JolCraftEntityDamageEventsHelper {
         );
     }
 
-
-    public static void onFinalDamage(LivingDamageEvent.Post event) {
-        LivingEntity entity = event.getEntity();
-
-        if (entity.level().isClientSide()
-                || entity.isDeadOrDying()
-                || event.getNewDamage() <= 0.0F
-                || event.getSource().is(JolCraftDamageTypes.SUNFIRE)
-                || !(event.getSource().getEntity() instanceof LivingEntity attacker)
-                || (!JolCraftDimensionHelper.isNether(entity)
-                && (!JolCraftTimeHelper.isDay(entity)
-                || !entity.level().canSeeSky(entity.blockPosition())))) {
-            return;
-        }
-
-        double sunFireDamage = attacker.getAttributeValue(JolCraftAttributes.SUN_FIRE_DAMAGE);
-
-        if (sunFireDamage <= 0.0D) return;
-
-        entity.hurt(
-                entity.damageSources().source(JolCraftDamageTypes.SUNFIRE, attacker),
-                (float) sunFireDamage
-        );
-
-        if(!entity.isOnFire()){
-            entity.igniteForSeconds(3.0F);
-        }
-
-        JolCraftLogs.debug(
-                JolCraftLogTags.ENTITY,
-                "Entity {} dealt {} bonus fire damage using sunfire attribute to {} at {} in {}",
-                attacker.getName().getString(),
-                sunFireDamage,
-                entity.getName().getString(),
-                JolCraftLogs.roundedPos(entity),
-                entity.level().dimension().location()
-        );
-    }
-
     public static void onArmorHurt(ArmorHurtEvent event) {
         LivingEntity entity = event.getEntity();
-        MobEffectInstance corrosion =
-                entity.getEffect(JolCraftEffects.CORROSION);
+        MobEffectInstance corrosion = entity.getEffect(JolCraftEffects.CORROSION);
 
         if (corrosion == null) return;
 

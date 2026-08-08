@@ -19,6 +19,7 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.damage.JolCraftDamageTypes;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.DeliriumCurseEffect;
 
 import javax.annotation.Nullable;
 
@@ -78,7 +79,7 @@ public final class JolCraftCurseEventsHelper {
         );
     }
 
-    public static void onIncomingDamage(
+    public static void applyPreMitigationTargetModifiers(
             LivingIncomingDamageEvent event
     ) {
         LivingEntity entity = event.getEntity();
@@ -121,8 +122,9 @@ public final class JolCraftCurseEventsHelper {
     }
 
     public static void onEffectRemoved(MobEffectEvent.Remove event) {
-        MobEffectInstance removedEffect =
-                event.getEffectInstance();
+        MobEffectInstance removedEffect = event.getEffectInstance();
+
+        cleanupDelirium(event.getEntity(), removedEffect);
 
         if (removedEffect == null
                 || !affectsVitalityScaling(removedEffect)) {
@@ -137,8 +139,9 @@ public final class JolCraftCurseEventsHelper {
     }
 
     public static void onEffectExpired(MobEffectEvent.Expired event) {
-        MobEffectInstance expiredEffect =
-                event.getEffectInstance();
+        MobEffectInstance expiredEffect = event.getEffectInstance();
+
+        cleanupDelirium(event.getEntity(), expiredEffect);
 
         if (expiredEffect == null
                 || !affectsVitalityScaling(expiredEffect)) {
@@ -150,6 +153,17 @@ public final class JolCraftCurseEventsHelper {
                 null,
                 expiredEffect
         );
+    }
+
+    private static void cleanupDelirium(
+            LivingEntity entity,
+            @Nullable MobEffectInstance effect
+    ) {
+        if (entity instanceof ServerPlayer player
+                && effect != null
+                && effect.is(JolCraftEffects.DELIRIUM_CURSE)) {
+            DeliriumCurseEffect.cleanupRuntime(player);
+        }
     }
 
     private static void updateVitalityCurseModifier(

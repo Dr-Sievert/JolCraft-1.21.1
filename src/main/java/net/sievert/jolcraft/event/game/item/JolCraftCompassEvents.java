@@ -19,10 +19,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftRuntime;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -38,8 +35,6 @@ import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class JolCraftCompassEvents {
 
     private record Compass(@NotNull ItemStack stack, @NotNull InteractionHand hand, @NotNull CompassData data) {}
@@ -56,7 +51,6 @@ public final class JolCraftCompassEvents {
         LAST_PLAYER_POS.clear(player);
     }
 
-    @SubscribeEvent
     public static void onCompassTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (player.tickCount % 20 != 0) return;

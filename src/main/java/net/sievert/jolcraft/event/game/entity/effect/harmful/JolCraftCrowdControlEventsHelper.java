@@ -1,14 +1,43 @@
 package net.sievert.jolcraft.event.game.entity.effect.harmful;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.AbstractCrowdControlEffect;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 
 public final class JolCraftCrowdControlEventsHelper {
 
     private JolCraftCrowdControlEventsHelper() {}
+
+    public static void onEffectApplicable(MobEffectEvent.Applicable event) {
+        LivingEntity entity = event.getEntity();
+        MobEffectInstance effect = event.getEffectInstance();
+
+        if (!(effect.getEffect().value() instanceof AbstractCrowdControlEffect)) return;
+
+        double tenacity = entity.getAttributeValue(JolCraftAttributes.TENACITY);
+        if (tenacity < 1.0D) return;
+
+        event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.ENTITY,
+                "{} resisted {} application with {}% tenacity",
+                entity.getName().getString(),
+                effect.getEffect().unwrapKey()
+                        .map(ResourceKey::location)
+                        .orElse(null),
+                JolCraftLogs.pct1(tenacity)
+        );
+    }
 
     public static void onEntityTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
@@ -70,6 +99,9 @@ public final class JolCraftCrowdControlEventsHelper {
     }
 
     private static void disableActions(LivingEntity entity) {
-        if (entity.isUsingItem() && !JolCraftEquipmentHelper.isRangedWeapon(entity.getMainHandItem())) {entity.stopUsingItem();}
+        if (entity.isUsingItem()
+                && !JolCraftEquipmentHelper.isRangedWeapon(entity.getMainHandItem())) {
+            entity.stopUsingItem();
+        }
     }
 }

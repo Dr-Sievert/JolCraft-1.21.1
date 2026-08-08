@@ -32,49 +32,49 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
     @Override
     public void addTranslations(@NotNull Map<String, String> translations) {
 
-        addPotion(translations,  JolCraftPotions.ANCIENT_MEMORY, "Ancient Memory", true, false);
-        addPotion(translations,  JolCraftPotions.LOCKPICKING, "Lockpicking", true, true);
-        addPotion(translations,  JolCraftPotions.DWARVEN_HASTE, "Mining", true, true);
-        addPotion(translations,  JolCraftPotions.BULWARK, "Bulwark", true, true);
-        addPotion(translations,  JolCraftPotions.ALCHEMIST_FOCUS, "Alchemist Focus", true, true);
-        addPotion(translations,  JolCraftPotions.ANCHOR, "Anchor", true, false);
-        addPotion(translations,  JolCraftPotions.DEXTERITY, "Dexterity", true, true);
-        addPotion(translations,  JolCraftPotions.DWARVEN_RAGE, "Dwarven Rage", true, true);
-        addPotion(translations,  JolCraftPotions.ENDURANCE, "Endurance", true, true);
-        addPotion(translations,  JolCraftPotions.MAGIC_RESISTANCE, "Magic Resistance", true, true);
-        addPotion(translations,  JolCraftPotions.POISON_RESISTANCE, "Poison Resistance", true, true);
-        addPotion(translations,  JolCraftPotions.SLOW_RESISTANCE, "Slow Resistance", true, true);
-        addPotion(translations,  JolCraftPotions.MARKSMAN, "Marksman", true, true);
-        addPotion(translations,  JolCraftPotions.STONE_SKIN, "Stone Skin", true, true);
-        addPotion(translations,  JolCraftPotions.HOARD, "Hoarding", true, true);
-        addPotion(translations,  JolCraftPotions.PIERCING, "Piercing", true, true);
-        addPotion(translations,  JolCraftPotions.TENACITY, "Tenacity", true, true);
-        addPotion(translations,  JolCraftPotions.WISDOM, "Wisdom", true, true);
-        addPotion(translations,  JolCraftPotions.MIGHT, "Might", true, true);
-        addPotion(translations,  JolCraftPotions.HARVEST, "Harvest", true, true);
-        addPotion(translations,  JolCraftPotions.LUNAR, "the Moon", true, true);
-        addPotion(translations,  JolCraftPotions.CONFLAGRATION, "Conflagration", true, true);
-        addPotion(translations,  JolCraftPotions.SUNFIRE, "Sunfire", true, false);
-        addPotion(translations,  JolCraftPotions.LUMINANCE, "Luminance", true, true);
-        addPotion(translations,  JolCraftPotions.VITALITY, "Vitality", true, true);
+        addPotion(translations, JolCraftPotions.ANCIENT_MEMORY, "Ancient Memory");
+        addPotion(translations, JolCraftPotions.LOCKPICKING, "Lockpicking");
+        addPotion(translations, JolCraftPotions.DWARVEN_HASTE, "Mining");
+        addPotion(translations, JolCraftPotions.BULWARK, "Bulwark");
+        addPotion(translations, JolCraftPotions.ALCHEMIST_FOCUS, "Alchemist Focus");
+        addPotion(translations, JolCraftPotions.ANCHOR, "Anchor");
+        addPotion(translations, JolCraftPotions.DEXTERITY, "Dexterity");
+        addPotion(translations, JolCraftPotions.DWARVEN_RAGE, "Dwarven Rage");
+        addPotion(translations, JolCraftPotions.ENDURANCE, "Endurance");
+        addPotion(translations, JolCraftPotions.MAGIC_RESISTANCE, "Magic Resistance");
+        addPotion(translations, JolCraftPotions.POISON_RESISTANCE, "Poison Resistance");
+        addPotion(translations, JolCraftPotions.SLOW_RESISTANCE, "Slow Resistance");
+        addPotion(translations, JolCraftPotions.MARKSMAN, "Marksman");
+        addPotion(translations, JolCraftPotions.STONE_SKIN, "Stone Skin");
+        addPotion(translations, JolCraftPotions.HOARD, "Hoarding");
+        addPotion(translations, JolCraftPotions.PIERCING, "Piercing");
+        addPotion(translations, JolCraftPotions.TENACITY, "Tenacity");
+        addPotion(translations, JolCraftPotions.WISDOM, "Wisdom");
+        addPotion(translations, JolCraftPotions.MIGHT, "Might");
+        addPotion(translations, JolCraftPotions.HARVEST, "Harvest");
+        addPotion(translations, JolCraftPotions.LUNAR, "the Moon");
+        addPotion(translations, JolCraftPotions.CONFLAGRATION, "Conflagration");
+        addPotion(translations, JolCraftPotions.SUNFIRE, "Sunfire");
+        addPotion(translations, JolCraftPotions.LUMINANCE, "Luminance");
+        addPotion(translations, JolCraftPotions.VITALITY, "Vitality");
 
-        addPotion(translations,  JolCraftPotions.ATAXIA_CURSE, "Ataxia Cursing", false, false);
-        addPotion(translations,  JolCraftPotions.CURSED_WOUND, "Cursing Wound", false, false);
-        addPotion(translations,  JolCraftPotions.DELIRIUM_CURSE, "Delirium Cursing", false, false);
-        addPotion(translations,  JolCraftPotions.FAMINE_CURSE, "Famine Cursing", false, false);
-        addPotion(translations,  JolCraftPotions.FRAILTY_CURSE, "Frailty Cursing", false, false);
-        addPotion(translations,  JolCraftPotions.HEX, "Hex", false, false);
-        addPotion(translations,  JolCraftPotions.VITALITY_CURSE, "Vitality Cursing", false, false);
+        addPotion(translations, JolCraftPotions.ATAXIA_CURSE, "Ataxia Cursing");
+        addPotion(translations, JolCraftPotions.CURSED_WOUND, "Cursing Wound");
+        addPotion(translations, JolCraftPotions.DELIRIUM_CURSE, "Delirium Cursing");
+        addPotion(translations, JolCraftPotions.FAMINE_CURSE, "Famine Cursing");
+        addPotion(translations, JolCraftPotions.FRAILTY_CURSE, "Frailty Cursing");
+        addPotion(translations, JolCraftPotions.HEX, "Hex");
+        addPotion(translations, JolCraftPotions.VITALITY_CURSE, "Vitality Cursing");
 
-        addPotion(translations,  JolCraftPotions.DISARMED, "Disarming", false, false);
-        addPotion(translations,  JolCraftPotions.ROOTED, "Rooting", false, false);
-        addPotion(translations,  JolCraftPotions.STUNNED, "Stunning", false, false);
-        addPotion(translations,  JolCraftPotions.SUPPRESSED, "Suppression", false, false);
+        addPotion(translations, JolCraftPotions.DISARMED, "Disarming");
+        addPotion(translations, JolCraftPotions.ROOTED, "Rooting");
+        addPotion(translations, JolCraftPotions.STUNNED, "Stunning");
+        addPotion(translations, JolCraftPotions.SUPPRESSED, "Suppression");
 
-        addPotion(translations,  JolCraftPotions.CORROSION, "Corrosion", true, true);
+        addPotion(translations, JolCraftPotions.CORROSION, "Corrosion");
 
-        addPotion(translations,  JolCraftPotions.UNLUCK, "Bad Luck", false, true);
-        addPotion(translations,  JolCraftPotions.STRONG_LUCK, "Luck", false, false);
+        addPotion(translations, JolCraftPotions.UNLUCK, "Bad Luck");
+        addPotion(translations, JolCraftPotions.STRONG_LUCK, "Luck");
     }
 
     private static final String[] TYPES = {
@@ -87,20 +87,31 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
     private void addPotion(
             Map<String, String> translations,
             Holder<Potion> potionHolder,
-            String displayName,
-            boolean hasLong,
-            boolean hasStrong
+            String displayName
     ) {
-        String baseName = resolvePotionName(potionHolder);
+        JolCraftPotions.PotionFamily family =
+                JolCraftPotions.familyOf(potionHolder);
 
-        addVariant(translations, baseName, displayName);
+        addVariant(
+                translations,
+                resolvePotionName(family.base()),
+                displayName
+        );
 
-        if (hasLong) {
-            addVariant(translations, "long_" + baseName, displayName);
+        if (family.longPotion() != null) {
+            addVariant(
+                    translations,
+                    resolvePotionName(family.longPotion()),
+                    displayName
+            );
         }
 
-        if (hasStrong) {
-            addVariant(translations, "strong_" + baseName, displayName);
+        if (family.strongPotion() != null) {
+            addVariant(
+                    translations,
+                    resolvePotionName(family.strongPotion()),
+                    displayName
+            );
         }
     }
 

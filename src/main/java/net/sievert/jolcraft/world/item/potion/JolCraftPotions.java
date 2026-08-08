@@ -2,6 +2,7 @@ package net.sievert.jolcraft.world.item.potion;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.alchemy.Potion;
@@ -9,385 +10,177 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.item.JolCraftPotionIds;
+import net.sievert.jolcraft.data.language.JolCraftDictionary;
+import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public final class JolCraftPotions {
 
-    private JolCraftPotions(){}
+    public static final DeferredRegister<Potion> POTIONS =
+            DeferredRegister.create(Registries.POTION, JolCraft.MOD_ID);
 
-    public static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, JolCraft.MOD_ID);
+    private static final Map<String, Holder<Potion>> POTIONS_BY_ID =
+            new LinkedHashMap<>();
 
-    // -------------------------------------------------------------------------
+    private static final Map<Holder<Potion>, PotionFamily> FAMILIES =
+            new LinkedHashMap<>();
+
+    static {
+        longFamily(JolCraftPotionIds.ANCIENT_MEMORY, JolCraftEffects.ANCIENT_MEMORY, 300, 600);
+        family(JolCraftPotionIds.LOCKPICKING, JolCraftEffects.LOCKPICKING, 600, 1200, 300);
+        family(JolCraftPotionIds.DWARVEN_HASTE, JolCraftEffects.DWARVEN_HASTE, 6000, 12000, 3000);
+        single(JolCraftPotionIds.STRONG_LUCK, MobEffects.LUCK, 3000, 1);
+        family(JolCraftPotionIds.BULWARK, JolCraftEffects.BULWARK, 1200, 2400, 600);
+        family(JolCraftPotionIds.ALCHEMIST_FOCUS, JolCraftEffects.ALCHEMIST_FOCUS, 600, 1200, 300);
+        longFamily(JolCraftPotionIds.ANCHOR, JolCraftEffects.ANCHOR, 6000, 12000);
+        family(JolCraftPotionIds.DEXTERITY, JolCraftEffects.DEXTERITY, 3600, 7200, 1800);
+        family(JolCraftPotionIds.DWARVEN_RAGE, JolCraftEffects.DWARVEN_RAGE, 1200, 2400, 600);
+        family(JolCraftPotionIds.ENDURANCE, JolCraftEffects.ENDURANCE, 6000, 12000, 3000);
+        family(JolCraftPotionIds.MAGIC_RESISTANCE, JolCraftEffects.MAGIC_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.POISON_RESISTANCE, JolCraftEffects.POISON_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.SLOW_RESISTANCE, JolCraftEffects.SLOW_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.MARKSMAN, JolCraftEffects.MARKSMAN, 3600, 9600, 1800);
+        family(JolCraftPotionIds.STONE_SKIN, JolCraftEffects.STONE_SKIN, 1200, 2400, 600);
+        family(JolCraftPotionIds.HOARD, JolCraftEffects.HOARD, 6000, 12000, 3000);
+        family(JolCraftPotionIds.PIERCING, JolCraftEffects.PIERCING, 3600, 7200, 1800);
+        family(JolCraftPotionIds.TENACITY, JolCraftEffects.TENACITY, 3600, 7200, 1800);
+        family(JolCraftPotionIds.WISDOM, JolCraftEffects.WISDOM, 3600, 7200, 1800);
+        family(JolCraftPotionIds.MIGHT, JolCraftEffects.MIGHT, 3600, 7200, 1800);
+        family(JolCraftPotionIds.HARVEST, JolCraftEffects.HARVEST, 3600, 7200, 1800);
+        family(JolCraftPotionIds.LUNAR, JolCraftEffects.LUNAR, 3600, 7200, 1800);
+        family(JolCraftPotionIds.CONFLAGRATION, JolCraftEffects.CONFLAGRATION, 3600, 7200, 1800);
+        longFamily(JolCraftPotionIds.SUNFIRE, JolCraftEffects.SUNFIRE, 600, 1200);
+        family(JolCraftPotionIds.LUMINANCE, JolCraftEffects.LUMINANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.VITALITY, JolCraftEffects.VITALITY, 3600, 7200, 1800);
+        single(JolCraftPotionIds.ATAXIA_CURSE, JolCraftEffects.ATAXIA_CURSE, 3000);
+        single(JolCraftPotionIds.CURSED_WOUND, JolCraftEffects.CURSED_WOUND, 600);
+        single(JolCraftPotionIds.DELIRIUM_CURSE, JolCraftEffects.DELIRIUM_CURSE, 3000);
+        single(JolCraftPotionIds.FAMINE_CURSE, JolCraftEffects.FAMINE_CURSE, 3000);
+        single(JolCraftPotionIds.FRAILTY_CURSE, JolCraftEffects.FRAILTY_CURSE, 3000);
+        single(JolCraftPotionIds.HEX, JolCraftEffects.HEX, 1200);
+        single(JolCraftPotionIds.VITALITY_CURSE, JolCraftEffects.VITALITY_CURSE, 3000);
+        single(JolCraftPotionIds.DISARMED, JolCraftEffects.DISARMED, 200);
+        single(JolCraftPotionIds.STUNNED, JolCraftEffects.STUNNED, 200);
+        single(JolCraftPotionIds.ROOTED, JolCraftEffects.ROOTED, 200);
+        single(JolCraftPotionIds.SUPPRESSED, JolCraftEffects.SUPPRESSED, 200);
+        family(JolCraftPotionIds.CORROSION, JolCraftEffects.CORROSION, 1200, 2400, 600);
+        strongFamily(JolCraftPotionIds.UNLUCK, MobEffects.UNLUCK, 6000, 3000);
+    }
+
+    private JolCraftPotions() {}
+
     // Beneficial
-    // -------------------------------------------------------------------------
 
-    public static final Holder<Potion> ANCIENT_MEMORY = POTIONS.register(JolCraftPotionIds.ANCIENT_MEMORY,
-            () -> new Potion(JolCraftPotionIds.ANCIENT_MEMORY,
-                    new MobEffectInstance(JolCraftEffects.ANCIENT_MEMORY, 300, 0)));
+    public static final Holder<Potion> ANCIENT_MEMORY = holder(JolCraftPotionIds.ANCIENT_MEMORY);
+    public static final Holder<Potion> LONG_ANCIENT_MEMORY = holder(JolCraftPotionIds.LONG_ANCIENT_MEMORY);
+    public static final Holder<Potion> LOCKPICKING = holder(JolCraftPotionIds.LOCKPICKING);
+    public static final Holder<Potion> LONG_LOCKPICKING = holder(JolCraftPotionIds.LONG_LOCKPICKING);
+    public static final Holder<Potion> STRONG_LOCKPICKING = holder(JolCraftPotionIds.STRONG_LOCKPICKING);
+    public static final Holder<Potion> DWARVEN_HASTE = holder(JolCraftPotionIds.DWARVEN_HASTE);
+    public static final Holder<Potion> LONG_DWARVEN_HASTE = holder(JolCraftPotionIds.LONG_DWARVEN_HASTE);
+    public static final Holder<Potion> STRONG_DWARVEN_HASTE = holder(JolCraftPotionIds.STRONG_DWARVEN_HASTE);
+    public static final Holder<Potion> STRONG_LUCK = holder(JolCraftPotionIds.STRONG_LUCK);
+    public static final Holder<Potion> BULWARK = holder(JolCraftPotionIds.BULWARK);
+    public static final Holder<Potion> LONG_BULWARK = holder(JolCraftPotionIds.LONG_BULWARK);
+    public static final Holder<Potion> STRONG_BULWARK = holder(JolCraftPotionIds.STRONG_BULWARK);
+    public static final Holder<Potion> ALCHEMIST_FOCUS = holder(JolCraftPotionIds.ALCHEMIST_FOCUS);
+    public static final Holder<Potion> LONG_ALCHEMIST_FOCUS = holder(JolCraftPotionIds.LONG_ALCHEMIST_FOCUS);
+    public static final Holder<Potion> STRONG_ALCHEMIST_FOCUS = holder(JolCraftPotionIds.STRONG_ALCHEMIST_FOCUS);
+    public static final Holder<Potion> ANCHOR = holder(JolCraftPotionIds.ANCHOR);
+    public static final Holder<Potion> LONG_ANCHOR = holder(JolCraftPotionIds.LONG_ANCHOR);
+    public static final Holder<Potion> DEXTERITY = holder(JolCraftPotionIds.DEXTERITY);
+    public static final Holder<Potion> LONG_DEXTERITY = holder(JolCraftPotionIds.LONG_DEXTERITY);
+    public static final Holder<Potion> STRONG_DEXTERITY = holder(JolCraftPotionIds.STRONG_DEXTERITY);
+    public static final Holder<Potion> DWARVEN_RAGE = holder(JolCraftPotionIds.DWARVEN_RAGE);
+    public static final Holder<Potion> LONG_DWARVEN_RAGE = holder(JolCraftPotionIds.LONG_DWARVEN_RAGE);
+    public static final Holder<Potion> STRONG_DWARVEN_RAGE = holder(JolCraftPotionIds.STRONG_DWARVEN_RAGE);
+    public static final Holder<Potion> ENDURANCE = holder(JolCraftPotionIds.ENDURANCE);
+    public static final Holder<Potion> LONG_ENDURANCE = holder(JolCraftPotionIds.LONG_ENDURANCE);
+    public static final Holder<Potion> STRONG_ENDURANCE = holder(JolCraftPotionIds.STRONG_ENDURANCE);
+    public static final Holder<Potion> MAGIC_RESISTANCE = holder(JolCraftPotionIds.MAGIC_RESISTANCE);
+    public static final Holder<Potion> LONG_MAGIC_RESISTANCE = holder(JolCraftPotionIds.LONG_MAGIC_RESISTANCE);
+    public static final Holder<Potion> STRONG_MAGIC_RESISTANCE = holder(JolCraftPotionIds.STRONG_MAGIC_RESISTANCE);
+    public static final Holder<Potion> POISON_RESISTANCE = holder(JolCraftPotionIds.POISON_RESISTANCE);
+    public static final Holder<Potion> LONG_POISON_RESISTANCE = holder(JolCraftPotionIds.LONG_POISON_RESISTANCE);
+    public static final Holder<Potion> STRONG_POISON_RESISTANCE = holder(JolCraftPotionIds.STRONG_POISON_RESISTANCE);
+    public static final Holder<Potion> SLOW_RESISTANCE = holder(JolCraftPotionIds.SLOW_RESISTANCE);
+    public static final Holder<Potion> LONG_SLOW_RESISTANCE = holder(JolCraftPotionIds.LONG_SLOW_RESISTANCE);
+    public static final Holder<Potion> STRONG_SLOW_RESISTANCE = holder(JolCraftPotionIds.STRONG_SLOW_RESISTANCE);
+    public static final Holder<Potion> MARKSMAN = holder(JolCraftPotionIds.MARKSMAN);
+    public static final Holder<Potion> LONG_MARKSMAN = holder(JolCraftPotionIds.LONG_MARKSMAN);
+    public static final Holder<Potion> STRONG_MARKSMAN = holder(JolCraftPotionIds.STRONG_MARKSMAN);
+    public static final Holder<Potion> STONE_SKIN = holder(JolCraftPotionIds.STONE_SKIN);
+    public static final Holder<Potion> LONG_STONE_SKIN = holder(JolCraftPotionIds.LONG_STONE_SKIN);
+    public static final Holder<Potion> STRONG_STONE_SKIN = holder(JolCraftPotionIds.STRONG_STONE_SKIN);
+    public static final Holder<Potion> HOARD = holder(JolCraftPotionIds.HOARD);
+    public static final Holder<Potion> LONG_HOARD = holder(JolCraftPotionIds.LONG_HOARD);
+    public static final Holder<Potion> STRONG_HOARD = holder(JolCraftPotionIds.STRONG_HOARD);
+    public static final Holder<Potion> PIERCING = holder(JolCraftPotionIds.PIERCING);
+    public static final Holder<Potion> LONG_PIERCING = holder(JolCraftPotionIds.LONG_PIERCING);
+    public static final Holder<Potion> STRONG_PIERCING = holder(JolCraftPotionIds.STRONG_PIERCING);
+    public static final Holder<Potion> TENACITY = holder(JolCraftPotionIds.TENACITY);
+    public static final Holder<Potion> LONG_TENACITY = holder(JolCraftPotionIds.LONG_TENACITY);
+    public static final Holder<Potion> STRONG_TENACITY = holder(JolCraftPotionIds.STRONG_TENACITY);
+    public static final Holder<Potion> WISDOM = holder(JolCraftPotionIds.WISDOM);
+    public static final Holder<Potion> LONG_WISDOM = holder(JolCraftPotionIds.LONG_WISDOM);
+    public static final Holder<Potion> STRONG_WISDOM = holder(JolCraftPotionIds.STRONG_WISDOM);
+    public static final Holder<Potion> MIGHT = holder(JolCraftPotionIds.MIGHT);
+    public static final Holder<Potion> LONG_MIGHT = holder(JolCraftPotionIds.LONG_MIGHT);
+    public static final Holder<Potion> STRONG_MIGHT = holder(JolCraftPotionIds.STRONG_MIGHT);
+    public static final Holder<Potion> HARVEST = holder(JolCraftPotionIds.HARVEST);
+    public static final Holder<Potion> LONG_HARVEST = holder(JolCraftPotionIds.LONG_HARVEST);
+    public static final Holder<Potion> STRONG_HARVEST = holder(JolCraftPotionIds.STRONG_HARVEST);
+    public static final Holder<Potion> LUNAR = holder(JolCraftPotionIds.LUNAR);
+    public static final Holder<Potion> LONG_LUNAR = holder(JolCraftPotionIds.LONG_LUNAR);
+    public static final Holder<Potion> STRONG_LUNAR = holder(JolCraftPotionIds.STRONG_LUNAR);
+    public static final Holder<Potion> CONFLAGRATION = holder(JolCraftPotionIds.CONFLAGRATION);
+    public static final Holder<Potion> LONG_CONFLAGRATION = holder(JolCraftPotionIds.LONG_CONFLAGRATION);
+    public static final Holder<Potion> STRONG_CONFLAGRATION = holder(JolCraftPotionIds.STRONG_CONFLAGRATION);
+    public static final Holder<Potion> SUNFIRE = holder(JolCraftPotionIds.SUNFIRE);
+    public static final Holder<Potion> LONG_SUNFIRE = holder(JolCraftPotionIds.LONG_SUNFIRE);
+    public static final Holder<Potion> LUMINANCE = holder(JolCraftPotionIds.LUMINANCE);
+    public static final Holder<Potion> LONG_LUMINANCE = holder(JolCraftPotionIds.LONG_LUMINANCE);
+    public static final Holder<Potion> STRONG_LUMINANCE = holder(JolCraftPotionIds.STRONG_LUMINANCE);
+    public static final Holder<Potion> VITALITY = holder(JolCraftPotionIds.VITALITY);
+    public static final Holder<Potion> LONG_VITALITY = holder(JolCraftPotionIds.LONG_VITALITY);
+    public static final Holder<Potion> STRONG_VITALITY = holder(JolCraftPotionIds.STRONG_VITALITY);
 
-    public static final Holder<Potion> LONG_ANCIENT_MEMORY = POTIONS.register(JolCraftPotionIds.LONG_ANCIENT_MEMORY,
-            () -> new Potion(JolCraftPotionIds.LONG_ANCIENT_MEMORY,
-                    new MobEffectInstance(JolCraftEffects.ANCIENT_MEMORY, 600, 0)));
-
-    public static final Holder<Potion> LOCKPICKING = POTIONS.register(JolCraftPotionIds.LOCKPICKING,
-            () -> new Potion(JolCraftPotionIds.LOCKPICKING,
-                    new MobEffectInstance(JolCraftEffects.LOCKPICKING, 600, 0)));
-
-    public static final Holder<Potion> LONG_LOCKPICKING = POTIONS.register(JolCraftPotionIds.LONG_LOCKPICKING,
-            () -> new Potion(JolCraftPotionIds.LONG_LOCKPICKING,
-                    new MobEffectInstance(JolCraftEffects.LOCKPICKING, 1200, 0)));
-
-    public static final Holder<Potion> STRONG_LOCKPICKING = POTIONS.register(JolCraftPotionIds.STRONG_LOCKPICKING,
-            () -> new Potion(JolCraftPotionIds.STRONG_LOCKPICKING,
-                    new MobEffectInstance(JolCraftEffects.LOCKPICKING, 300, 1)));
-
-    public static final Holder<Potion> DWARVEN_HASTE = POTIONS.register(JolCraftPotionIds.DWARVEN_HASTE,
-            () -> new Potion(JolCraftPotionIds.DWARVEN_HASTE,
-                    new MobEffectInstance(JolCraftEffects.DWARVEN_HASTE, 6000, 0)));
-
-    public static final Holder<Potion> LONG_DWARVEN_HASTE = POTIONS.register(JolCraftPotionIds.LONG_DWARVEN_HASTE,
-            () -> new Potion(JolCraftPotionIds.LONG_DWARVEN_HASTE,
-                    new MobEffectInstance(JolCraftEffects.DWARVEN_HASTE, 12000, 0)));
-
-    public static final Holder<Potion> STRONG_DWARVEN_HASTE = POTIONS.register(JolCraftPotionIds.STRONG_DWARVEN_HASTE,
-            () -> new Potion(JolCraftPotionIds.STRONG_DWARVEN_HASTE,
-                    new MobEffectInstance(JolCraftEffects.DWARVEN_HASTE, 3000, 1)));
-
-    public static final Holder<Potion> STRONG_LUCK = POTIONS.register(JolCraftPotionIds.STRONG_LUCK,
-            () -> new Potion(JolCraftPotionIds.STRONG_LUCK,
-                    new MobEffectInstance(MobEffects.LUCK, 3000, 1)));
-
-    public static final Holder<Potion> BULWARK = POTIONS.register(JolCraftPotionIds.BULWARK,
-            () -> new Potion(JolCraftPotionIds.BULWARK,
-                    new MobEffectInstance(JolCraftEffects.BULWARK, 1200, 0)));
-
-    public static final Holder<Potion> LONG_BULWARK = POTIONS.register(JolCraftPotionIds.LONG_BULWARK,
-            () -> new Potion(JolCraftPotionIds.LONG_BULWARK,
-                    new MobEffectInstance(JolCraftEffects.BULWARK, 2400, 0)));
-
-    public static final Holder<Potion> STRONG_BULWARK = POTIONS.register(JolCraftPotionIds.STRONG_BULWARK,
-            () -> new Potion(JolCraftPotionIds.STRONG_BULWARK,
-                    new MobEffectInstance(JolCraftEffects.BULWARK, 600, 1)));
-
-    public static final Holder<Potion> ALCHEMIST_FOCUS = POTIONS.register(JolCraftPotionIds.ALCHEMIST_FOCUS,
-            () -> new Potion(JolCraftPotionIds.ALCHEMIST_FOCUS,
-                    new MobEffectInstance(JolCraftEffects.ALCHEMIST_FOCUS, 600, 0)));
-
-    public static final Holder<Potion> LONG_ALCHEMIST_FOCUS = POTIONS.register(JolCraftPotionIds.LONG_ALCHEMIST_FOCUS,
-            () -> new Potion(JolCraftPotionIds.LONG_ALCHEMIST_FOCUS,
-                    new MobEffectInstance(JolCraftEffects.ALCHEMIST_FOCUS, 1200, 0)));
-
-    public static final Holder<Potion> STRONG_ALCHEMIST_FOCUS = POTIONS.register(JolCraftPotionIds.STRONG_ALCHEMIST_FOCUS,
-            () -> new Potion(JolCraftPotionIds.STRONG_ALCHEMIST_FOCUS,
-                    new MobEffectInstance(JolCraftEffects.ALCHEMIST_FOCUS, 300, 1)));
-
-    public static final Holder<Potion> ANCHOR = POTIONS.register(JolCraftPotionIds.ANCHOR,
-            () -> new Potion(JolCraftPotionIds.ANCHOR,
-                    new MobEffectInstance(JolCraftEffects.ANCHOR, 6000, 0)));
-
-    public static final Holder<Potion> LONG_ANCHOR = POTIONS.register(JolCraftPotionIds.LONG_ANCHOR,
-            () -> new Potion(JolCraftPotionIds.LONG_ANCHOR,
-                    new MobEffectInstance(JolCraftEffects.ANCHOR, 12000, 0)));
-
-    public static final Holder<Potion> DEXTERITY = POTIONS.register(JolCraftPotionIds.DEXTERITY,
-            () -> new Potion(JolCraftPotionIds.DEXTERITY,
-                    new MobEffectInstance(JolCraftEffects.DEXTERITY, 3600, 0)));
-
-    public static final Holder<Potion> LONG_DEXTERITY = POTIONS.register(JolCraftPotionIds.LONG_DEXTERITY,
-            () -> new Potion(JolCraftPotionIds.LONG_DEXTERITY,
-                    new MobEffectInstance(JolCraftEffects.DEXTERITY, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_DEXTERITY = POTIONS.register(JolCraftPotionIds.STRONG_DEXTERITY,
-            () -> new Potion(JolCraftPotionIds.STRONG_DEXTERITY,
-                    new MobEffectInstance(JolCraftEffects.DEXTERITY, 1800, 1)));
-
-    public static final Holder<Potion> DWARVEN_RAGE = POTIONS.register(JolCraftPotionIds.DWARVEN_RAGE,
-            () -> new Potion(JolCraftPotionIds.DWARVEN_RAGE,
-                    new MobEffectInstance(JolCraftEffects.DWARVEN_RAGE, 1200, 0)));
-
-    public static final Holder<Potion> LONG_DWARVEN_RAGE = POTIONS.register(JolCraftPotionIds.LONG_DWARVEN_RAGE,
-            () -> new Potion(JolCraftPotionIds.LONG_DWARVEN_RAGE,
-                    new MobEffectInstance(JolCraftEffects.DWARVEN_RAGE, 2400, 0)));
-
-    public static final Holder<Potion> STRONG_DWARVEN_RAGE = POTIONS.register(JolCraftPotionIds.STRONG_DWARVEN_RAGE,
-            () -> new Potion(JolCraftPotionIds.STRONG_DWARVEN_RAGE,
-                    new MobEffectInstance(JolCraftEffects.DWARVEN_RAGE, 600, 1)));
-
-    public static final Holder<Potion> ENDURANCE = POTIONS.register(JolCraftPotionIds.ENDURANCE,
-            () -> new Potion(JolCraftPotionIds.ENDURANCE,
-                    new MobEffectInstance(JolCraftEffects.ENDURANCE, 6000, 0)));
-
-    public static final Holder<Potion> LONG_ENDURANCE = POTIONS.register(JolCraftPotionIds.LONG_ENDURANCE,
-            () -> new Potion(JolCraftPotionIds.LONG_ENDURANCE,
-                    new MobEffectInstance(JolCraftEffects.ENDURANCE, 12000, 0)));
-
-    public static final Holder<Potion> STRONG_ENDURANCE = POTIONS.register(JolCraftPotionIds.STRONG_ENDURANCE,
-            () -> new Potion(JolCraftPotionIds.STRONG_ENDURANCE,
-                    new MobEffectInstance(JolCraftEffects.ENDURANCE, 3000, 1)));
-
-    public static final Holder<Potion> MAGIC_RESISTANCE = POTIONS.register(JolCraftPotionIds.MAGIC_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.MAGIC_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.MAGIC_RESISTANCE, 3600, 0)));
-
-    public static final Holder<Potion> LONG_MAGIC_RESISTANCE = POTIONS.register(JolCraftPotionIds.LONG_MAGIC_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.LONG_MAGIC_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.MAGIC_RESISTANCE, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_MAGIC_RESISTANCE = POTIONS.register(JolCraftPotionIds.STRONG_MAGIC_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.STRONG_MAGIC_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.MAGIC_RESISTANCE, 1800, 1)));
-
-    public static final Holder<Potion> POISON_RESISTANCE = POTIONS.register(JolCraftPotionIds.POISON_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.POISON_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.POISON_RESISTANCE, 3600, 0)));
-
-    public static final Holder<Potion> LONG_POISON_RESISTANCE = POTIONS.register(JolCraftPotionIds.LONG_POISON_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.LONG_POISON_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.POISON_RESISTANCE, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_POISON_RESISTANCE = POTIONS.register(JolCraftPotionIds.STRONG_POISON_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.STRONG_POISON_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.POISON_RESISTANCE, 1800, 1)));
-
-    public static final Holder<Potion> SLOW_RESISTANCE = POTIONS.register(JolCraftPotionIds.SLOW_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.SLOW_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.SLOW_RESISTANCE, 3600, 0)));
-
-    public static final Holder<Potion> LONG_SLOW_RESISTANCE = POTIONS.register(JolCraftPotionIds.LONG_SLOW_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.LONG_SLOW_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.SLOW_RESISTANCE, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_SLOW_RESISTANCE = POTIONS.register(JolCraftPotionIds.STRONG_SLOW_RESISTANCE,
-            () -> new Potion(JolCraftPotionIds.STRONG_SLOW_RESISTANCE,
-                    new MobEffectInstance(JolCraftEffects.SLOW_RESISTANCE, 1800, 1)));
-
-    public static final Holder<Potion> MARKSMAN = POTIONS.register(JolCraftPotionIds.MARKSMAN,
-            () -> new Potion(JolCraftPotionIds.MARKSMAN,
-                    new MobEffectInstance(JolCraftEffects.MARKSMAN, 3600, 0)));
-
-    public static final Holder<Potion> LONG_MARKSMAN = POTIONS.register(JolCraftPotionIds.LONG_MARKSMAN,
-            () -> new Potion(JolCraftPotionIds.LONG_MARKSMAN,
-                    new MobEffectInstance(JolCraftEffects.MARKSMAN, 9600, 0)));
-
-    public static final Holder<Potion> STRONG_MARKSMAN = POTIONS.register(JolCraftPotionIds.STRONG_MARKSMAN,
-            () -> new Potion(JolCraftPotionIds.STRONG_MARKSMAN,
-                    new MobEffectInstance(JolCraftEffects.MARKSMAN, 1800, 1)));
-
-    public static final Holder<Potion> STONE_SKIN = POTIONS.register(JolCraftPotionIds.STONE_SKIN,
-            () -> new Potion(JolCraftPotionIds.STONE_SKIN,
-                    new MobEffectInstance(JolCraftEffects.STONE_SKIN, 1200, 0)));
-
-    public static final Holder<Potion> LONG_STONE_SKIN = POTIONS.register(JolCraftPotionIds.LONG_STONE_SKIN,
-            () -> new Potion(JolCraftPotionIds.LONG_STONE_SKIN,
-                    new MobEffectInstance(JolCraftEffects.STONE_SKIN, 2400, 0)));
-
-    public static final Holder<Potion> STRONG_STONE_SKIN = POTIONS.register(JolCraftPotionIds.STRONG_STONE_SKIN,
-            () -> new Potion(JolCraftPotionIds.STRONG_STONE_SKIN,
-                    new MobEffectInstance(JolCraftEffects.STONE_SKIN, 600, 1)));
-
-    public static final Holder<Potion> HOARD = POTIONS.register(JolCraftPotionIds.HOARD,
-            () -> new Potion(JolCraftPotionIds.HOARD,
-                    new MobEffectInstance(JolCraftEffects.HOARD, 6000, 0)));
-
-    public static final Holder<Potion> LONG_HOARD = POTIONS.register(JolCraftPotionIds.LONG_HOARD,
-            () -> new Potion(JolCraftPotionIds.LONG_HOARD,
-                    new MobEffectInstance(JolCraftEffects.HOARD, 12000, 0)));
-
-    public static final Holder<Potion> STRONG_HOARD = POTIONS.register(JolCraftPotionIds.STRONG_HOARD,
-            () -> new Potion(JolCraftPotionIds.STRONG_HOARD,
-                    new MobEffectInstance(JolCraftEffects.HOARD, 3000, 1)));
-
-    public static final Holder<Potion> PIERCING = POTIONS.register(JolCraftPotionIds.PIERCING,
-            () -> new Potion(JolCraftPotionIds.PIERCING,
-                    new MobEffectInstance(JolCraftEffects.PIERCING, 3600, 0)));
-
-    public static final Holder<Potion> LONG_PIERCING = POTIONS.register(JolCraftPotionIds.LONG_PIERCING,
-            () -> new Potion(JolCraftPotionIds.LONG_PIERCING,
-                    new MobEffectInstance(JolCraftEffects.PIERCING, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_PIERCING = POTIONS.register(JolCraftPotionIds.STRONG_PIERCING,
-            () -> new Potion(JolCraftPotionIds.STRONG_PIERCING,
-                    new MobEffectInstance(JolCraftEffects.PIERCING, 1800, 1)));
-
-    public static final Holder<Potion> TENACITY = POTIONS.register(JolCraftPotionIds.TENACITY,
-            () -> new Potion(JolCraftPotionIds.TENACITY,
-                    new MobEffectInstance(JolCraftEffects.TENACITY, 3600, 0)));
-
-    public static final Holder<Potion> LONG_TENACITY = POTIONS.register(JolCraftPotionIds.LONG_TENACITY,
-            () -> new Potion(JolCraftPotionIds.LONG_TENACITY,
-                    new MobEffectInstance(JolCraftEffects.TENACITY, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_TENACITY = POTIONS.register(JolCraftPotionIds.STRONG_TENACITY,
-            () -> new Potion(JolCraftPotionIds.STRONG_TENACITY,
-                    new MobEffectInstance(JolCraftEffects.TENACITY, 1800, 1)));
-
-    public static final Holder<Potion> WISDOM = POTIONS.register(JolCraftPotionIds.WISDOM,
-            () -> new Potion(JolCraftPotionIds.WISDOM,
-                    new MobEffectInstance(JolCraftEffects.WISDOM, 3600, 0)));
-
-    public static final Holder<Potion> LONG_WISDOM = POTIONS.register(JolCraftPotionIds.LONG_WISDOM,
-            () -> new Potion(JolCraftPotionIds.LONG_WISDOM,
-                    new MobEffectInstance(JolCraftEffects.WISDOM, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_WISDOM = POTIONS.register(JolCraftPotionIds.STRONG_WISDOM,
-            () -> new Potion(JolCraftPotionIds.STRONG_WISDOM,
-                    new MobEffectInstance(JolCraftEffects.WISDOM, 1800, 1)));
-
-    public static final Holder<Potion> MIGHT = POTIONS.register(JolCraftPotionIds.MIGHT,
-            () -> new Potion(JolCraftPotionIds.MIGHT,
-                    new MobEffectInstance(JolCraftEffects.MIGHT, 3600, 0)));
-
-    public static final Holder<Potion> LONG_MIGHT = POTIONS.register(JolCraftPotionIds.LONG_MIGHT,
-            () -> new Potion(JolCraftPotionIds.LONG_MIGHT,
-                    new MobEffectInstance(JolCraftEffects.MIGHT, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_MIGHT = POTIONS.register(JolCraftPotionIds.STRONG_MIGHT,
-            () -> new Potion(JolCraftPotionIds.STRONG_MIGHT,
-                    new MobEffectInstance(JolCraftEffects.MIGHT, 1800, 1)));
-
-    public static final Holder<Potion> HARVEST = POTIONS.register(JolCraftPotionIds.HARVEST,
-            () -> new Potion(JolCraftPotionIds.HARVEST,
-                    new MobEffectInstance(JolCraftEffects.HARVEST, 3600, 0)));
-
-    public static final Holder<Potion> LONG_HARVEST = POTIONS.register(JolCraftPotionIds.LONG_HARVEST,
-            () -> new Potion(JolCraftPotionIds.LONG_HARVEST,
-                    new MobEffectInstance(JolCraftEffects.HARVEST, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_HARVEST = POTIONS.register(JolCraftPotionIds.STRONG_HARVEST,
-            () -> new Potion(JolCraftPotionIds.STRONG_HARVEST,
-                    new MobEffectInstance(JolCraftEffects.HARVEST, 1800, 1)));
-
-    public static final Holder<Potion> LUNAR = POTIONS.register(JolCraftPotionIds.LUNAR,
-            () -> new Potion(JolCraftPotionIds.LUNAR,
-                    new MobEffectInstance(JolCraftEffects.LUNAR, 3600, 0)));
-
-    public static final Holder<Potion> LONG_LUNAR = POTIONS.register(JolCraftPotionIds.LONG_LUNAR,
-            () -> new Potion(JolCraftPotionIds.LONG_LUNAR,
-                    new MobEffectInstance(JolCraftEffects.LUNAR, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_LUNAR = POTIONS.register(JolCraftPotionIds.STRONG_LUNAR,
-            () -> new Potion(JolCraftPotionIds.STRONG_LUNAR,
-                    new MobEffectInstance(JolCraftEffects.LUNAR, 1800, 1)));
-
-    public static final Holder<Potion> CONFLAGRATION = POTIONS.register(JolCraftPotionIds.CONFLAGRATION,
-            () -> new Potion(JolCraftPotionIds.CONFLAGRATION,
-                    new MobEffectInstance(JolCraftEffects.CONFLAGRATION, 3600, 0)));
-
-    public static final Holder<Potion> LONG_CONFLAGRATION = POTIONS.register(JolCraftPotionIds.LONG_CONFLAGRATION,
-            () -> new Potion(JolCraftPotionIds.LONG_CONFLAGRATION,
-                    new MobEffectInstance(JolCraftEffects.CONFLAGRATION, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_CONFLAGRATION = POTIONS.register(JolCraftPotionIds.STRONG_CONFLAGRATION,
-            () -> new Potion(JolCraftPotionIds.STRONG_CONFLAGRATION,
-                    new MobEffectInstance(JolCraftEffects.CONFLAGRATION, 1800, 1)));
-
-    public static final Holder<Potion> SUNFIRE = POTIONS.register(JolCraftPotionIds.SUNFIRE,
-            () -> new Potion(JolCraftPotionIds.SUNFIRE,
-                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 600, 0)));
-
-    public static final Holder<Potion> LONG_SUNFIRE = POTIONS.register(JolCraftPotionIds.LONG_SUNFIRE,
-            () -> new Potion(JolCraftPotionIds.LONG_SUNFIRE,
-                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 1200, 0)));
-
-    public static final Holder<Potion> LUMINANCE = POTIONS.register(JolCraftPotionIds.LUMINANCE,
-            () -> new Potion(JolCraftPotionIds.LUMINANCE,
-                    new MobEffectInstance(JolCraftEffects.LUMINANCE, 3600, 0)));
-
-    public static final Holder<Potion> LONG_LUMINANCE = POTIONS.register(JolCraftPotionIds.LONG_LUMINANCE,
-            () -> new Potion(JolCraftPotionIds.LONG_LUMINANCE,
-                    new MobEffectInstance(JolCraftEffects.LUMINANCE, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_LUMINANCE = POTIONS.register(JolCraftPotionIds.STRONG_LUMINANCE,
-            () -> new Potion(JolCraftPotionIds.STRONG_LUMINANCE,
-                    new MobEffectInstance(JolCraftEffects.LUMINANCE, 1800, 1)));
-
-    public static final Holder<Potion> VITALITY = POTIONS.register(JolCraftPotionIds.VITALITY,
-            () -> new Potion(JolCraftPotionIds.VITALITY,
-                    new MobEffectInstance(JolCraftEffects.VITALITY, 3600, 0)));
-
-    public static final Holder<Potion> LONG_VITALITY = POTIONS.register(JolCraftPotionIds.LONG_VITALITY,
-            () -> new Potion(JolCraftPotionIds.LONG_VITALITY,
-                    new MobEffectInstance(JolCraftEffects.VITALITY, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_VITALITY = POTIONS.register(JolCraftPotionIds.STRONG_VITALITY,
-            () -> new Potion(JolCraftPotionIds.STRONG_VITALITY,
-                    new MobEffectInstance(JolCraftEffects.VITALITY, 1800, 1)));
-
-    // -------------------------------------------------------------------------
     // Harmful
-    // -------------------------------------------------------------------------
 
-    // Curses
+    public static final Holder<Potion> ATAXIA_CURSE = holder(JolCraftPotionIds.ATAXIA_CURSE);
+    public static final Holder<Potion> CURSED_WOUND = holder(JolCraftPotionIds.CURSED_WOUND);
+    public static final Holder<Potion> DELIRIUM_CURSE = holder(JolCraftPotionIds.DELIRIUM_CURSE);
+    public static final Holder<Potion> FAMINE_CURSE = holder(JolCraftPotionIds.FAMINE_CURSE);
+    public static final Holder<Potion> FRAILTY_CURSE = holder(JolCraftPotionIds.FRAILTY_CURSE);
+    public static final Holder<Potion> HEX = holder(JolCraftPotionIds.HEX);
+    public static final Holder<Potion> VITALITY_CURSE = holder(JolCraftPotionIds.VITALITY_CURSE);
+    public static final Holder<Potion> DISARMED = holder(JolCraftPotionIds.DISARMED);
+    public static final Holder<Potion> STUNNED = holder(JolCraftPotionIds.STUNNED);
+    public static final Holder<Potion> ROOTED = holder(JolCraftPotionIds.ROOTED);
+    public static final Holder<Potion> SUPPRESSED = holder(JolCraftPotionIds.SUPPRESSED);
+    public static final Holder<Potion> CORROSION = holder(JolCraftPotionIds.CORROSION);
+    public static final Holder<Potion> LONG_CORROSION = holder(JolCraftPotionIds.LONG_CORROSION);
+    public static final Holder<Potion> STRONG_CORROSION = holder(JolCraftPotionIds.STRONG_CORROSION);
+    public static final Holder<Potion> UNLUCK = holder(JolCraftPotionIds.UNLUCK);
+    public static final Holder<Potion> STRONG_UNLUCK = holder(JolCraftPotionIds.STRONG_UNLUCK);
 
-    public static final Holder<Potion> ATAXIA_CURSE = POTIONS.register(JolCraftPotionIds.ATAXIA_CURSE,
-            () -> new Potion(JolCraftPotionIds.ATAXIA_CURSE,
-                    new MobEffectInstance(JolCraftEffects.ATAXIA_CURSE, 3000, 0)));
+    public static PotionFamily familyOf(Holder<Potion> potion) {
+        PotionFamily family = FAMILIES.get(potion);
 
-    public static final Holder<Potion> CURSED_WOUND = POTIONS.register(JolCraftPotionIds.CURSED_WOUND,
-            () -> new Potion(JolCraftPotionIds.CURSED_WOUND,
-                    new MobEffectInstance(JolCraftEffects.CURSED_WOUND, 600, 0)));
+        if (family == null) {
+            throw new IllegalArgumentException(
+                    "Potion is not registered to a JolCraft family: " + potion
+            );
+        }
 
-    public static final Holder<Potion> DELIRIUM_CURSE = POTIONS.register(JolCraftPotionIds.DELIRIUM_CURSE,
-            () -> new Potion(JolCraftPotionIds.DELIRIUM_CURSE,
-                    new MobEffectInstance(JolCraftEffects.DELIRIUM_CURSE, 3000, 0)));
-
-    public static final Holder<Potion> FAMINE_CURSE = POTIONS.register(JolCraftPotionIds.FAMINE_CURSE,
-            () -> new Potion(JolCraftPotionIds.FAMINE_CURSE,
-                    new MobEffectInstance(JolCraftEffects.FAMINE_CURSE, 3000, 0)));
-
-    public static final Holder<Potion> FRAILTY_CURSE = POTIONS.register(JolCraftPotionIds.FRAILTY_CURSE,
-            () -> new Potion(JolCraftPotionIds.FRAILTY_CURSE,
-                    new MobEffectInstance(JolCraftEffects.FRAILTY_CURSE, 3000, 0)));
-
-    public static final Holder<Potion> HEX = POTIONS.register(JolCraftPotionIds.HEX,
-            () -> new Potion(JolCraftPotionIds.HEX,
-                    new MobEffectInstance(JolCraftEffects.HEX, 1200, 0)));
-
-    public static final Holder<Potion> VITALITY_CURSE = POTIONS.register(JolCraftPotionIds.VITALITY_CURSE,
-            () -> new Potion(JolCraftPotionIds.VITALITY_CURSE,
-                    new MobEffectInstance(JolCraftEffects.VITALITY_CURSE, 3000, 0)));
-
-    // Crowd Control
-
-    public static final Holder<Potion> DISARMED = POTIONS.register(JolCraftPotionIds.DISARMED,
-            () -> new Potion(JolCraftPotionIds.DISARMED,
-                    new MobEffectInstance(JolCraftEffects.DISARMED, 200, 0)));
-
-    public static final Holder<Potion> STUNNED = POTIONS.register(JolCraftPotionIds.STUNNED,
-            () -> new Potion(JolCraftPotionIds.STUNNED,
-                    new MobEffectInstance(JolCraftEffects.STUNNED, 200, 0)));
-
-    public static final Holder<Potion> ROOTED = POTIONS.register(JolCraftPotionIds.ROOTED,
-            () -> new Potion(JolCraftPotionIds.ROOTED,
-                    new MobEffectInstance(JolCraftEffects.ROOTED, 200, 0)));
-
-    public static final Holder<Potion> SUPPRESSED = POTIONS.register(JolCraftPotionIds.SUPPRESSED,
-            () -> new Potion(JolCraftPotionIds.SUPPRESSED,
-                    new MobEffectInstance(JolCraftEffects.SUPPRESSED, 200, 0)));
-
-    // Other
-
-    public static final Holder<Potion> CORROSION = POTIONS.register(JolCraftPotionIds.CORROSION,
-            () -> new Potion(JolCraftPotionIds.CORROSION,
-                    new MobEffectInstance(JolCraftEffects.CORROSION, 1200, 0)));
-
-    public static final Holder<Potion> LONG_CORROSION = POTIONS.register(JolCraftPotionIds.LONG_CORROSION,
-            () -> new Potion(JolCraftPotionIds.LONG_CORROSION,
-                    new MobEffectInstance(JolCraftEffects.CORROSION, 2400, 0)));
-
-    public static final Holder<Potion> STRONG_CORROSION = POTIONS.register(JolCraftPotionIds.STRONG_CORROSION,
-            () -> new Potion(JolCraftPotionIds.STRONG_CORROSION,
-                    new MobEffectInstance(JolCraftEffects.CORROSION, 600, 1)));
-
-    public static final Holder<Potion> UNLUCK = POTIONS.register(JolCraftPotionIds.UNLUCK,
-            () -> new Potion(JolCraftPotionIds.UNLUCK,
-                    new MobEffectInstance(MobEffects.UNLUCK, 6000, 0)));
-
-    public static final Holder<Potion> STRONG_UNLUCK = POTIONS.register(JolCraftPotionIds.STRONG_UNLUCK,
-            () -> new Potion(JolCraftPotionIds.STRONG_UNLUCK,
-                    new MobEffectInstance(MobEffects.UNLUCK, 3000, 1)));
+        return family;
+    }
 
     public static void register(IEventBus eventBus) {
         POTIONS.register(eventBus);
@@ -398,4 +191,131 @@ public final class JolCraftPotions {
                 POTIONS.getEntries().size()
         );
     }
+
+    private static void family(
+            String id,
+            Holder<MobEffect> effect,
+            int duration,
+            int longDuration,
+            int strongDuration
+    ) {
+        registerFamily(new PotionFamily(
+                registerPotion(id, effect, duration, 0),
+                registerPotion(longId(id), effect, longDuration, 0),
+                registerPotion(strongId(id), effect, strongDuration, 1)
+        ));
+    }
+
+    private static void longFamily(
+            String id,
+            Holder<MobEffect> effect,
+            int duration,
+            int longDuration
+    ) {
+        registerFamily(new PotionFamily(
+                registerPotion(id, effect, duration, 0),
+                registerPotion(longId(id), effect, longDuration, 0),
+                null
+        ));
+    }
+
+    private static void strongFamily(
+            String id,
+            Holder<MobEffect> effect,
+            int duration,
+            int strongDuration
+    ) {
+        registerFamily(new PotionFamily(
+                registerPotion(id, effect, duration, 0),
+                null,
+                registerPotion(strongId(id), effect, strongDuration, 1)
+        ));
+    }
+
+    private static void single(
+            String id,
+            Holder<MobEffect> effect,
+            int duration
+    ) {
+        single(id, effect, duration, 0);
+    }
+
+    private static void single(
+            String id,
+            Holder<MobEffect> effect,
+            int duration,
+            int amplifier
+    ) {
+        registerFamily(new PotionFamily(
+                registerPotion(id, effect, duration, amplifier),
+                null,
+                null
+        ));
+    }
+
+    private static Holder<Potion> registerPotion(
+            String id,
+            Holder<MobEffect> effect,
+            int duration,
+            int amplifier
+    ) {
+        Holder<Potion> potion = POTIONS.register(
+                id,
+                () -> new Potion(
+                        id,
+                        new MobEffectInstance(
+                                effect,
+                                duration,
+                                amplifier
+                        )
+                )
+        );
+
+        POTIONS_BY_ID.put(id, potion);
+        return potion;
+    }
+
+    private static void registerFamily(PotionFamily family) {
+        FAMILIES.put(family.base(), family);
+
+        if (family.longPotion() != null) {
+            FAMILIES.put(family.longPotion(), family);
+        }
+
+        if (family.strongPotion() != null) {
+            FAMILIES.put(family.strongPotion(), family);
+        }
+    }
+
+    private static Holder<Potion> holder(String id) {
+        Holder<Potion> potion = POTIONS_BY_ID.get(id);
+
+        if (potion == null) {
+            throw new IllegalStateException(
+                    "Potion was not registered: " + id
+            );
+        }
+
+        return potion;
+    }
+
+    private static String longId(String id) {
+        return JolCraftStrings.underscored(
+                JolCraftDictionary.LONG,
+                id
+        );
+    }
+
+    private static String strongId(String id) {
+        return JolCraftStrings.underscored(
+                JolCraftDictionary.STRONG,
+                id
+        );
+    }
+
+    public record PotionFamily(
+            Holder<Potion> base,
+            @Nullable Holder<Potion> longPotion,
+            @Nullable Holder<Potion> strongPotion
+    ) {}
 }

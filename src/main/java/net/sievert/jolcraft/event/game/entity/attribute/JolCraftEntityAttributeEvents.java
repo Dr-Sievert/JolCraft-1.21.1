@@ -20,11 +20,27 @@ public final class JolCraftEntityAttributeEvents {
         JolCraftEntityAttributeEventsHelper.tickAttributes(entity);
     }
 
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        JolCraftEntityAttributeEventsHelper.applyIncomingDamageModifiers(event);
+    public static void applyAttackBuild(LivingIncomingDamageEvent event) {
+        JolCraftEntityAttributeEventsHelper.applyAttackBuild(event);
     }
 
-    public static void onFinalDamage(LivingDamageEvent.Pre event) {
-        JolCraftEntityAttributeEventsHelper.applyFinalDamageReductions(event);
+    public static void applyDefenseShaping(LivingIncomingDamageEvent event) {
+        JolCraftEntityAttributeEventsHelper.applyDefenseShaping(event);
+    }
+
+    public static void applyFinalDefenses(LivingDamageEvent.Pre event) {
+        JolCraftEntityAttributeEventsHelper.applyFinalDefenses(event);
+    }
+
+    public static void applyPostHitMarkers(LivingDamageEvent.Post event) {
+        JolCraftEntityAttributeEventsHelper.applyPostHitMarkers(event);
+    }
+
+    public static void applySecondaryDamage(LivingDamageEvent.Post event) {
+        JolCraftEntityAttributeEventsHelper.applySecondaryDamage(event);
+    }
+
+    public static void applyPostHitSideEffects(LivingDamageEvent.Post event) {
+        JolCraftEntityAttributeEventsHelper.applyPostHitSideEffects(event);
     }
 }

@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.DamageTypeTagsProvider;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.JolCraft;
@@ -73,33 +74,53 @@ public final class JolCraftDamageTypeTagProvider
             @Nullable ExistingFileHelper existingFileHelper,
             @NotNull JolCraftDataTracking tracking
     ) {
+        // Custom Groups
+
         target.tag(JolCraftTags.DamageTypes.CURSE)
                 .addOptional(JolCraftDamageTypes.CURSED_WOUND.location())
                 .addOptional(JolCraftDamageTypes.VITALITY_CURSE.location());
 
+        // Affinities
+
         target.tag(Tags.DamageTypes.IS_MAGIC)
                 .addTag(JolCraftTags.DamageTypes.CURSE);
+
+        target.tag(DamageTypeTags.IS_FIRE)
+                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
+
+        // Behavior
 
         target.tag(DamageTypeTags.BYPASSES_ARMOR)
                 .addTag(JolCraftTags.DamageTypes.CURSE)
                 .addOptional(JolCraftDamageTypes.SUNFIRE.location());
 
+        target.tag(DamageTypeTags.BYPASSES_WOLF_ARMOR)
+                .addTag(JolCraftTags.DamageTypes.CURSE);
+
         target.tag(DamageTypeTags.BYPASSES_COOLDOWN)
-                .addTag(JolCraftTags.DamageTypes.CURSE)
-                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
-
-        target.tag(DamageTypeTags.IS_FIRE)
-                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
-
-        target.tag(DamageTypeTags.NO_KNOCKBACK)
                 .addTag(JolCraftTags.DamageTypes.CURSE)
                 .addOptional(JolCraftDamageTypes.SUNFIRE.location());
 
         target.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS)
                 .addTag(JolCraftTags.DamageTypes.CURSE);
 
+        target.tag(DamageTypeTags.ALWAYS_TRIGGERS_SILVERFISH)
+                .addTag(JolCraftTags.DamageTypes.CURSE);
+
+        target.tag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS)
+                .addTag(JolCraftTags.DamageTypes.CURSE);
+
+        target.tag(DamageTypeTags.PANIC_CAUSES)
+                .addTag(JolCraftTags.DamageTypes.CURSE);
 
         target.tag(DamageTypeTags.BYPASSES_RESISTANCE)
                 .addTag(JolCraftTags.DamageTypes.CURSE);
+
+        target.tag(DamageTypeTags.WITCH_RESISTANT_TO)
+                .addTag(JolCraftTags.DamageTypes.CURSE);
+
+        target.tag(DamageTypeTags.NO_KNOCKBACK)
+                .addTag(JolCraftTags.DamageTypes.CURSE)
+                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
     }
 }

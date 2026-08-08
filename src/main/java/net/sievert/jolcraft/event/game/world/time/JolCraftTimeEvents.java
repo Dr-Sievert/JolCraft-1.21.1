@@ -6,6 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.event.game.recipe.brewing.BrewingSleepHandler;
 import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachmentHelper;
 
 @SuppressWarnings("removal")

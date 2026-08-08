@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game.world.time;
+package net.sievert.jolcraft.event.game.recipe.brewing;
 
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;

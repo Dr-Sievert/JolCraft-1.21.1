@@ -12,7 +12,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -22,8 +21,10 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
+import net.sievert.jolcraft.world.entity.damage.JolCraftDamageTypes;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
+import net.sievert.jolcraft.world.entity.effect.JolCraftOwnedEffectHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.util.JolCraftDimensionHelper;
 import net.sievert.jolcraft.world.util.JolCraftTimeHelper;
@@ -35,16 +36,25 @@ import java.util.UUID;
 @SuppressWarnings("SameParameterValue")
 public final class JolCraftEntityAttributeEventsHelper {
 
-    private static final ResourceLocation FROSTVEIN_ID = JolCraft.location(JolCraftAttributeIds.SLOW_RESISTANCE);
+    private static final ResourceLocation FROSTVEIN_ID =
+            JolCraft.location(JolCraftAttributeIds.SLOW_RESISTANCE);
 
     private static final Map<UUID, Double> FROSTVEIN_CACHE = new HashMap<>();
 
-    private static final String NBT_LUMINANCE_GLOWING =
+    private static final int MAX_SUNFIRE_DURATION = 60 * 20;
+
+    private static final String NBT_LUMINANCE_EFFECTS =
             JolCraftStrings.underscored(
                     JolCraft.MOD_ID,
                     JolCraftAttributeIds.LUMINANCE,
                     JolCraftDictionary.EFFECT
             );
+
+    private static final String LUMINANCE_GLOWING_ID =
+            MobEffects.GLOWING.unwrapKey()
+                    .orElseThrow()
+                    .location()
+                    .toString();
 
     private JolCraftEntityAttributeEventsHelper() {}
 
@@ -54,12 +64,11 @@ public final class JolCraftEntityAttributeEventsHelper {
         tickFrostvein(entity);
         tickMoonShield(entity);
         tickLuminance(entity);
+        tickSunfire(entity);
     }
 
     public static void clearTrackedAttributes(LivingEntity entity) {
-        UUID uuid = entity.getUUID();
-
-        FROSTVEIN_CACHE.remove(uuid);
+        FROSTVEIN_CACHE.remove(entity.getUUID());
     }
 
     private static boolean shouldIgnoreAttribute(
@@ -175,109 +184,177 @@ public final class JolCraftEntityAttributeEventsHelper {
     }
 
     private static void tickLuminance(LivingEntity entity) {
-        boolean hasLuminance = entity.getAttributeValue(JolCraftAttributes.LUMINANCE) > 0.0D;
+        JolCraftOwnedEffectHelper.syncInfinite(
+                entity,
+                MobEffects.GLOWING,
+                0,
+                NBT_LUMINANCE_EFFECTS,
+                LUMINANCE_GLOWING_ID,
+                entity.getAttributeValue(JolCraftAttributes.LUMINANCE) > 0.0D,
+                false,
+                false,
+                false
+        );
+    }
 
-        MobEffectInstance glowing = entity.getEffect(MobEffects.GLOWING);
-
-        boolean owned = entity.getPersistentData().getBoolean(NBT_LUMINANCE_GLOWING);
-
-        if (hasLuminance) {
-            if (glowing != null) return;
-
-            entity.addEffect(
-                    new MobEffectInstance(
-                            MobEffects.GLOWING,
-                            MobEffectInstance.INFINITE_DURATION,
-                            0,
-                            false,
-                            false,
-                            false
-                    )
-            );
-
-            entity.getPersistentData().putBoolean(
-                    NBT_LUMINANCE_GLOWING,
-                    true
-            );
-
+    private static void tickSunfire(LivingEntity entity) {
+        if (!entity.hasEffect(JolCraftEffects.SUNFIRE)
+                || !isSunfireEnvironment(entity)
+                || entity.isOnFire()) {
             return;
         }
 
-        if (owned
-                && glowing != null
-                && glowing.isInfiniteDuration()
-                && glowing.getAmplifier() == 0) {
-            entity.removeEffect(MobEffects.GLOWING);
-        }
-
-        entity.getPersistentData().remove(NBT_LUMINANCE_GLOWING);
+        entity.igniteForSeconds(2.0F);
     }
 
-    public static void applyIncomingDamageModifiers(LivingIncomingDamageEvent event) {
+    public static void applyAttackBuild(LivingIncomingDamageEvent event) {
         applyProjectileDamage(event);
+    }
+
+    public static void applyDefenseShaping(LivingIncomingDamageEvent event) {
         applyArmorPenetration(event);
     }
 
-    public static void applyFinalDamageReductions(LivingDamageEvent.Pre event) {
+    public static void applyFinalDefenses(LivingDamageEvent.Pre event) {
         LivingEntity entity = event.getEntity();
-
         float damage = event.getNewDamage();
 
-        damage = applyMagicResistance(entity, event.getSource(), damage);
         damage = applyMoonShieldDamage(entity, damage);
 
         event.setNewDamage(Math.max(0.0F, damage));
     }
 
-    private static float applyMagicResistance(
-            LivingEntity entity,
-            DamageSource source,
-            float damage
-    ) {
-        if (!source.is(Tags.DamageTypes.IS_MAGIC)) return damage;
+    public static void applyPostHitMarkers(LivingDamageEvent.Post event) {
+        LivingEntity entity = event.getEntity();
 
-        double resist = Mth.clamp(
-                entity.getAttributeValue(JolCraftAttributes.MAGIC_RESISTANCE),
-                0.0D,
-                1.0D
+        if (!isValidSunfireTrigger(event)) return;
+
+        LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
+        double sunFireDamage =
+                attacker.getAttributeValue(JolCraftAttributes.SUN_FIRE_DAMAGE);
+
+        if (sunFireDamage <= 0.0D) return;
+
+        applySunfire(
+                entity,
+                Mth.floor(sunFireDamage) * 20
         );
-        if (resist <= 0.0D) return damage;
+    }
 
-        float reduced = (float) (damage * (1.0D - resist));
-        if (reduced >= damage) return damage;
+    public static void applySecondaryDamage(LivingDamageEvent.Post event) {
+        LivingEntity entity = event.getEntity();
+
+        if (!isValidSunfireTrigger(event)
+                || !entity.isOnFire()
+                || !isSunfireEnvironment(entity)) {
+            return;
+        }
+
+        LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
+        double sunFireDamage =
+                attacker.getAttributeValue(JolCraftAttributes.SUN_FIRE_DAMAGE);
+
+        if (sunFireDamage <= 0.0D) return;
+
+        entity.hurt(
+                entity.damageSources().source(
+                        JolCraftDamageTypes.SUNFIRE,
+                        attacker
+                ),
+                (float) sunFireDamage
+        );
 
         JolCraftLogs.debug(
-                JolCraftLogTags.PLAYER,
-                "Magic damage reduced: entity={}, input={}, resist={}%, final={}",
-                entity.getDisplayName().getString(),
-                damage,
-                JolCraftLogs.pct1(resist),
-                reduced
+                JolCraftLogTags.ENTITY,
+                "Entity {} dealt {} bonus fire damage using sunfire attribute to {} at {} in {}",
+                attacker.getName().getString(),
+                sunFireDamage,
+                entity.getName().getString(),
+                JolCraftLogs.roundedPos(entity),
+                entity.level().dimension().location()
+        );
+    }
+
+    public static void applyPostHitSideEffects(LivingDamageEvent.Post event) {
+        // Reserved for non-damage consequences that should happen after the hit resolves.
+    }
+
+    private static boolean isValidSunfireTrigger(LivingDamageEvent.Post event) {
+        LivingEntity entity = event.getEntity();
+
+        return !entity.level().isClientSide()
+                && !entity.isDeadOrDying()
+                && event.getNewDamage() > 0.0F
+                && !event.getSource().is(JolCraftDamageTypes.SUNFIRE)
+                && event.getSource().getEntity() instanceof LivingEntity;
+    }
+
+    private static void applySunfire(
+            LivingEntity entity,
+            int addedDuration
+    ) {
+        MobEffectInstance current =
+                entity.getEffect(JolCraftEffects.SUNFIRE);
+
+        int duration = Math.min(
+                MAX_SUNFIRE_DURATION,
+                addedDuration + (current != null ? current.getDuration() : 0)
         );
 
-        return reduced;
+        entity.forceAddEffect(
+                new MobEffectInstance(
+                        JolCraftEffects.SUNFIRE,
+                        duration,
+                        0,
+                        false,
+                        true,
+                        true
+                ),
+                null
+        );
+    }
+
+    private static boolean isSunfireEnvironment(LivingEntity entity) {
+        return JolCraftDimensionHelper.isNether(entity)
+                || (JolCraftTimeHelper.isDay(entity)
+                && entity.level().canSeeSky(entity.blockPosition()));
     }
 
     private static float applyMoonShieldDamage(
             LivingEntity entity,
             float damage
     ) {
-        MobEffectInstance shield = entity.getEffect(JolCraftEffects.MOON_SHIELD);
+        MobEffectInstance shield =
+                entity.getEffect(JolCraftEffects.MOON_SHIELD);
+
         if (shield == null) return damage;
 
-        int maxStacks = Mth.floor(entity.getAttributeValue(JolCraftAttributes.MOON_SHIELD));
+        int maxStacks =
+                Mth.floor(
+                        entity.getAttributeValue(JolCraftAttributes.MOON_SHIELD)
+                );
+
         if (maxStacks <= 0) {
             entity.removeEffect(JolCraftEffects.MOON_SHIELD);
             return damage;
         }
 
-        int stacks = Math.min(shield.getAmplifier() + 1, maxStacks);
-        double reduction = Mth.clamp(stacks * 0.05D, 0.0D, 1.0D);
+        int stacks =
+                Math.min(
+                        shield.getAmplifier() + 1,
+                        maxStacks
+                );
 
-        float reduced = (float) (damage * (1.0D - reduction));
+        double reduction =
+                Mth.clamp(stacks * 0.05D, 0.0D, 1.0D);
+
+        float reduced =
+                (float) (damage * (1.0D - reduction));
+
         if (reduced >= damage) return damage;
 
-        int newAmplifier = stacks - 2;
+        int newAmplifier =
+                stacks - 2;
 
         entity.removeEffect(JolCraftEffects.MOON_SHIELD);
 
@@ -289,14 +366,16 @@ public final class JolCraftEntityAttributeEventsHelper {
         );
 
         if (newAmplifier >= 0) {
-            entity.addEffect(new MobEffectInstance(
-                    JolCraftEffects.MOON_SHIELD,
-                    MobEffectInstance.INFINITE_DURATION,
-                    newAmplifier,
-                    false,
-                    false,
-                    true
-            ));
+            entity.addEffect(
+                    new MobEffectInstance(
+                            JolCraftEffects.MOON_SHIELD,
+                            MobEffectInstance.INFINITE_DURATION,
+                            newAmplifier,
+                            false,
+                            false,
+                            true
+                    )
+            );
         }
 
         JolCraftLogs.debug(
@@ -313,11 +392,13 @@ public final class JolCraftEntityAttributeEventsHelper {
     }
 
     private static void tickMoonShield(LivingEntity entity) {
-        int maxStacks = Mth.floor(
-                entity.getAttributeValue(JolCraftAttributes.MOON_SHIELD)
-        );
+        int maxStacks =
+                Mth.floor(
+                        entity.getAttributeValue(JolCraftAttributes.MOON_SHIELD)
+                );
 
-        MobEffectInstance current = entity.getEffect(JolCraftEffects.MOON_SHIELD);
+        MobEffectInstance current =
+                entity.getEffect(JolCraftEffects.MOON_SHIELD);
 
         if (maxStacks <= 0) {
             if (current != null) {
@@ -326,24 +407,29 @@ public final class JolCraftEntityAttributeEventsHelper {
             return;
         }
 
-        int maxAmplifier = maxStacks - 1;
+        int maxAmplifier =
+                maxStacks - 1;
 
-        if (current != null && current.getAmplifier() > maxAmplifier) {
+        if (current != null
+                && current.getAmplifier() > maxAmplifier) {
             entity.removeEffect(JolCraftEffects.MOON_SHIELD);
 
-            entity.addEffect(new MobEffectInstance(
-                    JolCraftEffects.MOON_SHIELD,
-                    MobEffectInstance.INFINITE_DURATION,
-                    maxAmplifier,
-                    false,
-                    false,
-                    true
-            ));
+            entity.addEffect(
+                    new MobEffectInstance(
+                            JolCraftEffects.MOON_SHIELD,
+                            MobEffectInstance.INFINITE_DURATION,
+                            maxAmplifier,
+                            false,
+                            false,
+                            true
+                    )
+            );
 
             return;
         }
 
-        if (JolCraftTimeHelper.isDay(entity) && !JolCraftDimensionHelper.isEnd(entity)) {
+        if (JolCraftTimeHelper.isDay(entity)
+                && !JolCraftDimensionHelper.isEnd(entity)) {
             if (current != null) {
                 entity.removeEffect(JolCraftEffects.MOON_SHIELD);
             }
@@ -353,14 +439,16 @@ public final class JolCraftEntityAttributeEventsHelper {
         if ((entity.tickCount % 200) != 0) return;
 
         if (current == null) {
-            entity.addEffect(new MobEffectInstance(
-                    JolCraftEffects.MOON_SHIELD,
-                    MobEffectInstance.INFINITE_DURATION,
-                    0,
-                    false,
-                    false,
-                    true
-            ));
+            entity.addEffect(
+                    new MobEffectInstance(
+                            JolCraftEffects.MOON_SHIELD,
+                            MobEffectInstance.INFINITE_DURATION,
+                            0,
+                            false,
+                            false,
+                            true
+                    )
+            );
 
             JolCraftSoundHelper.entity(
                     entity,
@@ -368,19 +456,22 @@ public final class JolCraftEntityAttributeEventsHelper {
                     0.15F,
                     1.3F + entity.getRandom().nextFloat() * 0.15F
             );
+
             return;
         }
 
         if (current.getAmplifier() >= maxAmplifier) return;
 
-        entity.addEffect(new MobEffectInstance(
-                JolCraftEffects.MOON_SHIELD,
-                MobEffectInstance.INFINITE_DURATION,
-                current.getAmplifier() + 1,
-                false,
-                false,
-                true
-        ));
+        entity.addEffect(
+                new MobEffectInstance(
+                        JolCraftEffects.MOON_SHIELD,
+                        MobEffectInstance.INFINITE_DURATION,
+                        current.getAmplifier() + 1,
+                        false,
+                        false,
+                        true
+                )
+        );
 
         JolCraftSoundHelper.entity(
                 entity,
@@ -392,28 +483,43 @@ public final class JolCraftEntityAttributeEventsHelper {
 
     public static void applyArmorPenetration(LivingIncomingDamageEvent event) {
         DamageSource source = event.getSource();
+
         if (!(source.getEntity() instanceof LivingEntity attacker)) return;
 
         LivingEntity target = event.getEntity();
+
         if (target.getArmorValue() <= 0.0D) return;
 
-        double penetration = Mth.clamp(
-                attacker.getAttributeValue(JolCraftAttributes.ARMOR_PENETRATION),
-                0.0D,
-                1.0D
-        );
+        double penetration =
+                Mth.clamp(
+                        attacker.getAttributeValue(
+                                JolCraftAttributes.ARMOR_PENETRATION
+                        ),
+                        0.0D,
+                        1.0D
+                );
+
         if (penetration <= 0.0D) return;
 
         event.addReductionModifier(
                 DamageContainer.Reduction.ARMOR,
                 (container, armorReduction) -> {
-                    float originalDamage = container.getNewDamage();
-                    float newReduction = armorReduction * (float) (1.0D - penetration);
+                    float originalDamage =
+                            container.getNewDamage();
 
-                    float finalDamage = originalDamage - (newReduction - armorReduction);
+                    float newReduction =
+                            armorReduction
+                                    * (float) (1.0D - penetration);
 
-                    double armor = target.getArmorValue();
-                    double effectiveArmor = armor * (1.0D - penetration);
+                    float finalDamage =
+                            originalDamage
+                                    - (newReduction - armorReduction);
+
+                    double armor =
+                            target.getArmorValue();
+
+                    double effectiveArmor =
+                            armor * (1.0D - penetration);
 
                     JolCraftLogs.debug(
                             JolCraftLogTags.PLAYER,
@@ -432,8 +538,11 @@ public final class JolCraftEntityAttributeEventsHelper {
         );
     }
 
-    private static void applyProjectileDamage(LivingIncomingDamageEvent event) {
-        DamageSource source = event.getSource();
+    private static void applyProjectileDamage(
+            LivingIncomingDamageEvent event
+    ) {
+        DamageSource source =
+                event.getSource();
 
         if (!source.is(DamageTypeTags.IS_PROJECTILE)
                 || !(source.getDirectEntity() instanceof AbstractArrow)
@@ -441,11 +550,18 @@ public final class JolCraftEntityAttributeEventsHelper {
             return;
         }
 
-        double bonus = attacker.getAttributeValue(JolCraftAttributes.PROJECTILE_DAMAGE);
+        double bonus =
+                attacker.getAttributeValue(
+                        JolCraftAttributes.PROJECTILE_DAMAGE
+                );
+
         if (bonus <= 0.0D) return;
 
-        float originalDamage = event.getAmount();
-        float modifiedDamage = originalDamage + (float) bonus;
+        float originalDamage =
+                event.getAmount();
+
+        float modifiedDamage =
+                originalDamage + (float) bonus;
 
         event.setAmount(modifiedDamage);
 

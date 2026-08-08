@@ -1,20 +1,17 @@
 package net.sievert.jolcraft.event.game.entity.effect;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.sievert.jolcraft.event.game.entity.damage.JolCraftDamageAffinityEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.harmful.JolCraftCrowdControlEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.harmful.JolCraftCurseEventsHelper;
-import net.sievert.jolcraft.event.game.entity.util.JolCraftEntityDamageEventsHelper;
+import net.sievert.jolcraft.event.game.entity.effect.util.JolCraftEffectDamageEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.util.JolCraftEffectDurationEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.util.JolCraftStackingEffectEventsHelper;
-import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
-import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.DeliriumCurseEffect;
 
 public final class JolCraftEffectEvents {
 
@@ -28,38 +25,64 @@ public final class JolCraftEffectEvents {
 
     public static void onEffectRemoved(MobEffectEvent.Remove event) {
         JolCraftCurseEventsHelper.onEffectRemoved(event);
-        cleanupDelirium(event.getEntity(), event.getEffectInstance());
     }
 
     public static void onEffectExpired(MobEffectEvent.Expired event) {
         JolCraftCurseEventsHelper.onEffectExpired(event);
-        cleanupDelirium(event.getEntity(), event.getEffectInstance());
     }
 
-    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        JolCraftCurseEventsHelper.onIncomingDamage(event);
+    public static void onEffectApplicable(
+            MobEffectEvent.Applicable event
+    ) {
+        JolCraftDamageAffinityEventsHelper.onEffectApplicable(event);
+        JolCraftCrowdControlEventsHelper.onEffectApplicable(event);
     }
 
-    public static void onArmorHurt(ArmorHurtEvent event) {
-        JolCraftEntityDamageEventsHelper.onArmorHurt(event);
+    public static void applyPreMitigationTargetModifiers(
+            LivingIncomingDamageEvent event
+    ) {
+        JolCraftCurseEventsHelper
+                .applyPreMitigationTargetModifiers(event);
     }
 
-    public static void onLivingHeal(LivingHealEvent event) {
+    public static void applyEarlyFlatDefenses(
+            LivingIncomingDamageEvent event
+    ) {
+        JolCraftEffectDamageEventsHelper
+                .applyEarlyFlatDefenses(event);
+    }
+
+    public static void applyFinalDefenses(
+            LivingDamageEvent.Pre event
+    ) {}
+
+    public static void applyPostHitMarkers(
+            LivingDamageEvent.Post event
+    ) {}
+
+    public static void applySecondaryDamage(
+            LivingDamageEvent.Post event
+    ) {}
+
+    public static void applyPostHitSideEffects(
+            LivingDamageEvent.Post event
+    ) {}
+
+    public static void onArmorHurt(
+            ArmorHurtEvent event
+    ) {
+        JolCraftEffectDamageEventsHelper.onArmorHurt(event);
+    }
+
+    public static void onLivingHeal(
+            LivingHealEvent event
+    ) {
         JolCraftCurseEventsHelper.onLivingHeal(event);
     }
 
-    public static void onEntityTick(EntityTickEvent.Post event) {
-        JolCraftCrowdControlEventsHelper.onEntityTick(event);
-    }
-
-    private static void cleanupDelirium(
-            LivingEntity entity,
-            MobEffectInstance effect
+    public static void onEntityTick(
+            EntityTickEvent.Post event
     ) {
-        if (entity instanceof ServerPlayer player
-                && effect != null
-                && effect.is(JolCraftEffects.DELIRIUM_CURSE)) {
-            DeliriumCurseEffect.cleanupRuntime(player);
-        }
+        JolCraftCrowdControlEventsHelper.onEntityTick(event);
     }
 }

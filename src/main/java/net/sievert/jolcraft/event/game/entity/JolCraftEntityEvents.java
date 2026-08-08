@@ -8,6 +8,7 @@ import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
@@ -16,10 +17,11 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.event.game.entity.attribute.JolCraftEntityAttributeEvents;
+import net.sievert.jolcraft.event.game.entity.damage.JolCraftDamageEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.JolCraftEffectEvents;
 import net.sievert.jolcraft.event.game.entity.npc.JolCraftDwarfEvents;
 import net.sievert.jolcraft.event.game.entity.npc.villager.JolCraftVillagerEvents;
-import net.sievert.jolcraft.event.game.entity.util.JolCraftEntityDamageEventsHelper;
+import net.sievert.jolcraft.event.game.recipe.JolCraftBountyEvents;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
@@ -40,19 +42,22 @@ public final class JolCraftEntityEvents {
 
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        JolCraftEntityAttributeEvents.onIncomingDamage(event);
-        JolCraftEffectEvents.onIncomingDamage(event);
-        JolCraftEntityDamageEventsHelper.onIncomingDamage(event);
+        JolCraftDamageEventsHelper.onIncomingDamage(event);
     }
 
     @SubscribeEvent
     public static void onFinalDamage(LivingDamageEvent.Pre event) {
-        JolCraftEntityAttributeEvents.onFinalDamage(event);
+        JolCraftDamageEventsHelper.onFinalDamage(event);
     }
 
     @SubscribeEvent
     public static void onFinalDamagePost(LivingDamageEvent.Post event) {
-        JolCraftEntityDamageEventsHelper.onFinalDamage(event);
+        JolCraftDamageEventsHelper.onPostDamage(event);
+    }
+
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event) {
+        JolCraftBountyEvents.onLivingDeath(event);
     }
 
     @SubscribeEvent
@@ -72,7 +77,7 @@ public final class JolCraftEntityEvents {
 
     @SubscribeEvent
     public static void onEffectApplicable(MobEffectEvent.Applicable event) {
-        JolCraftEntityDamageEventsHelper.onEffectApplicable(event);
+        JolCraftEffectEvents.onEffectApplicable(event);
     }
 
     @SubscribeEvent
@@ -96,7 +101,9 @@ public final class JolCraftEntityEvents {
     }
 
     @SubscribeEvent
-    public static void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
+    public static void onEntityInteractSpecific(
+            PlayerInteractEvent.EntityInteractSpecific event
+    ) {
         JolCraftVillagerEvents.onVillagerCrateInteract(event);
     }
 

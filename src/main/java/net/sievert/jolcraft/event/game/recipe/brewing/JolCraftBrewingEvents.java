@@ -18,6 +18,8 @@ public final class JolCraftBrewingEvents {
     private JolCraftBrewingEvents() {}
 
     public static void register(PotionBrewing.Builder builder) {
+        clearSpecialRecipes();
+
         int recipes = 0;
 
         // Endurance
@@ -28,218 +30,173 @@ public final class JolCraftBrewingEvents {
                         Items.COOKED_PORKCHOP,
                         Items.PUMPKIN_PIE
                 ),
-                JolCraftPotions.ENDURANCE,
-                JolCraftPotions.LONG_ENDURANCE,
-                JolCraftPotions.STRONG_ENDURANCE
+                JolCraftPotions.ENDURANCE
         );
 
         // Anchor
 
         recipes += addStartMix(builder,
                 Items.IRON_BLOCK,
-                JolCraftPotions.ANCHOR,
-                JolCraftPotions.LONG_ANCHOR
+                JolCraftPotions.ANCHOR
         );
 
         // Marksman
 
         recipes += addStartMix(builder,
                 Items.WIND_CHARGE,
-                JolCraftPotions.MARKSMAN,
-                JolCraftPotions.LONG_MARKSMAN,
-                JolCraftPotions.STRONG_MARKSMAN
+                JolCraftPotions.MARKSMAN
         );
 
         // Alchemist Focus
 
         recipes += addStartMix(builder,
                 Items.AMETHYST_SHARD,
-                JolCraftPotions.ALCHEMIST_FOCUS,
-                JolCraftPotions.LONG_ALCHEMIST_FOCUS,
-                JolCraftPotions.STRONG_ALCHEMIST_FOCUS
+                JolCraftPotions.ALCHEMIST_FOCUS
         );
 
         // Lockpicking
 
         recipes += addStartMix(builder,
                 JolCraftBlocks.DUSKCAP,
-                JolCraftPotions.LOCKPICKING,
-                JolCraftPotions.LONG_LOCKPICKING,
-                JolCraftPotions.STRONG_LOCKPICKING
+                JolCraftPotions.LOCKPICKING
         );
 
         // Stone Skin
 
         recipes += addStartMix(builder,
                 JolCraftItems.AEGISCORE_DUST,
-                JolCraftPotions.STONE_SKIN,
-                JolCraftPotions.LONG_STONE_SKIN,
-                JolCraftPotions.STRONG_STONE_SKIN
+                JolCraftPotions.STONE_SKIN
         );
 
         // Might
 
         recipes += addStartMix(builder,
                 JolCraftItems.ASHFANG_DUST,
-                JolCraftPotions.MIGHT,
-                JolCraftPotions.LONG_MIGHT,
-                JolCraftPotions.STRONG_MIGHT
+                JolCraftPotions.MIGHT
         );
 
         // Ancient Memory
 
         recipes += addStartMix(builder,
                 JolCraftItems.DEEPMARROW_DUST,
-                JolCraftPotions.ANCIENT_MEMORY,
-                JolCraftPotions.LONG_ANCIENT_MEMORY
+                JolCraftPotions.ANCIENT_MEMORY
         );
 
         // Dwarven Haste
 
         recipes += addStartMix(builder,
                 JolCraftItems.EARTHBLOOD_DUST,
-                JolCraftPotions.DWARVEN_HASTE,
-                JolCraftPotions.LONG_DWARVEN_HASTE,
-                JolCraftPotions.STRONG_DWARVEN_HASTE
+                JolCraftPotions.DWARVEN_HASTE
         );
 
         // Slow Resistance
 
         recipes += addStartMix(builder,
                 JolCraftItems.FROSTVEIN_DUST,
-                JolCraftPotions.SLOW_RESISTANCE,
-                JolCraftPotions.LONG_SLOW_RESISTANCE,
-                JolCraftPotions.STRONG_SLOW_RESISTANCE
+                JolCraftPotions.SLOW_RESISTANCE
         );
 
         // Dwarven Rage
 
         recipes += addStartMix(builder,
                 JolCraftItems.GRIMSTONE_DUST,
-                JolCraftPotions.DWARVEN_RAGE,
-                JolCraftPotions.LONG_DWARVEN_RAGE,
-                JolCraftPotions.STRONG_DWARVEN_RAGE
+                JolCraftPotions.DWARVEN_RAGE
         );
 
         // Bulwark
 
         recipes += addStartMix(builder,
                 JolCraftItems.IRONHEART_DUST,
-                JolCraftPotions.BULWARK,
-                JolCraftPotions.LONG_BULWARK,
-                JolCraftPotions.STRONG_BULWARK
+                JolCraftPotions.BULWARK
         );
 
         // Corrosion
 
         recipes += addStartMix(builder,
                 JolCraftItems.RUSTAGATE_DUST,
-                JolCraftPotions.CORROSION,
-                JolCraftPotions.LONG_CORROSION,
-                JolCraftPotions.STRONG_CORROSION
+                JolCraftPotions.CORROSION
         );
 
         // Piercing
 
-        recipes += addMix(builder,
+        recipes += addFamilyMix(builder,
                 Potions.OOZING,
                 JolCraftItems.RUSTAGATE_DUST,
-                JolCraftPotions.PIERCING,
-                JolCraftPotions.LONG_PIERCING,
-                JolCraftPotions.STRONG_PIERCING
+                JolCraftPotions.PIERCING
         );
 
         // Dexterity
 
         recipes += addStartMix(builder,
                 JolCraftItems.SKYBURROW_DUST,
-                JolCraftPotions.DEXTERITY,
-                JolCraftPotions.LONG_DEXTERITY,
-                JolCraftPotions.STRONG_DEXTERITY
+                JolCraftPotions.DEXTERITY
         );
 
         // Hoard
 
-        recipes += addMix(builder,
+        recipes += addFamilyMix(builder,
                 Potions.LUCK,
                 JolCraftItems.SUNGLEAM_DUST,
-                JolCraftPotions.HOARD,
-                JolCraftPotions.LONG_HOARD,
-                JolCraftPotions.STRONG_HOARD
+                JolCraftPotions.HOARD
         );
 
         // Wisdom
 
-        recipes += addMix(builder,
+        recipes += addFamilyMix(builder,
                 Items.EXPERIENCE_BOTTLE,
                 JolCraftItems.DEEPMARROW_DUST,
-                JolCraftPotions.WISDOM,
-                JolCraftPotions.LONG_WISDOM,
-                JolCraftPotions.STRONG_WISDOM
+                JolCraftPotions.WISDOM
         );
 
         // Poison Resistance
 
-        recipes += addMix(builder,
+        recipes += addFamilyMix(builder,
                 Items.HONEY_BOTTLE,
                 JolCraftItems.VERDANITE_DUST,
-                JolCraftPotions.POISON_RESISTANCE,
-                JolCraftPotions.LONG_POISON_RESISTANCE,
-                JolCraftPotions.STRONG_POISON_RESISTANCE
+                JolCraftPotions.POISON_RESISTANCE
         );
 
         // Harvest
 
         recipes += addStartMix(builder,
                 JolCraftItems.VERDANITE_DUST,
-                JolCraftPotions.HARVEST,
-                JolCraftPotions.LONG_HARVEST,
-                JolCraftPotions.STRONG_HARVEST
+                JolCraftPotions.HARVEST
         );
 
         // Lunar
 
         recipes += addStartMix(builder,
                 JolCraftItems.MOONSHARD_DUST,
-                JolCraftPotions.LUNAR,
-                JolCraftPotions.LONG_LUNAR,
-                JolCraftPotions.STRONG_LUNAR
+                JolCraftPotions.LUNAR
         );
 
         // Conflagration
 
         recipes += addStartMix(builder,
                 JolCraftItems.SUNGLEAM_DUST,
-                JolCraftPotions.CONFLAGRATION,
-                JolCraftPotions.LONG_CONFLAGRATION,
-                JolCraftPotions.STRONG_CONFLAGRATION
+                JolCraftPotions.CONFLAGRATION
         );
 
         // Sunfire
 
-        recipes += addMix(builder,
+        recipes += addFamilyMix(builder,
                 Potions.HARMING,
                 JolCraftItems.SUNGLEAM_DUST,
-                JolCraftPotions.SUNFIRE,
-                JolCraftPotions.LONG_SUNFIRE
+                JolCraftPotions.SUNFIRE
         );
 
         // Vitality
 
         recipes += addStartMix(builder,
                 JolCraftItems.EMBERGLASS_DUST,
-                JolCraftPotions.VITALITY,
-                JolCraftPotions.LONG_VITALITY,
-                JolCraftPotions.STRONG_VITALITY
+                JolCraftPotions.VITALITY
         );
 
         // Luminance
 
         recipes += addStartMix(builder,
                 JolCraftItems.LUMIERE_DUST,
-                JolCraftPotions.LUMINANCE,
-                JolCraftPotions.LONG_LUMINANCE,
-                JolCraftPotions.STRONG_LUMINANCE
+                JolCraftPotions.LUMINANCE
         );
 
 
@@ -247,26 +204,21 @@ public final class JolCraftBrewingEvents {
 
         recipes += addStartMix(builder,
                 JolCraftItems.WOECRYSTAL_DUST,
-                JolCraftPotions.MAGIC_RESISTANCE,
-                JolCraftPotions.LONG_MAGIC_RESISTANCE,
-                JolCraftPotions.STRONG_MAGIC_RESISTANCE
+                JolCraftPotions.MAGIC_RESISTANCE
         );
 
         // Tenacity
 
         recipes += addStartMix(builder,
                 Items.SHULKER_SHELL,
-                JolCraftPotions.TENACITY,
-                JolCraftPotions.LONG_TENACITY,
-                JolCraftPotions.STRONG_TENACITY
+                JolCraftPotions.TENACITY
         );
 
         // Unluck
 
-        recipes += addStartStrongMix(builder,
+        recipes += addStartMix(builder,
                 JolCraftItems.BROKEN_COINS,
-                JolCraftPotions.UNLUCK,
-                JolCraftPotions.STRONG_UNLUCK
+                JolCraftPotions.UNLUCK
         );
 
         // Luck

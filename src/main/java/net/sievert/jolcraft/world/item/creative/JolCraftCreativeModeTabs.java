@@ -202,17 +202,17 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.STONE_ARTISAN_HAMMER);
                         output.accept(JolCraftItems.IRON_ARTISAN_HAMMER);
                         output.accept(JolCraftItems.GOLDEN_ARTISAN_HAMMER);
+                        output.accept(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER);
                         output.accept(JolCraftItems.DIAMOND_ARTISAN_HAMMER);
                         output.accept(JolCraftItems.NETHERITE_ARTISAN_HAMMER);
-                        output.accept(JolCraftItems.DEEPSLATE_ARTISAN_HAMMER);
                         output.accept(JolCraftItems.MITHRIL_ARTISAN_HAMMER);
                         output.accept(JolCraftItems.WOODEN_CHISEL);
                         output.accept(JolCraftItems.STONE_CHISEL);
                         output.accept(JolCraftItems.IRON_CHISEL);
                         output.accept(JolCraftItems.GOLDEN_CHISEL);
+                        output.accept(JolCraftItems.DEEPSLATE_CHISEL);
                         output.accept(JolCraftItems.DIAMOND_CHISEL);
                         output.accept(JolCraftItems.NETHERITE_CHISEL);
-                        output.accept(JolCraftItems.DEEPSLATE_CHISEL);
                         output.accept(JolCraftItems.MITHRIL_CHISEL);
 
                         output.accept(JolCraftItems.BARLEY_SEEDS);
@@ -276,9 +276,9 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.STONE_PESTLE);
                         output.accept(JolCraftItems.IRON_PESTLE);
                         output.accept(JolCraftItems.GOLDEN_PESTLE);
+                        output.accept(JolCraftItems.DEEPSLATE_PESTLE);
                         output.accept(JolCraftItems.DIAMOND_PESTLE);
                         output.accept(JolCraftItems.NETHERITE_PESTLE);
-                        output.accept(JolCraftItems.DEEPSLATE_PESTLE);
                         output.accept(JolCraftItems.MITHRIL_PESTLE);
 
                         output.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
@@ -293,9 +293,9 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.STONE_SPANNER);
                         output.accept(JolCraftItems.IRON_SPANNER);
                         output.accept(JolCraftItems.GOLDEN_SPANNER);
+                        output.accept(JolCraftItems.DEEPSLATE_SPANNER);
                         output.accept(JolCraftItems.DIAMOND_SPANNER);
                         output.accept(JolCraftItems.NETHERITE_SPANNER);
-                        output.accept(JolCraftItems.DEEPSLATE_SPANNER);
                         output.accept(JolCraftItems.MITHRIL_SPANNER);
                         output.accept(JolCraftItems.SCRAP);
                         output.accept(JolCraftItems.SCRAP_HEAP);
