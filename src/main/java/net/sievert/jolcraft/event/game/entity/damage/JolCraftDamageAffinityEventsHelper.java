@@ -14,30 +14,42 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-@SuppressWarnings("SameParameterValue")
 public final class JolCraftDamageAffinityEventsHelper {
 
     private static final List<DamageAffinity> AFFINITIES = List.of(
-            resistance(
+            affinity(
                     Tags.DamageTypes.IS_MAGIC,
                     JolCraftAttributes.MAGIC_RESISTANCE,
+                    JolCraftAttributes.MAGIC_VULNERABILITY,
                     Tags.DamageTypes.IS_POISON
             ),
-            resistance(
+            affinity(
+                    DamageTypeTags.IS_FIRE,
+                    JolCraftAttributes.FIRE_RESISTANCE,
+                    JolCraftAttributes.FIRE_VULNERABILITY
+            ),
+            affinity(
+                    DamageTypeTags.IS_EXPLOSION,
+                    JolCraftAttributes.EXPLOSION_RESISTANCE,
+                    JolCraftAttributes.EXPLOSION_VULNERABILITY
+            ),
+            affinity(
                     Tags.DamageTypes.IS_POISON,
-                    JolCraftAttributes.POISON_RESISTANCE
+                    JolCraftAttributes.POISON_RESISTANCE,
+                    JolCraftAttributes.POISON_VULNERABILITY
             ),
-            resistance(
+            affinity(
                     DamageTypeTags.IS_FREEZING,
-                    JolCraftAttributes.FROST_RESISTANCE
+                    JolCraftAttributes.FROST_RESISTANCE,
+                    JolCraftAttributes.FROST_VULNERABILITY
             ),
-            resistance(
+            affinity(
                     Tags.DamageTypes.IS_WITHER,
-                    JolCraftAttributes.WITHER_RESISTANCE
+                    JolCraftAttributes.WITHER_RESISTANCE,
+                    JolCraftAttributes.WITHER_VULNERABILITY
             )
     );
 
@@ -70,53 +82,42 @@ public final class JolCraftDamageAffinityEventsHelper {
             DamageAffinity affinity,
             float damage
     ) {
-        double resistance =
-                attributeValue(
-                        entity,
-                        affinity.resistance(),
-                        1.0D
-                );
+        double resistance = attributeValue(
+                entity,
+                affinity.resistance(),
+                1.0D
+        );
 
-        double vulnerability =
-                attributeValue(
-                        entity,
-                        affinity.vulnerability(),
-                        Double.MAX_VALUE
-                );
+        double vulnerability = attributeValue(
+                entity,
+                affinity.vulnerability(),
+                Double.MAX_VALUE
+        );
 
-        if (resistance <= 0.0D
-                && vulnerability <= 0.0D) {
+        if (resistance <= 0.0D && vulnerability <= 0.0D) {
             return damage;
         }
 
-        float modified =
-                (float) (
-                        damage
-                                * (1.0D + vulnerability)
-                                * (1.0D - resistance)
-                );
+        float modified = (float) (
+                damage
+                        * (1.0D + vulnerability)
+                        * (1.0D - resistance)
+        );
 
-        Object damageTypeId =
-                source.typeHolder()
-                        .unwrapKey()
-                        .map(ResourceKey::location)
-                        .orElse(null);
+        Object damageTypeId = source.typeHolder()
+                .unwrapKey()
+                .map(ResourceKey::location)
+                .orElse(null);
 
-        Object resistanceId =
-                affinity.resistance() != null
-                        ? affinity.resistance()
-                        .unwrapKey()
-                        .map(ResourceKey::location)
-                        .orElse(null)
-                        : null;
+        Object resistanceId = affinity.resistance()
+                .unwrapKey()
+                .map(ResourceKey::location)
+                .orElse(null);
 
-        Object vulnerabilityId =
-                affinity.vulnerability() != null
-                        ? affinity.vulnerability()
-                        .unwrapKey()
-                        .map(ResourceKey::location)
-                        .orElse(null)
-                        : null;
+        Object vulnerabilityId = affinity.vulnerability()
+                .unwrapKey()
+                .map(ResourceKey::location)
+                .orElse(null);
 
         JolCraftLogs.debug(
                 JolCraftLogTags.ENTITY,
@@ -137,13 +138,9 @@ public final class JolCraftDamageAffinityEventsHelper {
 
     private static double attributeValue(
             LivingEntity entity,
-            @Nullable Holder<Attribute> attribute,
+            Holder<Attribute> attribute,
             double max
     ) {
-        if (attribute == null) {
-            return 0.0D;
-        }
-
         return Mth.clamp(
                 entity.getAttributeValue(attribute),
                 0.0D,
@@ -152,40 +149,10 @@ public final class JolCraftDamageAffinityEventsHelper {
     }
 
     @SafeVarargs
-    private static DamageAffinity resistance(
-            TagKey<DamageType> damageTypeTag,
-            Holder<Attribute> resistance,
-            TagKey<DamageType>... excludedTags
-    ) {
-        return new DamageAffinity(
-                damageTypeTag,
-                List.of(excludedTags),
-                resistance,
-                null
-        );
-    }
-
-    @SafeVarargs
-    @SuppressWarnings("unused")
-    private static DamageAffinity vulnerability(
-            TagKey<DamageType> damageTypeTag,
-            Holder<Attribute> vulnerability,
-            TagKey<DamageType>... excludedTags
-    ) {
-        return new DamageAffinity(
-                damageTypeTag,
-                List.of(excludedTags),
-                null,
-                vulnerability
-        );
-    }
-
-    @SafeVarargs
-    @SuppressWarnings("unused")
     private static DamageAffinity affinity(
             TagKey<DamageType> damageTypeTag,
-            @Nullable Holder<Attribute> resistance,
-            @Nullable Holder<Attribute> vulnerability,
+            Holder<Attribute> resistance,
+            Holder<Attribute> vulnerability,
             TagKey<DamageType>... excludedTags
     ) {
         return new DamageAffinity(
@@ -199,8 +166,8 @@ public final class JolCraftDamageAffinityEventsHelper {
     private record DamageAffinity(
             TagKey<DamageType> damageTypeTag,
             List<TagKey<DamageType>> excludedTags,
-            @Nullable Holder<Attribute> resistance,
-            @Nullable Holder<Attribute> vulnerability
+            Holder<Attribute> resistance,
+            Holder<Attribute> vulnerability
     ) {
 
         private boolean matches(DamageSource source) {

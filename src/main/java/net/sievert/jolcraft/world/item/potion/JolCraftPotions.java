@@ -43,11 +43,20 @@ public final class JolCraftPotions {
         family(JolCraftPotionIds.DEXTERITY, JolCraftEffects.DEXTERITY, 3600, 7200, 1800);
         family(JolCraftPotionIds.DWARVEN_RAGE, JolCraftEffects.DWARVEN_RAGE, 1200, 2400, 600);
         family(JolCraftPotionIds.ENDURANCE, JolCraftEffects.ENDURANCE, 6000, 12000, 3000);
-        family(JolCraftPotionIds.MAGIC_RESISTANCE, JolCraftEffects.MAGIC_RESISTANCE, 3600, 7200, 1800);
-        family(JolCraftPotionIds.POISON_RESISTANCE, JolCraftEffects.POISON_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.EXPLOSION_RESISTANCE, JolCraftEffects.EXPLOSION_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.EXPLOSION_VULNERABILITY, JolCraftEffects.EXPLOSION_VULNERABILITY, 3600, 7200, 1800);
+        single(JolCraftPotionIds.STRONG_FIRE_RESISTANCE, MobEffects.FIRE_RESISTANCE, 1800, 1);
+        family(JolCraftPotionIds.FIRE_VULNERABILITY, JolCraftEffects.FIRE_VULNERABILITY, 3600, 7200, 1800);
         family(JolCraftPotionIds.FROST_RESISTANCE, JolCraftEffects.FROST_RESISTANCE, 3600, 7200, 1800);
-        family(JolCraftPotionIds.WITHER_RESISTANCE, JolCraftEffects.WITHER_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.FROST_VULNERABILITY, JolCraftEffects.FROST_VULNERABILITY, 3600, 7200, 1800);
+        family(JolCraftPotionIds.MAGIC_RESISTANCE, JolCraftEffects.MAGIC_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.MAGIC_VULNERABILITY, JolCraftEffects.MAGIC_VULNERABILITY, 3600, 7200, 1800);
+        family(JolCraftPotionIds.POISON_RESISTANCE, JolCraftEffects.POISON_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.POISON_VULNERABILITY, JolCraftEffects.POISON_VULNERABILITY, 3600, 7200, 1800);
         family(JolCraftPotionIds.SLOW_RESISTANCE, JolCraftEffects.SLOW_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.SLOW_VULNERABILITY, JolCraftEffects.SLOW_VULNERABILITY, 3600, 7200, 1800);
+        family(JolCraftPotionIds.WITHER_RESISTANCE, JolCraftEffects.WITHER_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.WITHER_VULNERABILITY, JolCraftEffects.WITHER_VULNERABILITY, 3600, 7200, 1800);
         family(JolCraftPotionIds.MARKSMAN, JolCraftEffects.MARKSMAN, 3600, 9600, 1800);
         family(JolCraftPotionIds.STONE_SKIN, JolCraftEffects.STONE_SKIN, 1200, 2400, 600);
         family(JolCraftPotionIds.HOARD, JolCraftEffects.HOARD, 6000, 12000, 3000);
@@ -106,21 +115,61 @@ public final class JolCraftPotions {
     public static final Holder<Potion> ENDURANCE = holder(JolCraftPotionIds.ENDURANCE);
     public static final Holder<Potion> LONG_ENDURANCE = holder(JolCraftPotionIds.LONG_ENDURANCE);
     public static final Holder<Potion> STRONG_ENDURANCE = holder(JolCraftPotionIds.STRONG_ENDURANCE);
-    public static final Holder<Potion> MAGIC_RESISTANCE = holder(JolCraftPotionIds.MAGIC_RESISTANCE);
-    public static final Holder<Potion> LONG_MAGIC_RESISTANCE = holder(JolCraftPotionIds.LONG_MAGIC_RESISTANCE);
-    public static final Holder<Potion> STRONG_MAGIC_RESISTANCE = holder(JolCraftPotionIds.STRONG_MAGIC_RESISTANCE);
-    public static final Holder<Potion> POISON_RESISTANCE = holder(JolCraftPotionIds.POISON_RESISTANCE);
-    public static final Holder<Potion> LONG_POISON_RESISTANCE = holder(JolCraftPotionIds.LONG_POISON_RESISTANCE);
-    public static final Holder<Potion> STRONG_POISON_RESISTANCE = holder(JolCraftPotionIds.STRONG_POISON_RESISTANCE);
+
+    public static final Holder<Potion> EXPLOSION_RESISTANCE = holder(JolCraftPotionIds.EXPLOSION_RESISTANCE);
+    public static final Holder<Potion> LONG_EXPLOSION_RESISTANCE = holder(JolCraftPotionIds.LONG_EXPLOSION_RESISTANCE);
+    public static final Holder<Potion> STRONG_EXPLOSION_RESISTANCE = holder(JolCraftPotionIds.STRONG_EXPLOSION_RESISTANCE);
+
+    public static final Holder<Potion> EXPLOSION_VULNERABILITY = holder(JolCraftPotionIds.EXPLOSION_VULNERABILITY);
+    public static final Holder<Potion> LONG_EXPLOSION_VULNERABILITY = holder(JolCraftPotionIds.LONG_EXPLOSION_VULNERABILITY);
+    public static final Holder<Potion> STRONG_EXPLOSION_VULNERABILITY = holder(JolCraftPotionIds.STRONG_EXPLOSION_VULNERABILITY);
+
+    public static final Holder<Potion> STRONG_FIRE_RESISTANCE = holder(JolCraftPotionIds.STRONG_FIRE_RESISTANCE);
+
+    public static final Holder<Potion> FIRE_VULNERABILITY = holder(JolCraftPotionIds.FIRE_VULNERABILITY);
+    public static final Holder<Potion> LONG_FIRE_VULNERABILITY = holder(JolCraftPotionIds.LONG_FIRE_VULNERABILITY);
+    public static final Holder<Potion> STRONG_FIRE_VULNERABILITY = holder(JolCraftPotionIds.STRONG_FIRE_VULNERABILITY);
+
     public static final Holder<Potion> FROST_RESISTANCE = holder(JolCraftPotionIds.FROST_RESISTANCE);
     public static final Holder<Potion> LONG_FROST_RESISTANCE = holder(JolCraftPotionIds.LONG_FROST_RESISTANCE);
     public static final Holder<Potion> STRONG_FROST_RESISTANCE = holder(JolCraftPotionIds.STRONG_FROST_RESISTANCE);
-    public static final Holder<Potion> WITHER_RESISTANCE = holder(JolCraftPotionIds.WITHER_RESISTANCE);
-    public static final Holder<Potion> LONG_WITHER_RESISTANCE = holder(JolCraftPotionIds.LONG_WITHER_RESISTANCE);
-    public static final Holder<Potion> STRONG_WITHER_RESISTANCE = holder(JolCraftPotionIds.STRONG_WITHER_RESISTANCE);
+
+    public static final Holder<Potion> FROST_VULNERABILITY = holder(JolCraftPotionIds.FROST_VULNERABILITY);
+    public static final Holder<Potion> LONG_FROST_VULNERABILITY = holder(JolCraftPotionIds.LONG_FROST_VULNERABILITY);
+    public static final Holder<Potion> STRONG_FROST_VULNERABILITY = holder(JolCraftPotionIds.STRONG_FROST_VULNERABILITY);
+
+    public static final Holder<Potion> MAGIC_RESISTANCE = holder(JolCraftPotionIds.MAGIC_RESISTANCE);
+    public static final Holder<Potion> LONG_MAGIC_RESISTANCE = holder(JolCraftPotionIds.LONG_MAGIC_RESISTANCE);
+    public static final Holder<Potion> STRONG_MAGIC_RESISTANCE = holder(JolCraftPotionIds.STRONG_MAGIC_RESISTANCE);
+
+    public static final Holder<Potion> MAGIC_VULNERABILITY = holder(JolCraftPotionIds.MAGIC_VULNERABILITY);
+    public static final Holder<Potion> LONG_MAGIC_VULNERABILITY = holder(JolCraftPotionIds.LONG_MAGIC_VULNERABILITY);
+    public static final Holder<Potion> STRONG_MAGIC_VULNERABILITY = holder(JolCraftPotionIds.STRONG_MAGIC_VULNERABILITY);
+
+    public static final Holder<Potion> POISON_RESISTANCE = holder(JolCraftPotionIds.POISON_RESISTANCE);
+    public static final Holder<Potion> LONG_POISON_RESISTANCE = holder(JolCraftPotionIds.LONG_POISON_RESISTANCE);
+    public static final Holder<Potion> STRONG_POISON_RESISTANCE = holder(JolCraftPotionIds.STRONG_POISON_RESISTANCE);
+
+    public static final Holder<Potion> POISON_VULNERABILITY = holder(JolCraftPotionIds.POISON_VULNERABILITY);
+    public static final Holder<Potion> LONG_POISON_VULNERABILITY = holder(JolCraftPotionIds.LONG_POISON_VULNERABILITY);
+    public static final Holder<Potion> STRONG_POISON_VULNERABILITY = holder(JolCraftPotionIds.STRONG_POISON_VULNERABILITY);
+
     public static final Holder<Potion> SLOW_RESISTANCE = holder(JolCraftPotionIds.SLOW_RESISTANCE);
     public static final Holder<Potion> LONG_SLOW_RESISTANCE = holder(JolCraftPotionIds.LONG_SLOW_RESISTANCE);
     public static final Holder<Potion> STRONG_SLOW_RESISTANCE = holder(JolCraftPotionIds.STRONG_SLOW_RESISTANCE);
+
+    public static final Holder<Potion> SLOW_VULNERABILITY = holder(JolCraftPotionIds.SLOW_VULNERABILITY);
+    public static final Holder<Potion> LONG_SLOW_VULNERABILITY = holder(JolCraftPotionIds.LONG_SLOW_VULNERABILITY);
+    public static final Holder<Potion> STRONG_SLOW_VULNERABILITY = holder(JolCraftPotionIds.STRONG_SLOW_VULNERABILITY);
+
+    public static final Holder<Potion> WITHER_RESISTANCE = holder(JolCraftPotionIds.WITHER_RESISTANCE);
+    public static final Holder<Potion> LONG_WITHER_RESISTANCE = holder(JolCraftPotionIds.LONG_WITHER_RESISTANCE);
+    public static final Holder<Potion> STRONG_WITHER_RESISTANCE = holder(JolCraftPotionIds.STRONG_WITHER_RESISTANCE);
+
+    public static final Holder<Potion> WITHER_VULNERABILITY = holder(JolCraftPotionIds.WITHER_VULNERABILITY);
+    public static final Holder<Potion> LONG_WITHER_VULNERABILITY = holder(JolCraftPotionIds.LONG_WITHER_VULNERABILITY);
+    public static final Holder<Potion> STRONG_WITHER_VULNERABILITY = holder(JolCraftPotionIds.STRONG_WITHER_VULNERABILITY);
+
     public static final Holder<Potion> MARKSMAN = holder(JolCraftPotionIds.MARKSMAN);
     public static final Holder<Potion> LONG_MARKSMAN = holder(JolCraftPotionIds.LONG_MARKSMAN);
     public static final Holder<Potion> STRONG_MARKSMAN = holder(JolCraftPotionIds.STRONG_MARKSMAN);

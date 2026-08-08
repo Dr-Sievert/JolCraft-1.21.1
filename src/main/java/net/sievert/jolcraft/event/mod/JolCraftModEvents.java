@@ -67,13 +67,23 @@ public final class JolCraftModEvents {
 
         added += addToAllLivingEntities(event, JolCraftAttributes.LUMINANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_PENETRATION);
-        added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_RESISTANCE);
-        added += addToAllLivingEntities(event, JolCraftAttributes.POISON_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.CURSE_VULNERABILITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.EXPLOSION_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.EXPLOSION_VULNERABILITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.FIRE_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.FIRE_VULNERABILITY);
         added += addToAllLivingEntities(event, JolCraftAttributes.FROST_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.FROST_VULNERABILITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_VULNERABILITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.POISON_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.POISON_VULNERABILITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_VULNERABILITY);
         added += addToAllLivingEntities(event, JolCraftAttributes.WITHER_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.WITHER_VULNERABILITY);
         added += addToAllLivingEntities(event, JolCraftAttributes.TENACITY);
         added += addToAllLivingEntities(event, JolCraftAttributes.FOCUS);
-        added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.MOON_SHIELD);
         added += addToAllLivingEntities(event, JolCraftAttributes.PROJECTILE_DAMAGE);
         added += addToAllLivingEntities(event, JolCraftAttributes.LOCKPICKING);
@@ -81,7 +91,7 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.CONTAINER_LOOT_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.CROP_LOOT_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.EXPERIENCE_INCREASE);
-        added += addToAllLivingEntities(event, JolCraftAttributes.CURSE_VULNERABILITY);
+
         added += addToAllLivingEntities(event, JolCraftAttributes.SUN_FIRE_DAMAGE);
 
         return added;

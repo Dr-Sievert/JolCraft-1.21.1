@@ -2,6 +2,7 @@ package net.sievert.jolcraft.data.id.item;
 
 import net.minecraft.world.effect.MobEffects;
 import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
 import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
@@ -46,6 +47,16 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_ENDURANCE = longPotion(ENDURANCE);
     public static final String STRONG_ENDURANCE = strongPotion(ENDURANCE);
 
+    public static final String EXPLOSION_RESISTANCE = JolCraftEffectIds.EXPLOSION_RESISTANCE;
+    public static final String LONG_EXPLOSION_RESISTANCE = longPotion(EXPLOSION_RESISTANCE);
+    public static final String STRONG_EXPLOSION_RESISTANCE = strongPotion(EXPLOSION_RESISTANCE);
+
+    public static final String STRONG_FIRE_RESISTANCE = strongPotion(JolCraftAttributeIds.FIRE_RESISTANCE);
+
+    public static final String FROST_RESISTANCE = JolCraftEffectIds.FROST_RESISTANCE;
+    public static final String LONG_FROST_RESISTANCE = longPotion(FROST_RESISTANCE);
+    public static final String STRONG_FROST_RESISTANCE = strongPotion(FROST_RESISTANCE);
+
     public static final String MAGIC_RESISTANCE = JolCraftEffectIds.MAGIC_RESISTANCE;
     public static final String LONG_MAGIC_RESISTANCE = longPotion(MAGIC_RESISTANCE);
     public static final String STRONG_MAGIC_RESISTANCE = strongPotion(MAGIC_RESISTANCE);
@@ -54,17 +65,13 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_POISON_RESISTANCE = longPotion(POISON_RESISTANCE);
     public static final String STRONG_POISON_RESISTANCE = strongPotion(POISON_RESISTANCE);
 
-    public static final String FROST_RESISTANCE = JolCraftEffectIds.FROST_RESISTANCE;
-    public static final String LONG_FROST_RESISTANCE = longPotion(FROST_RESISTANCE);
-    public static final String STRONG_FROST_RESISTANCE = strongPotion(FROST_RESISTANCE);
+    public static final String SLOW_RESISTANCE = JolCraftEffectIds.SLOW_RESISTANCE;
+    public static final String LONG_SLOW_RESISTANCE = longPotion(SLOW_RESISTANCE);
+    public static final String STRONG_SLOW_RESISTANCE = strongPotion(SLOW_RESISTANCE);
 
     public static final String WITHER_RESISTANCE = JolCraftEffectIds.WITHER_RESISTANCE;
     public static final String LONG_WITHER_RESISTANCE = longPotion(WITHER_RESISTANCE);
     public static final String STRONG_WITHER_RESISTANCE = strongPotion(WITHER_RESISTANCE);
-
-    public static final String SLOW_RESISTANCE = JolCraftEffectIds.SLOW_RESISTANCE;
-    public static final String LONG_SLOW_RESISTANCE = longPotion(SLOW_RESISTANCE);
-    public static final String STRONG_SLOW_RESISTANCE = strongPotion(SLOW_RESISTANCE);
 
     public static final String MARKSMAN = JolCraftEffectIds.MARKSMAN;
     public static final String LONG_MARKSMAN = longPotion(MARKSMAN);
@@ -125,6 +132,34 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String FRAILTY_CURSE = JolCraftEffectIds.FRAILTY_CURSE;
     public static final String HEX = JolCraftEffectIds.HEX;
     public static final String VITALITY_CURSE = JolCraftEffectIds.VITALITY_CURSE;
+
+    public static final String EXPLOSION_VULNERABILITY = JolCraftEffectIds.EXPLOSION_VULNERABILITY;
+    public static final String LONG_EXPLOSION_VULNERABILITY = longPotion(EXPLOSION_VULNERABILITY);
+    public static final String STRONG_EXPLOSION_VULNERABILITY = strongPotion(EXPLOSION_VULNERABILITY);
+
+    public static final String FIRE_VULNERABILITY = JolCraftEffectIds.FIRE_VULNERABILITY;
+    public static final String LONG_FIRE_VULNERABILITY = longPotion(FIRE_VULNERABILITY);
+    public static final String STRONG_FIRE_VULNERABILITY = strongPotion(FIRE_VULNERABILITY);
+
+    public static final String FROST_VULNERABILITY = JolCraftEffectIds.FROST_VULNERABILITY;
+    public static final String LONG_FROST_VULNERABILITY = longPotion(FROST_VULNERABILITY);
+    public static final String STRONG_FROST_VULNERABILITY = strongPotion(FROST_VULNERABILITY);
+
+    public static final String MAGIC_VULNERABILITY = JolCraftEffectIds.MAGIC_VULNERABILITY;
+    public static final String LONG_MAGIC_VULNERABILITY = longPotion(MAGIC_VULNERABILITY);
+    public static final String STRONG_MAGIC_VULNERABILITY = strongPotion(MAGIC_VULNERABILITY);
+
+    public static final String POISON_VULNERABILITY = JolCraftEffectIds.POISON_VULNERABILITY;
+    public static final String LONG_POISON_VULNERABILITY = longPotion(POISON_VULNERABILITY);
+    public static final String STRONG_POISON_VULNERABILITY = strongPotion(POISON_VULNERABILITY);
+
+    public static final String SLOW_VULNERABILITY = JolCraftEffectIds.SLOW_VULNERABILITY;
+    public static final String LONG_SLOW_VULNERABILITY = longPotion(SLOW_VULNERABILITY);
+    public static final String STRONG_SLOW_VULNERABILITY = strongPotion(SLOW_VULNERABILITY);
+
+    public static final String WITHER_VULNERABILITY = JolCraftEffectIds.WITHER_VULNERABILITY;
+    public static final String LONG_WITHER_VULNERABILITY = longPotion(WITHER_VULNERABILITY);
+    public static final String STRONG_WITHER_VULNERABILITY = strongPotion(WITHER_VULNERABILITY);
 
     public static final String DISARMED = JolCraftEffectIds.DISARMED;
     public static final String ROOTED = JolCraftEffectIds.ROOTED;

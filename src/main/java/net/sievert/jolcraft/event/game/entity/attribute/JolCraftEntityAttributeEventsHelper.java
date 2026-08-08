@@ -102,10 +102,15 @@ public final class JolCraftEntityAttributeEventsHelper {
 
         if (speed == null) return;
 
-        double resist = Mth.clamp(
+        double resistance = Mth.clamp(
                 entity.getAttributeValue(JolCraftAttributes.SLOW_RESISTANCE),
                 0.0D,
                 1.0D
+        );
+
+        double vulnerability = Math.max(
+                0.0D,
+                entity.getAttributeValue(JolCraftAttributes.SLOW_VULNERABILITY)
         );
 
         MobEffectInstance slow =
@@ -117,13 +122,13 @@ public final class JolCraftEntityAttributeEventsHelper {
             return;
         }
 
-        int amp = slow.getAmplifier();
+        int amplifier = slow.getAmplifier();
 
-        double slowAmount =
-                -0.15D * (amp + 1);
+        double originalSlow =
+                0.15D * (amplifier + 1);
 
         double vanillaMultiplier =
-                1.0D + slowAmount;
+                1.0D - originalSlow;
 
         if (vanillaMultiplier <= 0.0D) {
             FROSTVEIN_CACHE.remove(entity.getUUID());
@@ -131,11 +136,14 @@ public final class JolCraftEntityAttributeEventsHelper {
             return;
         }
 
-        double desiredSlowAmount =
-                slowAmount * (1.0D - resist);
+        double actualSlow =
+                originalSlow * Math.max(
+                        0.0D,
+                        1.0D - resistance + vulnerability
+                );
 
         double desiredMultiplier =
-                1.0D + desiredSlowAmount;
+                Math.max(0.0D, 1.0D - actualSlow);
 
         double extra =
                 desiredMultiplier / vanillaMultiplier - 1.0D;
@@ -149,12 +157,6 @@ public final class JolCraftEntityAttributeEventsHelper {
         )) {
             return;
         }
-
-        double originalSlow =
-                0.15D * (amp + 1);
-
-        double actualSlow =
-                originalSlow * (1.0D - resist);
 
         double oldSpeed =
                 speed.getValue();
@@ -174,8 +176,10 @@ public final class JolCraftEntityAttributeEventsHelper {
 
         JolCraftLogs.debug(
                 JolCraftLogTags.PLAYER,
-                "Frostvein slow resistance triggered: entity={}, originalSlow={}%, actualSlow={}%, oldSpeed={}, newSpeed={}",
+                "Slowness modifier triggered: entity={}, resistance={}%, vulnerability={}%, originalSlow={}%, actualSlow={}%, oldSpeed={}, newSpeed={}",
                 entity.getDisplayName().getString(),
+                JolCraftLogs.pct1(resistance),
+                JolCraftLogs.pct1(vulnerability),
                 JolCraftLogs.pct1(originalSlow),
                 JolCraftLogs.pct1(actualSlow),
                 oldSpeed,

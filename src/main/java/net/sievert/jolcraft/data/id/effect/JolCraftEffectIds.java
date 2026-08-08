@@ -22,6 +22,7 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String DWARVEN_RAGE = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.RAGE);
     public static final String ENDURANCE = JolCraftDictionary.ENDURANCE;
     public static final String MAGIC_RESISTANCE = JolCraftAttributeIds.MAGIC_RESISTANCE;
+    public static final String EXPLOSION_RESISTANCE = JolCraftAttributeIds.EXPLOSION_RESISTANCE;
     public static final String POISON_RESISTANCE = JolCraftAttributeIds.POISON_RESISTANCE;
     public static final String FROST_RESISTANCE = JolCraftAttributeIds.FROST_RESISTANCE;
     public static final String WITHER_RESISTANCE = JolCraftAttributeIds.WITHER_RESISTANCE;
@@ -45,8 +46,16 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String DELIRIUM_CURSE = join(JolCraftDictionary.DELIRIUM, JolCraftDictionary.CURSE);
     public static final String FAMINE_CURSE = join(JolCraftDictionary.FAMINE, JolCraftDictionary.CURSE);
     public static final String FRAILTY_CURSE = join(JolCraftDictionary.FRAILTY, JolCraftDictionary.CURSE);
-    public static final String HEX = JolCraftDictionary.HEX;
     public static final String VITALITY_CURSE = join(JolCraftDictionary.VITALITY, JolCraftDictionary.CURSE);
+    public static final String HEX = JolCraftDictionary.HEX;
+
+    public static final String EXPLOSION_VULNERABILITY = JolCraftAttributeIds.EXPLOSION_VULNERABILITY;
+    public static final String FIRE_VULNERABILITY = JolCraftAttributeIds.FIRE_VULNERABILITY;
+    public static final String FROST_VULNERABILITY = JolCraftAttributeIds.FROST_VULNERABILITY;
+    public static final String MAGIC_VULNERABILITY = JolCraftAttributeIds.MAGIC_VULNERABILITY;
+    public static final String POISON_VULNERABILITY = JolCraftAttributeIds.POISON_VULNERABILITY;
+    public static final String SLOW_VULNERABILITY = JolCraftAttributeIds.SLOW_VULNERABILITY;
+    public static final String WITHER_VULNERABILITY = JolCraftAttributeIds.WITHER_VULNERABILITY;
 
     public static final String DISARMED = JolCraftDictionary.DISARMED;
     public static final String ROOTED = JolCraftDictionary.ROOTED;

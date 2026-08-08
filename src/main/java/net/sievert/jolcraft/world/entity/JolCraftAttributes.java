@@ -13,7 +13,7 @@ import net.sievert.jolcraft.data.language.util.AbstractLanguageKeys;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "SameParameterValue"})
 public final class JolCraftAttributes {
 
     private JolCraftAttributes() {}
@@ -42,6 +42,12 @@ public final class JolCraftAttributes {
 
     public static final DeferredHolder<Attribute, Attribute> MAGIC_RESISTANCE =
             registerPositivePercentage(JolCraftAttributeIds.MAGIC_RESISTANCE, 1.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> FIRE_RESISTANCE =
+            registerPositivePercentage(JolCraftAttributeIds.FIRE_RESISTANCE, 1.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> EXPLOSION_RESISTANCE =
+            registerPositivePercentage(JolCraftAttributeIds.EXPLOSION_RESISTANCE, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> POISON_RESISTANCE =
             registerPositivePercentage(JolCraftAttributeIds.POISON_RESISTANCE, 1.0D);
@@ -78,6 +84,27 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> CURSE_VULNERABILITY =
             registerNegativeDouble(JolCraftAttributeIds.CURSE_VULNERABILITY, 2048.0D);
 
+    public static final DeferredHolder<Attribute, Attribute> EXPLOSION_VULNERABILITY =
+            registerNegativePercentage(JolCraftAttributeIds.EXPLOSION_VULNERABILITY, 2048.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> FIRE_VULNERABILITY =
+            registerNegativePercentage(JolCraftAttributeIds.FIRE_VULNERABILITY, 2048.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> FROST_VULNERABILITY =
+            registerNegativePercentage(JolCraftAttributeIds.FROST_VULNERABILITY, 2048.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> MAGIC_VULNERABILITY =
+            registerNegativePercentage(JolCraftAttributeIds.MAGIC_VULNERABILITY, 2048.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> POISON_VULNERABILITY =
+            registerNegativePercentage(JolCraftAttributeIds.POISON_VULNERABILITY, 2048.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> SLOW_VULNERABILITY =
+            registerNegativePercentage(JolCraftAttributeIds.SLOW_VULNERABILITY, 2048.0D);
+
+    public static final DeferredHolder<Attribute, Attribute> WITHER_VULNERABILITY =
+            registerNegativePercentage(JolCraftAttributeIds.WITHER_VULNERABILITY, 2048.0D);
+
     // Helpers
 
     private static DeferredHolder<Attribute, Attribute> registerPositivePercentage(String id, double max) {
@@ -86,7 +113,6 @@ public final class JolCraftAttributes {
                         .setSyncable(true).setSentiment(Attribute.Sentiment.POSITIVE)
         );
     }
-
 
     private static DeferredHolder<Attribute, Attribute> registerPositiveDouble(String id, double max) {
         return ATTRIBUTES.register(id, () ->

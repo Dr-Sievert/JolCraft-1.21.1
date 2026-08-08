@@ -32,17 +32,20 @@ public final class JolCraftEffectApplicationEventsHelper {
                     JolCraftEffects.VITALITY_CURSE
             ),
             attributeProtection(
+                    JolCraftAttributes.FIRE_RESISTANCE,
+                    JolCraftEffects.SUNFIRE
+            ),
+            attributeProtection(
+                    JolCraftAttributes.EXPLOSION_RESISTANCE
+                    // Empty for now
+            ),
+            attributeProtection(
                     JolCraftAttributes.POISON_RESISTANCE,
                     MobEffects.POISON
             ),
-            effectProtection(
-                    MobEffects.FIRE_RESISTANCE,
-                    JolCraftEffects.SUNFIRE,
-                    JolCraftEffects.FROST_RESISTANCE
-            ),
             attributeProtection(
-                    JolCraftAttributes.FROST_RESISTANCE,
-                    MobEffects.FIRE_RESISTANCE
+                    JolCraftAttributes.FROST_RESISTANCE
+                    // Empty for now
             ),
             attributeProtection(
                     JolCraftAttributes.WITHER_RESISTANCE,
@@ -55,12 +58,41 @@ public final class JolCraftEffectApplicationEventsHelper {
                     MobEffects.DOLPHINS_GRACE,
                     MobEffects.MOVEMENT_SPEED,
                     MobEffects.JUMP
+            ),
+            cleansingEffectProtection(
+                    JolCraftEffects.EXPLOSION_VULNERABILITY,
+                    JolCraftEffects.EXPLOSION_RESISTANCE
+            ),
+            cleansingEffectProtection(
+                    JolCraftEffects.FIRE_VULNERABILITY,
+                    MobEffects.FIRE_RESISTANCE
+            ),
+            cleansingEffectProtection(
+                    JolCraftEffects.FROST_VULNERABILITY,
+                    JolCraftEffects.FROST_RESISTANCE
+            ),
+            cleansingEffectProtection(
+                    JolCraftEffects.MAGIC_VULNERABILITY,
+                    JolCraftEffects.MAGIC_RESISTANCE
+            ),
+            cleansingEffectProtection(
+                    JolCraftEffects.POISON_VULNERABILITY,
+                    JolCraftEffects.POISON_RESISTANCE
+            ),
+            cleansingEffectProtection(
+                    JolCraftEffects.SLOW_VULNERABILITY,
+                    JolCraftEffects.SLOW_RESISTANCE
+            ),
+            cleansingEffectProtection(
+                    JolCraftEffects.WITHER_VULNERABILITY,
+                    JolCraftEffects.WITHER_RESISTANCE
             )
     );
 
     private JolCraftEffectApplicationEventsHelper() {}
 
     public static void onEffectAdded(MobEffectEvent.Added event) {
+        LivingEntity entity = event.getEntity();
         MobEffectInstance addedEffect = event.getEffectInstance();
 
         for (EffectProtection protection : PROTECTIONS) {
@@ -71,7 +103,19 @@ public final class JolCraftEffectApplicationEventsHelper {
             }
 
             for (Holder<MobEffect> blockedEffect : protection.blockedEffects()) {
-                event.getEntity().removeEffect(blockedEffect);
+                if (!entity.removeEffect(blockedEffect)) {
+                    continue;
+                }
+
+                JolCraftLogs.debug(
+                        JolCraftLogTags.ENTITY,
+                        "Entity {} cleansed existing effect {} through {}",
+                        entity.getName().getString(),
+                        blockedEffect.unwrapKey()
+                                .map(ResourceKey::location)
+                                .orElse(null),
+                        protectionId(protection)
+                );
             }
 
             return;
@@ -167,6 +211,7 @@ public final class JolCraftEffectApplicationEventsHelper {
         );
     }
 
+    @SuppressWarnings("unused")
     @SafeVarargs
     private static EffectProtection effectProtection(
             Holder<MobEffect> protectionEffect,

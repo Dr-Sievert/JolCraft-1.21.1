@@ -1,11 +1,14 @@
 package net.sievert.jolcraft.event.game.entity.effect.util;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.sievert.jolcraft.util.JolCraftRuntime;
+import net.sievert.jolcraft.util.log.JolCraftLogTags;
+import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 
 import javax.annotation.Nullable;
@@ -16,14 +19,24 @@ public final class JolCraftStackingEffectEventsHelper {
     private static final int UNLIMITED = -1;
 
     private static final List<StackingRule> RULES = List.of(
+
             rule(JolCraftEffects.ATAXIA_CURSE, 4),
-            rule(JolCraftEffects.CORROSION, 4),
             rule(JolCraftEffects.DELIRIUM_CURSE, UNLIMITED),
             rule(JolCraftEffects.FAMINE_CURSE, UNLIMITED),
             rule(JolCraftEffects.FRAILTY_CURSE, 4),
-            rule(JolCraftEffects.HEX, UNLIMITED),
             rule(JolCraftEffects.VITALITY_CURSE, 4),
-            rule(JolCraftEffects.CURSED_WOUND, UNLIMITED)
+            rule(JolCraftEffects.CURSED_WOUND, UNLIMITED),
+            rule(JolCraftEffects.HEX, UNLIMITED),
+
+            rule(JolCraftEffects.EXPLOSION_VULNERABILITY, UNLIMITED),
+            rule(JolCraftEffects.FIRE_VULNERABILITY, UNLIMITED),
+            rule(JolCraftEffects.FROST_VULNERABILITY, UNLIMITED),
+            rule(JolCraftEffects.MAGIC_VULNERABILITY, UNLIMITED),
+            rule(JolCraftEffects.POISON_VULNERABILITY, UNLIMITED),
+            rule(JolCraftEffects.SLOW_VULNERABILITY, UNLIMITED),
+            rule(JolCraftEffects.WITHER_VULNERABILITY, UNLIMITED),
+
+            rule(JolCraftEffects.CORROSION, 4)
     );
 
     private JolCraftStackingEffectEventsHelper() {}
@@ -56,16 +69,20 @@ public final class JolCraftStackingEffectEventsHelper {
         try {
             if (oldEffect == null) return;
 
+            int oldAmplifier = oldEffect.getAmplifier();
+            int addedAmplifier = addedEffect.getAmplifier();
+
             int newAmplifier =
-                    oldEffect.getAmplifier()
-                            + addedEffect.getAmplifier()
+                    oldAmplifier
+                            + addedAmplifier
                             + 1;
 
-            if (rule.maxAmplifier() >= 0) {
-                newAmplifier = Math.min(
-                        newAmplifier,
-                        rule.maxAmplifier()
-                );
+            boolean capped =
+                    rule.maxAmplifier() >= 0
+                            && newAmplifier > rule.maxAmplifier();
+
+            if (capped) {
+                newAmplifier = rule.maxAmplifier();
             }
 
             entity.addEffect(new MobEffectInstance(
@@ -79,6 +96,19 @@ public final class JolCraftStackingEffectEventsHelper {
                     addedEffect.isVisible(),
                     addedEffect.showIcon()
             ));
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.ENTITY,
+                    "Entity {} stacked effect {} from amplifier {} + {} to {}{}",
+                    entity.getName().getString(),
+                    addedEffect.getEffect().unwrapKey()
+                            .map(ResourceKey::location)
+                            .orElse(null),
+                    oldAmplifier,
+                    addedAmplifier,
+                    newAmplifier,
+                    capped ? " (capped)" : ""
+            );
         } finally {
             rule.guard().exit(entity);
         }

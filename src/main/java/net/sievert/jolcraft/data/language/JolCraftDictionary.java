@@ -364,6 +364,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String EXCAVATION = "excavation";
     public static final String EXPERIENCE = "experience";
     public static final String EXPLORER = "explorer";
+    public static final String EXPLOSION = "explosion";
     public static final String EYE = "eye";
     public static final String FABRIC = "fabric";
     public static final String FACE = "face";

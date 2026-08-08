@@ -15,7 +15,10 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
-import net.sievert.jolcraft.world.entity.effect.custom.beneficial.*;
+import net.sievert.jolcraft.world.entity.effect.custom.beneficial.combat.defence.*;
+import net.sievert.jolcraft.world.entity.effect.custom.beneficial.combat.defence.resistance.*;
+import net.sievert.jolcraft.world.entity.effect.custom.beneficial.combat.offense.*;
+import net.sievert.jolcraft.world.entity.effect.custom.beneficial.utility.*;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.CorrosionEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.SunfireEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.DisarmedEffect;
@@ -23,6 +26,7 @@ import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.Roo
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.StunnedEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.SuppressedEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.*;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.vulnerability.*;
 import net.sievert.jolcraft.world.entity.effect.custom.neutral.AnchorEffect;
 
 public final class JolCraftEffects {
@@ -44,6 +48,17 @@ public final class JolCraftEffects {
                             JolCraftAttributes.MAGIC_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.MAGIC_RESISTANCE, JolCraftDictionary.EFFECT)),
                             0.10D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> EXPLOSION_RESISTANCE = MOB_EFFECTS.register(
+            JolCraftEffectIds.EXPLOSION_RESISTANCE,
+            () -> new ExplosionResistanceEffect(MobEffectCategory.BENEFICIAL,0x796e70)
+                    .addAttributeModifier(
+                            JolCraftAttributes.EXPLOSION_RESISTANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.EXPLOSION_RESISTANCE, JolCraftDictionary.EFFECT)),
+                            0.25D,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );
@@ -466,6 +481,85 @@ public final class JolCraftEffects {
                             JolCraftAttributes.CURSE_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.HEX, JolCraftDictionary.EFFECT)),
                             1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    //Vulnerabilities
+
+    public static final Holder<MobEffect> EXPLOSION_VULNERABILITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.EXPLOSION_VULNERABILITY,
+            () -> new ExplosionVulnerabilityEffect(MobEffectCategory.HARMFUL,0x635a5a)
+                    .addAttributeModifier(
+                            JolCraftAttributes.EXPLOSION_VULNERABILITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.EXPLOSION_VULNERABILITY, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> FIRE_VULNERABILITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.FIRE_VULNERABILITY,
+            () -> new FireVulnerabilityEffect(MobEffectCategory.HARMFUL,0x281b1b)
+                    .addAttributeModifier(
+                            JolCraftAttributes.FIRE_VULNERABILITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.FIRE_VULNERABILITY, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> FROST_VULNERABILITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.FROST_VULNERABILITY,
+            () -> new FrostVulnerabilityEffect(MobEffectCategory.HARMFUL,0x5ea2b7)
+                    .addAttributeModifier(
+                            JolCraftAttributes.FROST_VULNERABILITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.FROST_VULNERABILITY, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> MAGIC_VULNERABILITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.MAGIC_VULNERABILITY,
+            () -> new MagicVulnerabilityEffect(MobEffectCategory.HARMFUL,0x2a6d76)
+                    .addAttributeModifier(
+                            JolCraftAttributes.MAGIC_VULNERABILITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.MAGIC_VULNERABILITY, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> POISON_VULNERABILITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.POISON_VULNERABILITY,
+            () -> new PoisonVulnerabilityEffect(MobEffectCategory.HARMFUL,0x629e31)
+                    .addAttributeModifier(
+                            JolCraftAttributes.POISON_VULNERABILITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.POISON_VULNERABILITY, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> SLOW_VULNERABILITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.SLOW_VULNERABILITY,
+            () -> new SlowVulnerabilityEffect(MobEffectCategory.HARMFUL,0x974e35)
+                    .addAttributeModifier(
+                            JolCraftAttributes.SLOW_VULNERABILITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.SLOW_VULNERABILITY, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> WITHER_VULNERABILITY = MOB_EFFECTS.register(
+            JolCraftEffectIds.WITHER_VULNERABILITY,
+            () -> new WitherVulnerabilityEffect(MobEffectCategory.HARMFUL,0x674451)
+                    .addAttributeModifier(
+                            JolCraftAttributes.WITHER_VULNERABILITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.WITHER_VULNERABILITY, JolCraftDictionary.EFFECT)),
+                            0.25D,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );

@@ -172,6 +172,21 @@ public final class JolCraftBrewingEvents {
                 JolCraftPotions.WITHER_RESISTANCE
         );
 
+        // Explosion Resistance
+
+        recipes += addFamilyMix(builder,
+                Potions.STRENGTH,
+                JolCraftItems.AEGISCORE_DUST,
+                JolCraftPotions.EXPLOSION_RESISTANCE
+        );
+
+        // Fire Resistance (Strong only)
+
+        recipes += addStrong(builder,
+                Potions.FIRE_RESISTANCE,
+                JolCraftPotions.STRONG_FIRE_RESISTANCE
+        );
+
         // Harvest
 
         recipes += addStartMix(builder,
@@ -228,6 +243,50 @@ public final class JolCraftBrewingEvents {
         recipes += addStartMix(builder,
                 Items.SHULKER_SHELL,
                 JolCraftPotions.TENACITY
+        );
+
+        // Vulnerabilities
+
+        recipes += addFamilyMix(builder,
+                JolCraftPotions.EXPLOSION_RESISTANCE,
+                JolCraftItems.INVERIX,
+                JolCraftPotions.EXPLOSION_VULNERABILITY
+        );
+
+        recipes += addFamilyMix(builder,
+                Potions.FIRE_RESISTANCE,
+                JolCraftItems.INVERIX,
+                JolCraftPotions.FIRE_VULNERABILITY
+        );
+
+        recipes += addFamilyMix(builder,
+                JolCraftPotions.FROST_RESISTANCE,
+                JolCraftItems.INVERIX,
+                JolCraftPotions.FROST_VULNERABILITY
+        );
+
+        recipes += addFamilyMix(builder,
+                JolCraftPotions.MAGIC_RESISTANCE,
+                JolCraftItems.INVERIX,
+                JolCraftPotions.MAGIC_VULNERABILITY
+        );
+
+        recipes += addFamilyMix(builder,
+                JolCraftPotions.POISON_RESISTANCE,
+                JolCraftItems.INVERIX,
+                JolCraftPotions.POISON_VULNERABILITY
+        );
+
+        recipes += addFamilyMix(builder,
+                JolCraftPotions.SLOW_RESISTANCE,
+                JolCraftItems.INVERIX,
+                JolCraftPotions.SLOW_VULNERABILITY
+        );
+
+        recipes += addFamilyMix(builder,
+                JolCraftPotions.WITHER_RESISTANCE,
+                JolCraftItems.INVERIX,
+                JolCraftPotions.WITHER_VULNERABILITY
         );
 
         // Unluck
