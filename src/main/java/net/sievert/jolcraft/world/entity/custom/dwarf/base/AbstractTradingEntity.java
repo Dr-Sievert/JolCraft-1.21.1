@@ -282,30 +282,12 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
 
         var recipes = DwarfTrades.getTradeRecipesForMode(serverLevel, profession, level, this.random, mode);
 
-        JolCraftLogs.debug(
-                JolCraftLogTags.ENTITY,
-                "Rebuilding dwarf trades for profession={} level={} mode={} recipeCount={}",
-                profession,
-                level,
-                mode,
-                recipes.size()
-        );
-
         for (var holder : recipes) {
             addOfferFromRecipe(
                     rebuilt,
                     holder
             );
         }
-
-        JolCraftLogs.debug(
-                JolCraftLogTags.ENTITY,
-                "Finished rebuilding dwarf trades for profession={} level={} mode={} offerCount={}",
-                profession,
-                level,
-                mode,
-                rebuilt.size()
-        );
 
         this.offers = rebuilt;
     }

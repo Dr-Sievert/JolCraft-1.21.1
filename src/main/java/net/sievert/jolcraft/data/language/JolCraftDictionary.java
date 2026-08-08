@@ -156,7 +156,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String LONG = "long";
     public static final String LUNAR = "lunar";
     public static final String MAIN = "main";
-    public static final String MANAGED = "managed";
     public static final String MATURED = "matured";
     public static final String MEDIUM = "medium";
     public static final String MIDDLE = "middle";
@@ -294,6 +293,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String COMPASS = "compass";
     public static final String CONDITION = "condition";
     public static final String CONFIG = "config";
+    public static final String CONFLAGRATION = "conflagration";
     public static final String CONTAINER = "container";
     public static final String CONTENT = "content";
     public static final String CONTEXT = "context";
@@ -463,6 +463,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String LORE = "lore";
     public static final String LOVE = "love";
     public static final String LUMIERE = "lumiere";
+    public static final String LUMINANCE = "luminance";
     public static final String MAGIC = "magic";
     public static final String MALT = "malt";
     public static final String MAP = "map";
@@ -543,7 +544,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String PROMOTION = "promotion";
     public static final String PROVIDER = "provider";
     public static final String QUILL = "quill";
-    public static final String RADIANT = "radiant";
     public static final String RAGE = "rage";
     public static final String RARITY = "rarity";
     public static final String RECIPE = "recipe";

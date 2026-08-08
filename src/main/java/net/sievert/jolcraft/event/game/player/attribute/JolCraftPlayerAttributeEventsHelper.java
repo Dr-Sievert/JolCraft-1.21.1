@@ -7,7 +7,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -32,23 +33,19 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
-import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
-import net.sievert.jolcraft.world.entity.JolCraftEntities;
-import net.sievert.jolcraft.world.entity.custom.object.RadiantEntity;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,18 +53,16 @@ import java.util.UUID;
 
 public final class JolCraftPlayerAttributeEventsHelper {
 
-    private static final Map<UUID, RadiantEntity> ACTIVE_RADIANT_ENTITIES = new HashMap<>();
+    private static final float LUMINANCE_DAMAGE_PER_LIGHT_LEVEL = 0.05F;
+
+    private static final Map<UUID, PendingLuminanceCritical> PENDING_LUMINANCE_CRITICALS = new HashMap<>();
     private static final Map<UUID, PendingChestLoot> CHEST_LOOT_TO_REROLL = new HashMap<>();
     private static final Map<UUID, Double> ITEM_USE_SPEED_PROGRESS = new HashMap<>();
 
     private JolCraftPlayerAttributeEventsHelper() {}
 
     public static void clearPlayerTracking(UUID uuid) {
-        RadiantEntity radiant = ACTIVE_RADIANT_ENTITIES.remove(uuid);
-        if (radiant != null && !radiant.isRemoved()) {
-            radiant.discard();
-        }
-
+        PENDING_LUMINANCE_CRITICALS.remove(uuid);
         CHEST_LOOT_TO_REROLL.remove(uuid);
         ITEM_USE_SPEED_PROGRESS.remove(uuid);
     }
@@ -97,181 +92,74 @@ public final class JolCraftPlayerAttributeEventsHelper {
         );
     }
 
-    public static void tickRadiantEntity(PlayerTickEvent.Post event) {
+    public static void applyLuminanceCritical(CriticalHitEvent event) {
         Player player = event.getEntity();
         if (player.level().isClientSide()) return;
-        if (!(player.level() instanceof ServerLevel level)) return;
 
         UUID uuid = player.getUUID();
+        PENDING_LUMINANCE_CRITICALS.remove(uuid);
 
-        int pieces = Mth.clamp((int) Math.round(player.getAttributeValue(JolCraftAttributes.RADIANT)), 0, 4);
-        boolean hasRadiant = pieces > 0;
-
-        int lightLevel = switch (pieces) {
-            case 1 -> 9;
-            case 2 -> 11;
-            case 3 -> 13;
-            case 4 -> 15;
-            default -> 0;
-        };
-
-        RadiantEntity existing = ACTIVE_RADIANT_ENTITIES.get(uuid);
-
-        if (existing != null) {
-            if (existing.isRemoved()) {
-                JolCraftLogs.debug(
-                        JolCraftLogTags.PLAYER,
-                        "Clearing radiant (removed) for player {} in {}",
-                        player.getDisplayName().getString(),
-                        level.dimension().location()
-                );
-                ACTIVE_RADIANT_ENTITIES.remove(uuid);
-                existing = null;
-            } else if (existing.level() != level) {
-                JolCraftLogs.debug(
-                        JolCraftLogTags.PLAYER,
-                        "Clearing radiant (dimension change) for player {} old={} new={}",
-                        player.getDisplayName().getString(),
-                        existing.level().dimension().location(),
-                        level.dimension().location()
-                );
-                ACTIVE_RADIANT_ENTITIES.remove(uuid);
-                existing.discard();
-                existing = null;
-            }
-        }
-
-        if (!hasRadiant) {
-            if (existing != null) {
-                JolCraftLogs.debug(
-                        JolCraftLogTags.PLAYER,
-                        "Removing radiant for player {} (pieces={})",
-                        player.getDisplayName().getString(),
-                        pieces
-                );
-
-                existing.discard();
-            }
-
-            ACTIVE_RADIANT_ENTITIES.remove(uuid);
+        if (!event.isCriticalHit() || !(event.getTarget() instanceof LivingEntity target)) {
             return;
         }
 
-        if (existing == null) {
-            RadiantEntity found = null;
+        int luminanceLevel = Mth.floor(player.getAttributeValue(JolCraftAttributes.LUMINANCE));
+        if (luminanceLevel <= 0) return;
 
-            for (RadiantEntity entity : level.getEntitiesOfClass(RadiantEntity.class, player.getBoundingBox().inflate(64.0D))) {
-                if (!entity.isRemoved() && uuid.equals(entity.getOwnerUUID()) && entity.level() == level) {
-                    found = entity;
-                    break;
-                }
-            }
+        int lightLevel = player.level().getMaxLocalRawBrightness(player.blockPosition());
+        if (lightLevel <= 0) return;
 
-            if (found != null) {
-                JolCraftLogs.debug(
-                        JolCraftLogTags.PLAYER,
-                        "Recovered untracked radiant for player {} in {}",
-                        player.getDisplayName().getString(),
-                        level.dimension().location()
-                );
+        float bonusDamage = LUMINANCE_DAMAGE_PER_LIGHT_LEVEL * lightLevel * luminanceLevel;
 
-                existing = found;
-                ACTIVE_RADIANT_ENTITIES.put(uuid, existing);
-            } else {
-                JolCraftLogs.debug(
-                        JolCraftLogTags.PLAYER,
-                        "Creating radiant for player {} (pieces={}, lightLevel={}, dim={})",
-                        player.getDisplayName().getString(),
-                        pieces,
-                        lightLevel,
-                        level.dimension().location()
-                );
+        PENDING_LUMINANCE_CRITICALS.put(
+                uuid,
+                new PendingLuminanceCritical(
+                        target.getId(),
+                        player.level().getGameTime(),
+                        luminanceLevel,
+                        bonusDamage
+                )
+        );
 
-                RadiantEntity created = new RadiantEntity(JolCraftEntities.RADIANT.get(), level);
-                BlockPos spawnPos = player.blockPosition().above();
-                created.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY() + 1.0D, spawnPos.getZ() + 0.5D);
-                created.setOwner(player);
-                created.setRadiantLightLevel(lightLevel);
-
-                if (!level.addFreshEntity(created)) {
-                    JolCraftLogs.warn(
-                            JolCraftLogTags.PLAYER,
-                            "Failed to add radiant entity for player {} in {}",
-                            player.getDisplayName().getString(),
-                            level.dimension().location()
-                    );
-                    return;
-                }
-
-                existing = created;
-                ACTIVE_RADIANT_ENTITIES.put(uuid, existing);
-            }
-        }
-
-        existing.setOwner(player);
-        existing.setRadiantLightLevel(lightLevel);
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Luminance critical primed: player={}, target={}, luminance={}, light={}, bonusDmg={}, glowing={}s",
+                player.getDisplayName().getString(),
+                target.getDisplayName().getString(),
+                luminanceLevel,
+                lightLevel,
+                bonusDamage,
+                luminanceLevel
+        );
     }
 
-    public static void tickRadiantAura(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
-        if ((level.getGameTime() % 10L) != 0L) return;
+    public static void applyLuminanceCriticalDamage(LivingIncomingDamageEvent event) {
+        if (!(event.getSource().getEntity() instanceof Player player)) return;
 
-        Iterator<Map.Entry<UUID, RadiantEntity>> it = ACTIVE_RADIANT_ENTITIES.entrySet().iterator();
-
-        while (it.hasNext()) {
-            Map.Entry<UUID, RadiantEntity> entry = it.next();
-            RadiantEntity radiant = entry.getValue();
-
-            if (radiant == null || radiant.isRemoved()) {
-                it.remove();
-                continue;
-            }
-
-            if (radiant.level() != level) {
-                continue;
-            }
-
-            Entity ownerEntity = radiant.getOwner();
-            if (!(ownerEntity instanceof Player owner) || owner.isRemoved() || owner.level() != level) {
-                it.remove();
-                radiant.discard();
-                continue;
-            }
-
-            int pieces = Mth.clamp((int) Math.round(owner.getAttributeValue(JolCraftAttributes.RADIANT)), 0, 4);
-            if (pieces <= 0) {
-                it.remove();
-                radiant.discard();
-                continue;
-            }
-
-            int radius = 1 + pieces;
-            int amplifier = pieces - 1;
-
-            var box = radiant.getBoundingBox().inflate(radius, 4.0D, radius);
-            for (Player player : level.getEntitiesOfClass(Player.class, box)) {
-                double dy = radiant.getY() - player.getY();
-                if (dy < 0.0D || dy > 4.0D) continue;
-
-                double dx = radiant.getX() - player.getX();
-                double dz = radiant.getZ() - player.getZ();
-                if ((dx * dx + dz * dz) > (radius * radius)) continue;
-
-                MobEffectInstance existing = player.getEffect(JolCraftEffects.RADIANT);
-                if (existing != null && existing.getAmplifier() == amplifier && existing.getDuration() >= 200) {
-                    continue;
-                }
-
-                player.addEffect(new MobEffectInstance(
-                        JolCraftEffects.RADIANT,
-                        400,
-                        amplifier,
-                        false,
-                        false,
-                        true
-                ));
-            }
+        PendingLuminanceCritical pending = PENDING_LUMINANCE_CRITICALS.remove(player.getUUID());
+        if (pending == null
+                || pending.targetId() != event.getEntity().getId()
+                || pending.gameTime() != event.getEntity().level().getGameTime()) {
+            return;
         }
+
+        event.getEntity().addEffect(new MobEffectInstance(
+                MobEffects.GLOWING,
+                20 * pending.luminanceLevel()
+        ));
+
+        float originalDamage = event.getAmount();
+        event.setAmount(originalDamage + pending.bonusDamage());
+
+        JolCraftLogs.debug(
+                JolCraftLogTags.PLAYER,
+                "Luminance critical damage applied: player={}, target={}, original={}, bonus={}, new={}",
+                player.getDisplayName().getString(),
+                event.getEntity().getDisplayName().getString(),
+                originalDamage,
+                pending.bonusDamage(),
+                event.getAmount()
+        );
     }
 
     public static void trackChestLoot(PlayerInteractEvent.RightClickBlock event) {
@@ -558,6 +446,8 @@ public final class JolCraftPlayerAttributeEventsHelper {
         return (stack.getFoodProperties(player) != null || stack.getItem() instanceof PotionItem)
                 && (stack.getUseAnimation() == UseAnim.DRINK || stack.getUseAnimation() == UseAnim.EAT);
     }
+
+    private record PendingLuminanceCritical(int targetId, long gameTime, int luminanceLevel, float bonusDamage) {}
 
     private record PendingChestLoot(ResourceKey<Level> dim, BlockPos pos, ResourceKey<LootTable> table) {}
 }

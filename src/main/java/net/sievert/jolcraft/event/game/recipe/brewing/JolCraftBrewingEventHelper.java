@@ -100,6 +100,17 @@ public final class JolCraftBrewingEventHelper {
 
     public static int addMix(
             PotionBrewing.Builder builder,
+            Holder<Potion> input,
+            ItemLike ingredient,
+            Holder<Potion> potion,
+            Holder<Potion> longPotion
+    ) {
+        return addMix(builder, input, ingredient, potion)
+                + addLong(builder, potion, longPotion);
+    }
+
+    public static int addMix(
+            PotionBrewing.Builder builder,
             ItemLike input,
             ItemLike ingredient,
             Holder<Potion> result

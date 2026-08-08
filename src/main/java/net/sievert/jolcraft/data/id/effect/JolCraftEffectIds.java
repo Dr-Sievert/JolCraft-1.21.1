@@ -2,7 +2,6 @@ package net.sievert.jolcraft.data.id.effect;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
-import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftEffectIds extends JolCraftIds {
@@ -14,7 +13,7 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String ANCIENT_MEMORY = join(JolCraftDictionary.ANCIENT, JolCraftDictionary.MEMORY);
     public static final String LOCKPICKING = JolCraftAttributeIds.LOCKPICKING;
     public static final String DWARVEN_HASTE = join(JolCraftDictionary.DWARVEN, JolCraftDictionary.HASTE);
-    public static final String RADIANT = JolCraftEntityObjectIds.RADIANT;
+    public static final String LUMINANCE = JolCraftAttributeIds.LUMINANCE;
     public static final String MOON_SHIELD = JolCraftAttributeIds.MOON_SHIELD;
     public static final String BULWARK = JolCraftDictionary.BULWARK;
     public static final String ALCHEMIST_FOCUS = join(JolCraftDictionary.ALCHEMIST, JolCraftDictionary.FOCUS);
@@ -34,6 +33,7 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String MIGHT = JolCraftDictionary.MIGHT;
     public static final String HARVEST = JolCraftDictionary.HARVEST;
     public static final String LUNAR = JolCraftDictionary.LUNAR;
+    public static final String CONFLAGRATION = JolCraftDictionary.CONFLAGRATION;
     public static final String SUNFIRE = JolCraftDictionary.SUNFIRE;
     public static final String VITALITY = JolCraftDictionary.VITALITY;
 

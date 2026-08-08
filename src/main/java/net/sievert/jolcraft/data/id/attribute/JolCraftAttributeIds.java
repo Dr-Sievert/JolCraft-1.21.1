@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.data.id.attribute;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
-import net.sievert.jolcraft.data.id.entity.object.JolCraftEntityObjectIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
 public final class JolCraftAttributeIds extends JolCraftIds {
@@ -14,7 +13,7 @@ public final class JolCraftAttributeIds extends JolCraftIds {
     public static final String SLOW_RESISTANCE = join(JolCraftDictionary.SLOW, JolCraftDictionary.RESISTANCE);
     public static final String CROP_LOOT_INCREASE = join(JolCraftDictionary.CROP, JolCraftDictionary.LOOT, JolCraftDictionary.INCREASE);
     public static final String CONTAINER_LOOT_INCREASE = join(JolCraftDictionary.CONTAINER, JolCraftDictionary.LOOT, JolCraftDictionary.INCREASE);
-    public static final String RADIANT = JolCraftEntityObjectIds.RADIANT;
+    public static final String LUMINANCE = JolCraftDictionary.LUMINANCE;
     public static final String ARMOR_PENETRATION = join(JolCraftDictionary.ARMOR, JolCraftDictionary.PENETRATION);
     public static final String MAGIC_RESISTANCE = join(JolCraftDictionary.MAGIC, JolCraftDictionary.RESISTANCE);
     public static final String POISON_RESISTANCE = join(JolCraftDictionary.POISON, JolCraftDictionary.RESISTANCE);

@@ -47,6 +47,13 @@ public class DamageTypeLangSubProvider implements LanguageSubProvider {
                 "%1$s succumbed to a vitality curse",
                 "%1$s succumbed to a vitality curse while fighting %2$s"
         );
+
+        putDeathAttack(
+                translations,
+                JolCraftDamageTypeIds.SUNFIRE,
+                "%1$s was scorched by sunfire",
+                "%1$s was scorched by sunfire while fighting %2$s"
+        );
     }
 
     private void putDeathAttack(

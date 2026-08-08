@@ -3,9 +3,9 @@ package net.sievert.jolcraft.world.entity.effect.custom.beneficial;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 
-public class RadiantEffect extends MobEffect {
+public class LuminanceEffect extends MobEffect {
 
-    public RadiantEffect(MobEffectCategory category, int color) {
+    public LuminanceEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
 }

@@ -18,15 +18,12 @@ import net.sievert.jolcraft.world.block.registry.JolCraftCropBlocks;
 import net.sievert.jolcraft.world.block.registry.JolCraftMaterialBlocks;
 import net.sievert.jolcraft.world.block.registry.JolCraftPlantBlocks;
 import net.sievert.jolcraft.world.block.registry.JolCraftStationBlocks;
-import net.sievert.jolcraft.world.block.registry.JolCraftUtilityBlocks;
 
 public final class JolCraftBlocks {
 
     private JolCraftBlocks() {}
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(JolCraft.MOD_ID);
-
-    public static final DeferredBlock<Block> MANAGED_LIGHT = JolCraftUtilityBlocks.registerManagedLight();
 
     public static final DeferredBlock<Block> DEEPSLATE_MORTAR = JolCraftStationBlocks.registerDeepslateMortar();
     public static final DeferredBlock<Block> LAPIDARY_BENCH = JolCraftStationBlocks.registerLapidaryBench();

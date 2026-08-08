@@ -34,8 +34,8 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> CONTAINER_LOOT_INCREASE =
             registerPositivePercentage(JolCraftAttributeIds.CONTAINER_LOOT_INCREASE, 2048.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> RADIANT =
-            registerPositiveDouble(JolCraftAttributeIds.RADIANT, 4);
+    public static final DeferredHolder<Attribute, Attribute> LUMINANCE =
+            registerPositiveDouble(JolCraftAttributeIds.LUMINANCE, 6);
 
     public static final DeferredHolder<Attribute, Attribute> ARMOR_PENETRATION =
             registerPositivePercentage(JolCraftAttributeIds.ARMOR_PENETRATION, 1.0D);

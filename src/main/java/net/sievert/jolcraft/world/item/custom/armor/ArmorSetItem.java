@@ -105,18 +105,19 @@ public abstract class ArmorSetItem extends ArmorItem {
             if (hasFullSet) {
                 if (!hasEffect) {
                     player.addEffect(effect.createInstance());
+                    setAppliedArmorSetEffect(player, id);
                 }
 
-                setAppliedArmorSetEffect(player, id);
                 continue;
             }
 
             if (owned && hasEffect) {
-                if (instance.getDuration() == EFFECT_DURATION && instance.getAmplifier() == effect.amplifier()) {
+                if (instance.getDuration() == EFFECT_DURATION
+                        && instance.getAmplifier() == effect.amplifier()) {
                     player.removeEffect(effect.effect());
-                    clearAppliedArmorSetEffect(player, id);
                 }
 
+                clearAppliedArmorSetEffect(player, id);
                 continue;
             }
 

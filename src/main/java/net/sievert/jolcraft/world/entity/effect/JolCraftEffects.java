@@ -17,6 +17,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.entity.effect.custom.beneficial.*;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.CorrosionEffect;
+import net.sievert.jolcraft.world.entity.effect.custom.harmful.SunfireEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.DisarmedEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.RootedEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.StunnedEffect;
@@ -117,9 +118,15 @@ public final class JolCraftEffects {
                     )
     );
 
-    public static final Holder<MobEffect> RADIANT = MOB_EFFECTS.register(
-            JolCraftEffectIds.RADIANT,
-            () -> new RadiantEffect(MobEffectCategory.BENEFICIAL, 0xfaff42)
+    public static final Holder<MobEffect> LUMINANCE = MOB_EFFECTS.register(
+            JolCraftEffectIds.LUMINANCE,
+            () -> new LuminanceEffect(MobEffectCategory.BENEFICIAL, 0xfaff42)
+                    .addAttributeModifier(
+                            JolCraftAttributes.LUMINANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.LUMINANCE, JolCraftDictionary.EFFECT)),
+                            1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
     );
 
     public static final Holder<MobEffect> MOON_SHIELD = MOB_EFFECTS.register(
@@ -341,13 +348,13 @@ public final class JolCraftEffects {
                     )
     );
 
-    public static final Holder<MobEffect> SUNFIRE = MOB_EFFECTS.register(
-            JolCraftEffectIds.SUNFIRE,
-            () -> new SunfireEffect(MobEffectCategory.BENEFICIAL, 0xf4d919)
+    public static final Holder<MobEffect> CONFLAGRATION = MOB_EFFECTS.register(
+            JolCraftEffectIds.CONFLAGRATION,
+            () -> new ConflagrationEffect(MobEffectCategory.BENEFICIAL, 0xffaa3f)
                     .addAttributeModifier(
                             JolCraftAttributes.SUN_FIRE_DAMAGE,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.SUNFIRE, JolCraftDictionary.EFFECT)),
-                            4.0D,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.CONFLAGRATION, JolCraftDictionary.EFFECT)),
+                            5.0D,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );
@@ -364,7 +371,7 @@ public final class JolCraftEffects {
                     .addAttributeModifier(
                             Attributes.MAX_ABSORPTION,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.VITALITY, JolCraftDictionary.EFFECT)),
-                            2.0D,
+                            VitalityEffect.ABSORPTION_PER_LEVEL,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );
@@ -488,6 +495,13 @@ public final class JolCraftEffects {
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
                     )
     );
+
+    public static final Holder<MobEffect> SUNFIRE = MOB_EFFECTS.register(
+            JolCraftEffectIds.SUNFIRE,
+            () -> new SunfireEffect(MobEffectCategory.HARMFUL, 0xf4d919)
+    );
+
+
 
     public static void register(IEventBus eventBus) {
         MOB_EFFECTS.register(eventBus);

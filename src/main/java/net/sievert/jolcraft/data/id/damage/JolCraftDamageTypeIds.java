@@ -9,4 +9,5 @@ public class JolCraftDamageTypeIds extends JolCraftIds {
 
     public static final String VITALITY_CURSE = JolCraftEffectIds.VITALITY_CURSE;
     public static final String CURSED_WOUND = JolCraftEffectIds.CURSED_WOUND;
+    public static final String SUNFIRE = JolCraftEffectIds.SUNFIRE;
 }

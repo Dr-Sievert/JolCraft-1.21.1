@@ -4,6 +4,8 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,11 +35,11 @@ import net.sievert.jolcraft.world.entity.JolCraftEntities;
 import net.sievert.jolcraft.world.entity.client.model.creature.MuffhornModel;
 import net.sievert.jolcraft.world.block.entity.custom.client.model.StrongboxModel;
 import net.sievert.jolcraft.world.entity.client.model.dwarf.*;
-import net.sievert.jolcraft.world.entity.client.model.object.RadiantModel;
+import net.sievert.jolcraft.world.entity.client.model.object.LuminanceModel;
+import net.sievert.jolcraft.world.entity.client.util.player.LuminancePlayerLayer;
 import net.sievert.jolcraft.world.entity.client.render.creature.MuffhornRenderer;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.StrongboxRenderer;
 import net.sievert.jolcraft.world.entity.client.render.dwarf.*;
-import net.sievert.jolcraft.world.entity.client.render.object.RadiantRenderer;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
 import net.sievert.jolcraft.world.gui.client.screen.DwarfMerchantScreen;
 import net.sievert.jolcraft.world.gui.client.screen.LapidaryBenchScreen;
@@ -85,9 +87,6 @@ public final class JolCraftClientModEvents {
         // Animals
         EntityRenderers.register(JolCraftEntities.MUFFHORN.get(), MuffhornRenderer::new); entityRenderers++;
 
-        // Objects
-        EntityRenderers.register(JolCraftEntities.RADIANT.get(), RadiantRenderer::new); entityRenderers++;
-
         // Blocks
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.VERDANT_FARMLAND.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.BARLEY_CROP.get(), RenderType.cutout()); itemBlockRenderTypes++;
@@ -124,13 +123,36 @@ public final class JolCraftClientModEvents {
 
         event.registerLayerDefinition(MuffhornModel.LAYER_LOCATION, MuffhornModel::createBodyLayer); layers++;
 
-        event.registerLayerDefinition(RadiantModel.LAYER_LOCATION, RadiantModel::createBodyLayer); layers++;
+        event.registerLayerDefinition(LuminanceModel.LAYER_LOCATION, LuminanceModel::createBodyLayer); layers++;
 
         // BlockEntity
 
         event.registerLayerDefinition(StrongboxModel.LAYER_LOCATION, StrongboxModel::createBodyLayer); layers++;
 
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} layer definitions", layers);
+    }
+
+    @SubscribeEvent
+    public static void registerPlayerLayers(EntityRenderersEvent.AddLayers event) {
+        int layers = 0;
+
+        for (PlayerSkin.Model skin : event.getSkins()) {
+            if (event.getSkin(skin) instanceof PlayerRenderer playerRenderer) {
+                playerRenderer.addLayer(
+                        new LuminancePlayerLayer(
+                                playerRenderer,
+                                event.getEntityModels()
+                        )
+                );
+                layers++;
+            }
+        }
+
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Registered {} player render layers",
+                layers
+        );
     }
 
     @SubscribeEvent

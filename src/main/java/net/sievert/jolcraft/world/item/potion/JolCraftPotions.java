@@ -271,29 +271,37 @@ public final class JolCraftPotions {
             () -> new Potion(JolCraftPotionIds.STRONG_LUNAR,
                     new MobEffectInstance(JolCraftEffects.LUNAR, 1800, 1)));
 
+    public static final Holder<Potion> CONFLAGRATION = POTIONS.register(JolCraftPotionIds.CONFLAGRATION,
+            () -> new Potion(JolCraftPotionIds.CONFLAGRATION,
+                    new MobEffectInstance(JolCraftEffects.CONFLAGRATION, 3600, 0)));
+
+    public static final Holder<Potion> LONG_CONFLAGRATION = POTIONS.register(JolCraftPotionIds.LONG_CONFLAGRATION,
+            () -> new Potion(JolCraftPotionIds.LONG_CONFLAGRATION,
+                    new MobEffectInstance(JolCraftEffects.CONFLAGRATION, 7200, 0)));
+
+    public static final Holder<Potion> STRONG_CONFLAGRATION = POTIONS.register(JolCraftPotionIds.STRONG_CONFLAGRATION,
+            () -> new Potion(JolCraftPotionIds.STRONG_CONFLAGRATION,
+                    new MobEffectInstance(JolCraftEffects.CONFLAGRATION, 1800, 1)));
+
     public static final Holder<Potion> SUNFIRE = POTIONS.register(JolCraftPotionIds.SUNFIRE,
             () -> new Potion(JolCraftPotionIds.SUNFIRE,
-                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 3600, 0)));
+                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 600, 0)));
 
     public static final Holder<Potion> LONG_SUNFIRE = POTIONS.register(JolCraftPotionIds.LONG_SUNFIRE,
             () -> new Potion(JolCraftPotionIds.LONG_SUNFIRE,
-                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 7200, 0)));
+                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 1200, 0)));
 
-    public static final Holder<Potion> STRONG_SUNFIRE = POTIONS.register(JolCraftPotionIds.STRONG_SUNFIRE,
-            () -> new Potion(JolCraftPotionIds.STRONG_SUNFIRE,
-                    new MobEffectInstance(JolCraftEffects.SUNFIRE, 1800, 1)));
+    public static final Holder<Potion> LUMINANCE = POTIONS.register(JolCraftPotionIds.LUMINANCE,
+            () -> new Potion(JolCraftPotionIds.LUMINANCE,
+                    new MobEffectInstance(JolCraftEffects.LUMINANCE, 3600, 0)));
 
-    public static final Holder<Potion> RADIANT = POTIONS.register(JolCraftPotionIds.RADIANT,
-            () -> new Potion(JolCraftPotionIds.RADIANT,
-                    new MobEffectInstance(JolCraftEffects.RADIANT, 3600, 0)));
+    public static final Holder<Potion> LONG_LUMINANCE = POTIONS.register(JolCraftPotionIds.LONG_LUMINANCE,
+            () -> new Potion(JolCraftPotionIds.LONG_LUMINANCE,
+                    new MobEffectInstance(JolCraftEffects.LUMINANCE, 7200, 0)));
 
-    public static final Holder<Potion> LONG_RADIANT = POTIONS.register(JolCraftPotionIds.LONG_RADIANT,
-            () -> new Potion(JolCraftPotionIds.LONG_RADIANT,
-                    new MobEffectInstance(JolCraftEffects.RADIANT, 7200, 0)));
-
-    public static final Holder<Potion> STRONG_RADIANT = POTIONS.register(JolCraftPotionIds.STRONG_RADIANT,
-            () -> new Potion(JolCraftPotionIds.STRONG_RADIANT,
-                    new MobEffectInstance(JolCraftEffects.RADIANT, 1800, 1)));
+    public static final Holder<Potion> STRONG_LUMINANCE = POTIONS.register(JolCraftPotionIds.STRONG_LUMINANCE,
+            () -> new Potion(JolCraftPotionIds.STRONG_LUMINANCE,
+                    new MobEffectInstance(JolCraftEffects.LUMINANCE, 1800, 1)));
 
     public static final Holder<Potion> VITALITY = POTIONS.register(JolCraftPotionIds.VITALITY,
             () -> new Potion(JolCraftPotionIds.VITALITY,

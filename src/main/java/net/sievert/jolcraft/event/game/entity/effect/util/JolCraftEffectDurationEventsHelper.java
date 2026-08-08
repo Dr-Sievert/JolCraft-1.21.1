@@ -10,6 +10,7 @@ import net.sievert.jolcraft.mixin.MobEffectInstanceAccessor;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
+import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.AbstractCrowdControlEffect;
 
 public final class JolCraftEffectDurationEventsHelper {
@@ -20,12 +21,26 @@ public final class JolCraftEffectDurationEventsHelper {
         LivingEntity entity = event.getEntity();
         MobEffectInstance effect = event.getEffectInstance();
 
-        if (effect.isInfiniteDuration()) {
+        if (effect.isInfiniteDuration()
+                || isStoneSkinDegradation(event)) {
             return;
         }
 
         applyFocus(entity, effect);
         applyTenacity(entity, effect);
+    }
+
+    private static boolean isStoneSkinDegradation(
+            MobEffectEvent.Added event
+    ) {
+        MobEffectInstance oldEffect = event.getOldEffectInstance();
+        MobEffectInstance addedEffect = event.getEffectInstance();
+
+        return oldEffect != null
+                && oldEffect.is(JolCraftEffects.STONE_SKIN)
+                && addedEffect.is(JolCraftEffects.STONE_SKIN)
+                && addedEffect.getAmplifier() == oldEffect.getAmplifier() - 1
+                && addedEffect.getDuration() == oldEffect.getDuration();
     }
 
     private static void applyFocus(

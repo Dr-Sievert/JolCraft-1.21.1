@@ -1,14 +1,15 @@
 package net.sievert.jolcraft.event.game.player.attribute;
 
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.sievert.jolcraft.JolCraft;
 
 @SuppressWarnings("removal")
@@ -22,14 +23,14 @@ public final class JolCraftPlayerAttributeEvents {
         JolCraftPlayerAttributeEventsHelper.applyXpIncrease(event);
     }
 
-    @SubscribeEvent
-    public static void onPlayerRadiantTick(PlayerTickEvent.Post event) {
-        JolCraftPlayerAttributeEventsHelper.tickRadiantEntity(event);
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onCriticalHit(CriticalHitEvent event) {
+        JolCraftPlayerAttributeEventsHelper.applyLuminanceCritical(event);
     }
 
     @SubscribeEvent
-    public static void onLevelTickRadiantAura(LevelTickEvent.Post event) {
-        JolCraftPlayerAttributeEventsHelper.tickRadiantAura(event);
+    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        JolCraftPlayerAttributeEventsHelper.applyLuminanceCriticalDamage(event);
     }
 
     @SubscribeEvent

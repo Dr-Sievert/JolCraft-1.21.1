@@ -81,12 +81,25 @@ public final class JolCraftDamageTypeTagProvider
                 .addTag(JolCraftTags.DamageTypes.CURSE);
 
         target.tag(DamageTypeTags.BYPASSES_ARMOR)
-                .addTag(JolCraftTags.DamageTypes.CURSE);
+                .addTag(JolCraftTags.DamageTypes.CURSE)
+                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
+
+        target.tag(DamageTypeTags.BYPASSES_COOLDOWN)
+                .addTag(JolCraftTags.DamageTypes.CURSE)
+                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
+
+        target.tag(DamageTypeTags.IS_FIRE)
+                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
+
+        target.tag(DamageTypeTags.NO_KNOCKBACK)
+                .addTag(JolCraftTags.DamageTypes.CURSE)
+                .addOptional(JolCraftDamageTypes.SUNFIRE.location());
 
         target.tag(DamageTypeTags.BYPASSES_ENCHANTMENTS)
-                .addOptional(JolCraftDamageTypes.VITALITY_CURSE.location());
+                .addTag(JolCraftTags.DamageTypes.CURSE);
+
 
         target.tag(DamageTypeTags.BYPASSES_RESISTANCE)
-                .addOptional(JolCraftDamageTypes.VITALITY_CURSE.location());
+                .addTag(JolCraftTags.DamageTypes.CURSE);
     }
 }

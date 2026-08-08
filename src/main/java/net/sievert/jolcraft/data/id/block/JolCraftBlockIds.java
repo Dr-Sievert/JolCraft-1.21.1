@@ -8,8 +8,6 @@ public final class JolCraftBlockIds extends JolCraftIds {
 
     private JolCraftBlockIds() {}
 
-    public static final String MANAGED_LIGHT = join(JolCraftDictionary.MANAGED, JolCraftDictionary.LIGHT);
-
     public static final String DEEPSLATE_MORTAR = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.MORTAR);
 
     public static final String GEODE_BLOCK = block(JolCraftDictionary.GEODE);

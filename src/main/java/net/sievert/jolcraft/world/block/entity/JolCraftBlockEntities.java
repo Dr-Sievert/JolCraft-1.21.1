@@ -13,7 +13,6 @@ import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBl
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.LapidaryBenchBlockEntity;
-import net.sievert.jolcraft.world.block.entity.custom.ManagedLightBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.StrongboxBlockEntity;
 
 import java.util.function.Supplier;
@@ -59,13 +58,6 @@ public final class JolCraftBlockEntities {
                     BlockEntityType.Builder.of(
                             HearthBlockEntity::new,
                             JolCraftBlocks.HEARTH.get()
-                    ).build(null));
-
-    public static final Supplier<BlockEntityType<ManagedLightBlockEntity>> MANAGED_LIGHT =
-            BLOCK_ENTITIES.register(JolCraftBlockEntityIds.MANAGED_LIGHT, () ->
-                    BlockEntityType.Builder.of(
-                            ManagedLightBlockEntity::new,
-                            JolCraftBlocks.MANAGED_LIGHT.get()
                     ).build(null));
 
     public static void register(IEventBus eventBus) {

@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.world.entity.effect.custom.beneficial;
+package net.sievert.jolcraft.world.entity.effect.custom.harmful;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

@@ -19,6 +19,9 @@ public final class JolCraftDamageTypes {
     public static final ResourceKey<DamageType> VITALITY_CURSE =
             create(JolCraftDamageTypeIds.VITALITY_CURSE);
 
+    public static final ResourceKey<DamageType> SUNFIRE =
+            create(JolCraftDamageTypeIds.SUNFIRE);
+
     private static ResourceKey<DamageType> create(String id) {
         return ResourceKey.create(Registries.DAMAGE_TYPE, JolCraft.location(id));
     }
@@ -26,6 +29,7 @@ public final class JolCraftDamageTypes {
     public static void bootstrap(BootstrapContext<DamageType> context) {
         register(context, CURSED_WOUND, JolCraftDamageTypeIds.CURSED_WOUND);
         register(context, VITALITY_CURSE, JolCraftDamageTypeIds.VITALITY_CURSE);
+        register(context, SUNFIRE, JolCraftDamageTypeIds.SUNFIRE, DamageEffects.BURNING);
     }
 
     private static void register(
@@ -33,13 +37,22 @@ public final class JolCraftDamageTypes {
             ResourceKey<DamageType> key,
             String messageId
     ) {
+        register(context, key, messageId, DamageEffects.HURT);
+    }
+
+    private static void register(
+            BootstrapContext<DamageType> context,
+            ResourceKey<DamageType> key,
+            String messageId,
+            DamageEffects effects
+    ) {
         context.register(
                 key,
                 new DamageType(
                         messageId,
                         DamageScaling.NEVER,
                         0.0F,
-                        DamageEffects.HURT
+                        effects
                 )
         );
     }

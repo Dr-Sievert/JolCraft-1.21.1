@@ -11,7 +11,6 @@ import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -30,7 +29,6 @@ import net.sievert.jolcraft.world.item.client.property.custom.CoinPouchAmount;
 import net.sievert.jolcraft.world.item.client.property.JolCraftItemProperties;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
 
 @OnlyIn(Dist.CLIENT)
 public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implements JolCraftModelSubProvider {
@@ -63,7 +61,6 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
         builder.flatItem(JolCraftItems.BOUNTY_CRATE.get(), SUB_BOUNTY);
 
         createHearth(builder, JolCraftBlocks.HEARTH.get());
-        createManagedLight(builder, JolCraftBlocks.MANAGED_LIGHT.get());
 
         builder.manualBlockState(JolCraftBlocks.DEEPSLATE_MORTAR.get());
         builder.manualBlockState(JolCraftBlocks.STRONGBOX.get());
@@ -204,29 +201,5 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
         builder.delegateItemToBlockModel(hearthBlock);
     }
 
-    public static void createManagedLight(@NotNull JolCraftModelBuilder builder, @NotNull Block block) {
-        PropertyDispatch.C1<Integer> dispatch = PropertyDispatch.property(BlockStateProperties.LEVEL);
 
-        for (int i = 0; i <= 15; i++) {
-            String suffix = String.format(Locale.ROOT, "_%02d", i);
-            ResourceLocation particleTex = TextureMapping.getItemTexture(Items.LIGHT, suffix);
-
-            dispatch.select(
-                    i,
-                    Variant.variant().with(
-                            VariantProperties.MODEL,
-                            ModelTemplates.PARTICLE_ONLY.createWithSuffix(
-                                    block,
-                                    suffix,
-                                    TextureMapping.particle(particleTex),
-                                    builder::addModel
-                            )
-                    )
-            );
-        }
-
-        builder.addBlockState(
-                MultiVariantGenerator.multiVariant(block).with(dispatch)
-        );
-    }
 }

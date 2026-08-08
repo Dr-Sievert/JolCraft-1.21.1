@@ -65,7 +65,7 @@ public final class JolCraftModEvents {
     private static int addLivingEntityAttributes(EntityAttributeModificationEvent event) {
         int added = 0;
 
-        added += addToAllLivingEntities(event, JolCraftAttributes.RADIANT);
+        added += addToAllLivingEntities(event, JolCraftAttributes.LUMINANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_PENETRATION);
         added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.POISON_RESISTANCE);

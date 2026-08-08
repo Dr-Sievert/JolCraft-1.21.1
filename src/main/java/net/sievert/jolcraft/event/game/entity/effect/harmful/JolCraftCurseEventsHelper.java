@@ -223,7 +223,7 @@ public final class JolCraftCurseEventsHelper {
                             / baseMultiplier
                             - 1.0D;
 
-            maxHealth.addOrReplacePermanentModifier(
+            maxHealth.addTransientModifier(
                     new AttributeModifier(
                             HEX_VITALITY_MODIFIER_ID,
                             modifierAmount,

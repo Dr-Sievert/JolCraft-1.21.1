@@ -84,7 +84,7 @@ public final class JolCraftTrimAttributes {
         );
 
         out.put(JolCraftTrimMaterials.Attribute.LUMIERE,
-                attributes(JolCraftAttributes.RADIANT, 1.0D, AttributeModifier.Operation.ADD_VALUE));
+                attributes(JolCraftAttributes.LUMINANCE, 1.0D, AttributeModifier.Operation.ADD_VALUE));
 
         out.put(JolCraftTrimMaterials.Attribute.MOONSHARD,
                 attributes(JolCraftAttributes.MOON_SHIELD, 1.0D, AttributeModifier.Operation.ADD_VALUE));

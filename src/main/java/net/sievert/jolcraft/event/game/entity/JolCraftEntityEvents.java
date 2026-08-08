@@ -19,6 +19,7 @@ import net.sievert.jolcraft.event.game.entity.attribute.JolCraftEntityAttributeE
 import net.sievert.jolcraft.event.game.entity.effect.JolCraftEffectEvents;
 import net.sievert.jolcraft.event.game.entity.npc.JolCraftDwarfEvents;
 import net.sievert.jolcraft.event.game.entity.npc.villager.JolCraftVillagerEvents;
+import net.sievert.jolcraft.event.game.entity.util.JolCraftEntityDamageEventsHelper;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
@@ -41,11 +42,17 @@ public final class JolCraftEntityEvents {
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
         JolCraftEntityAttributeEvents.onIncomingDamage(event);
         JolCraftEffectEvents.onIncomingDamage(event);
+        JolCraftEntityDamageEventsHelper.onIncomingDamage(event);
     }
 
     @SubscribeEvent
     public static void onFinalDamage(LivingDamageEvent.Pre event) {
         JolCraftEntityAttributeEvents.onFinalDamage(event);
+    }
+
+    @SubscribeEvent
+    public static void onFinalDamagePost(LivingDamageEvent.Post event) {
+        JolCraftEntityDamageEventsHelper.onFinalDamage(event);
     }
 
     @SubscribeEvent
@@ -65,7 +72,7 @@ public final class JolCraftEntityEvents {
 
     @SubscribeEvent
     public static void onEffectApplicable(MobEffectEvent.Applicable event) {
-        JolCraftEffectEvents.onEffectApplicable(event);
+        JolCraftEntityDamageEventsHelper.onEffectApplicable(event);
     }
 
     @SubscribeEvent

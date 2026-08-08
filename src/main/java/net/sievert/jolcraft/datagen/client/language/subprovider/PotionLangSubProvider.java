@@ -53,8 +53,9 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations,  JolCraftPotions.MIGHT, "Might", true, true);
         addPotion(translations,  JolCraftPotions.HARVEST, "Harvest", true, true);
         addPotion(translations,  JolCraftPotions.LUNAR, "the Moon", true, true);
-        addPotion(translations,  JolCraftPotions.SUNFIRE, "Sunfire", true, true);
-        addPotion(translations,  JolCraftPotions.RADIANT, "Radiance", true, true);
+        addPotion(translations,  JolCraftPotions.CONFLAGRATION, "Conflagration", true, true);
+        addPotion(translations,  JolCraftPotions.SUNFIRE, "Sunfire", true, false);
+        addPotion(translations,  JolCraftPotions.LUMINANCE, "Luminance", true, true);
         addPotion(translations,  JolCraftPotions.VITALITY, "Vitality", true, true);
 
         addPotion(translations,  JolCraftPotions.ATAXIA_CURSE, "Ataxia Cursing", false, false);

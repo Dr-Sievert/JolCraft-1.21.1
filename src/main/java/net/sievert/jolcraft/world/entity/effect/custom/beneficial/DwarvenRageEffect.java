@@ -66,7 +66,7 @@ public final class DwarvenRageEffect extends MobEffect {
         }
 
         attackSpeed.removeModifier(DWARVEN_RAGE_EFFECT_MODIFIER_ID);
-        attackSpeed.addPermanentModifier(new AttributeModifier(
+        attackSpeed.addTransientModifier(new AttributeModifier(
                 DWARVEN_RAGE_EFFECT_MODIFIER_ID,
                 bonus,
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE

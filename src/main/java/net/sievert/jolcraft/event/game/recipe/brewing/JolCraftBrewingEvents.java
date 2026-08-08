@@ -206,14 +206,22 @@ public final class JolCraftBrewingEvents {
                 JolCraftPotions.STRONG_LUNAR
         );
 
+        // Conflagration
+
+        recipes += addStartMix(builder,
+                JolCraftItems.SUNGLEAM_DUST,
+                JolCraftPotions.CONFLAGRATION,
+                JolCraftPotions.LONG_CONFLAGRATION,
+                JolCraftPotions.STRONG_CONFLAGRATION
+        );
+
         // Sunfire
 
         recipes += addMix(builder,
-                Potions.FIRE_RESISTANCE,
+                Potions.HARMING,
                 JolCraftItems.SUNGLEAM_DUST,
                 JolCraftPotions.SUNFIRE,
-                JolCraftPotions.LONG_SUNFIRE,
-                JolCraftPotions.STRONG_SUNFIRE
+                JolCraftPotions.LONG_SUNFIRE
         );
 
         // Vitality
@@ -225,13 +233,13 @@ public final class JolCraftBrewingEvents {
                 JolCraftPotions.STRONG_VITALITY
         );
 
-        // Radiant
+        // Luminance
 
         recipes += addStartMix(builder,
                 JolCraftItems.LUMIERE_DUST,
-                JolCraftPotions.RADIANT,
-                JolCraftPotions.LONG_RADIANT,
-                JolCraftPotions.STRONG_RADIANT
+                JolCraftPotions.LUMINANCE,
+                JolCraftPotions.LONG_LUMINANCE,
+                JolCraftPotions.STRONG_LUMINANCE
         );
 
 
