@@ -380,6 +380,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FORGE = "forge";
     public static final String FORTRESS = "fortress";
     public static final String FRAILTY = "frailty";
+    public static final String FROST= "frost";
     public static final String FROSTVEIN = "frostvein";
     public static final String FUEL = "fuel";
     public static final String FUR = "fur";
@@ -659,6 +660,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String WEIGHT = "weight";
     public static final String WIDGET = "widget";
     public static final String WISDOM = "wisdom";
+    public static final String WITHER = "wither";
     public static final String WOECRYSTAL = "woecrystal";
     public static final String WORLDGEN = "worldgen";
     public static final String WOUND = "wound";

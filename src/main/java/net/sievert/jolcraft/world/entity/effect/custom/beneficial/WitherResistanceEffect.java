@@ -3,9 +3,9 @@ package net.sievert.jolcraft.world.entity.effect.custom.beneficial;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 
-public class AnchorEffect extends MobEffect {
+public class WitherResistanceEffect extends MobEffect {
 
-    public AnchorEffect(MobEffectCategory category, int color) {
+    public WitherResistanceEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
 }

@@ -54,6 +54,14 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_POISON_RESISTANCE = longPotion(POISON_RESISTANCE);
     public static final String STRONG_POISON_RESISTANCE = strongPotion(POISON_RESISTANCE);
 
+    public static final String FROST_RESISTANCE = JolCraftEffectIds.FROST_RESISTANCE;
+    public static final String LONG_FROST_RESISTANCE = longPotion(FROST_RESISTANCE);
+    public static final String STRONG_FROST_RESISTANCE = strongPotion(FROST_RESISTANCE);
+
+    public static final String WITHER_RESISTANCE = JolCraftEffectIds.WITHER_RESISTANCE;
+    public static final String LONG_WITHER_RESISTANCE = longPotion(WITHER_RESISTANCE);
+    public static final String STRONG_WITHER_RESISTANCE = strongPotion(WITHER_RESISTANCE);
+
     public static final String SLOW_RESISTANCE = JolCraftEffectIds.SLOW_RESISTANCE;
     public static final String LONG_SLOW_RESISTANCE = longPotion(SLOW_RESISTANCE);
     public static final String STRONG_SLOW_RESISTANCE = strongPotion(SLOW_RESISTANCE);

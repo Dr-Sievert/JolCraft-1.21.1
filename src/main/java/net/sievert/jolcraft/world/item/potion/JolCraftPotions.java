@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@SuppressWarnings({"SameParameterValue", "unused"})
 public final class JolCraftPotions {
 
     public static final DeferredRegister<Potion> POTIONS =
@@ -44,6 +45,8 @@ public final class JolCraftPotions {
         family(JolCraftPotionIds.ENDURANCE, JolCraftEffects.ENDURANCE, 6000, 12000, 3000);
         family(JolCraftPotionIds.MAGIC_RESISTANCE, JolCraftEffects.MAGIC_RESISTANCE, 3600, 7200, 1800);
         family(JolCraftPotionIds.POISON_RESISTANCE, JolCraftEffects.POISON_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.FROST_RESISTANCE, JolCraftEffects.FROST_RESISTANCE, 3600, 7200, 1800);
+        family(JolCraftPotionIds.WITHER_RESISTANCE, JolCraftEffects.WITHER_RESISTANCE, 3600, 7200, 1800);
         family(JolCraftPotionIds.SLOW_RESISTANCE, JolCraftEffects.SLOW_RESISTANCE, 3600, 7200, 1800);
         family(JolCraftPotionIds.MARKSMAN, JolCraftEffects.MARKSMAN, 3600, 9600, 1800);
         family(JolCraftPotionIds.STONE_SKIN, JolCraftEffects.STONE_SKIN, 1200, 2400, 600);
@@ -109,6 +112,12 @@ public final class JolCraftPotions {
     public static final Holder<Potion> POISON_RESISTANCE = holder(JolCraftPotionIds.POISON_RESISTANCE);
     public static final Holder<Potion> LONG_POISON_RESISTANCE = holder(JolCraftPotionIds.LONG_POISON_RESISTANCE);
     public static final Holder<Potion> STRONG_POISON_RESISTANCE = holder(JolCraftPotionIds.STRONG_POISON_RESISTANCE);
+    public static final Holder<Potion> FROST_RESISTANCE = holder(JolCraftPotionIds.FROST_RESISTANCE);
+    public static final Holder<Potion> LONG_FROST_RESISTANCE = holder(JolCraftPotionIds.LONG_FROST_RESISTANCE);
+    public static final Holder<Potion> STRONG_FROST_RESISTANCE = holder(JolCraftPotionIds.STRONG_FROST_RESISTANCE);
+    public static final Holder<Potion> WITHER_RESISTANCE = holder(JolCraftPotionIds.WITHER_RESISTANCE);
+    public static final Holder<Potion> LONG_WITHER_RESISTANCE = holder(JolCraftPotionIds.LONG_WITHER_RESISTANCE);
+    public static final Holder<Potion> STRONG_WITHER_RESISTANCE = holder(JolCraftPotionIds.STRONG_WITHER_RESISTANCE);
     public static final Holder<Potion> SLOW_RESISTANCE = holder(JolCraftPotionIds.SLOW_RESISTANCE);
     public static final Holder<Potion> LONG_SLOW_RESISTANCE = holder(JolCraftPotionIds.LONG_SLOW_RESISTANCE);
     public static final Holder<Potion> STRONG_SLOW_RESISTANCE = holder(JolCraftPotionIds.STRONG_SLOW_RESISTANCE);

@@ -23,6 +23,7 @@ import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.Roo
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.StunnedEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.crowd_control.SuppressedEffect;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.*;
+import net.sievert.jolcraft.world.entity.effect.custom.neutral.AnchorEffect;
 
 public final class JolCraftEffects {
 
@@ -53,6 +54,28 @@ public final class JolCraftEffects {
                     .addAttributeModifier(
                             JolCraftAttributes.POISON_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.POISON_RESISTANCE, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> FROST_RESISTANCE = MOB_EFFECTS.register(
+            JolCraftEffectIds.FROST_RESISTANCE,
+            () -> new FrostResistanceEffect(MobEffectCategory.BENEFICIAL,0x01bef2)
+                    .addAttributeModifier(
+                            JolCraftAttributes.FROST_RESISTANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.FROST_RESISTANCE, JolCraftDictionary.EFFECT)),
+                            0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    public static final Holder<MobEffect> WITHER_RESISTANCE = MOB_EFFECTS.register(
+            JolCraftEffectIds.WITHER_RESISTANCE,
+            () -> new WitherResistanceEffect(MobEffectCategory.BENEFICIAL,0x1a1310)
+                    .addAttributeModifier(
+                            JolCraftAttributes.WITHER_RESISTANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.WITHER_RESISTANCE, JolCraftDictionary.EFFECT)),
                             0.25D,
                             AttributeModifier.Operation.ADD_VALUE
                     )
@@ -159,41 +182,6 @@ public final class JolCraftEffects {
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ALCHEMIST_FOCUS, JolCraftDictionary.EFFECT)),
                             0.25D,
                             AttributeModifier.Operation.ADD_VALUE
-                    )
-    );
-
-    public static final Holder<MobEffect> ANCHOR = MOB_EFFECTS.register(
-            JolCraftEffectIds.ANCHOR,
-            () -> new AnchorEffect(MobEffectCategory.BENEFICIAL, 0x4b5660)
-                    .addAttributeModifier(
-                            Attributes.KNOCKBACK_RESISTANCE,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
-                            1.0D,
-                            AttributeModifier.Operation.ADD_VALUE
-                    )
-                    .addAttributeModifier(
-                            Attributes.EXPLOSION_KNOCKBACK_RESISTANCE,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
-                            1.0D,
-                            AttributeModifier.Operation.ADD_VALUE
-                    )
-                    .addAttributeModifier(
-                            Attributes.GRAVITY,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
-                            0.30D,
-                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-                    )
-                    .addAttributeModifier(
-                            Attributes.SAFE_FALL_DISTANCE,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
-                            -1.0D,
-                            AttributeModifier.Operation.ADD_VALUE
-                    )
-                    .addAttributeModifier(
-                            Attributes.FALL_DAMAGE_MULTIPLIER,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
-                            0.5D,
-                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
                     )
     );
 
@@ -373,6 +361,57 @@ public final class JolCraftEffects {
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.VITALITY, JolCraftDictionary.EFFECT)),
                             VitalityEffect.ABSORPTION_PER_LEVEL,
                             AttributeModifier.Operation.ADD_VALUE
+                    )
+    );
+
+    // -------------------------------------------------------------------------
+    // Neutral
+    // -------------------------------------------------------------------------
+
+    public static final Holder<MobEffect> ANCHOR = MOB_EFFECTS.register(
+            JolCraftEffectIds.ANCHOR,
+            () -> new AnchorEffect(MobEffectCategory.NEUTRAL, 0x4b5660)
+                    .addAttributeModifier(
+                            Attributes.KNOCKBACK_RESISTANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
+                            1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+                    .addAttributeModifier(
+                            Attributes.EXPLOSION_KNOCKBACK_RESISTANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
+                            1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+                    .addAttributeModifier(
+                            Attributes.MOVEMENT_EFFICIENCY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
+                            -0.25D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                    )
+                    .addAttributeModifier(
+                            Attributes.WATER_MOVEMENT_EFFICIENCY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
+                            -0.25D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                    )
+                    .addAttributeModifier(
+                            Attributes.GRAVITY,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
+                            0.30D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                    )
+                    .addAttributeModifier(
+                            Attributes.SAFE_FALL_DISTANCE,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
+                            -1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+                    .addAttributeModifier(
+                            Attributes.FALL_DAMAGE_MULTIPLIER,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
+                            0.5D,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
                     )
     );
 

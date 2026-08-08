@@ -69,6 +69,8 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.ARMOR_PENETRATION);
         added += addToAllLivingEntities(event, JolCraftAttributes.MAGIC_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.POISON_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.FROST_RESISTANCE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.WITHER_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.TENACITY);
         added += addToAllLivingEntities(event, JolCraftAttributes.FOCUS);
         added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_RESISTANCE);

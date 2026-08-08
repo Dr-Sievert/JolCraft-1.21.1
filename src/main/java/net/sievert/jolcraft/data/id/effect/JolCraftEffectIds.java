@@ -23,6 +23,8 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String ENDURANCE = JolCraftDictionary.ENDURANCE;
     public static final String MAGIC_RESISTANCE = JolCraftAttributeIds.MAGIC_RESISTANCE;
     public static final String POISON_RESISTANCE = JolCraftAttributeIds.POISON_RESISTANCE;
+    public static final String FROST_RESISTANCE = JolCraftAttributeIds.FROST_RESISTANCE;
+    public static final String WITHER_RESISTANCE = JolCraftAttributeIds.WITHER_RESISTANCE;
     public static final String SLOW_RESISTANCE = JolCraftAttributeIds.SLOW_RESISTANCE;
     public static final String TENACITY = JolCraftAttributeIds.TENACITY;
     public static final String MARKSMAN = JolCraftDictionary.MARKSMAN;

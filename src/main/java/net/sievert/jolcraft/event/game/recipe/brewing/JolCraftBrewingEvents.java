@@ -156,6 +156,22 @@ public final class JolCraftBrewingEvents {
                 JolCraftPotions.POISON_RESISTANCE
         );
 
+        // Frost Resistance
+
+        recipes += addFamilyMix(builder,
+                Items.HONEY_BOTTLE,
+                JolCraftItems.FROSTVEIN_DUST,
+                JolCraftPotions.FROST_RESISTANCE
+        );
+
+        // Wither Resistance
+
+        recipes += addFamilyMix(builder,
+                Items.HONEY_BOTTLE,
+                Items.WITHER_ROSE,
+                JolCraftPotions.WITHER_RESISTANCE
+        );
+
         // Harvest
 
         recipes += addStartMix(builder,

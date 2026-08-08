@@ -7,21 +7,16 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
-import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings("SameParameterValue")
 public final class JolCraftDamageAffinityEventsHelper {
@@ -35,19 +30,14 @@ public final class JolCraftDamageAffinityEventsHelper {
             resistance(
                     Tags.DamageTypes.IS_POISON,
                     JolCraftAttributes.POISON_RESISTANCE
-            )
-    );
-
-    private static final List<EffectProtection> EFFECT_PROTECTIONS = List.of(
-            attributeProtection(
-                    Tags.DamageTypes.IS_POISON,
-                    JolCraftAttributes.POISON_RESISTANCE,
-                    MobEffects.POISON
             ),
-            effectProtection(
-                    DamageTypeTags.IS_FIRE,
-                    MobEffects.FIRE_RESISTANCE,
-                    JolCraftEffects.SUNFIRE
+            resistance(
+                    DamageTypeTags.IS_FREEZING,
+                    JolCraftAttributes.FROST_RESISTANCE
+            ),
+            resistance(
+                    Tags.DamageTypes.IS_WITHER,
+                    JolCraftAttributes.WITHER_RESISTANCE
             )
     );
 
@@ -72,61 +62,6 @@ public final class JolCraftDamageAffinityEventsHelper {
         event.setNewDamage(
                 Math.max(0.0F, damage)
         );
-    }
-
-    public static void onEffectApplicable(
-            MobEffectEvent.Applicable event
-    ) {
-        LivingEntity entity = event.getEntity();
-        Holder<MobEffect> effect =
-                event.getEffectInstance().getEffect();
-
-        for (EffectProtection protection : EFFECT_PROTECTIONS) {
-            if (!protection.blockedEffects().contains(effect)) {
-                continue;
-            }
-
-            double strength =
-                    protectionStrength(entity, protection);
-
-            if (strength <= 0.0D) {
-                continue;
-            }
-
-            if (strength < 1.0D
-                    && entity.getRandom().nextDouble() >= strength) {
-                continue;
-            }
-
-            event.setResult(
-                    MobEffectEvent.Applicable.Result.DO_NOT_APPLY
-            );
-
-            Object protectionId =
-                    protection.protectionAttribute() != null
-                            ? protection.protectionAttribute()
-                            .unwrapKey()
-                            .map(ResourceKey::location)
-                            .orElse(null)
-                            : Objects.requireNonNull(protection.protectionEffect())
-                            .unwrapKey()
-                            .map(ResourceKey::location)
-                            .orElse(null);
-
-            JolCraftLogs.debug(
-                    JolCraftLogTags.ENTITY,
-                    "Entity {} resisted application of effect {} from tag {} through effect {} with {}% protection chance",
-                    entity.getName().getString(),
-                    effect.unwrapKey()
-                            .map(ResourceKey::location)
-                            .orElse(null),
-                    protection.damageTypeTag().location(),
-                    protectionId,
-                    JolCraftLogs.pct1(strength)
-            );
-
-            return;
-        }
     }
 
     private static float applyAffinity(
@@ -200,23 +135,6 @@ public final class JolCraftDamageAffinityEventsHelper {
         return modified;
     }
 
-    private static double protectionStrength(
-            LivingEntity entity,
-            EffectProtection protection
-    ) {
-        if (protection.protectionEffect() != null) {
-            return entity.hasEffect(protection.protectionEffect())
-                    ? 1.0D
-                    : 0.0D;
-        }
-
-        return attributeValue(
-                entity,
-                protection.protectionAttribute(),
-                1.0D
-        );
-    }
-
     private static double attributeValue(
             LivingEntity entity,
             @Nullable Holder<Attribute> attribute,
@@ -278,34 +196,6 @@ public final class JolCraftDamageAffinityEventsHelper {
         );
     }
 
-    @SafeVarargs
-    private static EffectProtection attributeProtection(
-            TagKey<DamageType> damageTypeTag,
-            Holder<Attribute> protectionAttribute,
-            Holder<MobEffect>... blockedEffects
-    ) {
-        return new EffectProtection(
-                damageTypeTag,
-                protectionAttribute,
-                null,
-                List.of(blockedEffects)
-        );
-    }
-
-    @SafeVarargs
-    private static EffectProtection effectProtection(
-            TagKey<DamageType> damageTypeTag,
-            Holder<MobEffect> protectionEffect,
-            Holder<MobEffect>... blockedEffects
-    ) {
-        return new EffectProtection(
-                damageTypeTag,
-                null,
-                protectionEffect,
-                List.of(blockedEffects)
-        );
-    }
-
     private record DamageAffinity(
             TagKey<DamageType> damageTypeTag,
             List<TagKey<DamageType>> excludedTags,
@@ -327,11 +217,4 @@ public final class JolCraftDamageAffinityEventsHelper {
             return true;
         }
     }
-
-    private record EffectProtection(
-            TagKey<DamageType> damageTypeTag,
-            @Nullable Holder<Attribute> protectionAttribute,
-            @Nullable Holder<MobEffect> protectionEffect,
-            List<Holder<MobEffect>> blockedEffects
-    ) {}
 }

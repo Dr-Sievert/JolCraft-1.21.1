@@ -6,9 +6,9 @@ import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import net.sievert.jolcraft.event.game.entity.damage.JolCraftDamageAffinityEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.harmful.JolCraftCrowdControlEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.harmful.JolCraftCurseEventsHelper;
+import net.sievert.jolcraft.event.game.entity.effect.util.JolCraftEffectApplicationEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.util.JolCraftEffectDamageEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.util.JolCraftEffectDurationEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.util.JolCraftStackingEffectEventsHelper;
@@ -18,6 +18,7 @@ public final class JolCraftEffectEvents {
     private JolCraftEffectEvents() {}
 
     public static void onEffectAdded(MobEffectEvent.Added event) {
+        JolCraftEffectApplicationEventsHelper.onEffectAdded(event);
         JolCraftStackingEffectEventsHelper.onEffectAdded(event);
         JolCraftEffectDurationEventsHelper.onEffectAdded(event);
         JolCraftCurseEventsHelper.onEffectAdded(event);
@@ -34,7 +35,7 @@ public final class JolCraftEffectEvents {
     public static void onEffectApplicable(
             MobEffectEvent.Applicable event
     ) {
-        JolCraftDamageAffinityEventsHelper.onEffectApplicable(event);
+        JolCraftEffectApplicationEventsHelper.onEffectApplicable(event);
         JolCraftCrowdControlEventsHelper.onEffectApplicable(event);
     }
 
