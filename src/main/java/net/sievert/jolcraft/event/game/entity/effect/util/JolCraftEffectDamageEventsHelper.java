@@ -4,6 +4,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -18,6 +19,8 @@ public final class JolCraftEffectDamageEventsHelper {
     private JolCraftEffectDamageEventsHelper() {}
 
     public static void applyEarlyFlatDefenses(LivingIncomingDamageEvent event) {
+        if (!event.getSource().is(Tags.DamageTypes.IS_PHYSICAL)) return;
+
         LivingEntity entity = event.getEntity();
         MobEffectInstance stoneSkin = entity.getEffect(JolCraftEffects.STONE_SKIN);
 
@@ -32,7 +35,7 @@ public final class JolCraftEffectDamageEventsHelper {
 
         JolCraftLogs.debug(
                 JolCraftLogTags.ENTITY,
-                "Stone Skin reduced damage on entity {} at {} in {}, original={}, reduction={}, new={}",
+                "Stone Skin reduced physical damage on entity {} at {} in {}, original={}, reduction={}, new={}",
                 entity.getName().getString(),
                 JolCraftLogs.roundedPos(entity.position()),
                 entity.level().dimension().location(),

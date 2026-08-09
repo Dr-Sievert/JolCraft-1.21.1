@@ -120,9 +120,9 @@ public final class JolCraftPotionIds extends JolCraftIds {
     public static final String LONG_CONFLAGRATION = longPotion(CONFLAGRATION);
     public static final String STRONG_CONFLAGRATION = strongPotion(CONFLAGRATION);
 
-    public static final String VITALITY = JolCraftEffectIds.VITALITY;
-    public static final String LONG_VITALITY = longPotion(VITALITY);
-    public static final String STRONG_VITALITY = strongPotion(VITALITY);
+    public static final String OVERHEAL = JolCraftEffectIds.OVERHEAL;
+    public static final String LONG_OVERHEAL = longPotion(OVERHEAL);
+    public static final String STRONG_OVERHEAL = strongPotion(OVERHEAL);
 
     // Harmful
     public static final String ATAXIA_CURSE = JolCraftEffectIds.ATAXIA_CURSE;

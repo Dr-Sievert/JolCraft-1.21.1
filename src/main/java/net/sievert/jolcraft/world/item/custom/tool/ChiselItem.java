@@ -9,10 +9,9 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.lore.DwarfLoreAttachmentHelper;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
-import net.sievert.jolcraft.world.item.client.tooltip.util.JolCraftTooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 
 import javax.annotation.ParametersAreNonnullByDefault;

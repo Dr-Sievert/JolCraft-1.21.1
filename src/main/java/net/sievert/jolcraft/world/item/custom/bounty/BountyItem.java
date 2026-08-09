@@ -13,7 +13,7 @@ import net.sievert.jolcraft.network.proxy.JolCraftProxy;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.item.component.custom.BountyData;
-import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.world.recipe.custom.bounty.BountyRecipe;
 import org.jetbrains.annotations.NotNull;
 

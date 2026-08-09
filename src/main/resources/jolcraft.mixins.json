@@ -36,6 +36,7 @@
     "WorldGenRegionMixin"
   ],
   "client": [
+    "GuiMixin"
   ],
   "injectors": {
     "defaultRequire": 1

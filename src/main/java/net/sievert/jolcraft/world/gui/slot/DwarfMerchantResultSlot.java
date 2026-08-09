@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.sievert.jolcraft.world.entity.player.JolCraftStats;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.gui.container.DwarfMerchantContainer;

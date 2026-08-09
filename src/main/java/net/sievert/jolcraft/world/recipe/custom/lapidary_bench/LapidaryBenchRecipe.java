@@ -23,7 +23,7 @@ import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.lore.DwarfLoreAttachmentHelper;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
 import net.sievert.jolcraft.world.recipe.base.RecipeValidation;

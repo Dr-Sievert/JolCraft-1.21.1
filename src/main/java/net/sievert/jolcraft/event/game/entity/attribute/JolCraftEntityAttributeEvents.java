@@ -3,6 +3,7 @@ package net.sievert.jolcraft.event.game.entity.attribute;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
@@ -18,6 +19,10 @@ public final class JolCraftEntityAttributeEvents {
     public static void onEntityTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
         JolCraftEntityAttributeEventsHelper.tickAttributes(entity);
+    }
+
+    public static void onLivingHeal(LivingHealEvent event) {
+        JolCraftEntityAttributeEventsHelper.onLivingHeal(event);
     }
 
     public static void applyAttackBuild(LivingIncomingDamageEvent event) {

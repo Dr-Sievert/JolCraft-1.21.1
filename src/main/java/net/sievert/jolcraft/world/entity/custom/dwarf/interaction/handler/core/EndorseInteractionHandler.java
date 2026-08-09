@@ -11,7 +11,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteracti
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfessionTraits;
-import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.reputation.DwarvenReputationAttachmentHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 
 import javax.annotation.ParametersAreNonnullByDefault;

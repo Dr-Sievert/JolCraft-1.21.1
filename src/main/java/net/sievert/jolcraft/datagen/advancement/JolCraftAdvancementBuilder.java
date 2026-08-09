@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.world.player.advancement.custom.AdvancementTrigger;
+import net.sievert.jolcraft.world.entity.player.advancement.custom.AdvancementTrigger;
 import net.sievert.jolcraft.data.id.advancement.JolCraftAdvancementIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftEmissionBuilder;

@@ -29,7 +29,7 @@ import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
-import net.sievert.jolcraft.world.player.attachment.custom.compass.DiscoveredStructuresAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.compass.DiscoveredStructuresAttachmentHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;

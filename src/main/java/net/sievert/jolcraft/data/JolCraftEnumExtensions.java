@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.data;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.network.chat.Style;
 import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 import net.sievert.jolcraft.JolCraft;
@@ -23,6 +24,23 @@ public final class JolCraftEnumExtensions {
                 (UnaryOperator<Style>) style -> style
                         .withColor(ChatFormatting.GOLD)
                         .withBold(true)
+        );
+    }
+
+    public static final class HeartType {
+
+        private HeartType() {}
+
+        public static final EnumProxy<Gui.HeartType> OVERHEAL = new EnumProxy<>(
+                Gui.HeartType.class,
+                JolCraft.location("hud/heart/overheal_full"),
+                JolCraft.location("hud/heart/overheal_full_blinking"),
+                JolCraft.location("hud/heart/overheal_half"),
+                JolCraft.location("hud/heart/overheal_half_blinking"),
+                JolCraft.location("hud/heart/overheal_hardcore_full"),
+                JolCraft.location("hud/heart/overheal_hardcore_full_blinking"),
+                JolCraft.location("hud/heart/overheal_hardcore_half"),
+                JolCraft.location("hud/heart/overheal_hardcore_half_blinking")
         );
     }
 }

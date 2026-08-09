@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.item.client.tooltip.util.JolCraftTooltipHelper;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;

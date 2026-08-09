@@ -79,6 +79,9 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> SUN_FIRE_DAMAGE =
             registerPositiveDouble(JolCraftAttributeIds.SUN_FIRE_DAMAGE, 2048.0D);
 
+    public static final DeferredHolder<Attribute, Attribute> MAX_OVERHEAL =
+            registerPositivePercentage(JolCraftAttributeIds.MAX_OVERHEAL, 1.0D);
+
     // Negative
 
     public static final DeferredHolder<Attribute, Attribute> CURSE_VULNERABILITY =

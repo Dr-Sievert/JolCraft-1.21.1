@@ -220,7 +220,7 @@ public final class JolCraftBrewingEvents {
 
         recipes += addStartMix(builder,
                 JolCraftItems.EMBERGLASS_DUST,
-                JolCraftPotions.VITALITY
+                JolCraftPotions.OVERHEAL
         );
 
         // Luminance

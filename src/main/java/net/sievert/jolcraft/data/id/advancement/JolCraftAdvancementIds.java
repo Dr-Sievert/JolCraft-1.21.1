@@ -1,6 +1,6 @@
 package net.sievert.jolcraft.data.id.advancement;
 
-import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 

@@ -91,7 +91,7 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.CONTAINER_LOOT_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.CROP_LOOT_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.EXPERIENCE_INCREASE);
-
+        added += addToAllLivingEntities(event, JolCraftAttributes.MAX_OVERHEAL);
         added += addToAllLivingEntities(event, JolCraftAttributes.SUN_FIRE_DAMAGE);
 
         return added;

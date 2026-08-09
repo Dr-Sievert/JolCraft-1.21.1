@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.Tags;
-import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.hearth.HearthAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;

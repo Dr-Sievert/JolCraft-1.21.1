@@ -14,4 +14,5 @@ public final class JolCraftAttachmentIds extends JolCraftIds {
     public static final String DWARF_LORE = join(JolCraftDwarfIds.DWARF, JolCraftDictionary.LORE);
     public static final String HEARTH = JolCraftBlockIds.HEARTH;
     public static final String DISCOVERED_STRUCTURES = join(JolCraftDictionary.DISCOVERED, plural(JolCraftDictionary.STRUCTURE));
+    public static final String OVERHEAL = JolCraftDictionary.OVERHEAL;
 }

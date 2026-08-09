@@ -26,7 +26,7 @@ import net.sievert.jolcraft.network.util.SyncHelper;
 import net.sievert.jolcraft.world.data.custom.PendingStatData;
 import net.sievert.jolcraft.world.entity.effect.custom.harmful.curse.DeliriumCurseEffect;
 import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
-import net.sievert.jolcraft.world.player.advancement.JolCraftCriteriaTriggers;
+import net.sievert.jolcraft.world.entity.player.advancement.JolCraftCriteriaTriggers;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)

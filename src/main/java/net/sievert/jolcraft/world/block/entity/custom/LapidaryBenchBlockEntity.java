@@ -26,7 +26,7 @@ import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.gui.menu.LapidaryBenchMenu;
 import net.sievert.jolcraft.world.item.inventory.JolCraftItemInsertionHelper;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
-import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.sievert.jolcraft.world.entity.player.JolCraftStats;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParams;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;

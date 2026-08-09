@@ -28,6 +28,7 @@ public final class JolCraftAttributeIds extends JolCraftIds {
     public static final String FOCUS = JolCraftDictionary.FOCUS;
     public static final String LOCKPICKING = JolCraftDictionary.LOCKPICKING;
     public static final String SUN_FIRE_DAMAGE = join(JolCraftDictionary.SUN, JolCraftDictionary.FIRE, JolCraftDictionary.DAMAGE);
+    public static final String MAX_OVERHEAL = join(JolCraftDictionary.MAX, JolCraftDictionary.OVERHEAL);
 
     // Negative
 

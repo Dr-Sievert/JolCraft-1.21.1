@@ -508,6 +508,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String ORE = "ore";
     public static final String ORDER = "order";
     public static final String OUTPUT = "output";
+    public static final String OVERHEAL = "overheal";
     public static final String OVERLAY = "overlay";
     public static final String OWNER = "owner";
     public static final String PADDING = "padding";

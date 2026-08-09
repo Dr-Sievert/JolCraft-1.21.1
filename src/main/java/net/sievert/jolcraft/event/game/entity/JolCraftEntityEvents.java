@@ -88,6 +88,9 @@ public final class JolCraftEntityEvents {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingHeal(LivingHealEvent event) {
         JolCraftEffectEvents.onLivingHeal(event);
+        if (event.isCanceled()) return;
+
+        JolCraftEntityAttributeEvents.onLivingHeal(event);
     }
 
     @SubscribeEvent

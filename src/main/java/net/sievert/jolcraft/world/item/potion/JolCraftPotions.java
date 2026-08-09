@@ -69,7 +69,7 @@ public final class JolCraftPotions {
         family(JolCraftPotionIds.CONFLAGRATION, JolCraftEffects.CONFLAGRATION, 3600, 7200, 1800);
         longFamily(JolCraftPotionIds.SUNFIRE, JolCraftEffects.SUNFIRE, 600, 1200);
         family(JolCraftPotionIds.LUMINANCE, JolCraftEffects.LUMINANCE, 3600, 7200, 1800);
-        family(JolCraftPotionIds.VITALITY, JolCraftEffects.VITALITY, 3600, 7200, 1800);
+        family(JolCraftPotionIds.OVERHEAL, JolCraftEffects.OVERHEAL, 3600, 7200, 1800);
         single(JolCraftPotionIds.ATAXIA_CURSE, JolCraftEffects.ATAXIA_CURSE, 3000);
         single(JolCraftPotionIds.CURSED_WOUND, JolCraftEffects.CURSED_WOUND, 600);
         single(JolCraftPotionIds.DELIRIUM_CURSE, JolCraftEffects.DELIRIUM_CURSE, 3000);
@@ -205,9 +205,9 @@ public final class JolCraftPotions {
     public static final Holder<Potion> LUMINANCE = holder(JolCraftPotionIds.LUMINANCE);
     public static final Holder<Potion> LONG_LUMINANCE = holder(JolCraftPotionIds.LONG_LUMINANCE);
     public static final Holder<Potion> STRONG_LUMINANCE = holder(JolCraftPotionIds.STRONG_LUMINANCE);
-    public static final Holder<Potion> VITALITY = holder(JolCraftPotionIds.VITALITY);
-    public static final Holder<Potion> LONG_VITALITY = holder(JolCraftPotionIds.LONG_VITALITY);
-    public static final Holder<Potion> STRONG_VITALITY = holder(JolCraftPotionIds.STRONG_VITALITY);
+    public static final Holder<Potion> OVERHEAL = holder(JolCraftPotionIds.OVERHEAL);
+    public static final Holder<Potion> LONG_OVERHEAL = holder(JolCraftPotionIds.LONG_OVERHEAL);
+    public static final Holder<Potion> STRONG_OVERHEAL = holder(JolCraftPotionIds.STRONG_OVERHEAL);
 
     // Harmful
 

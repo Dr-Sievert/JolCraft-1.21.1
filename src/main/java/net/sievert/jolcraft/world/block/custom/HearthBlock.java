@@ -33,7 +33,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.hearth.HearthAttachmentHelper;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.base.TickingBlockEntity;
 import org.jetbrains.annotations.Nullable;

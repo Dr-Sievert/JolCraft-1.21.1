@@ -4,7 +4,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionHand;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
-import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.sievert.jolcraft.world.entity.player.JolCraftStats;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

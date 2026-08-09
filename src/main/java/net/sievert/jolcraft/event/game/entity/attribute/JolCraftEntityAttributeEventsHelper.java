@@ -14,6 +14,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
@@ -22,6 +23,7 @@ import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
+import net.sievert.jolcraft.world.entity.attachment.custom.overheal.OverhealAttachmentHelper;
 import net.sievert.jolcraft.world.entity.damage.JolCraftDamageTypes;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.entity.effect.JolCraftOwnedEffectHelper;
@@ -31,6 +33,7 @@ import net.sievert.jolcraft.world.util.JolCraftTimeHelper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("SameParameterValue")
@@ -225,6 +228,18 @@ public final class JolCraftEntityAttributeEventsHelper {
 
         damage = applyMoonShieldDamage(entity, damage);
 
+        float overheal = OverhealAttachmentHelper.getAmount(entity);
+        if (overheal > 0.0F && damage > 0.0F) {
+            float absorbed = Math.min(overheal, damage);
+
+            OverhealAttachmentHelper.setAmount(
+                    entity,
+                    overheal - absorbed
+            );
+
+            damage -= absorbed;
+        }
+
         event.setNewDamage(Math.max(0.0F, damage));
     }
 
@@ -235,7 +250,7 @@ public final class JolCraftEntityAttributeEventsHelper {
 
         LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
         double sunFireDamage =
-                attacker.getAttributeValue(JolCraftAttributes.SUN_FIRE_DAMAGE);
+                Objects.requireNonNull(attacker).getAttributeValue(JolCraftAttributes.SUN_FIRE_DAMAGE);
 
         if (sunFireDamage <= 0.0D) return;
 
@@ -256,7 +271,7 @@ public final class JolCraftEntityAttributeEventsHelper {
 
         LivingEntity attacker = (LivingEntity) event.getSource().getEntity();
         double sunFireDamage =
-                attacker.getAttributeValue(JolCraftAttributes.SUN_FIRE_DAMAGE);
+                Objects.requireNonNull(attacker).getAttributeValue(JolCraftAttributes.SUN_FIRE_DAMAGE);
 
         if (sunFireDamage <= 0.0D) return;
 
@@ -283,6 +298,7 @@ public final class JolCraftEntityAttributeEventsHelper {
         // Reserved for non-damage consequences that should happen after the hit resolves.
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isValidSunfireTrigger(LivingDamageEvent.Post event) {
         LivingEntity entity = event.getEntity();
 
@@ -318,6 +334,7 @@ public final class JolCraftEntityAttributeEventsHelper {
         );
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isSunfireEnvironment(LivingEntity entity) {
         return JolCraftDimensionHelper.isNether(entity)
                 || (JolCraftTimeHelper.isDay(entity)
@@ -578,5 +595,24 @@ public final class JolCraftEntityAttributeEventsHelper {
                 originalDamage,
                 modifiedDamage
         );
+    }
+
+    public static void onLivingHeal(LivingHealEvent event) {
+        LivingEntity entity = event.getEntity();
+
+        if (entity.level().isClientSide()) return;
+
+        float maxOverheal = OverhealAttachmentHelper.getMaxAmount(entity);
+        if (maxOverheal <= 0.0F) return;
+
+        float missingHealth = Math.max(
+                0.0F,
+                entity.getMaxHealth() - entity.getHealth()
+        );
+
+        float excessHealing = event.getAmount() - missingHealth;
+        if (excessHealing <= 0.0F) return;
+
+        OverhealAttachmentHelper.addAmount(entity, excessHealing);
     }
 }

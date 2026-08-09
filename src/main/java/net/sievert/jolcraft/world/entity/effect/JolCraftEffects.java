@@ -362,19 +362,13 @@ public final class JolCraftEffects {
                     )
     );
 
-    public static final Holder<MobEffect> VITALITY = MOB_EFFECTS.register(
-            JolCraftEffectIds.VITALITY,
-            () -> new VitalityEffect(MobEffectCategory.BENEFICIAL, 0xa74f43)
+    public static final Holder<MobEffect> OVERHEAL = MOB_EFFECTS.register(
+            JolCraftEffectIds.OVERHEAL,
+            () -> new OverhealEffect(MobEffectCategory.BENEFICIAL, 0xa74f43)
                     .addAttributeModifier(
-                            Attributes.MAX_HEALTH,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.VITALITY, JolCraftDictionary.EFFECT)),
+                            JolCraftAttributes.MAX_OVERHEAL,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.OVERHEAL, JolCraftDictionary.EFFECT)),
                             0.10D,
-                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-                    )
-                    .addAttributeModifier(
-                            Attributes.MAX_ABSORPTION,
-                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.VITALITY, JolCraftDictionary.EFFECT)),
-                            VitalityEffect.ABSORPTION_PER_LEVEL,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );

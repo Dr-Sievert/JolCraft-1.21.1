@@ -14,7 +14,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.sievert.jolcraft.world.entity.effect.JolCraftEffects;
 import net.sievert.jolcraft.world.item.lore.dwarf.DwarfLoreKey;
-import net.sievert.jolcraft.world.player.attachment.custom.lore.DwarfLoreAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.lore.DwarfLoreAttachmentHelper;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

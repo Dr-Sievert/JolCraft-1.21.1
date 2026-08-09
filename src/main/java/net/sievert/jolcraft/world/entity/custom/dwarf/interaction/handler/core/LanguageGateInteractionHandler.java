@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractionOutcome;
 import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteractions;
-import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.world.sound.util.PlaySound;
 import org.jetbrains.annotations.NotNull;
 

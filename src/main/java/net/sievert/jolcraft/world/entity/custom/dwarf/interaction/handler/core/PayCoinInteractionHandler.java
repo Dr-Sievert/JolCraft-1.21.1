@@ -8,7 +8,7 @@ import net.sievert.jolcraft.world.entity.custom.dwarf.interaction.DwarfInteracti
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.custom.container.CoinPouchItem;
-import net.sievert.jolcraft.world.player.JolCraftStats;
+import net.sievert.jolcraft.world.entity.player.JolCraftStats;
 import net.sievert.jolcraft.world.sound.JolCraftSounds;
 import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 

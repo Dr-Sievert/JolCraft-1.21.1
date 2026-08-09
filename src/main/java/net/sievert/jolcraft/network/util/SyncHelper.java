@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.sievert.jolcraft.world.player.attachment.custom.hearth.HearthAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.hearth.HearthAttachmentHelper;
 import net.sievert.jolcraft.network.JolCraftNetworking;
 import net.sievert.jolcraft.network.packet.s2c.ClientboundDeliriumCursePacket;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;

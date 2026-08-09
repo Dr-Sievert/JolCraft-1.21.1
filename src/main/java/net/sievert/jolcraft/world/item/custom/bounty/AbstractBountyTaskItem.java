@@ -16,7 +16,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
-import net.sievert.jolcraft.world.player.attachment.custom.language.LanguageAttachmentHelper;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.proxy.JolCraftProxy;

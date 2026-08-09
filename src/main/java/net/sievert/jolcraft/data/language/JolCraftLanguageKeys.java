@@ -4,7 +4,7 @@ import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
 import net.sievert.jolcraft.data.id.directory.JolCraftDirectoryIds;
 import net.sievert.jolcraft.data.id.item.JolCraftRarityIds;
 import net.sievert.jolcraft.data.id.loot.JolCraftLootTableIds;
-import net.sievert.jolcraft.world.player.attachment.custom.reputation.DwarvenReputationAttachment;
+import net.sievert.jolcraft.world.entity.attachment.player.custom.reputation.DwarvenReputationAttachment;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.advancement.JolCraftCriterionTriggerIds;
 import net.sievert.jolcraft.data.id.attachment.JolCraftAttachmentIds;
