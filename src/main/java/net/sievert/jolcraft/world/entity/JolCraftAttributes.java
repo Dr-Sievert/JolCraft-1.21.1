@@ -58,8 +58,8 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> WITHER_RESISTANCE =
             registerPositivePercentage(JolCraftAttributeIds.WITHER_RESISTANCE, 1.0D);
 
-    public static final DeferredHolder<Attribute, Attribute> TENACITY =
-            registerPositivePercentage(JolCraftAttributeIds.TENACITY, 1.0D);
+    public static final DeferredHolder<Attribute, Attribute> CROWD_CONTROL_REDUCTION =
+            registerPositivePercentage(JolCraftAttributeIds.CROWD_CONTROL_REDUCTION, 1.0D);
 
     public static final DeferredHolder<Attribute, Attribute> FOCUS =
             registerPositivePercentage(JolCraftAttributeIds.FOCUS, 1.0D);

@@ -73,7 +73,7 @@ public final class JolCraftEffectDurationEventsHelper {
             return;
         }
 
-        double tenacity = entity.getAttributeValue(JolCraftAttributes.TENACITY);
+        double tenacity = entity.getAttributeValue(JolCraftAttributes.CROWD_CONTROL_REDUCTION);
 
         if (tenacity <= 0.0D) {
             return;
@@ -82,7 +82,7 @@ public final class JolCraftEffectDurationEventsHelper {
         modifyDuration(
                 entity,
                 effect,
-                JolCraftAttributes.TENACITY,
+                JolCraftAttributes.CROWD_CONTROL_REDUCTION,
                 -tenacity
         );
     }

@@ -32,8 +32,7 @@ public final class JolCraftTrimAttributes {
     private static final Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> ATTRIBUTES = buildAttributes();
 
     private static Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> buildAttributes() {
-        Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> out =
-                new EnumMap<>(JolCraftTrimMaterials.Attribute.class);
+        Map<JolCraftTrimMaterials.Attribute, List<TrimAttribute>> out = new EnumMap<>(JolCraftTrimMaterials.Attribute.class);
 
         out.put(
                 JolCraftTrimMaterials.Attribute.AEGISCORE,
@@ -57,11 +56,42 @@ public final class JolCraftTrimAttributes {
         out.put(JolCraftTrimMaterials.Attribute.DEEPMARROW,
                 attributes(JolCraftAttributes.EXPERIENCE_INCREASE, 0.125D, AttributeModifier.Operation.ADD_VALUE));
 
-        out.put(JolCraftTrimMaterials.Attribute.EARTHBLOOD,
-                attributes(Attributes.MINING_EFFICIENCY, 2.0D, AttributeModifier.Operation.ADD_VALUE));
+        out.put(
+                JolCraftTrimMaterials.Attribute.EARTHBLOOD,
+                attributes(
+                        new TrimAttribute(
+                                Attributes.BLOCK_INTERACTION_RANGE,
+                                0.5D,
+                                AttributeModifier.Operation.ADD_VALUE
+                        ),
+                        new TrimAttribute(
+                                Attributes.BLOCK_BREAK_SPEED,
+                                0.05D,
+                                AttributeModifier.Operation.ADD_MULTIPLIED_BASE
+                        ),
+                        new TrimAttribute(
+                                Attributes.MINING_EFFICIENCY,
+                                1.0D,
+                                AttributeModifier.Operation.ADD_VALUE
+                        )
+                )
+        );
 
-        out.put(JolCraftTrimMaterials.Attribute.EMBERGLASS,
-                attributes(Attributes.MAX_HEALTH, 2.0D, AttributeModifier.Operation.ADD_VALUE));
+        out.put(
+                JolCraftTrimMaterials.Attribute.EMBERGLASS,
+                attributes(
+                        new TrimAttribute(
+                                Attributes.MAX_HEALTH,
+                                1.0D,
+                                AttributeModifier.Operation.ADD_VALUE
+                        ),
+                        new TrimAttribute(
+                                JolCraftAttributes.MAX_OVERHEAL,
+                                0.05D,
+                                AttributeModifier.Operation.ADD_VALUE
+                        )
+                )
+        );
 
         out.put(JolCraftTrimMaterials.Attribute.FROSTVEIN,
                 attributes(JolCraftAttributes.SLOW_RESISTANCE, 0.20D, AttributeModifier.Operation.ADD_VALUE));

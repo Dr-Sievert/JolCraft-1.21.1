@@ -84,6 +84,31 @@ public final class JolCraftTagIds extends JolCraftIds {
     public static final String HOPS_BOTTOM = join(plural(JolCraftDictionary.HOP), JolCraftDictionary.BOTTOM);
 
     // ---------------------------------------------------------------------
+    // Entity
+    // ---------------------------------------------------------------------
+
+    public static final String EXPLOSION_IMMUNE = join(JolCraftDictionary.EXPLOSION, JolCraftDictionary.IMMUNE);
+    public static final String FIRE_IMMUNE = join(JolCraftDictionary.FIRE, JolCraftDictionary.IMMUNE);
+    public static final String FROST_IMMUNE = join(JolCraftDictionary.FROST, JolCraftDictionary.IMMUNE);
+    public static final String MAGIC_IMMUNE = join(JolCraftDictionary.MAGIC, JolCraftDictionary.IMMUNE);
+    public static final String POISON_IMMUNE = join(JolCraftDictionary.POISON, JolCraftDictionary.IMMUNE);
+    public static final String WITHER_IMMUNE = join(JolCraftDictionary.WITHER, JolCraftDictionary.IMMUNE);
+
+    public static final String EXPLOSION_RESISTANT = join(JolCraftDictionary.EXPLOSION, JolCraftDictionary.RESISTANT);
+    public static final String FIRE_RESISTANT = join(JolCraftDictionary.FIRE, JolCraftDictionary.RESISTANT);
+    public static final String FROST_RESISTANT = join(JolCraftDictionary.FROST, JolCraftDictionary.RESISTANT);
+    public static final String MAGIC_RESISTANT = join(JolCraftDictionary.MAGIC, JolCraftDictionary.RESISTANT);
+    public static final String POISON_RESISTANT = join(JolCraftDictionary.POISON, JolCraftDictionary.RESISTANT);
+    public static final String WITHER_RESISTANT = join(JolCraftDictionary.WITHER, JolCraftDictionary.RESISTANT);
+
+    public static final String EXPLOSION_VULNERABLE = join(JolCraftDictionary.EXPLOSION, JolCraftDictionary.VULNERABLE);
+    public static final String FIRE_VULNERABLE = join(JolCraftDictionary.FIRE, JolCraftDictionary.VULNERABLE);
+    public static final String FROST_VULNERABLE = join(JolCraftDictionary.FROST, JolCraftDictionary.VULNERABLE);
+    public static final String MAGIC_VULNERABLE = join(JolCraftDictionary.MAGIC, JolCraftDictionary.VULNERABLE);
+    public static final String POISON_VULNERABLE = join(JolCraftDictionary.POISON, JolCraftDictionary.VULNERABLE);
+    public static final String WITHER_VULNERABLE = join(JolCraftDictionary.WITHER, JolCraftDictionary.VULNERABLE);
+
+    // ---------------------------------------------------------------------
     // Structure
     // ---------------------------------------------------------------------
 

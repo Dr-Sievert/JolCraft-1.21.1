@@ -46,17 +46,45 @@ public final class JolCraftDataGenerator {
         );
 
         if (event.includeServer()) {
-            JolCraftBlockTagProvider blockTagsProvider = new JolCraftBlockTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            );
-            generator.addProvider(true, blockTagsProvider);
+
+
 
             generator.addProvider(true, new JolCraftDataMapProvider(packOutput, lookupProvider));
             generator.addProvider(true, new JolCraftRecipeProvider(packOutput, lookupProvider));
             generator.addProvider(true, new JolCraftGlobalLootModifierProvider(packOutput, lookupProvider));
             generator.addProvider(true, new JolCraftMainLootTableProvider(packOutput, lookupProvider));
+
+            generator.addProvider(true, new JolCraftBiomeTagProvider(
+                    packOutput,
+                    lookupProvider,
+                    existingFileHelper
+            ));
+
+            JolCraftBlockTagProvider blockTagsProvider = new JolCraftBlockTagProvider(
+                    packOutput,
+                    lookupProvider,
+                    existingFileHelper
+            );
+
+            generator.addProvider(true, blockTagsProvider);
+
+            generator.addProvider(true, new JolCraftDamageTypeTagProvider(
+                    packOutput,
+                    lookupProvider,
+                    existingFileHelper
+            ));
+
+            generator.addProvider(true, new JolCraftEntityTypeTagProvider(
+                    packOutput,
+                    lookupProvider,
+                    existingFileHelper
+            ));
+
+            generator.addProvider(true, new JolCraftInstrumentTagProvider(
+                    packOutput,
+                    lookupProvider,
+                    existingFileHelper
+            ));
 
             generator.addProvider(true, new JolCraftItemTagProvider(
                     packOutput,
@@ -64,22 +92,9 @@ public final class JolCraftDataGenerator {
                     blockTagsProvider.contentsGetter(),
                     existingFileHelper
             ));
-            generator.addProvider(true, new JolCraftBiomeTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
+
+
             generator.addProvider(true, new JolCraftStructureTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
-            generator.addProvider(true, new JolCraftDamageTypeTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
-            generator.addProvider(true, new JolCraftInstrumentTagProvider(
                     packOutput,
                     lookupProvider,
                     existingFileHelper

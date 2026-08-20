@@ -37,10 +37,10 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations, JolCraftPotions.DWARVEN_HASTE, "Mining");
         addPotion(translations, JolCraftPotions.BULWARK, "Bulwark");
         addPotion(translations, JolCraftPotions.ALCHEMIST_FOCUS, "Alchemist Focus");
-        addPotion(translations, JolCraftPotions.ANCHOR, "Anchor");
+        addPotion(translations, JolCraftPotions.ANCHOR, "Anchoring");
         addPotion(translations, JolCraftPotions.DEXTERITY, "Dexterity");
         addPotion(translations, JolCraftPotions.DWARVEN_RAGE, "Dwarven Rage");
-        addPotion(translations, JolCraftPotions.ENDURANCE, "Endurance");
+        addPotion(translations, JolCraftPotions.ENDURANCE, "Enduring");
         addPotion(translations, JolCraftPotions.EXPLOSION_RESISTANCE, "Explosion Resistance");
         addPotion(translations, JolCraftPotions.EXPLOSION_VULNERABILITY, "Explosion Vulnerability");
         addPotion(translations, JolCraftPotions.STRONG_FIRE_RESISTANCE, "Fire Resistance");
@@ -62,27 +62,27 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations, JolCraftPotions.TENACITY, "Tenacity");
         addPotion(translations, JolCraftPotions.WISDOM, "Wisdom");
         addPotion(translations, JolCraftPotions.MIGHT, "Might");
-        addPotion(translations, JolCraftPotions.HARVEST, "Harvest");
+        addPotion(translations, JolCraftPotions.HARVEST, "Harvesting");
         addPotion(translations, JolCraftPotions.LUNAR, "the Moon");
         addPotion(translations, JolCraftPotions.CONFLAGRATION, "Conflagration");
         addPotion(translations, JolCraftPotions.SUNFIRE, "Sunfire");
         addPotion(translations, JolCraftPotions.LUMINANCE, "Luminance");
-        addPotion(translations, JolCraftPotions.OVERHEAL, "Overheal");
+        addPotion(translations, JolCraftPotions.OVERHEAL, "Overhealing");
 
         addPotion(translations, JolCraftPotions.ATAXIA_CURSE, "Ataxia Cursing");
         addPotion(translations, JolCraftPotions.CURSED_WOUND, "Cursing Wound");
         addPotion(translations, JolCraftPotions.DELIRIUM_CURSE, "Delirium Cursing");
         addPotion(translations, JolCraftPotions.FAMINE_CURSE, "Famine Cursing");
         addPotion(translations, JolCraftPotions.FRAILTY_CURSE, "Frailty Cursing");
-        addPotion(translations, JolCraftPotions.HEX, "Hex");
+        addPotion(translations, JolCraftPotions.HEX, "Hexing");
         addPotion(translations, JolCraftPotions.VITALITY_CURSE, "Vitality Cursing");
 
         addPotion(translations, JolCraftPotions.DISARMED, "Disarming");
         addPotion(translations, JolCraftPotions.ROOTED, "Rooting");
         addPotion(translations, JolCraftPotions.STUNNED, "Stunning");
-        addPotion(translations, JolCraftPotions.SUPPRESSED, "Suppression");
+        addPotion(translations, JolCraftPotions.SUPPRESSED, "Suppressing");
 
-        addPotion(translations, JolCraftPotions.CORROSION, "Corrosion");
+        addPotion(translations, JolCraftPotions.CORROSION, "Corroding");
 
         addPotion(translations, JolCraftPotions.UNLUCK, "Bad Luck");
         addPotion(translations, JolCraftPotions.STRONG_LUCK, "Luck");

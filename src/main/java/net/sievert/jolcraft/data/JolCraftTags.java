@@ -5,6 +5,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
@@ -97,6 +98,34 @@ public final class JolCraftTags {
 
         private static TagKey<Biome> create(String id) {
             return TagKey.create(Registries.BIOME, JolCraft.location(id));
+        }
+    }
+
+    public static final class EntityTypes {
+
+        public static final TagKey<EntityType<?>> EXPLOSION_IMMUNE = create(JolCraftTagIds.EXPLOSION_IMMUNE);
+        public static final TagKey<EntityType<?>> FIRE_IMMUNE = create(JolCraftTagIds.FIRE_IMMUNE);
+        public static final TagKey<EntityType<?>> FROST_IMMUNE = create(JolCraftTagIds.FROST_IMMUNE);
+        public static final TagKey<EntityType<?>> MAGIC_IMMUNE = create(JolCraftTagIds.MAGIC_IMMUNE);
+        public static final TagKey<EntityType<?>> POISON_IMMUNE = create(JolCraftTagIds.POISON_IMMUNE);
+        public static final TagKey<EntityType<?>> WITHER_IMMUNE = create(JolCraftTagIds.WITHER_IMMUNE);
+
+        public static final TagKey<EntityType<?>> EXPLOSION_RESISTANT = create(JolCraftTagIds.EXPLOSION_RESISTANT);
+        public static final TagKey<EntityType<?>> FIRE_RESISTANT = create(JolCraftTagIds.FIRE_RESISTANT);
+        public static final TagKey<EntityType<?>> FROST_RESISTANT = create(JolCraftTagIds.FROST_RESISTANT);
+        public static final TagKey<EntityType<?>> MAGIC_RESISTANT = create(JolCraftTagIds.MAGIC_RESISTANT);
+        public static final TagKey<EntityType<?>> POISON_RESISTANT = create(JolCraftTagIds.POISON_RESISTANT);
+        public static final TagKey<EntityType<?>> WITHER_RESISTANT = create(JolCraftTagIds.WITHER_RESISTANT);
+
+        public static final TagKey<EntityType<?>> EXPLOSION_VULNERABLE = create(JolCraftTagIds.EXPLOSION_VULNERABLE);
+        public static final TagKey<EntityType<?>> FIRE_VULNERABLE = create(JolCraftTagIds.FIRE_VULNERABLE);
+        public static final TagKey<EntityType<?>> FROST_VULNERABLE = create(JolCraftTagIds.FROST_VULNERABLE);
+        public static final TagKey<EntityType<?>> MAGIC_VULNERABLE = create(JolCraftTagIds.MAGIC_VULNERABLE);
+        public static final TagKey<EntityType<?>> POISON_VULNERABLE = create(JolCraftTagIds.POISON_VULNERABLE);
+        public static final TagKey<EntityType<?>> WITHER_VULNERABLE = create(JolCraftTagIds.WITHER_VULNERABLE);
+
+        private static TagKey<EntityType<?>> create(String id) {
+            return TagKey.create(Registries.ENTITY_TYPE, JolCraft.location(id));
         }
     }
 

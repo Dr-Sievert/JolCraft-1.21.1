@@ -1,9 +1,11 @@
 package net.sievert.jolcraft.event.game.entity;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
@@ -17,6 +19,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.event.game.entity.attribute.JolCraftEntityAttributeEvents;
+import net.sievert.jolcraft.event.game.entity.damage.JolCraftDamageAffinityEventsHelper;
 import net.sievert.jolcraft.event.game.entity.damage.JolCraftDamageEventsHelper;
 import net.sievert.jolcraft.event.game.entity.effect.JolCraftEffectEvents;
 import net.sievert.jolcraft.event.game.entity.npc.JolCraftDwarfEvents;
@@ -113,5 +116,14 @@ public final class JolCraftEntityEvents {
     @SubscribeEvent
     public static void onVillagerTrades(VillagerTradesEvent event) {
         JolCraftVillagerEvents.addVillagerTrades(event);
+    }
+
+    @SubscribeEvent
+    public static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide || !(event.getEntity() instanceof LivingEntity entity)) {
+            return;
+        }
+
+        JolCraftDamageAffinityEventsHelper.applyEntityTypeAffinityModifiers(entity);
     }
 }

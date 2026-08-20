@@ -24,7 +24,7 @@ public final class JolCraftAttributeIds extends JolCraftIds {
     public static final String ITEM_USE_SPEED = join(JolCraftDictionary.ITEM, JolCraftDictionary.USE, JolCraftDictionary.SPEED);
     public static final String MOON_SHIELD = join(JolCraftDictionary.MOON, JolCraftDictionary.SHIELD);
     public static final String PROJECTILE_DAMAGE = join(JolCraftDictionary.PROJECTILE, JolCraftDictionary.DAMAGE);
-    public static final String TENACITY = JolCraftDictionary.TENACITY;
+    public static final String CROWD_CONTROL_REDUCTION = join(JolCraftDictionary.CROWD, JolCraftDictionary.CONTROL, JolCraftDictionary.REDUCTION);
     public static final String FOCUS = JolCraftDictionary.FOCUS;
     public static final String LOCKPICKING = JolCraftDictionary.LOCKPICKING;
     public static final String SUN_FIRE_DAMAGE = join(JolCraftDictionary.SUN, JolCraftDictionary.FIRE, JolCraftDictionary.DAMAGE);

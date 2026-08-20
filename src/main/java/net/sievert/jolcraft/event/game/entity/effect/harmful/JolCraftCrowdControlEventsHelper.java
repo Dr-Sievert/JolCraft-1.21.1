@@ -23,7 +23,7 @@ public final class JolCraftCrowdControlEventsHelper {
 
         if (!(effect.getEffect().value() instanceof AbstractCrowdControlEffect)) return;
 
-        double tenacity = entity.getAttributeValue(JolCraftAttributes.TENACITY);
+        double tenacity = entity.getAttributeValue(JolCraftAttributes.CROWD_CONTROL_REDUCTION);
         if (tenacity < 1.0D) return;
 
         event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);

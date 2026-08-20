@@ -82,7 +82,7 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.SLOW_VULNERABILITY);
         added += addToAllLivingEntities(event, JolCraftAttributes.WITHER_RESISTANCE);
         added += addToAllLivingEntities(event, JolCraftAttributes.WITHER_VULNERABILITY);
-        added += addToAllLivingEntities(event, JolCraftAttributes.TENACITY);
+        added += addToAllLivingEntities(event, JolCraftAttributes.CROWD_CONTROL_REDUCTION);
         added += addToAllLivingEntities(event, JolCraftAttributes.FOCUS);
         added += addToAllLivingEntities(event, JolCraftAttributes.MOON_SHIELD);
         added += addToAllLivingEntities(event, JolCraftAttributes.PROJECTILE_DAMAGE);

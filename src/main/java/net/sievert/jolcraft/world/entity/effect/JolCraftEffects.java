@@ -111,7 +111,7 @@ public final class JolCraftEffects {
             JolCraftEffectIds.TENACITY,
             () -> new TenacityEffect(MobEffectCategory.BENEFICIAL, 0x1d2734)
                     .addAttributeModifier(
-                            JolCraftAttributes.TENACITY,
+                            JolCraftAttributes.CROWD_CONTROL_REDUCTION,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.TENACITY, JolCraftDictionary.EFFECT)),
                             0.25D,
                             AttributeModifier.Operation.ADD_VALUE
@@ -145,13 +145,13 @@ public final class JolCraftEffects {
                     .addAttributeModifier(
                             Attributes.BLOCK_BREAK_SPEED,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.DWARVEN_HASTE, JolCraftDictionary.EFFECT)),
-                            0.20D,
+                            0.10D,
                             AttributeModifier.Operation.ADD_MULTIPLIED_BASE
                     )
                     .addAttributeModifier(
                             Attributes.MINING_EFFICIENCY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.DWARVEN_HASTE, JolCraftDictionary.EFFECT)),
-                            3.0D,
+                            2.0D,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );
@@ -366,9 +366,15 @@ public final class JolCraftEffects {
             JolCraftEffectIds.OVERHEAL,
             () -> new OverhealEffect(MobEffectCategory.BENEFICIAL, 0xa74f43)
                     .addAttributeModifier(
+                            Attributes.MAX_HEALTH,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.OVERHEAL, JolCraftDictionary.EFFECT)),
+                            1.0D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
+                    .addAttributeModifier(
                             JolCraftAttributes.MAX_OVERHEAL,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.OVERHEAL, JolCraftDictionary.EFFECT)),
-                            0.10D,
+                            0.05D,
                             AttributeModifier.Operation.ADD_VALUE
                     )
     );

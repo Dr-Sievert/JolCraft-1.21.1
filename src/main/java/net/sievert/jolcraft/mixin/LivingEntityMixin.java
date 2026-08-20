@@ -1,8 +1,11 @@
 package net.sievert.jolcraft.mixin;
 
 import net.minecraft.core.Holder;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,6 +36,24 @@ public abstract class LivingEntityMixin {
         }
 
         return instance.hasEffect(effect);
+    }
+
+    @Redirect(
+            method = "hurt",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/EntityType;is(Lnet/minecraft/tags/TagKey;)Z"
+            )
+    )
+    private boolean jolcraft$removeFreezeExtraDamage(
+            EntityType<?> instance,
+            TagKey<EntityType<?>> tag
+    ) {
+        if (tag == EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES) {
+            return false;
+        }
+
+        return instance.is(tag);
     }
 
     @SuppressWarnings("deprecation")

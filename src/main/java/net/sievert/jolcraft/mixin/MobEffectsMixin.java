@@ -2,6 +2,7 @@ package net.sievert.jolcraft.mixin;
 
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.attribute.JolCraftAttributeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -22,17 +23,28 @@ public abstract class MobEffectsMixin {
                     value = "FIELD",
                     target = "Lnet/minecraft/world/effect/MobEffects;FIRE_RESISTANCE:Lnet/minecraft/core/Holder;",
                     shift = At.Shift.AFTER,
-                    opcode = Opcodes.PUTSTATIC)
+                    opcode = Opcodes.PUTSTATIC
+            )
     )
-    private static void jolcraft$addFireResistanceAttribute(CallbackInfo ci) {
-        MobEffects.FIRE_RESISTANCE.value().addAttributeModifier(
-                JolCraftAttributes.FIRE_RESISTANCE,
-                JolCraft.location(JolCraftStrings.underscored(
-                        JolCraftAttributeIds.FIRE_RESISTANCE,
-                        JolCraftDictionary.EFFECT
-                )),
-                0.25D,
-                AttributeModifier.Operation.ADD_VALUE
-        );
+    private static void jolcraft$addFireResistanceAttributes(CallbackInfo ci) {
+        MobEffects.FIRE_RESISTANCE.value()
+                .addAttributeModifier(
+                        JolCraftAttributes.FIRE_RESISTANCE,
+                        JolCraft.location(JolCraftStrings.underscored(
+                                JolCraftAttributeIds.FIRE_RESISTANCE,
+                                JolCraftDictionary.EFFECT
+                        )),
+                        0.25D,
+                        AttributeModifier.Operation.ADD_VALUE
+                )
+                .addAttributeModifier(
+                        Attributes.BURNING_TIME,
+                        JolCraft.location(JolCraftStrings.underscored(
+                                JolCraftAttributeIds.FIRE_RESISTANCE,
+                                JolCraftDictionary.EFFECT
+                        )),
+                        -0.25D,
+                        AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                );
     }
 }

@@ -192,7 +192,9 @@ public final class JolCraftJeiPlugin implements IModPlugin {
 
         registration.addRecipes(
                 RecipeTypes.BREWING,
-                JeiBrewingRecipeHelper.getRecipes()
+                JeiBrewingRecipeHelper.getRecipes(
+                        registration.getVanillaRecipeFactory()
+                )
         );
     }
 
