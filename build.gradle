@@ -1,8 +1,6 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
+    id 'java'
     id 'net.neoforged.moddev' version '2.0.142'
-    id 'idea'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -13,38 +11,32 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    mavenLocal()
-
     maven {
-        name = "Jared's maven"
+        name = "BlameJared"
         url = "https://maven.blamejared.com/"
+
+        content {
+            includeGroup "mezz.jei"
+        }
     }
 
     maven {
-        name = "ModMaven"
-        url = "https://modmaven.dev"
-    }
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
 
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "CurseMaven"
-                url = "https://cursemaven.com"
-            }
-        }
-
-        filter {
-            includeGroup "curse.maven"
+        content {
+            includeGroup "maven.modrinth"
         }
     }
 }
-
 
 base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
 
 sourceSets {
     gametest {
@@ -56,14 +48,15 @@ sourceSets {
 configurations {
     gametestImplementation.extendsFrom implementation
     gametestRuntimeOnly.extendsFrom runtimeOnly
+    runtimeClasspath.extendsFrom localRuntime
 }
 
 neoForge {
     version = project.neo_version
 
     parchment {
-        mappingsVersion = project.parchment_mappings_version
         minecraftVersion = project.parchment_minecraft_version
+        mappingsVersion = project.parchment_mappings_version
     }
 
     runs {
@@ -120,49 +113,193 @@ neoForge {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
 
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
+
+// ============================================================
+// Optional Development Integrations
+// ============================================================
+
+def integrationProperties = new Properties()
+
+file("integrations.properties").withInputStream {
+    integrationProperties.load(it)
+}
+
+def integrationNames = integrationProperties.stringPropertyNames()
+        .collect { key -> key.substring(0, key.indexOf('.')) }
+        .unique()
+        .sort()
+
+def requiredIntegrationProperty = { String integration, String property ->
+    def key = "${integration}.${property}"
+    def value = integrationProperties.getProperty(key)
+
+    if (value == null || value.isBlank()) {
+        throw new GradleException(
+                "Missing '${key}' in integrations.properties"
+        )
+    }
+
+    value
+}
+
+integrationNames.each { integrationName ->
+    def enabled = requiredIntegrationProperty(
+            integrationName,
+            "enabled"
+    )
+
+    if (enabled != "true" && enabled != "false") {
+        throw new GradleException(
+                "'${integrationName}.enabled' must be true or false"
+        )
+    }
+
+    requiredIntegrationProperty(integrationName, "modId")
+    requiredIntegrationProperty(integrationName, "versionRange")
+
+    def side = requiredIntegrationProperty(
+            integrationName,
+            "side"
+    )
+
+    if (!(side in ["CLIENT", "SERVER", "BOTH"])) {
+        throw new GradleException(
+                "'${integrationName}.side' must be CLIENT, SERVER, or BOTH"
+        )
+    }
+
+    def artifactPrefix = "${integrationName}.artifact."
+
+    def artifactNames = integrationProperties.stringPropertyNames()
+            .findAll {
+                it.startsWith(artifactPrefix) &&
+                        it.endsWith(".dependency")
+            }
+            .collect {
+                it.substring(
+                        artifactPrefix.length(),
+                        it.length() - ".dependency".length()
+                )
+            }
+            .unique()
+            .sort()
+
+    if (artifactNames.isEmpty()) {
+        throw new GradleException(
+                "Integration '${integrationName}' defines no artifacts"
+        )
+    }
+
+    artifactNames.each { artifactName ->
+        def configurationName = requiredIntegrationProperty(
+                integrationName,
+                "artifact.${artifactName}.configuration"
+        )
+
+        requiredIntegrationProperty(
+                integrationName,
+                "artifact.${artifactName}.dependency"
+        )
+
+        if (configurations.findByName(configurationName) == null) {
+            throw new GradleException(
+                    "Unknown Gradle configuration '${configurationName}' " +
+                            "for ${integrationName}.${artifactName}"
+            )
+        }
+    }
+}
+
+def enabledIntegrations = integrationNames.findAll { integrationName ->
+    integrationProperties.getProperty(
+            "${integrationName}.enabled"
+    ).toBoolean()
 }
 
 dependencies {
+    enabledIntegrations.each { integrationName ->
+        def artifactPrefix = "${integrationName}.artifact."
 
-    //JEI
-    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+        def artifactNames = integrationProperties.stringPropertyNames()
+                .findAll {
+                    it.startsWith(artifactPrefix) &&
+                            it.endsWith(".dependency")
+                }
+                .collect {
+                    it.substring(
+                            artifactPrefix.length(),
+                            it.length() - ".dependency".length()
+                    )
+                }
+                .unique()
+                .sort()
 
-    // Jade
-    compileOnly "curse.maven:jade-324717:${jade_file_id}"
-    localRuntime "curse.maven:jade-324717:${jade_file_id}"
+        artifactNames.each { artifactName ->
+            def configurationName = integrationProperties.getProperty(
+                    "${integrationName}.artifact.${artifactName}.configuration"
+            )
 
-    //Tests
+            def dependencyNotation = integrationProperties.getProperty(
+                    "${integrationName}.artifact.${artifactName}.dependency"
+            )
+
+            add(configurationName, dependencyNotation)
+        }
+    }
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }
 
-def includeGametestMixins = !gradle.startParameter.taskNames.any {
-    it.toLowerCase().contains("build") || it.toLowerCase().contains("publish")
+
+// ============================================================
+// Generated Mod Metadata
+// ============================================================
+
+def includeGametestMixins = gradle.startParameter.taskNames.any {
+    it.toLowerCase().contains("gametest")
 }
 
-var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
-    var replaceProperties = [
-            minecraft_version      : minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            neo_version_range      : neo_version_range,
-            loader_version_range   : loader_version_range,
-            mod_id                 : mod_id,
-            mod_name               : mod_name,
-            mod_license            : mod_license,
-            mod_version            : mod_version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description,
-            gametest_mixins        : includeGametestMixins ? '[[mixins]]\nconfig = "' + mod_id + '.gametest.mixins.json"' : ''
+def integrationDependenciesToml = enabledIntegrations.collect { integrationName ->
+    """
+[[dependencies.${mod_id}]]
+modId="${integrationProperties.getProperty("${integrationName}.modId")}"
+type="optional"
+versionRange="${integrationProperties.getProperty("${integrationName}.versionRange")}"
+ordering="NONE"
+side="${integrationProperties.getProperty("${integrationName}.side")}"
+"""
+}.join("\n")
+
+def generateModMetadata = tasks.register(
+        "generateModMetadata",
+        ProcessResources
+) {
+    def replaceProperties = [
+            minecraft_version        : minecraft_version,
+            minecraft_version_range  : minecraft_version_range,
+            neo_version              : neo_version,
+            neo_version_range        : neo_version_range,
+            loader_version_range     : loader_version_range,
+            mod_id                   : mod_id,
+            mod_name                 : mod_name,
+            mod_license              : mod_license,
+            mod_version              : mod_version,
+            mod_authors              : mod_authors,
+            mod_description          : mod_description,
+            integration_dependencies: integrationDependenciesToml,
+            gametest_mixins          : includeGametestMixins
+                    ? '[[mixins]]\nconfig = "' + mod_id + '.gametest.mixins.json"'
+                    : ''
     ]
+
     inputs.properties replaceProperties
     expand replaceProperties
+
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
@@ -170,28 +307,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
-        }
-    }
-}
-
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-}
-
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
 }
 
 test {
