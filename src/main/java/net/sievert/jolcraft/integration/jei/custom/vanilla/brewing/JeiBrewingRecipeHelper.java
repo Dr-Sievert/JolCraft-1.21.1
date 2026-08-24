@@ -9,7 +9,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.event.game.recipe.brewing.JolCraftBrewingEventHelper;
+import net.sievert.jolcraft.event.game.world.recipe.brewing.JolCraftBrewingEventHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
 import java.util.ArrayList;

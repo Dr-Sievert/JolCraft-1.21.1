@@ -13,6 +13,20 @@ public final class JolCraftCropItems {
     private JolCraftCropItems() {}
 
     // -------------------------------------------------------------------------
+    // Bloodroot
+    // -------------------------------------------------------------------------
+
+    public static DeferredItem<Item> registerBloodroot() {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.BLOODROOT,
+                props -> new ItemNameBlockItem(
+                        JolCraftBlocks.BLOODROOT.get(),
+                        props
+                )
+        );
+    }
+
+    // -------------------------------------------------------------------------
     // Barley
     // -------------------------------------------------------------------------
 

@@ -33,16 +33,15 @@ import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import net.sievert.jolcraft.world.block.custom.HearthBlock;
-import net.sievert.jolcraft.world.block.custom.crop.*;
+import net.sievert.jolcraft.world.block.custom.plant.crop.*;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "SameParameterValue"})
 public final class JolCraftBlockLootTableProvider
         extends BlockLootSubProvider
         implements JolCraftMainDataProvider<JolCraftBlockLootTableProvider> {
@@ -77,6 +76,14 @@ public final class JolCraftBlockLootTableProvider
             @NotNull JolCraftDataTracking tracking
     ) {
         this.tracking = tracking;
+
+        target.add(JolCraftBlocks.TUFF_VITRIOL_ORE.get(),
+                block -> createOreDrop(JolCraftBlocks.TUFF_VITRIOL_ORE.get(), JolCraftItems.VITRIOL.get()));
+
+        target.dropSelf(JolCraftBlocks.VITRIOL_BLOCK.get());
+
+        target.dropOther(JolCraftBlocks.BLOODROOT.get(), JolCraftItems.BLOODROOT.get());
+
         target.dropOther(JolCraftBlocks.DEEPSLATE_MORTAR.get(), JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
 
         target.add(JolCraftBlocks.GEODE_BLOCK.get(),
@@ -105,6 +112,12 @@ public final class JolCraftBlockLootTableProvider
 
         target.dropSelf(JolCraftBlocks.VERDANT_SOIL.get());
         target.dropOther(JolCraftBlocks.VERDANT_FARMLAND.get(), JolCraftBlocks.VERDANT_SOIL.get());
+
+        target.dropSelf(JolCraftBlocks.CYANELLA.get());
+        target.dropPottedContents(JolCraftBlocks.POTTED_CYANELLA.get());
+
+        target.dropSelf(JolCraftBlocks.SKYBELL.get());
+        target.dropPottedContents(JolCraftBlocks.POTTED_SKYBELL.get());
 
         target.dropSelf(JolCraftBlocks.DUSKCAP.get());
         target.dropPottedContents(JolCraftBlocks.POTTED_DUSKCAP.get());

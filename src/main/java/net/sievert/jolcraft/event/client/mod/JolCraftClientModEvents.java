@@ -103,6 +103,11 @@ public final class JolCraftClientModEvents {
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.FERMENTING_CAULDRON.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.DEEPSLATE_MORTAR.get(), RenderType.cutout()); itemBlockRenderTypes++;
 
+        ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.BLOODROOT.get(), RenderType.cutout()); itemBlockRenderTypes++;
+        ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.CYANELLA.get(), RenderType.cutout()); itemBlockRenderTypes++;
+        ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.POTTED_CYANELLA.get(), RenderType.cutout()); itemBlockRenderTypes++;
+        ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.SKYBELL.get(), RenderType.cutout()); itemBlockRenderTypes++;
+        ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.POTTED_SKYBELL.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.DUSKCAP.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.POTTED_DUSKCAP.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.FESTERLING_CROP.get(), RenderType.cutout()); itemBlockRenderTypes++;

@@ -27,4 +27,8 @@ public final class JolCraftAlchemyItems {
                 new Item.Properties()
         );
     }
+
+    public static DeferredItem<Item> registerVitriol() {
+        return JolCraftItemRegistryHelper.registerSimpleItem(JolCraftItemIds.VITRIOL);
+    }
 }

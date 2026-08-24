@@ -370,6 +370,25 @@ public final class JolCraftModelBuilder {
 
     public void createPlantWithDefaultItem(
             @NotNull Block plantBlock,
+            @NotNull ModelTemplate plantTemplate,
+            @NotNull TextureMapping plantTextureMapping
+    ) {
+        flatBlockItem(plantBlock);
+
+        ResourceLocation plantModel = plantTemplate.create(
+                plantBlock,
+                plantTextureMapping,
+                this::addModel
+        );
+
+        addBlockState(MultiVariantGenerator.multiVariant(
+                plantBlock,
+                Variant.variant().with(VariantProperties.MODEL, plantModel)
+        ));
+    }
+
+    public void createPlantWithDefaultItem(
+            @NotNull Block plantBlock,
             @NotNull Block pottedPlantBlock,
             @NotNull ModelTemplate plantTemplate,
             @NotNull ModelTemplate pottedPlantTemplate,
@@ -411,6 +430,34 @@ public final class JolCraftModelBuilder {
                 TextureMapping.cross(plantBlock),
                 TextureMapping.plant(plantBlock)
         );
+    }
+
+    public void createPlantWithDefaultItem(
+            @NotNull Block plantBlock
+    ) {
+        createPlantWithDefaultItem(
+                plantBlock,
+                ModelTemplates.CROSS,
+                TextureMapping.cross(plantBlock)
+        );
+    }
+
+    public void createPlantWithSeparateItem(
+            @NotNull Block plantBlock,
+            @NotNull Item plantItem
+    ) {
+        ResourceLocation plantModel = ModelTemplates.CROSS.create(
+                plantBlock,
+                TextureMapping.cross(plantBlock),
+                this::addModel
+        );
+
+        addBlockState(MultiVariantGenerator.multiVariant(
+                plantBlock,
+                Variant.variant().with(VariantProperties.MODEL, plantModel)
+        ));
+
+        flatItem(plantItem);
     }
 
     public void manualBlockState(@NotNull Block block) {

@@ -82,9 +82,11 @@ public final class JolCraftTags {
     public static final class Blocks {
 
         public static final TagKey<Block> DEEPSLATE_BULBS_PLANTABLE = createTag(JolCraftTagIds.DEEPSLATE_BULBS_PLANTABLE);
+        public static final TagKey<Block> CYANELLA_PLANTABLE = createTag(JolCraftTagIds.CYANELLA_PLANTABLE);
         public static final TagKey<Block> VERDANT = createTag(JolCraftTagIds.VERDANT);
         public static final TagKey<Block> HOPS_BOTTOM = createTag(JolCraftTagIds.HOPS_BOTTOM);
         public static final TagKey<Block> HOPS_TOP = createTag(JolCraftTagIds.HOPS_TOP);
+        public static final TagKey<Block> SHEARS_LOOT = createTag(JolCraftTagIds.SHEARS_LOOT);
 
         private static TagKey<Block> createTag(String id) {
             return BlockTags.create(JolCraft.location(id));

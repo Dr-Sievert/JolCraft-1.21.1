@@ -232,10 +232,12 @@ public final class JolCraftItemTagProvider
         // Materials
 
         target.tag(Tags.Items.ORES)
+                .add(JolCraftBlocks.TUFF_VITRIOL_ORE.get().asItem())
                 .add(JolCraftBlocks.GEODE_BLOCK.get().asItem())
                 .add(JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get().asItem());
 
         target.tag(Tags.Items.ORE_RATES_SINGULAR)
+                .add(JolCraftBlocks.TUFF_VITRIOL_ORE.get().asItem())
                 .add(JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get().asItem());
 
         target.tag(Tags.Items.ORE_RATES_DENSE)
@@ -258,6 +260,7 @@ public final class JolCraftItemTagProvider
 
         target.tag(Tags.Items.RAW_MATERIALS)
                 .addTag(JolCraftTags.Items.GEMS_UNCUT)
+                .add(JolCraftItems.VITRIOL.get())
                 .add(JolCraftItems.IMPURE_MITHRIL.get())
                 .add(JolCraftItems.PURE_MITHRIL.get())
                 .add(JolCraftItems.DEEPSLATE_BULBS.get());

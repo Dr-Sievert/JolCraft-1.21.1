@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
+import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
@@ -60,6 +61,16 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
             @NotNull JolCraftDataLookups lookups,
             @NotNull JolCraftDataTracking tracking
     ) {
+        VanillaRecipeBuilder.Storage.nineBlock(
+                lookups.items(),
+                output,
+                folder(),
+                RecipeCategory.MISC,
+                JolCraftItems.VITRIOL.get(),
+                RecipeCategory.MISC,
+                JolCraftBlocks.VITRIOL_BLOCK.get()
+        );
+
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.BREAD)
                 )
@@ -76,6 +87,20 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .requires(JolCraftItems.GUILD_SIGIL_MOULD)
                 .unlockedByHas(JolCraftItems.GUILD_SIGIL_MOULD)
                 .save(output, folder(), JolCraftItems.GUILD_SIGIL.get());
+
+        VanillaRecipeBuilder.shapeless(
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.CYAN_DYE)
+                )
+                .requires(JolCraftBlocks.CYANELLA)
+                .unlockedByHas(JolCraftBlocks.CYANELLA)
+                .save(output, folder(), JolCraftStrings.underscored(JolCraftBlockIds.CYANELLA, JolCraftDictionary.DYE));
+
+        VanillaRecipeBuilder.shapeless(
+                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.LIGHT_BLUE_DYE)
+                )
+                .requires(JolCraftBlocks.SKYBELL)
+                .unlockedByHas(JolCraftBlocks.SKYBELL)
+                .save(output, folder(), JolCraftStrings.underscored(JolCraftBlockIds.SKYBELL, JolCraftDictionary.DYE));
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftBlocks.HEARTH)

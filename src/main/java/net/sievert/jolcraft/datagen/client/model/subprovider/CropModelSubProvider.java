@@ -17,10 +17,10 @@ import net.sievert.jolcraft.datagen.client.model.JolCraftModelBuilder;
 import net.sievert.jolcraft.datagen.client.model.JolCraftModelProvider;
 import net.sievert.jolcraft.datagen.client.model.JolCraftModelSubProvider;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.block.custom.crop.BarleyCropBlock;
-import net.sievert.jolcraft.world.block.custom.crop.FesterlingCropBlock;
-import net.sievert.jolcraft.world.block.custom.crop.HopsCropBottomBlock;
-import net.sievert.jolcraft.world.block.custom.crop.HopsCropTopBlock;
+import net.sievert.jolcraft.world.block.custom.plant.crop.BarleyCropBlock;
+import net.sievert.jolcraft.world.block.custom.plant.crop.FesterlingCropBlock;
+import net.sievert.jolcraft.world.block.custom.plant.crop.HopsCropBottomBlock;
+import net.sievert.jolcraft.world.block.custom.plant.crop.HopsCropTopBlock;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +56,24 @@ public record CropModelSubProvider(@NotNull JolCraftModelProvider parent) implem
                 0, 1, 2, 3, 4, 5, 6, 7
         );
 
+        builder.createPlantWithSeparateItem(
+                JolCraftBlocks.BLOODROOT.get(),
+                JolCraftItems.BLOODROOT.get()
+        );
+
         builder.createPlantWithDefaultItem(
                 JolCraftBlocks.DUSKCAP.get(),
                 JolCraftBlocks.POTTED_DUSKCAP.get()
+        );
+
+        builder.createPlantWithDefaultItem(
+                JolCraftBlocks.CYANELLA.get(),
+                JolCraftBlocks.POTTED_CYANELLA.get()
+        );
+
+        builder.createPlantWithDefaultItem(
+                JolCraftBlocks.SKYBELL.get(),
+                JolCraftBlocks.POTTED_SKYBELL.get()
         );
 
         createMushroomBlocks(

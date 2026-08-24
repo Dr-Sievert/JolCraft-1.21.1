@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
@@ -17,6 +18,21 @@ import net.sievert.jolcraft.world.worldgen.feature.JolCraftPlacedFeatures;
 public class JolCraftBiomeModifiers {
 
     // Vegetation
+    public static final ResourceKey<BiomeModifier> ADD_BLOODROOT =
+            registerKey(JolCraftBiomeModifierIds.ADD_BLOODROOT);
+
+    public static final ResourceKey<BiomeModifier> ADD_BLOODROOT_SPECIAL =
+            registerKey(JolCraftBiomeModifierIds.ADD_BLOODROOT_SPECIAL);
+
+    public static final ResourceKey<BiomeModifier> ADD_CYANELLA_PATCH =
+            registerKey(JolCraftBiomeModifierIds.ADD_CYANELLA_PATCH);
+
+    public static final ResourceKey<BiomeModifier> ADD_SKYBELL_PATCH =
+            registerKey(JolCraftBiomeModifierIds.ADD_SKYBELL_PATCH);
+
+    public static final ResourceKey<BiomeModifier> ADD_SKYBELL_SPECIAL_PATCH =
+            registerKey(JolCraftBiomeModifierIds.ADD_SKYBELL_SPECIAL_PATCH);
+
     public static final ResourceKey<BiomeModifier> ADD_DUSKCAP_PATCH =
             registerKey(JolCraftBiomeModifierIds.ADD_DUSKCAP_PATCH);
 
@@ -48,6 +64,51 @@ public class JolCraftBiomeModifiers {
         var biomes = context.lookup(Registries.BIOME);
 
         //Vegetation
+        context.register(
+                ADD_BLOODROOT,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                        HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.BLOODROOT_PLACED_KEY)),
+                        GenerationStep.Decoration.VEGETAL_DECORATION
+                )
+        );
+
+        context.register(
+                ADD_BLOODROOT_SPECIAL,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.DRIPSTONE_CAVES)),
+                        HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.BLOODROOT_SPECIAL_PLACED_KEY)),
+                        GenerationStep.Decoration.VEGETAL_DECORATION
+                )
+        );
+
+        context.register(
+                ADD_CYANELLA_PATCH,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.WARPED_FOREST)),
+                        HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.CYANELLA_PATCH_PLACED_KEY)),
+                        GenerationStep.Decoration.VEGETAL_DECORATION
+                )
+        );
+
+        context.register(
+                ADD_SKYBELL_PATCH,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        biomes.getOrThrow(JolCraftTags.Biomes.DWARVEN),
+                        HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.SKYBELL_PATCH_PLACED_KEY)),
+                        GenerationStep.Decoration.VEGETAL_DECORATION
+                )
+        );
+
+        context.register(
+                ADD_SKYBELL_SPECIAL_PATCH,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.MEADOW)),
+                        HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.SKYBELL_PATCH_SPECIAL_PLACED_KEY)),
+                        GenerationStep.Decoration.VEGETAL_DECORATION
+                )
+        );
+
         context.register(
                 ADD_DUSKCAP_PATCH,
                 new BiomeModifiers.AddFeaturesBiomeModifier(

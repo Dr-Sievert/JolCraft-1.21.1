@@ -167,6 +167,7 @@ public final class JolCraftItems {
     // -------------------------------------------------------------------------
 
     public static final DeferredItem<BlockItem> DEEPSLATE_MORTAR_ITEM = JolCraftAlchemyItems.registerDeepslateMortar();
+    public static final DeferredItem<Item> VITRIOL = JolCraftAlchemyItems.registerVitriol();
     public static final DeferredItem<Item> INVERIX = JolCraftAlchemyItems.registerInverix();
 
     // -------------------------------------------------------------------------
@@ -252,6 +253,8 @@ public final class JolCraftItems {
     // -------------------------------------------------------------------------
     // Crops
     // -------------------------------------------------------------------------
+
+    public static final DeferredItem<Item> BLOODROOT = JolCraftCropItems.registerBloodroot();
 
     public static final DeferredItem<Item> BARLEY_SEEDS = JolCraftCropItems.registerBarleySeeds();
     public static final DeferredItem<Item> BARLEY = JolCraftCropItems.registerBarley();

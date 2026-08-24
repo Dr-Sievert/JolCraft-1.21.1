@@ -1,10 +1,14 @@
 package net.sievert.jolcraft.world.worldgen.feature;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.valueproviders.ConstantInt;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -12,13 +16,32 @@ import net.minecraft.world.level.levelgen.placement.*;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftPlacedFeatureIds;
+import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.worldgen.placement.custom.MaxYPlacementFilter;
+import net.sievert.jolcraft.world.worldgen.placement.custom.MinYPlacementFilter;
 import net.sievert.jolcraft.world.worldgen.predicate.custom.DarknessPredicate;
 
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class JolCraftPlacedFeatures {
 
     // Vegetation
+    public static final ResourceKey<PlacedFeature> BLOODROOT_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.BLOODROOT_PLACED);
+
+    public static final ResourceKey<PlacedFeature> BLOODROOT_SPECIAL_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.BLOODROOT_SPECIAL_PLACED);
+
+    public static final ResourceKey<PlacedFeature> CYANELLA_PATCH_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.CYANELLA_PATCH_PLACED);
+
+    public static final ResourceKey<PlacedFeature> SKYBELL_PATCH_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.SKYBELL_PATCH_PLACED);
+
+    public static final ResourceKey<PlacedFeature> SKYBELL_PATCH_SPECIAL_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.SKYBELL_PATCH_SPECIAL_PLACED);
+
     public static final ResourceKey<PlacedFeature> DUSKCAP_PATCH_PLACED_KEY =
             registerKey(JolCraftPlacedFeatureIds.DUSKCAP_PATCH_PLACED);
 
@@ -49,6 +72,104 @@ public class JolCraftPlacedFeatures {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
         //Vegetation
+        register(
+                context,
+                BLOODROOT_PLACED_KEY,
+                configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.BLOODROOT_KEY),
+                List.of(
+                        CountPlacement.of(1),
+                        RarityFilter.onAverageOnceEvery(2),
+                        InSquarePlacement.spread(),
+                        HeightRangePlacement.uniform(
+                                VerticalAnchor.absolute(0),
+                                VerticalAnchor.absolute(64)
+                        ),
+                        EnvironmentScanPlacement.scanningFor(
+                                Direction.UP,
+                                BlockPredicate.solid(),
+                                BlockPredicate.ONLY_IN_AIR_PREDICATE,
+                                12
+                        ),
+                        RandomOffsetPlacement.vertical(ConstantInt.of(-1)),
+                        MinYPlacementFilter.of(0),
+                        MaxYPlacementFilter.of(64),
+                        BlockPredicateFilter.forPredicate(
+                                BlockPredicate.wouldSurvive(
+                                        JolCraftBlocks.BLOODROOT.get().defaultBlockState(),
+                                        BlockPos.ZERO
+                                )
+                        ),
+                        BiomeFilter.biome()
+                )
+        );
+
+        register(
+                context,
+                BLOODROOT_SPECIAL_PLACED_KEY,
+                configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.BLOODROOT_KEY),
+                List.of(
+                        CountPlacement.of(3),
+                        InSquarePlacement.spread(),
+                        HeightRangePlacement.uniform(
+                                VerticalAnchor.absolute(0),
+                                VerticalAnchor.absolute(64)
+                        ),
+                        EnvironmentScanPlacement.scanningFor(
+                                Direction.UP,
+                                BlockPredicate.solid(),
+                                BlockPredicate.ONLY_IN_AIR_PREDICATE,
+                                12
+                        ),
+                        RandomOffsetPlacement.vertical(ConstantInt.of(-1)),
+                        MinYPlacementFilter.of(0),
+                        MaxYPlacementFilter.of(64),
+                        BlockPredicateFilter.forPredicate(
+                                BlockPredicate.wouldSurvive(
+                                        JolCraftBlocks.BLOODROOT.get().defaultBlockState(),
+                                        BlockPos.ZERO
+                                )
+                        ),
+                        BiomeFilter.biome()
+                )
+        );
+
+        register(
+                context,
+                CYANELLA_PATCH_PLACED_KEY,
+                configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.CYANELLA_PATCH_KEY),
+                List.of(
+                        CountOnEveryLayerPlacement.of(1),
+                        RarityFilter.onAverageOnceEvery(4),
+                        BiomeFilter.biome()
+                )
+        );
+
+        register(
+                context,
+                SKYBELL_PATCH_PLACED_KEY,
+                configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.SKYBELL_PATCH_KEY),
+                List.of(
+                        RarityFilter.onAverageOnceEvery(5),
+                        InSquarePlacement.spread(),
+                        HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING),
+                        MinYPlacementFilter.of(100),
+                        BiomeFilter.biome()
+                )
+        );
+
+        register(
+                context,
+                SKYBELL_PATCH_SPECIAL_PLACED_KEY,
+                configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.SKYBELL_PATCH_KEY),
+                List.of(
+                        RarityFilter.onAverageOnceEvery(3),
+                        InSquarePlacement.spread(),
+                        HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING),
+                        MinYPlacementFilter.of(115),
+                        BiomeFilter.biome()
+                )
+        );
+
         register(
                 context,
                 DUSKCAP_PATCH_PLACED_KEY,

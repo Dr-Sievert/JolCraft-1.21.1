@@ -7,7 +7,7 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.block.custom.crop.*;
+import net.sievert.jolcraft.world.block.custom.plant.crop.*;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 
 public final class JolCraftCropBlocks {

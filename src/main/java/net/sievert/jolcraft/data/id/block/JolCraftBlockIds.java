@@ -1,5 +1,7 @@
 package net.sievert.jolcraft.data.id.block;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.Blocks;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -9,6 +11,10 @@ public final class JolCraftBlockIds extends JolCraftIds {
     private JolCraftBlockIds() {}
 
     public static final String DEEPSLATE_MORTAR = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.MORTAR);
+
+    public static final String VITRIOL_BLOCK = block(JolCraftDictionary.VITRIOL);
+
+    public static final String TUFF_VITRIOL_ORE = join(BuiltInRegistries.BLOCK.getKey(Blocks.TUFF).getPath(), JolCraftDictionary.VITRIOL, JolCraftDictionary.ORE);
 
     public static final String GEODE_BLOCK = block(JolCraftDictionary.GEODE);
 
@@ -29,6 +35,16 @@ public final class JolCraftBlockIds extends JolCraftIds {
     public static final String VERDANT_SOIL = join(JolCraftDictionary.VERDANT, JolCraftDictionary.SOIL);
 
     public static final String VERDANT_FARMLAND = join(JolCraftDictionary.VERDANT, JolCraftDictionary.FARMLAND);
+
+    public static final String BLOODROOT = JolCraftDictionary.BLOODROOT;
+
+    public static final String CYANELLA = JolCraftDictionary.CYANELLA;
+
+    public static final String POTTED_CYANELLA = join(JolCraftDictionary.POTTED, CYANELLA);
+
+    public static final String SKYBELL = JolCraftDictionary.SKYBELL;
+
+    public static final String POTTED_SKYBELL = join(JolCraftDictionary.POTTED, SKYBELL);
 
     public static final String DUSKCAP = JolCraftDictionary.DUSKCAP;
 

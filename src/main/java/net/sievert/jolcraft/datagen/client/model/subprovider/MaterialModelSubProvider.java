@@ -40,6 +40,11 @@ public record MaterialModelSubProvider(@NotNull JolCraftModelProvider parent) im
             JolCraftDictionary.MITHRIL
     );
 
+    private static final String SUB_VITRIOL = JolCraftStrings.slashed(
+            JolCraftDictionary.MATERIAL,
+            JolCraftDictionary.VITRIOL
+    );
+
     @Override
     public @NotNull String id() {
         return JolCraftDictionary.MATERIAL;
@@ -61,6 +66,9 @@ public record MaterialModelSubProvider(@NotNull JolCraftModelProvider parent) im
         builder.handheldItem(JolCraftItems.MUFFHORN_FUR.get(), SUB_ENTITY);
 
         builder.cubeAllWithItem(JolCraftBlocks.MUFFHORN_FUR_BLOCK.get(), SUB_ENTITY);
+
+        builder.cubeAllWithItem(JolCraftBlocks.TUFF_VITRIOL_ORE.get(), SUB_VITRIOL);
+        builder.cubeAllWithItem(JolCraftBlocks.VITRIOL_BLOCK.get(), SUB_VITRIOL);
 
         builder.flatItem(JolCraftItems.GEODE_SMALL.get(), SUB_GEODE);
         builder.flatItem(JolCraftItems.GEODE_MEDIUM.get(), SUB_GEODE);

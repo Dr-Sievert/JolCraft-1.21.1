@@ -56,6 +56,7 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
 
         builder.flatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
         builder.flatItem(JolCraftItems.INVERIX.get());
+        builder.flatItem(JolCraftItems.VITRIOL.get());
 
         builder.flatItem(JolCraftItems.BOUNTY.get(), SUB_BOUNTY);
         builder.flatItem(JolCraftItems.BOUNTY_CRATE.get(), SUB_BOUNTY);

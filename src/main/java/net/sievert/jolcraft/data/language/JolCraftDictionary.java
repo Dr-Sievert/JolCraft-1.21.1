@@ -253,6 +253,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String BLACKSMITH = "blacksmith";
     public static final String BLOCK = "block";
     public static final String BLOOD = "blood";
+    public static final String BLOODROOT = "bloodroot";
     public static final String BODY = "body";
     public static final String BOOK = "book";
     public static final String BOOKSHELF = "bookshelf";
@@ -320,6 +321,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CULTURE = "culture";
     public static final String CURSE = "curse";
     public static final String CURSED = "cursed";
+    public static final String CYANELLA = "cyanella";
     public static final String DAMAGE = "damage";
     public static final String DATA = "data";
     public static final String DATAGEN = "datagen";
@@ -585,6 +587,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String SIZE = "size";
     public static final String SKIN = "skin";
     public static final String SKY = "sky";
+    public static final String SKYBELL = "skybell";
     public static final String SKYBURROW = "skyburrow";
     public static final String SLAYER = "slayer";
     public static final String SLOT = "slot";
@@ -657,6 +660,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String VILLAGE = "village";
     public static final String VILLAGER = "villager";
     public static final String VITALITY = "vitality";
+    public static final String VITRIOL = "vitriol";
     public static final String VOICE = "voice";
     public static final String VOID = "void";
     public static final String VOLUME = "volume";

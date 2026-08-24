@@ -13,6 +13,14 @@ public final class JolCraftConfiguredFeatureIds extends JolCraftIds {
     // Vegetation
     // ---------------------------------------------------------------------
 
+    public static final String BLOODROOT = JolCraftBlockIds.BLOODROOT;
+
+    public static final String CYANELLA_PATCH =
+            join(JolCraftBlockIds.CYANELLA, JolCraftDictionary.PATCH);
+
+    public static final String SKYBELL_PATCH =
+            join(JolCraftBlockIds.SKYBELL, JolCraftDictionary.PATCH);
+
     public static final String DUSKCAP_PATCH =
             join(JolCraftBlockIds.DUSKCAP, JolCraftDictionary.PATCH);
 

@@ -1,5 +1,7 @@
 package net.sievert.jolcraft.data.id.tag;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
@@ -78,10 +80,14 @@ public final class JolCraftTagIds extends JolCraftIds {
             JolCraftDictionary.PLANTABLE
     );
 
+    public static final String CYANELLA_PLANTABLE = join(JolCraftDictionary.CYANELLA, JolCraftDictionary.PLANTABLE);
+
     public static final String VERDANT = JolCraftDictionary.VERDANT;
 
     public static final String HOPS_TOP = join(plural(JolCraftDictionary.HOP), JolCraftDictionary.TOP);
     public static final String HOPS_BOTTOM = join(plural(JolCraftDictionary.HOP), JolCraftDictionary.BOTTOM);
+
+    public static final String SHEARS_LOOT = join(BuiltInRegistries.ITEM.getKey(Items.SHEARS).getPath(), JolCraftDictionary.LOOT);
 
     // ---------------------------------------------------------------------
     // Entity

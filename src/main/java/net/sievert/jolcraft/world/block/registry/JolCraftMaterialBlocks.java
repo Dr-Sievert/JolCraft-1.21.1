@@ -2,6 +2,7 @@ package net.sievert.jolcraft.world.block.registry;
 
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.HayBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -15,6 +16,35 @@ import net.sievert.jolcraft.world.block.registry.util.JolCraftBlockRegistryHelpe
 public final class JolCraftMaterialBlocks {
 
     private JolCraftMaterialBlocks() {}
+
+    public static DeferredBlock<Block> registerTuffVitriolOre() {
+        return JolCraftBlockRegistryHelper.registerBlock(
+                JolCraftBlockIds.TUFF_VITRIOL_ORE,
+                props -> new DropExperienceBlock(
+                        UniformInt.of(3, 6), props
+                        .mapColor(MapColor.TERRACOTTA_GRAY)
+                        .instrument(NoteBlockInstrument.BASEDRUM)
+                        .sound(SoundType.TUFF)
+                        .strength(3.0F, 6.0F)
+                        .requiresCorrectToolForDrops()
+                ),
+                BlockBehaviour.Properties.of(),
+                true
+        );
+    }
+
+    public static DeferredBlock<Block> registerVitriolBlock() {
+        return JolCraftBlockRegistryHelper.registerBlock(
+                JolCraftBlockIds.VITRIOL_BLOCK,
+                props -> new Block(props
+                        .mapColor(MapColor.TERRACOTTA_GRAY)
+                        .strength(3.0F, 6.0F)
+                        .requiresCorrectToolForDrops()
+                ),
+                BlockBehaviour.Properties.of(),
+                true
+        );
+    }
 
     public static DeferredBlock<Block> registerGeodeBlock() {
         return JolCraftBlockRegistryHelper.registerBlock(

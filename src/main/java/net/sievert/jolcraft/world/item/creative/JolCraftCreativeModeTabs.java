@@ -226,6 +226,9 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftItems.DUSKHOLD_HOPS);
                         output.accept(JolCraftItems.KRANDONIAN_HOPS);
                         output.accept(JolCraftItems.YANILLIAN_HOPS);
+                        output.accept(JolCraftBlocks.SKYBELL);
+                        output.accept(JolCraftBlocks.CYANELLA);
+                        output.accept(JolCraftItems.BLOODROOT);
                         output.accept(JolCraftBlocks.DUSKCAP);
                         output.accept(JolCraftBlocks.DUSKCAP_BLOCK);
                         output.accept(JolCraftBlocks.DUSKCAP_STEM);
@@ -268,6 +271,10 @@ public final class JolCraftCreativeModeTabs {
                                        DwarvenBrewAge.FRESH
                                 )
                         );
+
+                        output.accept(JolCraftBlocks.TUFF_VITRIOL_ORE);
+                        output.accept(JolCraftItems.VITRIOL);
+                        output.accept(JolCraftBlocks.VITRIOL_BLOCK);
 
                         output.accept(JolCraftItems.INVERIX);
 

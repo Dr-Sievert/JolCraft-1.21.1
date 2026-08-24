@@ -24,7 +24,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftConfiguredFeatureIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
-import net.sievert.jolcraft.world.block.custom.crop.DeepslateBulbsCropBlock;
+import net.sievert.jolcraft.world.block.custom.plant.crop.DeepslateBulbsCropBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,6 +32,15 @@ import java.util.List;
 public class JolCraftConfiguredFeatures {
 
     // Vegetation
+    public static final ResourceKey<ConfiguredFeature<?, ?>> BLOODROOT_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.BLOODROOT);
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> CYANELLA_PATCH_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.CYANELLA_PATCH);
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> SKYBELL_PATCH_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.SKYBELL_PATCH);
+
     public static final ResourceKey<ConfiguredFeature<?, ?>> DUSKCAP_PATCH_KEY =
             registerKey(JolCraftConfiguredFeatureIds.DUSKCAP_PATCH);
 
@@ -68,6 +77,41 @@ public class JolCraftConfiguredFeatures {
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 
         //Vegetation
+        register(
+                context,
+                BLOODROOT_KEY,
+                Feature.SIMPLE_BLOCK,
+                new SimpleBlockConfiguration(
+                        BlockStateProvider.simple(JolCraftBlocks.BLOODROOT.get())
+                )
+        );
+
+        register(
+                context,
+                CYANELLA_PATCH_KEY,
+                Feature.NETHER_FOREST_VEGETATION,
+                new NetherForestVegetationConfig(
+                        BlockStateProvider.simple(JolCraftBlocks.CYANELLA.get()),
+                        5,
+                        3
+                )
+        );
+
+        register(
+                context,
+                SKYBELL_PATCH_KEY,
+                Feature.FLOWER,
+                new RandomPatchConfiguration(
+                        15,
+                        5,
+                        3,
+                        PlacementUtils.onlyWhenEmpty(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(BlockStateProvider.simple(JolCraftBlocks.SKYBELL.get()))
+                        )
+                )
+        );
+
         register(
                 context,
                 DUSKCAP_PATCH_KEY,

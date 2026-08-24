@@ -30,6 +30,8 @@ public final class JolCraftDataMapProvider extends DataMapProvider {
                 .add(JolCraftItems.KRANDONIAN_HOPS.getId(), new Compostable(0.45f), false)
                 .add(JolCraftItems.YANILLIAN_SEEDS.getId(), new Compostable(0.25f), false)
                 .add(JolCraftItems.YANILLIAN_HOPS.getId(), new Compostable(0.45f), false)
+                .add(JolCraftBlocks.CYANELLA.getId(), new Compostable(0.65f), false)
+                .add(JolCraftBlocks.SKYBELL.getId(), new Compostable(0.65f), false)
                 .add(JolCraftBlocks.DUSKCAP.getId(), new Compostable(0.65f), false)
                 .add(JolCraftBlocks.FESTERLING.getId(), new Compostable(0.65f), false);
     }

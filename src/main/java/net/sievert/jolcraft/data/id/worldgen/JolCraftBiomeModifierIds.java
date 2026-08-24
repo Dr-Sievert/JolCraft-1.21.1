@@ -1,6 +1,7 @@
 package net.sievert.jolcraft.data.id.worldgen;
 
 import net.sievert.jolcraft.data.id.JolCraftIds;
+import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
 
@@ -11,6 +12,21 @@ public final class JolCraftBiomeModifierIds extends JolCraftIds {
     // ---------------------------------------------------------------------
     // Vegetation
     // ---------------------------------------------------------------------
+
+    public static final String ADD_BLOODROOT =
+            add(JolCraftConfiguredFeatureIds.BLOODROOT);
+
+    public static final String ADD_BLOODROOT_SPECIAL =
+            add(join(JolCraftConfiguredFeatureIds.BLOODROOT, JolCraftDictionary.SPECIAL));
+
+    public static final String ADD_CYANELLA_PATCH =
+            add(JolCraftConfiguredFeatureIds.CYANELLA_PATCH);
+
+    public static final String ADD_SKYBELL_PATCH =
+            add(JolCraftConfiguredFeatureIds.SKYBELL_PATCH);
+
+    public static final String ADD_SKYBELL_SPECIAL_PATCH =
+            add(join(JolCraftBlockIds.SKYBELL, JolCraftDictionary.SPECIAL, JolCraftDictionary.PATCH));
 
     public static final String ADD_DUSKCAP_PATCH =
             add(JolCraftConfiguredFeatureIds.DUSKCAP_PATCH);

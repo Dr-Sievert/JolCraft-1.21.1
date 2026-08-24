@@ -128,6 +128,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String DEEPSLATE_MORTAR = JolCraftBlockIds.DEEPSLATE_MORTAR;
+    public static final String VITRIOL = JolCraftDictionary.VITRIOL;
     public static final String INVERIX = JolCraftDictionary.INVERIX;
 
     // ---------------------------------------------------------------------
@@ -268,6 +269,8 @@ public final class JolCraftItemIds extends JolCraftIds {
     // ---------------------------------------------------------------------
     // Crops / Food / Brewing
     // ---------------------------------------------------------------------
+
+    public static final String BLOODROOT = JolCraftBlockIds.BLOODROOT;
 
     public static final String BARLEY_SEEDS = join(JolCraftDictionary.BARLEY, plural(JolCraftDictionary.SEED));
     public static final String BARLEY = JolCraftDictionary.BARLEY;
