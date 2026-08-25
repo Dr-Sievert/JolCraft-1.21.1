@@ -9,6 +9,7 @@ import net.sievert.jolcraft.data.id.block.entity.JolCraftBlockEntityIds;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.block.entity.custom.MortarBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingBarrelBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.HearthBlockEntity;
@@ -30,6 +31,13 @@ public final class JolCraftBlockEntities {
                     BlockEntityType.Builder.of(
                             LapidaryBenchBlockEntity::new,
                             JolCraftBlocks.LAPIDARY_BENCH.get()
+                    ).build(null));
+
+    public static final Supplier<BlockEntityType<MortarBlockEntity>> MORTAR =
+            BLOCK_ENTITIES.register(JolCraftBlockEntityIds.MORTAR, () ->
+                    BlockEntityType.Builder.of(
+                            MortarBlockEntity::new,
+                            JolCraftBlocks.MORTAR.get()
                     ).build(null));
 
     public static final Supplier<BlockEntityType<StrongboxBlockEntity>> STRONGBOX =

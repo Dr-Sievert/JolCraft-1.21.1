@@ -97,6 +97,7 @@ public final class JolCraftTags {
 
         public static final TagKey<Biome> MOUNTAINS_AND_HILLS = create(JolCraftTagIds.MOUNTAINS_HILLS);
         public static final TagKey<Biome> DWARVEN = create(JolCraftTagIds.DWARVEN);
+        public static final TagKey<Biome> MITHRIL_SPECIAL = create(JolCraftTagIds.MITHRIL_SPECIAL);
 
         private static TagKey<Biome> create(String id) {
             return TagKey.create(Registries.BIOME, JolCraft.location(id));

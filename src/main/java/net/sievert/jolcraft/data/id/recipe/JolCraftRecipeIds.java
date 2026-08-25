@@ -13,6 +13,7 @@ public final class JolCraftRecipeIds extends JolCraftIds {
     public static final String HAND_INTERACTION = join(JolCraftDictionary.HAND, JolCraftDictionary.INTERACTION);
     public static final String DWARF_TRADE = join(JolCraftDwarfIds.DWARF, JolCraftDictionary.TRADE);
     public static final String LAPIDARY_BENCH = JolCraftBlockIds.LAPIDARY_BENCH;
+    public static final String MORTAR = JolCraftBlockIds.MORTAR;
     public static final String FERMENTING_CAULDRON = JolCraftBlockIds.FERMENTING_CAULDRON;
     public static final String BOUNTY_TASK = join(JolCraftDictionary.BOUNTY, JolCraftDictionary.TASK);
     public static final String BOUNTY_REWARD = join(JolCraftDictionary.BOUNTY, JolCraftDictionary.REWARD);

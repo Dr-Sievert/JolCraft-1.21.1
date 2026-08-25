@@ -4,6 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.JolCraftTags;
@@ -68,5 +69,9 @@ public final class JolCraftBiomeTagProvider
                 .addTag(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS)
                 .addTag(BiomeTags.IS_FOREST)
                 .addTag(BiomeTags.IS_TAIGA);
+
+        target.tag(JolCraftTags.Biomes.MITHRIL_SPECIAL)
+                .addTag(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS)
+                .add(Biomes.DEEP_DARK);
     }
 }

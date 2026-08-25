@@ -27,6 +27,7 @@ import java.util.List;
 public class JolCraftPlacedFeatures {
 
     // Vegetation
+
     public static final ResourceKey<PlacedFeature> BLOODROOT_PLACED_KEY =
             registerKey(JolCraftPlacedFeatureIds.BLOODROOT_PLACED);
 
@@ -49,6 +50,10 @@ public class JolCraftPlacedFeatures {
             registerKey(JolCraftPlacedFeatureIds.DEEPSLATE_BULBS_PATCH_PLACED);
 
     // Ores
+
+    public static final ResourceKey<PlacedFeature> ORE_TUFF_VITRIOL_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.ORE_TUFF_VITRIOL_PLACED);
+
     public static final ResourceKey<PlacedFeature> ORE_MITHRIL_SMALL_PLACED_KEY =
             registerKey(JolCraftPlacedFeatureIds.ORE_MITHRIL_SMALL_PLACED);
 
@@ -65,8 +70,11 @@ public class JolCraftPlacedFeatures {
             registerKey(JolCraftPlacedFeatureIds.ORE_MITHRIL_BURIED_PLACED);
 
     // Geodes
+
     public static final ResourceKey<PlacedFeature> BASALT_GEODE_PLACED_KEY =
             registerKey(JolCraftPlacedFeatureIds.BASALT_GEODE_PLACED);
+
+
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -210,6 +218,22 @@ public class JolCraftPlacedFeatures {
         );
 
         //Ores
+
+        register(
+                context,
+                ORE_TUFF_VITRIOL_PLACED_KEY,
+                configuredFeatures.getOrThrow(
+                        JolCraftConfiguredFeatures.ORE_TUFF_VITRIOL_KEY
+                ),
+                JolCraftOreReplacement.commonOrePlacement(
+                        8,
+                        HeightRangePlacement.uniform(
+                                VerticalAnchor.absolute(-64),
+                                VerticalAnchor.absolute(0)
+                        )
+                )
+        );
+
         register(context, ORE_MITHRIL_SMALL_PLACED_KEY, configuredFeatures.getOrThrow(JolCraftConfiguredFeatures.ORE_MITHRIL_SMALL_KEY),
                 JolCraftOreReplacement.rareOrePlacement(1, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(0))));
 

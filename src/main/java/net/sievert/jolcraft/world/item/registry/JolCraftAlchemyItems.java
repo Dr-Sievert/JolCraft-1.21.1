@@ -11,11 +11,11 @@ public final class JolCraftAlchemyItems {
 
     private JolCraftAlchemyItems() {}
 
-    public static DeferredItem<BlockItem> registerDeepslateMortar() {
+    public static DeferredItem<BlockItem> registerMortar() {
         return JolCraftItemRegistryHelper.registerItem(
-                JolCraftItemIds.DEEPSLATE_MORTAR,
+                JolCraftItemIds.MORTAR,
                 props -> new BlockItem(
-                        JolCraftBlocks.DEEPSLATE_MORTAR.get(),
+                        JolCraftBlocks.MORTAR.get(),
                         props.stacksTo(3)
                 )
         );

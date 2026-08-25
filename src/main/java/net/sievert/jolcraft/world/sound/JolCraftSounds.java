@@ -27,6 +27,7 @@ public final class JolCraftSounds {
     public static final Supplier<SoundEvent> LEVEL_UP = registerSoundEvent(JolCraftSoundIds.LEVEL_UP);
 
     // Blocks
+    public static final Supplier<SoundEvent> MORTAR_GRIND = registerSoundEvent(JolCraftSoundIds.MORTAR_GRIND);
     public static final Supplier<SoundEvent> STRONGBOX_OPEN = registerSoundEvent(JolCraftSoundIds.STRONGBOX_OPEN);
     public static final Supplier<SoundEvent> STRONGBOX_CLOSE = registerSoundEvent(JolCraftSoundIds.STRONGBOX_CLOSE);
     public static final Supplier<SoundEvent> STRONGBOX_LOCKPICK = registerSoundEvent(JolCraftSoundIds.STRONGBOX_LOCKPICK);

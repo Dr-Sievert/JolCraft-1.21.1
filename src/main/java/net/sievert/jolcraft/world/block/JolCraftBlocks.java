@@ -24,7 +24,7 @@ public final class JolCraftBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(JolCraft.MOD_ID);
 
-    public static final DeferredBlock<Block> DEEPSLATE_MORTAR = JolCraftStationBlocks.registerDeepslateMortar();
+    public static final DeferredBlock<Block> MORTAR = JolCraftStationBlocks.registerMortar();
     public static final DeferredBlock<Block> LAPIDARY_BENCH = JolCraftStationBlocks.registerLapidaryBench();
     public static final DeferredBlock<Block> STRONGBOX = JolCraftStationBlocks.registerStrongbox();
     public static final DeferredBlock<Block> HEARTH = JolCraftStationBlocks.registerHearth();

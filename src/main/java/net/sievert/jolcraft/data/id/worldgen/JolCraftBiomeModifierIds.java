@@ -38,6 +38,9 @@ public final class JolCraftBiomeModifierIds extends JolCraftIds {
     // Ores
     // ---------------------------------------------------------------------
 
+    public static final String ADD_ORE_TUFF_VITRIOL =
+            add(JolCraftConfiguredFeatureIds.ORE_TUFF_VITRIOL);
+
     public static final String ADD_ORE_MITHRIL_SMALL =
             add(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SMALL);
 

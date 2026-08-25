@@ -110,6 +110,12 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // ContainerLangSubProvider
     // ---------------------------------------------------------------------
 
+    public static final String CONTAINER_MORTAR =
+            category(JolCraftDictionary.CONTAINER, JolCraftBlockIds.MORTAR);
+
+    public static final String TOOLTIP_MORTAR_MULTI_LOCKED =
+            tooltip(JolCraftBlockIds.MORTAR, us(JolCraftDictionary.MULTI, JolCraftDictionary.LOCKED));
+
     public static final String CONTAINER_LAPIDARY_BENCH =
             category(JolCraftDictionary.CONTAINER, JolCraftBlockIds.LAPIDARY_BENCH);
 
@@ -122,8 +128,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX =
             tooltip(JolCraftBlockIds.FERMENTING_CAULDRON, us(JolCraftDictionary.INGREDIENT, JolCraftDictionary.MAX));
 
-    public static final String TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI =
-            tooltip(JolCraftBlockIds.FERMENTING_CAULDRON, us(JolCraftDictionary.LOCKED, JolCraftDictionary.MULTI));
+    public static final String TOOLTIP_FERMENTING_CAULDRON_MULTI_LOCKED =
+            tooltip(JolCraftBlockIds.FERMENTING_CAULDRON, us(JolCraftDictionary.MULTI, JolCraftDictionary.LOCKED));
 
     public static final String TOOLTIP_BREWING_SPEED =
             tooltip(JolCraftDictionary.BREWING, JolCraftDictionary.SPEED);
@@ -272,6 +278,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_MINING =
             tooltip(JolCraftAttachmentIds.DWARF_LORE, JolCraftDictionary.MINING);
+
+    public static final String TOOLTIP_DWARVEN_TOME_UNLOCK_ALCHEMY =
+            tooltip(JolCraftAttachmentIds.DWARF_LORE, JolCraftDictionary.ALCHEMY);
 
     public static final String TOOLTIP_CONTRACTS =
             category(JolCraftDictionary.TOOLTIP, pl(JolCraftDictionary.CONTRACT));
@@ -444,6 +453,8 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String TOOLTIP_RARITY_NAME =
             tooltip(JolCraftDictionary.RARITY, JolCraftDictionary.NAME);
 
+    public static final String TOOLTIP_PESTLE_GRIND_SPEED =
+            tooltip(JolCraftDictionary.PESTLE, us(JolCraftDictionary.GRIND, JolCraftDictionary.SPEED));
 
     public static final String JOLCRAFT_GENERAL_CREATIVE_TAB =
             itemGroup(JolCraftCreativeTabIds.JOLCRAFT_GENERAL_CREATIVE_TAB);
@@ -470,6 +481,21 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     // ---------------------------------------------------------------------
     // JeiLangSubProvider
     // ---------------------------------------------------------------------
+
+    public static final String JEI_CATEGORY_MORTAR =
+            category(JolCraftDictionary.JEI, JolCraftRecipeIds.MORTAR);
+
+    public static final String JEI_MORTAR_GRINDING_WORK =
+            category(
+                    JolCraftDictionary.JEI,
+                    dot(
+                            JolCraftRecipeIds.MORTAR,
+                            us(
+                                    JolCraftDictionary.GRIND,
+                                    JolCraftDictionary.PROGRESS
+                            )
+                    )
+            );
 
     public static final String JEI_CATEGORY_DWARF_TRADES =
             category(JolCraftDictionary.JEI, pl(JolCraftRecipeIds.DWARF_TRADE));
@@ -726,6 +752,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
 
     public static final String SUBTITLE_GEM_CUT =
             subtitleFromSoundId(JolCraftSoundIds.GEM_CUT);
+
+    public static final String SUBTITLE_MORTAR_GRIND =
+            subtitleFromSoundId(JolCraftSoundIds.MORTAR_GRIND);
 
     public static final String SUBTITLE_CURSE =
             subtitleFromSoundId(JolCraftSoundIds.CURSE);

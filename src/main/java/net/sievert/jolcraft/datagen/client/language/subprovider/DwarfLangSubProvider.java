@@ -81,6 +81,7 @@ public final class DwarfLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_BREW, "You can now brew with multiple ingredients!");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_GEMS, "You can now cut gems using a chisel!");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_MINING, "You learned how to channel Rhythm of the Deep!");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_DWARVEN_TOME_UNLOCK_ALCHEMY, "You learned how to grind with multiple ingredients!");
 
         // -----------------------------------------------------------------
         // Locked item variants

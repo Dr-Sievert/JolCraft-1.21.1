@@ -54,7 +54,7 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
 
         builder.handheldItem(JolCraftItems.LOCKPICK.get());
 
-        builder.flatItem(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
+        builder.flatItem(JolCraftItems.MORTAR_ITEM.get());
         builder.flatItem(JolCraftItems.INVERIX.get());
         builder.flatItem(JolCraftItems.VITRIOL.get());
 
@@ -63,7 +63,7 @@ public record MiscModelSubProvider(@NotNull JolCraftModelProvider parent) implem
 
         createHearth(builder, JolCraftBlocks.HEARTH.get());
 
-        builder.manualBlockState(JolCraftBlocks.DEEPSLATE_MORTAR.get());
+        builder.manualBlockState(JolCraftBlocks.MORTAR.get());
         builder.manualBlockState(JolCraftBlocks.STRONGBOX.get());
 
         builder.flatItemWithOverlay(

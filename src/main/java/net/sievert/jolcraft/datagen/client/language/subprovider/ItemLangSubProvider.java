@@ -131,6 +131,9 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.RARITY_LEGENDARY, "Legendary");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_RARITY_NAME, "%1$s %2$s");
 
+        // Tooltips
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_PESTLE_GRIND_SPEED, "Grinding Speed: %s");
+
         // Creative tabs
         putManual(translations, JolCraftLanguageKeys.JOLCRAFT_GENERAL_CREATIVE_TAB, JolCraft.MOD_NAME);
 

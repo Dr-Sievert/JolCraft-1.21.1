@@ -10,7 +10,7 @@ public final class JolCraftBlockIds extends JolCraftIds {
 
     private JolCraftBlockIds() {}
 
-    public static final String DEEPSLATE_MORTAR = join(JolCraftDictionary.DEEPSLATE, JolCraftDictionary.MORTAR);
+    public static final String MORTAR = JolCraftDictionary.MORTAR;
 
     public static final String VITRIOL_BLOCK = block(JolCraftDictionary.VITRIOL);
 

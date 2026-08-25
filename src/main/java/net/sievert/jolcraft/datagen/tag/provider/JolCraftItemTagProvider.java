@@ -392,7 +392,7 @@ public final class JolCraftItemTagProvider
                 .add(JolCraftItems.DEEPSLATE_BOOTS.get())
                 .add(JolCraftBlocks.HEARTH.get().asItem())
                 .add(JolCraftBlocks.LAPIDARY_BENCH.get().asItem())
-                .add(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
+                .add(JolCraftItems.MORTAR_ITEM.get())
                 .add(JolCraftItems.STRONGBOX_ITEM.get())
                 .add(JolCraftItems.GUILD_SIGIL_MOULD.get());
 

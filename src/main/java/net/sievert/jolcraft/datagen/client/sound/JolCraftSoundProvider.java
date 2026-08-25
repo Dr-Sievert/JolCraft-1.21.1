@@ -115,6 +115,14 @@ public final class JolCraftSoundProvider extends SoundDefinitionsProvider
                 vanillaSmithingTableList()
         );
 
+        addRange(
+                JolCraftSounds.MORTAR_GRIND,
+                JolCraftLanguageKeys.SUBTITLE_MORTAR_GRIND,
+                mod(JolCraftStrings.slashed(JolCraftDictionary.BLOCK, JolCraftDictionary.MORTAR,JolCraftDictionary.GRIND)),
+                1,
+                6
+        );
+
         addCurseRange(JolCraftSounds.CURSE, JolCraftLanguageKeys.SUBTITLE_CURSE, 1, 10);
 
         addItemSingle(JolCraftSounds.WAR_HORN, JolCraftLanguageKeys.SUBTITLE_WAR_HORN);

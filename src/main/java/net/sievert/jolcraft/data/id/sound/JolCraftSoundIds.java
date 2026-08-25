@@ -19,6 +19,7 @@ public final class JolCraftSoundIds extends JolCraftIds {
     public static final String LEVEL_UP = JolCraftStrings.underscored(JolCraftDictionary.LEVEL, JolCraftDictionary.UP);
 
     // Blocks
+    public static final String MORTAR_GRIND = join(JolCraftBlockIds.MORTAR, JolCraftDictionary.GRIND);
     public static final String STRONGBOX_OPEN = JolCraftStrings.underscored(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.OPEN);
     public static final String STRONGBOX_CLOSE = JolCraftStrings.underscored(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.CLOSE);
     public static final String STRONGBOX_LOCKPICK = JolCraftStrings.underscored(JolCraftBlockIds.STRONGBOX, JolCraftDictionary.LOCKPICK);

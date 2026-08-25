@@ -19,17 +19,7 @@ import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
 import net.sievert.jolcraft.datagen.base.builder.JolCraftDataLookups;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataTracking;
 import net.sievert.jolcraft.datagen.base.report.JolCraftDataValidation;
-import net.sievert.jolcraft.datagen.recipe.subprovider.CompassRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfBountyRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.DwarfTradeRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.EquipmentRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.FermentingCauldronRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.HandInteractionRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.LapidaryRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.MaterialRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.MiscRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.ToolRecipesSubProvider;
-import net.sievert.jolcraft.datagen.recipe.subprovider.TrimRecipesSubProvider;
+import net.sievert.jolcraft.datagen.recipe.subprovider.*;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +76,7 @@ public final class JolCraftRecipeProvider
                 new LapidaryRecipesSubProvider(this),
                 new MaterialRecipesSubProvider(this),
                 new MiscRecipesSubProvider(this),
+                new MortarRecipesSubProvider(this),
                 new ToolRecipesSubProvider(this),
                 new TrimRecipesSubProvider(this)
         );

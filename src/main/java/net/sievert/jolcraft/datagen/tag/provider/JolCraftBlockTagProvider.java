@@ -104,7 +104,7 @@ public final class JolCraftBlockTagProvider
                 .add(JolCraftBlocks.DEEPSLATE_PLATE_BLOCK.get())
                 .add(JolCraftBlocks.HEARTH.get())
                 .add(JolCraftBlocks.FERMENTING_CAULDRON.get())
-                .add(JolCraftBlocks.DEEPSLATE_MORTAR.get());
+                .add(JolCraftBlocks.MORTAR.get());
 
         target.tag(BlockTags.MINEABLE_WITH_SHOVEL)
                 .add(JolCraftBlocks.VERDANT_SOIL.get())

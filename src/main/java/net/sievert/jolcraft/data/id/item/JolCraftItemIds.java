@@ -127,7 +127,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     // Alchemy
     // ---------------------------------------------------------------------
 
-    public static final String DEEPSLATE_MORTAR = JolCraftBlockIds.DEEPSLATE_MORTAR;
+    public static final String MORTAR = JolCraftBlockIds.MORTAR;
     public static final String VITRIOL = JolCraftDictionary.VITRIOL;
     public static final String INVERIX = JolCraftDictionary.INVERIX;
 

@@ -347,7 +347,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
             player.displayClientMessage(
                     Component.translatable(
                                     JolCraftLanguageKeys
-                                            .TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI
+                                            .TOOLTIP_FERMENTING_CAULDRON_MULTI_LOCKED
                             )
                             .withStyle(ChatFormatting.RED),
                     true

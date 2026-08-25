@@ -5,6 +5,7 @@ import net.minecraft.world.item.Items;
 import net.sievert.jolcraft.data.id.JolCraftIds;
 import net.sievert.jolcraft.data.id.entity.dwarf.JolCraftDwarfIds;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
+import net.sievert.jolcraft.data.id.item.JolCraftMaterialIds;
 import net.sievert.jolcraft.data.id.worldgen.JolCraftStructureIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 
@@ -143,6 +144,7 @@ public final class JolCraftTagIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String MOUNTAINS_HILLS = join(plural(JolCraftDictionary.MOUNTAIN), JolCraftDictionary.AND, plural(JolCraftDictionary.HILL));
+    public static final String MITHRIL_SPECIAL = join(JolCraftMaterialIds.MITHRIL, JolCraftDictionary.SPECIAL);
 
     // ---------------------------------------------------------------------
     // Damage Type

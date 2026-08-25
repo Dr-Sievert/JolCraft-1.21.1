@@ -360,7 +360,7 @@ public final class JolCraftAdvancementProvider
                 JolCraftAdvancementBuilder.create()
                         .idPath(JolCraftAdvancementIds.TRADE_ALCHEMIST)
                         .parent(JolCraft.location(JolCraftAdvancementIds.REP_3_DUMMY))
-                        .icon(JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
+                        .icon(JolCraftItems.MORTAR_ITEM.get())
                         .type(AdvancementType.TASK)
                         .display(true, true, false)
                         .criterion(DwarfTradeTrigger.tradedWithProfession(DwarfProfession.ALCHEMIST))

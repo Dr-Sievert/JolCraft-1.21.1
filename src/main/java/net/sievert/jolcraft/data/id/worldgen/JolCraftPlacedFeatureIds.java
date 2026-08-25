@@ -38,6 +38,9 @@ public final class JolCraftPlacedFeatureIds extends JolCraftIds {
     // Ores
     // ---------------------------------------------------------------------
 
+    public static final String ORE_TUFF_VITRIOL_PLACED =
+            placed(JolCraftConfiguredFeatureIds.ORE_TUFF_VITRIOL);
+
     public static final String ORE_MITHRIL_SMALL_PLACED =
             placed(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SMALL);
 

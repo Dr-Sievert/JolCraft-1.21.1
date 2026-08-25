@@ -30,6 +30,13 @@ public final class ContainerLangSubProvider implements LanguageSubProvider {
     public void addTranslations(@NotNull Map<String, String> translations) {
 
         // -----------------------------------------------------------------
+        // Mortar
+        // -----------------------------------------------------------------
+
+        putManual(translations, JolCraftLanguageKeys.CONTAINER_MORTAR, "Mortar");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_MORTAR_MULTI_LOCKED, "You have not learned how to grind multiple ingredients together!");
+
+        // -----------------------------------------------------------------
         // Lapidary Bench
         // -----------------------------------------------------------------
 
@@ -42,7 +49,7 @@ public final class ContainerLangSubProvider implements LanguageSubProvider {
         // -----------------------------------------------------------------
 
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_INGREDIENT_MAX, "You have already added the maximum amount of this ingredient to the brew.");
-        putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_LOCKED_MULTI, "Adding more ingredients without proper knowledge would ruin the brew.");
+        putManual(translations, JolCraftLanguageKeys.TOOLTIP_FERMENTING_CAULDRON_MULTI_LOCKED, "Adding more ingredients without proper knowledge would ruin the brew.");
 
         // -----------------------------------------------------------------
         // Strongbox / Locks

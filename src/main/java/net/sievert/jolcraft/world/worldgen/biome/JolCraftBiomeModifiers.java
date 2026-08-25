@@ -18,6 +18,7 @@ import net.sievert.jolcraft.world.worldgen.feature.JolCraftPlacedFeatures;
 public class JolCraftBiomeModifiers {
 
     // Vegetation
+
     public static final ResourceKey<BiomeModifier> ADD_BLOODROOT =
             registerKey(JolCraftBiomeModifierIds.ADD_BLOODROOT);
 
@@ -40,6 +41,10 @@ public class JolCraftBiomeModifiers {
             registerKey(JolCraftBiomeModifierIds.ADD_DEEPSLATE_BULBS_PATCH);
 
     // Ores
+
+    public static final ResourceKey<BiomeModifier> ADD_ORE_TUFF_VITRIOL =
+            registerKey(JolCraftBiomeModifierIds.ADD_ORE_TUFF_VITRIOL);
+
     public static final ResourceKey<BiomeModifier> ADD_ORE_MITHRIL_SMALL =
             registerKey(JolCraftBiomeModifierIds.ADD_ORE_MITHRIL_SMALL);
 
@@ -56,6 +61,7 @@ public class JolCraftBiomeModifiers {
             registerKey(JolCraftBiomeModifierIds.ADD_ORE_MITHRIL_BURIED);
 
     // Geodes
+
     public static final ResourceKey<BiomeModifier> ADD_BASALT_GEODE =
             registerKey(JolCraftBiomeModifierIds.ADD_BASALT_GEODE);
 
@@ -94,7 +100,7 @@ public class JolCraftBiomeModifiers {
         context.register(
                 ADD_SKYBELL_PATCH,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                        biomes.getOrThrow(JolCraftTags.Biomes.DWARVEN),
+                        biomes.getOrThrow(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS),
                         HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.SKYBELL_PATCH_PLACED_KEY)),
                         GenerationStep.Decoration.VEGETAL_DECORATION
                 )
@@ -128,6 +134,20 @@ public class JolCraftBiomeModifiers {
         );
 
         //Ores
+
+        context.register(
+                ADD_ORE_TUFF_VITRIOL,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
+                        HolderSet.direct(
+                                placedFeatures.getOrThrow(
+                                        JolCraftPlacedFeatures.ORE_TUFF_VITRIOL_PLACED_KEY
+                                )
+                        ),
+                        GenerationStep.Decoration.UNDERGROUND_ORES
+                )
+        );
+
         context.register(ADD_ORE_MITHRIL_SMALL, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_SMALL_PLACED_KEY)),
@@ -144,12 +164,12 @@ public class JolCraftBiomeModifiers {
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 
         context.register(ADD_ORE_MITHRIL_SPECIAL, new BiomeModifiers.AddFeaturesBiomeModifier(
-                biomes.getOrThrow(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS),
+                biomes.getOrThrow(JolCraftTags.Biomes.MITHRIL_SPECIAL),
                 HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_SPECIAL_PLACED_KEY)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 
         context.register(ADD_ORE_MITHRIL_BURIED, new BiomeModifiers.AddFeaturesBiomeModifier(
-                biomes.getOrThrow(JolCraftTags.Biomes.MOUNTAINS_AND_HILLS),
+                biomes.getOrThrow(JolCraftTags.Biomes.MITHRIL_SPECIAL),
                 HolderSet.direct(placedFeatures.getOrThrow(JolCraftPlacedFeatures.ORE_MITHRIL_BURIED_PLACED_KEY)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 

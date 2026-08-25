@@ -84,7 +84,7 @@ public final class JolCraftBlockLootTableProvider
 
         target.dropOther(JolCraftBlocks.BLOODROOT.get(), JolCraftItems.BLOODROOT.get());
 
-        target.dropOther(JolCraftBlocks.DEEPSLATE_MORTAR.get(), JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
+        target.dropOther(JolCraftBlocks.MORTAR.get(), JolCraftItems.MORTAR_ITEM.get());
 
         target.add(JolCraftBlocks.GEODE_BLOCK.get(),
                 createGeodeOreDrop(

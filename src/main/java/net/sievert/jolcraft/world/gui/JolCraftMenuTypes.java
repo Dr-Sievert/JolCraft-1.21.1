@@ -11,10 +11,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.menu.JolCraftMenuIds;
-import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
-import net.sievert.jolcraft.world.gui.menu.LapidaryBenchMenu;
-import net.sievert.jolcraft.world.gui.menu.LockMenu;
-import net.sievert.jolcraft.world.gui.menu.StrongboxMenu;
+import net.sievert.jolcraft.world.gui.menu.*;
 
 public final class JolCraftMenuTypes {
 
@@ -30,6 +27,9 @@ public final class JolCraftMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<LapidaryBenchMenu>> LAPIDARY_BENCH_MENU =
             registerSimple(JolCraftMenuIds.LAPIDARY_BENCH, LapidaryBenchMenu::new);
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MortarMenu>> MORTAR_MENU =
+            registerSimple(JolCraftMenuIds.MORTAR, MortarMenu::new);
 
     public static final DeferredHolder<MenuType<?>, MenuType<DwarfMerchantMenu>> DWARF_MERCHANT_MENU =
             registerExtended(JolCraftMenuIds.DWARF_MERCHANT, DwarfMerchantMenu::new);

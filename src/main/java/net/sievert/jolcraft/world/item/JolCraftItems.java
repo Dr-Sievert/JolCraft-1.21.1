@@ -166,7 +166,7 @@ public final class JolCraftItems {
     // Alchemy
     // -------------------------------------------------------------------------
 
-    public static final DeferredItem<BlockItem> DEEPSLATE_MORTAR_ITEM = JolCraftAlchemyItems.registerDeepslateMortar();
+    public static final DeferredItem<BlockItem> MORTAR_ITEM = JolCraftAlchemyItems.registerMortar();
     public static final DeferredItem<Item> VITRIOL = JolCraftAlchemyItems.registerVitriol();
     public static final DeferredItem<Item> INVERIX = JolCraftAlchemyItems.registerInverix();
 

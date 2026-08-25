@@ -7,6 +7,7 @@ public final class JolCraftBlockEntityIds extends JolCraftIds {
 
     private JolCraftBlockEntityIds() {}
 
+    public static final String MORTAR = JolCraftBlockIds.MORTAR;
     public static final String LAPIDARY_BENCH = JolCraftBlockIds.LAPIDARY_BENCH;
     public static final String STRONGBOX = JolCraftBlockIds.STRONGBOX;
     public static final String FERMENTING_CAULDRON = JolCraftBlockIds.FERMENTING_CAULDRON;

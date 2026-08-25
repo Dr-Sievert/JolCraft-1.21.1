@@ -33,6 +33,8 @@ import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageCategory;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageHelper;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchCategory;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchHelper;
+import net.sievert.jolcraft.integration.jei.custom.mortar.JeiMortarHelper;
+import net.sievert.jolcraft.integration.jei.custom.mortar.JeiMortarCategory;
 import net.sievert.jolcraft.integration.jei.custom.vanilla.brewing.JeiBrewingRecipeHelper;
 import net.sievert.jolcraft.integration.jei.util.JeiCategoryDefinition;
 import net.sievert.jolcraft.integration.jei.util.recipe.JeiRecipeTypes;
@@ -63,6 +65,17 @@ public final class JolCraftJeiPlugin implements IModPlugin {
 
     private static final List<JeiCategoryDefinition<?>> CATEGORY_DEFINITIONS =
             List.of(
+                    new JeiCategoryDefinition<>(
+                            JeiMortarCategory::new,
+                            JeiRecipeTypes.MORTAR,
+                            JeiMortarHelper::getRecipes,
+                            catalysts(
+                                    () -> new ItemStack(
+                                            JolCraftBlocks.MORTAR.get()
+                                    )
+                            )
+                    ),
+
                     new JeiCategoryDefinition<>(
                             JeiLapidaryBenchCategory::new,
                             JeiRecipeTypes.LAPIDARY_BENCH,

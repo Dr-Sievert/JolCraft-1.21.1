@@ -126,13 +126,13 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .save(output, folder(), JolCraftBlocks.LAPIDARY_BENCH);
 
         VanillaRecipeBuilder.shaped(
-                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.DEEPSLATE_MORTAR_ITEM.get())
+                        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.MORTAR_ITEM.get())
                 )
                 .pattern("B B")
                 .pattern(" B ")
                 .define('B', JolCraftItems.DEEPSLATE_PLATE.get())
                 .unlockedByHas(JolCraftItems.DEEPSLATE_PLATE.get())
-                .save(output, folder(), JolCraftItems.DEEPSLATE_MORTAR_ITEM.get());
+                .save(output, folder(), JolCraftItems.MORTAR_ITEM.get());
 
         VanillaRecipeBuilder.shaped(
                         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, JolCraftItems.PARCHMENT.get())

@@ -58,7 +58,7 @@ public record DwarfAlchemistTrades(JolCraftDataProvider<RecipeOutput> parent) im
                         )
                         .noCostB()
                         .result(
-                                JolCraftItems.DEEPSLATE_MORTAR_ITEM.get(),
+                                JolCraftItems.MORTAR_ITEM.get(),
                                 1
                         )
                         .maxUses(6)

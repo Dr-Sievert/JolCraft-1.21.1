@@ -32,6 +32,7 @@ import java.util.List;
 public class JolCraftConfiguredFeatures {
 
     // Vegetation
+
     public static final ResourceKey<ConfiguredFeature<?, ?>> BLOODROOT_KEY =
             registerKey(JolCraftConfiguredFeatureIds.BLOODROOT);
 
@@ -54,6 +55,10 @@ public class JolCraftConfiguredFeatures {
             registerKey(JolCraftConfiguredFeatureIds.DEEPSLATE_BULBS_PATCH);
 
     // Ores
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_TUFF_VITRIOL_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.ORE_TUFF_VITRIOL);
+
     public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_MITHRIL_SMALL_KEY =
             registerKey(JolCraftConfiguredFeatureIds.ORE_MITHRIL_SMALL);
 
@@ -70,8 +75,10 @@ public class JolCraftConfiguredFeatures {
             registerKey(JolCraftConfiguredFeatureIds.ORE_MITHRIL_BURIED);
 
     // Geodes
+
     public static final ResourceKey<ConfiguredFeature<?, ?>> BASALT_GEODE_KEY =
             registerKey(JolCraftConfiguredFeatureIds.BASALT_GEODE);
+
 
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
@@ -177,6 +184,7 @@ public class JolCraftConfiguredFeatures {
         RuleTest deepslateReplaceables = new TagMatchTest(Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE);
         RuleTest netherrackReplaceables = new TagMatchTest(Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK);
         RuleTest endReplaceables = new BlockMatchTest(Blocks.END_STONE);
+        RuleTest tuffReplaceables = new BlockMatchTest(Blocks.TUFF);
 
         List<OreConfiguration.TargetBlockState> overworldMithrilOres = List.of(
                 OreConfiguration.target(deepslateReplaceables, JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get().defaultBlockState()));
@@ -186,6 +194,20 @@ public class JolCraftConfiguredFeatures {
         register(context, ORE_MITHRIL_LARGE_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5, 0.7F));
         register(context, ORE_MITHRIL_SPECIAL_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5));
         register(context, ORE_MITHRIL_BURIED_KEY, Feature.ORE, new OreConfiguration(overworldMithrilOres, 5, 1.0F));
+
+        List<OreConfiguration.TargetBlockState> tuffVitriolOres = List.of(
+                OreConfiguration.target(
+                        tuffReplaceables,
+                        JolCraftBlocks.TUFF_VITRIOL_ORE.get().defaultBlockState()
+                )
+        );
+
+        register(
+                context,
+                ORE_TUFF_VITRIOL_KEY,
+                Feature.ORE,
+                new OreConfiguration(tuffVitriolOres, 3)
+        );
 
         //Geodes
         GeodeBlockSettings basaltGeodeBlocks = new GeodeBlockSettings(

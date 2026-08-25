@@ -19,9 +19,9 @@ public final class JolCraftStationBlocks {
 
     private JolCraftStationBlocks() {}
 
-    public static DeferredBlock<Block> registerDeepslateMortar() {
+    public static DeferredBlock<Block> registerMortar() {
         return JolCraftBlockRegistryHelper.registerBlock(
-                JolCraftBlockIds.DEEPSLATE_MORTAR,
+                JolCraftBlockIds.MORTAR,
                 props -> new MortarBlock(props
                         .mapColor(MapColor.DEEPSLATE)
                         .sound(SoundType.POLISHED_DEEPSLATE)

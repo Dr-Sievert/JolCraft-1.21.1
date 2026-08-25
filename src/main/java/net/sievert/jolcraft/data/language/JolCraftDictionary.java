@@ -54,6 +54,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FINALIZE = "finalize";
     public static final String FISHING = "fishing";
     public static final String FOCUS = "focus";
+    public static final String GRIND = "grind";
     public static final String HARVEST = "harvest";
     public static final String HAS = "has";
     public static final String HEX = "hex";

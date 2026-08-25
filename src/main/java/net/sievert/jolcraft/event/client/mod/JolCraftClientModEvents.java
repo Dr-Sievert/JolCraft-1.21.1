@@ -26,6 +26,7 @@ import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
 import net.sievert.jolcraft.world.block.entity.custom.client.render.FermentingCauldronRenderer;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.gui.client.screen.*;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.client.color.JolCraftItemColors;
@@ -41,10 +42,6 @@ import net.sievert.jolcraft.world.entity.client.render.creature.MuffhornRenderer
 import net.sievert.jolcraft.world.block.entity.custom.client.render.StrongboxRenderer;
 import net.sievert.jolcraft.world.entity.client.render.dwarf.*;
 import net.sievert.jolcraft.world.gui.JolCraftMenuTypes;
-import net.sievert.jolcraft.world.gui.client.screen.DwarfMerchantScreen;
-import net.sievert.jolcraft.world.gui.client.screen.LapidaryBenchScreen;
-import net.sievert.jolcraft.world.gui.client.screen.LockScreen;
-import net.sievert.jolcraft.world.gui.client.screen.StrongboxScreen;
 import net.sievert.jolcraft.world.item.custom.container.strongbox.client.StrongboxItemRenderer;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,7 +98,7 @@ public final class JolCraftClientModEvents {
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.YANILLIAN_CROP_TOP.get(), RenderType.cutout()); itemBlockRenderTypes++;
 
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.FERMENTING_CAULDRON.get(), RenderType.cutout()); itemBlockRenderTypes++;
-        ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.DEEPSLATE_MORTAR.get(), RenderType.cutout()); itemBlockRenderTypes++;
+        ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.MORTAR.get(), RenderType.cutout()); itemBlockRenderTypes++;
 
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.BLOODROOT.get(), RenderType.cutout()); itemBlockRenderTypes++;
         ItemBlockRenderTypes.setRenderLayer(JolCraftBlocks.CYANELLA.get(), RenderType.cutout()); itemBlockRenderTypes++;
@@ -188,6 +185,7 @@ public final class JolCraftClientModEvents {
         event.register(JolCraftMenuTypes.STRONGBOX_MENU.get(), StrongboxScreen::new); screens++;
         event.register(JolCraftMenuTypes.LOCK_MENU.get(), LockScreen::new); screens++;
         event.register(JolCraftMenuTypes.LAPIDARY_BENCH_MENU.get(), LapidaryBenchScreen::new); screens++;
+        event.register(JolCraftMenuTypes.MORTAR_MENU.get(), MortarScreen::new); screens++;
 
         JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} menu screens", screens);
     }

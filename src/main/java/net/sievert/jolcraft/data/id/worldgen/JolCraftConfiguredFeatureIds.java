@@ -35,6 +35,8 @@ public final class JolCraftConfiguredFeatureIds extends JolCraftIds {
     // Ores
     // ---------------------------------------------------------------------
 
+    public static final String ORE_TUFF_VITRIOL = JolCraftBlockIds.TUFF_VITRIOL_ORE;
+
     public static final String ORE_MITHRIL_SMALL =
             join(JolCraftDictionary.ORE, JolCraftDictionary.MITHRIL, JolCraftDictionary.SMALL);
 

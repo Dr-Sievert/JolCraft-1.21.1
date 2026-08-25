@@ -11,6 +11,7 @@ import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeReci
 import net.sievert.jolcraft.integration.jei.custom.hand_interaction.JeiHandInteractionRecipe;
 import net.sievert.jolcraft.integration.jei.custom.info.JeiInfoPageRecipe;
 import net.sievert.jolcraft.integration.jei.custom.lapidary_bench.JeiLapidaryBenchRecipe;
+import net.sievert.jolcraft.integration.jei.custom.mortar.JeiMortarRecipe;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.entity.custom.dwarf.profession.DwarfProfession;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,13 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public final class JeiRecipeTypes {
+
+    public static final RecipeType<JeiMortarRecipe> MORTAR =
+            RecipeType.create(
+                    JolCraft.MOD_ID,
+                    JolCraftJeiIds.MORTAR,
+                    JeiMortarRecipe.class
+            );
 
     public static final RecipeType<JeiLapidaryBenchRecipe> LAPIDARY_BENCH =
             RecipeType.create(

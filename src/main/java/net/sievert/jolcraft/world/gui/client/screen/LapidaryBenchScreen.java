@@ -27,7 +27,7 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
     private static final ResourceLocation HIGHLIGHT_SPRITE = JolCraftTextures.modWidget(JolCraftStrings.underscored(JolCraftDictionary.SLOT, JolCraftDictionary.HIGHLIGHTED));
 
     private static final int TOOL_BTN_X = 80;
-    private static final int TOOL_BTN_Y = 32;
+    private static final int TOOL_BTN_Y = 48;
 
     private static final int BUTTON_SIZE = 16;
     private static final int HIGHLIGHT_SIZE = 17;

@@ -278,7 +278,7 @@ public final class JolCraftCreativeModeTabs {
 
                         output.accept(JolCraftItems.INVERIX);
 
-                        output.accept(JolCraftItems.DEEPSLATE_MORTAR_ITEM);
+                        output.accept(JolCraftItems.MORTAR_ITEM);
                         output.accept(JolCraftItems.WOODEN_PESTLE);
                         output.accept(JolCraftItems.STONE_PESTLE);
                         output.accept(JolCraftItems.IRON_PESTLE);
@@ -290,11 +290,12 @@ public final class JolCraftCreativeModeTabs {
 
                         output.accept(JolCraftItems.EMPTY_DEEPSLATE_COMPASS);
                         output.accept(JolCraftItems.DEEPSLATE_COMPASS_DIAL);
-                        output.accept(JolCraftItems.DIAL_DUST);
 
                         for (DeepslateCompassStructureGroup group : DeepslateCompassStructureGroup.values()) {
                             addCompassDialVariant(output, group);
                         }
+
+                        output.accept(JolCraftItems.DIAL_DUST);
 
                         output.accept(JolCraftItems.WOODEN_SPANNER);
                         output.accept(JolCraftItems.STONE_SPANNER);

@@ -15,6 +15,7 @@ import net.sievert.jolcraft.world.recipe.custom.fermenting_cauldron.FermentingCa
 import net.sievert.jolcraft.world.recipe.custom.dwarf_trade.DwarfTradeRecipe;
 import net.sievert.jolcraft.world.recipe.custom.hand.HandInteractionRecipe;
 import net.sievert.jolcraft.world.recipe.custom.lapidary_bench.LapidaryBenchRecipe;
+import net.sievert.jolcraft.world.recipe.custom.mortar.MortarRecipe;
 import net.sievert.jolcraft.world.recipe.custom.vanilla.AttributeSmithingTrimRecipe;
 import net.sievert.jolcraft.world.recipe.custom.vanilla.ComponentPreservingShapelessRecipe;
 
@@ -49,6 +50,12 @@ public final class JolCraftRecipes {
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<LapidaryBenchRecipe>> LAPIDARY_BENCH_TYPE =
             TYPES.register(JolCraftRecipeIds.LAPIDARY_BENCH, () -> simpleType(JolCraftRecipeIds.LAPIDARY_BENCH));
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MortarRecipe>> MORTAR_SERIALIZER =
+            SERIALIZERS.register(JolCraftRecipeIds.MORTAR, MortarRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MortarRecipe>> MORTAR_TYPE =
+            TYPES.register(JolCraftRecipeIds.MORTAR, () -> simpleType(JolCraftRecipeIds.MORTAR));
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<FermentingCauldronRecipe>> FERMENTING_CAULDRON_SERIALIZER =
             SERIALIZERS.register(JolCraftRecipeIds.FERMENTING_CAULDRON, FermentingCauldronRecipe.Serializer::new);

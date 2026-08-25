@@ -47,6 +47,7 @@ public final class SubtitleLangSubProvider implements LanguageSubProvider {
         putManual(translations, JolCraftLanguageKeys.SUBTITLE_LEVEL_UP, "Celebration");
         putManual(translations, JolCraftLanguageKeys.SUBTITLE_ARMOR_EQUIP_DEEPSLATE, "Deepslate armor rumbles");
         putManual(translations, JolCraftLanguageKeys.SUBTITLE_GEM_CUT, "Gem cut");
+        putManual(translations, JolCraftLanguageKeys.SUBTITLE_MORTAR_GRIND, "Grinding");
         putManual(translations, JolCraftLanguageKeys.SUBTITLE_CURSE, "Curse");
         putManual(translations, JolCraftLanguageKeys.SUBTITLE_WAR_HORN, "War Horn plays");
 
