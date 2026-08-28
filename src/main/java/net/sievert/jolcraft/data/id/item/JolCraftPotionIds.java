@@ -11,6 +11,10 @@ public final class JolCraftPotionIds extends JolCraftIds {
     private JolCraftPotionIds() {}
 
     // Beneficial
+    public static final String INFUSED = JolCraftDictionary.INFUSED;
+    public static final String REFINED = JolCraftDictionary.REFINED;
+    public static final String EXALTED = JolCraftDictionary.EXALTED;
+
     public static final String ANCIENT_MEMORY = JolCraftEffectIds.ANCIENT_MEMORY;
     public static final String LONG_ANCIENT_MEMORY = longPotion(ANCIENT_MEMORY);
 

@@ -30,6 +30,8 @@ import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.custom.mortar.MortarRecipe;
 import net.sievert.jolcraft.world.recipe.custom.mortar.MortarRecipeInput;
+import net.sievert.jolcraft.world.sound.JolCraftSounds;
+import net.sievert.jolcraft.world.sound.util.JolCraftSoundHelper;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -184,17 +186,9 @@ public class MortarBlockEntity extends BaseContainerBlockEntity {
             generatedResults.removeIf(ItemStack::isEmpty);
         }
 
-        recipe.generateSound(
-                context,
-                recipeInput,
-                generatedSound -> level.playSound(
-                        null,
-                        worldPosition,
-                        generatedSound.sound().value(),
-                        generatedSound.source(),
-                        generatedSound.volume(),
-                        generatedSound.pitch()
-                )
+        JolCraftSoundHelper.block(
+                this,
+                JolCraftSounds.MORTAR_GRIND.get()
         );
 
         if (!player.isCreative()) {
@@ -411,12 +405,18 @@ public class MortarBlockEntity extends BaseContainerBlockEntity {
             return;
         }
 
+        ItemStack remainder =
+                count == 1
+                        && stack.getMaxStackSize() == 1
+                        ? stack.getCraftingRemainingItem()
+                        : ItemStack.EMPTY;
+
         stack.shrink(count);
 
         if (stack.isEmpty()) {
             items.set(
                     slot,
-                    ItemStack.EMPTY
+                    remainder
             );
         }
     }

@@ -2,6 +2,7 @@ package net.sievert.jolcraft.integration.jei.custom.vanilla.brewing;
 
 import mezz.jei.api.recipe.vanilla.IJeiBrewingRecipe;
 import mezz.jei.api.recipe.vanilla.IVanillaRecipeFactory;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -11,10 +12,12 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.event.game.world.recipe.brewing.JolCraftBrewingEventHelper;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public final class JeiBrewingRecipeHelper {
@@ -60,6 +63,52 @@ public final class JeiBrewingRecipeHelper {
                                     )
                             ),
                             1
+                    )
+            );
+        }
+
+        for (JolCraftBrewingEventHelper.EssenceBrewingRecipe recipe
+                : JolCraftBrewingEventHelper.getEssenceRecipes()) {
+            ResourceLocation potionId = recipe.potion()
+                    .unwrapKey()
+                    .orElseThrow()
+                    .location();
+
+            ItemStack input = PotionContents.createItemStack(
+                    Items.POTION,
+                    recipe.input()
+            );
+
+            ItemStack output = new ItemStack(
+                    Items.POTION
+            );
+
+            output.set(
+                    DataComponents.POTION_CONTENTS,
+                    new PotionContents(
+                            Optional.of(recipe.potion()),
+                            Optional.of(
+                                    JolCraftColors.rgb(
+                                            recipe.essenceType().color()
+                                    )
+                            ),
+                            List.of()
+                    )
+            );
+
+            recipes.add(
+                    recipeFactory.createBrewingRecipe(
+                            List.of(
+                                    recipe.ingredient().copy()
+                            ),
+                            input,
+                            output,
+                            JolCraft.location(
+                                    JolCraftStrings.slashed(
+                                            JolCraftDictionary.BREWING,
+                                            potionId.getPath()
+                                    )
+                            )
                     )
             );
         }

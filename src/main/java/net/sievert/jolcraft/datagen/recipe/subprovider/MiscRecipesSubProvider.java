@@ -301,22 +301,6 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 .unlockedByHas(JolCraftItems.VERDANITE_DUST.get())
                 .save(output, folder(), JolCraftBlocks.VERDANT_SOIL.get());
 
-        VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.INVERIX.get(), 3)
-                )
-                .requires(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
-                .requires(Items.COAL)
-                .unlockedByHas(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
-                .save(output, folder(), JolCraftItems.INVERIX.getId().getPath() + "_coal");
-
-        VanillaRecipeBuilder.shapeless(
-                        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, JolCraftItems.INVERIX.get(), 3)
-                )
-                .requires(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
-                .requires(Items.CHARCOAL)
-                .unlockedByHas(JolCraftItems.MUFFHORN_MILK_BUCKET.get())
-                .save(output, folder(), JolCraftItems.INVERIX.getId().getPath() + "_charcoal");
-
         yeastCulture(
                 output,
                 waterBottleIngredient(),

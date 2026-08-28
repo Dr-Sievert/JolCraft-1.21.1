@@ -2,8 +2,10 @@ package net.sievert.jolcraft.world.recipe.base.input;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.sievert.jolcraft.world.recipe.base.condition.custom.InputItemCondition;
@@ -22,6 +24,20 @@ public record ItemInput(
         return predicate(
                 ItemPredicate.Builder.item()
                         .of(items)
+        );
+    }
+
+    public static ItemInput item(ItemStack stack) {
+        return predicate(
+                ItemPredicate.Builder.item()
+                        .of(
+                                stack.getItem()
+                        )
+                        .hasComponents(
+                                DataComponentPredicate.allOf(
+                                        stack.getComponents()
+                                )
+                        )
         );
     }
 

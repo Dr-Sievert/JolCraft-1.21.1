@@ -17,13 +17,13 @@ import java.util.Optional;
 
 public final class ItemInputJeiTranslator {
 
-    private ItemInputJeiTranslator() {
-    }
+    private ItemInputJeiTranslator() {}
 
     public static @NotNull List<ItemStack> translate(
             @NotNull ItemInput input
     ) {
-        if (!(input.condition() instanceof InputItemCondition(ItemPredicate predicate))) {
+        if (!(input.condition()
+                instanceof InputItemCondition(ItemPredicate predicate))) {
             throw new IllegalArgumentException(
                     "Unsupported item input condition for JEI translation: "
                             + input.condition()
@@ -58,8 +58,7 @@ public final class ItemInputJeiTranslator {
 
         if (matches.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Item input produced no displayable JEI ingredients from default item stacks; "
-                            + "component-specific predicates require an explicit preview stack"
+                    "Item input produced no displayable JEI ingredients"
             );
         }
 
@@ -79,6 +78,11 @@ public final class ItemInputJeiTranslator {
 
         ItemStack stack =
                 item.getDefaultInstance();
+
+        stack.applyComponents(
+                predicate.components()
+                        .asPatch()
+        );
 
         int maxCount =
                 Math.max(

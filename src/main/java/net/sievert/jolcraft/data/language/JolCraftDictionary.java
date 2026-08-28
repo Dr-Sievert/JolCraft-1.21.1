@@ -16,6 +16,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FOR = "for";
     public static final String FROM = "from";
     public static final String IN = "in";
+    public static final String INTO = "into";
     public static final String NO = "no";
     public static final String NOT = "not";
     public static final String OF = "of";
@@ -131,6 +132,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String ENDORSED = "endorsed";
     public static final String ENOUGH = "enough";
     public static final String EXACT = "exact";
+    public static final String EXALTED = "exalted";
     public static final String EXPIRED = "expired";
     public static final String EXTRA = "extra";
     public static final String FAIL = "fail";
@@ -149,6 +151,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String IMMUNE = "immune";
     public static final String IMPURE = "impure";
     public static final String INACTIVE = "inactive";
+    public static final String INFUSED = "infused";
     public static final String INVALID = "invalid";
     public static final String KNOWN = "known";
     public static final String LARGE = "large";

@@ -2,6 +2,7 @@ package net.sievert.jolcraft.world.item.client.color;
 
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -14,6 +15,7 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.client.color.custom.DialColor;
 import net.sievert.jolcraft.world.item.client.color.custom.EssenceColor;
 import net.sievert.jolcraft.world.item.client.color.custom.FluidColor;
+import net.sievert.jolcraft.world.item.client.color.custom.PotionColor;
 
 @OnlyIn(Dist.CLIENT)
 public final class JolCraftItemColors {
@@ -62,6 +64,17 @@ public final class JolCraftItemColors {
 
         colors += register(
                 event,
+                (stack, tintIndex) -> tintIndex == 0
+                        ? PotionColor.color(stack)
+                        : NO_TINT,
+                Items.POTION,
+                Items.SPLASH_POTION,
+                Items.LINGERING_POTION,
+                Items.TIPPED_ARROW
+        );
+
+        colors += register(
+                event,
                 JolCraftItems.YEAST_CULTURE.get(),
                 (stack, tintIndex) -> tintIndex == 0
                         ? FluidColor.brewingSpeedColor(stack)
@@ -100,7 +113,11 @@ public final class JolCraftItemColors {
                         : NO_TINT
         );
 
-        JolCraftLogs.info(JolCraftLogTags.INIT, "Registered {} items with custom color layers", colors);
+        JolCraftLogs.info(
+                JolCraftLogTags.INIT,
+                "Registered {} items with custom color layers",
+                colors
+        );
     }
 
     private static int register(
@@ -110,5 +127,14 @@ public final class JolCraftItemColors {
     ) {
         event.register(color, item);
         return 1;
+    }
+
+    private static int register(
+            RegisterColorHandlersEvent.Item event,
+            ItemColor color,
+            Item... items
+    ) {
+        event.register(color, items);
+        return items.length;
     }
 }

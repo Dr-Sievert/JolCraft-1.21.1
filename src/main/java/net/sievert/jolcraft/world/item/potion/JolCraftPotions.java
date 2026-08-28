@@ -33,6 +33,10 @@ public final class JolCraftPotions {
             new LinkedHashMap<>();
 
     static {
+        base(JolCraftPotionIds.INFUSED);
+        base(JolCraftPotionIds.REFINED);
+        base(JolCraftPotionIds.EXALTED);
+
         longFamily(JolCraftPotionIds.ANCIENT_MEMORY, JolCraftEffects.ANCIENT_MEMORY, 300, 600);
         family(JolCraftPotionIds.LOCKPICKING, JolCraftEffects.LOCKPICKING, 600, 1200, 300);
         family(JolCraftPotionIds.DWARVEN_HASTE, JolCraftEffects.DWARVEN_HASTE, 6000, 12000, 3000);
@@ -88,6 +92,10 @@ public final class JolCraftPotions {
     private JolCraftPotions() {}
 
     // Beneficial
+
+    public static final Holder<Potion> INFUSED = holder(JolCraftPotionIds.INFUSED);
+    public static final Holder<Potion> REFINED = holder(JolCraftPotionIds.REFINED);
+    public static final Holder<Potion> EXALTED = holder(JolCraftPotionIds.EXALTED);
 
     public static final Holder<Potion> ANCIENT_MEMORY = holder(JolCraftPotionIds.ANCIENT_MEMORY);
     public static final Holder<Potion> LONG_ANCIENT_MEMORY = holder(JolCraftPotionIds.LONG_ANCIENT_MEMORY);
@@ -248,6 +256,20 @@ public final class JolCraftPotions {
                 "Queued {} potions",
                 POTIONS.getEntries().size()
         );
+    }
+
+    private static void base(String id) {
+        Holder<Potion> potion = POTIONS.register(
+                id,
+                () -> new Potion(id)
+        );
+
+        POTIONS_BY_ID.put(id, potion);
+        registerFamily(new PotionFamily(
+                potion,
+                null,
+                null
+        ));
     }
 
     private static void family(

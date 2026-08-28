@@ -29,7 +29,6 @@ import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContextParam
 import net.sievert.jolcraft.world.recipe.base.context.JolCraftRecipeContexts;
 import net.sievert.jolcraft.world.recipe.base.input.ItemInput;
 import net.sievert.jolcraft.world.recipe.base.output.custom.ItemOutput;
-import net.sievert.jolcraft.world.recipe.base.output.custom.SoundOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ import java.util.function.Consumer;
 public record MortarRecipe(
         List<ItemInput> inputs,
         ItemOutput result,
-        SoundOutput sound,
         int grindingWork,
         int toolDamage
 ) implements CustomRecipe<MortarRecipeInput> {
@@ -197,18 +195,6 @@ public record MortarRecipe(
             @NotNull Consumer<ItemStack> output
     ) {
         result.generate(
-                context,
-                input,
-                output
-        );
-    }
-
-    public void generateSound(
-            @NotNull LootContext context,
-            @NotNull MortarRecipeInput input,
-            @NotNull Consumer<SoundOutput.GeneratedSound> output
-    ) {
-        sound.generate(
                 context,
                 input,
                 output
@@ -390,14 +376,6 @@ public record MortarRecipe(
                         ItemOutput.CODEC.codec()
                 );
 
-        private static final StreamCodec<
-                RegistryFriendlyByteBuf,
-                SoundOutput
-                > SOUND_OUTPUT_STREAM_CODEC =
-                ByteBufCodecs.fromCodecWithRegistries(
-                        SoundOutput.CODEC.codec()
-                );
-
         public static final MapCodec<MortarRecipe> CODEC =
                 RecordCodecBuilder.<MortarRecipe>mapCodec(instance ->
                         instance.group(
@@ -410,11 +388,6 @@ public record MortarRecipe(
                                         .codec()
                                         .fieldOf(JolCraftDictionary.RESULT)
                                         .forGetter(MortarRecipe::result),
-
-                                SoundOutput.CODEC
-                                        .codec()
-                                        .fieldOf(JolCraftDictionary.SOUND)
-                                        .forGetter(MortarRecipe::sound),
 
                                 Codec.intRange(1, MAX_GRINDING_WORK)
                                         .fieldOf(GRIND_PROGRESS_KEY)
@@ -444,9 +417,6 @@ public record MortarRecipe(
 
                 ITEM_OUTPUT_STREAM_CODEC,
                 MortarRecipe::result,
-
-                SOUND_OUTPUT_STREAM_CODEC,
-                MortarRecipe::sound,
 
                 ByteBufCodecs.VAR_INT,
                 MortarRecipe::grindingWork,
@@ -509,10 +479,6 @@ public record MortarRecipe(
                                     recipe.result(),
                                     JolCraftDictionary.RESULT
                             )
-                            .require(
-                                    recipe.sound(),
-                                    JolCraftDictionary.SOUND
-                            )
                             .done();
 
             if (base.error().isPresent()) {
@@ -533,25 +499,6 @@ public record MortarRecipe(
 
                 return DataResult.error(() ->
                         JolCraftDictionary.RESULT
-                                + ": "
-                                + message
-                );
-            }
-
-            DataResult<Void> soundValidation =
-                    RecipeValidation.validateOutput(
-                            recipe.sound(),
-                            OUTPUT_CONTEXT_PARAMS
-                    );
-
-            if (soundValidation.error().isPresent()) {
-                String message =
-                        soundValidation.error()
-                                .map(DataResult.Error::message)
-                                .orElse("invalid sound output");
-
-                return DataResult.error(() ->
-                        JolCraftDictionary.SOUND
                                 + ": "
                                 + message
                 );

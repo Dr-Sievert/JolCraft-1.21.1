@@ -291,6 +291,20 @@ public final class JolCraftJeiPlugin implements IModPlugin {
         );
 
         registration.registerSubtypeInterpreter(
+                JolCraftItems.ESSENCE.get(),
+                (stack, context) -> {
+                    var essenceType =
+                            stack.get(
+                                    JolCraftDataComponents.ESSENCE_TYPE.get()
+                            );
+
+                    return essenceType != null
+                            ? essenceType.getId()
+                            : JolCraftDictionary.EMPTY;
+                }
+        );
+
+        registration.registerSubtypeInterpreter(
                 JolCraftItems.REWARD_CRATE.get(),
                 (stack, context) -> {
                     RewardCrateSource source =

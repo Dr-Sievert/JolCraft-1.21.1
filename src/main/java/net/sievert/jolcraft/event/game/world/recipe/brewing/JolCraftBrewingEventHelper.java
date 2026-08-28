@@ -1,14 +1,20 @@
 package net.sievert.jolcraft.event.game.world.recipe.brewing;
 
 import net.minecraft.core.Holder;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
+import net.sievert.jolcraft.util.client.JolCraftColors;
+import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.custom.alchemy.EssenceType;
 import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
 import net.sievert.jolcraft.world.recipe.custom.vanilla.JolCraftBrewingRecipe;
+import net.sievert.jolcraft.world.recipe.custom.vanilla.JolCraftEssenceBrewingRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +24,9 @@ public final class JolCraftBrewingEventHelper {
     private static final List<SpecialBrewingRecipe> SPECIAL_RECIPES =
             new ArrayList<>();
 
+    private static final List<EssenceBrewingRecipe> ESSENCE_RECIPES =
+            new ArrayList<>();
+
     private JolCraftBrewingEventHelper() {}
 
     public static int addStartMix(
@@ -25,9 +34,11 @@ public final class JolCraftBrewingEventHelper {
             ItemLike ingredient,
             Holder<Potion> potion
     ) {
-        builder.addStartMix(ingredient.asItem(), potion);
-
-        return 2 + addVariants(builder, potion);
+        return addStartMix(
+                builder,
+                List.of(ingredient),
+                potion
+        );
     }
 
     public static int addStartMix(
@@ -35,24 +46,121 @@ public final class JolCraftBrewingEventHelper {
             List<? extends ItemLike> ingredients,
             Holder<Potion> potion
     ) {
-        int recipes = 0;
-
         for (ItemLike ingredient : ingredients) {
-            builder.addStartMix(ingredient.asItem(), potion);
-            recipes += 2;
+            builder.addStartMix(
+                    ingredient.asItem(),
+                    potion
+            );
         }
 
-        return recipes + addVariants(builder, potion);
+        return ingredients.size() * 2
+                + addVariants(builder, potion);
+    }
+
+    public static int addInfusedMix(
+            PotionBrewing.Builder builder,
+            ItemLike ingredient,
+            Holder<Potion> potion
+    ) {
+        return addInfusedMix(
+                builder,
+                List.of(ingredient),
+                potion
+        );
+    }
+
+    public static int addInfusedMix(
+            PotionBrewing.Builder builder,
+            List<? extends ItemLike> ingredients,
+            Holder<Potion> potion
+    ) {
+        return addFamilyMix(
+                builder,
+                JolCraftPotions.INFUSED,
+                ingredients,
+                potion
+        );
+    }
+
+    public static int addRefinedMix(
+            PotionBrewing.Builder builder,
+            ItemLike ingredient,
+            Holder<Potion> potion
+    ) {
+        return addRefinedMix(
+                builder,
+                List.of(ingredient),
+                potion
+        );
+    }
+
+    public static int addRefinedMix(
+            PotionBrewing.Builder builder,
+            List<? extends ItemLike> ingredients,
+            Holder<Potion> potion
+    ) {
+        return addFamilyMix(
+                builder,
+                JolCraftPotions.REFINED,
+                ingredients,
+                potion
+        );
+    }
+
+    public static int addExaltedMix(
+            PotionBrewing.Builder builder,
+            ItemLike ingredient,
+            Holder<Potion> potion
+    ) {
+        return addExaltedMix(
+                builder,
+                List.of(ingredient),
+                potion
+        );
+    }
+
+    public static int addExaltedMix(
+            PotionBrewing.Builder builder,
+            List<? extends ItemLike> ingredients,
+            Holder<Potion> potion
+    ) {
+        return addFamilyMix(
+                builder,
+                JolCraftPotions.EXALTED,
+                ingredients,
+                potion
+        );
     }
 
     public static int addMix(
             PotionBrewing.Builder builder,
-            Holder<Potion> potion,
+            Holder<Potion> input,
             ItemLike ingredient,
             Holder<Potion> result
     ) {
-        builder.addMix(potion, ingredient.asItem(), result);
-        return 1;
+        return addMix(
+                builder,
+                input,
+                List.of(ingredient),
+                result
+        );
+    }
+
+    public static int addMix(
+            PotionBrewing.Builder builder,
+            Holder<Potion> input,
+            List<? extends ItemLike> ingredients,
+            Holder<Potion> result
+    ) {
+        for (ItemLike ingredient : ingredients) {
+            builder.addMix(
+                    input,
+                    ingredient.asItem(),
+                    result
+            );
+        }
+
+        return ingredients.size();
     }
 
     public static int addFamilyMix(
@@ -61,8 +169,29 @@ public final class JolCraftBrewingEventHelper {
             ItemLike ingredient,
             Holder<Potion> potion
     ) {
-        return addMix(builder, input, ingredient, potion)
-                + addVariants(builder, potion);
+        return addFamilyMix(
+                builder,
+                input,
+                List.of(ingredient),
+                potion
+        );
+    }
+
+    public static int addFamilyMix(
+            PotionBrewing.Builder builder,
+            Holder<Potion> input,
+            List<? extends ItemLike> ingredients,
+            Holder<Potion> potion
+    ) {
+        return addMix(
+                builder,
+                input,
+                ingredients,
+                potion
+        ) + addVariants(
+                builder,
+                potion
+        );
     }
 
     public static int addMix(
@@ -71,26 +200,42 @@ public final class JolCraftBrewingEventHelper {
             ItemLike ingredient,
             Holder<Potion> result
     ) {
-        builder.addRecipe(
-                new JolCraftBrewingRecipe(
-                        Ingredient.of(input),
-                        Ingredient.of(ingredient),
-                        PotionContents.createItemStack(
-                                Items.POTION,
-                                result
-                        )
-                )
+        return addMix(
+                builder,
+                input,
+                List.of(ingredient),
+                result
         );
+    }
 
-        SPECIAL_RECIPES.add(
-                new SpecialBrewingRecipe(
-                        input,
-                        ingredient,
-                        result
-                )
-        );
+    public static int addMix(
+            PotionBrewing.Builder builder,
+            ItemLike input,
+            List<? extends ItemLike> ingredients,
+            Holder<Potion> result
+    ) {
+        for (ItemLike ingredient : ingredients) {
+            builder.addRecipe(
+                    new JolCraftBrewingRecipe(
+                            Ingredient.of(input),
+                            Ingredient.of(ingredient),
+                            PotionContents.createItemStack(
+                                    Items.POTION,
+                                    result
+                            )
+                    )
+            );
 
-        return 1;
+            SPECIAL_RECIPES.add(
+                    new SpecialBrewingRecipe(
+                            input,
+                            ingredient,
+                            result
+                    )
+            );
+        }
+
+        return ingredients.size();
     }
 
     public static int addFamilyMix(
@@ -99,8 +244,67 @@ public final class JolCraftBrewingEventHelper {
             ItemLike ingredient,
             Holder<Potion> potion
     ) {
-        return addMix(builder, input, ingredient, potion)
-                + addVariants(builder, potion);
+        return addFamilyMix(
+                builder,
+                input,
+                List.of(ingredient),
+                potion
+        );
+    }
+
+    public static int addFamilyMix(
+            PotionBrewing.Builder builder,
+            ItemLike input,
+            List<? extends ItemLike> ingredients,
+            Holder<Potion> potion
+    ) {
+        return addMix(
+                builder,
+                input,
+                ingredients,
+                potion
+        ) + addVariants(
+                builder,
+                potion
+        );
+    }
+
+    public static int addEssenceMix(
+            PotionBrewing.Builder builder,
+            Holder<Potion> input,
+            EssenceType essenceType,
+            Holder<Potion> output
+    ) {
+        ItemStack essence =
+                JolCraftItems.ESSENCE.get()
+                        .createStack(
+                                essenceType
+                        );
+
+        builder.addRecipe(
+                new JolCraftEssenceBrewingRecipe(
+                        input,
+                        DataComponentIngredient.of(
+                                false,
+                                essence
+                        ),
+                        output,
+                        JolCraftColors.rgb(
+                                essenceType.color()
+                        )
+                )
+        );
+
+        ESSENCE_RECIPES.add(
+                new EssenceBrewingRecipe(
+                        input,
+                        essence.copy(),
+                        output,
+                        essenceType
+                )
+        );
+
+        return 1;
     }
 
     public static int addStrong(
@@ -119,10 +323,19 @@ public final class JolCraftBrewingEventHelper {
 
     public static void clearSpecialRecipes() {
         SPECIAL_RECIPES.clear();
+        ESSENCE_RECIPES.clear();
     }
 
     public static List<SpecialBrewingRecipe> getSpecialRecipes() {
-        return List.copyOf(SPECIAL_RECIPES);
+        return List.copyOf(
+                SPECIAL_RECIPES
+        );
+    }
+
+    public static List<EssenceBrewingRecipe> getEssenceRecipes() {
+        return List.copyOf(
+                ESSENCE_RECIPES
+        );
     }
 
     private static int addVariants(
@@ -130,7 +343,9 @@ public final class JolCraftBrewingEventHelper {
             Holder<Potion> potion
     ) {
         JolCraftPotions.PotionFamily family =
-                JolCraftPotions.familyOf(potion);
+                JolCraftPotions.familyOf(
+                        potion
+                );
 
         int recipes = 0;
 
@@ -140,6 +355,7 @@ public final class JolCraftBrewingEventHelper {
                     Items.REDSTONE,
                     family.longPotion()
             );
+
             recipes++;
         }
 
@@ -149,6 +365,7 @@ public final class JolCraftBrewingEventHelper {
                     Items.GLOWSTONE_DUST,
                     family.strongPotion()
             );
+
             recipes++;
         }
 
@@ -159,5 +376,12 @@ public final class JolCraftBrewingEventHelper {
             ItemLike input,
             ItemLike ingredient,
             Holder<Potion> potion
+    ) {}
+
+    public record EssenceBrewingRecipe(
+            Holder<Potion> input,
+            ItemStack ingredient,
+            Holder<Potion> potion,
+            EssenceType essenceType
     ) {}
 }
