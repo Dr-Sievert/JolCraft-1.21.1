@@ -5,6 +5,9 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.sievert.jolcraft.data.id.item.JolCraftItemIds;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
+import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.alchemy.EssenceType;
+import net.sievert.jolcraft.world.item.custom.alchemy.EssenceItem;
 import net.sievert.jolcraft.world.item.registry.util.JolCraftItemRegistryHelper;
 
 public final class JolCraftAlchemyItems {
@@ -17,6 +20,18 @@ public final class JolCraftAlchemyItems {
                 props -> new BlockItem(
                         JolCraftBlocks.MORTAR.get(),
                         props.stacksTo(3)
+                )
+        );
+    }
+
+    public static DeferredItem<EssenceItem> registerEssence() {
+        return JolCraftItemRegistryHelper.registerItem(
+                JolCraftItemIds.ESSENCE,
+                properties -> new EssenceItem(
+                        properties.component(
+                                JolCraftDataComponents.ESSENCE_TYPE.get(),
+                                EssenceType.INFUSED
+                        )
                 )
         );
     }

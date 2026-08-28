@@ -366,6 +366,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String ENTRANCE = "entrance";
     public static final String ENTRIES = "entries";
     public static final String ENTRY = "entry";
+    public static final String ESSENCE = "essence";
     public static final String EQUIP = "equip";
     public static final String EQUIPMENT = "equipment";
     public static final String EVENT = "event";

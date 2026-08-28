@@ -20,6 +20,7 @@ import java.util.Map;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import net.sievert.jolcraft.world.item.JolCraftItems;
+import net.sievert.jolcraft.world.item.component.custom.alchemy.EssenceType;
 
 @OnlyIn(Dist.CLIENT)
 public final class ItemLangSubProvider implements LanguageSubProvider {
@@ -39,6 +40,14 @@ public final class ItemLangSubProvider implements LanguageSubProvider {
     public void addTranslations(@NotNull Map<String, String> translations) {
 
         //Items
+
+        for (EssenceType type : EssenceType.values()) {
+            putManual(
+                    translations,
+                    type.translationKey(),
+                    JolCraftStrings.toTitleCase(type.getId())
+            );
+        }
 
         putManual(translations, JolCraftItems.YEAST, "Brewing Yeast");
         putManual(translations, JolCraftLanguageKeys.TOOLTIP_BREWING_SPEED, "Brewing Speed: %sx");

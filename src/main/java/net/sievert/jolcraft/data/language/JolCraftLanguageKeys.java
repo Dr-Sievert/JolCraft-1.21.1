@@ -677,6 +677,10 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String PREFIX_NAME =
             category(JolCraftDictionary.PREFIX, JolCraftDictionary.NAME);
 
+    public static String essenceType(String id) {
+        return category(JolCraftDataComponentIds.ESSENCE_TYPE, id);
+    }
+
     public static final String BREW_AGE =
             category(JolCraftDictionary.TOOLTIP, JolCraftDataComponentIds.BREW_AGE);
 

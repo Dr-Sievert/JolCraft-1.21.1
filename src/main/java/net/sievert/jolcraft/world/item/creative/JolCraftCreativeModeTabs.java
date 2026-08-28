@@ -13,6 +13,7 @@ import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
+import net.sievert.jolcraft.world.item.component.custom.alchemy.EssenceType;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
 import net.sievert.jolcraft.data.id.item.JolCraftCreativeTabIds;
@@ -275,6 +276,12 @@ public final class JolCraftCreativeModeTabs {
                         output.accept(JolCraftBlocks.TUFF_VITRIOL_ORE);
                         output.accept(JolCraftItems.VITRIOL);
                         output.accept(JolCraftBlocks.VITRIOL_BLOCK);
+
+                        for (EssenceType type : EssenceType.values()) {
+                            output.accept(
+                                    JolCraftItems.ESSENCE.get().createStack(type)
+                            );
+                        }
 
                         output.accept(JolCraftItems.INVERIX);
 

@@ -8,6 +8,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
+import net.sievert.jolcraft.world.item.custom.alchemy.EssenceItem;
 import net.sievert.jolcraft.world.item.custom.instrument.WarHornItem;
 import net.sievert.jolcraft.world.item.custom.tool.ArtisanHammerItem;
 import net.sievert.jolcraft.world.item.custom.tool.ChiselItem;
@@ -167,6 +168,7 @@ public final class JolCraftItems {
     // -------------------------------------------------------------------------
 
     public static final DeferredItem<BlockItem> MORTAR_ITEM = JolCraftAlchemyItems.registerMortar();
+    public static final DeferredItem<EssenceItem> ESSENCE = JolCraftAlchemyItems.registerEssence();
     public static final DeferredItem<Item> VITRIOL = JolCraftAlchemyItems.registerVitriol();
     public static final DeferredItem<Item> INVERIX = JolCraftAlchemyItems.registerInverix();
 

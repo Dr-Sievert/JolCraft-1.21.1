@@ -11,6 +11,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.client.color.custom.DialColor;
+import net.sievert.jolcraft.world.item.client.color.custom.EssenceColor;
 import net.sievert.jolcraft.world.item.client.color.custom.FluidColor;
 
 @OnlyIn(Dist.CLIENT)
@@ -48,6 +49,14 @@ public final class JolCraftItemColors {
                     case 3 -> DialColor.color(stack);
                     default -> NO_TINT;
                 }
+        );
+
+        colors += register(
+                event,
+                JolCraftItems.ESSENCE.get(),
+                (stack, tintIndex) -> tintIndex == 0
+                        ? EssenceColor.color(stack)
+                        : NO_TINT
         );
 
         colors += register(

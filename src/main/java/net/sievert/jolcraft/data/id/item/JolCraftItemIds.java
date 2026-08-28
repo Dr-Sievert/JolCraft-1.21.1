@@ -128,6 +128,7 @@ public final class JolCraftItemIds extends JolCraftIds {
     // ---------------------------------------------------------------------
 
     public static final String MORTAR = JolCraftBlockIds.MORTAR;
+    public static final String ESSENCE = JolCraftDictionary.ESSENCE;
     public static final String VITRIOL = JolCraftDictionary.VITRIOL;
     public static final String INVERIX = JolCraftDictionary.INVERIX;
 
