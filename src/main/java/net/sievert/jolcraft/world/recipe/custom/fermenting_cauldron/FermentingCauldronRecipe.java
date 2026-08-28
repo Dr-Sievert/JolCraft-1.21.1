@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
 import net.sievert.jolcraft.world.recipe.base.CustomRecipe;
@@ -338,10 +339,14 @@ public record FermentingCauldronRecipe(
                         )
                         .comapFlatMap(
                                 either -> either.map(
-                                        DataResult::success,
+                                        color -> DataResult.success(
+                                                JolCraftColors.toArgb(color)
+                                        ),
                                         Serializer::decodeColor
                                 ),
-                                Either::left
+                                color -> Either.right(
+                                        JolCraftColors.hex(color)
+                                )
                         );
 
         private static final StreamCodec<
@@ -736,44 +741,13 @@ public record FermentingCauldronRecipe(
         private static DataResult<Integer> decodeColor(
                 String value
         ) {
-            if (value == null
-                    || value.isBlank()) {
-                return DataResult.error(
-                        () -> "invalid color"
-                );
-            }
-
-            String normalized =
-                    value.trim();
-
-            if (normalized.startsWith(
-                    "#"
-            )) {
-                normalized =
-                        normalized.substring(
-                                1
-                        );
-            }
-
-            if (normalized.length() != 6
-                    && normalized.length() != 8) {
-                return DataResult.error(
-                        () -> "invalid color: "
-                                + value
-                );
-            }
-
             try {
                 return DataResult.success(
-                        (int) Long.parseLong(
-                                normalized,
-                                16
-                        )
+                        JolCraftColors.argb(value)
                 );
-            } catch (NumberFormatException exception) {
+            } catch (IllegalArgumentException exception) {
                 return DataResult.error(
-                        () -> "invalid color: "
-                                + value
+                        exception::getMessage
                 );
             }
         }

@@ -3,6 +3,7 @@ package net.sievert.jolcraft.world.item.client.color.custom;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassStructureGroup;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @OnlyIn(Dist.CLIENT)
 public final class DialColor {
 
-    private static final int DEFAULT = 0xFFFF0000;
+    private static final int DEFAULT = JolCraftColors.argb("FF0000");
 
     private DialColor() {}
 
@@ -20,7 +21,7 @@ public final class DialColor {
                 JolCraftDataComponents.DEEPSLATE_COMPASS_DIAL_COLOR.get()
         );
 
-        return color != null ? color.color() : DEFAULT;
+        return color != null ? JolCraftColors.argb(color.color()) : DEFAULT;
     }
 
     public static int color(String groupId) {

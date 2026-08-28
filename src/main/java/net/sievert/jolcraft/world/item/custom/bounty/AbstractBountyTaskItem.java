@@ -6,7 +6,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,6 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.extensions.IItemExtension;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.entity.attachment.player.custom.language.LanguageAttachmentHelper;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
@@ -32,8 +32,8 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 public abstract class AbstractBountyTaskItem extends Item implements IItemExtension {
 
-    private static final int FULL_BAR_COLOR = FastColor.ARGB32.color(255, 0, 255, 0); //Green
-    private static final int BAR_COLOR = FastColor.ARGB32.color(255, 255, 84, 84);    //Red
+    private static final int FULL_BAR_COLOR = JolCraftColors.argb("00FF00");
+    private static final int BAR_COLOR = JolCraftColors.argb("FF5454");
 
     protected AbstractBountyTaskItem(Properties properties) {
         super(properties);

@@ -13,10 +13,10 @@ import java.util.Locale;
 
 public enum EssenceType implements JolCraftEnumHelper.StringId {
 
-    INFUSED(0xFF6ECBE5),
-    REFINED(0xFFBF2900),
-    EXALTED(0xFFE6C65C),
-    CORRUPTED(0xFF401C4F);
+    INFUSED("6ECBE5"),
+    REFINED("BF2900"),
+    EXALTED("E6C65C"),
+    CORRUPTED("401C4F");
 
     public static final Codec<EssenceType> CODEC =
             Codec.STRING.comapFlatMap(
@@ -30,9 +30,9 @@ public enum EssenceType implements JolCraftEnumHelper.StringId {
                     buffer -> buffer.readEnum(EssenceType.class)
             );
 
-    private final int color;
+    private final String color;
 
-    EssenceType(int color) {
+    EssenceType(String color) {
         this.color = color;
     }
 
@@ -41,7 +41,7 @@ public enum EssenceType implements JolCraftEnumHelper.StringId {
         return name().toLowerCase(Locale.ROOT);
     }
 
-    public int color() {
+    public String color() {
         return color;
     }
 

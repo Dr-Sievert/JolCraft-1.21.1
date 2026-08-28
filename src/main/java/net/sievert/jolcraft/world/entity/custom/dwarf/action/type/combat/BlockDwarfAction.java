@@ -4,6 +4,7 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.particle.util.JolCraftParticleHelper;
 import net.sievert.jolcraft.world.entity.custom.dwarf.base.AbstractDwarfEntity;
 import net.sievert.jolcraft.world.entity.custom.dwarf.action.DwarfAction;
@@ -56,11 +57,11 @@ public class BlockDwarfAction implements DwarfAction {
         double py = dwarf.getY() + 1.2D;
         double pz = dwarf.getZ() + forward.z + left.z * (-0.4D);
 
-        int color = -2233622;
+        int color = JolCraftColors.argb("DDEAEA");
 
-        float r = ((color >> 16) & 0xFF) / 255.0F;
-        float g = ((color >> 8) & 0xFF) / 255.0F;
-        float b = (color & 0xFF) / 255.0F;
+        float r = JolCraftColors.red(color) / 255.0F;
+        float g = JolCraftColors.green(color) / 255.0F;
+        float b = JolCraftColors.blue(color) / 255.0F;
 
         DustParticleOptions dust = new DustParticleOptions(new Vector3f(r, g, b), 0.5F);
 

@@ -1,7 +1,6 @@
 package net.sievert.jolcraft.world.item.custom.container;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
@@ -15,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
 import net.sievert.jolcraft.world.item.client.tooltip.coin.CoinPouchTooltip;
 import net.sievert.jolcraft.world.item.JolCraftItems;
@@ -30,7 +30,7 @@ public class CoinPouchItem extends Item {
 
     public static final int MAX_COINS = 999;
 
-    private static final int BAR_COLOR = FastColor.ARGB32.color(255, 232, 193, 67);
+    private static final int BAR_COLOR = JolCraftColors.argb("E8C143");
 
     public CoinPouchItem(Properties properties) {
         super(properties.stacksTo(1));

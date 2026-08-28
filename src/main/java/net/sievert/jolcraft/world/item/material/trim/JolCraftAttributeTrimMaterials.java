@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,21 +36,21 @@ public final class JolCraftAttributeTrimMaterials {
     }
 
     private static final List<Entry> ENTRIES = List.of(
-            new Entry(JolCraftTrimMaterials.Attribute.AEGISCORE, JolCraftItems.AEGISCORE_CUT, "#8397bf"),
-            new Entry(JolCraftTrimMaterials.Attribute.ASHFANG, JolCraftItems.ASHFANG_CUT, "#fe8301"),
-            new Entry(JolCraftTrimMaterials.Attribute.DEEPMARROW, JolCraftItems.DEEPMARROW_CUT, "#bbb2ac"),
-            new Entry(JolCraftTrimMaterials.Attribute.EARTHBLOOD, JolCraftItems.EARTHBLOOD_CUT, "#3e4206"),
-            new Entry(JolCraftTrimMaterials.Attribute.EMBERGLASS, JolCraftItems.EMBERGLASS_CUT, "#9c584b"),
-            new Entry(JolCraftTrimMaterials.Attribute.FROSTVEIN, JolCraftItems.FROSTVEIN_CUT, "#067da8"),
-            new Entry(JolCraftTrimMaterials.Attribute.GRIMSTONE, JolCraftItems.GRIMSTONE_CUT, "#b50002"),
-            new Entry(JolCraftTrimMaterials.Attribute.IRONHEART, JolCraftItems.IRONHEART_CUT, "#5c2320"),
-            new Entry(JolCraftTrimMaterials.Attribute.LUMIERE, JolCraftItems.LUMIERE_CUT, "#f8f338"),
-            new Entry(JolCraftTrimMaterials.Attribute.MOONSHARD, JolCraftItems.MOONSHARD_CUT, "#a5a6ff"),
-            new Entry(JolCraftTrimMaterials.Attribute.RUSTAGATE, JolCraftItems.RUSTAGATE_CUT, "#c95d38"),
-            new Entry(JolCraftTrimMaterials.Attribute.SKYBURROW, JolCraftItems.SKYBURROW_CUT, "#5bc9dc"),
-            new Entry(JolCraftTrimMaterials.Attribute.SUNGLEAM, JolCraftItems.SUNGLEAM_CUT, "#efd03c"),
-            new Entry(JolCraftTrimMaterials.Attribute.VERDANITE, JolCraftItems.VERDANITE_CUT, "#6de775"),
-            new Entry(JolCraftTrimMaterials.Attribute.WOECRYSTAL, JolCraftItems.WOECRYSTAL_CUT, "#737296")
+            new Entry(JolCraftTrimMaterials.Attribute.AEGISCORE, JolCraftItems.AEGISCORE_CUT, "8397BF"),
+            new Entry(JolCraftTrimMaterials.Attribute.ASHFANG, JolCraftItems.ASHFANG_CUT, "FE8301"),
+            new Entry(JolCraftTrimMaterials.Attribute.DEEPMARROW, JolCraftItems.DEEPMARROW_CUT, "BBB2AC"),
+            new Entry(JolCraftTrimMaterials.Attribute.EARTHBLOOD, JolCraftItems.EARTHBLOOD_CUT, "3E4206"),
+            new Entry(JolCraftTrimMaterials.Attribute.EMBERGLASS, JolCraftItems.EMBERGLASS_CUT, "9C584B"),
+            new Entry(JolCraftTrimMaterials.Attribute.FROSTVEIN, JolCraftItems.FROSTVEIN_CUT, "067DA8"),
+            new Entry(JolCraftTrimMaterials.Attribute.GRIMSTONE, JolCraftItems.GRIMSTONE_CUT, "B50002"),
+            new Entry(JolCraftTrimMaterials.Attribute.IRONHEART, JolCraftItems.IRONHEART_CUT, "5C2320"),
+            new Entry(JolCraftTrimMaterials.Attribute.LUMIERE, JolCraftItems.LUMIERE_CUT, "F8F338"),
+            new Entry(JolCraftTrimMaterials.Attribute.MOONSHARD, JolCraftItems.MOONSHARD_CUT, "A5A6FF"),
+            new Entry(JolCraftTrimMaterials.Attribute.RUSTAGATE, JolCraftItems.RUSTAGATE_CUT, "C95D38"),
+            new Entry(JolCraftTrimMaterials.Attribute.SKYBURROW, JolCraftItems.SKYBURROW_CUT, "5BC9DC"),
+            new Entry(JolCraftTrimMaterials.Attribute.SUNGLEAM, JolCraftItems.SUNGLEAM_CUT, "EFD03C"),
+            new Entry(JolCraftTrimMaterials.Attribute.VERDANITE, JolCraftItems.VERDANITE_CUT, "6DE775"),
+            new Entry(JolCraftTrimMaterials.Attribute.WOECRYSTAL, JolCraftItems.WOECRYSTAL_CUT, "737296")
     );
 
     public static @NotNull List<Supplier<Item>> ingredients() {
@@ -69,7 +70,7 @@ public final class JolCraftAttributeTrimMaterials {
     }
 
     private static @NotNull Style style(@NotNull String hexColor) {
-        return Style.EMPTY.withColor(TextColor.parseColor(hexColor).getOrThrow());
+        return Style.EMPTY.withColor(TextColor.fromRgb(JolCraftColors.rgb(hexColor)));
     }
 
     private static void register(

@@ -14,6 +14,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.gui.menu.MortarMenu;
 
@@ -224,7 +225,7 @@ public class MortarScreen extends AbstractContainerScreen<MortarMenu> {
                 this.title,
                 this.titleLabelX,
                 this.titleLabelY,
-                0xDDDDDD,
+                JolCraftColors.rgb("DDDDDD"),
                 false
         );
 
@@ -233,7 +234,7 @@ public class MortarScreen extends AbstractContainerScreen<MortarMenu> {
                 this.playerInventoryTitle,
                 this.inventoryLabelX,
                 this.inventoryLabelY,
-                0xDDDDDD,
+                JolCraftColors.rgb("DDDDDD"),
                 false
         );
     }

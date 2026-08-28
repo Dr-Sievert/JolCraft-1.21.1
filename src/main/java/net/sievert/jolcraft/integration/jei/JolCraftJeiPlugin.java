@@ -280,7 +280,7 @@ public final class JolCraftJeiPlugin implements IModPlugin {
 
                     String rgb =
                             compassColor != null
-                                    ? Integer.toString(compassColor.color())
+                                    ? compassColor.color()
                                     : JolCraftDictionary.DEFAULT;
 
                     return JolCraftStrings.underscored(

@@ -2,7 +2,7 @@ package net.sievert.jolcraft.world.block.entity.custom.brewing.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 
 /**
  * Owns all color mixing and interpolation for the fermenting cauldron.
@@ -13,7 +13,7 @@ public final class FermentingCauldronColorHelper {
     /**
      * Sentinel for unset ARGB values. All real brew colors are opaque.
      */
-    public static final int UNSET_COLOR = 0x00000000;
+    public static final int UNSET_COLOR = JolCraftColors.argb("000000", 0);
 
     private FermentingCauldronColorHelper() {}
 
@@ -43,7 +43,7 @@ public final class FermentingCauldronColorHelper {
     ) {
         int rgb = level.getBiome(pos).value().getWaterColor();
 
-        return BrewingColors.argb(rgb);
+        return JolCraftColors.toArgb(rgb);
     }
 
     /**
@@ -165,9 +165,9 @@ public final class FermentingCauldronColorHelper {
             }
 
             int color = data.color();
-            int red = color >>> 16 & 0xFF;
-            int green = color >>> 8 & 0xFF;
-            int blue = color & 0xFF;
+            int red = JolCraftColors.red(color);
+            int green = JolCraftColors.green(color);
+            int blue = JolCraftColors.blue(color);
 
             int steps = Math.min(
                     3,
@@ -198,10 +198,11 @@ public final class FermentingCauldronColorHelper {
 
         int blue = clamp255((int) Math.round(totalBlue / totalWeight));
 
-        return BrewingColors.argb(
-                red << 16
-                        | green << 8
-                        | blue
+        return JolCraftColors.argb(
+                255,
+                red,
+                green,
+                blue
         );
     }
 
@@ -237,27 +238,10 @@ public final class FermentingCauldronColorHelper {
             int target,
             float progress
     ) {
-        int startAlpha = start >>> 24 & 0xFF;
-        int startRed = start >>> 16 & 0xFF;
-        int startGreen = start >>> 8 & 0xFF;
-        int startBlue = start & 0xFF;
-
-        int targetAlpha = target >>> 24 & 0xFF;
-        int targetRed = target >>> 16 & 0xFF;
-        int targetGreen = target >>> 8 & 0xFF;
-        int targetBlue = target & 0xFF;
-
-        int alpha = (int) (startAlpha + (targetAlpha - startAlpha) * progress);
-
-        int red = (int) (startRed + (targetRed - startRed) * progress);
-
-        int green = (int) (startGreen + (targetGreen - startGreen) * progress);
-
-        int blue = (int) (startBlue + (targetBlue - startBlue) * progress);
-
-        return alpha << 24
-                | red << 16
-                | green << 8
-                | blue;
+        return JolCraftColors.lerpArgb(
+                start,
+                target,
+                progress
+        );
     }
 }

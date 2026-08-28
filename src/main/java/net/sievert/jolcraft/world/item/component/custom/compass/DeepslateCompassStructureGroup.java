@@ -7,6 +7,7 @@ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.util.JolCraftEnumHelper;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.worldgen.structure.JolCraftStructures;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +21,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
             List.of(
                     JolCraftStructures.DWARVEN_FORTRESS.key()
             ),
-            0xFF242424,
+            "242424",
             6
     ),
     VILLAGES(
@@ -32,7 +33,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
                     BuiltinStructures.VILLAGE_SNOWY,
                     BuiltinStructures.VILLAGE_TAIGA
             ),
-            0xFFB37B62,
+            "B37B62",
             2
     ),
     PILLAGERS(
@@ -41,7 +42,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
                     BuiltinStructures.PILLAGER_OUTPOST,
                     BuiltinStructures.WOODLAND_MANSION
             ),
-            0xFF8E9393,
+            "8E9393",
             3
     ),
     NETHER_PORTALS(
@@ -54,7 +55,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
                     BuiltinStructures.RUINED_PORTAL_SWAMP,
                     BuiltinStructures.RUINED_PORTAL_OCEAN
             ),
-            0xFF271E3D,
+            "271E3D",
             2
     ),
     SURFACE(
@@ -79,7 +80,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
                     BuiltinStructures.IGLOO,
                     BuiltinStructures.SWAMP_HUT
             ),
-            0xFF61A137,
+            "61A137",
             1
     ),
     RUINS(
@@ -89,7 +90,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
                     BuiltinStructures.OCEAN_RUIN_COLD,
                     BuiltinStructures.OCEAN_RUIN_WARM
             ),
-            0xFFA54926,
+            "A54926",
             3
     ),
     OCEAN(
@@ -102,7 +103,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
                     BuiltinStructures.OCEAN_RUIN_WARM,
                     BuiltinStructures.OCEAN_MONUMENT
             ),
-            0xFF2332C3,
+            "2332C3",
             3
     ),
     UNDERGROUND(
@@ -114,7 +115,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
                     BuiltinStructures.STRONGHOLD,
                     JolCraftStructures.DWARVEN_FORTRESS.key()
             ),
-            0xFF111B21,
+            "111B21",
             4
     );
 
@@ -130,13 +131,13 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
 
     private final TagKey<Structure> structureTag;
     private final List<ResourceKey<Structure>> structures;
-    private final int color;
+    private final String color;
     private final int discoveryDust;
 
     DeepslateCompassStructureGroup(
             TagKey<Structure> structureTag,
             List<ResourceKey<Structure>> structures,
-            int color,
+            String color,
             int discoveryDust
     ) {
         this.structureTag = structureTag;
@@ -158,7 +159,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
         return this.structures;
     }
 
-    public int color() {
+    public String color() {
         return this.color;
     }
 
@@ -177,9 +178,9 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
         );
     }
 
-    public static @Nullable DeepslateCompassStructureGroup byColor(int color) {
+    public static @Nullable DeepslateCompassStructureGroup byColor(String color) {
         for (DeepslateCompassStructureGroup group : values()) {
-            if (group.color == color) {
+            if (group.color.equals(color)) {
                 return group;
             }
         }
@@ -204,7 +205,7 @@ public enum DeepslateCompassStructureGroup implements JolCraftEnumHelper.StringI
         DeepslateCompassStructureGroup group = byId(id);
 
         return group != null
-                ? group.color()
+                ? JolCraftColors.argb(group.color())
                 : fallback;
     }
 }

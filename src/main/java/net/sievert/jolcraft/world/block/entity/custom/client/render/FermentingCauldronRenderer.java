@@ -16,6 +16,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.FermentingCauldronBlockEntity;
 import net.sievert.jolcraft.world.block.entity.custom.brewing.util.FermentingCauldronColorHelper;
 import org.jetbrains.annotations.NotNull;
@@ -103,19 +104,19 @@ public final class FermentingCauldronRenderer implements BlockEntityRenderer<Fer
 
         float alpha =
                 Mth.clamp(
-                        ((argb >>> 24) & 0xFF) / 255.0F * 0.85F,
+                        JolCraftColors.alpha(argb) / 255.0F * 0.85F,
                         0.0F,
                         1.0F
                 );
 
         float red =
-                ((argb >>> 16) & 0xFF) / 255.0F;
+                JolCraftColors.red(argb) / 255.0F;
 
         float green =
-                ((argb >>> 8) & 0xFF) / 255.0F;
+                JolCraftColors.green(argb) / 255.0F;
 
         float blue =
-                (argb & 0xFF) / 255.0F;
+                JolCraftColors.blue(argb) / 255.0F;
 
         float u0 =
                 sprite.getU0();

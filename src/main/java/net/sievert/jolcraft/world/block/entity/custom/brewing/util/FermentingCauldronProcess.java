@@ -23,6 +23,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
@@ -1728,7 +1729,7 @@ public final class FermentingCauldronProcess {
                     ? ingredientTag.getInt(
                     NBT_COLOR
             )
-                    : 0xFFFFFFFF;
+                    : JolCraftColors.argb("FFFFFF");
 
             ingredients.put(
                     item,

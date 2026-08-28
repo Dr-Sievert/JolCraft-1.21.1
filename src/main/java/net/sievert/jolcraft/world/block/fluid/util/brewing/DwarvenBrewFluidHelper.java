@@ -7,6 +7,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.FluidUtil;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
@@ -122,7 +123,7 @@ public final class DwarvenBrewFluidHelper {
 
         brew.set(
                 JolCraftDataComponents.BREW_COLOR.get(),
-                BrewingColors.argb(
+                JolCraftColors.toArgb(
                         brewColor
                 )
         );

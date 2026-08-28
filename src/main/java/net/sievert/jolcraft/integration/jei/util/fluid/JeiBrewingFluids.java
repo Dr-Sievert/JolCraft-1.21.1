@@ -9,6 +9,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.block.fluid.JolCraftFluids;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
@@ -480,9 +481,7 @@ public final class JeiBrewingFluids {
 
         result.set(
                 JolCraftDataComponents.BREW_COLOR.get(),
-                0xFF000000
-                        | color
-                        & 0x00FFFFFF
+                JolCraftColors.toArgb(color)
         );
 
         return result;

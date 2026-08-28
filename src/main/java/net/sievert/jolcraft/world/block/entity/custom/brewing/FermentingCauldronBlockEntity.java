@@ -32,6 +32,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.entity.JolCraftBlockEntities;
@@ -1147,7 +1148,7 @@ public final class FermentingCauldronBlockEntity extends BlockEntity
                 .getFluid()
                 .getOrDefault(
                         JolCraftDataComponents.BREW_COLOR.get(),
-                        0xFFFFFFFF
+                        JolCraftColors.argb("FFFFFF")
                 );
     }
 

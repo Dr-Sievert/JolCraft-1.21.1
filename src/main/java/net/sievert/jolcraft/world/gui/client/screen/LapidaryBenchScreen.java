@@ -13,6 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.sievert.jolcraft.data.id.recipe.JolCraftRecipeIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.gui.menu.LapidaryBenchMenu;
 
@@ -89,8 +90,8 @@ public class LapidaryBenchScreen extends AbstractContainerScreen<LapidaryBenchMe
 
     @Override
     protected void renderLabels(GuiGraphics gg, int mouseX, int mouseY) {
-        gg.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xDDDDDD, false);
-        gg.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xDDDDDD, false);
+        gg.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, JolCraftColors.rgb("DDDDDD"), false);
+        gg.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, JolCraftColors.rgb("DDDDDD"), false);
     }
 
     @Override

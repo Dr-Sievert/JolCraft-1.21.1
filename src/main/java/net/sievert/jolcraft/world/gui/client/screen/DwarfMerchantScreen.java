@@ -22,6 +22,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.network.packet.c2s.ServerboundDwarfSelectTradePacket;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantData;
 import net.sievert.jolcraft.world.entity.custom.dwarf.trade.DwarfMerchantOffer;
@@ -166,11 +167,11 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
         }
 
         int titleX = 49 + this.imageWidth / 2 - this.font.width(displayTitle) / 2;
-        graphics.drawString(this.font, displayTitle, titleX, 6, 0xDDDDDD, false);
-        graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 0xDDDDDD, false);
+        graphics.drawString(this.font, displayTitle, titleX, 6, JolCraftColors.rgb("DDDDDD"), false);
+        graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, JolCraftColors.rgb("DDDDDD"), false);
 
         int tradesLabelWidth = this.font.width(TRADES_LABEL);
-        graphics.drawString(this.font, TRADES_LABEL, 5 - tradesLabelWidth / 2 + 48, 6, 0xDDDDDD, false);
+        graphics.drawString(this.font, TRADES_LABEL, 5 - tradesLabelWidth / 2 + 48, 6, JolCraftColors.rgb("DDDDDD"), false);
     }
 
     @Override
@@ -319,7 +320,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
                     count,
                     (float) (x + 14) + 19 - 2 - this.font.width(count),
                     (float) y + 6 + 3,
-                    0xFFFFFF,
+                    JolCraftColors.rgb("FFFFFF"),
                     true,
                     graphics.pose().last().pose(),
                     graphics.bufferSource(),
@@ -394,7 +395,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
                 JolCraft.location("widget/button_highlighted")
         );
 
-        public TradeOfferButton(int x, int y, int index, Button.OnPress onPress) {
+        public TradeOfferButton(int x, int y, int index, OnPress onPress) {
             super(x, y, 88, 20, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION);
             this.index = index;
             this.visible = false;
@@ -410,7 +411,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
                     this.getWidth(),
                     this.getHeight()
             );
-            int color = this.getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24;
+            int color = JolCraftColors.withAlpha(this.getFGColor(), Mth.ceil(this.alpha * 255.0F));
             this.renderString(graphics, minecraft.font, color);
         }
 

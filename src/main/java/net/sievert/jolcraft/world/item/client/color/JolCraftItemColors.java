@@ -6,6 +6,7 @@ import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
@@ -17,8 +18,8 @@ import net.sievert.jolcraft.world.item.client.color.custom.FluidColor;
 @OnlyIn(Dist.CLIENT)
 public final class JolCraftItemColors {
 
-    private static final int NO_TINT = 0xFFFFFFFF;
-    private static final int DEFAULT_COMPASS_DYE_COLOR = 0xD3D3D3;
+    private static final int NO_TINT = JolCraftColors.argb("FFFFFF");
+    private static final int DEFAULT_COMPASS_DYE_COLOR = JolCraftColors.rgb("D3D3D3");
 
     private JolCraftItemColors() {}
 

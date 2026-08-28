@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingTooltipHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,27 +53,21 @@ public final class JeiFluidRenderer {
                         fluid
                 );
 
-        int red =
-                tint >> 16
-                        & 0xFF;
-
-        int green =
-                tint >> 8
-                        & 0xFF;
-
-        int blue =
-                tint
-                        & 0xFF;
+        int red = JolCraftColors.red(tint);
+        int green = JolCraftColors.green(tint);
+        int blue = JolCraftColors.blue(tint);
 
         graphics.fill(
                 x,
                 y,
                 x + width,
                 y + height,
-                0xFF000000
-                        | red << 16
-                        | green << 8
-                        | blue
+                JolCraftColors.argb(
+                        255,
+                        red,
+                        green,
+                        blue
+                )
         );
 
         graphics.setColor(

@@ -12,6 +12,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.effect.JolCraftEffectIds;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
@@ -43,7 +44,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> MAGIC_RESISTANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.MAGIC_RESISTANCE,
-            () -> new MagicResistanceEffect(MobEffectCategory.BENEFICIAL, 0x25b7b8)
+            () -> new MagicResistanceEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("25B7B8"))
                     .addAttributeModifier(
                             JolCraftAttributes.MAGIC_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.MAGIC_RESISTANCE, JolCraftDictionary.EFFECT)),
@@ -54,7 +55,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> EXPLOSION_RESISTANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.EXPLOSION_RESISTANCE,
-            () -> new ExplosionResistanceEffect(MobEffectCategory.BENEFICIAL,0x796e70)
+            () -> new ExplosionResistanceEffect(MobEffectCategory.BENEFICIAL,JolCraftColors.rgb("796E70"))
                     .addAttributeModifier(
                             JolCraftAttributes.EXPLOSION_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.EXPLOSION_RESISTANCE, JolCraftDictionary.EFFECT)),
@@ -65,7 +66,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> POISON_RESISTANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.POISON_RESISTANCE,
-            () -> new PoisonResistanceEffect(MobEffectCategory.BENEFICIAL,0x538b30)
+            () -> new PoisonResistanceEffect(MobEffectCategory.BENEFICIAL,JolCraftColors.rgb("538B30"))
                     .addAttributeModifier(
                             JolCraftAttributes.POISON_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.POISON_RESISTANCE, JolCraftDictionary.EFFECT)),
@@ -76,7 +77,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> FROST_RESISTANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.FROST_RESISTANCE,
-            () -> new FrostResistanceEffect(MobEffectCategory.BENEFICIAL,0x01bef2)
+            () -> new FrostResistanceEffect(MobEffectCategory.BENEFICIAL,JolCraftColors.rgb("01BEF2"))
                     .addAttributeModifier(
                             JolCraftAttributes.FROST_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.FROST_RESISTANCE, JolCraftDictionary.EFFECT)),
@@ -87,7 +88,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> WITHER_RESISTANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.WITHER_RESISTANCE,
-            () -> new WitherResistanceEffect(MobEffectCategory.BENEFICIAL,0x1a1310)
+            () -> new WitherResistanceEffect(MobEffectCategory.BENEFICIAL,JolCraftColors.rgb("1A1310"))
                     .addAttributeModifier(
                             JolCraftAttributes.WITHER_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.WITHER_RESISTANCE, JolCraftDictionary.EFFECT)),
@@ -98,7 +99,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> SLOW_RESISTANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.SLOW_RESISTANCE,
-            () -> new SlowResistanceEffect(MobEffectCategory.BENEFICIAL,0x575769)
+            () -> new SlowResistanceEffect(MobEffectCategory.BENEFICIAL,JolCraftColors.rgb("575769"))
                     .addAttributeModifier(
                             JolCraftAttributes.SLOW_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.SLOW_RESISTANCE, JolCraftDictionary.EFFECT)),
@@ -109,7 +110,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> TENACITY = MOB_EFFECTS.register(
             JolCraftEffectIds.TENACITY,
-            () -> new TenacityEffect(MobEffectCategory.BENEFICIAL, 0x1d2734)
+            () -> new TenacityEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("1D2734"))
                     .addAttributeModifier(
                             JolCraftAttributes.CROWD_CONTROL_REDUCTION,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.TENACITY, JolCraftDictionary.EFFECT)),
@@ -120,17 +121,17 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> HOMESTEAD = MOB_EFFECTS.register(
             JolCraftEffectIds.HOMESTEAD,
-            () -> new HomesteadEffect(MobEffectCategory.BENEFICIAL, 0x6e6d6d)
+            () -> new HomesteadEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("6E6D6D"))
     );
 
     public static final Holder<MobEffect> ANCIENT_MEMORY = MOB_EFFECTS.register(
             JolCraftEffectIds.ANCIENT_MEMORY,
-            () -> new AncientMemoryEffect(MobEffectCategory.BENEFICIAL, 0x8bb386)
+            () -> new AncientMemoryEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("8BB386"))
     );
 
     public static final Holder<MobEffect> LOCKPICKING = MOB_EFFECTS.register(
             JolCraftEffectIds.LOCKPICKING,
-            () -> new LockpickingEffect(MobEffectCategory.BENEFICIAL, 0x6b6b6b)
+            () -> new LockpickingEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("6B6B6B"))
                     .addAttributeModifier(
                             JolCraftAttributes.LOCKPICKING,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.LOCKPICKING, JolCraftDictionary.EFFECT)),
@@ -141,7 +142,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> DWARVEN_HASTE = MOB_EFFECTS.register(
             JolCraftEffectIds.DWARVEN_HASTE,
-            () -> new DwarvenHasteEffect(MobEffectCategory.BENEFICIAL, 0x2bc7ac)
+            () -> new DwarvenHasteEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("2BC7AC"))
                     .addAttributeModifier(
                             Attributes.BLOCK_BREAK_SPEED,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.DWARVEN_HASTE, JolCraftDictionary.EFFECT)),
@@ -158,7 +159,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> LUMINANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.LUMINANCE,
-            () -> new LuminanceEffect(MobEffectCategory.BENEFICIAL, 0xfaff42)
+            () -> new LuminanceEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("FAFF42"))
                     .addAttributeModifier(
                             JolCraftAttributes.LUMINANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.LUMINANCE, JolCraftDictionary.EFFECT)),
@@ -169,12 +170,12 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> MOON_SHIELD = MOB_EFFECTS.register(
             JolCraftEffectIds.MOON_SHIELD,
-            () -> new MoonShieldEffect(MobEffectCategory.BENEFICIAL, 0xadb4a7)
+            () -> new MoonShieldEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("ADB4A7"))
     );
 
     public static final Holder<MobEffect> BULWARK = MOB_EFFECTS.register(
             JolCraftEffectIds.BULWARK,
-            () -> new BulwarkEffect(MobEffectCategory.BENEFICIAL, 0x777f91)
+            () -> new BulwarkEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("777F91"))
                     .addAttributeModifier(
                             Attributes.ARMOR,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.BULWARK, JolCraftDictionary.EFFECT)),
@@ -191,7 +192,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> ALCHEMIST_FOCUS = MOB_EFFECTS.register(
             JolCraftEffectIds.ALCHEMIST_FOCUS,
-            () -> new AlchemistFocusEffect(MobEffectCategory.BENEFICIAL, 0xca008b)
+            () -> new AlchemistFocusEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("CA008B"))
                     .addAttributeModifier(
                             JolCraftAttributes.FOCUS,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ALCHEMIST_FOCUS, JolCraftDictionary.EFFECT)),
@@ -202,7 +203,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> DEXTERITY = MOB_EFFECTS.register(
             JolCraftEffectIds.DEXTERITY,
-            () -> new DexterityEffect(MobEffectCategory.BENEFICIAL, 0xe2aa65)
+            () -> new DexterityEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("E2AA65"))
                     .addAttributeModifier(
                             JolCraftAttributes.ITEM_USE_SPEED,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.DEXTERITY, JolCraftDictionary.EFFECT)),
@@ -213,7 +214,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> DWARVEN_RAGE = MOB_EFFECTS.register(
             JolCraftEffectIds.DWARVEN_RAGE,
-            () -> new DwarvenRageEffect(MobEffectCategory.BENEFICIAL, 0x411515)
+            () -> new DwarvenRageEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("411515"))
                     .addAttributeModifier(
                     Attributes.ATTACK_SPEED,
                     DwarvenRageEffect.DWARVEN_RAGE_EFFECT_MODIFIER_ID,
@@ -236,12 +237,12 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> ENDURANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.ENDURANCE,
-            () -> new EnduranceEffect(MobEffectCategory.BENEFICIAL, 0x9a5e57)
+            () -> new EnduranceEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("9A5E57"))
     );
 
     public static final Holder<MobEffect> MARKSMAN = MOB_EFFECTS.register(
             JolCraftEffectIds.MARKSMAN,
-            () -> new MarksmanEffect(MobEffectCategory.BENEFICIAL, 0x15561b)
+            () -> new MarksmanEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("15561B"))
                     .addAttributeModifier(
                             JolCraftAttributes.PROJECTILE_DAMAGE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.MARKSMAN, JolCraftDictionary.EFFECT)),
@@ -252,7 +253,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> STONE_SKIN = MOB_EFFECTS.register(
             JolCraftEffectIds.STONE_SKIN,
-            () -> new StoneSkinEffect(MobEffectCategory.BENEFICIAL, 0x52555a)
+            () -> new StoneSkinEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("52555A"))
                     .addAttributeModifier(
                             Attributes.MOVEMENT_SPEED,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.STONE_SKIN, JolCraftDictionary.EFFECT)),
@@ -263,7 +264,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> HOARD = MOB_EFFECTS.register(
             JolCraftEffectIds.HOARD,
-            () -> new HoardEffect(MobEffectCategory.BENEFICIAL, 0xf7be26)
+            () -> new HoardEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("F7BE26"))
                     .addAttributeModifier(
                             JolCraftAttributes.CONTAINER_LOOT_INCREASE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.HOARD, JolCraftDictionary.EFFECT)),
@@ -286,7 +287,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> PIERCING = MOB_EFFECTS.register(
             JolCraftEffectIds.PIERCING,
-            () -> new PiercingEffect(MobEffectCategory.BENEFICIAL, 0x828a9b)
+            () -> new PiercingEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("828A9B"))
                     .addAttributeModifier(
                             JolCraftAttributes.ARMOR_PENETRATION,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.PIERCING, JolCraftDictionary.EFFECT)),
@@ -297,7 +298,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> WISDOM = MOB_EFFECTS.register(
             JolCraftEffectIds.WISDOM,
-            () -> new WisdomEffect(MobEffectCategory.BENEFICIAL, 0x00ff00)
+            () -> new WisdomEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("00FF00"))
                     .addAttributeModifier(
                             JolCraftAttributes.EXPERIENCE_INCREASE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.WISDOM, JolCraftDictionary.EFFECT)),
@@ -308,7 +309,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> MIGHT = MOB_EFFECTS.register(
             JolCraftEffectIds.MIGHT,
-            () -> new MightEffect(MobEffectCategory.BENEFICIAL, 0xff6a00)
+            () -> new MightEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("FF6A00"))
                     .addAttributeModifier(
                             Attributes.ATTACK_DAMAGE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.MIGHT, JolCraftDictionary.EFFECT)),
@@ -319,7 +320,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> HARVEST = MOB_EFFECTS.register(
             JolCraftEffectIds.HARVEST,
-            () -> new HarvestEffect(MobEffectCategory.BENEFICIAL, 0x247a24)
+            () -> new HarvestEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("247A24"))
                     .addAttributeModifier(
                             JolCraftAttributes.CROP_LOOT_INCREASE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.HARVEST, JolCraftDictionary.EFFECT)),
@@ -330,7 +331,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> LUNAR = MOB_EFFECTS.register(
             JolCraftEffectIds.LUNAR,
-            () -> new LunarEffect(MobEffectCategory.BENEFICIAL, 0xadb4a7)
+            () -> new LunarEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("ADB4A7"))
                     .addAttributeModifier(
                             JolCraftAttributes.MOON_SHIELD,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.LUNAR, JolCraftDictionary.EFFECT)),
@@ -353,7 +354,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> CONFLAGRATION = MOB_EFFECTS.register(
             JolCraftEffectIds.CONFLAGRATION,
-            () -> new ConflagrationEffect(MobEffectCategory.BENEFICIAL, 0xffaa3f)
+            () -> new ConflagrationEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("FFAA3F"))
                     .addAttributeModifier(
                             JolCraftAttributes.SUN_FIRE_DAMAGE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.CONFLAGRATION, JolCraftDictionary.EFFECT)),
@@ -364,7 +365,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> OVERHEAL = MOB_EFFECTS.register(
             JolCraftEffectIds.OVERHEAL,
-            () -> new OverhealEffect(MobEffectCategory.BENEFICIAL, 0xa74f43)
+            () -> new OverhealEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("A74F43"))
                     .addAttributeModifier(
                             Attributes.MAX_HEALTH,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.OVERHEAL, JolCraftDictionary.EFFECT)),
@@ -385,7 +386,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> ANCHOR = MOB_EFFECTS.register(
             JolCraftEffectIds.ANCHOR,
-            () -> new AnchorEffect(MobEffectCategory.NEUTRAL, 0x4b5660)
+            () -> new AnchorEffect(MobEffectCategory.NEUTRAL, JolCraftColors.rgb("4B5660"))
                     .addAttributeModifier(
                             Attributes.KNOCKBACK_RESISTANCE,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ANCHOR, JolCraftDictionary.EFFECT)),
@@ -436,7 +437,7 @@ public final class JolCraftEffects {
 
     // Curses
 
-    private static final int CURSE_COLOR = 0x7510a3;
+    private static final int CURSE_COLOR = JolCraftColors.rgb("7510A3");
 
     public static final Holder<MobEffect> ATAXIA_CURSE = MOB_EFFECTS.register(
             JolCraftEffectIds.ATAXIA_CURSE,
@@ -489,7 +490,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> EXPLOSION_VULNERABILITY = MOB_EFFECTS.register(
             JolCraftEffectIds.EXPLOSION_VULNERABILITY,
-            () -> new ExplosionVulnerabilityEffect(MobEffectCategory.HARMFUL,0x635a5a)
+            () -> new ExplosionVulnerabilityEffect(MobEffectCategory.HARMFUL,JolCraftColors.rgb("635A5A"))
                     .addAttributeModifier(
                             JolCraftAttributes.EXPLOSION_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.EXPLOSION_VULNERABILITY, JolCraftDictionary.EFFECT)),
@@ -500,7 +501,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> FIRE_VULNERABILITY = MOB_EFFECTS.register(
             JolCraftEffectIds.FIRE_VULNERABILITY,
-            () -> new FireVulnerabilityEffect(MobEffectCategory.HARMFUL,0x281b1b)
+            () -> new FireVulnerabilityEffect(MobEffectCategory.HARMFUL,JolCraftColors.rgb("281B1B"))
                     .addAttributeModifier(
                             JolCraftAttributes.FIRE_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.FIRE_VULNERABILITY, JolCraftDictionary.EFFECT)),
@@ -511,7 +512,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> FROST_VULNERABILITY = MOB_EFFECTS.register(
             JolCraftEffectIds.FROST_VULNERABILITY,
-            () -> new FrostVulnerabilityEffect(MobEffectCategory.HARMFUL,0x5ea2b7)
+            () -> new FrostVulnerabilityEffect(MobEffectCategory.HARMFUL,JolCraftColors.rgb("5EA2B7"))
                     .addAttributeModifier(
                             JolCraftAttributes.FROST_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.FROST_VULNERABILITY, JolCraftDictionary.EFFECT)),
@@ -522,7 +523,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> MAGIC_VULNERABILITY = MOB_EFFECTS.register(
             JolCraftEffectIds.MAGIC_VULNERABILITY,
-            () -> new MagicVulnerabilityEffect(MobEffectCategory.HARMFUL,0x2a6d76)
+            () -> new MagicVulnerabilityEffect(MobEffectCategory.HARMFUL,JolCraftColors.rgb("2A6D76"))
                     .addAttributeModifier(
                             JolCraftAttributes.MAGIC_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.MAGIC_VULNERABILITY, JolCraftDictionary.EFFECT)),
@@ -533,7 +534,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> POISON_VULNERABILITY = MOB_EFFECTS.register(
             JolCraftEffectIds.POISON_VULNERABILITY,
-            () -> new PoisonVulnerabilityEffect(MobEffectCategory.HARMFUL,0x629e31)
+            () -> new PoisonVulnerabilityEffect(MobEffectCategory.HARMFUL,JolCraftColors.rgb("629E31"))
                     .addAttributeModifier(
                             JolCraftAttributes.POISON_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.POISON_VULNERABILITY, JolCraftDictionary.EFFECT)),
@@ -544,7 +545,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> SLOW_VULNERABILITY = MOB_EFFECTS.register(
             JolCraftEffectIds.SLOW_VULNERABILITY,
-            () -> new SlowVulnerabilityEffect(MobEffectCategory.HARMFUL,0x974e35)
+            () -> new SlowVulnerabilityEffect(MobEffectCategory.HARMFUL,JolCraftColors.rgb("974E35"))
                     .addAttributeModifier(
                             JolCraftAttributes.SLOW_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.SLOW_VULNERABILITY, JolCraftDictionary.EFFECT)),
@@ -555,7 +556,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> WITHER_VULNERABILITY = MOB_EFFECTS.register(
             JolCraftEffectIds.WITHER_VULNERABILITY,
-            () -> new WitherVulnerabilityEffect(MobEffectCategory.HARMFUL,0x674451)
+            () -> new WitherVulnerabilityEffect(MobEffectCategory.HARMFUL,JolCraftColors.rgb("674451"))
                     .addAttributeModifier(
                             JolCraftAttributes.WITHER_VULNERABILITY,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.WITHER_VULNERABILITY, JolCraftDictionary.EFFECT)),
@@ -568,12 +569,12 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> DISARMED = MOB_EFFECTS.register(
             JolCraftEffectIds.DISARMED,
-            () -> new DisarmedEffect(MobEffectCategory.HARMFUL, 0x820000)
+            () -> new DisarmedEffect(MobEffectCategory.HARMFUL, JolCraftColors.rgb("820000"))
     );
 
     public static final Holder<MobEffect> ROOTED = MOB_EFFECTS.register(
             JolCraftEffectIds.ROOTED,
-            () -> new RootedEffect(MobEffectCategory.HARMFUL, 0xc4ced2)
+            () -> new RootedEffect(MobEffectCategory.HARMFUL, JolCraftColors.rgb("C4CED2"))
                     .addAttributeModifier(
                             Attributes.MOVEMENT_SPEED,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ROOTED, JolCraftDictionary.EFFECT)),
@@ -590,7 +591,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> STUNNED = MOB_EFFECTS.register(
             JolCraftEffectIds.STUNNED,
-            () -> new StunnedEffect(MobEffectCategory.HARMFUL, 0x716a49)
+            () -> new StunnedEffect(MobEffectCategory.HARMFUL, JolCraftColors.rgb("716A49"))
                     .addAttributeModifier(
                             Attributes.MOVEMENT_SPEED,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.STUNNED, JolCraftDictionary.EFFECT)),
@@ -607,14 +608,14 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> SUPPRESSED = MOB_EFFECTS.register(
             JolCraftEffectIds.SUPPRESSED,
-            () -> new SuppressedEffect(MobEffectCategory.HARMFUL, 0x820000)
+            () -> new SuppressedEffect(MobEffectCategory.HARMFUL, JolCraftColors.rgb("820000"))
     );
 
     // Other
 
     public static final Holder<MobEffect> CORROSION = MOB_EFFECTS.register(
             JolCraftEffectIds.CORROSION,
-            () -> new CorrosionEffect(MobEffectCategory.HARMFUL, 0x398f22)
+            () -> new CorrosionEffect(MobEffectCategory.HARMFUL, JolCraftColors.rgb("398F22"))
                     .addAttributeModifier(
                             Attributes.ARMOR,
                             JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.CORROSION, JolCraftDictionary.EFFECT)),
@@ -631,7 +632,7 @@ public final class JolCraftEffects {
 
     public static final Holder<MobEffect> SUNFIRE = MOB_EFFECTS.register(
             JolCraftEffectIds.SUNFIRE,
-            () -> new SunfireEffect(MobEffectCategory.HARMFUL, 0xf4d919)
+            () -> new SunfireEffect(MobEffectCategory.HARMFUL, JolCraftColors.rgb("F4D919"))
     );
 
 

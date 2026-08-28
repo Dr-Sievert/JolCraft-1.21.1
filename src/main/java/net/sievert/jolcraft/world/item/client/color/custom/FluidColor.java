@@ -6,6 +6,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.BrewingColors;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewFluidHelper;
 import org.jetbrains.annotations.NotNull;
@@ -42,14 +43,9 @@ public final class FluidColor {
                 1.0F - (speed - 1.0F) * 0.14F
         );
 
-        int color = BrewingColors.YEAST_CULTURE;
-        int red = Math.round(((color >> 16) & 0xFF) * brightness);
-        int green = Math.round(((color >> 8) & 0xFF) * brightness);
-        int blue = Math.round((color & 0xFF) * brightness);
-
-        return 0xFF000000
-                | (red << 16)
-                | (green << 8)
-                | blue;
+        return JolCraftColors.multiplyRgb(
+                BrewingColors.YEAST_CULTURE,
+                brightness
+        );
     }
 }

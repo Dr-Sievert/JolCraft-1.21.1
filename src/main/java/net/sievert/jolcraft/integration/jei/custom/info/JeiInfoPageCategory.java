@@ -31,6 +31,7 @@ import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.data.language.JolCraftLanguageKeys;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiDrawableHelper;
 import net.sievert.jolcraft.integration.jei.util.gui.JeiTextures;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -166,7 +167,7 @@ public final class JeiInfoPageCategory
                     lines.get(i + scrollOffset),
                     8,
                     TEXT_START_Y + i * LINE_HEIGHT,
-                    0x444444,
+                    JolCraftColors.rgb("444444"),
                     false
             );
         }
@@ -189,7 +190,7 @@ public final class JeiInfoPageCategory
                 barY,
                 barX + barWidth,
                 barY + textHeight,
-                0x66BBBBBB
+                JolCraftColors.argb("BBBBBB", 102)
         );
 
         float ratio =
@@ -225,7 +226,7 @@ public final class JeiInfoPageCategory
                 thumbY,
                 barX + barWidth,
                 thumbY + thumbHeight,
-                0xFF888888
+                JolCraftColors.argb("888888")
         );
 
         graphics.fill(
@@ -233,7 +234,7 @@ public final class JeiInfoPageCategory
                 thumbY + 1,
                 barX + barWidth - 1,
                 thumbY + thumbHeight - 1,
-                0xFF666666
+                JolCraftColors.argb("666666")
         );
     }
 

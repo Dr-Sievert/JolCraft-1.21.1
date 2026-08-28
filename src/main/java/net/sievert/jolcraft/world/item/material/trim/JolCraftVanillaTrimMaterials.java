@@ -11,6 +11,7 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 import net.sievert.jolcraft.data.id.item.JolCraftTrimIds;
+import net.sievert.jolcraft.util.client.JolCraftColors;
 import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 import net.sievert.jolcraft.world.item.material.armor.JolCraftArmorMaterials;
@@ -54,12 +55,12 @@ public final class JolCraftVanillaTrimMaterials {
             new Entry(
                     JolCraftMaterials.Material.DEEPSLATE,
                     JolCraftItems.DEEPSLATE_PLATE,
-                    "#595959"
+                    "595959"
             ),
             new Entry(
                     JolCraftMaterials.Material.MITHRIL,
                     JolCraftItems.MITHRIL_INGOT,
-                    "#a6cfe5"
+                    "A6CFE5"
             )
     );
 
@@ -105,7 +106,7 @@ public final class JolCraftVanillaTrimMaterials {
     }
 
     private static @NotNull Style style(@NotNull String hexColor) {
-        return Style.EMPTY.withColor(TextColor.parseColor(hexColor).getOrThrow());
+        return Style.EMPTY.withColor(TextColor.fromRgb(JolCraftColors.rgb(hexColor)));
     }
 
     private static void register(
