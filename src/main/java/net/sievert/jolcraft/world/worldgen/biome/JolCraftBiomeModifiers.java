@@ -147,7 +147,7 @@ public class JolCraftBiomeModifiers {
                                         JolCraftPlacedFeatures.ORE_BASALT_GEODE_PLACED_KEY
                                 )
                         ),
-                        GenerationStep.Decoration.UNDERGROUND_ORES
+                        GenerationStep.Decoration.UNDERGROUND_DECORATION
                 )
         );
 

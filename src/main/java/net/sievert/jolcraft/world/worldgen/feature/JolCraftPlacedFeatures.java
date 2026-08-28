@@ -228,7 +228,7 @@ public class JolCraftPlacedFeatures {
                 configuredFeatures.getOrThrow(
                         JolCraftConfiguredFeatures.ORE_BASALT_GEODE_KEY
                 ),
-                JolCraftOreReplacement.commonNetherOrePlacement(100)
+                JolCraftOreReplacement.commonNetherOrePlacement(50)
         );
 
         register(

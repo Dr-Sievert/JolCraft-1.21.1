@@ -223,8 +223,8 @@ public class JolCraftConfiguredFeatures {
         register(
                 context,
                 ORE_BASALT_GEODE_KEY,
-                Feature.ORE,
-                new OreConfiguration(basaltGeodeOres, 1)
+                Feature.REPLACE_SINGLE_BLOCK,
+                new ReplaceBlockConfiguration(basaltGeodeOres)
         );
 
         //Geodes
