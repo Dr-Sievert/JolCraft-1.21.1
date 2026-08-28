@@ -21,6 +21,8 @@ import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyReward
 import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyRewardHelper;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskCategory;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskHelper;
+import net.sievert.jolcraft.integration.jei.custom.brewing.corruption.JeiCorruptionCategory;
+import net.sievert.jolcraft.integration.jei.custom.brewing.corruption.JeiCorruptionHelper;
 import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel.JeiFermentingBarrelCategory;
 import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel.JeiFermentingBarrelHelper;
 import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_cauldron.JeiFermentingCauldronCategory;
@@ -72,6 +74,17 @@ public final class JolCraftJeiPlugin implements IModPlugin {
                             catalysts(
                                     () -> new ItemStack(
                                             JolCraftBlocks.MORTAR.get()
+                                    )
+                            )
+                    ),
+
+                    new JeiCategoryDefinition<>(
+                            JeiCorruptionCategory::new,
+                            JeiRecipeTypes.CORRUPTION,
+                            JeiCorruptionHelper::getRecipes,
+                            catalysts(
+                                    () -> new ItemStack(
+                                            Blocks.BREWING_STAND
                                     )
                             )
                     ),

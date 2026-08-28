@@ -67,4 +67,5 @@ public final class JolCraftDataComponentIds extends JolCraftIds {
     public static final String BREW_AGE = join(JolCraftDictionary.BREW, JolCraftDictionary.AGE);
     public static final String MAX_BREW_AGE = join(JolCraftDictionary.MAX, BREW_AGE);
     public static final String BREWING_SPEED = join(JolCraftDictionary.BREWING, JolCraftDictionary.SPEED);
+    public static final String CORRUPTION_DATA = join(JolCraftDictionary.POTION, JolCraftDictionary.CORRUPTION);
 }

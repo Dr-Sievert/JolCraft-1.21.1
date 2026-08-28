@@ -42,6 +42,9 @@ public class JolCraftBiomeModifiers {
 
     // Ores
 
+    public static final ResourceKey<BiomeModifier> ADD_ORE_BASALT_GEODE =
+            registerKey(JolCraftBiomeModifierIds.ADD_ORE_BASALT_GEODE);
+
     public static final ResourceKey<BiomeModifier> ADD_ORE_TUFF_VITRIOL =
             registerKey(JolCraftBiomeModifierIds.ADD_ORE_TUFF_VITRIOL);
 
@@ -134,6 +137,19 @@ public class JolCraftBiomeModifiers {
         );
 
         //Ores
+
+        context.register(
+                ADD_ORE_BASALT_GEODE,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        HolderSet.direct(biomes.getOrThrow(Biomes.BASALT_DELTAS)),
+                        HolderSet.direct(
+                                placedFeatures.getOrThrow(
+                                        JolCraftPlacedFeatures.ORE_BASALT_GEODE_PLACED_KEY
+                                )
+                        ),
+                        GenerationStep.Decoration.UNDERGROUND_ORES
+                )
+        );
 
         context.register(
                 ADD_ORE_TUFF_VITRIOL,

@@ -48,7 +48,7 @@ public record MortarRecipesSubProvider(
                 output,
                 tracking,
                 MortarRecipeBuilder.create()
-                        .input(Items.CHORUS_FRUIT)
+                        .input(JolCraftBlocks.FESTERLING)
                         .essenceOutput(EssenceType.INFUSED)
                         .grindingWork(100)
                         .toolDamage(1)
@@ -73,7 +73,7 @@ public record MortarRecipesSubProvider(
                 MortarRecipeBuilder.create()
                         .essenceInput(EssenceType.REFINED)
                         .input(JolCraftItems.VITRIOL)
-                        .input(Items.GOLD_INGOT)
+                        .input(Items.CHORUS_FRUIT)
                         .essenceOutput(EssenceType.EXALTED)
                         .grindingWork(300)
                         .toolDamage(3)
@@ -154,22 +154,13 @@ public record MortarRecipesSubProvider(
                         .buildValidated()
         );
 
-        emit(
-                output,
-                tracking,
-                MortarRecipeBuilder.create()
-                        .input(Items.LILY_OF_THE_VALLEY)
-                        .result(Items.WHITE_DYE, 2)
-                        .grindingWork(10)
-                        .toolDamage(1)
-                        .buildValidated()
-        );
+        //Dyes
 
         emit(
                 output,
                 tracking,
                 MortarRecipeBuilder.create()
-                        .input(Items.BONE_MEAL)
+                        .input(Items.LILY_OF_THE_VALLEY)
                         .result(Items.WHITE_DYE, 2)
                         .grindingWork(10)
                         .toolDamage(1)

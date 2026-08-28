@@ -9,4 +9,7 @@ public interface MobEffectInstanceAccessor {
 
     @Accessor("duration")
     void jolcraft$setDuration(int duration);
+
+    @Accessor("amplifier")
+    void jolcraft$setAmplifier(int amplifier);
 }

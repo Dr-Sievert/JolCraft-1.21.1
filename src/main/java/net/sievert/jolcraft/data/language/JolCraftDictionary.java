@@ -312,6 +312,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String CORNER = "corner";
     public static final String CORRIDOR = "corridor";
     public static final String CORROSION = "corrosion";
+    public static final String CORRUPTION = "corruption";
     public static final String COST = "cost";
     public static final String COUNT = "count";
     public static final String CRATE = "crate";

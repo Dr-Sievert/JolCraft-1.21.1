@@ -8,6 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.sievert.jolcraft.JolCraft;
+import net.sievert.jolcraft.config.custom.brewing.CorruptionEffectsConfigManager;
 import net.sievert.jolcraft.config.custom.dwarf.DwarfProfessionConfigManager;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -24,7 +25,8 @@ public final class JolCraftConfigs {
     private static final String COMMON_CONFIG_FILE = JolCraftStrings.dashed(JolCraft.MOD_ID, Rarity.COMMON.name().toLowerCase()) + ".toml";
 
     public static final List<PreparableReloadListener> ALL = List.of(
-            DwarfProfessionConfigManager.INSTANCE
+            DwarfProfessionConfigManager.INSTANCE,
+            CorruptionEffectsConfigManager.INSTANCE
     );
 
     private JolCraftConfigs() {}

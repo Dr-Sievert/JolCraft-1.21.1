@@ -56,6 +56,9 @@ public class JolCraftConfiguredFeatures {
 
     // Ores
 
+    public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_BASALT_GEODE_KEY =
+            registerKey(JolCraftConfiguredFeatureIds.ORE_BASALT_GEODE);
+
     public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_TUFF_VITRIOL_KEY =
             registerKey(JolCraftConfiguredFeatureIds.ORE_TUFF_VITRIOL);
 
@@ -185,6 +188,7 @@ public class JolCraftConfiguredFeatures {
         RuleTest netherrackReplaceables = new TagMatchTest(Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK);
         RuleTest endReplaceables = new BlockMatchTest(Blocks.END_STONE);
         RuleTest tuffReplaceables = new BlockMatchTest(Blocks.TUFF);
+        RuleTest basaltReplaceables = new BlockMatchTest(Blocks.BASALT);
 
         List<OreConfiguration.TargetBlockState> overworldMithrilOres = List.of(
                 OreConfiguration.target(deepslateReplaceables, JolCraftBlocks.DEEPSLATE_MITHRIL_ORE.get().defaultBlockState()));
@@ -207,6 +211,20 @@ public class JolCraftConfiguredFeatures {
                 ORE_TUFF_VITRIOL_KEY,
                 Feature.ORE,
                 new OreConfiguration(tuffVitriolOres, 3)
+        );
+
+        List<OreConfiguration.TargetBlockState> basaltGeodeOres = List.of(
+                OreConfiguration.target(
+                        basaltReplaceables,
+                        JolCraftBlocks.GEODE_BLOCK.get().defaultBlockState()
+                )
+        );
+
+        register(
+                context,
+                ORE_BASALT_GEODE_KEY,
+                Feature.ORE,
+                new OreConfiguration(basaltGeodeOres, 1)
         );
 
         //Geodes

@@ -51,6 +51,9 @@ public class JolCraftPlacedFeatures {
 
     // Ores
 
+    public static final ResourceKey<PlacedFeature> ORE_BASALT_GEODE_PLACED_KEY =
+            registerKey(JolCraftPlacedFeatureIds.ORE_BASALT_GEODE_PLACED);
+
     public static final ResourceKey<PlacedFeature> ORE_TUFF_VITRIOL_PLACED_KEY =
             registerKey(JolCraftPlacedFeatureIds.ORE_TUFF_VITRIOL_PLACED);
 
@@ -218,6 +221,15 @@ public class JolCraftPlacedFeatures {
         );
 
         //Ores
+
+        register(
+                context,
+                ORE_BASALT_GEODE_PLACED_KEY,
+                configuredFeatures.getOrThrow(
+                        JolCraftConfiguredFeatures.ORE_BASALT_GEODE_KEY
+                ),
+                JolCraftOreReplacement.commonNetherOrePlacement(100)
+        );
 
         register(
                 context,

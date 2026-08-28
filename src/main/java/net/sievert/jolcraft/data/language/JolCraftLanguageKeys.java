@@ -485,6 +485,9 @@ public final class JolCraftLanguageKeys extends AbstractLanguageKeys {
     public static final String JEI_CATEGORY_MORTAR =
             category(JolCraftDictionary.JEI, JolCraftRecipeIds.MORTAR);
 
+    public static final String JEI_CATEGORY_CORRUPTION =
+            category(JolCraftDictionary.JEI, JolCraftDictionary.CORRUPTION);
+
     public static final String JEI_MORTAR_GRINDING_WORK =
             category(
                     JolCraftDictionary.JEI,

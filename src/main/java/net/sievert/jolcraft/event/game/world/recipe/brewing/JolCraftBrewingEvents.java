@@ -46,6 +46,15 @@ public final class JolCraftBrewingEvents {
                 JolCraftPotions.EXALTED
         );
 
+        // Corruption
+
+        recipes += addCorruptionMix(
+                builder
+        );
+        recipes += addCorruptedContainerMixes(
+                builder
+        );
+
         // Endurance
 
         recipes += addInfusedMix(
@@ -75,7 +84,7 @@ public final class JolCraftBrewingEvents {
         // Alchemist Focus
 
         recipes += addExaltedMix(builder,
-                JolCraftBlocks.BLOODROOT,
+                Items.CRIMSON_FUNGUS,
                 JolCraftPotions.ALCHEMIST_FOCUS
         );
 

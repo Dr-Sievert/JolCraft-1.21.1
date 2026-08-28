@@ -2,7 +2,9 @@ package net.sievert.jolcraft.datagen.config;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -24,24 +26,72 @@ public final class ConfigCodecWriter {
             @NotNull Codec<T> codec,
             @NotNull T value
     ) {
-        Optional<JsonElement> jsonOpt = codec.encodeStart(JsonOps.INSTANCE, value)
-                .resultOrPartial(__ -> {});
+        return write(
+                cache,
+                output,
+                path,
+                codec,
+                value,
+                JsonOps.INSTANCE
+        );
+    }
+
+    public static <T> @NotNull CompletableFuture<?> write(
+            @NotNull CachedOutput cache,
+            @NotNull PackOutput output,
+            @NotNull String path,
+            @NotNull Codec<T> codec,
+            @NotNull T value,
+            @NotNull HolderLookup.Provider registries
+    ) {
+        return write(
+                cache,
+                output,
+                path,
+                codec,
+                value,
+                registries.createSerializationContext(
+                        JsonOps.INSTANCE
+                )
+        );
+    }
+
+    private static <T> @NotNull CompletableFuture<?> write(
+            @NotNull CachedOutput cache,
+            @NotNull PackOutput output,
+            @NotNull String path,
+            @NotNull Codec<T> codec,
+            @NotNull T value,
+            @NotNull DynamicOps<JsonElement> ops
+    ) {
+        Optional<JsonElement> jsonOpt =
+                codec.encodeStart(
+                                ops,
+                                value
+                        )
+                        .resultOrPartial(__ -> {});
 
         if (jsonOpt.isEmpty()) {
             return CompletableFuture.failedFuture(
-                    new IllegalStateException("Failed to encode config json for " + path)
+                    new IllegalStateException(
+                            "Failed to encode config json for "
+                                    + path
+                    )
             );
         }
 
-        PackOutput.PathProvider paths = output.createPathProvider(
-                PackOutput.Target.DATA_PACK,
-                JolCraftDataDomain.CONFIG.getId()
-        );
+        PackOutput.PathProvider paths =
+                output.createPathProvider(
+                        PackOutput.Target.DATA_PACK,
+                        JolCraftDataDomain.CONFIG.getId()
+                );
 
         return DataProvider.saveStable(
                 cache,
                 jsonOpt.get(),
-                paths.json(JolCraft.location(path))
+                paths.json(
+                        JolCraft.location(path)
+                )
         );
     }
 }

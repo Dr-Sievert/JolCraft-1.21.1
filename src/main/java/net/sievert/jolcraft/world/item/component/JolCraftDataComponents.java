@@ -17,6 +17,7 @@ import net.sievert.jolcraft.util.log.JolCraftLogs;
 import net.sievert.jolcraft.world.block.fluid.util.brewing.DwarvenBrewAge;
 import net.sievert.jolcraft.world.item.component.custom.BountyData;
 import net.sievert.jolcraft.world.item.component.custom.crate.RewardCrateSource;
+import net.sievert.jolcraft.world.item.component.custom.alchemy.CorruptionData;
 import net.sievert.jolcraft.world.item.component.custom.alchemy.EssenceType;
 import net.sievert.jolcraft.world.item.component.custom.compass.DeepslateCompassDialColor;
 import net.sievert.jolcraft.data.id.data_component.JolCraftDataComponentIds;
@@ -195,6 +196,12 @@ public final class JolCraftDataComponents {
             register(JolCraftDataComponentIds.BREWING_SPEED, builder -> builder
                     .persistent(Codec.FLOAT)
                     .networkSynchronized(ByteBufCodecs.FLOAT)
+            );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CorruptionData>> CORRUPTION_DATA =
+            register(JolCraftDataComponentIds.CORRUPTION_DATA, builder -> builder
+                    .persistent(CorruptionData.CODEC)
+                    .networkSynchronized(CorruptionData.STREAM_CODEC)
             );
 
     // -----------------

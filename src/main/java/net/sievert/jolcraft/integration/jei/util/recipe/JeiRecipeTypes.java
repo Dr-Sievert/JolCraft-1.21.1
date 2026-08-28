@@ -5,6 +5,7 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.data.id.jei.JolCraftJeiIds;
 import net.sievert.jolcraft.integration.jei.custom.bounty.reward.JeiBountyRewardRecipe;
 import net.sievert.jolcraft.integration.jei.custom.bounty.task.JeiBountyTaskRecipe;
+import net.sievert.jolcraft.integration.jei.custom.brewing.corruption.JeiCorruptionRecipe;
 import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_barrel.JeiFermentingBarrelRecipe;
 import net.sievert.jolcraft.integration.jei.custom.brewing.fermenting_cauldron.JeiFermentingCauldronRecipe;
 import net.sievert.jolcraft.integration.jei.custom.dwarf_trade.JeiDwarfTradeRecipe;
@@ -26,6 +27,13 @@ public final class JeiRecipeTypes {
                     JolCraft.MOD_ID,
                     JolCraftJeiIds.MORTAR,
                     JeiMortarRecipe.class
+            );
+
+    public static final RecipeType<JeiCorruptionRecipe> CORRUPTION =
+            RecipeType.create(
+                    JolCraft.MOD_ID,
+                    JolCraftJeiIds.CORRUPTION,
+                    JeiCorruptionRecipe.class
             );
 
     public static final RecipeType<JeiLapidaryBenchRecipe> LAPIDARY_BENCH =

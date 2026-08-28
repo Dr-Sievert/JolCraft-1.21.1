@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.datagen.config;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -8,6 +9,7 @@ import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.datagen.base.JolCraftDataDomain;
 import net.sievert.jolcraft.datagen.base.JolCraftMainDataProvider;
 import net.sievert.jolcraft.datagen.base.JolCraftSubDataProvider;
+import net.sievert.jolcraft.datagen.config.subprovider.CorruptionEffectsConfigProvider;
 import net.sievert.jolcraft.datagen.config.subprovider.DwarfProfessionConfigProvider;
 import net.sievert.jolcraft.util.JolCraftStrings;
 import org.jetbrains.annotations.NotNull;
@@ -15,15 +17,27 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public final class JolCraftConfigProvider implements DataProvider, JolCraftMainDataProvider<CachedOutput> {
+public final class JolCraftConfigProvider
+        implements DataProvider,
+        JolCraftMainDataProvider<CachedOutput> {
 
     private final PackOutput output;
-    private final List<JolCraftSubDataProvider<CachedOutput>> subProviders;
+    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
 
-    public JolCraftConfigProvider(@NotNull PackOutput output) {
+    private final List<JolCraftSubDataProvider<CachedOutput>>
+            subProviders;
+
+    public JolCraftConfigProvider(
+            @NotNull PackOutput output,
+            @NotNull CompletableFuture<HolderLookup.Provider>
+                    lookupProvider
+    ) {
         this.output = output;
+        this.lookupProvider = lookupProvider;
+
         this.subProviders = List.of(
-                new DwarfProfessionConfigProvider(this)
+                new DwarfProfessionConfigProvider(this),
+                new CorruptionEffectsConfigProvider(this)
         );
     }
 
@@ -54,13 +68,23 @@ public final class JolCraftConfigProvider implements DataProvider, JolCraftMainD
     }
 
     @Override
-    public @NotNull List<JolCraftSubDataProvider<CachedOutput>> subProviders() {
+    public @NotNull List<
+            JolCraftSubDataProvider<CachedOutput>
+            > subProviders() {
         return subProviders;
     }
 
     @Override
-    public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cache) {
-        generate(cache, output, null, null);
+    public @NotNull CompletableFuture<?> run(
+            @NotNull CachedOutput cache
+    ) {
+        generate(
+                cache,
+                output,
+                lookupProvider,
+                null
+        );
+
         return CompletableFuture.completedFuture(null);
     }
 }

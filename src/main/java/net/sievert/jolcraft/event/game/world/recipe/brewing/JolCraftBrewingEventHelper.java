@@ -14,6 +14,8 @@ import net.sievert.jolcraft.world.item.JolCraftItems;
 import net.sievert.jolcraft.world.item.component.custom.alchemy.EssenceType;
 import net.sievert.jolcraft.world.item.potion.JolCraftPotions;
 import net.sievert.jolcraft.world.recipe.custom.vanilla.JolCraftBrewingRecipe;
+import net.sievert.jolcraft.world.recipe.custom.vanilla.JolCraftCorruptedContainerBrewingRecipe;
+import net.sievert.jolcraft.world.recipe.custom.vanilla.JolCraftCorruptionBrewingRecipe;
 import net.sievert.jolcraft.world.recipe.custom.vanilla.JolCraftEssenceBrewingRecipe;
 
 import java.util.ArrayList;
@@ -305,6 +307,37 @@ public final class JolCraftBrewingEventHelper {
         );
 
         return 1;
+    }
+
+    public static int addCorruptionMix(
+            PotionBrewing.Builder builder
+    ) {
+        ItemStack essence =
+                JolCraftItems.ESSENCE.get()
+                        .createStack(
+                                EssenceType.CORRUPTED
+                        );
+
+        builder.addRecipe(
+                new JolCraftCorruptionBrewingRecipe(
+                        DataComponentIngredient.of(
+                                false,
+                                essence
+                        )
+                )
+        );
+
+        return 1;
+    }
+
+    public static int addCorruptedContainerMixes(
+            PotionBrewing.Builder builder
+    ) {
+        builder.addRecipe(
+                new JolCraftCorruptedContainerBrewingRecipe()
+        );
+
+        return 2;
     }
 
     public static int addStrong(

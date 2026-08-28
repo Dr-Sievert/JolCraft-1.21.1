@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.event.game.world.recipe;
 
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
@@ -12,7 +13,7 @@ public final class JolCraftRecipeEvents {
 
     private JolCraftRecipeEvents() {}
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onRegisterBrewingRecipes(
             RegisterBrewingRecipesEvent event
     ) {

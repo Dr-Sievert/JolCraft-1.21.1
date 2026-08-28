@@ -26,17 +26,30 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(modid = JolCraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(
+        modid = JolCraft.MOD_ID,
+        bus = EventBusSubscriber.Bus.MOD
+)
 public final class JolCraftDataGenerator {
 
     private JolCraftDataGenerator() {}
 
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
-        DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+    public static void gatherData(
+            GatherDataEvent event
+    ) {
+        DataGenerator generator =
+                event.getGenerator();
+
+        PackOutput packOutput =
+                generator.getPackOutput();
+
+        CompletableFuture<HolderLookup.Provider>
+                lookupProvider =
+                event.getLookupProvider();
+
+        ExistingFileHelper existingFileHelper =
+                event.getExistingFileHelper();
 
         JolCraftLogs.info(
                 JolCraftLogTags.DATAGEN,
@@ -47,69 +60,141 @@ public final class JolCraftDataGenerator {
 
         if (event.includeServer()) {
 
-
-
-            generator.addProvider(true, new JolCraftDataMapProvider(packOutput, lookupProvider));
-            generator.addProvider(true, new JolCraftRecipeProvider(packOutput, lookupProvider));
-            generator.addProvider(true, new JolCraftGlobalLootModifierProvider(packOutput, lookupProvider));
-            generator.addProvider(true, new JolCraftMainLootTableProvider(packOutput, lookupProvider));
-
-            generator.addProvider(true, new JolCraftBiomeTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
-
-            JolCraftBlockTagProvider blockTagsProvider = new JolCraftBlockTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
+            generator.addProvider(
+                    true,
+                    new JolCraftDataMapProvider(
+                            packOutput,
+                            lookupProvider
+                    )
             );
 
-            generator.addProvider(true, blockTagsProvider);
+            generator.addProvider(
+                    true,
+                    new JolCraftRecipeProvider(
+                            packOutput,
+                            lookupProvider
+                    )
+            );
 
-            generator.addProvider(true, new JolCraftDamageTypeTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
+            generator.addProvider(
+                    true,
+                    new JolCraftGlobalLootModifierProvider(
+                            packOutput,
+                            lookupProvider
+                    )
+            );
 
-            generator.addProvider(true, new JolCraftEntityTypeTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
+            generator.addProvider(
+                    true,
+                    new JolCraftMainLootTableProvider(
+                            packOutput,
+                            lookupProvider
+                    )
+            );
 
-            generator.addProvider(true, new JolCraftInstrumentTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
+            generator.addProvider(
+                    true,
+                    new JolCraftBiomeTagProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper
+                    )
+            );
 
-            generator.addProvider(true, new JolCraftItemTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    blockTagsProvider.contentsGetter(),
-                    existingFileHelper
-            ));
+            JolCraftBlockTagProvider blockTagsProvider =
+                    new JolCraftBlockTagProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper
+                    );
 
+            generator.addProvider(
+                    true,
+                    blockTagsProvider
+            );
 
-            generator.addProvider(true, new JolCraftStructureTagProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper
-            ));
+            generator.addProvider(
+                    true,
+                    new JolCraftDamageTypeTagProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper
+                    )
+            );
 
-            generator.addProvider(true, new AdvancementProvider(
-                    packOutput,
-                    lookupProvider,
-                    existingFileHelper,
-                    List.of((registries, consumer, fileHelper) ->
-                            new JolCraftAdvancementProvider().generate(registries, consumer))
-            ));
+            generator.addProvider(
+                    true,
+                    new JolCraftEntityTypeTagProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper
+                    )
+            );
 
-            generator.addProvider(true, new JolCraftDatapackProvider(packOutput, lookupProvider));
-            generator.addProvider(true, new JolCraftConfigProvider(packOutput));
+            generator.addProvider(
+                    true,
+                    new JolCraftInstrumentTagProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new JolCraftItemTagProvider(
+                            packOutput,
+                            lookupProvider,
+                            blockTagsProvider.contentsGetter(),
+                            existingFileHelper
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new JolCraftStructureTagProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new AdvancementProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper,
+                            List.of(
+                                    (
+                                            registries,
+                                            consumer,
+                                            fileHelper
+                                    ) ->
+                                            new JolCraftAdvancementProvider()
+                                                    .generate(
+                                                            registries,
+                                                            consumer
+                                                    )
+                            )
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new JolCraftDatapackProvider(
+                            packOutput,
+                            lookupProvider
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new JolCraftConfigProvider(
+                            packOutput,
+                            lookupProvider
+                    )
+            );
 
             JolCraftLogs.debug(
                     JolCraftLogTags.DATAGEN,
@@ -128,10 +213,36 @@ public final class JolCraftDataGenerator {
         }
 
         if (event.includeClient()) {
-            generator.addProvider(true, new JolCraftModelProvider(packOutput, lookupProvider, existingFileHelper));
-            generator.addProvider(true, new JolCraftLanguageProvider(packOutput));
-            generator.addProvider(true, new JolCraftAtlasProvider(packOutput));
-            generator.addProvider(true, new JolCraftSoundProvider(packOutput, existingFileHelper));
+            generator.addProvider(
+                    true,
+                    new JolCraftModelProvider(
+                            packOutput,
+                            lookupProvider,
+                            existingFileHelper
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new JolCraftLanguageProvider(
+                            packOutput
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new JolCraftAtlasProvider(
+                            packOutput
+                    )
+            );
+
+            generator.addProvider(
+                    true,
+                    new JolCraftSoundProvider(
+                            packOutput,
+                            existingFileHelper
+                    )
+            );
 
             JolCraftLogs.debug(
                     JolCraftLogTags.DATAGEN,

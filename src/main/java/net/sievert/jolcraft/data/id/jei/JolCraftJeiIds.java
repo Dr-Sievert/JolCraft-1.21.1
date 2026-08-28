@@ -15,6 +15,7 @@ public class JolCraftJeiIds extends JolCraftIds {
     public static final String DWARF_TRADE = JolCraftRecipeIds.DWARF_TRADE;
     public static final String LAPIDARY_BENCH = JolCraftRecipeIds.LAPIDARY_BENCH;
     public static final String MORTAR = JolCraftBlockIds.MORTAR;
+    public static final String CORRUPTION = JolCraftDictionary.CORRUPTION;
     public static final String HAND_INTERACTION = JolCraftRecipeIds.HAND_INTERACTION;
     public static final String FERMENTING_CAULDRON = JolCraftRecipeIds.FERMENTING_CAULDRON;
     public static final String FERMENTING_BARREL = JolCraftBlockIds.FERMENTING_BARREL;
