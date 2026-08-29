@@ -153,10 +153,26 @@ public abstract class JolCraftMenu extends AbstractContainerMenu {
     }
 
     public static int tile(int tile) {
-        return tile * TILE_SIZE;
+        if (tile < 1) {
+            throw new IllegalArgumentException(
+                    "Tile must be at least 1"
+            );
+        }
+
+        return (tile - 1) * TILE_SIZE;
     }
 
     public static int slot(int tile) {
         return tile(tile);
+    }
+
+    public static int tileIndex(int tileIndex) {
+        if (tileIndex < 0) {
+            throw new IllegalArgumentException(
+                    "Tile index cannot be negative"
+            );
+        }
+
+        return tileIndex * TILE_SIZE;
     }
 }

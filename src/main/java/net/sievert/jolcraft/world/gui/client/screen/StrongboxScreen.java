@@ -1,47 +1,58 @@
 package net.sievert.jolcraft.world.gui.client.screen;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
-import net.sievert.jolcraft.util.client.JolCraftColors;
-import net.sievert.jolcraft.util.client.JolCraftTextures;
 import net.sievert.jolcraft.world.gui.menu.StrongboxMenu;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
-public class StrongboxScreen extends AbstractContainerScreen<StrongboxMenu> {
+public class StrongboxScreen
+        extends JolCraftScreen<StrongboxMenu> {
 
-    private static final ResourceLocation TEXTURE = JolCraftTextures.mod(JolCraftTextures.container(JolCraftBlockIds.STRONGBOX));
+    private static final int STRONGBOX_SIZE = 18;
 
-    public StrongboxScreen(StrongboxMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
-        this.imageWidth = 176;
-        this.imageHeight = 150;
-        this.titleLabelY = 6;
-        this.inventoryLabelY = 56;
+    public StrongboxScreen(
+            StrongboxMenu menu,
+            Inventory playerInventory,
+            Component title
+    ) {
+        super(
+                menu,
+                playerInventory,
+                title
+        );
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
+    protected void renderBg(
+            GuiGraphics guiGraphics,
+            float partialTicks,
+            int mouseX,
+            int mouseY
+    ) {
+        super.renderBg(
+                guiGraphics,
+                partialTicks,
+                mouseX,
+                mouseY
+        );
 
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, 176, 150);
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, JolCraftColors.rgb("DDDDDD"), false);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, JolCraftColors.rgb("DDDDDD"), false);
+        for (int slotIndex = 0;
+             slotIndex < STRONGBOX_SIZE;
+             slotIndex++) {
+            renderSlotBackground(
+                    guiGraphics,
+                    this.menu.getSlot(
+                            slotIndex
+                    )
+            );
+        }
     }
 }

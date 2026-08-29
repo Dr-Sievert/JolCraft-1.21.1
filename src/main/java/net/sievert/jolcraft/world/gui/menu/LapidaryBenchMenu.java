@@ -105,8 +105,8 @@ public class LapidaryBenchMenu extends JolCraftMenu {
         this.addSlot(new JolCraftSlot(
                 container,
                 LapidaryBenchBlockEntity.SLOT_INPUT,
-                slot(2),
-                slot(2)
+                slot(3),
+                slot(3)
         ).onSlotChanged(
                 this::refreshBenchState
         ));
@@ -114,8 +114,8 @@ public class LapidaryBenchMenu extends JolCraftMenu {
         this.addSlot(new JolCraftSlot(
                 container,
                 LapidaryBenchBlockEntity.SLOT_TOOL,
-                slot(4),
-                slot(2)
+                slot(5),
+                slot(3)
         ).onSlotChanged(
                 this::refreshBenchState
         ).mayPlaceRule(stack ->
@@ -131,8 +131,8 @@ public class LapidaryBenchMenu extends JolCraftMenu {
                 this.player,
                 container,
                 LapidaryBenchBlockEntity.SLOT_OUTPUT,
-                slot(8),
-                slot(2)
+                slot(9),
+                slot(3)
         ));
 
         appendPlayerInventory(

@@ -6,7 +6,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.SimpleContainerData;
@@ -24,7 +23,7 @@ import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class MortarMenu extends AbstractContainerMenu {
+public class MortarMenu extends JolCraftMenu {
 
     private static final int MORTAR_SLOT_COUNT = 5;
 
@@ -35,11 +34,8 @@ public class MortarMenu extends AbstractContainerMenu {
 
     private static final int GRIND_BUTTON_ID = 0;
 
-    private static final int PLAYER_SLOT_START = 5;
-    private static final int PLAYER_SLOT_END = 41;
-    private static final int PLAYER_MAIN_END = 32;
+    private static final int MENU_HEIGHT_TILES = 6;
 
-    private final Player player;
     private final ContainerData data;
     private final ContainerLevelAccess access;
 
@@ -90,7 +86,9 @@ public class MortarMenu extends AbstractContainerMenu {
             );
         }
 
-        return blockEntity.createContainerData(serverPlayer);
+        return blockEntity.createContainerData(
+                serverPlayer
+        );
     }
 
     private MortarMenu(
@@ -102,10 +100,12 @@ public class MortarMenu extends AbstractContainerMenu {
     ) {
         super(
                 JolCraftMenuTypes.MORTAR_MENU.get(),
-                windowId
+                windowId,
+                STANDARD_WIDTH_TILES,
+                MENU_HEIGHT_TILES
         );
 
-        this.player = playerInventory.player;
+        Player player = playerInventory.player;
         this.data = data;
         this.access = access;
 
@@ -122,62 +122,50 @@ public class MortarMenu extends AbstractContainerMenu {
         this.addSlot(new JolCraftSlot(
                 container,
                 MortarBlockEntity.SLOT_INPUT_1,
-                16,
-                32
+                slot(2),
+                slot(3)
         ));
 
         this.addSlot(new JolCraftSlot(
                 container,
                 MortarBlockEntity.SLOT_INPUT_2,
-                48,
-                32
+                slot(4),
+                slot(3)
         ));
 
         this.addSlot(new JolCraftSlot(
                 container,
                 MortarBlockEntity.SLOT_INPUT_3,
-                80,
-                32
+                slot(6),
+                slot(3)
         ));
 
         this.addSlot(new JolCraftResultSlot(
-                this.player,
+                player,
                 container,
                 MortarBlockEntity.SLOT_OUTPUT,
-                112,
-                16
+                slot(10),
+                slot(5)
         ));
 
         this.addSlot(new JolCraftSlot(
                 container,
                 MortarBlockEntity.SLOT_TOOL,
-                144,
-                16
+                slot(8),
+                slot(3)
         ).mayPlaceRule(stack ->
-                stack.is(JolCraftTags.Items.PESTLES)
+                stack.is(
+                        JolCraftTags.Items.PESTLES
+                )
         ));
 
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(
-                        playerInventory,
-                        col + row * 9 + 9,
-                        8 + col * 18,
-                        68 + row * 18
-                ));
-            }
-        }
+        appendPlayerInventory(
+                playerInventory
+        );
 
-        for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(
-                    playerInventory,
-                    col,
-                    8 + col * 18,
-                    126
-            ));
-        }
-
-        this.addDataSlots(this.data);
+        this.addDataSlots(
+                this.data
+        );
     }
 
     public boolean isRecipeValid() {
@@ -191,33 +179,25 @@ public class MortarMenu extends AbstractContainerMenu {
                 && hasTool();
     }
 
-    public int getGrindingProgress() {
-        return this.data.get(
-                DATA_GRINDING_PROGRESS
-        );
-    }
+    public float getGrindingProgress() {
+        int progress =
+                this.data.get(
+                        DATA_GRINDING_PROGRESS
+                );
 
-    public int getGrindingWork() {
-        return this.data.get(
-                DATA_GRINDING_WORK
-        );
-    }
+        int work =
+                this.data.get(
+                        DATA_GRINDING_WORK
+                );
 
-    public int getScaledGrindingProgress(
-            int width
-    ) {
-        int progress = getGrindingProgress();
-        int work = getGrindingWork();
-
-        if (width <= 0
-                || progress <= 0
+        if (progress <= 0
                 || work <= 0) {
-            return 0;
+            return 0.0F;
         }
 
-        return (int) Math.min(
-                (long) width,
-                (long) progress * width / work
+        return Math.min(
+                1.0F,
+                (float) progress / work
         );
     }
 
@@ -249,7 +229,8 @@ public class MortarMenu extends AbstractContainerMenu {
             Player player,
             int index
     ) {
-        Slot slot = this.slots.get(index);
+        Slot slot =
+                this.slots.get(index);
 
         if (!slot.hasItem()) {
             return ItemStack.EMPTY;
@@ -264,8 +245,8 @@ public class MortarMenu extends AbstractContainerMenu {
         if (index == MortarBlockEntity.SLOT_OUTPUT) {
             if (!this.moveItemStackTo(
                     stackInSlot,
-                    PLAYER_SLOT_START,
-                    PLAYER_SLOT_END,
+                    getPlayerInventorySlotStart(),
+                    getPlayerInventorySlotEnd(),
                     true
             )) {
                 return ItemStack.EMPTY;
@@ -275,7 +256,7 @@ public class MortarMenu extends AbstractContainerMenu {
                     stackInSlot,
                     originalStack
             );
-        } else if (index >= PLAYER_SLOT_START) {
+        } else if (index >= getPlayerInventorySlotStart()) {
             if (stackInSlot.is(
                     JolCraftTags.Items.PESTLES
             )) {
@@ -293,19 +274,19 @@ public class MortarMenu extends AbstractContainerMenu {
                     MortarBlockEntity.SLOT_OUTPUT,
                     false
             )) {
-                if (index < PLAYER_MAIN_END) {
+                if (index < getPlayerInventoryMainEnd()) {
                     if (!this.moveItemStackTo(
                             stackInSlot,
-                            PLAYER_MAIN_END,
-                            PLAYER_SLOT_END,
+                            getPlayerInventoryMainEnd(),
+                            getPlayerInventorySlotEnd(),
                             false
                     )) {
                         return ItemStack.EMPTY;
                     }
                 } else if (!this.moveItemStackTo(
                         stackInSlot,
-                        PLAYER_SLOT_START,
-                        PLAYER_MAIN_END,
+                        getPlayerInventorySlotStart(),
+                        getPlayerInventoryMainEnd(),
                         false
                 )) {
                     return ItemStack.EMPTY;
@@ -313,8 +294,8 @@ public class MortarMenu extends AbstractContainerMenu {
             }
         } else if (!this.moveItemStackTo(
                 stackInSlot,
-                PLAYER_SLOT_START,
-                PLAYER_SLOT_END,
+                getPlayerInventorySlotStart(),
+                getPlayerInventorySlotEnd(),
                 false
         )) {
             return ItemStack.EMPTY;
@@ -352,7 +333,9 @@ public class MortarMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(
+            Player player
+    ) {
         return stillValid(
                 this.access,
                 player,

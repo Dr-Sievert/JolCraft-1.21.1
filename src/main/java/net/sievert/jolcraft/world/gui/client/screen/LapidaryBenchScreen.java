@@ -19,9 +19,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LapidaryBenchScreen
         extends JolCraftScreen<LapidaryBenchMenu> {
 
-    private static final int TOOL_BUTTON_TILE_X = 6;
-    private static final int TOOL_BUTTON_TILE_Y = 2;
-    private static final ItemLike TOOL_TEXTURE = JolCraftItems.DEEPSLATE_ARTISAN_HAMMER;
+    private static final int TOOL_BUTTON_TILE_X = 7;
+    private static final int TOOL_BUTTON_TILE_Y = 3;
+
+    private static final ItemLike TOOL_TEXTURE =
+            JolCraftItems.DEEPSLATE_ARTISAN_HAMMER;
 
     public LapidaryBenchScreen(
             LapidaryBenchMenu menu,

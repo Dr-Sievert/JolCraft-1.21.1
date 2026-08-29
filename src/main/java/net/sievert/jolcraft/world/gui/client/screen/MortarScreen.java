@@ -1,61 +1,37 @@
 package net.sievert.jolcraft.world.gui.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.sievert.jolcraft.JolCraft;
-import net.sievert.jolcraft.data.id.block.JolCraftBlockIds;
-import net.sievert.jolcraft.data.language.JolCraftDictionary;
-import net.sievert.jolcraft.util.JolCraftStrings;
-import net.sievert.jolcraft.util.client.JolCraftColors;
-import net.sievert.jolcraft.util.client.JolCraftTextures;
+import net.sievert.jolcraft.world.block.entity.custom.MortarBlockEntity;
+import net.sievert.jolcraft.world.gui.client.util.JolCraftProgressRenderer;
 import net.sievert.jolcraft.world.gui.menu.MortarMenu;
+import net.sievert.jolcraft.world.item.JolCraftItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
-public class MortarScreen extends AbstractContainerScreen<MortarMenu> {
+public class MortarScreen
+        extends JolCraftScreen<MortarMenu> {
 
-    private static final ResourceLocation TEXTURE =
-            JolCraftTextures.mod(
-                    JolCraftTextures.container(
-                            JolCraftBlockIds.MORTAR
-                    )
-            );
+    private static final ItemLike TOOL_TEXTURE =
+            JolCraftItems.DEEPSLATE_PESTLE;
 
-    private static final ResourceLocation PROGRESS_SPRITE = JolCraft.location(JolCraftStrings.slashed(JolCraftBlockIds.MORTAR, JolCraftStrings.underscored(
-            JolCraftDictionary.RECIPE,
-            JolCraftDictionary.ARROW,
-            JolCraftDictionary.FILLED
-    )));
+    private static final int PROGRESS_TILE_X = 2;
+    private static final int PROGRESS_TILE_Y = 5;
+    private static final int PROGRESS_LENGTH_TILES = 8;
+    private static final int PROGRESS_START_PADDING = 7;
+    private static final int PROGRESS_END_PADDING = 7;
 
-    private static final ResourceLocation HIGHLIGHT_SPRITE =
-            JolCraftTextures.modWidget(
-                    JolCraftStrings.underscored(
-                            JolCraftDictionary.SLOT,
-                            JolCraftDictionary.HIGHLIGHTED
-                    )
-            );
+    private static final int TOOL_BUTTON_TILE_X = 10;
+    private static final int TOOL_BUTTON_TILE_Y = 3;
 
-    private static final int PROGRESS_X = 7;
-    private static final int PROGRESS_Y = 15;
-    private static final int PROGRESS_WIDTH = 98;
-    private static final int PROGRESS_HEIGHT = 15;
-
-    private static final int TOOL_BUTTON_X = 144;
-    private static final int TOOL_BUTTON_Y = 48;
-
-    private static final int BUTTON_SIZE = 16;
-    private static final int HIGHLIGHT_SIZE = 17;
     private static final int GRIND_BUTTON_ID = 0;
 
     public MortarScreen(
@@ -68,175 +44,81 @@ public class MortarScreen extends AbstractContainerScreen<MortarMenu> {
                 playerInventory,
                 title
         );
-
-        this.imageWidth = 176;
-        this.imageHeight = 150;
-        this.titleLabelY = 6;
-        this.inventoryLabelY = 56;
-    }
-
-    @Override
-    public void render(
-            GuiGraphics gg,
-            int mouseX,
-            int mouseY,
-            float partialTicks
-    ) {
-        super.render(
-                gg,
-                mouseX,
-                mouseY,
-                partialTicks
-        );
-
-        this.renderTooltip(
-                gg,
-                mouseX,
-                mouseY
-        );
     }
 
     @Override
     protected void renderBg(
-            GuiGraphics gg,
+            GuiGraphics guiGraphics,
             float partialTicks,
             int mouseX,
             int mouseY
     ) {
-        int x =
-                (this.width - this.imageWidth) / 2;
-
-        int y =
-                (this.height - this.imageHeight) / 2;
-
-        gg.blit(
-                TEXTURE,
-                x,
-                y,
-                0,
-                0.0F,
-                0.0F,
-                this.imageWidth,
-                this.imageHeight,
-                176,
-                150
+        super.renderBg(
+                guiGraphics,
+                partialTicks,
+                mouseX,
+                mouseY
         );
 
-        int progressWidth =
-                menu.getScaledGrindingProgress(
-                        PROGRESS_WIDTH
-                );
+        renderSlotBackground(
+                guiGraphics,
+                this.menu.getSlot(
+                        MortarBlockEntity.SLOT_INPUT_1
+                )
+        );
 
-        if (progressWidth > 0) {
-            gg.blitSprite(
-                    PROGRESS_SPRITE,
-                    PROGRESS_WIDTH,
-                    PROGRESS_HEIGHT,
-                    0,
-                    0,
-                    x + PROGRESS_X,
-                    y + PROGRESS_Y,
-                    progressWidth,
-                    PROGRESS_HEIGHT
+        renderSlotBackground(
+                guiGraphics,
+                this.menu.getSlot(
+                        MortarBlockEntity.SLOT_INPUT_2
+                )
+        );
+
+        renderSlotBackground(
+                guiGraphics,
+                this.menu.getSlot(
+                        MortarBlockEntity.SLOT_INPUT_3
+                )
+        );
+
+        renderSlotBackground(
+                guiGraphics,
+                this.menu.getSlot(
+                        MortarBlockEntity.SLOT_OUTPUT
+                )
+        );
+
+        renderToolSlot(
+                guiGraphics,
+                this.menu.getSlot(
+                        MortarBlockEntity.SLOT_TOOL
+                ),
+                TOOL_TEXTURE
+        );
+
+        JolCraftProgressRenderer.render(
+                guiGraphics,
+                this.leftPos,
+                this.topPos,
+                PROGRESS_TILE_X,
+                PROGRESS_TILE_Y,
+                PROGRESS_LENGTH_TILES,
+                PROGRESS_START_PADDING,
+                PROGRESS_END_PADDING,
+                this.menu.getGrindingProgress()
+        );
+
+        if (this.menu.hasTool()) {
+            renderItemButton(
+                    guiGraphics,
+                    TOOL_BUTTON_TILE_X,
+                    TOOL_BUTTON_TILE_Y,
+                    this.menu.getToolStack(),
+                    this.menu.isButtonActive(),
+                    mouseX,
+                    mouseY
             );
         }
-
-        if (!menu.hasTool()) {
-            return;
-        }
-
-        ItemStack toolStack =
-                menu.getToolStack();
-
-        boolean active =
-                menu.isButtonActive();
-
-        int buttonX =
-                x + TOOL_BUTTON_X;
-
-        int buttonY =
-                y + TOOL_BUTTON_Y;
-
-        boolean hovered =
-                active
-                        && isOverButton(
-                        mouseX,
-                        mouseY,
-                        buttonX,
-                        buttonY
-                );
-
-        float alpha =
-                active ? 1.0F : 0.4F;
-
-        gg.flush();
-
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(
-                1.0F,
-                1.0F,
-                1.0F,
-                alpha
-        );
-
-        if (hovered) {
-            gg.blitSprite(
-                    HIGHLIGHT_SPRITE,
-                    buttonX,
-                    buttonY,
-                    HIGHLIGHT_SIZE,
-                    HIGHLIGHT_SIZE
-            );
-        }
-
-        gg.renderItem(
-                toolStack,
-                buttonX,
-                buttonY
-        );
-
-        gg.renderItemDecorations(
-                this.font,
-                toolStack,
-                buttonX,
-                buttonY
-        );
-
-        gg.flush();
-
-        RenderSystem.setShaderColor(
-                1.0F,
-                1.0F,
-                1.0F,
-                1.0F
-        );
-
-        RenderSystem.disableBlend();
-    }
-
-    @Override
-    protected void renderLabels(
-            GuiGraphics gg,
-            int mouseX,
-            int mouseY
-    ) {
-        gg.drawString(
-                this.font,
-                this.title,
-                this.titleLabelX,
-                this.titleLabelY,
-                JolCraftColors.rgb("DDDDDD"),
-                false
-        );
-
-        gg.drawString(
-                this.font,
-                this.playerInventoryTitle,
-                this.inventoryLabelX,
-                this.inventoryLabelY,
-                JolCraftColors.rgb("DDDDDD"),
-                false
-        );
     }
 
     @Override
@@ -246,30 +128,23 @@ public class MortarScreen extends AbstractContainerScreen<MortarMenu> {
             int button
     ) {
         if (button == 0
-                && menu.hasTool()
-                && menu.isButtonActive()) {
-            int x =
-                    (this.width - this.imageWidth) / 2;
+                && this.menu.hasTool()
+                && this.menu.isButtonActive()
+                && isOverButton(
+                mouseX,
+                mouseY,
+                TOOL_BUTTON_TILE_X,
+                TOOL_BUTTON_TILE_Y
+        )) {
+            if (this.minecraft != null
+                    && this.minecraft.gameMode != null) {
+                this.minecraft.gameMode
+                        .handleInventoryButtonClick(
+                                this.menu.containerId,
+                                GRIND_BUTTON_ID
+                        );
 
-            int y =
-                    (this.height - this.imageHeight) / 2;
-
-            if (isOverButton(
-                    mouseX,
-                    mouseY,
-                    x + TOOL_BUTTON_X,
-                    y + TOOL_BUTTON_Y
-            )) {
-                if (this.minecraft != null
-                        && this.minecraft.gameMode != null) {
-                    this.minecraft.gameMode
-                            .handleInventoryButtonClick(
-                                    this.menu.containerId,
-                                    GRIND_BUTTON_ID
-                            );
-
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -278,17 +153,5 @@ public class MortarScreen extends AbstractContainerScreen<MortarMenu> {
                 mouseY,
                 button
         );
-    }
-
-    private boolean isOverButton(
-            double mouseX,
-            double mouseY,
-            int buttonX,
-            int buttonY
-    ) {
-        return mouseX >= buttonX
-                && mouseY >= buttonY
-                && mouseX < buttonX + BUTTON_SIZE
-                && mouseY < buttonY + BUTTON_SIZE;
     }
 }

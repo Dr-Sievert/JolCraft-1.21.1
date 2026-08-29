@@ -173,7 +173,7 @@ public abstract class JolCraftScreen<M extends JolCraftMenu>
                 this.title,
                 this.titleLabelX,
                 this.titleLabelY,
-                JolCraftColors.rgb("FFFFFF"),
+                JolCraftColors.rgb("D0D0D0"),
                 false
         );
 
@@ -483,9 +483,9 @@ public abstract class JolCraftScreen<M extends JolCraftMenu>
                 guiGraphics.blit(
                         texture,
                         this.leftPos
-                                + JolCraftMenu.tile(tileX),
+                                + JolCraftMenu.tileIndex(tileX),
                         this.topPos
-                                + JolCraftMenu.tile(tileY),
+                                + JolCraftMenu.tileIndex(tileY),
                         0,
                         getSourceCoordinate(
                                 tileX,
@@ -529,11 +529,11 @@ public abstract class JolCraftScreen<M extends JolCraftMenu>
             for (int tileX = 0; tileX < widthTiles; tileX++) {
                 int x =
                         this.leftPos
-                                + JolCraftMenu.tile(tileX);
+                                + JolCraftMenu.tileIndex(tileX);
 
                 int y =
                         this.topPos
-                                + JolCraftMenu.tile(tileY);
+                                + JolCraftMenu.tileIndex(tileY);
 
                 boolean left =
                         tileX == 0;
@@ -608,38 +608,9 @@ public abstract class JolCraftScreen<M extends JolCraftMenu>
             int x,
             int y
     ) {
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x + 2,
-                y,
-                2,
-                0,
-                14,
-                1
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x + 1,
-                y + 1,
-                1,
-                1,
-                15,
-                1
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y + 2,
-                0,
-                2,
-                16,
-                14
-        );
+        renderThemeRegion(guiGraphics, themeTexture, x + 2, y, 2, 0, 14, 1);
+        renderThemeRegion(guiGraphics, themeTexture, x + 1, y + 1, 1, 1, 15, 1);
+        renderThemeRegion(guiGraphics, themeTexture, x, y + 2, 0, 2, 16, 14);
     }
 
     private void renderTopRightThemeCorner(
@@ -648,38 +619,9 @@ public abstract class JolCraftScreen<M extends JolCraftMenu>
             int x,
             int y
     ) {
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y,
-                0,
-                0,
-                14,
-                1
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y + 1,
-                0,
-                1,
-                15,
-                1
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y + 2,
-                0,
-                2,
-                16,
-                14
-        );
+        renderThemeRegion(guiGraphics, themeTexture, x, y, 0, 0, 14, 1);
+        renderThemeRegion(guiGraphics, themeTexture, x, y + 1, 0, 1, 15, 1);
+        renderThemeRegion(guiGraphics, themeTexture, x, y + 2, 0, 2, 16, 14);
     }
 
     private void renderBottomLeftThemeCorner(
@@ -688,38 +630,9 @@ public abstract class JolCraftScreen<M extends JolCraftMenu>
             int x,
             int y
     ) {
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y,
-                0,
-                0,
-                16,
-                14
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x + 1,
-                y + 14,
-                1,
-                14,
-                15,
-                1
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x + 2,
-                y + 15,
-                2,
-                15,
-                14,
-                1
-        );
+        renderThemeRegion(guiGraphics, themeTexture, x, y, 0, 0, 16, 14);
+        renderThemeRegion(guiGraphics, themeTexture, x + 1, y + 14, 1, 14, 15, 1);
+        renderThemeRegion(guiGraphics, themeTexture, x + 2, y + 15, 2, 15, 14, 1);
     }
 
     private void renderBottomRightThemeCorner(
@@ -728,38 +641,9 @@ public abstract class JolCraftScreen<M extends JolCraftMenu>
             int x,
             int y
     ) {
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y,
-                0,
-                0,
-                16,
-                14
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y + 14,
-                0,
-                14,
-                15,
-                1
-        );
-
-        renderThemeRegion(
-                guiGraphics,
-                themeTexture,
-                x,
-                y + 15,
-                0,
-                15,
-                14,
-                1
-        );
+        renderThemeRegion(guiGraphics, themeTexture, x, y, 0, 0, 16, 14);
+        renderThemeRegion(guiGraphics, themeTexture, x, y + 14, 0, 14, 15, 1);
+        renderThemeRegion(guiGraphics, themeTexture, x, y + 15, 0, 15, 14, 1);
     }
 
     private void renderThemeRegion(
