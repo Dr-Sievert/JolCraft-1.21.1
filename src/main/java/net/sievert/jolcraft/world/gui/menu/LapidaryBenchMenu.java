@@ -6,7 +6,10 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.data.JolCraftTags;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
@@ -20,31 +23,48 @@ import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class LapidaryBenchMenu extends AbstractContainerMenu {
+public class LapidaryBenchMenu extends JolCraftMenu {
 
     private static final int DATA_RECIPE_VALID = 0;
     private static final int DATA_ACTION_ID = 1;
     private static final int DATA_COUNT = 2;
 
+    private static final int MENU_HEIGHT_TILES = 4;
+
     private final Player player;
     private final ContainerData data;
     private final ContainerLevelAccess access;
 
-    public LapidaryBenchMenu(int windowId, Inventory playerInventory, LapidaryBenchBlockEntity be) {
+    public LapidaryBenchMenu(
+            int windowId,
+            Inventory playerInventory,
+            LapidaryBenchBlockEntity blockEntity
+    ) {
         this(
                 windowId,
                 playerInventory,
-                be,
-                be.getContainerData(),
-                ContainerLevelAccess.create(Objects.requireNonNull(be.getLevel()), be.getBlockPos())
+                blockEntity,
+                blockEntity.getContainerData(),
+                ContainerLevelAccess.create(
+                        Objects.requireNonNull(
+                                blockEntity.getLevel()
+                        ),
+                        blockEntity.getBlockPos()
+                )
         );
 
-        if (playerInventory.player instanceof ServerPlayer sp) {
-            be.refreshCachedState(sp);
+        if (playerInventory.player
+                instanceof ServerPlayer serverPlayer) {
+            blockEntity.refreshCachedState(
+                    serverPlayer
+            );
         }
     }
 
-    public LapidaryBenchMenu(int windowId, Inventory playerInventory) {
+    public LapidaryBenchMenu(
+            int windowId,
+            Inventory playerInventory
+    ) {
         this(
                 windowId,
                 playerInventory,
@@ -61,60 +81,89 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
             ContainerData data,
             ContainerLevelAccess access
     ) {
-        super(JolCraftMenuTypes.LAPIDARY_BENCH_MENU.get(), windowId);
+        super(
+                JolCraftMenuTypes.LAPIDARY_BENCH_MENU.get(),
+                windowId,
+                STANDARD_WIDTH_TILES,
+                MENU_HEIGHT_TILES
+        );
 
         this.access = access;
         this.player = playerInventory.player;
         this.data = data;
 
-        checkContainerSize(container, 3);
-        checkContainerDataCount(data, DATA_COUNT);
+        checkContainerSize(
+                container,
+                3
+        );
 
-        this.addSlot(new JolCraftSlot(container, LapidaryBenchBlockEntity.SLOT_INPUT, 32, 32) {
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                refreshBenchState();
-            }
-        });
+        checkContainerDataCount(
+                data,
+                DATA_COUNT
+        );
 
-        this.addSlot(new JolCraftSlot(container, LapidaryBenchBlockEntity.SLOT_TOOL, 80, 16) {
-            @Override
-            public void setChanged() {
-                super.setChanged();
-                refreshBenchState();
-            }
-        }.mayPlaceRule(stack ->
-                stack.is(JolCraftTags.Items.ARTISAN_HAMMERS) || stack.is(JolCraftTags.Items.CHISELS)
+        this.addSlot(new JolCraftSlot(
+                container,
+                LapidaryBenchBlockEntity.SLOT_INPUT,
+                slot(2),
+                slot(2)
+        ).onSlotChanged(
+                this::refreshBenchState
         ));
 
-        this.addSlot(new JolCraftResultSlot(this.player, container, LapidaryBenchBlockEntity.SLOT_OUTPUT, 128, 32));
+        this.addSlot(new JolCraftSlot(
+                container,
+                LapidaryBenchBlockEntity.SLOT_TOOL,
+                slot(4),
+                slot(2)
+        ).onSlotChanged(
+                this::refreshBenchState
+        ).mayPlaceRule(stack ->
+                stack.is(
+                        JolCraftTags.Items.ARTISAN_HAMMERS
+                )
+                        || stack.is(
+                        JolCraftTags.Items.CHISELS
+                )
+        ));
 
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 68 + row * 18));
-            }
-        }
+        this.addSlot(new JolCraftResultSlot(
+                this.player,
+                container,
+                LapidaryBenchBlockEntity.SLOT_OUTPUT,
+                slot(8),
+                slot(2)
+        ));
 
-        for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 126));
-        }
+        appendPlayerInventory(
+                playerInventory
+        );
 
-        this.addDataSlots(this.data);
+        this.addDataSlots(
+                this.data
+        );
     }
 
     private void refreshBenchState() {
-        if (!(this.player instanceof ServerPlayer sp)) return;
+        if (!(this.player
+                instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
 
         this.access.execute((level, pos) -> {
-            if (level.getBlockEntity(pos) instanceof LapidaryBenchBlockEntity be) {
-                be.refreshCachedState(sp);
+            if (level.getBlockEntity(pos)
+                    instanceof LapidaryBenchBlockEntity blockEntity) {
+                blockEntity.refreshCachedState(
+                        serverPlayer
+                );
             }
         });
     }
 
     public boolean isRecipeValid() {
-        return this.data.get(DATA_RECIPE_VALID) == 1;
+        return this.data.get(
+                DATA_RECIPE_VALID
+        ) == 1;
     }
 
     public boolean isButtonActive() {
@@ -122,16 +171,24 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean clickMenuButton(Player player, int buttonId) {
-        if (!isButtonActive() || buttonId != this.data.get(DATA_ACTION_ID)) {
+    public boolean clickMenuButton(
+            Player player,
+            int buttonId
+    ) {
+        if (!isButtonActive()
+                || buttonId
+                != this.data.get(DATA_ACTION_ID)) {
             return false;
         }
 
         this.access.execute((level, pos) -> {
-            if (player instanceof ServerPlayer sp) {
-                if (level.getBlockEntity(pos) instanceof LapidaryBenchBlockEntity be) {
-                    be.handleAction(sp);
-                }
+            if (player
+                    instanceof ServerPlayer serverPlayer
+                    && level.getBlockEntity(pos)
+                    instanceof LapidaryBenchBlockEntity blockEntity) {
+                blockEntity.handleAction(
+                        serverPlayer
+                );
             }
         });
 
@@ -139,49 +196,104 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
+    public ItemStack quickMoveStack(
+            Player player,
+            int index
+    ) {
+        Slot slot =
+                this.slots.get(index);
 
-        if (slot.hasItem()) {
-            ItemStack stackInSlot = slot.getItem();
-            itemstack = stackInSlot.copy();
-
-            if (index == LapidaryBenchBlockEntity.SLOT_OUTPUT) {
-                if (!this.moveItemStackTo(stackInSlot, 3, 39, true)) return ItemStack.EMPTY;
-                slot.onQuickCraft(stackInSlot, itemstack);
-            } else if (index >= 3) {
-                if (!this.moveItemStackTo(stackInSlot, LapidaryBenchBlockEntity.SLOT_TOOL, LapidaryBenchBlockEntity.SLOT_TOOL + 1, false)) {
-                    if (!this.moveItemStackTo(stackInSlot, LapidaryBenchBlockEntity.SLOT_INPUT, LapidaryBenchBlockEntity.SLOT_INPUT + 1, false)) {
-                        if (index < 30) {
-                            if (!this.moveItemStackTo(stackInSlot, 30, 39, false)) return ItemStack.EMPTY;
-                        } else if (!this.moveItemStackTo(stackInSlot, 3, 30, false)) {
-                            return ItemStack.EMPTY;
-                        }
-                    }
-                }
-            } else if (!this.moveItemStackTo(stackInSlot, 3, 39, false)) {
-                return ItemStack.EMPTY;
-            }
-
-            if (stackInSlot.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-
-            if (stackInSlot.getCount() == itemstack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-
-            slot.onTake(player, stackInSlot);
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
         }
 
-        return itemstack;
+        ItemStack stackInSlot =
+                slot.getItem();
+
+        ItemStack originalStack =
+                stackInSlot.copy();
+
+        if (index
+                == LapidaryBenchBlockEntity.SLOT_OUTPUT) {
+            if (!this.moveItemStackTo(
+                    stackInSlot,
+                    getPlayerInventorySlotStart(),
+                    getPlayerInventorySlotEnd(),
+                    true
+            )) {
+                return ItemStack.EMPTY;
+            }
+
+            slot.onQuickCraft(
+                    stackInSlot,
+                    originalStack
+            );
+        } else if (index >= getPlayerInventorySlotStart()) {
+            if (!this.moveItemStackTo(
+                    stackInSlot,
+                    LapidaryBenchBlockEntity.SLOT_TOOL,
+                    LapidaryBenchBlockEntity.SLOT_TOOL + 1,
+                    false
+            )) {
+                if (!this.moveItemStackTo(
+                        stackInSlot,
+                        LapidaryBenchBlockEntity.SLOT_INPUT,
+                        LapidaryBenchBlockEntity.SLOT_INPUT + 1,
+                        false
+                )) {
+                    if (index < getPlayerInventoryMainEnd()) {
+                        if (!this.moveItemStackTo(
+                                stackInSlot,
+                                getPlayerInventoryMainEnd(),
+                                getPlayerInventorySlotEnd(),
+                                false
+                        )) {
+                            return ItemStack.EMPTY;
+                        }
+                    } else if (!this.moveItemStackTo(
+                            stackInSlot,
+                            getPlayerInventorySlotStart(),
+                            getPlayerInventoryMainEnd(),
+                            false
+                    )) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            }
+        } else if (!this.moveItemStackTo(
+                stackInSlot,
+                getPlayerInventorySlotStart(),
+                getPlayerInventorySlotEnd(),
+                false
+        )) {
+            return ItemStack.EMPTY;
+        }
+
+        if (stackInSlot.isEmpty()) {
+            slot.setByPlayer(
+                    ItemStack.EMPTY
+            );
+        } else {
+            slot.setChanged();
+        }
+
+        if (stackInSlot.getCount()
+                == originalStack.getCount()) {
+            return ItemStack.EMPTY;
+        }
+
+        slot.onTake(
+                player,
+                stackInSlot
+        );
+
+        return originalStack;
     }
 
     public ItemStack getToolStack() {
-        return this.slots.get(LapidaryBenchBlockEntity.SLOT_TOOL).getItem();
+        return this.slots.get(
+                LapidaryBenchBlockEntity.SLOT_TOOL
+        ).getItem();
     }
 
     public boolean hasTool() {
@@ -189,11 +301,19 @@ public class LapidaryBenchMenu extends AbstractContainerMenu {
     }
 
     public int getActionIdForTool() {
-        return this.data.get(DATA_ACTION_ID);
+        return this.data.get(
+                DATA_ACTION_ID
+        );
     }
 
     @Override
-    public boolean stillValid(Player player) {
-        return stillValid(this.access, player, JolCraftBlocks.LAPIDARY_BENCH.get());
+    public boolean stillValid(
+            Player player
+    ) {
+        return stillValid(
+                this.access,
+                player,
+                JolCraftBlocks.LAPIDARY_BENCH.get()
+        );
     }
 }
