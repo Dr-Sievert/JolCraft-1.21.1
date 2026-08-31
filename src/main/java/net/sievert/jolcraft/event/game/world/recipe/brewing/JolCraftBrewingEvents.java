@@ -55,6 +55,13 @@ public final class JolCraftBrewingEvents {
                 builder
         );
 
+        // Rejuvenation
+
+        recipes += addRefinedMix(builder,
+                Items.GOLDEN_APPLE,
+                JolCraftPotions.REJUVENATION
+        );
+
         // Endurance
 
         recipes += addInfusedMix(

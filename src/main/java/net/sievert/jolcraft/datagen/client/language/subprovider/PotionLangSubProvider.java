@@ -76,6 +76,7 @@ public final class PotionLangSubProvider implements LanguageSubProvider {
         addPotion(translations, JolCraftPotions.SUNFIRE, "Sunfire");
         addPotion(translations, JolCraftPotions.LUMINANCE, "Luminance");
         addPotion(translations, JolCraftPotions.OVERHEAL, "Overhealing");
+        addPotion(translations, JolCraftPotions.REJUVENATION, "Rejuvenation");
 
         addPotion(translations, JolCraftPotions.ATAXIA_CURSE, "Ataxia Cursing");
         addPotion(translations, JolCraftPotions.CURSED_WOUND, "Cursing Wound");

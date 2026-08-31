@@ -1,4 +1,4 @@
-package net.sievert.jolcraft.event.game.world.entity.effect.harmful;
+package net.sievert.jolcraft.event.game.world.entity.effect.util.harmful;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;

@@ -39,6 +39,7 @@ public final class JolCraftEffectIds extends JolCraftIds {
     public static final String CONFLAGRATION = JolCraftDictionary.CONFLAGRATION;
     public static final String SUNFIRE = JolCraftDictionary.SUNFIRE;
     public static final String OVERHEAL = JolCraftDictionary.OVERHEAL;
+    public static final String REJUVENATION = JolCraftDictionary.REJUVENATION;
 
     // Harmful
     public static final String ATAXIA_CURSE = join(JolCraftDictionary.ATAXIA, JolCraftDictionary.CURSE);

@@ -82,6 +82,9 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> MAX_OVERHEAL =
             registerPositivePercentage(JolCraftAttributeIds.MAX_OVERHEAL, 1.0D);
 
+    public static final DeferredHolder<Attribute, Attribute> HEAL_INCREASE =
+            registerPositivePercentage(JolCraftAttributeIds.HEAL_INCREASE, 1.0D);
+
     // Negative
 
     public static final DeferredHolder<Attribute, Attribute> CURSE_VULNERABILITY =

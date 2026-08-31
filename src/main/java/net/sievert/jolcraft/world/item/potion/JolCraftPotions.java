@@ -87,6 +87,7 @@ public final class JolCraftPotions {
         single(JolCraftPotionIds.SUPPRESSED, JolCraftEffects.SUPPRESSED, 200);
         family(JolCraftPotionIds.CORROSION, JolCraftEffects.CORROSION, 1200, 2400, 600);
         strongFamily(JolCraftPotionIds.UNLUCK, MobEffects.UNLUCK, 6000, 3000);
+        family(JolCraftPotionIds.REJUVENATION, JolCraftEffects.REJUVENATION, 3600, 7200, 1800);
     }
 
     private JolCraftPotions() {}
@@ -216,6 +217,9 @@ public final class JolCraftPotions {
     public static final Holder<Potion> OVERHEAL = holder(JolCraftPotionIds.OVERHEAL);
     public static final Holder<Potion> LONG_OVERHEAL = holder(JolCraftPotionIds.LONG_OVERHEAL);
     public static final Holder<Potion> STRONG_OVERHEAL = holder(JolCraftPotionIds.STRONG_OVERHEAL);
+    public static final Holder<Potion> REJUVENATION = holder(JolCraftPotionIds.REJUVENATION);
+    public static final Holder<Potion> LONG_REJUVENATION = holder(JolCraftPotionIds.LONG_REJUVENATION);
+    public static final Holder<Potion> STRONG_REJUVENATION = holder(JolCraftPotionIds.STRONG_REJUVENATION);
 
     // Harmful
 

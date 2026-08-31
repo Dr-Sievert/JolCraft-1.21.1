@@ -93,6 +93,7 @@ public final class JolCraftModEvents {
         added += addToAllLivingEntities(event, JolCraftAttributes.EXPERIENCE_INCREASE);
         added += addToAllLivingEntities(event, JolCraftAttributes.MAX_OVERHEAL);
         added += addToAllLivingEntities(event, JolCraftAttributes.SUN_FIRE_DAMAGE);
+        added += addToAllLivingEntities(event, JolCraftAttributes.HEAL_INCREASE);
 
         return added;
     }

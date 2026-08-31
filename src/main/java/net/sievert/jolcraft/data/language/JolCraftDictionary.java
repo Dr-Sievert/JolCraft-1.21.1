@@ -16,7 +16,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String FOR = "for";
     public static final String FROM = "from";
     public static final String IN = "in";
-    public static final String INTO = "into";
     public static final String NO = "no";
     public static final String NOT = "not";
     public static final String OF = "of";
@@ -58,6 +57,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String GRIND = "grind";
     public static final String HARVEST = "harvest";
     public static final String HAS = "has";
+    public static final String HEAL = "heal";
     public static final String HEX = "hex";
     public static final String HOARD = "hoard";
     public static final String HOLD = "hold";
@@ -66,7 +66,6 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String INJECT = "inject";
     public static final String KEEP = "keep";
     public static final String LOCATE = "locate";
-    public static final String LOCK = "lock";
     public static final String MINING = "mining";
     public static final String NEED = "need";
     public static final String OPEN = "open";
@@ -565,6 +564,7 @@ public final class JolCraftDictionary extends JolCraftIds {
     public static final String RECIPE = "recipe";
     public static final String REDSTONE = "redstone";
     public static final String REDUCTION = "reduction";
+    public static final String REJUVENATION = "rejuvenation";
     public static final String REPUTATION = "reputation";
     public static final String REQUIREMENT = "requirement";
     public static final String RESISTANCE = "resistance";

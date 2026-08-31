@@ -602,6 +602,24 @@ public final class JolCraftEntityAttributeEventsHelper {
 
         if (entity.level().isClientSide()) return;
 
+        double healIncrease = entity.getAttributeValue(JolCraftAttributes.HEAL_INCREASE);
+
+        if (healIncrease > 0.0D) {
+            float originalHealing = event.getAmount();
+            float modifiedHealing = originalHealing * (float) (1.0D + healIncrease);
+
+            event.setAmount(modifiedHealing);
+
+            JolCraftLogs.debug(
+                    JolCraftLogTags.PLAYER,
+                    "Healing increased: entity={}, increase={}%, originalHealing={}, finalHealing={}",
+                    entity.getDisplayName().getString(),
+                    JolCraftLogs.pct1(healIncrease),
+                    originalHealing,
+                    modifiedHealing
+            );
+        }
+
         float maxOverheal = OverhealAttachmentHelper.getMaxAmount(entity);
         if (maxOverheal <= 0.0F) return;
 
@@ -610,9 +628,14 @@ public final class JolCraftEntityAttributeEventsHelper {
                 entity.getMaxHealth() - entity.getHealth()
         );
 
-        float excessHealing = event.getAmount() - missingHealth;
+        float excessHealing =
+                event.getAmount() - missingHealth;
+
         if (excessHealing <= 0.0F) return;
 
-        OverhealAttachmentHelper.addAmount(entity, excessHealing);
+        OverhealAttachmentHelper.addAmount(
+                entity,
+                excessHealing
+        );
     }
 }
