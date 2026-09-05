@@ -111,6 +111,9 @@ public final class JolCraftAttributes {
     public static final DeferredHolder<Attribute, Attribute> WITHER_VULNERABILITY =
             registerNegativePercentage(JolCraftAttributeIds.WITHER_VULNERABILITY, 2048.0D);
 
+    public static final DeferredHolder<Attribute, Attribute> EXHAUSTION =
+            registerNegativePercentage(JolCraftAttributeIds.EXHAUSTION, -1.0D, 1.0D);
+
     // Helpers
 
     private static DeferredHolder<Attribute, Attribute> registerPositivePercentage(String id, double max) {
@@ -124,6 +127,17 @@ public final class JolCraftAttributes {
         return ATTRIBUTES.register(id, () ->
                 new RangedAttribute(AbstractLanguageKeys.attribute(id), 0.0D, 0.0D, max)
                         .setSyncable(true).setSentiment(Attribute.Sentiment.POSITIVE)
+        );
+    }
+
+    private static DeferredHolder<Attribute, Attribute> registerNegativePercentage(
+            String id,
+            double min,
+            double max
+    ) {
+        return ATTRIBUTES.register(id, () ->
+                new PercentageAttribute(AbstractLanguageKeys.attribute(id), 0.0D, min, max)
+                        .setSyncable(true).setSentiment(Attribute.Sentiment.NEGATIVE)
         );
     }
 

@@ -7,21 +7,22 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(FoodData.class)
-public abstract class FoodDataMixin {
+@Mixin(Player.class)
+public abstract class PlayerMixin {
 
     @Redirect(
-            method = "tick",
+            method = "causeFoodExhaustion",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/food/FoodData;addExhaustion(F)V"
             )
     )
-    private void jolcraft$modifyRegenerationExhaustion(
+    private void jolcraft$modifyFoodExhaustion(
             FoodData foodData,
-            float exhaustion,
-            Player player
+            float exhaustion
     ) {
+        Player player = (Player) (Object) this;
+
         double exhaustionModifier = player.getAttributeValue(JolCraftAttributes.EXHAUSTION);
 
         float modifiedExhaustion = exhaustion * (1.0F + (float) exhaustionModifier);

@@ -238,6 +238,12 @@ public final class JolCraftEffects {
     public static final Holder<MobEffect> ENDURANCE = MOB_EFFECTS.register(
             JolCraftEffectIds.ENDURANCE,
             () -> new EnduranceEffect(MobEffectCategory.BENEFICIAL, JolCraftColors.rgb("9A5E57"))
+                    .addAttributeModifier(
+                            JolCraftAttributes.EXHAUSTION,
+                            JolCraft.location(JolCraftStrings.underscored(JolCraftEffectIds.ENDURANCE, JolCraftDictionary.EFFECT)),
+                            -0.25D,
+                            AttributeModifier.Operation.ADD_VALUE
+                    )
     );
 
     public static final Holder<MobEffect> MARKSMAN = MOB_EFFECTS.register(

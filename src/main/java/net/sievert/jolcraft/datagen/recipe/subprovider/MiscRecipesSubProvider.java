@@ -313,7 +313,7 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 yeastCultureIngredient(
                         DwarvenBrewFluidHelper.DEFAULT_BREWING_SPEED
                 ),
-                Items.FERMENTED_SPIDER_EYE,
+                JolCraftBlocks.FESTERLING,
                 DwarvenBrewFluidHelper.BREWING_SPEED_1_5
         );
 
@@ -322,7 +322,7 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 yeastCultureIngredient(
                         DwarvenBrewFluidHelper.BREWING_SPEED_1_5
                 ),
-                Items.NETHER_WART,
+                Items.CRIMSON_FUNGUS,
                 DwarvenBrewFluidHelper.BREWING_SPEED_2_0
         );
 
@@ -331,7 +331,7 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 yeastCultureIngredient(
                         DwarvenBrewFluidHelper.BREWING_SPEED_2_0
                 ),
-                JolCraftItems.EMBERGLASS_DUST.get(),
+                Items.DRAGON_BREATH,
                 DwarvenBrewFluidHelper.BREWING_SPEED_2_5
         );
 
@@ -340,7 +340,7 @@ public record MiscRecipesSubProvider(JolCraftDataProvider<RecipeOutput> parent) 
                 yeastCultureIngredient(
                         DwarvenBrewFluidHelper.BREWING_SPEED_2_5
                 ),
-                Items.DRAGON_BREATH,
+                JolCraftItems.EMBERGLASS_DUST,
                 DwarvenBrewFluidHelper.BREWING_SPEED_3_0
         );
 

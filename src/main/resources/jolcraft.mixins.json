@@ -25,6 +25,7 @@
     "MobEffectsMixin",
     "MushroomBlockMixin",
     "NestedLootTableAccessor",
+    "PlayerMixin",
     "PotionBrewingBuilderMixin",
     "PotionsMixin",
     "RangedBowAttackGoalMixin",

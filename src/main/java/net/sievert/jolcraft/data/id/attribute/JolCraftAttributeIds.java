@@ -30,6 +30,7 @@ public final class JolCraftAttributeIds extends JolCraftIds {
     public static final String SUN_FIRE_DAMAGE = join(JolCraftDictionary.SUN, JolCraftDictionary.FIRE, JolCraftDictionary.DAMAGE);
     public static final String MAX_OVERHEAL = join(JolCraftDictionary.MAX, JolCraftDictionary.OVERHEAL);
     public static final String HEAL_INCREASE = join(JolCraftDictionary.HEAL, JolCraftDictionary.INCREASE);
+    public static final String EXHAUSTION = JolCraftDictionary.EXHAUSTION;
 
     // Negative
 
