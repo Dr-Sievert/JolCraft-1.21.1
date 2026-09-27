@@ -138,6 +138,9 @@ public class DwarfMerchantContainer implements Container {
                     this.setItem(2, ItemStack.EMPTY);
                     this.futureXp = 0;
                 }
+            } else {
+                this.setItem(2, ItemStack.EMPTY);
+                this.futureXp = 0;
             }
 
             this.merchant.notifyTradeUpdated(this.getItem(2));
@@ -152,7 +155,6 @@ public class DwarfMerchantContainer implements Container {
 
     public void setSelectionHint(int currentRecipeIndex) {
         this.selectionHint = currentRecipeIndex;
-        this.updateSellItem();
     }
 
     @Override

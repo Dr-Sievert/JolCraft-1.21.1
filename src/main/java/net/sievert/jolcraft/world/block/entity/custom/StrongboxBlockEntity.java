@@ -847,4 +847,4 @@ public class StrongboxBlockEntity extends RandomizableContainerBlockEntity imple
 
         lidAnimateTick(this);
     }
-}
+}

@@ -84,4 +84,4 @@ public sealed interface DwarfProfessionRule permits
             return TYPE_MIN_MERCHANT_LEVEL;
         }
     }
-}
+}

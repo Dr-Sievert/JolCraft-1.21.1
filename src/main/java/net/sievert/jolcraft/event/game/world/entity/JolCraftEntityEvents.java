@@ -22,6 +22,7 @@ import net.sievert.jolcraft.event.game.world.entity.attribute.JolCraftEntityAttr
 import net.sievert.jolcraft.event.game.world.entity.damage.JolCraftDamageAffinityEventsHelper;
 import net.sievert.jolcraft.event.game.world.entity.damage.JolCraftDamageEventsHelper;
 import net.sievert.jolcraft.event.game.world.entity.effect.JolCraftEffectEvents;
+import net.sievert.jolcraft.event.game.world.entity.effect.util.harmful.JolCraftCurseEventsHelper;
 import net.sievert.jolcraft.event.game.world.entity.npc.JolCraftDwarfEvents;
 import net.sievert.jolcraft.event.game.world.entity.npc.villager.JolCraftVillagerEvents;
 import net.sievert.jolcraft.event.game.world.recipe.JolCraftBountyEvents;
@@ -125,5 +126,6 @@ public final class JolCraftEntityEvents {
         }
 
         JolCraftDamageAffinityEventsHelper.applyEntityTypeAffinityModifiers(entity);
+        JolCraftCurseEventsHelper.refreshVitalityCurseModifier(entity);
     }
 }

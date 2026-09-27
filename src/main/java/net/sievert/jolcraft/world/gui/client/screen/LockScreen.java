@@ -249,6 +249,11 @@ public class LockScreen extends JolCraftScreen<LockMenu> {
                         && unlockSlot >= 0
                         && unlockSlot < 3;
 
+        if (correctButtonId < 0 || correctButtonId > 3
+                || correctButtonId == 3 && !unlockMode) {
+            return;
+        }
+
         ResourceLocation[] wrongs = {
                 this.brokenTexA,
                 this.brokenTexB

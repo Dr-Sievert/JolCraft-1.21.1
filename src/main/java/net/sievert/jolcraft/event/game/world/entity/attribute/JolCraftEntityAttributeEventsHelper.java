@@ -87,15 +87,16 @@ public final class JolCraftEntityAttributeEventsHelper {
     ) {
         UUID uuid = entity.getUUID();
 
-        if (value <= 0.0D) {
-            if (cache.remove(uuid) != null) {
-                instance.removeModifier(modifierId);
-            }
+        if (!Double.isFinite(value) || value == 0.0D) {
+            cache.remove(uuid);
+            instance.removeModifier(modifierId);
             return true;
         }
 
         Double oldValue = cache.get(uuid);
-        if (oldValue != null && Double.compare(oldValue, value) == 0) {
+        AttributeModifier existing = instance.getModifier(modifierId);
+        if (oldValue != null && Double.compare(oldValue, value) == 0
+                && existing != null && Double.compare(existing.amount(), value) == 0) {
             return true;
         }
 

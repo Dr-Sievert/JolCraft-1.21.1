@@ -148,7 +148,7 @@ public class HearthBlockEntity extends BlockEntity implements TickingBlockEntity
         }
 
         if (hasNoNearbyBed(player)
-                || !HearthAttachmentHelper.isActiveHearth(player, this.worldPosition)) {
+                || !HearthAttachmentHelper.isActiveHearth(player, serverLevel.dimension(), this.worldPosition)) {
             deactivate();
             return;
         }
@@ -195,7 +195,7 @@ public class HearthBlockEntity extends BlockEntity implements TickingBlockEntity
 
     private void setOwner(ServerPlayer player){
         this.owner = player.getUUID();
-        HearthAttachmentHelper.setActiveHearthPos(player, this.worldPosition);
+        HearthAttachmentHelper.setActiveHearthPos(player, this.level.dimension(), this.worldPosition);
     }
 
     private void clearOwner(){
@@ -244,18 +244,21 @@ public class HearthBlockEntity extends BlockEntity implements TickingBlockEntity
     private void activate(ServerPlayer player) {
         setLit();
         setOwner(player);
-        if (player.isCreative()){
-            this.litCreative = true;
-            return;
+        this.litCreative = player.isCreative();
+
+        if (!this.litCreative) {
+            HearthAttachmentHelper.setLastLitToday(player);
         }
-        HearthAttachmentHelper.setLastLitToday(player);
-        this.litCreative = false;
+
+        // owner/litCreative only persisted so far because setLit() happened to flip the block
+        // state in the same tick; don't rely on that.
+        setChanged();
     }
 
     private void deactivate() {
         if (this.level instanceof ServerLevel serverLevel && this.owner != null) {
             ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(this.owner);
-            if (HearthAttachmentHelper.isActiveHearth(player, this.worldPosition)) {
+            if (HearthAttachmentHelper.isActiveHearth(player, serverLevel.dimension(), this.worldPosition)) {
                 HearthAttachmentHelper.clearActiveHearthPos(player);
             }
         }
@@ -263,6 +266,7 @@ public class HearthBlockEntity extends BlockEntity implements TickingBlockEntity
         setLitOff();
         clearOwner();
         this.litCreative = false;
+        setChanged();
     }
 
     private boolean isUnsafeArea(ServerPlayer player) {
@@ -288,6 +292,9 @@ public class HearthBlockEntity extends BlockEntity implements TickingBlockEntity
     }
 
     private void applyHomesteadEffect(ServerPlayer player) {
+        if (this.level == null
+                || !this.level.dimension().equals(player.level().dimension())
+                || !HearthAttachmentHelper.isActiveHearth(player, this.level.dimension(), this.worldPosition)) return;
         if (player.hasEffect(JolCraftEffects.HOMESTEAD)) return;
         if (player.blockPosition().distSqr(this.worldPosition) > RADIUS_SQ) return;
 

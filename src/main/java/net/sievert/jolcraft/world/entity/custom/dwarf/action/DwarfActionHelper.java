@@ -71,14 +71,20 @@ public class DwarfActionHelper {
     public void tick(AbstractDwarfEntity dwarf) {
         recoverInterruptedAction(dwarf);
 
+        if (!dwarf.isAlive()) {
+            stopAction(dwarf);
+            return;
+        }
+
         if (activeAction == null) {
             activeAction = IdleDwarfAction.INSTANCE;
         }
         if(activeAction.getType() != DwarfActionType.IDLE){
             activeAction.tick();
             if (activeAction.isStopped()) {
-                activeAction.stop();
-                stopAction(dwarf);
+                DwarfAction completedAction = activeAction;
+                clearAction(dwarf);
+                completedAction.stop();
             }
         }
     }
@@ -91,7 +97,7 @@ public class DwarfActionHelper {
             @Nullable InteractionHand hand,
             @Nullable ItemStack itemstack
     ) {
-        if (interruptedAction != null
+        if (!dwarf.isAlive() || dwarf.isUsingItem() || interruptedAction != null
                 || activeAction.getType() != DwarfActionType.IDLE) {
             return false;
         }
@@ -249,13 +255,11 @@ public class DwarfActionHelper {
 
     /**
      * Queues an interrupted inspect transaction for rollback on the first
-     * server tick. The legacy flag migrates saves made before rollback data
-     * was written; in that case the visible hand item is returned.
+     * server tick using its serialized input and previous equipment.
      */
     public void readAdditionalSaveData(
             AbstractDwarfEntity dwarf,
-            CompoundTag compound,
-            boolean legacyInterruptedInspect
+            CompoundTag compound
     ) {
         activeAction = IdleDwarfAction.INSTANCE;
         interruptedAction = null;
@@ -264,13 +268,6 @@ public class DwarfActionHelper {
             interruptedAction = loadInterruptedAction(
                     compound.getCompound(NBT_INTERRUPTED_ACTION),
                     dwarf.level().registryAccess()
-            );
-        } else if (legacyInterruptedInspect) {
-            interruptedAction = new InterruptedAction(
-                    null,
-                    dwarf.getMainHandItem(),
-                    ItemStack.EMPTY,
-                    true
             );
         }
 
@@ -391,7 +388,7 @@ public class DwarfActionHelper {
     }
 
     /**
-     * Compatibility wrapper for existing non-interaction callers.
+     * Starts an action for AI callers.
      */
     public void setAction(
             AbstractDwarfEntity dwarf,
@@ -448,12 +445,32 @@ public class DwarfActionHelper {
         }
     }
 
-    /** Stops the current action and returns the dwarf to Idle. */
+    /** Cancels the action, rolling back spent inspection inputs exactly once. */
     public void stopAction(AbstractDwarfEntity dwarf) {
+        if (activeAction instanceof InspectDwarfAction inspectAction) {
+            interruptedAction = new InterruptedAction(
+                    inspectAction.getPlayerId(),
+                    inspectAction.getActionInput(),
+                    inspectAction.getPreviousMainHandItem(),
+                    inspectAction.wasInputConsumed()
+            );
+        }
+        clearAction(dwarf);
+        recoverInterruptedAction(dwarf);
+    }
+
+    private void clearAction(AbstractDwarfEntity dwarf) {
         setCurrentAction(dwarf, DwarfActionType.IDLE, null);
         activeAction = IdleDwarfAction.INSTANCE;
     }
 
+    public boolean isIdle() {
+        return interruptedAction == null && activeAction.getType() == DwarfActionType.IDLE;
+    }
+
+    public DwarfAction getActiveAction() {
+        return activeAction;
+    }
 
     /**
      * Gets the current action type from the entity's data.

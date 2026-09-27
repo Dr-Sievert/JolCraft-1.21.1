@@ -1,5 +1,6 @@
 package net.sievert.jolcraft.event.game.world.entity.effect;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
@@ -85,5 +86,8 @@ public final class JolCraftEffectEvents {
             EntityTickEvent.Post event
     ) {
         JolCraftCrowdControlEventsHelper.onEntityTick(event);
+        if (event.getEntity() instanceof LivingEntity entity) {
+            JolCraftCurseEventsHelper.refreshVitalityCurseModifier(entity);
+        }
     }
 }

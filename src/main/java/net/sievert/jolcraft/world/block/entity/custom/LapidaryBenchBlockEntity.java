@@ -99,6 +99,11 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
         ItemStack inputStack = items.get(SLOT_INPUT);
         ItemStack toolStack = items.get(SLOT_TOOL);
 
+        boolean wasGeode = inputStack.is(JolCraftTags.Items.GEODES);
+        boolean wasUncutGem = inputStack.is(JolCraftTags.Items.GEMS_UNCUT);
+        boolean wasHammer = toolStack.is(JolCraftTags.Items.ARTISAN_HAMMERS);
+        boolean wasChisel = toolStack.is(JolCraftTags.Items.CHISELS);
+
         LapidaryRecipeInput recipeInput =
                 new LapidaryRecipeInput(
                         inputStack,
@@ -138,18 +143,6 @@ public class LapidaryBenchBlockEntity extends BaseContainerBlockEntity {
             refreshCachedState(player);
             return;
         }
-
-        boolean wasGeode =
-                inputStack.is(JolCraftTags.Items.GEODES);
-
-        boolean wasUncutGem =
-                inputStack.is(JolCraftTags.Items.GEMS_UNCUT);
-
-        boolean wasHammer =
-                toolStack.is(JolCraftTags.Items.ARTISAN_HAMMERS);
-
-        boolean wasChisel =
-                toolStack.is(JolCraftTags.Items.CHISELS);
 
         for (ItemStack generatedResult : generatedResults) {
             JolCraftItemInsertionHelper.tryInsertIntoSlotInventoryOrDrop(

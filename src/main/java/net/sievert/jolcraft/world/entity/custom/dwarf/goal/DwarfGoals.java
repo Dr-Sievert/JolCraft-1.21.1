@@ -276,4 +276,4 @@ public final class DwarfGoals {
             configurator.configure(dwarf, tracker);
         }
     }
-}
+}

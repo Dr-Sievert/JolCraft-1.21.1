@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.entity.player.advancement.JolCraftCriteriaTriggers;
@@ -24,6 +25,7 @@ import net.sievert.jolcraft.world.sound.util.PlaySound;
 public class ReputationGainDwarfAction extends InspectDwarfAction {
 
     public int ticksRemaining = 0;
+    private int startingTier;
 
     public ReputationGainDwarfAction(AbstractDwarfEntity dwarf, Player player, InteractionHand hand, ItemStack itemstack) {
         super(dwarf, player, hand, itemstack);
@@ -35,7 +37,7 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
     @Override
     public void start() {
         this.ticksRemaining = 40;
-        dwarf.resetPaid();
+        this.startingTier = DwarvenReputationAttachmentHelper.getTier(player);
         startInspect(dwarf, player, hand, itemstack);
     }
 
@@ -56,6 +58,22 @@ public class ReputationGainDwarfAction extends InspectDwarfAction {
     public void stop() {
 
         int rep = DwarvenReputationAttachmentHelper.getTier(player);
+
+        if (!(player instanceof ServerPlayer)
+                || rep != startingTier
+                || rep >= DwarvenReputationAttachmentHelper.getMaxTier()
+                || !DwarvenReputationAttachmentHelper.canAdvance(player)) {
+            if (wasInputConsumed()) {
+                throwItem(dwarf, player, itemstack.copy());
+            } else {
+                dwarf.setItemSlot(EquipmentSlot.MAINHAND, previousMainHandItem);
+                previousMainHandItem = ItemStack.EMPTY;
+            }
+            return;
+        }
+
+        // Charge only a successful promotion; a stale inspection keeps its payment.
+        dwarf.resetPaid();
 
         if (player instanceof ServerPlayer serverPlayer) {
             DwarvenReputationAttachmentHelper.setReputationTier(serverPlayer, rep + 1);

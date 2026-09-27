@@ -22,6 +22,7 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
     protected ItemStack previousMainHandItem = ItemStack.EMPTY;
     private final int cooldownTicks;
     private int cooldownTimer = 0;
+    private boolean startedUsingItem;
 
     public DwarfUseItemGoal(T mob, ItemStack item, @Nullable SoundEvent finishUsingSound, Predicate<? super T> canUseSelector, int cooldownTicks) {
         this.mob = mob;
@@ -37,29 +38,45 @@ public class DwarfUseItemGoal<T extends Mob> extends Goal {
             cooldownTimer--;
             return false;
         }
-        return this.canUseSelector.test(this.mob);
+        return this.mob.isAlive() && !this.mob.isUsingItem()
+                && (!(this.mob instanceof AbstractDwarfEntity dwarf)
+                    || dwarf.getActionHelper().isIdle())
+                && this.canUseSelector.test(this.mob);
     }
 
     @Override
     public boolean canContinueToUse() {
-        return this.mob.isUsingItem();
+        return this.startedUsingItem && this.mob.isAlive() && this.mob.isUsingItem()
+                && (!(this.mob instanceof AbstractDwarfEntity dwarf)
+                    || dwarf.getCurrentActionType() == DwarfActionType.DRINK);
     }
 
     @Override
     public void start() {
+        this.startedUsingItem = false;
         if (this.mob instanceof AbstractDwarfEntity dwarf) {
-            dwarf.getActionHelper().setAction(dwarf, DwarfActionType.DRINK);
+            if (!dwarf.getActionHelper().trySetAction(
+                    dwarf, DwarfActionType.DRINK, null, null, null, null)) {
+                return;
+            }
         }
         this.previousMainHandItem = this.mob.getItemBySlot(EquipmentSlot.MAINHAND).copy();
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.item.copy());
         this.mob.startUsingItem(InteractionHand.MAIN_HAND);
+        this.startedUsingItem = true;
     }
 
     @Override
     public void stop() {
-        if (this.mob instanceof AbstractDwarfEntity dwarf) {
+        if (!this.startedUsingItem) {
+            return;
+        }
+        this.startedUsingItem = false;
+        if (this.mob instanceof AbstractDwarfEntity dwarf
+                && dwarf.getCurrentActionType() == DwarfActionType.DRINK) {
             dwarf.getActionHelper().stopAction(dwarf);
         }
+        this.mob.stopUsingItem();
         this.mob.setItemSlot(EquipmentSlot.MAINHAND, this.previousMainHandItem);
         if (this.finishUsingSound != null) {
             JolCraftSoundHelper.entity(

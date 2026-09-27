@@ -67,12 +67,6 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
     private static final String NBT_PROFESSION = JolCraftDictionary.PROFESSION;
 
-    private static final String NBT_CURRENT_ACTION =
-            JolCraftStrings.underscored(JolCraftDictionary.CURRENT, JolCraftDictionary.ACTION);
-
-    private static final String NBT_CURRENT_ACTION_SUBTYPE =
-            JolCraftStrings.underscored(JolCraftDictionary.CURRENT, JolCraftDictionary.ACTION, JolCraftDictionary.SUBTYPE);
-
     private static final String NBT_PAID_TICKS =
             JolCraftStrings.underscored(JolCraftDictionary.PAID, JolCraftStrings.plural(JolCraftDictionary.TICK));
 
@@ -204,41 +198,13 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
         this.actionHelper.readAdditionalSaveData(
                 this,
-                compound,
-                hasLegacyInterruptedInspectAction(compound)
+                compound
         );
 
         this.paidTicks = compound.getInt(NBT_PAID_TICKS);
         this.paidCause = compound.hasUUID(NBT_PAID_CAUSE)
                 ? compound.getUUID(NBT_PAID_CAUSE)
                 : null;
-    }
-
-    /**
-     * Older saves persisted only animation ordinals. If those values describe
-     * an inspect action, the current main-hand item is treated as the consumed
-     * action input and safely returned by DwarfActionHelper.
-     */
-    private static boolean hasLegacyInterruptedInspectAction(
-            CompoundTag compound
-    ) {
-        if (compound.contains(NBT_CURRENT_ACTION, 3)
-                && compound.getInt(NBT_CURRENT_ACTION)
-                == DwarfActionType.INSPECT.ordinal()) {
-            return true;
-        }
-
-        if (!compound.contains(NBT_CURRENT_ACTION_SUBTYPE, 3)) {
-            return false;
-        }
-
-        int subtypeIndex = compound.getInt(NBT_CURRENT_ACTION_SUBTYPE);
-        DwarfActionType.Subtype[] subtypes = DwarfActionType.Subtype.values();
-
-        return subtypeIndex >= 0
-                && subtypeIndex < subtypes.length
-                && subtypes[subtypeIndex].getParent()
-                == DwarfActionType.INSPECT;
     }
 
     //Attributes
@@ -522,6 +488,15 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
     }
 
     @Override
+    public void die(DamageSource source) {
+        if (!this.level().isClientSide) {
+            // Remove the temporary inspection item before vanilla death loot runs.
+            this.actionHelper.stopAction(this);
+        }
+        super.die(source);
+    }
+
+    @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         ItemStack mainHand = this.getMainHandItem();
 
@@ -605,4 +580,4 @@ public class AbstractDwarfEntity extends AbstractTradingEntity implements Npc, D
 
         return out;
     }
-}
+}

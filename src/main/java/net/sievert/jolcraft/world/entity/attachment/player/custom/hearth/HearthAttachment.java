@@ -2,7 +2,7 @@ package net.sievert.jolcraft.world.entity.attachment.player.custom.hearth;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.sievert.jolcraft.world.entity.attachment.base.JolCraftPersistentAttachment;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.util.JolCraftStrings;
@@ -22,20 +22,20 @@ public final class HearthAttachment extends JolCraftPersistentAttachment<HearthA
     public static final Codec<HearthAttachment> CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     Codec.LONG.fieldOf(TAG_LAST_LIT_DAY).forGetter(HearthAttachment::lastLitDay),
-                    BlockPos.CODEC.optionalFieldOf(TAG_ACTIVE_HEARTH_POS)
+                    GlobalPos.CODEC.optionalFieldOf(TAG_ACTIVE_HEARTH_POS)
                             .forGetter(attachment -> Optional.ofNullable(attachment.activeHearthPos))
-            ).apply(instance, (lastLitDay, activeHearthPos) -> new HearthAttachment(lastLitDay, activeHearthPos.orElse(null))));
+            ).apply(instance, (lastLitDay, position) -> new HearthAttachment(lastLitDay, position.orElse(null))));
 
     private final long lastLitDay;
-    private final @Nullable BlockPos activeHearthPos;
+    private final @Nullable GlobalPos activeHearthPos;
 
     public HearthAttachment() {
         this(-1L, null);
     }
 
-    public HearthAttachment(long lastLitDay, @Nullable BlockPos activeHearthPos) {
+    public HearthAttachment(long lastLitDay, @Nullable GlobalPos activeHearthPos) {
         this.lastLitDay = lastLitDay;
-        this.activeHearthPos = activeHearthPos == null ? null : activeHearthPos.immutable();
+        this.activeHearthPos = activeHearthPos == null ? null : GlobalPos.of(activeHearthPos.dimension(), activeHearthPos.pos().immutable());
     }
 
     public long lastLitDay() {
@@ -50,7 +50,7 @@ public final class HearthAttachment extends JolCraftPersistentAttachment<HearthA
         return lastLitDay == -1L ? this : new HearthAttachment(-1L, activeHearthPos);
     }
 
-    public @Nullable BlockPos activeHearthPos() {
+    public @Nullable GlobalPos activeHearthPos() {
         return activeHearthPos;
     }
 
@@ -58,17 +58,16 @@ public final class HearthAttachment extends JolCraftPersistentAttachment<HearthA
         return activeHearthPos != null;
     }
 
-    public boolean isActiveHearth(BlockPos pos) {
+    public boolean isActiveHearth(GlobalPos pos) {
         return activeHearthPos != null && activeHearthPos.equals(pos);
     }
 
-    public HearthAttachment withActiveHearthPos(@Nullable BlockPos pos) {
-        BlockPos immutablePos = pos == null ? null : pos.immutable();
-        return Objects.equals(activeHearthPos, immutablePos) ? this : new HearthAttachment(lastLitDay, immutablePos);
+    public HearthAttachment withActiveHearthPos(@Nullable GlobalPos pos) {
+        return Objects.equals(activeHearthPos, pos) ? this : new HearthAttachment(lastLitDay, pos);
     }
 
     public HearthAttachment clearActiveHearthPos() {
-        return activeHearthPos == null ? this : new HearthAttachment(lastLitDay, null);
+        return !hasActiveHearth() ? this : new HearthAttachment(lastLitDay, null);
     }
 
     @Override

@@ -14,6 +14,7 @@ import net.sievert.jolcraft.network.packet.s2c.ClientboundDwarfMerchantOffersPac
 import net.sievert.jolcraft.network.packet.s2c.ClientboundRewardLootTablesPacket;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
 import net.sievert.jolcraft.util.log.JolCraftLogs;
+import net.sievert.jolcraft.world.gui.client.screen.DwarfMerchantScreen;
 import net.sievert.jolcraft.world.gui.menu.DwarfMerchantMenu;
 import net.sievert.jolcraft.world.loot.custom.reward.client.RewardLootTableClientCache;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +53,9 @@ public final class JolCraftClientProxy implements JolCraftClientAccess {
             dwarfMenu.setShowProgressBar(packet.showProgress());
             dwarfMenu.setshowLevel(packet.showLevel());
             dwarfMenu.setCanRestock(packet.canRestock());
+            if (mc.screen instanceof DwarfMerchantScreen screen && screen.getMenu() == dwarfMenu) {
+                screen.onOffersUpdated();
+            }
             return;
         }
 

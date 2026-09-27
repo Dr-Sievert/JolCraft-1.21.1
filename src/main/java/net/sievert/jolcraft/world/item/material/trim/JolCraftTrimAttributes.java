@@ -17,13 +17,12 @@ import net.sievert.jolcraft.JolCraft;
 import net.sievert.jolcraft.world.entity.JolCraftAttributes;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public final class JolCraftTrimAttributes {
 
@@ -138,7 +137,8 @@ public final class JolCraftTrimAttributes {
     }
 
     public static void applyAttribute(@NotNull ItemStack stack, @NotNull ArmorTrim trim) {
-        List<TrimAttribute> attributes = getTrimAttributes(getAttributeTrim(trim));
+        JolCraftTrimMaterials.Attribute material = getAttributeTrim(trim);
+        List<TrimAttribute> attributes = material == null ? List.of() : getTrimAttributes(material);
 
         EquipmentSlot slot = getSlotForArmor(stack);
         if (slot == null) {
@@ -150,7 +150,10 @@ public final class JolCraftTrimAttributes {
                 stack.getItem().getDefaultAttributeModifiers(stack)
         );
 
-        modifiers = removeOldTrimModifiers(modifiers);
+        ItemAttributeModifiers cleaned = removeOldTrimModifiers(modifiers);
+        // Ordinary trims without our modifiers should retain the item's component/default behavior.
+        if (attributes.isEmpty() && cleaned.modifiers().size() == modifiers.modifiers().size()) return;
+        modifiers = cleaned;
 
         for (int i = 0; i < attributes.size(); i++) {
             TrimAttribute attribute = attributes.get(i);
@@ -169,15 +172,17 @@ public final class JolCraftTrimAttributes {
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, modifiers);
     }
 
-    private static JolCraftTrimMaterials.Attribute getAttributeTrim(@NotNull ArmorTrim trim) {
+    private static @Nullable JolCraftTrimMaterials.Attribute getAttributeTrim(@NotNull ArmorTrim trim) {
         ResourceLocation id = trim.material().unwrapKey()
                 .map(ResourceKey::location)
-                .orElseThrow(() -> new IllegalStateException("Trim material has no registry key: " + trim));
+                .orElse(null);
+
+        if (id == null || !id.getNamespace().equals(JolCraft.MOD_ID)) return null;
 
         return Arrays.stream(JolCraftTrimMaterials.Attribute.values())
                 .filter(attribute -> attribute.getId().equals(id.getPath()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Unknown attribute trim material: " + id));
+                .orElse(null);
     }
 
     public static List<TrimAttribute> getTrimAttributes(@NotNull JolCraftTrimMaterials.Attribute trim) {
@@ -191,36 +196,21 @@ public final class JolCraftTrimAttributes {
     }
 
     private static ItemAttributeModifiers removeOldTrimModifiers(@NotNull ItemAttributeModifiers modifiers) {
-        Set<ResourceLocation> legacyIds = new HashSet<>();
-
-        for (JolCraftTrimMaterials.Attribute attribute : JolCraftTrimMaterials.Attribute.values()) {
-            legacyIds.add(JolCraft.location(attribute.getId()));
-
-            for (EquipmentSlot slot : EquipmentSlot.values()) {
-                legacyIds.add(JolCraft.location(attribute.getId() + "_" + slot.getName()));
-            }
-        }
-
         return new ItemAttributeModifiers(
                 modifiers.modifiers().stream()
-                        .filter(entry -> !isTrimModifier(entry.modifier().id(), legacyIds))
+                        .filter(entry -> !isTrimModifier(entry.modifier().id()))
                         .toList(),
                 modifiers.showInTooltip()
         );
     }
 
-    private static boolean isTrimModifier(
-            @NotNull ResourceLocation id,
-            @NotNull Set<ResourceLocation> legacyIds
-    ) {
-        if (legacyIds.contains(id)) {
-            return true;
-        }
-
+    private static boolean isTrimModifier(@NotNull ResourceLocation id) {
+        if (!id.getNamespace().equals(JolCraft.MOD_ID)) return false;
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (id.getNamespace().equals(JolCraft.MOD_ID)
-                    && id.getPath().startsWith("attribute_trim_" + slot.getName())) {
-                return true;
+            String prefix = "attribute_trim_" + slot.getName() + "_";
+            if (id.getPath().startsWith(prefix)) {
+                String index = id.getPath().substring(prefix.length());
+                return !index.isEmpty() && index.chars().allMatch(Character::isDigit);
             }
         }
 

@@ -166,11 +166,19 @@ public final class JolCraftCurseEventsHelper {
         }
     }
 
+    public static void refreshVitalityCurseModifier(LivingEntity entity) {
+        updateVitalityCurseModifier(entity, null, null);
+    }
+
     private static void updateVitalityCurseModifier(
             LivingEntity entity,
             @Nullable MobEffectInstance addedEffect,
             @Nullable MobEffectInstance removedEffect
     ) {
+        if (!(entity.level() instanceof ServerLevel) || !entity.isAlive()) {
+            return;
+        }
+
         AttributeInstance maxHealth =
                 entity.getAttribute(Attributes.MAX_HEALTH);
 
@@ -183,10 +191,6 @@ public final class JolCraftCurseEventsHelper {
                         HEX_VITALITY_MODIFIER_ID
                 );
 
-        if (existingModifier != null) {
-            maxHealth.removeModifier(existingModifier);
-        }
-
         MobEffectInstance vitality = resolveEffect(
                 entity,
                 JolCraftEffects.VITALITY_CURSE,
@@ -195,6 +199,9 @@ public final class JolCraftCurseEventsHelper {
         );
 
         if (vitality == null) {
+            if (existingModifier != null) {
+                maxHealth.removeModifier(existingModifier);
+            }
             return;
         }
 
@@ -237,13 +244,19 @@ public final class JolCraftCurseEventsHelper {
                             / baseMultiplier
                             - 1.0D;
 
-            maxHealth.addTransientModifier(
-                    new AttributeModifier(
-                            HEX_VITALITY_MODIFIER_ID,
-                            modifierAmount,
-                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-                    )
-            );
+            if (existingModifier == null
+                    || Double.compare(existingModifier.amount(), modifierAmount) != 0) {
+                maxHealth.removeModifier(HEX_VITALITY_MODIFIER_ID);
+                maxHealth.addTransientModifier(
+                        new AttributeModifier(
+                                HEX_VITALITY_MODIFIER_ID,
+                                modifierAmount,
+                                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                        )
+                );
+            }
+        } else if (existingModifier != null) {
+            maxHealth.removeModifier(existingModifier);
         }
 
         if (effectiveLevels >= LETHAL_VITALITY_LEVEL) {

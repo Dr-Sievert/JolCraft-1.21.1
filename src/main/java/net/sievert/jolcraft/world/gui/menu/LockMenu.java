@@ -26,10 +26,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LockMenu extends JolCraftMenu {
 
     private static final int DATA_PROGRESS = 0;
-    private static final int DATA_CORRECT_BUTTON = 1;
+    private static final int DATA_BUTTON_LAYER = 1;
     private static final int DATA_LAYER_PULSE = 2;
-    private static final int DATA_UNLOCK_SLOT = 3;
-    private static final int DATA_COUNT = 4;
+    private static final int DATA_COUNT = 3;
 
     private static final int MENU_HEIGHT_TILES = 5;
 
@@ -120,18 +119,14 @@ public class LockMenu extends JolCraftMenu {
             );
 
             this.data.set(
-                    DATA_CORRECT_BUTTON,
+                    DATA_BUTTON_LAYER,
                     this.blockEntity.getCorrectButtonId()
+                            | ((this.blockEntity.getUnlockSlotId() + 1) << 2)
             );
 
             this.data.set(
                     DATA_LAYER_PULSE,
                     this.blockEntity.getButtonLayerUpdatePulse()
-            );
-
-            this.data.set(
-                    DATA_UNLOCK_SLOT,
-                    this.blockEntity.getUnlockSlotId()
             );
         }
 
@@ -303,8 +298,8 @@ public class LockMenu extends JolCraftMenu {
 
     public int getCorrectButtonId() {
         return this.data.get(
-                DATA_CORRECT_BUTTON
-        );
+                DATA_BUTTON_LAYER
+        ) & 3;
     }
 
     public int getButtonLayerUpdatePulse() {
@@ -314,18 +309,18 @@ public class LockMenu extends JolCraftMenu {
     }
 
     public int getUnlockSlotId() {
-        return this.data.get(
-                DATA_UNLOCK_SLOT
-        );
+        return (this.data.get(
+                DATA_BUTTON_LAYER
+        ) >> 2 & 3) - 1;
     }
 
     private static final class LockData
             implements ContainerData {
 
         private int lockpickProgress;
-        private int correctButtonId;
+        // Correct button and unlock slot must arrive in the same menu data packet.
+        private int buttonLayer;
         private int buttonLayerUpdatePulse;
-        private int unlockSlotId = -1;
 
         @Override
         public int get(
@@ -334,12 +329,10 @@ public class LockMenu extends JolCraftMenu {
             return switch (index) {
                 case DATA_PROGRESS ->
                         this.lockpickProgress;
-                case DATA_CORRECT_BUTTON ->
-                        this.correctButtonId;
+                case DATA_BUTTON_LAYER ->
+                        this.buttonLayer;
                 case DATA_LAYER_PULSE ->
                         this.buttonLayerUpdatePulse;
-                case DATA_UNLOCK_SLOT ->
-                        this.unlockSlotId;
                 default ->
                         0;
             };
@@ -353,12 +346,10 @@ public class LockMenu extends JolCraftMenu {
             switch (index) {
                 case DATA_PROGRESS ->
                         this.lockpickProgress = value;
-                case DATA_CORRECT_BUTTON ->
-                        this.correctButtonId = value;
+                case DATA_BUTTON_LAYER ->
+                        this.buttonLayer = value;
                 case DATA_LAYER_PULSE ->
                         this.buttonLayerUpdatePulse = value;
-                case DATA_UNLOCK_SLOT ->
-                        this.unlockSlotId = value;
             }
         }
 

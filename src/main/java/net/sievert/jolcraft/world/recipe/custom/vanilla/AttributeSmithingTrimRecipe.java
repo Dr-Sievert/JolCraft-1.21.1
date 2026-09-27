@@ -3,19 +3,13 @@ package net.sievert.jolcraft.world.recipe.custom.vanilla;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.item.crafting.SmithingTrimRecipe;
 import net.sievert.jolcraft.data.language.JolCraftDictionary;
 import net.sievert.jolcraft.world.recipe.JolCraftRecipes;
-import net.sievert.jolcraft.world.item.material.trim.JolCraftTrimAttributes;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -36,20 +30,6 @@ public class AttributeSmithingTrimRecipe extends SmithingTrimRecipe {
         this.jolTemplate = template;
         this.jolBase = base;
         this.jolAddition = addition;
-    }
-
-    @Override
-    public ItemStack assemble(SmithingRecipeInput input, HolderLookup.Provider registries) {
-        ItemStack stack = super.assemble(input, registries);
-        if (stack.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        ArmorTrim trim = stack.get(DataComponents.TRIM);
-        if (trim != null) {
-            JolCraftTrimAttributes.applyAttribute(stack, trim);
-        }
-        return stack;
     }
 
     @Override

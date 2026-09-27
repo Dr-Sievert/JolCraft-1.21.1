@@ -16,6 +16,7 @@ import net.sievert.jolcraft.world.entity.effect.JolCraftOwnedEffectHelper;
 import net.sievert.jolcraft.world.item.equipment.JolCraftEquipmentHelper;
 import net.sievert.jolcraft.world.item.material.JolCraftMaterials;
 import net.sievert.jolcraft.world.item.material.armor.JolCraftArmorMaterials;
+import net.sievert.jolcraft.world.item.registry.JolCraftArmorItems;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -97,6 +98,15 @@ public abstract class ArmorSetItem extends ArmorItem {
         }
 
         return true;
+    }
+
+    /** Player ticks still run when all pieces of a set leave the inventory. */
+    public static void maintainSetEffects(Player player) {
+        if (player.level().isClientSide) return;
+        for (var set : List.of(JolCraftArmorItems.DEEPSLATE, JolCraftArmorItems.MITHRIL)) {
+            ArmorSetItem armor = (ArmorSetItem) set.helmet().get();
+            armor.updateSetEffects(player, armor.hasFullSet(player));
+        }
     }
 
     private void updateSetEffects(

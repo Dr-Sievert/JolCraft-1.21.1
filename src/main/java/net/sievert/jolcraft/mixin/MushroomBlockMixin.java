@@ -1,5 +1,7 @@
 package net.sievert.jolcraft.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -9,14 +11,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.sievert.jolcraft.world.block.JolCraftBlocks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.Inject;
 
 @Mixin(MushroomBlock.class)
 public abstract class MushroomBlockMixin {
 
-    @Redirect(
+    // @WrapOperation, not @Redirect, so other mods can wrap the same call. The trailing
+    // parameters capture randomTick's own arguments; captured args come after the Operation.
+    @WrapOperation(
             method = "randomTick",
             at = @At(
                     value = "INVOKE",
@@ -27,13 +30,15 @@ public abstract class MushroomBlockMixin {
     private int jolcraft$modifySpreadChance(
             RandomSource random,
             int bound,
+            Operation<Integer> original,
             BlockState state,
             ServerLevel level,
-            BlockPos pos
+            BlockPos pos,
+            RandomSource tickRandom
     ) {
         if (!level.getBlockState(pos.below())
                 .is(JolCraftBlocks.VERDANT_SOIL.get())) {
-            return random.nextInt(bound);
+            return original.call(random, bound);
         }
 
         return random.nextInt(50) < 3

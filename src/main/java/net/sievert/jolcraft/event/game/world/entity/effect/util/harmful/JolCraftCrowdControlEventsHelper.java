@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.sievert.jolcraft.util.log.JolCraftLogTags;
@@ -46,8 +47,9 @@ public final class JolCraftCrowdControlEventsHelper {
         boolean rooted = entity.hasEffect(JolCraftEffects.ROOTED);
         boolean stunned = entity.hasEffect(JolCraftEffects.STUNNED);
         boolean suppressed = entity.hasEffect(JolCraftEffects.SUPPRESSED);
+        boolean disarmed = entity.hasEffect(JolCraftEffects.DISARMED);
 
-        if (!rooted && !suppressed && !stunned) return;
+        if (!rooted && !suppressed && !stunned && !disarmed) return;
 
         if (stunned) {
             applyStunned(entity);
@@ -61,11 +63,19 @@ public final class JolCraftCrowdControlEventsHelper {
         if (suppressed) {
             applySuppressed(entity);
         }
+
+        if (disarmed && !(entity instanceof Player player && player.isCreative())
+                && entity.isUsingItem()
+                && JolCraftEquipmentHelper.isRangedWeapon(entity.getUseItem())) {
+            entity.stopUsingItem();
+        }
     }
 
     private static void applyStunned(LivingEntity entity) {
         disableTargeting(entity);
-        disableActions(entity);
+        if (!(entity instanceof Player player && player.isCreative()) && entity.isUsingItem()) {
+            entity.stopUsingItem();
+        }
         disableNavigation(entity);
         disableHorizontalMovement(entity);
     }
@@ -99,8 +109,8 @@ public final class JolCraftCrowdControlEventsHelper {
     }
 
     private static void disableActions(LivingEntity entity) {
-        if (entity.isUsingItem()
-                && !JolCraftEquipmentHelper.isRangedWeapon(entity.getMainHandItem())) {
+        if (!(entity instanceof Player player && player.isCreative()) && entity.isUsingItem()
+                && !JolCraftEquipmentHelper.isRangedWeapon(entity.getUseItem())) {
             entity.stopUsingItem();
         }
     }

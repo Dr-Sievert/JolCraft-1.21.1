@@ -226,7 +226,7 @@ public class HearthBlock extends BaseEntityBlock {
             BlockEntity be = level.getBlockEntity(lowerPos);
             if (be instanceof HearthBlockEntity hearth && hearth.getOwner() != null) {
                 ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(hearth.getOwner());
-                if (HearthAttachmentHelper.isActiveHearth(player, lowerPos)) {
+                if (HearthAttachmentHelper.isActiveHearth(player, level.dimension(), lowerPos)) {
                     HearthAttachmentHelper.clearActiveHearthPos(player);
                 }
             }

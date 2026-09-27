@@ -94,6 +94,7 @@ neoForge {
             type = "gameTestServer"
             sourceSet = sourceSets.gametest
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            gameDirectory = file('run/gametest')
         }
 
         data {
@@ -124,6 +125,7 @@ neoForge {
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
+    exclude '.cache/**'
 }
 
 
@@ -323,4 +325,41 @@ tasks.withType(JavaCompile).configureEach {
 test {
     useJUnitPlatform()
     maxHeapSize = "8G"
+}
+
+abstract class VerifyModJar extends DefaultTask {
+    @InputFile
+    @PathSensitive(PathSensitivity.NONE)
+    abstract RegularFileProperty getModJar()
+
+    @Input
+    abstract ListProperty<String> getRequiredEntries()
+
+    @TaskAction
+    void verifyContents() {
+        new java.util.zip.ZipFile(modJar.get().asFile).withCloseable { archive ->
+            def missing = requiredEntries.get().findAll { archive.getEntry(it) == null }
+            if (!missing.isEmpty()) {
+                throw new GradleException("Mod JAR is missing required generated resources: ${missing.join(', ')}. Run './gradlew runData' before building.")
+            }
+        }
+    }
+}
+
+def verifyModJar = tasks.register('verifyModJar', VerifyModJar) {
+    modJar = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    requiredEntries = [
+            'assets/jolcraft/blockstates/strongbox.json',
+            'assets/jolcraft/models/item/lockpick.json',
+            'assets/jolcraft/lang/en_us.json',
+            'assets/jolcraft/sounds.json',
+            'data/jolcraft/recipe/trim/forge_armor_trim_smithing_template.json',
+            'data/jolcraft/config/brewing/corruption_effects.json',
+            'data/jolcraft/damage_type/vitality_curse.json',
+            'data/jolcraft/worldgen/structure/dwarven_fortress.json'
+    ]
+}
+
+tasks.named('check') {
+    dependsOn verifyModJar
 }

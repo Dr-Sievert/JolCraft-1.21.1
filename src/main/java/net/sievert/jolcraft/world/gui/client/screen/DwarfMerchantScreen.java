@@ -120,6 +120,10 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
     }
 
     private void postButtonClick() {
+        if (this.shopItem < 0 || this.shopItem >= this.menu.getOffers().size()) {
+            return;
+        }
+
         this.menu.setSelectionHint(this.shopItem);
         this.menu.tryMoveItems(this.shopItem);
 
@@ -133,6 +137,20 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
         }
 
         connection.send(new ServerboundDwarfSelectTradePacket(this.shopItem));
+    }
+
+    public void onOffersUpdated() {
+        int count = this.menu.getOffers().size();
+        this.shopItem = Mth.clamp(this.menu.getSelectedOfferIndex(), 0, Math.max(0, count - 1));
+        this.scrollOff = Mth.clamp(this.scrollOff, 0, Math.max(0, count - this.tradeOfferButtons.length));
+        if (!this.canScroll(count)) {
+            this.isDragging = false;
+        }
+        for (TradeOfferButton button : this.tradeOfferButtons) {
+            if (button != null) {
+                button.visible = button.index + this.scrollOff < count;
+            }
+        }
     }
 
     @Override
@@ -151,6 +169,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
             }));
             k += 20;
         }
+        this.onOffersUpdated();
     }
 
     @Override
@@ -232,6 +251,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        this.onOffersUpdated();
         super.render(graphics, mouseX, mouseY, partialTick);
         DwarfMerchantOffers offers = this.menu.getOffers();
 
@@ -273,21 +293,21 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
             }
 
             int k1 = this.shopItem;
-            DwarfMerchantOffer selectedOffer = offers.get(k1);
-            if (this.menu.showProgressBar()) {
-                this.renderProgressBar(graphics, i, j, selectedOffer);
-            }
+            if (k1 >= 0 && k1 < offers.size()) {
+                DwarfMerchantOffer selectedOffer = offers.get(k1);
+                if (this.menu.showProgressBar()) {
+                    this.renderProgressBar(graphics, i, j, selectedOffer);
+                }
 
-            if (selectedOffer.isOutOfStock() && this.isHovering(186, 35, 22, 21, mouseX, mouseY) && this.menu.canRestock()) {
-                graphics.renderTooltip(this.font, DEPRECATED_TOOLTIP, mouseX, mouseY);
+                if (selectedOffer.isOutOfStock() && this.isHovering(186, 35, 22, 21, mouseX, mouseY) && this.menu.canRestock()) {
+                    graphics.renderTooltip(this.font, DEPRECATED_TOOLTIP, mouseX, mouseY);
+                }
             }
 
             for (TradeOfferButton tradeOfferButton : this.tradeOfferButtons) {
                 if (tradeOfferButton.isHoveredOrFocused()) {
                     tradeOfferButton.renderToolTip(graphics, mouseX, mouseY);
                 }
-
-                tradeOfferButton.visible = tradeOfferButton.index < this.menu.getOffers().size();
             }
 
             RenderSystem.enableDepthTest();
@@ -344,6 +364,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        this.onOffersUpdated();
         int i = this.menu.getOffers().size();
         if (this.canScroll(i)) {
             int j = i - 7;
@@ -355,6 +376,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        this.onOffersUpdated();
         int i = this.menu.getOffers().size();
         if (this.isDragging) {
             int j = this.topPos + 18;
@@ -371,6 +393,7 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        this.onOffersUpdated();
         this.isDragging = false;
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
@@ -420,7 +443,8 @@ public class DwarfMerchantScreen extends AbstractContainerScreen<DwarfMerchantMe
         }
 
         public void renderToolTip(GuiGraphics graphics, int mouseX, int mouseY) {
-            if (this.isHovered && DwarfMerchantScreen.this.menu.getOffers().size() > this.index + DwarfMerchantScreen.this.scrollOff) {
+            int offerIndex = this.index + DwarfMerchantScreen.this.scrollOff;
+            if (this.visible && this.isHovered && offerIndex >= 0 && DwarfMerchantScreen.this.menu.getOffers().size() > offerIndex) {
                 if (mouseX < this.getX() + 20) {
                     ItemStack itemStack = DwarfMerchantScreen.this.menu.getOffers().get(this.index + DwarfMerchantScreen.this.scrollOff).getCostA();
                     graphics.renderTooltip(DwarfMerchantScreen.this.font, itemStack, mouseX, mouseY);

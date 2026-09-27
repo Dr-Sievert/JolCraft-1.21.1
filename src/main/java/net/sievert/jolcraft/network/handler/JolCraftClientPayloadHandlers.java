@@ -24,4 +24,4 @@ public final class JolCraftClientPayloadHandlers {
     public static void handleClientboundConfigSync(ClientboundConfigSyncPacket packet, IPayloadContext context) {
         context.enqueueWork(packet::apply);
     }
-}
+}

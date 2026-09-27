@@ -6,6 +6,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.sievert.jolcraft.world.item.component.JolCraftDataComponents;
@@ -27,6 +28,7 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
 
     private final DwarfMerchant trader;
     private final DwarfMerchantContainer tradeContainer;
+    private int selectedOfferIndex;
 
     private int merchantLevel;
     private boolean showProgressBar;
@@ -41,6 +43,18 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
         super(JolCraftMenuTypes.DWARF_MERCHANT_MENU.get(), containerId);
         this.trader = trader;
         this.tradeContainer = new DwarfMerchantContainer(trader);
+        this.addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return selectedOfferIndex;
+            }
+
+            @Override
+            public void set(int value) {
+                selectedOfferIndex = value;
+                tradeContainer.setSelectionHint(value);
+            }
+        });
 
         this.addSlot(new Slot(tradeContainer, 0, 136, 37));
         this.addSlot(new Slot(tradeContainer, 1, 162, 37));
@@ -192,11 +206,26 @@ public class DwarfMerchantMenu extends AbstractContainerMenu {
     }
 
     public void setSelectionHint(int index) {
+        this.selectedOfferIndex = index;
         this.tradeContainer.setSelectionHint(index);
+        this.tradeContainer.updateSellItem();
+    }
+
+    public int getSelectedOfferIndex() {
+        return this.selectedOfferIndex;
+    }
+
+    public void refreshOffers() {
+        this.selectedOfferIndex = Math.max(0, Math.min(this.selectedOfferIndex, this.getOffers().size() - 1));
+        this.tradeContainer.setSelectionHint(this.selectedOfferIndex);
+        if (!this.trader.isClientSide()) {
+            this.tradeContainer.updateSellItem();
+        }
     }
 
     public void setOffers(DwarfMerchantOffers offers) {
         trader.overrideOffers(offers);
+        this.refreshOffers();
     }
 
     public DwarfMerchantOffers getOffers() {

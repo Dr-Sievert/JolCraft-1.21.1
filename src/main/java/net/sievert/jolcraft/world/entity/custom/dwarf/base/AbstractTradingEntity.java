@@ -400,7 +400,10 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
         DwarfMerchantOffers merchantOffers = this.getOffers();
         Player player = this.getTradingPlayer();
 
-        if (player instanceof ServerPlayer serverPlayer && !merchantOffers.isEmpty()) {
+        if (player instanceof ServerPlayer serverPlayer
+                && serverPlayer.containerMenu instanceof DwarfMerchantMenu menu
+                && menu.getTrader() == this) {
+            menu.refreshOffers();
             JolCraftNetworking.sendToClient(
                     serverPlayer,
                     new ClientboundDwarfMerchantOffersPacket(
@@ -413,6 +416,7 @@ public class AbstractTradingEntity extends AbstractBreedingEntity implements Dwa
                             this.canRestock()
                     )
             );
+            menu.broadcastChanges();
         }
     }
 

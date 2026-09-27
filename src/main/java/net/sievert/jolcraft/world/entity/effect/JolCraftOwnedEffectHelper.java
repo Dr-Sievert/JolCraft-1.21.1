@@ -6,6 +6,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.sievert.jolcraft.mixin.MobEffectInstanceAccessor;
+
+import javax.annotation.Nullable;
 
 public final class JolCraftOwnedEffectHelper {
 
@@ -53,7 +56,7 @@ public final class JolCraftOwnedEffectHelper {
                 return;
             }
 
-            if (owned && !matches(current, amplifier)) {
+            if (owned && !containsOwnedEffect(current, amplifier)) {
                 clearOwned(
                         entity,
                         ownershipRoot,
@@ -64,10 +67,14 @@ public final class JolCraftOwnedEffectHelper {
             return;
         }
 
-        if (owned
-                && current != null
-                && matches(current, amplifier)) {
-            entity.removeEffect(effect);
+        if (owned && current != null) {
+            MobEffectInstance remaining = removeOwnedEffect(current, amplifier);
+            if (remaining != current) {
+                entity.removeEffect(effect);
+                if (remaining != null) {
+                    entity.addEffect(remaining);
+                }
+            }
         }
 
         clearOwned(
@@ -75,6 +82,25 @@ public final class JolCraftOwnedEffectHelper {
                 ownershipRoot,
                 ownershipId
         );
+    }
+
+    private static boolean containsOwnedEffect(MobEffectInstance current, int amplifier) {
+        for (MobEffectInstance candidate = current; candidate != null;
+             candidate = ((MobEffectInstanceAccessor) candidate).jolcraft$getHiddenEffect()) {
+            if (matches(candidate, amplifier)) return true;
+        }
+        return false;
+    }
+
+    /** Unlink an owned hidden bonus without replacing the active potion effect. */
+    private static @Nullable MobEffectInstance removeOwnedEffect(MobEffectInstance current, int amplifier) {
+        MobEffectInstanceAccessor accessor = (MobEffectInstanceAccessor) current;
+        MobEffectInstance hidden = accessor.jolcraft$getHiddenEffect();
+        if (hidden != null) {
+            hidden = removeOwnedEffect(hidden, amplifier);
+            accessor.jolcraft$setHiddenEffect(hidden);
+        }
+        return matches(current, amplifier) ? hidden : current;
     }
 
     private static boolean matches(
